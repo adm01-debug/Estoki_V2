@@ -221,7 +221,7 @@ export default function Dashboard() {
                   { icon: Warehouse, label: "Estoque", description: "Mapa visual", variant: "gradient" as const, path: "/estoque" },
                   { icon: ArrowLeftRight, label: "Movimentação", description: "Transferências", path: "/movimentacao" },
                   { icon: QrCode, label: "Scanner", description: "Ler QR Code", path: "/scanner" },
-                  { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/dashboard" },
+                  { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/relatorios" },
                 ].map((item, index) => (
                   <motion.div
                     key={item.label}
