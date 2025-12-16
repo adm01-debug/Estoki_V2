@@ -10,16 +10,34 @@ import {
   TrendingDown,
   BarChart3,
   Search,
-  Loader2
+  Loader2,
+  PieChart
 } from "lucide-react";
-import { format, subDays, startOfDay, endOfDay, isWithinInterval } from "date-fns";
+import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import jsPDF from "jspdf";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Legend
+} from "recharts";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
   Select,
@@ -44,6 +62,18 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import type { TipoMovimentacao, Movimentacao } from "@/types/estoque";
+
+const CHART_COLORS = {
+  entradas: "#22c55e",
+  saidas: "#ef4444",
+  recebimento: "#3b82f6",
+  armazenamento: "#8b5cf6",
+  transferencia: "#f59e0b",
+  saida_gravacao: "#ef4444",
+  retorno_gravacao: "#22c55e",
+  expedicao: "#06b6d4",
+  ajuste: "#6b7280",
+};
 
 // Mock data expandido para relatórios
 const mockMovimentacoes: (Movimentacao & { produto: string })[] = [
@@ -270,6 +300,74 @@ export default function RelatoriosPage() {
     return { entradas, saidas, ajustes, total: dadosFiltrados.length };
   }, [dadosFiltrados]);
 
+  // Dados para gráfico de linha temporal
+  const dadosGraficoTemporal = useMemo(() => {
+    if (!dataInicio || !dataFim) return [];
+    
+    const dias = eachDayOfInterval({ start: dataInicio, end: dataFim });
+    
+    return dias.map(dia => {
+      const movsDia = dadosFiltrados.filter(m => 
+        format(m.dataHora, "yyyy-MM-dd") === format(dia, "yyyy-MM-dd")
+      );
+      
+      const entradas = movsDia
+        .filter(m => ["recebimento", "retorno_gravacao"].includes(m.tipo))
+        .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
+      
+      const saidas = movsDia
+        .filter(m => ["saida_gravacao", "expedicao"].includes(m.tipo))
+        .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
+
+      return {
+        data: format(dia, "dd/MM"),
+        entradas,
+        saidas,
+        saldo: entradas - saidas,
+      };
+    });
+  }, [dadosFiltrados, dataInicio, dataFim]);
+
+  // Dados para gráfico de pizza por tipo
+  const dadosGraficoPizza = useMemo(() => {
+    const contagem: Record<string, number> = {};
+    
+    dadosFiltrados.forEach(mov => {
+      const tipo = mov.tipo;
+      contagem[tipo] = (contagem[tipo] || 0) + 1;
+    });
+
+    return Object.entries(contagem).map(([tipo, valor]) => ({
+      name: tipoLabels[tipo] || tipo,
+      value: valor,
+      tipo,
+    }));
+  }, [dadosFiltrados]);
+
+  // Dados para gráfico de barras por produto
+  const dadosGraficoProduto = useMemo(() => {
+    const porProduto: Record<string, { entradas: number; saidas: number }> = {};
+    
+    dadosFiltrados.forEach(mov => {
+      if (!porProduto[mov.produto]) {
+        porProduto[mov.produto] = { entradas: 0, saidas: 0 };
+      }
+      
+      if (["recebimento", "retorno_gravacao"].includes(mov.tipo)) {
+        porProduto[mov.produto].entradas += Math.abs(mov.quantidade);
+      } else if (["saida_gravacao", "expedicao"].includes(mov.tipo)) {
+        porProduto[mov.produto].saidas += Math.abs(mov.quantidade);
+      }
+    });
+
+    return Object.entries(porProduto)
+      .map(([produto, dados]) => ({
+        produto: produto.length > 15 ? produto.substring(0, 15) + "..." : produto,
+        ...dados,
+      }))
+      .slice(0, 5);
+  }, [dadosFiltrados]);
+
   const limparFiltros = () => {
     setDataInicio(subDays(new Date(), 7));
     setDataFim(new Date());
@@ -482,6 +580,166 @@ export default function RelatoriosPage() {
               {estatisticas.ajustes > 0 ? "+" : ""}{estatisticas.ajustes}
             </div>
           </div>
+        </div>
+
+        {/* Gráficos */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Gráfico de Área - Movimentações ao longo do tempo */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                Movimentações por Dia
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dadosGraficoTemporal.length > 0 ? (
+                <ResponsiveContainer width="100%" height={200}>
+                  <AreaChart data={dadosGraficoTemporal}>
+                    <defs>
+                      <linearGradient id="colorEntradas" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={CHART_COLORS.entradas} stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor={CHART_COLORS.entradas} stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorSaidas" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={CHART_COLORS.saidas} stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor={CHART_COLORS.saidas} stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis 
+                      dataKey="data" 
+                      tick={{ fontSize: 10 }} 
+                      className="text-muted-foreground"
+                    />
+                    <YAxis tick={{ fontSize: 10 }} className="text-muted-foreground" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: "hsl(var(--card))", 
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        fontSize: "12px"
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="entradas" 
+                      name="Entradas"
+                      stroke={CHART_COLORS.entradas} 
+                      fillOpacity={1} 
+                      fill="url(#colorEntradas)" 
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="saidas" 
+                      name="Saídas"
+                      stroke={CHART_COLORS.saidas} 
+                      fillOpacity={1} 
+                      fill="url(#colorSaidas)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+                  Sem dados para o período selecionado
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Gráfico de Pizza - Distribuição por Tipo */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <PieChart className="h-4 w-4 text-primary" />
+                Distribuição por Tipo
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dadosGraficoPizza.length > 0 ? (
+                <ResponsiveContainer width="100%" height={200}>
+                  <RechartsPieChart>
+                    <Pie
+                      data={dadosGraficoPizza}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={2}
+                      dataKey="value"
+                      label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                    >
+                      {dadosGraficoPizza.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={CHART_COLORS[entry.tipo as keyof typeof CHART_COLORS] || "#6b7280"} 
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: "hsl(var(--card))", 
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        fontSize: "12px"
+                      }}
+                      formatter={(value: number) => [`${value} mov.`, "Quantidade"]}
+                    />
+                    <Legend 
+                      wrapperStyle={{ fontSize: "10px" }}
+                      formatter={(value) => <span className="text-foreground">{value}</span>}
+                    />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+                  Sem dados para o período selecionado
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Gráfico de Barras - Por Produto */}
+          <Card className="lg:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                Top 5 Produtos - Entradas vs Saídas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dadosGraficoProduto.length > 0 ? (
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={dadosGraficoProduto} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis type="number" tick={{ fontSize: 10 }} />
+                    <YAxis 
+                      type="category" 
+                      dataKey="produto" 
+                      tick={{ fontSize: 10 }} 
+                      width={100}
+                    />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: "hsl(var(--card))", 
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "8px",
+                        fontSize: "12px"
+                      }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: "10px" }} />
+                    <Bar dataKey="entradas" name="Entradas" fill={CHART_COLORS.entradas} radius={[0, 4, 4, 0]} />
+                    <Bar dataKey="saidas" name="Saídas" fill={CHART_COLORS.saidas} radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
+                  Sem dados para o período selecionado
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filtros */}
