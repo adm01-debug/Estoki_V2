@@ -1,0 +1,232 @@
+import { useState, useRef } from "react";
+import { Camera, X, CheckCircle2, AlertCircle, ImagePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
+interface FotoLote {
+  id: number;
+  url: string;
+  tipo: "geral" | "etiqueta" | "detalhe";
+  timestamp: Date;
+}
+
+interface FotosLoteProps {
+  fotos: FotoLote[];
+  onAddFoto: (foto: Omit<FotoLote, "id" | "timestamp">) => void;
+  onRemoveFoto: (id: number) => void;
+  minFotos?: number;
+  className?: string;
+}
+
+const tiposFoto = [
+  { tipo: "geral" as const, label: "Visão Geral", emoji: "📦", descricao: "Foto geral do lote/volumes" },
+  { tipo: "etiqueta" as const, label: "Etiqueta/NF", emoji: "🏷️", descricao: "Etiqueta ou nota fiscal visível" },
+  { tipo: "detalhe" as const, label: "Detalhe", emoji: "🔍", descricao: "Detalhe do produto (opcional)" },
+];
+
+export function FotosLoteObrigatorias({
+  fotos,
+  onAddFoto,
+  onRemoveFoto,
+  minFotos = 2,
+  className,
+}: FotosLoteProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [tipoSelecionado, setTipoSelecionado] = useState<"geral" | "etiqueta" | "detalhe">("geral");
+
+  const fotosCompletas = fotos.length >= minFotos;
+  const temFotoGeral = fotos.some((f) => f.tipo === "geral");
+  const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta");
+  const requisitosAtendidos = temFotoGeral && temFotoEtiqueta;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result) {
+          onAddFoto({
+            url: event.target.result as string,
+            tipo: tipoSelecionado,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleCapture = (tipo: "geral" | "etiqueta" | "detalhe") => {
+    setTipoSelecionado(tipo);
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Camera className="h-4 w-4 text-muted-foreground" />
+          <h3 className="text-sm font-semibold text-muted-foreground">
+            FOTOS DO LOTE
+          </h3>
+          <Badge variant="destructive" className="text-[10px]">
+            Obrigatório
+          </Badge>
+        </div>
+        <Badge variant={requisitosAtendidos ? "default" : "secondary"} className={requisitosAtendidos ? "bg-success" : ""}>
+          {fotos.length}/{minFotos} mín.
+        </Badge>
+      </div>
+
+      {/* Status de Requisitos */}
+      <div className="bg-muted/50 rounded-lg p-3 mb-4 space-y-2">
+        <div className="text-xs text-muted-foreground mb-2">Fotos necessárias:</div>
+        <div className="flex flex-wrap gap-2">
+          <div className={cn(
+            "flex items-center gap-1.5 text-xs px-2 py-1 rounded-full",
+            temFotoGeral ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
+          )}>
+            {temFotoGeral ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+            📦 Visão Geral
+          </div>
+          <div className={cn(
+            "flex items-center gap-1.5 text-xs px-2 py-1 rounded-full",
+            temFotoEtiqueta ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
+          )}>
+            {temFotoEtiqueta ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+            🏷️ Etiqueta/NF
+          </div>
+        </div>
+      </div>
+
+      {/* Input oculto */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {/* Botões de Captura */}
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        {tiposFoto.map((tipo) => {
+          const temFoto = fotos.some((f) => f.tipo === tipo.tipo);
+          const isObrigatorio = tipo.tipo !== "detalhe";
+
+          return (
+            <button
+              key={tipo.tipo}
+              onClick={() => handleCapture(tipo.tipo)}
+              className={cn(
+                "p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all",
+                temFoto
+                  ? "border-success bg-success/5 hover:bg-success/10"
+                  : isObrigatorio
+                  ? "border-destructive/50 bg-destructive/5 hover:border-destructive hover:bg-destructive/10"
+                  : "border-border hover:border-primary hover:bg-primary/5"
+              )}
+            >
+              <span className="text-2xl">{tipo.emoji}</span>
+              <span className="text-xs font-medium">{tipo.label}</span>
+              {temFoto && <CheckCircle2 className="h-4 w-4 text-success" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Galeria de Fotos */}
+      {fotos.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground">Fotos capturadas:</div>
+          <div className="grid grid-cols-3 gap-2">
+            {fotos.map((foto) => {
+              const tipoInfo = tiposFoto.find((t) => t.tipo === foto.tipo);
+              return (
+                <div key={foto.id} className="relative group">
+                  <img
+                    src={foto.url}
+                    alt={tipoInfo?.label || "Foto"}
+                    className="w-full aspect-square object-cover rounded-lg border border-border"
+                  />
+                  <div className="absolute bottom-1 left-1 bg-background/90 rounded px-1.5 py-0.5 text-[10px] font-medium">
+                    {tipoInfo?.emoji} {tipoInfo?.label}
+                  </div>
+                  <button
+                    onClick={() => onRemoveFoto(foto.id)}
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              );
+            })}
+            
+            {/* Botão adicionar mais */}
+            <button
+              onClick={() => handleCapture("detalhe")}
+              className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+            >
+              <ImagePlus className="h-6 w-6" />
+              <span className="text-[10px] mt-1">Adicionar</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mensagem quando não tem fotos */}
+      {fotos.length === 0 && (
+        <div className="text-center py-4 text-muted-foreground">
+          <Camera className="h-10 w-10 mx-auto mb-2 opacity-50" />
+          <p className="text-sm">Capture as fotos obrigatórias do lote</p>
+          <p className="text-xs mt-1">Necessário para iniciar a triagem</p>
+        </div>
+      )}
+
+      {/* Alerta se não atende requisitos */}
+      {!requisitosAtendidos && fotos.length > 0 && (
+        <div className="mt-3 bg-warning/10 border border-warning/30 rounded-lg p-2 text-center text-warning text-xs">
+          ⚠️ Capture pelo menos a foto geral e da etiqueta/NF para continuar
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Hook para gerenciar fotos do lote
+export function useFotosLote() {
+  const [fotos, setFotos] = useState<FotoLote[]>([]);
+
+  const addFoto = (foto: Omit<FotoLote, "id" | "timestamp">) => {
+    const newFoto: FotoLote = {
+      ...foto,
+      id: Date.now(),
+      timestamp: new Date(),
+    };
+    setFotos((prev) => [...prev, newFoto]);
+  };
+
+  const removeFoto = (id: number) => {
+    setFotos((prev) => prev.filter((f) => f.id !== id));
+  };
+
+  const temFotoGeral = fotos.some((f) => f.tipo === "geral");
+  const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta");
+  const requisitosAtendidos = temFotoGeral && temFotoEtiqueta;
+
+  return {
+    fotos,
+    addFoto,
+    removeFoto,
+    requisitosAtendidos,
+    temFotoGeral,
+    temFotoEtiqueta,
+  };
+}
