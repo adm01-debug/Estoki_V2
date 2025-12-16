@@ -24,6 +24,7 @@ import {
   Package,
   AlertTriangle,
   BarChart3,
+  Trophy,
 } from "lucide-react";
 import {
   AreaChart,
@@ -39,6 +40,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { ConquistasResumo, useConquistas } from "@/components/gamificacao/ConquistasSystem";
 
 // Dados do triador atual (simulando usuário logado)
 const triadorAtual = {
@@ -182,6 +184,7 @@ function MetricCard({
 
 export default function DashboardTriador() {
   const [periodo, setPeriodo] = useState<"hoje" | "semana">("hoje");
+  const gamificacao = useConquistas(triadorAtual.id.toString());
   
   const metricas = periodo === "hoje" ? metricasHoje : metricasSemana;
 
@@ -191,13 +194,23 @@ export default function DashboardTriador() {
         {/* Header com info do triador */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center relative">
               <span className="text-xl font-bold text-primary">
                 {triadorAtual.nome.charAt(0)}
               </span>
+              {/* Badge de nível */}
+              <div className="absolute -bottom-1 -right-1 bg-warning text-warning-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-background">
+                {gamificacao.nivel}
+              </div>
             </div>
             <div>
-              <h2 className="font-semibold text-lg">{triadorAtual.nome}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-semibold text-lg">{triadorAtual.nome}</h2>
+                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-xs gap-1">
+                  <Trophy className="h-3 w-3" />
+                  {gamificacao.pontosTotal} XP
+                </Badge>
+              </div>
               <p className="text-sm text-muted-foreground">
                 Turno: {triadorAtual.turno} • Triador desde {triadorAtual.dataAdmissao.toLocaleDateString("pt-BR")}
               </p>
@@ -252,6 +265,14 @@ export default function DashboardTriador() {
             trendValue={`${metricas.lotesFinalizados || metricasHoje.lotesFinalizados} lotes`}
           />
         </div>
+
+        {/* Conquistas */}
+        <ConquistasResumo
+          conquistas={gamificacao.conquistas}
+          pontosTotal={gamificacao.pontosTotal}
+          nivel={gamificacao.nivel}
+          pontosProximoNivel={gamificacao.pontosProximoNivel}
+        />
 
         {/* Resumo visual aprovados/reprovados */}
         <Card>
