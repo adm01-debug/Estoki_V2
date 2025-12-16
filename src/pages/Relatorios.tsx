@@ -240,11 +240,15 @@ const tipoBadgeVariants: Record<string, "default" | "secondary" | "destructive" 
 // Lista de produtos únicos para o filtro
 const produtosUnicos = [...new Set(mockMovimentacoes.map(m => m.produto))];
 
+// Lista de responsáveis únicos para o filtro
+const responsaveisUnicos = [...new Set(mockMovimentacoes.map(m => m.responsavelNome))];
+
 export default function RelatoriosPage() {
   const [dataInicio, setDataInicio] = useState<Date | undefined>(subDays(new Date(), 7));
   const [dataFim, setDataFim] = useState<Date | undefined>(new Date());
   const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [produtoFiltro, setProdutoFiltro] = useState("todos");
+  const [responsavelFiltro, setResponsavelFiltro] = useState("todos");
   const [buscaTexto, setBuscaTexto] = useState("");
   const [exportandoCSV, setExportandoCSV] = useState(false);
   const [exportandoPDF, setExportandoPDF] = useState(false);
@@ -267,6 +271,9 @@ export default function RelatoriosPage() {
       // Filtro por produto
       if (produtoFiltro !== "todos" && mov.produto !== produtoFiltro) return false;
 
+      // Filtro por responsável
+      if (responsavelFiltro !== "todos" && mov.responsavelNome !== responsavelFiltro) return false;
+
       // Filtro por texto
       if (buscaTexto) {
         const texto = buscaTexto.toLowerCase();
@@ -281,7 +288,7 @@ export default function RelatoriosPage() {
 
       return true;
     }).sort((a, b) => b.dataHora.getTime() - a.dataHora.getTime());
-  }, [dataInicio, dataFim, tipoFiltro, produtoFiltro, buscaTexto]);
+  }, [dataInicio, dataFim, tipoFiltro, produtoFiltro, responsavelFiltro, buscaTexto]);
 
   // Estatísticas
   const estatisticas = useMemo(() => {
@@ -373,6 +380,7 @@ export default function RelatoriosPage() {
     setDataFim(new Date());
     setTipoFiltro("todos");
     setProdutoFiltro("todos");
+    setResponsavelFiltro("todos");
     setBuscaTexto("");
   };
 
@@ -833,9 +841,25 @@ export default function RelatoriosPage() {
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          {/* Busca por texto */}
+            {/* Responsável */}
+            <div className="space-y-2">
+              <Label className="text-xs text-muted-foreground">Responsável</Label>
+              <Select value={responsavelFiltro} onValueChange={setResponsavelFiltro}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os responsáveis</SelectItem>
+                  {responsaveisUnicos.map((responsavel) => (
+                    <SelectItem key={responsavel} value={responsavel}>
+                      {responsavel}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input 
