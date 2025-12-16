@@ -14,7 +14,8 @@ import {
   Shield,
   Users,
   ClipboardList,
-  Layers
+  Layers,
+  ListTodo
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -281,6 +282,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <Layers className="h-5 w-5" />
               <span className="font-medium">Curva ABC</span>
+            </button>
+            <button
+              onClick={() => navigate("/gestao-tarefas")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/gestao-tarefas"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <ListTodo className="h-5 w-5" />
+              <span className="font-medium">Gestão Tarefas</span>
             </button>
           </div>
         </nav>
