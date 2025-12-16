@@ -3,6 +3,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
@@ -25,6 +26,8 @@ import {
   AlertTriangle,
   BarChart3,
   Trophy,
+  Bell,
+  BellOff,
 } from "lucide-react";
 import {
   AreaChart,
@@ -41,6 +44,7 @@ import {
   Cell,
 } from "recharts";
 import { ConquistasResumo, useConquistas } from "@/components/gamificacao/ConquistasSystem";
+import { useConquistaNotificacoes } from "@/components/gamificacao/ConquistaNotificacoes";
 
 // Dados do triador atual (simulando usuário logado)
 const triadorAtual = {
@@ -186,6 +190,13 @@ export default function DashboardTriador() {
   const [periodo, setPeriodo] = useState<"hoje" | "semana">("hoje");
   const gamificacao = useConquistas(triadorAtual.id.toString());
   
+  // Sistema de notificações de conquistas
+  const notificacoes = useConquistaNotificacoes(gamificacao.conquistas, {
+    enabled: true,
+    showToast: true,
+    showBrowserNotification: true,
+  });
+  
   const metricas = periodo === "hoje" ? metricasHoje : metricasSemana;
 
   return (
@@ -216,16 +227,36 @@ export default function DashboardTriador() {
               </p>
             </div>
           </div>
-          <Select value={periodo} onValueChange={(v) => setPeriodo(v as "hoje" | "semana")}>
-            <SelectTrigger className="w-[140px]">
-              <Calendar className="h-4 w-4 mr-2" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="hoje">Hoje</SelectItem>
-              <SelectItem value="semana">Esta Semana</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select value={periodo} onValueChange={(v) => setPeriodo(v as "hoje" | "semana")}>
+              <SelectTrigger className="w-[140px]">
+                <Calendar className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hoje">Hoje</SelectItem>
+                <SelectItem value="semana">Esta Semana</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Botão de notificações */}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                if (!notificacoes.hasPermission) {
+                  notificacoes.requestPermission();
+                }
+              }}
+              title={notificacoes.hasPermission ? "Notificações ativadas" : "Ativar notificações"}
+            >
+              {notificacoes.hasPermission ? (
+                <Bell className="h-4 w-4 text-success" />
+              ) : (
+                <BellOff className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* KPIs principais */}
