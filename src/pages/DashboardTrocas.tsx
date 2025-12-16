@@ -532,6 +532,32 @@ export default function DashboardTrocas() {
             </CardTitle>
           </CardHeader>
           <CardContent>
+            {/* Alert when variation exceeds 20% */}
+            {(comparativoPeriodos.variacoes.total > 20 || 
+              comparativoPeriodos.variacoes.trocas > 20 || 
+              comparativoPeriodos.variacoes.devolucoes > 20 || 
+              comparativoPeriodos.variacoes.pecas > 20) && (
+              <div className="mb-4 p-4 bg-destructive/10 border border-destructive/30 rounded-lg flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-destructive">Alerta: Variação acima da meta (20%)</p>
+                  <ul className="mt-1 text-sm text-muted-foreground space-y-0.5">
+                    {comparativoPeriodos.variacoes.total > 20 && (
+                      <li>• Total de registros aumentou <span className="text-destructive font-medium">{comparativoPeriodos.variacoes.total.toFixed(0)}%</span></li>
+                    )}
+                    {comparativoPeriodos.variacoes.trocas > 20 && (
+                      <li>• Trocas aumentaram <span className="text-destructive font-medium">{comparativoPeriodos.variacoes.trocas.toFixed(0)}%</span></li>
+                    )}
+                    {comparativoPeriodos.variacoes.devolucoes > 20 && (
+                      <li>• Devoluções aumentaram <span className="text-destructive font-medium">{comparativoPeriodos.variacoes.devolucoes.toFixed(0)}%</span></li>
+                    )}
+                    {comparativoPeriodos.variacoes.pecas > 20 && (
+                      <li>• Peças afetadas aumentaram <span className="text-destructive font-medium">{comparativoPeriodos.variacoes.pecas.toFixed(0)}%</span></li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {/* Total */}
               <div className="bg-muted/50 rounded-lg p-4">
