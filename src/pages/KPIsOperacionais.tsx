@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
+import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
 import { 
   BarChart3, 
   TrendingUp,
@@ -30,7 +31,10 @@ import {
   ArrowUp,
   ArrowDown,
   Minus,
-  Activity
+  Activity,
+  Radio,
+  Wifi,
+  RefreshCw
 } from "lucide-react";
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -81,6 +85,32 @@ export default function KPIsOperacionais() {
   const [periodoFiltro, setPeriodoFiltro] = useState("7d");
   const [isMetaDialogOpen, setIsMetaDialogOpen] = useState(false);
   const [editingMeta, setEditingMeta] = useState<MetaKPI | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Enable realtime updates
+  useRealtimeKPIs({
+    onMetricUpdate: () => {
+      setLastUpdate(new Date());
+      setIsUpdating(true);
+      setTimeout(() => setIsUpdating(false), 1000);
+    },
+    onPositionUpdate: () => {
+      setLastUpdate(new Date());
+      setIsUpdating(true);
+      setTimeout(() => setIsUpdating(false), 1000);
+    },
+    onTriageUpdate: () => {
+      setLastUpdate(new Date());
+      setIsUpdating(true);
+      setTimeout(() => setIsUpdating(false), 1000);
+    },
+    onPickingUpdate: () => {
+      setLastUpdate(new Date());
+      setIsUpdating(true);
+      setTimeout(() => setIsUpdating(false), 1000);
+    },
+  });
 
   // Queries
   const { data: metricas = [], isLoading: loadingMetricas } = useQuery({
@@ -311,7 +341,29 @@ export default function KPIsOperacionais() {
           <h1 className="text-3xl font-bold text-foreground">KPIs Operacionais</h1>
           <p className="text-muted-foreground">Métricas e indicadores de desempenho</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
+          {/* Realtime Status Indicator */}
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+            <motion.div
+              animate={isUpdating ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 0.3 }}
+            >
+              <Wifi className={`h-4 w-4 ${isUpdating ? "text-green-500" : "text-primary"}`} />
+            </motion.div>
+            <div className="flex flex-col">
+              <span className="text-xs font-medium text-foreground flex items-center gap-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Tempo Real
+              </span>
+              <span className="text-[10px] text-muted-foreground">
+                Última atualização: {format(lastUpdate, "HH:mm:ss")}
+              </span>
+            </div>
+          </div>
+          
           <Select value={periodoFiltro} onValueChange={setPeriodoFiltro}>
             <SelectTrigger className="w-[150px]">
               <Calendar className="mr-2 h-4 w-4" />
