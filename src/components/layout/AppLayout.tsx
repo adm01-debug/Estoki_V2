@@ -159,7 +159,15 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         </nav>
 
         <div className="p-3 border-t border-sidebar-border">
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground hover:bg-sidebar-accent transition-all">
+          <button 
+            onClick={() => navigate("/configuracoes")}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+              location.pathname === "/configuracoes"
+                ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                : "text-sidebar-foreground hover:bg-sidebar-accent"
+            )}
+          >
             <Settings className="h-5 w-5" />
             <span className="font-medium">Configurações</span>
           </button>
