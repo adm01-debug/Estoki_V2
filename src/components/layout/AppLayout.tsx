@@ -16,7 +16,8 @@ import {
   ClipboardList,
   Layers,
   ListTodo,
-  BellRing
+  BellRing,
+  Activity
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -307,6 +308,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <BellRing className="h-5 w-5" />
               <span className="font-medium">Alertas</span>
+            </button>
+            <button
+              onClick={() => navigate("/kpis")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/kpis"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Activity className="h-5 w-5" />
+              <span className="font-medium">KPIs</span>
             </button>
           </div>
         </nav>

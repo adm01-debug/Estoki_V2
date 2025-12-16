@@ -204,6 +204,138 @@ export type Database = {
           },
         ]
       }
+      eventos_picking: {
+        Row: {
+          correto: boolean | null
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          id: string
+          observacoes: string | null
+          operador_id: string | null
+          posicao_id: string | null
+          produto_id: string | null
+          quantidade_separada: number
+          quantidade_solicitada: number
+          tarefa_id: string | null
+        }
+        Insert: {
+          correto?: boolean | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          observacoes?: string | null
+          operador_id?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade_separada: number
+          quantidade_solicitada: number
+          tarefa_id?: string | null
+        }
+        Update: {
+          correto?: boolean | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          observacoes?: string | null
+          operador_id?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade_separada?: number
+          quantidade_solicitada?: number
+          tarefa_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_picking_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_picking_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_picking_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_picking_tarefa_id_fkey"
+            columns: ["tarefa_id"]
+            isOneToOne: false
+            referencedRelation: "tarefas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      eventos_triagem: {
+        Row: {
+          created_at: string
+          data_fim: string | null
+          data_inicio: string
+          id: string
+          lote_id: string | null
+          observacoes: string | null
+          operador_id: string | null
+          produto_id: string | null
+          resultado: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id?: string | null
+          produto_id?: string | null
+          resultado?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id?: string | null
+          produto_id?: string | null
+          resultado?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "eventos_triagem_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_triagem_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_triagem_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventario_ciclos: {
         Row: {
           acuracidade: number | null
@@ -496,6 +628,120 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      metas_kpi: {
+        Row: {
+          ativo: boolean | null
+          created_at: string
+          descricao: string | null
+          id: string
+          metrica: string
+          nome: string
+          tipo: string
+          unidade: string | null
+          updated_at: string
+          valor_meta: number
+        }
+        Insert: {
+          ativo?: boolean | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          metrica: string
+          nome: string
+          tipo: string
+          unidade?: string | null
+          updated_at?: string
+          valor_meta: number
+        }
+        Update: {
+          ativo?: boolean | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          metrica?: string
+          nome?: string
+          tipo?: string
+          unidade?: string | null
+          updated_at?: string
+          valor_meta?: number
+        }
+        Relationships: []
+      }
+      metricas_operacionais: {
+        Row: {
+          acuracidade_picking: number | null
+          created_at: string
+          data: string
+          erros_picking: number | null
+          id: string
+          itens_aprovados: number | null
+          itens_reprovados: number | null
+          itens_separados: number | null
+          itens_triados: number | null
+          movimentacoes_realizadas: number | null
+          nfs_processadas: number | null
+          pedidos_separados: number | null
+          posicoes_ocupadas: number | null
+          posicoes_totais: number | null
+          taxa_aprovacao: number | null
+          taxa_ocupacao: number | null
+          tempo_medio_recebimento_minutos: number | null
+          tempo_medio_triagem_minutos: number | null
+          tempo_total_picking_minutos: number | null
+          tempo_total_triagem_minutos: number | null
+          updated_at: string
+          volumes_recebidos: number | null
+        }
+        Insert: {
+          acuracidade_picking?: number | null
+          created_at?: string
+          data?: string
+          erros_picking?: number | null
+          id?: string
+          itens_aprovados?: number | null
+          itens_reprovados?: number | null
+          itens_separados?: number | null
+          itens_triados?: number | null
+          movimentacoes_realizadas?: number | null
+          nfs_processadas?: number | null
+          pedidos_separados?: number | null
+          posicoes_ocupadas?: number | null
+          posicoes_totais?: number | null
+          taxa_aprovacao?: number | null
+          taxa_ocupacao?: number | null
+          tempo_medio_recebimento_minutos?: number | null
+          tempo_medio_triagem_minutos?: number | null
+          tempo_total_picking_minutos?: number | null
+          tempo_total_triagem_minutos?: number | null
+          updated_at?: string
+          volumes_recebidos?: number | null
+        }
+        Update: {
+          acuracidade_picking?: number | null
+          created_at?: string
+          data?: string
+          erros_picking?: number | null
+          id?: string
+          itens_aprovados?: number | null
+          itens_reprovados?: number | null
+          itens_separados?: number | null
+          itens_triados?: number | null
+          movimentacoes_realizadas?: number | null
+          nfs_processadas?: number | null
+          pedidos_separados?: number | null
+          posicoes_ocupadas?: number | null
+          posicoes_totais?: number | null
+          taxa_aprovacao?: number | null
+          taxa_ocupacao?: number | null
+          tempo_medio_recebimento_minutos?: number | null
+          tempo_medio_triagem_minutos?: number | null
+          tempo_total_picking_minutos?: number | null
+          tempo_total_triagem_minutos?: number | null
+          updated_at?: string
+          volumes_recebidos?: number | null
+        }
+        Relationships: []
       }
       ondas_separacao: {
         Row: {
