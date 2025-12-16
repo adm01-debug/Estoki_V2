@@ -329,6 +329,106 @@ export default function DashboardTrocas() {
     }
   }, []);
 
+  // Export drill-down to Excel/CSV
+  const exportDrillDownToExcel = useCallback(() => {
+    if (drillDownData.length === 0) return;
+    
+    const headers = ['ID', 'Tipo', 'Status', 'Produto', 'SKU', 'Quantidade', 'Fornecedor', 'Motivo', 'Data'];
+    const rows = drillDownData.map(r => [
+      r.id,
+      r.tipo === 'troca' ? 'Troca' : 'Devolução',
+      r.status.charAt(0).toUpperCase() + r.status.slice(1).replace('_', ' '),
+      r.produto,
+      r.sku,
+      r.quantidade.toString(),
+      r.fornecedor,
+      r.motivoDefeito,
+      r.dataCriacao.toLocaleDateString('pt-BR')
+    ]);
+
+    const csvContent = '\uFEFF' + [headers, ...rows].map(row => row.join(';')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const filePrefix = drillDown.type === 'fornecedor' ? 'fornecedor' : 'motivo';
+    link.download = `drilldown-${filePrefix}-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Dados do drill-down exportados para Excel!');
+  }, [drillDownData, drillDown.type]);
+
+  // Export drill-down to PDF
+  const exportDrillDownToPDF = useCallback(() => {
+    if (drillDownData.length === 0) return;
+    
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header
+    doc.setFontSize(16);
+    const title = drillDown.type === 'fornecedor' 
+      ? `Detalhes - Fornecedor: ${drillDown.value}` 
+      : `Detalhes - Motivo: ${drillDown.value}`;
+    doc.text(title, pageWidth / 2, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, pageWidth / 2, 28, { align: 'center' });
+    
+    // Summary
+    doc.setFontSize(12);
+    doc.text('Resumo:', 14, 42);
+    doc.setFontSize(10);
+    doc.text(`Total de registros: ${drillDownData.length}`, 14, 50);
+    doc.text(`Trocas: ${drillDownData.filter(r => r.tipo === 'troca').length}`, 14, 57);
+    doc.text(`Devoluções: ${drillDownData.filter(r => r.tipo === 'devolucao').length}`, 14, 64);
+    doc.text(`Peças afetadas: ${drillDownData.reduce((acc, r) => acc + r.quantidade, 0).toLocaleString()}`, 14, 71);
+    
+    // Table
+    let yPos = 85;
+    doc.setFontSize(12);
+    doc.text('Registros:', 14, yPos);
+    yPos += 8;
+    
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ID', 14, yPos);
+    doc.text('Tipo', 35, yPos);
+    doc.text('Status', 55, yPos);
+    doc.text('Produto', 80, yPos);
+    doc.text('Qtd', 130, yPos);
+    doc.text(drillDown.type === 'fornecedor' ? 'Motivo' : 'Fornecedor', 145, yPos);
+    doc.text('Data', 185, yPos);
+    yPos += 5;
+    
+    doc.setFont('helvetica', 'normal');
+    
+    drillDownData.forEach((r) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.text(r.id, 14, yPos);
+      doc.text(r.tipo === 'troca' ? 'Troca' : 'Dev.', 35, yPos);
+      doc.text(r.status.substring(0, 10), 55, yPos);
+      doc.text(r.produto.substring(0, 20), 80, yPos);
+      doc.text(r.quantidade.toString(), 130, yPos);
+      doc.text(
+        drillDown.type === 'fornecedor' 
+          ? r.motivoDefeito.substring(0, 15) 
+          : r.fornecedor.substring(0, 15), 
+        145, yPos
+      );
+      doc.text(r.dataCriacao.toLocaleDateString('pt-BR'), 185, yPos);
+      yPos += 5;
+    });
+    
+    const filePrefix = drillDown.type === 'fornecedor' ? 'fornecedor' : 'motivo';
+    doc.save(`drilldown-${filePrefix}-${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success('Dados do drill-down exportados para PDF!');
+  }, [drillDownData, drillDown]);
+
   // Export to Excel/CSV
   const exportToExcel = useCallback(() => {
     const headers = ['ID', 'Tipo', 'Status', 'Produto', 'SKU', 'Quantidade', 'Fornecedor', 'Motivo', 'Data'];
@@ -969,6 +1069,18 @@ export default function DashboardTrocas() {
           </SheetHeader>
           
           <div className="mt-6 space-y-4">
+            {/* Export Buttons */}
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={exportDrillDownToExcel} className="flex-1">
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Excel
+              </Button>
+              <Button size="sm" variant="outline" onClick={exportDrillDownToPDF} className="flex-1">
+                <FileText className="h-4 w-4 mr-2" />
+                PDF
+              </Button>
+            </div>
+
             {/* Summary */}
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-muted/50 rounded-lg p-3 text-center">
