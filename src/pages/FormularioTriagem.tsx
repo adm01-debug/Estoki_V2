@@ -36,6 +36,7 @@ import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
+import { FotosLoteObrigatorias, useFotosLote } from "@/components/triagem/FotosLoteObrigatorias";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
 // Dados mockados do item para triagem
@@ -113,11 +114,19 @@ export default function FormularioTriagem() {
   // Timer de triagem
   const timer = useTriagemTimer();
 
-  // Auto-iniciar timer ao montar o componente
-  useEffect(() => {
-    timer.start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Fotos obrigatórias do lote
+  const fotosLote = useFotosLote();
+
+  // Controle de início da triagem (após fotos obrigatórias)
+  const [triagemIniciada, setTriagemIniciada] = useState(false);
+
+  // Iniciar triagem após fotos
+  const handleIniciarTriagem = () => {
+    if (fotosLote.requisitosAtendidos) {
+      setTriagemIniciada(true);
+      timer.start();
+    }
+  };
 
   // Estado do checklist
   const [checklist, setChecklist] = useState<ChecklistState>({
@@ -296,18 +305,7 @@ export default function FormularioTriagem() {
   return (
     <AppLayout title={`Triagem #${mockItem.pedido}`} showBack>
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in pb-32">
-        {/* Timer de Triagem */}
-        <TriagemTimer
-          formattedTime={timer.formattedTime}
-          elapsedSeconds={timer.elapsedSeconds}
-          isRunning={timer.isRunning}
-          onStart={timer.start}
-          onPause={timer.pause}
-          onReset={timer.reset}
-          startTime={timer.startTime}
-        />
-
-        {/* Info do Produto */}
+        {/* Info do Produto - sempre visível */}
         <section className="bg-card rounded-xl p-4 border border-border">
           <div className="flex items-start justify-between">
             <div>
@@ -323,7 +321,52 @@ export default function FormularioTriagem() {
           </div>
         </section>
 
-        {/* Checklist de Inspeção */}
+        {/* Fotos Obrigatórias - primeira etapa */}
+        {!triagemIniciada && (
+          <>
+            <FotosLoteObrigatorias
+              fotos={fotosLote.fotos}
+              onAddFoto={fotosLote.addFoto}
+              onRemoveFoto={fotosLote.removeFoto}
+              minFotos={2}
+            />
+
+            {/* Botão Iniciar Triagem */}
+            <Button
+              className="w-full h-14 text-lg gap-3"
+              onClick={handleIniciarTriagem}
+              disabled={!fotosLote.requisitosAtendidos}
+            >
+              {fotosLote.requisitosAtendidos ? (
+                <>
+                  <Camera className="h-5 w-5" />
+                  Iniciar Triagem
+                </>
+              ) : (
+                <>
+                  <Camera className="h-5 w-5" />
+                  Capture as Fotos Obrigatórias
+                </>
+              )}
+            </Button>
+          </>
+        )}
+
+        {/* Resto do formulário - após fotos */}
+        {triagemIniciada && (
+          <>
+            {/* Timer de Triagem */}
+            <TriagemTimer
+              formattedTime={timer.formattedTime}
+              elapsedSeconds={timer.elapsedSeconds}
+              isRunning={timer.isRunning}
+              onStart={timer.start}
+              onPause={timer.pause}
+              onReset={timer.reset}
+              startTime={timer.startTime}
+            />
+
+            {/* Checklist de Inspeção */}
         <section className="bg-card rounded-xl p-4 border border-border">
           <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
             ✅ CHECKLIST DE INSPEÇÃO
@@ -587,8 +630,11 @@ export default function FormularioTriagem() {
             )}
           </div>
         </section>
+          </>
+        )}
 
-        {/* Ações Fixas */}
+        {/* Ações Fixas - só mostra após triagem iniciada */}
+        {triagemIniciada && (
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border lg:pl-72">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-3 gap-2">
@@ -621,6 +667,7 @@ export default function FormularioTriagem() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Modal de Defeito */}
         <Dialog open={showDefeitoModal} onOpenChange={setShowDefeitoModal}>
