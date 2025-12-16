@@ -16,6 +16,7 @@ import Scanner from "./pages/Scanner";
 import Movimentacao from "./pages/Movimentacao";
 import Armazenamento from "./pages/Armazenamento";
 import Dashboard from "./pages/Dashboard";
+import DashboardTriador from "./pages/DashboardTriador";
 import Relatorios from "./pages/Relatorios";
 import Produtividade from "./pages/Produtividade";
 import InventarioCiclico from "./pages/InventarioCiclico";
@@ -40,6 +41,7 @@ function AnimatedRoutes() {
         <Route path="/recebimento/:id" element={<ConferenciaRecebimento />} />
         <Route path="/triagem" element={<Triagem />} />
         <Route path="/triagem/:id" element={<FormularioTriagem />} />
+        <Route path="/minha-produtividade" element={<DashboardTriador />} />
         <Route path="/estoque" element={<Estoque />} />
         <Route path="/scanner" element={<Scanner />} />
         <Route path="/movimentacao" element={<Movimentacao />} />
