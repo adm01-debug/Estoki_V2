@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import type { TipoEmbalagem } from "@/types/estoque";
 
 // Dados mockados do pedido
@@ -93,10 +94,8 @@ export default function ConferenciaRecebimento() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      const newPhotos: string[] = [];
-      
       Array.from(files).forEach((file) => {
-        if (formData.fotos.length + newPhotos.length >= 5) return;
+        if (formData.fotos.length >= 5) return;
         
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -140,6 +139,17 @@ export default function ConferenciaRecebimento() {
       variant: divergencia < 0 ? "destructive" : "default",
     });
     navigate("/recebimento");
+  };
+
+  // Dados para o gerador de etiquetas
+  const etiquetaData = {
+    pedido: mockPedido.pedido,
+    produto: mockPedido.produto,
+    lote: `${mockPedido.pedido}-XBZ-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}`,
+    fornecedor: mockPedido.fornecedor,
+    totalVolumes: formData.qtdVolumes,
+    qtdPorVolume: formData.qtdPorVolume,
+    dataRecebimento: new Date(),
   };
 
   return (
@@ -456,86 +466,12 @@ export default function ConferenciaRecebimento() {
           </DialogContent>
         </Dialog>
 
-        {/* Modal de Etiquetas */}
-        <Dialog open={showEtiquetaModal} onOpenChange={setShowEtiquetaModal}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                🏷️ Gerar Etiquetas
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Pedido: #{mockPedido.pedido} - {mockPedido.produto}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Lote: {mockPedido.pedido}-XBZ-{new Date().toISOString().slice(0, 10).replace(/-/g, "")}
-                </p>
-              </div>
-
-              <div>
-                <Label>Quantidade de etiquetas</Label>
-                <Input type="number" defaultValue={formData.qtdVolumes} min={1} />
-              </div>
-
-              {/* Prévia da Etiqueta */}
-              <div className="border-2 border-dashed border-border rounded-lg p-4">
-                <div className="text-xs text-center font-bold bg-primary text-primary-foreground py-1 rounded mb-2">
-                  PROMO BRINDES - ESTOQUE
-                </div>
-                <div className="text-xs space-y-1">
-                  <div><strong>PEDIDO:</strong> {mockPedido.pedido}</div>
-                  <div><strong>PRODUTO:</strong> {mockPedido.produto}</div>
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="w-16 h-16 bg-muted rounded flex items-center justify-center text-2xl">
-                      📱
-                    </div>
-                    <div>
-                      <div>📦 VOLUME: 1/{formData.qtdVolumes}</div>
-                      <div>📊 QTD: ~{formData.qtdPorVolume} un</div>
-                      <div>📅 {new Date().toLocaleDateString("pt-BR")}</div>
-                    </div>
-                  </div>
-                  <div className="pt-2 border-t border-border mt-2">
-                    <div><strong>FORNECEDOR:</strong> {mockPedido.fornecedor}</div>
-                    <div><strong>ENDEREÇO:</strong> PP__-S__-N__</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <Select defaultValue="10x7">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10x7">10x7cm</SelectItem>
-                    <SelectItem value="8x5">8x5cm</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select defaultValue="pdf">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pdf">PDF</SelectItem>
-                    <SelectItem value="png">PNG</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1 gap-2">
-                  📥 Baixar PDF
-                </Button>
-                <Button className="flex-1 gap-2">
-                  🖨️ Imprimir
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        {/* Modal de Etiquetas com QR Code Real */}
+        <GeradorEtiquetas
+          open={showEtiquetaModal}
+          onOpenChange={setShowEtiquetaModal}
+          data={etiquetaData}
+        />
       </div>
     </AppLayout>
   );
