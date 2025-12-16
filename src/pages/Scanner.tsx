@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flashlight, Camera, Package, MapPin, ArrowRight, RotateCcw } from "lucide-react";
+import { Package, MapPin, ArrowRight, RotateCcw, AlertCircle } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
+import { QRScanner } from "@/components/scanner/QRScanner";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface ScanResult {
-  itemId: number;
+  itemId?: number;
   pedido: string;
   produto: string;
   lote: string;
@@ -20,107 +22,114 @@ interface ScanResult {
   dataArmazenamento: string;
 }
 
-// Mock de resultado de scan
-const mockScanResult: ScanResult = {
-  itemId: 12345,
-  pedido: "2638-1",
-  produto: "Mochila Executiva Preta",
-  lote: "2638-1-XBZ-20251216",
-  volume: 2,
-  totalVolumes: 4,
-  quantidade: 125,
-  localizacao: "PP1-S05-N2",
-  status: "Em estoque",
-  dataRecebimento: "16/12/2025 14:30",
-  dataTriagem: "16/12/2025 15:45",
-  dataArmazenamento: "16/12/2025 16:30",
+// Simular busca de dados do item pelo QR
+const fetchItemData = (qrData: string): ScanResult | null => {
+  try {
+    const parsed = JSON.parse(qrData);
+    // Retornar dados mockados baseados no QR
+    return {
+      itemId: parsed.itemId || 12345,
+      pedido: parsed.pedido || "2638-1",
+      produto: "Mochila Executiva Preta",
+      lote: parsed.lote || "2638-1-XBZ-20251216",
+      volume: parsed.volume || 1,
+      totalVolumes: parsed.totalVolumes || 4,
+      quantidade: 125,
+      localizacao: "PP1-S05-N2",
+      status: "Em estoque",
+      dataRecebimento: "16/12/2025 14:30",
+      dataTriagem: "16/12/2025 15:45",
+      dataArmazenamento: "16/12/2025 16:30",
+    };
+  } catch {
+    // Se não for JSON válido, tentar extrair pedido da URL ou string
+    const pedidoMatch = qrData.match(/pedido[=:]?([0-9-]+)/i) || qrData.match(/([0-9]+-[0-9]+)/);
+    if (pedidoMatch) {
+      return {
+        pedido: pedidoMatch[1],
+        produto: "Produto não identificado",
+        lote: `${pedidoMatch[1]}-UNKNOWN`,
+        volume: 1,
+        totalVolumes: 1,
+        quantidade: 0,
+        localizacao: "Não definido",
+        status: "Pendente verificação",
+        dataRecebimento: new Date().toLocaleDateString("pt-BR"),
+        dataTriagem: "-",
+        dataArmazenamento: "-",
+      };
+    }
+    return null;
+  }
 };
 
 export default function ScannerPage() {
   const navigate = useNavigate();
-  const [isScanning, setIsScanning] = useState(true);
-  const [flashOn, setFlashOn] = useState(false);
+  const { toast } = useToast();
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
-  const [recentScans, setRecentScans] = useState<Array<{ time: string; pedido: string; volume: string; local: string }>>([
-    { time: "16:45", pedido: "#2638-1 Vol 2/4", volume: "2/4", local: "PP1-S05-N2" },
-    { time: "16:42", pedido: "#2639-2 Vol 1/3", volume: "1/3", local: "PP2-S03-N1" },
-    { time: "16:38", pedido: "#2640-1 Vol 1/1", volume: "1/1", local: "BOX-08" },
-  ]);
+  const [rawScanData, setRawScanData] = useState<string | null>(null);
+  const [recentScans, setRecentScans] = useState<Array<{ time: string; pedido: string; local: string }>>([]);
 
-  // Simular scan após 2 segundos
-  const simulateScan = () => {
-    setTimeout(() => {
-      setScanResult(mockScanResult);
-      setIsScanning(false);
+  const handleScan = useCallback((data: string) => {
+    // Evitar processar o mesmo código múltiplas vezes seguidas
+    if (data === rawScanData) return;
+    
+    setRawScanData(data);
+    
+    const itemData = fetchItemData(data);
+    
+    if (itemData) {
+      setScanResult(itemData);
+      
+      // Adicionar ao histórico
       setRecentScans((prev) => [
-        { time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }), pedido: `#${mockScanResult.pedido} Vol ${mockScanResult.volume}/${mockScanResult.totalVolumes}`, volume: `${mockScanResult.volume}/${mockScanResult.totalVolumes}`, local: mockScanResult.localizacao },
-        ...prev.slice(0, 2),
+        {
+          time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+          pedido: `#${itemData.pedido} Vol ${itemData.volume}/${itemData.totalVolumes}`,
+          local: itemData.localizacao,
+        },
+        ...prev.slice(0, 4),
       ]);
-    }, 2000);
-  };
+
+      // Feedback sonoro/vibração
+      if (navigator.vibrate) {
+        navigator.vibrate(100);
+      }
+
+      toast({
+        title: "QR Code lido!",
+        description: `Pedido #${itemData.pedido} - Volume ${itemData.volume}/${itemData.totalVolumes}`,
+      });
+    } else {
+      toast({
+        title: "QR Code inválido",
+        description: "Não foi possível identificar o item",
+        variant: "destructive",
+      });
+    }
+  }, [rawScanData, toast]);
+
+  const handleScanError = useCallback((error: string) => {
+    toast({
+      title: "Erro no scanner",
+      description: error,
+      variant: "destructive",
+    });
+  }, [toast]);
 
   const handleNewScan = () => {
     setScanResult(null);
-    setIsScanning(true);
-    simulateScan();
+    setRawScanData(null);
   };
 
-  // Iniciar simulação de scan ao montar
-  useState(() => {
-    if (isScanning) {
-      simulateScan();
-    }
-  });
-
   return (
-    <AppLayout
-      title="Scanner"
-      showBack
-      rightAction={
-        <Button
-          size="icon"
-          variant={flashOn ? "default" : "outline"}
-          onClick={() => setFlashOn(!flashOn)}
-        >
-          <Flashlight className="h-4 w-4" />
-        </Button>
-      }
-    >
+    <AppLayout title="Scanner" showBack>
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
-        {/* Área de Scan ou Resultado */}
-        {isScanning && !scanResult ? (
-          <div className="relative aspect-[4/3] bg-black rounded-2xl overflow-hidden">
-            {/* Simulação de câmera */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                {/* Quadro de scan */}
-                <div className="w-64 h-64 border-2 border-white/50 rounded-2xl relative">
-                  {/* Cantos destacados */}
-                  <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-xl" />
-                  <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-xl" />
-                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white rounded-bl-xl" />
-                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white rounded-br-xl" />
-                  
-                  {/* Linha de scan animada */}
-                  <div className="absolute left-4 right-4 h-0.5 bg-primary animate-pulse" style={{ top: "50%" }} />
-                  
-                  {/* Ícone central */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Camera className="h-16 w-16 text-white/30" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Texto de instrução */}
-            <div className="absolute bottom-4 left-0 right-0 text-center">
-              <p className="text-white/80 text-sm">
-                Aponte a câmera para o QR Code da etiqueta
-              </p>
-            </div>
-          </div>
-        ) : scanResult ? (
-          <div className="bg-card rounded-2xl p-6 border border-border">
+        {/* Scanner ou Resultado */}
+        {!scanResult ? (
+          <QRScanner onScan={handleScan} onError={handleScanError} />
+        ) : (
+          <div className="bg-card rounded-2xl p-6 border border-border animate-fade-in">
             <div className="flex items-center gap-2 text-success mb-4">
               <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center">
                 ✓
@@ -162,11 +171,19 @@ export default function ScannerPage() {
             <div className="space-y-2">
               <h4 className="text-sm font-medium text-muted-foreground">AÇÕES RÁPIDAS:</h4>
               <div className="grid grid-cols-3 gap-2">
-                <Button variant="outline" className="flex-col h-auto py-3 gap-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-col h-auto py-3 gap-1"
+                  onClick={() => navigate(`/recebimento/${scanResult.pedido}`)}
+                >
                   <Package className="h-5 w-5" />
                   <span className="text-xs">Ver Completo</span>
                 </Button>
-                <Button variant="outline" className="flex-col h-auto py-3 gap-1">
+                <Button 
+                  variant="outline" 
+                  className="flex-col h-auto py-3 gap-1"
+                  onClick={() => navigate("/movimentacao")}
+                >
                   <ArrowRight className="h-5 w-5" />
                   <span className="text-xs">Mover</span>
                 </Button>
@@ -186,30 +203,37 @@ export default function ScannerPage() {
               Escanear Outro
             </Button>
           </div>
-        ) : null}
+        )}
 
         {/* Histórico de Scans */}
         <div className="bg-card rounded-xl p-4 border border-border">
           <h4 className="text-sm font-medium text-muted-foreground mb-3">
             📋 ÚLTIMOS ESCANEADOS:
           </h4>
-          <div className="space-y-2">
-            {recentScans.map((scan, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex items-center justify-between py-2 px-3 rounded-lg",
-                  i === 0 ? "bg-primary/5" : "bg-muted/50"
-                )}
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-muted-foreground">{scan.time}</span>
-                  <span className="font-medium">{scan.pedido}</span>
+          {recentScans.length > 0 ? (
+            <div className="space-y-2">
+              {recentScans.map((scan, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex items-center justify-between py-2 px-3 rounded-lg",
+                    i === 0 ? "bg-primary/5" : "bg-muted/50"
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">{scan.time}</span>
+                    <span className="font-medium">{scan.pedido}</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">{scan.local}</span>
                 </div>
-                <span className="text-sm text-muted-foreground">{scan.local}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-6 text-muted-foreground">
+              <AlertCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">Nenhum scan realizado ainda</p>
+            </div>
+          )}
         </div>
       </div>
     </AppLayout>
