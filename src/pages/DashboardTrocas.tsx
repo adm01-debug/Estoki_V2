@@ -133,6 +133,48 @@ export default function DashboardTrocas() {
         : '0'
     };
   }, [registrosFiltrados]);
+
+  // Period comparison (current month vs previous month)
+  const comparativoPeriodos = useMemo(() => {
+    const now = new Date();
+    const inicioMesAtual = new Date(now.getFullYear(), now.getMonth(), 1);
+    const inicioMesAnterior = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const fimMesAnterior = new Date(now.getFullYear(), now.getMonth(), 0);
+
+    const registrosMesAtual = mockRegistros.filter(r => r.dataCriacao >= inicioMesAtual);
+    const registrosMesAnterior = mockRegistros.filter(r => 
+      r.dataCriacao >= inicioMesAnterior && r.dataCriacao <= fimMesAnterior
+    );
+
+    const calcMetrics = (registros: typeof mockRegistros) => ({
+      total: registros.length,
+      trocas: registros.filter(r => r.tipo === 'troca').length,
+      devolucoes: registros.filter(r => r.tipo === 'devolucao').length,
+      pecas: registros.reduce((acc, r) => acc + r.quantidade, 0),
+      concluidos: registros.filter(r => r.status === 'concluido').length
+    });
+
+    const mesAtual = calcMetrics(registrosMesAtual);
+    const mesAnterior = calcMetrics(registrosMesAnterior);
+
+    const calcVariacao = (atual: number, anterior: number) => {
+      if (anterior === 0) return atual > 0 ? 100 : 0;
+      return ((atual - anterior) / anterior) * 100;
+    };
+
+    return {
+      mesAtual,
+      mesAnterior,
+      variacoes: {
+        total: calcVariacao(mesAtual.total, mesAnterior.total),
+        trocas: calcVariacao(mesAtual.trocas, mesAnterior.trocas),
+        devolucoes: calcVariacao(mesAtual.devolucoes, mesAnterior.devolucoes),
+        pecas: calcVariacao(mesAtual.pecas, mesAnterior.pecas)
+      },
+      nomeMesAtual: now.toLocaleDateString('pt-BR', { month: 'long' }),
+      nomeMesAnterior: new Date(now.getFullYear(), now.getMonth() - 1).toLocaleDateString('pt-BR', { month: 'long' })
+    };
+  }, []);
   
   // Data by supplier
   const dadosPorFornecedor = useMemo(() => {
@@ -325,6 +367,131 @@ export default function DashboardTrocas() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Period Comparison */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Calendar className="h-5 w-5" />
+              Comparativo: {comparativoPeriodos.nomeMesAtual.charAt(0).toUpperCase() + comparativoPeriodos.nomeMesAtual.slice(1)} vs {comparativoPeriodos.nomeMesAnterior.charAt(0).toUpperCase() + comparativoPeriodos.nomeMesAnterior.slice(1)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Total */}
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Total Registros</span>
+                  <Badge 
+                    variant={comparativoPeriodos.variacoes.total <= 0 ? "default" : "destructive"}
+                    className={comparativoPeriodos.variacoes.total <= 0 ? "bg-green-500/20 text-green-500" : ""}
+                  >
+                    {comparativoPeriodos.variacoes.total > 0 ? (
+                      <><TrendingUp className="h-3 w-3 mr-1" />+{comparativoPeriodos.variacoes.total.toFixed(0)}%</>
+                    ) : (
+                      <><TrendingDown className="h-3 w-3 mr-1" />{comparativoPeriodos.variacoes.total.toFixed(0)}%</>
+                    )}
+                  </Badge>
+                </div>
+                <div className="flex items-end gap-3">
+                  <div>
+                    <div className="text-2xl font-bold">{comparativoPeriodos.mesAtual.total}</div>
+                    <div className="text-xs text-muted-foreground">Atual</div>
+                  </div>
+                  <div className="text-muted-foreground">vs</div>
+                  <div>
+                    <div className="text-lg text-muted-foreground">{comparativoPeriodos.mesAnterior.total}</div>
+                    <div className="text-xs text-muted-foreground">Anterior</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Trocas */}
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Trocas</span>
+                  <Badge 
+                    variant={comparativoPeriodos.variacoes.trocas <= 0 ? "default" : "destructive"}
+                    className={comparativoPeriodos.variacoes.trocas <= 0 ? "bg-green-500/20 text-green-500" : ""}
+                  >
+                    {comparativoPeriodos.variacoes.trocas > 0 ? (
+                      <><TrendingUp className="h-3 w-3 mr-1" />+{comparativoPeriodos.variacoes.trocas.toFixed(0)}%</>
+                    ) : (
+                      <><TrendingDown className="h-3 w-3 mr-1" />{comparativoPeriodos.variacoes.trocas.toFixed(0)}%</>
+                    )}
+                  </Badge>
+                </div>
+                <div className="flex items-end gap-3">
+                  <div>
+                    <div className="text-2xl font-bold text-orange-500">{comparativoPeriodos.mesAtual.trocas}</div>
+                    <div className="text-xs text-muted-foreground">Atual</div>
+                  </div>
+                  <div className="text-muted-foreground">vs</div>
+                  <div>
+                    <div className="text-lg text-muted-foreground">{comparativoPeriodos.mesAnterior.trocas}</div>
+                    <div className="text-xs text-muted-foreground">Anterior</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Devoluções */}
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Devoluções</span>
+                  <Badge 
+                    variant={comparativoPeriodos.variacoes.devolucoes <= 0 ? "default" : "destructive"}
+                    className={comparativoPeriodos.variacoes.devolucoes <= 0 ? "bg-green-500/20 text-green-500" : ""}
+                  >
+                    {comparativoPeriodos.variacoes.devolucoes > 0 ? (
+                      <><TrendingUp className="h-3 w-3 mr-1" />+{comparativoPeriodos.variacoes.devolucoes.toFixed(0)}%</>
+                    ) : (
+                      <><TrendingDown className="h-3 w-3 mr-1" />{comparativoPeriodos.variacoes.devolucoes.toFixed(0)}%</>
+                    )}
+                  </Badge>
+                </div>
+                <div className="flex items-end gap-3">
+                  <div>
+                    <div className="text-2xl font-bold text-indigo-500">{comparativoPeriodos.mesAtual.devolucoes}</div>
+                    <div className="text-xs text-muted-foreground">Atual</div>
+                  </div>
+                  <div className="text-muted-foreground">vs</div>
+                  <div>
+                    <div className="text-lg text-muted-foreground">{comparativoPeriodos.mesAnterior.devolucoes}</div>
+                    <div className="text-xs text-muted-foreground">Anterior</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Peças */}
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Peças Afetadas</span>
+                  <Badge 
+                    variant={comparativoPeriodos.variacoes.pecas <= 0 ? "default" : "destructive"}
+                    className={comparativoPeriodos.variacoes.pecas <= 0 ? "bg-green-500/20 text-green-500" : ""}
+                  >
+                    {comparativoPeriodos.variacoes.pecas > 0 ? (
+                      <><TrendingUp className="h-3 w-3 mr-1" />+{comparativoPeriodos.variacoes.pecas.toFixed(0)}%</>
+                    ) : (
+                      <><TrendingDown className="h-3 w-3 mr-1" />{comparativoPeriodos.variacoes.pecas.toFixed(0)}%</>
+                    )}
+                  </Badge>
+                </div>
+                <div className="flex items-end gap-3">
+                  <div>
+                    <div className="text-2xl font-bold text-destructive">{comparativoPeriodos.mesAtual.pecas.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Atual</div>
+                  </div>
+                  <div className="text-muted-foreground">vs</div>
+                  <div>
+                    <div className="text-lg text-muted-foreground">{comparativoPeriodos.mesAnterior.pecas.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Anterior</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
         
         {/* Charts Row 1 */}
         <div className="grid md:grid-cols-2 gap-6">
