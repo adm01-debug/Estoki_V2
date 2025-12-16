@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { 
   FileText, 
   Filter, 
@@ -9,15 +9,18 @@ import {
   TrendingUp,
   TrendingDown,
   BarChart3,
-  Search
+  Search,
+  Loader2
 } from "lucide-react";
 import { format, subDays, startOfDay, endOfDay, isWithinInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import jsPDF from "jspdf";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 import {
   Select,
   SelectContent,
@@ -213,6 +216,8 @@ export default function RelatoriosPage() {
   const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [produtoFiltro, setProdutoFiltro] = useState("todos");
   const [buscaTexto, setBuscaTexto] = useState("");
+  const [exportandoCSV, setExportandoCSV] = useState(false);
+  const [exportandoPDF, setExportandoPDF] = useState(false);
 
   // Filtragem dos dados
   const dadosFiltrados = useMemo(() => {
@@ -272,6 +277,175 @@ export default function RelatoriosPage() {
     setProdutoFiltro("todos");
     setBuscaTexto("");
   };
+
+  // Exportar CSV
+  const exportarCSV = useCallback(() => {
+    if (dadosFiltrados.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+
+    setExportandoCSV(true);
+
+    try {
+      const headers = ["Data", "Hora", "Tipo", "Pedido", "Produto", "Volumes", "Quantidade", "Origem", "Destino", "Responsavel", "Observacao"];
+      
+      const rows = dadosFiltrados.map(mov => [
+        format(mov.dataHora, "dd/MM/yyyy"),
+        format(mov.dataHora, "HH:mm"),
+        tipoLabels[mov.tipo] || mov.tipo,
+        mov.pedido,
+        mov.produto,
+        mov.volumes.join("; "),
+        mov.quantidade.toString(),
+        mov.origem || "",
+        mov.destino || "",
+        mov.responsavelNome,
+        mov.observacao || ""
+      ]);
+
+      const csvContent = [
+        headers.join(";"),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(";"))
+      ].join("\n");
+
+      // Add BOM for Excel UTF-8 compatibility
+      const bom = "\uFEFF";
+      const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(`${dadosFiltrados.length} registros exportados com sucesso!`);
+    } catch (error) {
+      toast.error("Erro ao exportar CSV");
+      console.error(error);
+    } finally {
+      setExportandoCSV(false);
+    }
+  }, [dadosFiltrados]);
+
+  // Exportar PDF
+  const exportarPDF = useCallback(() => {
+    if (dadosFiltrados.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+
+    setExportandoPDF(true);
+
+    try {
+      const doc = new jsPDF({ orientation: "landscape" });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      // Título
+      doc.setFontSize(18);
+      doc.setFont("helvetica", "bold");
+      doc.text("Relatorio de Movimentacoes", pageWidth / 2, 15, { align: "center" });
+      
+      // Período
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const periodoText = `Periodo: ${dataInicio ? format(dataInicio, "dd/MM/yyyy") : "---"} a ${dataFim ? format(dataFim, "dd/MM/yyyy") : "---"}`;
+      doc.text(periodoText, pageWidth / 2, 22, { align: "center" });
+      
+      // Data de geração
+      doc.setFontSize(8);
+      doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, pageWidth - 14, 10, { align: "right" });
+
+      // Estatísticas
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "bold");
+      doc.text("Resumo:", 14, 32);
+      doc.setFont("helvetica", "normal");
+      doc.text(`Total de movimentacoes: ${estatisticas.total}`, 14, 38);
+      doc.text(`Entradas: ${estatisticas.entradas.toLocaleString()} un`, 80, 38);
+      doc.text(`Saidas: ${estatisticas.saidas.toLocaleString()} un`, 140, 38);
+      doc.text(`Ajustes: ${estatisticas.ajustes > 0 ? "+" : ""}${estatisticas.ajustes} un`, 200, 38);
+
+      // Tabela
+      const startY = 48;
+      const lineHeight = 7;
+      const colWidths = [25, 35, 45, 30, 25, 35, 35, 30];
+      const headers = ["Data/Hora", "Tipo", "Produto", "Pedido", "Qtd", "Origem", "Destino", "Responsavel"];
+      
+      // Cabeçalho da tabela
+      doc.setFillColor(240, 240, 240);
+      doc.rect(14, startY, pageWidth - 28, lineHeight, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(8);
+      
+      let xPos = 14;
+      headers.forEach((header, i) => {
+        doc.text(header, xPos + 2, startY + 5);
+        xPos += colWidths[i];
+      });
+
+      // Dados da tabela
+      doc.setFont("helvetica", "normal");
+      let yPos = startY + lineHeight;
+      
+      dadosFiltrados.forEach((mov, index) => {
+        // Nova página se necessário
+        if (yPos > doc.internal.pageSize.getHeight() - 20) {
+          doc.addPage();
+          yPos = 20;
+          
+          // Repetir cabeçalho
+          doc.setFillColor(240, 240, 240);
+          doc.rect(14, yPos, pageWidth - 28, lineHeight, "F");
+          doc.setFont("helvetica", "bold");
+          xPos = 14;
+          headers.forEach((header, i) => {
+            doc.text(header, xPos + 2, yPos + 5);
+            xPos += colWidths[i];
+          });
+          doc.setFont("helvetica", "normal");
+          yPos += lineHeight;
+        }
+
+        // Linha alternada
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(14, yPos, pageWidth - 28, lineHeight, "F");
+        }
+
+        xPos = 14;
+        const rowData = [
+          `${format(mov.dataHora, "dd/MM HH:mm")}`,
+          tipoLabels[mov.tipo] || mov.tipo,
+          mov.produto.substring(0, 20),
+          `#${mov.pedido}`,
+          mov.quantidade.toString(),
+          (mov.origem || "-").substring(0, 15),
+          (mov.destino || "-").substring(0, 15),
+          mov.responsavelNome.split(" ")[0]
+        ];
+
+        rowData.forEach((cell, i) => {
+          doc.text(cell, xPos + 2, yPos + 5);
+          xPos += colWidths[i];
+        });
+
+        yPos += lineHeight;
+      });
+
+      // Salvar PDF
+      doc.save(`relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}.pdf`);
+      toast.success(`PDF gerado com ${dadosFiltrados.length} registros!`);
+    } catch (error) {
+      toast.error("Erro ao gerar PDF");
+      console.error(error);
+    } finally {
+      setExportandoPDF(false);
+    }
+  }, [dadosFiltrados, dataInicio, dataFim, estatisticas]);
 
   return (
     <AppLayout title="Relatórios" showBack>
@@ -417,12 +591,22 @@ export default function RelatoriosPage() {
 
         {/* Ações */}
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
-            <Download className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={exportarCSV}
+            disabled={exportandoCSV || dadosFiltrados.length === 0}
+          >
+            {exportandoCSV ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
             Exportar CSV
           </Button>
-          <Button variant="outline" className="gap-2">
-            <FileText className="h-4 w-4" />
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={exportarPDF}
+            disabled={exportandoPDF || dadosFiltrados.length === 0}
+          >
+            {exportandoPDF ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
             Gerar PDF
           </Button>
         </div>
