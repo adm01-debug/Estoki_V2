@@ -14,6 +14,141 @@ export type Database = {
   }
   public: {
     Tables: {
+      alertas_config: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          descricao: string | null
+          id: string
+          notificar_email: boolean | null
+          notificar_push: boolean | null
+          severidade: Database["public"]["Enums"]["severidade_alerta"]
+          threshold_dias: number | null
+          threshold_valor: number | null
+          tipo: Database["public"]["Enums"]["tipo_alerta"]
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          notificar_email?: boolean | null
+          notificar_push?: boolean | null
+          severidade?: Database["public"]["Enums"]["severidade_alerta"]
+          threshold_dias?: number | null
+          threshold_valor?: number | null
+          tipo: Database["public"]["Enums"]["tipo_alerta"]
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          notificar_email?: boolean | null
+          notificar_push?: boolean | null
+          severidade?: Database["public"]["Enums"]["severidade_alerta"]
+          threshold_dias?: number | null
+          threshold_valor?: number | null
+          tipo?: Database["public"]["Enums"]["tipo_alerta"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      alertas_historico: {
+        Row: {
+          created_at: string
+          dados_contexto: Json | null
+          data_reconhecimento: string | null
+          data_resolucao: string | null
+          id: string
+          lote_id: string | null
+          mensagem: string
+          posicao_id: string | null
+          produto_id: string | null
+          reconhecido_por: string | null
+          resolvido_por: string | null
+          severidade: Database["public"]["Enums"]["severidade_alerta"]
+          status: Database["public"]["Enums"]["status_alerta"]
+          tipo: Database["public"]["Enums"]["tipo_alerta"]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          dados_contexto?: Json | null
+          data_reconhecimento?: string | null
+          data_resolucao?: string | null
+          id?: string
+          lote_id?: string | null
+          mensagem: string
+          posicao_id?: string | null
+          produto_id?: string | null
+          reconhecido_por?: string | null
+          resolvido_por?: string | null
+          severidade: Database["public"]["Enums"]["severidade_alerta"]
+          status?: Database["public"]["Enums"]["status_alerta"]
+          tipo: Database["public"]["Enums"]["tipo_alerta"]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          dados_contexto?: Json | null
+          data_reconhecimento?: string | null
+          data_resolucao?: string | null
+          id?: string
+          lote_id?: string | null
+          mensagem?: string
+          posicao_id?: string | null
+          produto_id?: string | null
+          reconhecido_por?: string | null
+          resolvido_por?: string | null
+          severidade?: Database["public"]["Enums"]["severidade_alerta"]
+          status?: Database["public"]["Enums"]["status_alerta"]
+          tipo?: Database["public"]["Enums"]["tipo_alerta"]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alertas_historico_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertas_historico_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertas_historico_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertas_historico_reconhecido_por_fkey"
+            columns: ["reconhecido_por"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alertas_historico_resolvido_por_fkey"
+            columns: ["resolvido_por"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estoque_posicao: {
         Row: {
           created_at: string
@@ -594,6 +729,59 @@ export type Database = {
         }
         Relationships: []
       }
+      regras_ponto_pedido: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          estoque_maximo: number | null
+          estoque_minimo: number
+          fornecedor_preferencial: string | null
+          id: string
+          lead_time_dias: number | null
+          ponto_pedido: number
+          produto_id: string
+          quantidade_pedido_sugerida: number | null
+          ultimo_alerta_em: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          estoque_maximo?: number | null
+          estoque_minimo?: number
+          fornecedor_preferencial?: string | null
+          id?: string
+          lead_time_dias?: number | null
+          ponto_pedido?: number
+          produto_id: string
+          quantidade_pedido_sugerida?: number | null
+          ultimo_alerta_em?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          estoque_maximo?: number | null
+          estoque_minimo?: number
+          fornecedor_preferencial?: string | null
+          id?: string
+          lead_time_dias?: number | null
+          ponto_pedido?: number
+          produto_id?: string
+          quantidade_pedido_sugerida?: number | null
+          ultimo_alerta_em?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regras_ponto_pedido_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: true
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tarefas: {
         Row: {
           created_at: string
@@ -746,6 +934,8 @@ export type Database = {
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
       prioridade_tarefa: "baixa" | "media" | "alta" | "urgente"
+      severidade_alerta: "info" | "aviso" | "critico" | "urgente"
+      status_alerta: "ativo" | "reconhecido" | "resolvido" | "ignorado"
       status_ciclo_inventario:
         | "agendado"
         | "em_andamento"
@@ -760,6 +950,15 @@ export type Database = {
         | "em_andamento"
         | "concluida"
         | "bloqueada"
+      tipo_alerta:
+        | "estoque_minimo"
+        | "estoque_maximo"
+        | "ponto_pedido"
+        | "posicao_ociosa"
+        | "vencimento_proximo"
+        | "gargalo_triagem"
+        | "divergencia_inventario"
+        | "item_sem_movimentacao"
       tipo_posicao: "porta_palete" | "box"
       tipo_tarefa:
         | "separacao"
@@ -896,6 +1095,8 @@ export const Constants = {
     Enums: {
       app_role: ["operador", "supervisor", "admin"],
       prioridade_tarefa: ["baixa", "media", "alta", "urgente"],
+      severidade_alerta: ["info", "aviso", "critico", "urgente"],
+      status_alerta: ["ativo", "reconhecido", "resolvido", "ignorado"],
       status_ciclo_inventario: [
         "agendado",
         "em_andamento",
@@ -911,6 +1112,16 @@ export const Constants = {
         "em_andamento",
         "concluida",
         "bloqueada",
+      ],
+      tipo_alerta: [
+        "estoque_minimo",
+        "estoque_maximo",
+        "ponto_pedido",
+        "posicao_ociosa",
+        "vencimento_proximo",
+        "gargalo_triagem",
+        "divergencia_inventario",
+        "item_sem_movimentacao",
       ],
       tipo_posicao: ["porta_palete", "box"],
       tipo_tarefa: [
