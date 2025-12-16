@@ -19,6 +19,7 @@ import Dashboard from "./pages/Dashboard";
 import Relatorios from "./pages/Relatorios";
 import Produtividade from "./pages/Produtividade";
 import InventarioCiclico from "./pages/InventarioCiclico";
+import CurvaABC from "./pages/CurvaABC";
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -44,6 +45,7 @@ function AnimatedRoutes() {
         <Route path="/produtividade" element={<Produtividade />} />
         <Route path="/configuracoes" element={<Configuracoes />} />
         <Route path="/inventario-ciclico" element={<InventarioCiclico />} />
+        <Route path="/curva-abc" element={<CurvaABC />} />
         <Route path="/inventario" element={<Estoque />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
