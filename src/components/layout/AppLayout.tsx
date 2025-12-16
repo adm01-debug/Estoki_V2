@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   LayoutDashboard, 
   Package, 
@@ -8,12 +9,23 @@ import {
   QrCode, 
   ArrowLeftRight,
   Settings,
-  User,
   ChevronLeft,
-  BarChart3
+  BarChart3,
+  LogOut,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -24,16 +36,48 @@ interface AppLayoutProps {
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, label: "Início" },
-  { path: "/dashboard", icon: BarChart3, label: "Dashboard" },
+  { path: "/dashboard", icon: BarChart3, label: "Dashboard", roles: ["supervisor", "admin"] },
   { path: "/recebimento", icon: Package, label: "Receber" },
   { path: "/triagem", icon: Search, label: "Triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque" },
   { path: "/scanner", icon: QrCode, label: "Scanner" },
 ];
 
+const getRoleBadgeColor = (role: string | null) => {
+  switch (role) {
+    case "admin": return "bg-red-500/20 text-red-700 border-red-500/30";
+    case "supervisor": return "bg-blue-500/20 text-blue-700 border-blue-500/30";
+    default: return "bg-green-500/20 text-green-700 border-green-500/30";
+  }
+};
+
+const getRoleLabel = (role: string | null) => {
+  switch (role) {
+    case "admin": return "Administrador";
+    case "supervisor": return "Supervisor";
+    default: return "Operador";
+  }
+};
+
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile, role, signOut, canAccess } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
+
+  const getInitials = (nome: string | null) => {
+    if (!nome) return "U";
+    return nome.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  };
+
+  const filteredNavItems = navItems.filter(item => {
+    if (!item.roles) return true;
+    return canAccess(item.roles as any);
+  });
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -67,12 +111,39 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
           <div className="flex items-center gap-2">
             {rightAction}
-            <Button variant="ghost" size="icon" className="touch-friendly">
-              <User className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="touch-friendly hidden sm:flex">
-              <Settings className="h-5 w-5" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="touch-friendly relative">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                      {getInitials(profile?.nome)}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 bg-popover">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">{profile?.nome || "Usuário"}</span>
+                    <span className="text-xs text-muted-foreground font-normal">{profile?.email}</span>
+                    <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(role))}>
+                      <Shield className="h-3 w-3 mr-1" />
+                      {getRoleLabel(role)}
+                    </Badge>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/configuracoes")}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configurações
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -87,7 +158,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Bottom Navigation (Mobile) */}
       <nav className="sticky bottom-0 bg-card border-t border-border px-2 py-2 md:hidden">
         <div className="flex items-center justify-around">
-          {navItems.map((item) => {
+          {filteredNavItems.slice(0, 5).map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <button
@@ -122,8 +193,27 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </div>
         </div>
 
+        {/* User Info */}
+        <div className="p-3 border-b border-sidebar-border">
+          <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent/50">
+            <Avatar className="h-9 w-9">
+              <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm">
+                {getInitials(profile?.nome)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
+                {profile?.nome || "Usuário"}
+              </p>
+              <Badge variant="outline" className={cn("text-xs scale-90 origin-left", getRoleBadgeColor(role))}>
+                {getRoleLabel(role)}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
         <nav className="flex-1 p-3 space-y-1">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <button
@@ -158,7 +248,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </div>
         </nav>
 
-        <div className="p-3 border-t border-sidebar-border">
+        <div className="p-3 border-t border-sidebar-border space-y-1">
           <button 
             onClick={() => navigate("/configuracoes")}
             className={cn(
@@ -170,6 +260,13 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           >
             <Settings className="h-5 w-5" />
             <span className="font-medium">Configurações</span>
+          </button>
+          <button 
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
+          >
+            <LogOut className="h-5 w-5" />
+            <span className="font-medium">Sair</span>
           </button>
         </div>
       </aside>
