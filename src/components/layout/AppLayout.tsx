@@ -12,7 +12,8 @@ import {
   BarChart3,
   LogOut,
   Shield,
-  Users
+  Users,
+  ClipboardList
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -255,6 +256,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <Users className="h-5 w-5" />
               <span className="font-medium">Produtividade</span>
+            </button>
+            <button
+              onClick={() => navigate("/inventario-ciclico")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/inventario-ciclico"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <ClipboardList className="h-5 w-5" />
+              <span className="font-medium">Inventário Cíclico</span>
             </button>
           </div>
         </nav>
