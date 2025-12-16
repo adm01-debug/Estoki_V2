@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import { 
   Search, 
@@ -30,7 +31,8 @@ import {
   Filter,
   ChevronRight,
   FileSpreadsheet,
-  FileDown
+  FileDown,
+  BarChart3
 } from "lucide-react";
 
 // Types
@@ -705,6 +707,7 @@ function DetalheRegistroDialog({ registro, open, onClose, onStatusChange }: {
 
 // Main Page
 export default function TrocasDevolucoes() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [registros, setRegistros] = useState(mockRegistros);
   const [searchTerm, setSearchTerm] = useState('');
@@ -918,7 +921,15 @@ export default function TrocasDevolucoes() {
   return (
     <AppLayout 
       title="Trocas e Devoluções" 
-      rightAction={<NovoRegistroDialog onSave={handleNovoRegistro} />}
+      rightAction={
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => navigate('/dashboard-trocas')}>
+            <BarChart3 className="h-4 w-4 mr-2" />
+            Dashboard
+          </Button>
+          <NovoRegistroDialog onSave={handleNovoRegistro} />
+        </div>
+      }
     >
       <div className="space-y-6">
         {/* Summary Cards */}

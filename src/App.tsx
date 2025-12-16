@@ -27,6 +27,7 @@ import KPIsOperacionais from "./pages/KPIsOperacionais";
 import Rastreabilidade from "./pages/Rastreabilidade";
 import RelatorioFornecedores from "./pages/RelatorioFornecedores";
 import TrocasDevolucoes from "./pages/TrocasDevolucoes";
+import DashboardTrocas from "./pages/DashboardTrocas";
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -60,6 +61,7 @@ function AnimatedRoutes() {
         <Route path="/rastreabilidade" element={<Rastreabilidade />} />
         <Route path="/qualidade-fornecedores" element={<RelatorioFornecedores />} />
         <Route path="/trocas-devolucoes" element={<TrocasDevolucoes />} />
+        <Route path="/dashboard-trocas" element={<DashboardTrocas />} />
         <Route path="/inventario" element={<Estoque />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
