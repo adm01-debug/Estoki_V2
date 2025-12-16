@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -29,10 +29,17 @@ import {
   Rocket,
   CheckCircle,
   Lock,
+  Gift,
+  Snowflake,
+  Heart,
+  PartyPopper,
+  Sun,
+  Sparkles,
+  Calendar,
 } from "lucide-react";
 
 export type BadgeRarity = "comum" | "raro" | "epico" | "lendario";
-export type BadgeCategory = "produtividade" | "qualidade" | "consistencia" | "especial";
+export type BadgeCategory = "produtividade" | "qualidade" | "consistencia" | "especial" | "sazonal";
 
 export interface ConquistaDefinicao {
   id: string;
@@ -236,10 +243,143 @@ export const conquistasDefinicoes: ConquistaDefinicao[] = [
     pontos: 50,
     meta: 5,
   },
+
+  // Sazonais - eventos especiais com datas específicas
+  {
+    id: "black_friday_warrior",
+    nome: "Guerreiro Black Friday",
+    descricao: "Triou 200 itens durante a Black Friday",
+    icone: Gift,
+    raridade: "epico",
+    categoria: "sazonal",
+    criterio: "200 itens na Black Friday",
+    pontos: 250,
+    meta: 200,
+  },
+  {
+    id: "natal_spirit",
+    nome: "Espírito Natalino",
+    descricao: "Trabalhou todos os dias de dezembro até o Natal",
+    icone: Snowflake,
+    raridade: "lendario",
+    categoria: "sazonal",
+    criterio: "Todos os dias até 25/12",
+    pontos: 400,
+    meta: 25,
+  },
+  {
+    id: "ano_novo_sprint",
+    nome: "Sprint de Ano Novo",
+    descricao: "Primeiro triador a completar 50 itens no ano novo",
+    icone: PartyPopper,
+    raridade: "lendario",
+    categoria: "sazonal",
+    criterio: "50 itens em 01/01",
+    pontos: 350,
+    meta: 50,
+  },
+  {
+    id: "carnaval_folia",
+    nome: "Folia de Carnaval",
+    descricao: "Triou 100 itens durante o Carnaval",
+    icone: PartyPopper,
+    raridade: "raro",
+    categoria: "sazonal",
+    criterio: "100 itens no Carnaval",
+    pontos: 150,
+    meta: 100,
+  },
+  {
+    id: "pascoa_hunt",
+    nome: "Caça aos Ovos",
+    descricao: "Encontrou 30 defeitos durante a Páscoa",
+    icone: Sparkles,
+    raridade: "raro",
+    categoria: "sazonal",
+    criterio: "30 defeitos na Páscoa",
+    pontos: 120,
+    meta: 30,
+  },
+  {
+    id: "dia_namorados",
+    nome: "Par Perfeito",
+    descricao: "Alcançou 99% de aprovação no Dia dos Namorados",
+    icone: Heart,
+    raridade: "epico",
+    categoria: "sazonal",
+    criterio: "99% aprovação em 12/06",
+    pontos: 200,
+    meta: 99,
+  },
+  {
+    id: "independencia_hero",
+    nome: "Herói da Independência",
+    descricao: "Triou 150 itens no dia 7 de Setembro",
+    icone: Star,
+    raridade: "epico",
+    categoria: "sazonal",
+    criterio: "150 itens em 07/09",
+    pontos: 220,
+    meta: 150,
+  },
+  {
+    id: "dia_trabalho",
+    nome: "Trabalhador Exemplar",
+    descricao: "Bateu todas as metas no Dia do Trabalho",
+    icone: Medal,
+    raridade: "raro",
+    categoria: "sazonal",
+    criterio: "Todas as metas em 01/05",
+    pontos: 180,
+  },
 ];
 
 // Import Search icon that was missing
 import { Search } from "lucide-react";
+
+// Helper para verificar se um evento sazonal está ativo
+export interface EventoSazonal {
+  id: string;
+  nome: string;
+  dataInicio: { mes: number; dia: number };
+  dataFim: { mes: number; dia: number };
+  icone: React.ElementType;
+  cor: string;
+}
+
+export const eventosSazonais: EventoSazonal[] = [
+  { id: "black_friday", nome: "Black Friday", dataInicio: { mes: 11, dia: 20 }, dataFim: { mes: 11, dia: 30 }, icone: Gift, cor: "text-orange-500" },
+  { id: "natal", nome: "Natal", dataInicio: { mes: 12, dia: 1 }, dataFim: { mes: 12, dia: 25 }, icone: Snowflake, cor: "text-red-500" },
+  { id: "ano_novo", nome: "Ano Novo", dataInicio: { mes: 12, dia: 31 }, dataFim: { mes: 1, dia: 2 }, icone: PartyPopper, cor: "text-yellow-500" },
+  { id: "carnaval", nome: "Carnaval", dataInicio: { mes: 2, dia: 10 }, dataFim: { mes: 2, dia: 18 }, icone: PartyPopper, cor: "text-purple-500" },
+  { id: "pascoa", nome: "Páscoa", dataInicio: { mes: 3, dia: 28 }, dataFim: { mes: 4, dia: 1 }, icone: Sparkles, cor: "text-pink-500" },
+  { id: "dia_namorados", nome: "Dia dos Namorados", dataInicio: { mes: 6, dia: 12 }, dataFim: { mes: 6, dia: 12 }, icone: Heart, cor: "text-red-400" },
+  { id: "independencia", nome: "Independência", dataInicio: { mes: 9, dia: 7 }, dataFim: { mes: 9, dia: 7 }, icone: Star, cor: "text-green-500" },
+  { id: "dia_trabalho", nome: "Dia do Trabalho", dataInicio: { mes: 5, dia: 1 }, dataFim: { mes: 5, dia: 1 }, icone: Medal, cor: "text-blue-500" },
+];
+
+export function getEventoAtivo(data: Date = new Date()): EventoSazonal | null {
+  const mes = data.getMonth() + 1;
+  const dia = data.getDate();
+
+  for (const evento of eventosSazonais) {
+    const { dataInicio, dataFim } = evento;
+    
+    // Handle year wrap (e.g., Dec 31 to Jan 2)
+    if (dataInicio.mes > dataFim.mes) {
+      if ((mes === dataInicio.mes && dia >= dataInicio.dia) || 
+          (mes === dataFim.mes && dia <= dataFim.dia)) {
+        return evento;
+      }
+    } else if (
+      (mes > dataInicio.mes || (mes === dataInicio.mes && dia >= dataInicio.dia)) &&
+      (mes < dataFim.mes || (mes === dataFim.mes && dia <= dataFim.dia))
+    ) {
+      return evento;
+    }
+  }
+  return null;
+}
 
 const raridadeConfig: Record<BadgeRarity, { label: string; cor: string; bg: string; border: string }> = {
   comum: { label: "Comum", cor: "text-muted-foreground", bg: "bg-muted", border: "border-muted-foreground/30" },
@@ -253,6 +393,7 @@ const categoriaConfig: Record<BadgeCategory, { label: string; icone: React.Eleme
   qualidade: { label: "Qualidade", icone: Target },
   consistencia: { label: "Consistência", icone: Flame },
   especial: { label: "Especial", icone: Star },
+  sazonal: { label: "Sazonais", icone: Calendar },
 };
 
 interface BadgeIconProps {
@@ -328,6 +469,7 @@ export function ConquistasResumo({ conquistas, pontosTotal, nivel, pontosProximo
     .slice(0, 5);
 
   const progressoNivel = (pontosTotal % pontosProximoNivel) / pontosProximoNivel * 100;
+  const eventoAtivo = useMemo(() => getEventoAtivo(), []);
 
   return (
     <Card>
@@ -343,6 +485,20 @@ export function ConquistasResumo({ conquistas, pontosTotal, nivel, pontosProximo
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Banner de evento sazonal ativo */}
+        {eventoAtivo && (
+          <div className={`flex items-center gap-3 p-3 rounded-lg bg-gradient-to-r from-primary/20 to-purple-500/20 border border-primary/30`}>
+            <div className="p-2 rounded-full bg-primary/20">
+              <eventoAtivo.icone className={`h-5 w-5 ${eventoAtivo.cor}`} />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium">🎉 {eventoAtivo.nome} está ativo!</p>
+              <p className="text-xs text-muted-foreground">Conquistas sazonais especiais disponíveis</p>
+            </div>
+            <Sparkles className="h-5 w-5 text-warning animate-pulse" />
+          </div>
+        )}
+
         {/* Barra de nível */}
         <div className="space-y-1">
           <div className="flex justify-between text-xs text-muted-foreground">
@@ -407,7 +563,8 @@ interface ConquistasCompletasProps {
 }
 
 function ConquistasCompletas({ conquistas }: ConquistasCompletasProps) {
-  const categorias: BadgeCategory[] = ["produtividade", "qualidade", "consistencia", "especial"];
+  const categorias: BadgeCategory[] = ["produtividade", "qualidade", "consistencia", "especial", "sazonal"];
+  const eventoAtivo = getEventoAtivo();
 
   return (
     <div className="space-y-6">
@@ -421,6 +578,11 @@ function ConquistasCompletas({ conquistas }: ConquistasCompletasProps) {
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-3">
               <CategoriaIcone className="h-4 w-4" />
               {config.label}
+              {categoria === "sazonal" && eventoAtivo && (
+                <Badge className="ml-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xs animate-pulse">
+                  {eventoAtivo.nome} Ativo!
+                </Badge>
+              )}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {conquistasCategoria.map((conquista) => {
@@ -501,6 +663,15 @@ export function useConquistas(userId?: string) {
         primeiro_lugar: { desbloqueada: false },
         heroi_urgente: { desbloqueada: true, progresso: 15, data: new Date("2024-12-10") },
         colaborador: { desbloqueada: false, progresso: 3 },
+        // Sazonais
+        black_friday_warrior: { desbloqueada: true, progresso: 200, data: new Date("2024-11-29") },
+        natal_spirit: { desbloqueada: false, progresso: 16 },
+        ano_novo_sprint: { desbloqueada: false, progresso: 0 },
+        carnaval_folia: { desbloqueada: true, progresso: 100, data: new Date("2024-02-13") },
+        pascoa_hunt: { desbloqueada: false, progresso: 12 },
+        dia_namorados: { desbloqueada: false, progresso: 95 },
+        independencia_hero: { desbloqueada: true, progresso: 150, data: new Date("2024-09-07") },
+        dia_trabalho: { desbloqueada: true, data: new Date("2024-05-01") },
       };
 
       const mock = mockProgress[def.id] || { desbloqueada: false, progresso: 0 };
