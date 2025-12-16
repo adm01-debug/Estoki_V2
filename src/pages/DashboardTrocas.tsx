@@ -791,6 +791,46 @@ export default function DashboardTrocas() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Supplier Ranking Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Building2 className="h-5 w-5" />
+              Ranking de Fornecedores por Ocorrências
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={Math.max(200, dadosPorFornecedor.length * 50)}>
+              <BarChart 
+                data={dadosPorFornecedor} 
+                layout="vertical"
+                margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis type="number" className="text-xs" />
+                <YAxis 
+                  type="category" 
+                  dataKey="fornecedorFull" 
+                  className="text-xs" 
+                  width={95}
+                  tick={{ fontSize: 11 }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px'
+                  }}
+                  formatter={(value: number, name: string) => [value, name === 'trocas' ? 'Trocas' : 'Devoluções']}
+                />
+                <Legend />
+                <Bar dataKey="trocas" name="Trocas" stackId="a" fill="#f97316" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="devolucoes" name="Devoluções" stackId="a" fill="#6366f1" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
         
         {/* Top Problematic Suppliers Table */}
         <Card>
