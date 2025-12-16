@@ -11,6 +11,7 @@ import FormularioTriagem from "./pages/FormularioTriagem";
 import Estoque from "./pages/Estoque";
 import Scanner from "./pages/Scanner";
 import Movimentacao from "./pages/Movimentacao";
+import Armazenamento from "./pages/Armazenamento";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/estoque" element={<Estoque />} />
           <Route path="/scanner" element={<Scanner />} />
           <Route path="/movimentacao" element={<Movimentacao />} />
+          <Route path="/armazenamento" element={<Armazenamento />} />
           <Route path="/inventario" element={<Estoque />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
