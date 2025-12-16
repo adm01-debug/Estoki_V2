@@ -45,6 +45,7 @@ import {
 } from "recharts";
 import { ConquistasResumo, useConquistas } from "@/components/gamificacao/ConquistasSystem";
 import { useConquistaNotificacoes } from "@/components/gamificacao/ConquistaNotificacoes";
+import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 
 // Dados do triador atual (simulando usuário logado)
 const triadorAtual = {
@@ -113,15 +114,6 @@ const ultimasTriagens = [
   { id: 3, pedido: "2640-1", produto: "Power Bank 10000mAh", qtd: 30, status: "ressalva", tempo: 25, taxa: 90 },
   { id: 4, pedido: "2641-1", produto: "Squeeze 500ml", qtd: 75, status: "aprovado", tempo: 15, taxa: 100 },
   { id: 5, pedido: "2642-1", produto: "Camiseta Polo", qtd: 40, status: "reprovado", tempo: 20, taxa: 75 },
-];
-
-// Ranking de triadores
-const rankingTriadores = [
-  { posicao: 1, nome: "Maria Santos", itensHora: 35.2, taxaAprovacao: 96.1 },
-  { posicao: 2, nome: "João Silva", itensHora: 31.1, taxaAprovacao: 92.9, atual: true },
-  { posicao: 3, nome: "Pedro Oliveira", itensHora: 28.5, taxaAprovacao: 91.2 },
-  { posicao: 4, nome: "Ana Costa", itensHora: 27.8, taxaAprovacao: 94.5 },
-  { posicao: 5, nome: "Carlos Lima", itensHora: 26.3, taxaAprovacao: 89.8 },
 ];
 
 function MetricCard({
@@ -527,52 +519,7 @@ export default function DashboardTriador() {
 
           {/* Ranking */}
           <TabsContent value="ranking" className="space-y-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Award className="h-4 w-4 text-warning" />
-                  Ranking de Triadores (Esta Semana)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {rankingTriadores.map((triador) => (
-                    <div 
-                      key={triador.posicao}
-                      className={`flex items-center gap-3 p-3 rounded-lg ${
-                        triador.atual ? "bg-primary/10 border border-primary/30" : "bg-muted/50"
-                      }`}
-                    >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
-                        triador.posicao === 1 ? "bg-warning text-warning-foreground" :
-                        triador.posicao === 2 ? "bg-muted-foreground/30 text-foreground" :
-                        triador.posicao === 3 ? "bg-orange-600/30 text-orange-600" :
-                        "bg-muted text-muted-foreground"
-                      }`}>
-                        {triador.posicao}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{triador.nome}</span>
-                          {triador.atual && (
-                            <Badge variant="outline" className="text-xs">Você</Badge>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium flex items-center gap-1">
-                          <Zap className="h-3 w-3 text-primary" />
-                          {triador.itensHora.toFixed(1)}/h
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {triador.taxaAprovacao.toFixed(1)}% aprov.
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <PlacarLideres />
           </TabsContent>
         </Tabs>
       </div>
