@@ -122,6 +122,86 @@ export default function KPIsOperacionais() {
     },
   });
 
+  // Query for occupancy by porta-palete
+  const { data: ocupacaoPorPP = [] } = useQuery({
+    queryKey: ["ocupacao_por_porta_palete"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("posicoes_estoque")
+        .select("porta_palete, status")
+        .eq("tipo", "porta_palete")
+        .not("porta_palete", "is", null);
+      if (error) throw error;
+      
+      // Group by porta_palete
+      const grouped = data.reduce((acc, pos) => {
+        const pp = pos.porta_palete!;
+        if (!acc[pp]) acc[pp] = { total: 0, ocupadas: 0 };
+        acc[pp].total++;
+        if (pos.status === "ocupado") acc[pp].ocupadas++;
+        return acc;
+      }, {} as Record<string, { total: number; ocupadas: number }>);
+      
+      return Object.entries(grouped).map(([pp, stats]) => ({
+        porta_palete: pp,
+        total: stats.total,
+        ocupadas: stats.ocupadas,
+        livres: stats.total - stats.ocupadas,
+        taxa_ocupacao: Math.round((stats.ocupadas / stats.total) * 100),
+      })).sort((a, b) => a.porta_palete.localeCompare(b.porta_palete));
+    },
+  });
+
+  // Query for triage events by product
+  const { data: triagemPorProduto = [] } = useQuery({
+    queryKey: ["triagem_por_produto"],
+    queryFn: async () => {
+      const { data: eventos, error: eventosError } = await supabase
+        .from("eventos_triagem")
+        .select("produto_id, data_inicio, data_fim")
+        .not("data_fim", "is", null);
+      if (eventosError) throw eventosError;
+      
+      const { data: produtos, error: produtosError } = await supabase
+        .from("produtos")
+        .select("id, nome, sku");
+      if (produtosError) throw produtosError;
+      
+      // Group events by product and calculate average time
+      const grouped = eventos.reduce((acc, evento) => {
+        if (!evento.produto_id || !evento.data_inicio || !evento.data_fim) return acc;
+        
+        const prodId = evento.produto_id;
+        if (!acc[prodId]) acc[prodId] = { total: 0, tempoTotal: 0 };
+        
+        const inicio = new Date(evento.data_inicio).getTime();
+        const fim = new Date(evento.data_fim).getTime();
+        const tempoMinutos = (fim - inicio) / (1000 * 60);
+        
+        if (tempoMinutos > 0 && tempoMinutos < 480) { // Max 8 hours
+          acc[prodId].total++;
+          acc[prodId].tempoTotal += tempoMinutos;
+        }
+        return acc;
+      }, {} as Record<string, { total: number; tempoTotal: number }>);
+      
+      return Object.entries(grouped)
+        .map(([prodId, stats]) => {
+          const produto = produtos.find(p => p.id === prodId);
+          return {
+            produto_id: prodId,
+            nome: produto?.nome ?? "Desconhecido",
+            sku: produto?.sku ?? "-",
+            eventos: stats.total,
+            tempo_medio: Math.round((stats.tempoTotal / stats.total) * 10) / 10,
+          };
+        })
+        .filter(p => p.eventos > 0)
+        .sort((a, b) => b.eventos - a.eventos)
+        .slice(0, 10);
+    },
+  });
+
   const updateMetaMutation = useMutation({
     mutationFn: async (meta: MetaKPI) => {
       const { id, ...updates } = meta;
@@ -427,6 +507,10 @@ export default function KPIsOperacionais() {
             <TrendingUp className="h-4 w-4 mr-2" />
             Evolução
           </TabsTrigger>
+          <TabsTrigger value="detalhamento">
+            <Warehouse className="h-4 w-4 mr-2" />
+            Detalhamento
+          </TabsTrigger>
           <TabsTrigger value="comparativo">
             <BarChart3 className="h-4 w-4 mr-2" />
             Comparativo
@@ -553,6 +637,192 @@ export default function KPIsOperacionais() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Detalhamento Tab */}
+        <TabsContent value="detalhamento" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Ocupação por Porta-Palete */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Warehouse className="h-5 w-5" />
+                  Taxa de Ocupação por Porta-Palete
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {ocupacaoPorPP.length > 0 ? (
+                  <>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={ocupacaoPorPP} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis type="number" domain={[0, 100]} unit="%" className="text-xs" />
+                        <YAxis type="category" dataKey="porta_palete" className="text-xs" width={50} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "hsl(var(--card))", 
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px"
+                          }}
+                          formatter={(value: number, name: string) => {
+                            if (name === "taxa_ocupacao") return [`${value}%`, "Ocupação"];
+                            return [value, name];
+                          }}
+                        />
+                        <Bar 
+                          dataKey="taxa_ocupacao" 
+                          fill="hsl(var(--primary))" 
+                          radius={[0, 4, 4, 0]}
+                          name="taxa_ocupacao"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <div className="mt-4 space-y-2">
+                      {ocupacaoPorPP.map((pp) => (
+                        <div key={pp.porta_palete} className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{pp.porta_palete}</span>
+                          <div className="flex items-center gap-4">
+                            <span className="text-green-500">{pp.ocupadas} ocupadas</span>
+                            <span className="text-muted-foreground">{pp.livres} livres</span>
+                            <Badge 
+                              className={
+                                pp.taxa_ocupacao >= 80 
+                                  ? "bg-green-500/20 text-green-500" 
+                                  : pp.taxa_ocupacao >= 50 
+                                  ? "bg-amber-500/20 text-amber-500"
+                                  : "bg-muted text-muted-foreground"
+                              }
+                            >
+                              {pp.taxa_ocupacao}%
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                    Nenhum dado de ocupação disponível
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Tempo Médio de Triagem por Produto */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Tempo Médio de Triagem por Produto
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {triagemPorProduto.length > 0 ? (
+                  <>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <BarChart data={triagemPorProduto} layout="vertical">
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis type="number" unit=" min" className="text-xs" />
+                        <YAxis 
+                          type="category" 
+                          dataKey="sku" 
+                          className="text-xs" 
+                          width={80}
+                          tick={{ fontSize: 10 }}
+                        />
+                        <Tooltip 
+                          contentStyle={{ 
+                            backgroundColor: "hsl(var(--card))", 
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px"
+                          }}
+                          formatter={(value: number) => [`${value.toFixed(1)} min`, "Tempo Médio"]}
+                          labelFormatter={(label) => {
+                            const produto = triagemPorProduto.find(p => p.sku === label);
+                            return produto?.nome ?? label;
+                          }}
+                        />
+                        <Bar 
+                          dataKey="tempo_medio" 
+                          fill="#F59E0B" 
+                          radius={[0, 4, 4, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                    <div className="mt-4">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Produto</TableHead>
+                            <TableHead className="text-right">Eventos</TableHead>
+                            <TableHead className="text-right">Tempo Médio</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {triagemPorProduto.slice(0, 5).map((produto) => (
+                            <TableRow key={produto.produto_id}>
+                              <TableCell>
+                                <div>
+                                  <p className="font-medium text-sm">{produto.nome}</p>
+                                  <p className="text-xs text-muted-foreground">{produto.sku}</p>
+                                </div>
+                              </TableCell>
+                              <TableCell className="text-right">{produto.eventos}</TableCell>
+                              <TableCell className="text-right">
+                                <Badge variant="outline">{produto.tempo_medio} min</Badge>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </>
+                ) : (
+                  <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+                    Nenhum evento de triagem registrado
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Acuracidade de Picking Detalhada */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Resumo de Picking
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <p className="text-sm text-muted-foreground">Itens Separados</p>
+                  <p className="text-2xl font-bold text-green-500">
+                    {metricas.reduce((acc, m) => acc + (m.itens_separados ?? 0), 0)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <p className="text-sm text-muted-foreground">Erros de Picking</p>
+                  <p className="text-2xl font-bold text-red-500">
+                    {metricas.reduce((acc, m) => acc + (m.erros_picking ?? 0), 0)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <p className="text-sm text-muted-foreground">Tempo Total (min)</p>
+                  <p className="text-2xl font-bold text-blue-500">
+                    {metricas.reduce((acc, m) => acc + (m.tempo_total_picking_minutos ?? 0), 0)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-sm text-muted-foreground">Acuracidade Média</p>
+                  <p className="text-2xl font-bold text-amber-500">
+                    {mediaAcuracidade.toFixed(1)}%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Comparativo Tab */}
