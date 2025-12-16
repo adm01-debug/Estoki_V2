@@ -34,6 +34,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
+import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
 // Dados mockados do item para triagem
@@ -45,6 +46,24 @@ const mockItem = {
   totalVolumes: 4,
   fornecedor: "XBZ Brindes",
   dataRecebimento: new Date("2025-12-16T14:30:00"),
+};
+
+// Gera volumes com quantidades distribuídas
+const generateMockVolumes = (): VolumeData[] => {
+  const volumes: VolumeData[] = [];
+  const qtdPorVolume = Math.floor(mockItem.qtdTotal / mockItem.totalVolumes);
+  const resto = mockItem.qtdTotal % mockItem.totalVolumes;
+
+  for (let i = 1; i <= mockItem.totalVolumes; i++) {
+    volumes.push({
+      id: i,
+      numero: `V${i}`,
+      qtdEsperada: qtdPorVolume + (i <= resto ? 1 : 0),
+      qtdContada: null,
+      conferido: false,
+    });
+  }
+  return volumes;
 };
 
 // Checklist de inspeção (7 itens)
@@ -109,9 +128,12 @@ export default function FormularioTriagem() {
     funcionalidadeOk: false,
   });
 
-  // Estado da contagem
-  const [qtdAprovada, setQtdAprovada] = useState(mockItem.qtdTotal);
-  
+  // Estado da contagem por volumes
+  const [volumes, setVolumes] = useState<VolumeData[]>(generateMockVolumes);
+
+  // Calcula quantidade aprovada baseada nos volumes conferidos
+  const qtdAprovada = volumes.reduce((acc, v) => acc + (v.conferido ? (v.qtdContada || 0) : 0), 0);
+  const todosVolumesConferidos = volumes.every((v) => v.conferido);
   // Estado dos defeitos
   const [defeitos, setDefeitos] = useState<Defeito[]>([]);
   const [showDefeitoModal, setShowDefeitoModal] = useState(false);
@@ -142,6 +164,23 @@ export default function FormularioTriagem() {
   };
 
   const aprovacaoStatus = getAprovacaoStatus();
+
+  // Handlers de Volumes
+  const handleVolumeChange = (volumeId: number, qtdContada: number) => {
+    setVolumes((prev) =>
+      prev.map((v) =>
+        v.id === volumeId ? { ...v, qtdContada } : v
+      )
+    );
+  };
+
+  const handleVolumeConfirm = (volumeId: number) => {
+    setVolumes((prev) =>
+      prev.map((v) =>
+        v.id === volumeId ? { ...v, conferido: true } : v
+      )
+    );
+  };
 
   // Handlers
   const handleChecklistChange = (itemId: string, checked: boolean) => {
@@ -341,60 +380,68 @@ export default function FormularioTriagem() {
           </div>
         </section>
 
-        {/* Contagem */}
+        {/* Contagem por Volume */}
+        <VolumeContagem
+          volumes={volumes}
+          onVolumeChange={handleVolumeChange}
+          onVolumeConfirm={handleVolumeConfirm}
+          totalEsperado={mockItem.qtdTotal}
+        />
+
+        {/* Resumo de Aprovação */}
         <section className="bg-card rounded-xl p-4 border border-border">
           <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
-            📊 CONTAGEM
+            📊 RESUMO
           </h3>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <div className="bg-muted/50 rounded-lg p-3 text-center">
-                <div className="text-xs text-muted-foreground">Total Recebido</div>
-                <div className="text-xl font-bold">{mockItem.qtdTotal} un</div>
+                <div className="text-xs text-muted-foreground">Esperado</div>
+                <div className="text-lg font-bold">{mockItem.qtdTotal} un</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-xs text-muted-foreground">Contado</div>
+                <div className="text-lg font-bold">{qtdAprovada} un</div>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 text-center">
                 <div className="text-xs text-muted-foreground">Defeitos</div>
-                <div className="text-xl font-bold text-destructive">{totalDefeitosQtd} un</div>
+                <div className="text-lg font-bold text-destructive">{totalDefeitosQtd} un</div>
               </div>
-            </div>
-
-            <div>
-              <Label className="text-xs text-muted-foreground">Quantidade Aprovada</Label>
-              <Input
-                type="number"
-                min={0}
-                max={mockItem.qtdTotal}
-                value={qtdAprovada}
-                onChange={(e) => setQtdAprovada(Math.min(mockItem.qtdTotal, Math.max(0, parseInt(e.target.value) || 0)))}
-                className="text-2xl font-bold h-14 text-center"
-              />
             </div>
 
             {/* Indicador de Aprovação */}
-            <div className={cn(
-              "rounded-xl p-4 flex items-center justify-between",
-              aprovacaoStatus.bg
-            )}>
-              <div>
-                <div className="text-sm text-muted-foreground">% Aprovação</div>
-                <div className={cn("text-3xl font-bold", aprovacaoStatus.color)}>
-                  {percentualAprovacao.toFixed(1)}%
+            {todosVolumesConferidos && (
+              <div className={cn(
+                "rounded-xl p-4 flex items-center justify-between",
+                aprovacaoStatus.bg
+              )}>
+                <div>
+                  <div className="text-sm text-muted-foreground">% Aprovação</div>
+                  <div className={cn("text-3xl font-bold", aprovacaoStatus.color)}>
+                    {percentualAprovacao.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className={cn(
+                    "text-lg font-bold px-3 py-1 rounded-full",
+                    aprovacaoStatus.bg,
+                    aprovacaoStatus.color
+                  )}>
+                    {aprovacaoStatus.label}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {qtdReprovada} un reprovadas
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <div className={cn(
-                  "text-lg font-bold px-3 py-1 rounded-full",
-                  aprovacaoStatus.bg,
-                  aprovacaoStatus.color
-                )}>
-                  {aprovacaoStatus.label}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {qtdReprovada} un reprovadas
-                </div>
+            )}
+
+            {!todosVolumesConferidos && (
+              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 text-center text-warning text-sm">
+                ⚠️ Confira todos os volumes para ver o resumo de aprovação
               </div>
-            </div>
+            )}
           </div>
         </section>
 
@@ -527,7 +574,7 @@ export default function FormularioTriagem() {
                 variant="outline"
                 className="h-12 gap-2 border-success text-success hover:bg-success/10"
                 onClick={handleAprovar}
-                disabled={!checklistCompleto || defeitos.length > 0}
+                disabled={!checklistCompleto || !todosVolumesConferidos || defeitos.length > 0}
               >
                 <CheckCircle2 className="h-5 w-5" />
                 <span className="hidden sm:inline">Aprovar</span>
@@ -536,7 +583,7 @@ export default function FormularioTriagem() {
                 variant="outline"
                 className="h-12 gap-2 border-warning text-warning hover:bg-warning/10"
                 onClick={handleRessalva}
-                disabled={!checklistCompleto}
+                disabled={!checklistCompleto || !todosVolumesConferidos}
               >
                 <AlertTriangle className="h-5 w-5" />
                 <span className="hidden sm:inline">Ressalva</span>
