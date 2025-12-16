@@ -362,6 +362,68 @@ export type Database = {
           },
         ]
       }
+      ondas_separacao: {
+        Row: {
+          codigo: string
+          created_at: string
+          data_conclusao: string | null
+          data_criacao: string
+          data_inicio: string | null
+          descricao: string | null
+          id: string
+          prioridade: Database["public"]["Enums"]["prioridade_tarefa"]
+          responsavel_id: string | null
+          rota: string | null
+          status: Database["public"]["Enums"]["status_onda"]
+          tarefas_concluidas: number | null
+          total_tarefas: number | null
+          updated_at: string
+          zona_alvo: string | null
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          data_conclusao?: string | null
+          data_criacao?: string
+          data_inicio?: string | null
+          descricao?: string | null
+          id?: string
+          prioridade?: Database["public"]["Enums"]["prioridade_tarefa"]
+          responsavel_id?: string | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_onda"]
+          tarefas_concluidas?: number | null
+          total_tarefas?: number | null
+          updated_at?: string
+          zona_alvo?: string | null
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          data_conclusao?: string | null
+          data_criacao?: string
+          data_inicio?: string | null
+          descricao?: string | null
+          id?: string
+          prioridade?: Database["public"]["Enums"]["prioridade_tarefa"]
+          responsavel_id?: string | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_onda"]
+          tarefas_concluidas?: number | null
+          total_tarefas?: number | null
+          updated_at?: string
+          zona_alvo?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ondas_separacao_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posicoes_estoque: {
         Row: {
           box: string | null
@@ -406,6 +468,53 @@ export type Database = {
           zona?: string | null
         }
         Relationships: []
+      }
+      produtividade_operador: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+          itens_movimentados: number | null
+          operador_id: string
+          tarefas_atribuidas: number | null
+          tarefas_concluidas: number | null
+          taxa_acerto: number | null
+          tempo_total_minutos: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: string
+          id?: string
+          itens_movimentados?: number | null
+          operador_id: string
+          tarefas_atribuidas?: number | null
+          tarefas_concluidas?: number | null
+          taxa_acerto?: number | null
+          tempo_total_minutos?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+          itens_movimentados?: number | null
+          operador_id?: string
+          tarefas_atribuidas?: number | null
+          tarefas_concluidas?: number | null
+          taxa_acerto?: number | null
+          tempo_total_minutos?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "produtividade_operador_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       produtos: {
         Row: {
@@ -485,6 +594,117 @@ export type Database = {
         }
         Relationships: []
       }
+      tarefas: {
+        Row: {
+          created_at: string
+          data_atribuicao: string | null
+          data_conclusao: string | null
+          data_inicio: string | null
+          id: string
+          instrucoes: string | null
+          observacoes: string | null
+          onda_id: string | null
+          operador_id: string | null
+          posicao_destino_id: string | null
+          posicao_origem_id: string | null
+          prioridade: Database["public"]["Enums"]["prioridade_tarefa"]
+          produto_id: string | null
+          quantidade: number
+          quantidade_executada: number | null
+          rota: string | null
+          status: Database["public"]["Enums"]["status_tarefa"]
+          tempo_estimado_minutos: number | null
+          tempo_real_minutos: number | null
+          tipo: Database["public"]["Enums"]["tipo_tarefa"]
+          updated_at: string
+          zona: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_atribuicao?: string | null
+          data_conclusao?: string | null
+          data_inicio?: string | null
+          id?: string
+          instrucoes?: string | null
+          observacoes?: string | null
+          onda_id?: string | null
+          operador_id?: string | null
+          posicao_destino_id?: string | null
+          posicao_origem_id?: string | null
+          prioridade?: Database["public"]["Enums"]["prioridade_tarefa"]
+          produto_id?: string | null
+          quantidade?: number
+          quantidade_executada?: number | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_tarefa"]
+          tempo_estimado_minutos?: number | null
+          tempo_real_minutos?: number | null
+          tipo?: Database["public"]["Enums"]["tipo_tarefa"]
+          updated_at?: string
+          zona?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_atribuicao?: string | null
+          data_conclusao?: string | null
+          data_inicio?: string | null
+          id?: string
+          instrucoes?: string | null
+          observacoes?: string | null
+          onda_id?: string | null
+          operador_id?: string | null
+          posicao_destino_id?: string | null
+          posicao_origem_id?: string | null
+          prioridade?: Database["public"]["Enums"]["prioridade_tarefa"]
+          produto_id?: string | null
+          quantidade?: number
+          quantidade_executada?: number | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_tarefa"]
+          tempo_estimado_minutos?: number | null
+          tempo_real_minutos?: number | null
+          tipo?: Database["public"]["Enums"]["tipo_tarefa"]
+          updated_at?: string
+          zona?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tarefas_onda_id_fkey"
+            columns: ["onda_id"]
+            isOneToOne: false
+            referencedRelation: "ondas_separacao"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_posicao_destino_id_fkey"
+            columns: ["posicao_destino_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_posicao_origem_id_fkey"
+            columns: ["posicao_origem_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tarefas_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -525,14 +745,28 @@ export type Database = {
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
+      prioridade_tarefa: "baixa" | "media" | "alta" | "urgente"
       status_ciclo_inventario:
         | "agendado"
         | "em_andamento"
         | "concluido"
         | "cancelado"
       status_contagem: "pendente" | "em_andamento" | "concluido" | "divergencia"
+      status_onda: "pendente" | "em_andamento" | "concluida" | "cancelada"
       status_posicao: "livre" | "ocupado" | "reservado" | "bloqueado"
+      status_tarefa:
+        | "pendente"
+        | "atribuida"
+        | "em_andamento"
+        | "concluida"
+        | "bloqueada"
       tipo_posicao: "porta_palete" | "box"
+      tipo_tarefa:
+        | "separacao"
+        | "armazenagem"
+        | "transferencia"
+        | "inventario"
+        | "expedicao"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -661,6 +895,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["operador", "supervisor", "admin"],
+      prioridade_tarefa: ["baixa", "media", "alta", "urgente"],
       status_ciclo_inventario: [
         "agendado",
         "em_andamento",
@@ -668,8 +903,23 @@ export const Constants = {
         "cancelado",
       ],
       status_contagem: ["pendente", "em_andamento", "concluido", "divergencia"],
+      status_onda: ["pendente", "em_andamento", "concluida", "cancelada"],
       status_posicao: ["livre", "ocupado", "reservado", "bloqueado"],
+      status_tarefa: [
+        "pendente",
+        "atribuida",
+        "em_andamento",
+        "concluida",
+        "bloqueada",
+      ],
       tipo_posicao: ["porta_palete", "box"],
+      tipo_tarefa: [
+        "separacao",
+        "armazenagem",
+        "transferencia",
+        "inventario",
+        "expedicao",
+      ],
     },
   },
 } as const
