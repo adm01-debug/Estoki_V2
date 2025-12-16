@@ -13,6 +13,7 @@ import Scanner from "./pages/Scanner";
 import Movimentacao from "./pages/Movimentacao";
 import Armazenamento from "./pages/Armazenamento";
 import Dashboard from "./pages/Dashboard";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/movimentacao" element={<Movimentacao />} />
           <Route path="/armazenamento" element={<Armazenamento />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="/inventario" element={<Estoque />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
