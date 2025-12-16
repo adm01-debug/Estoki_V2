@@ -11,7 +11,8 @@ import {
   ChevronLeft,
   BarChart3,
   LogOut,
-  Shield
+  Shield,
+  Users
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -230,7 +231,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             );
           })}
           
-          <div className="pt-4 border-t border-sidebar-border mt-4">
+          <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
             <button
               onClick={() => navigate("/movimentacao")}
               className={cn(
@@ -242,6 +243,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <ArrowLeftRight className="h-5 w-5" />
               <span className="font-medium">Movimentação</span>
+            </button>
+            <button
+              onClick={() => navigate("/produtividade")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/produtividade"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Users className="h-5 w-5" />
+              <span className="font-medium">Produtividade</span>
             </button>
           </div>
         </nav>
