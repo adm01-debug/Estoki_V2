@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { 
   BarChart, 
   Bar, 
@@ -35,7 +36,8 @@ import {
   Clock,
   Download,
   FileSpreadsheet,
-  FileText
+  FileText,
+  X
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { jsPDF } from "jspdf";
@@ -95,6 +97,7 @@ export default function DashboardTrocas() {
   const navigate = useNavigate();
   const [periodoSelecionado, setPeriodoSelecionado] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState<string>('todos');
+  const [drillDown, setDrillDown] = useState<{ type: 'fornecedor' | 'motivo' | null; value: string | null }>({ type: null, value: null });
 
   // Get unique suppliers
   const fornecedoresUnicos = useMemo(() => {
@@ -297,6 +300,34 @@ export default function DashboardTrocas() {
   const topFornecedoresProblematicos = useMemo(() => {
     return dadosPorFornecedor.slice(0, 5);
   }, [dadosPorFornecedor]);
+
+  // Drill-down data
+  const drillDownData = useMemo(() => {
+    if (!drillDown.type || !drillDown.value) return [];
+    
+    return registrosFiltrados.filter(r => {
+      if (drillDown.type === 'fornecedor') {
+        return r.fornecedor === drillDown.value;
+      }
+      if (drillDown.type === 'motivo') {
+        return r.motivoDefeito === drillDown.value;
+      }
+      return false;
+    });
+  }, [registrosFiltrados, drillDown]);
+
+  // Handle chart clicks
+  const handleFornecedorClick = useCallback((data: any) => {
+    if (data?.activePayload?.[0]?.payload?.fornecedorFull) {
+      setDrillDown({ type: 'fornecedor', value: data.activePayload[0].payload.fornecedorFull });
+    }
+  }, []);
+
+  const handleMotivoClick = useCallback((data: any) => {
+    if (data?.motivoFull) {
+      setDrillDown({ type: 'motivo', value: data.motivoFull });
+    }
+  }, []);
 
   // Export to Excel/CSV
   const exportToExcel = useCallback(() => {
@@ -682,11 +713,18 @@ export default function DashboardTrocas() {
               <CardTitle className="flex items-center gap-2 text-base">
                 <Building2 className="h-5 w-5" />
                 Por Fornecedor
+                <span className="text-xs text-muted-foreground font-normal ml-auto">Clique para detalhes</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={dadosPorFornecedor} layout="vertical" margin={{ left: 20 }}>
+                <BarChart 
+                  data={dadosPorFornecedor} 
+                  layout="vertical" 
+                  margin={{ left: 20 }}
+                  onClick={handleFornecedorClick}
+                  className="cursor-pointer"
+                >
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis type="number" className="text-xs" />
                   <YAxis dataKey="fornecedor" type="category" width={100} className="text-xs" />
@@ -711,6 +749,7 @@ export default function DashboardTrocas() {
               <CardTitle className="flex items-center gap-2 text-base">
                 <AlertTriangle className="h-5 w-5" />
                 Por Motivo de Defeito
+                <span className="text-xs text-muted-foreground font-normal ml-auto">Clique para detalhes</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -725,9 +764,11 @@ export default function DashboardTrocas() {
                     outerRadius={100}
                     label={({ motivo, percent }) => `${motivo} (${(percent * 100).toFixed(0)}%)`}
                     labelLine={false}
+                    onClick={handleMotivoClick}
+                    className="cursor-pointer"
                   >
                     {dadosPorMotivo.map((_, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} className="cursor-pointer hover:opacity-80" />
                     ))}
                   </Pie>
                   <Tooltip 
@@ -906,6 +947,89 @@ export default function DashboardTrocas() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Drill-down Sheet */}
+      <Sheet open={!!drillDown.type} onOpenChange={(open) => !open && setDrillDown({ type: null, value: null })}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle className="flex items-center gap-2">
+              {drillDown.type === 'fornecedor' ? (
+                <><Building2 className="h-5 w-5" /> Detalhes do Fornecedor</>
+              ) : (
+                <><AlertTriangle className="h-5 w-5" /> Detalhes do Motivo</>
+              )}
+            </SheetTitle>
+            <SheetDescription>
+              {drillDown.type === 'fornecedor' ? (
+                <>Registros de trocas e devoluções para <strong>{drillDown.value}</strong></>
+              ) : (
+                <>Registros com motivo: <strong>{drillDown.value}</strong></>
+              )}
+            </SheetDescription>
+          </SheetHeader>
+          
+          <div className="mt-6 space-y-4">
+            {/* Summary */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-xl font-bold">{drillDownData.length}</div>
+                <div className="text-xs text-muted-foreground">Registros</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-xl font-bold text-orange-500">
+                  {drillDownData.filter(r => r.tipo === 'troca').length}
+                </div>
+                <div className="text-xs text-muted-foreground">Trocas</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-xl font-bold text-indigo-500">
+                  {drillDownData.filter(r => r.tipo === 'devolucao').length}
+                </div>
+                <div className="text-xs text-muted-foreground">Devoluções</div>
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Total de peças afetadas: <span className="font-bold text-destructive">
+                {drillDownData.reduce((acc, r) => acc + r.quantidade, 0).toLocaleString()}
+              </span>
+            </div>
+
+            {/* Records list */}
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm">Registros:</h4>
+              {drillDownData.map(registro => (
+                <div key={registro.id} className="border border-border rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-mono text-sm">{registro.id}</span>
+                    <div className="flex gap-2">
+                      <Badge variant={registro.tipo === 'troca' ? 'default' : 'secondary'} className={registro.tipo === 'troca' ? 'bg-orange-500' : 'bg-indigo-500'}>
+                        {registro.tipo === 'troca' ? 'Troca' : 'Devolução'}
+                      </Badge>
+                      <Badge variant="outline">{registro.status}</Badge>
+                    </div>
+                  </div>
+                  <div className="text-sm">
+                    <div className="font-medium">{registro.produto}</div>
+                    <div className="text-muted-foreground text-xs">SKU: {registro.sku}</div>
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Qtd: <strong className="text-foreground">{registro.quantidade}</strong></span>
+                    {drillDown.type === 'fornecedor' ? (
+                      <span>Motivo: {registro.motivoDefeito}</span>
+                    ) : (
+                      <span>Fornecedor: {registro.fornecedor}</span>
+                    )}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    Data: {registro.dataCriacao.toLocaleDateString('pt-BR')}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </AppLayout>
   );
 }
