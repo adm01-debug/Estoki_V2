@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
 import { 
   Search, 
   Plus, 
@@ -26,7 +28,9 @@ import {
   Send,
   Eye,
   Filter,
-  ChevronRight
+  ChevronRight,
+  FileSpreadsheet,
+  FileDown
 } from "lucide-react";
 
 // Types
@@ -701,6 +705,7 @@ function DetalheRegistroDialog({ registro, open, onClose, onStatusChange }: {
 
 // Main Page
 export default function TrocasDevolucoes() {
+  const { toast } = useToast();
   const [registros, setRegistros] = useState(mockRegistros);
   const [searchTerm, setSearchTerm] = useState('');
   const [filtroTipo, setFiltroTipo] = useState<TipoRegistro | 'todos'>('todos');
@@ -768,6 +773,146 @@ export default function TrocasDevolucoes() {
       return r;
     }));
     setRegistroSelecionado(null);
+  };
+
+  // Export to Excel (CSV)
+  const handleExportExcel = () => {
+    const headers = ['ID', 'Tipo', 'Status', 'Produto', 'SKU', 'Quantidade', 'Fornecedor', 'Motivo', 'Descrição', 'NF Origem', 'NF Devolução', 'Lote', 'Data Criação', 'Observações'];
+    const statusLabels: Record<StatusRegistro, string> = {
+      pendente: 'Pendente',
+      em_analise: 'Em Análise',
+      autorizado: 'Autorizado',
+      enviado: 'Enviado',
+      concluido: 'Concluído',
+      recusado: 'Recusado'
+    };
+    
+    const rows = filteredRegistros.map(r => [
+      r.id,
+      r.tipo === 'troca' ? 'Troca' : 'Devolução',
+      statusLabels[r.status],
+      r.produto,
+      r.sku,
+      r.quantidade.toString(),
+      r.fornecedor,
+      r.motivoDefeito,
+      r.descricaoDefeito,
+      r.nfOrigem,
+      r.nfDevolucao || '',
+      r.lote,
+      r.dataCriacao.toLocaleDateString('pt-BR'),
+      r.observacoes
+    ]);
+    
+    const csvContent = '\uFEFF' + [headers, ...rows].map(row => 
+      row.map(cell => `"${(cell || '').replace(/"/g, '""')}"`).join(';')
+    ).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `trocas-devolucoes-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Excel exportado",
+      description: `${filteredRegistros.length} registro(s) exportado(s) com sucesso.`
+    });
+  };
+
+  // Export to PDF
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    const statusLabels: Record<StatusRegistro, string> = {
+      pendente: 'Pendente',
+      em_analise: 'Em Análise',
+      autorizado: 'Autorizado',
+      enviado: 'Enviado',
+      concluido: 'Concluído',
+      recusado: 'Recusado'
+    };
+    
+    // Header
+    doc.setFontSize(18);
+    doc.text('Relatório de Trocas e Devoluções', 14, 20);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 14, 28);
+    doc.text(`Total de registros: ${filteredRegistros.length}`, 14, 34);
+    
+    // Filters applied
+    const filtrosAplicados = [];
+    if (filtroTipo !== 'todos') filtrosAplicados.push(`Tipo: ${filtroTipo === 'troca' ? 'Trocas' : 'Devoluções'}`);
+    if (filtroStatus !== 'todos') filtrosAplicados.push(`Status: ${statusLabels[filtroStatus]}`);
+    if (searchTerm) filtrosAplicados.push(`Busca: "${searchTerm}"`);
+    if (filtrosAplicados.length > 0) {
+      doc.text(`Filtros: ${filtrosAplicados.join(' | ')}`, 14, 40);
+    }
+    
+    // Summary
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.text('Resumo', 14, 52);
+    
+    doc.setFontSize(10);
+    const trocasCount = filteredRegistros.filter(r => r.tipo === 'troca').length;
+    const devolucoesCount = filteredRegistros.filter(r => r.tipo === 'devolucao').length;
+    const totalPecas = filteredRegistros.reduce((acc, r) => acc + r.quantidade, 0);
+    
+    doc.text(`Trocas: ${trocasCount} | Devoluções: ${devolucoesCount} | Total de peças: ${totalPecas}`, 14, 60);
+    
+    // Table
+    let yPos = 72;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ID', 14, yPos);
+    doc.text('Tipo', 32, yPos);
+    doc.text('Produto', 52, yPos);
+    doc.text('Qtd', 110, yPos);
+    doc.text('Fornecedor', 125, yPos);
+    doc.text('Status', 170, yPos);
+    
+    doc.setFont('helvetica', 'normal');
+    yPos += 6;
+    doc.setDrawColor(200);
+    doc.line(14, yPos - 2, 196, yPos - 2);
+    
+    filteredRegistros.forEach((r, index) => {
+      if (yPos > 270) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.text(r.id, 14, yPos);
+      doc.text(r.tipo === 'troca' ? 'Troca' : 'Dev.', 32, yPos);
+      doc.text(r.produto.substring(0, 28), 52, yPos);
+      doc.text(r.quantidade.toString(), 110, yPos);
+      doc.text(r.fornecedor.substring(0, 20), 125, yPos);
+      doc.text(statusLabels[r.status], 170, yPos);
+      
+      yPos += 6;
+    });
+    
+    // Footer
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(150);
+      doc.text(`Página ${i} de ${pageCount}`, 100, 290, { align: 'center' });
+    }
+    
+    doc.save(`trocas-devolucoes-${new Date().toISOString().split('T')[0]}.pdf`);
+    
+    toast({
+      title: "PDF exportado",
+      description: `${filteredRegistros.length} registro(s) exportado(s) com sucesso.`
+    });
   };
   
   return (
@@ -850,6 +995,12 @@ export default function TrocasDevolucoes() {
                   <SelectItem value="devolucao">Devoluções</SelectItem>
                 </SelectContent>
               </Select>
+              <Button variant="outline" size="icon" onClick={handleExportExcel} title="Exportar Excel">
+                <FileSpreadsheet className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" onClick={handleExportPDF} title="Exportar PDF">
+                <FileDown className="h-4 w-4" />
+              </Button>
             </div>
           </div>
           
