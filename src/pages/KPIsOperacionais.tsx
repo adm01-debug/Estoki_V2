@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,9 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
 import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
+import { useKPIAlerts } from "@/hooks/useKPIAlerts";
+import { AlertIndicator } from "@/components/kpis/AlertIndicator";
+import { KPICardWithAlert } from "@/components/kpis/KPICardWithAlert";
 import { 
   BarChart3, 
   TrendingUp,
@@ -34,7 +37,8 @@ import {
   Activity,
   Radio,
   Wifi,
-  RefreshCw
+  RefreshCw,
+  AlertTriangle
 } from "lucide-react";
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -87,6 +91,14 @@ export default function KPIsOperacionais() {
   const [editingMeta, setEditingMeta] = useState<MetaKPI | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [isUpdating, setIsUpdating] = useState(false);
+  const [alertsEnabled, setAlertsEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // KPI Alerts system
+  const { checkKPIs, criticalAlerts, hasCriticalAlerts } = useKPIAlerts({
+    enabled: alertsEnabled,
+    soundEnabled,
+  });
 
   // Enable realtime updates
   useRealtimeKPIs({
@@ -329,6 +341,48 @@ export default function KPIsOperacionais() {
     ? metricas.reduce((acc, m) => acc + (m.acuracidade_picking ?? 100), 0) / metricas.length 
     : 100;
 
+  // Check KPIs against thresholds when data changes
+  useEffect(() => {
+    if (metas.length === 0) return;
+
+    const kpisToCheck = [
+      {
+        metrica: "taxa_ocupacao",
+        nome: "Taxa de Ocupação",
+        valorAtual: taxaOcupacaoAtual,
+        valorMeta: getMetaValue("taxa_ocupacao"),
+        unidade: "%",
+      },
+      {
+        metrica: "acuracidade_picking",
+        nome: "Acuracidade Picking",
+        valorAtual: ultimaMetrica?.acuracidade_picking ?? 100,
+        valorMeta: getMetaValue("acuracidade_picking"),
+        unidade: "%",
+      },
+      {
+        metrica: "tempo_medio_triagem_minutos",
+        nome: "Tempo Médio Triagem",
+        valorAtual: ultimaMetrica?.tempo_medio_triagem_minutos ?? 0,
+        valorMeta: getMetaValue("tempo_medio_triagem_minutos"),
+        invertido: true, // lower is better
+        unidade: " min",
+      },
+      {
+        metrica: "taxa_aprovacao",
+        nome: "Taxa de Aprovação",
+        valorAtual: ultimaMetrica?.taxa_aprovacao ?? 0,
+        valorMeta: getMetaValue("taxa_aprovacao"),
+        unidade: "%",
+      },
+    ];
+
+    checkKPIs(kpisToCheck);
+  }, [metas, taxaOcupacaoAtual, ultimaMetrica, checkKPIs]);
+
+  // Helper to check if a KPI is currently in critical state
+  const isKPICritical = (metrica: string) => criticalAlerts.includes(metrica);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -342,6 +396,15 @@ export default function KPIsOperacionais() {
           <p className="text-muted-foreground">Métricas e indicadores de desempenho</p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Alert Indicator */}
+          <AlertIndicator
+            criticalCount={criticalAlerts.length}
+            soundEnabled={soundEnabled}
+            onSoundToggle={() => setSoundEnabled(!soundEnabled)}
+            alertsEnabled={alertsEnabled}
+            onAlertsToggle={() => setAlertsEnabled(!alertsEnabled)}
+          />
+          
           {/* Realtime Status Indicator */}
           <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
             <motion.div
@@ -381,127 +444,54 @@ export default function KPIsOperacionais() {
       {/* Main KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Taxa de Ocupação */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Taxa de Ocupação</p>
-                <p className="text-3xl font-bold">{taxaOcupacaoAtual.toFixed(1)}%</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    Meta: {getMetaValue("taxa_ocupacao")}%
-                  </span>
-                  {taxaOcupacaoAtual >= getMetaValue("taxa_ocupacao") ? (
-                    <CheckCircle2 className="h-3 w-3 text-green-500" />
-                  ) : (
-                    <XCircle className="h-3 w-3 text-amber-500" />
-                  )}
-                </div>
-              </div>
-              <div className="rounded-full bg-primary/20 p-3">
-                <Warehouse className="h-6 w-6 text-primary" />
-              </div>
-            </div>
-            <Progress 
-              value={taxaOcupacaoAtual} 
-              className="mt-4 h-2"
-            />
-            <p className="text-xs text-muted-foreground mt-2">
-              {posicoesOcupadas} de {totalPosicoes} posições
-            </p>
-          </CardContent>
-        </Card>
+        <KPICardWithAlert
+          title="Taxa de Ocupação"
+          value={taxaOcupacaoAtual}
+          meta={getMetaValue("taxa_ocupacao")}
+          icon={Warehouse}
+          iconColor="text-primary"
+          iconBgColor="bg-primary/20"
+          subtitle={`${posicoesOcupadas} de ${totalPosicoes} posições`}
+          isCritical={isKPICritical("taxa_ocupacao")}
+        />
 
         {/* Acuracidade Picking */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Acuracidade Picking</p>
-                <p className="text-3xl font-bold">
-                  {(ultimaMetrica?.acuracidade_picking ?? 100).toFixed(1)}%
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    Meta: {getMetaValue("acuracidade_picking")}%
-                  </span>
-                  {tendenciaPicking !== 0 && (
-                    <Badge variant="outline" className={tendenciaPicking > 0 ? "text-green-500" : "text-red-500"}>
-                      {tendenciaPicking > 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-                      {Math.abs(tendenciaPicking).toFixed(1)}%
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div className="rounded-full bg-green-500/20 p-3">
-                <Target className="h-6 w-6 text-green-500" />
-              </div>
-            </div>
-            <Progress 
-              value={ultimaMetrica?.acuracidade_picking ?? 100} 
-              className="mt-4 h-2"
-            />
-          </CardContent>
-        </Card>
+        <KPICardWithAlert
+          title="Acuracidade Picking"
+          value={ultimaMetrica?.acuracidade_picking ?? 100}
+          meta={getMetaValue("acuracidade_picking")}
+          icon={Target}
+          iconColor="text-green-500"
+          iconBgColor="bg-green-500/20"
+          tendencia={tendenciaPicking}
+          isCritical={isKPICritical("acuracidade_picking")}
+        />
 
         {/* Tempo Médio Triagem */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Tempo Médio Triagem</p>
-                <p className="text-3xl font-bold">
-                  {(ultimaMetrica?.tempo_medio_triagem_minutos ?? 0).toFixed(1)} min
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    Meta: {getMetaValue("tempo_medio_triagem_minutos")} min
-                  </span>
-                  {tendenciaTriagem !== 0 && (
-                    <Badge variant="outline" className={tendenciaTriagem < 0 ? "text-green-500" : "text-red-500"}>
-                      {tendenciaTriagem < 0 ? <ArrowDown className="h-3 w-3" /> : <ArrowUp className="h-3 w-3" />}
-                      {Math.abs(tendenciaTriagem).toFixed(1)}%
-                    </Badge>
-                  )}
-                </div>
-              </div>
-              <div className="rounded-full bg-blue-500/20 p-3">
-                <Clock className="h-6 w-6 text-blue-500" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <KPICardWithAlert
+          title="Tempo Médio Triagem"
+          value={ultimaMetrica?.tempo_medio_triagem_minutos ?? 0}
+          meta={getMetaValue("tempo_medio_triagem_minutos")}
+          unit=" min"
+          icon={Clock}
+          iconColor="text-blue-500"
+          iconBgColor="bg-blue-500/20"
+          invertido={true}
+          tendencia={tendenciaTriagem}
+          showProgress={false}
+          isCritical={isKPICritical("tempo_medio_triagem_minutos")}
+        />
 
         {/* Taxa de Aprovação */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Taxa de Aprovação</p>
-                <p className="text-3xl font-bold">
-                  {(ultimaMetrica?.taxa_aprovacao ?? 0).toFixed(1)}%
-                </p>
-                <div className="flex items-center gap-1 mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    Meta: {getMetaValue("taxa_aprovacao")}%
-                  </span>
-                  {(ultimaMetrica?.taxa_aprovacao ?? 0) >= getMetaValue("taxa_aprovacao") ? (
-                    <CheckCircle2 className="h-3 w-3 text-green-500" />
-                  ) : (
-                    <XCircle className="h-3 w-3 text-amber-500" />
-                  )}
-                </div>
-              </div>
-              <div className="rounded-full bg-amber-500/20 p-3">
-                <CheckCircle2 className="h-6 w-6 text-amber-500" />
-              </div>
-            </div>
-            <Progress 
-              value={ultimaMetrica?.taxa_aprovacao ?? 0} 
-              className="mt-4 h-2"
-            />
-          </CardContent>
-        </Card>
+        <KPICardWithAlert
+          title="Taxa de Aprovação"
+          value={ultimaMetrica?.taxa_aprovacao ?? 0}
+          meta={getMetaValue("taxa_aprovacao")}
+          icon={CheckCircle2}
+          iconColor="text-amber-500"
+          iconBgColor="bg-amber-500/20"
+          isCritical={isKPICritical("taxa_aprovacao")}
+        />
       </div>
 
       {/* Summary Cards */}
