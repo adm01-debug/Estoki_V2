@@ -121,11 +121,11 @@
 @layer components {
   /* KPI Cards */
   .kpi-card {
-    @apply bg-card rounded-xl p-4 shadow-sm border border-border/50 transition-all duration-200;
+    @apply bg-card rounded-xl p-4 shadow-sm border border-border/50 transition-all duration-300;
   }
   
   .kpi-card:hover {
-    @apply shadow-md border-primary/20;
+    @apply shadow-lg border-primary/30 -translate-y-1;
   }
 
   /* Status Badges */
@@ -152,15 +152,15 @@
 
   /* Menu Buttons */
   .menu-button {
-    @apply flex flex-col items-center justify-center gap-2 p-6 rounded-xl bg-card border border-border/50 shadow-sm transition-all duration-200;
+    @apply flex items-center gap-4 p-4 rounded-xl bg-card border border-border/50 shadow-sm transition-all duration-300;
   }
   
   .menu-button:hover {
-    @apply shadow-md border-primary/30 bg-primary/5;
+    @apply shadow-lg border-primary/30 -translate-y-0.5;
   }
   
   .menu-button:active {
-    @apply scale-95;
+    @apply scale-[0.98];
   }
 
   /* Position indicators */
@@ -178,6 +178,23 @@
   
   .position-bloqueado {
     @apply bg-destructive/20 border-2 border-destructive;
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
