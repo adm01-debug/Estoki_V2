@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Recebimento from "./pages/Recebimento";
 import ConferenciaRecebimento from "./pages/ConferenciaRecebimento";
 import Triagem from "./pages/Triagem";
+import FormularioTriagem from "./pages/FormularioTriagem";
 import Estoque from "./pages/Estoque";
 import Scanner from "./pages/Scanner";
 import Movimentacao from "./pages/Movimentacao";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/recebimento" element={<Recebimento />} />
           <Route path="/recebimento/:id" element={<ConferenciaRecebimento />} />
           <Route path="/triagem" element={<Triagem />} />
+          <Route path="/triagem/:id" element={<FormularioTriagem />} />
           <Route path="/estoque" element={<Estoque />} />
           <Route path="/scanner" element={<Scanner />} />
           <Route path="/movimentacao" element={<Movimentacao />} />
