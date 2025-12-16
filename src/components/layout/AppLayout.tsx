@@ -7,6 +7,7 @@ import {
   Warehouse, 
   QrCode, 
   ArrowLeftRight,
+  Undo2,
   Settings,
   ChevronLeft,
   BarChart3,
@@ -346,6 +347,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <Building2 className="h-5 w-5" />
               <span className="font-medium">Qualidade Fornec.</span>
+            </button>
+            <button
+              onClick={() => navigate("/trocas-devolucoes")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/trocas-devolucoes"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Undo2 className="h-5 w-5" />
+              <span className="font-medium">Trocas/Devoluções</span>
             </button>
           </div>
         </nav>
