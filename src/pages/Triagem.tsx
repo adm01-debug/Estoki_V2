@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, QrCode, ChevronRight, Play, CheckCircle, AlertTriangle, Star, Clock, ArrowUpDown } from "lucide-react";
+import { Search, Filter, QrCode, ChevronRight, Play, CheckCircle, AlertTriangle, Star, Clock, ArrowUpDown, BarChart3 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -272,10 +272,16 @@ export default function TriagemPage() {
       title="Fila de Triagem"
       showBack
       rightAction={
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
-          <QrCode className="h-4 w-4" />
-          <span className="hidden sm:inline">Scan</span>
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/minha-produtividade")}>
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Métricas</span>
+          </Button>
+          <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
+            <QrCode className="h-4 w-4" />
+            <span className="hidden sm:inline">Scan</span>
+          </Button>
+        </div>
       }
     >
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
