@@ -149,6 +149,78 @@ export type Database = {
           },
         ]
       }
+      comprovantes_entrega: {
+        Row: {
+          assinatura_url: string | null
+          created_at: string
+          data_entrega: string | null
+          data_reagendamento: string | null
+          foto_entrega_url: string | null
+          id: string
+          latitude: number | null
+          longitude: number | null
+          motivo_recusa: string | null
+          observacoes: string | null
+          recebedor_documento: string | null
+          recebedor_nome: string | null
+          romaneio_id: string
+          romaneio_item_id: string | null
+          status: Database["public"]["Enums"]["status_entrega"]
+          updated_at: string
+        }
+        Insert: {
+          assinatura_url?: string | null
+          created_at?: string
+          data_entrega?: string | null
+          data_reagendamento?: string | null
+          foto_entrega_url?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          motivo_recusa?: string | null
+          observacoes?: string | null
+          recebedor_documento?: string | null
+          recebedor_nome?: string | null
+          romaneio_id: string
+          romaneio_item_id?: string | null
+          status?: Database["public"]["Enums"]["status_entrega"]
+          updated_at?: string
+        }
+        Update: {
+          assinatura_url?: string | null
+          created_at?: string
+          data_entrega?: string | null
+          data_reagendamento?: string | null
+          foto_entrega_url?: string | null
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          motivo_recusa?: string | null
+          observacoes?: string | null
+          recebedor_documento?: string | null
+          recebedor_nome?: string | null
+          romaneio_id?: string
+          romaneio_item_id?: string | null
+          status?: Database["public"]["Enums"]["status_entrega"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comprovantes_entrega_romaneio_id_fkey"
+            columns: ["romaneio_id"]
+            isOneToOne: false
+            referencedRelation: "romaneios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comprovantes_entrega_romaneio_item_id_fkey"
+            columns: ["romaneio_item_id"]
+            isOneToOne: false
+            referencedRelation: "romaneio_itens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estoque_posicao: {
         Row: {
           created_at: string
@@ -975,6 +1047,83 @@ export type Database = {
         }
         Relationships: []
       }
+      rastreamento_historico: {
+        Row: {
+          created_at: string
+          data_evento: string
+          descricao: string
+          detalhes: Json | null
+          documento_referencia: string | null
+          id: string
+          localizacao: string | null
+          lote_id: string | null
+          operador_id: string | null
+          posicao_id: string | null
+          produto_id: string | null
+          quantidade: number | null
+          tipo_evento: Database["public"]["Enums"]["tipo_evento_rastreamento"]
+        }
+        Insert: {
+          created_at?: string
+          data_evento?: string
+          descricao: string
+          detalhes?: Json | null
+          documento_referencia?: string | null
+          id?: string
+          localizacao?: string | null
+          lote_id?: string | null
+          operador_id?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number | null
+          tipo_evento: Database["public"]["Enums"]["tipo_evento_rastreamento"]
+        }
+        Update: {
+          created_at?: string
+          data_evento?: string
+          descricao?: string
+          detalhes?: Json | null
+          documento_referencia?: string | null
+          id?: string
+          localizacao?: string | null
+          lote_id?: string | null
+          operador_id?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number | null
+          tipo_evento?: Database["public"]["Enums"]["tipo_evento_rastreamento"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rastreamento_historico_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rastreamento_historico_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rastreamento_historico_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rastreamento_historico_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regras_ponto_pedido: {
         Row: {
           ativo: boolean
@@ -1024,6 +1173,156 @@ export type Database = {
             columns: ["produto_id"]
             isOneToOne: true
             referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      romaneio_itens: {
+        Row: {
+          cliente: string
+          contato_cliente: string | null
+          created_at: string
+          endereco_entrega: string
+          id: string
+          lote_id: string | null
+          nf_saida: string | null
+          observacoes: string | null
+          ordem_entrega: number | null
+          pedido_referencia: string | null
+          peso_kg: number | null
+          produto_id: string | null
+          quantidade: number
+          romaneio_id: string
+          telefone_cliente: string | null
+        }
+        Insert: {
+          cliente: string
+          contato_cliente?: string | null
+          created_at?: string
+          endereco_entrega: string
+          id?: string
+          lote_id?: string | null
+          nf_saida?: string | null
+          observacoes?: string | null
+          ordem_entrega?: number | null
+          pedido_referencia?: string | null
+          peso_kg?: number | null
+          produto_id?: string | null
+          quantidade?: number
+          romaneio_id: string
+          telefone_cliente?: string | null
+        }
+        Update: {
+          cliente?: string
+          contato_cliente?: string | null
+          created_at?: string
+          endereco_entrega?: string
+          id?: string
+          lote_id?: string | null
+          nf_saida?: string | null
+          observacoes?: string | null
+          ordem_entrega?: number | null
+          pedido_referencia?: string | null
+          peso_kg?: number | null
+          produto_id?: string | null
+          quantidade?: number
+          romaneio_id?: string
+          telefone_cliente?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "romaneio_itens_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "romaneio_itens_romaneio_id_fkey"
+            columns: ["romaneio_id"]
+            isOneToOne: false
+            referencedRelation: "romaneios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      romaneios: {
+        Row: {
+          codigo: string
+          created_at: string
+          data_criacao: string
+          data_prevista_entrega: string | null
+          data_retorno: string | null
+          data_saida: string | null
+          entregas_realizadas: number | null
+          id: string
+          motorista: string | null
+          observacoes: string | null
+          placa_veiculo: string | null
+          responsavel_id: string | null
+          rota: string | null
+          status: Database["public"]["Enums"]["status_romaneio"]
+          tipo_veiculo: string | null
+          total_entregas: number | null
+          total_peso_kg: number | null
+          total_volumes: number | null
+          updated_at: string
+        }
+        Insert: {
+          codigo: string
+          created_at?: string
+          data_criacao?: string
+          data_prevista_entrega?: string | null
+          data_retorno?: string | null
+          data_saida?: string | null
+          entregas_realizadas?: number | null
+          id?: string
+          motorista?: string | null
+          observacoes?: string | null
+          placa_veiculo?: string | null
+          responsavel_id?: string | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_romaneio"]
+          tipo_veiculo?: string | null
+          total_entregas?: number | null
+          total_peso_kg?: number | null
+          total_volumes?: number | null
+          updated_at?: string
+        }
+        Update: {
+          codigo?: string
+          created_at?: string
+          data_criacao?: string
+          data_prevista_entrega?: string | null
+          data_retorno?: string | null
+          data_saida?: string | null
+          entregas_realizadas?: number | null
+          id?: string
+          motorista?: string | null
+          observacoes?: string | null
+          placa_veiculo?: string | null
+          responsavel_id?: string | null
+          rota?: string | null
+          status?: Database["public"]["Enums"]["status_romaneio"]
+          tipo_veiculo?: string | null
+          total_entregas?: number | null
+          total_peso_kg?: number | null
+          total_volumes?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "romaneios_responsavel_id_fkey"
+            columns: ["responsavel_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1188,8 +1487,22 @@ export type Database = {
         | "concluido"
         | "cancelado"
       status_contagem: "pendente" | "em_andamento" | "concluido" | "divergencia"
+      status_entrega:
+        | "pendente"
+        | "em_rota"
+        | "entregue"
+        | "recusado"
+        | "parcial"
+        | "reagendado"
       status_onda: "pendente" | "em_andamento" | "concluida" | "cancelada"
       status_posicao: "livre" | "ocupado" | "reservado" | "bloqueado"
+      status_romaneio:
+        | "rascunho"
+        | "confirmado"
+        | "em_transito"
+        | "entregue"
+        | "parcial"
+        | "cancelado"
       status_tarefa:
         | "pendente"
         | "atribuida"
@@ -1205,6 +1518,20 @@ export type Database = {
         | "gargalo_triagem"
         | "divergencia_inventario"
         | "item_sem_movimentacao"
+      tipo_evento_rastreamento:
+        | "recebimento_nf"
+        | "conferencia"
+        | "triagem_inicio"
+        | "triagem_fim"
+        | "armazenamento"
+        | "reserva"
+        | "separacao"
+        | "conferencia_expedicao"
+        | "carregamento"
+        | "saida_transporte"
+        | "entrega"
+        | "devolucao"
+        | "ajuste_estoque"
       tipo_posicao: "porta_palete" | "box"
       tipo_tarefa:
         | "separacao"
@@ -1350,8 +1677,24 @@ export const Constants = {
         "cancelado",
       ],
       status_contagem: ["pendente", "em_andamento", "concluido", "divergencia"],
+      status_entrega: [
+        "pendente",
+        "em_rota",
+        "entregue",
+        "recusado",
+        "parcial",
+        "reagendado",
+      ],
       status_onda: ["pendente", "em_andamento", "concluida", "cancelada"],
       status_posicao: ["livre", "ocupado", "reservado", "bloqueado"],
+      status_romaneio: [
+        "rascunho",
+        "confirmado",
+        "em_transito",
+        "entregue",
+        "parcial",
+        "cancelado",
+      ],
       status_tarefa: [
         "pendente",
         "atribuida",
@@ -1368,6 +1711,21 @@ export const Constants = {
         "gargalo_triagem",
         "divergencia_inventario",
         "item_sem_movimentacao",
+      ],
+      tipo_evento_rastreamento: [
+        "recebimento_nf",
+        "conferencia",
+        "triagem_inicio",
+        "triagem_fim",
+        "armazenamento",
+        "reserva",
+        "separacao",
+        "conferencia_expedicao",
+        "carregamento",
+        "saida_transporte",
+        "entrega",
+        "devolucao",
+        "ajuste_estoque",
       ],
       tipo_posicao: ["porta_palete", "box"],
       tipo_tarefa: [

@@ -17,7 +17,8 @@ import {
   Layers,
   ListTodo,
   BellRing,
-  Activity
+  Activity,
+  Route
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -320,6 +321,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             >
               <Activity className="h-5 w-5" />
               <span className="font-medium">KPIs</span>
+            </button>
+            <button
+              onClick={() => navigate("/rastreabilidade")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/rastreabilidade"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Route className="h-5 w-5" />
+              <span className="font-medium">Rastreabilidade</span>
             </button>
           </div>
         </nav>
