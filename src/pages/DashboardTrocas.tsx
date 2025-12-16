@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,9 +32,14 @@ import {
   AlertTriangle,
   CheckCircle2,
   XCircle,
-  Clock
+  Clock,
+  Download,
+  FileSpreadsheet,
+  FileText
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { jsPDF } from "jspdf";
+import { toast } from "sonner";
 
 // Types
 type TipoRegistro = 'troca' | 'devolucao';
@@ -292,6 +297,103 @@ export default function DashboardTrocas() {
   const topFornecedoresProblematicos = useMemo(() => {
     return dadosPorFornecedor.slice(0, 5);
   }, [dadosPorFornecedor]);
+
+  // Export to Excel/CSV
+  const exportToExcel = useCallback(() => {
+    const headers = ['ID', 'Tipo', 'Status', 'Produto', 'SKU', 'Quantidade', 'Fornecedor', 'Motivo', 'Data'];
+    const rows = registrosFiltrados.map(r => [
+      r.id,
+      r.tipo === 'troca' ? 'Troca' : 'Devolução',
+      r.status.charAt(0).toUpperCase() + r.status.slice(1).replace('_', ' '),
+      r.produto,
+      r.sku,
+      r.quantidade.toString(),
+      r.fornecedor,
+      r.motivoDefeito,
+      r.dataCriacao.toLocaleDateString('pt-BR')
+    ]);
+
+    const csvContent = '\uFEFF' + [headers, ...rows].map(row => row.join(';')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `trocas-devolucoes-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Exportado para Excel com sucesso!');
+  }, [registrosFiltrados]);
+
+  // Export to PDF
+  const exportToPDF = useCallback(() => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    
+    // Header
+    doc.setFontSize(18);
+    doc.text('Relatório de Trocas e Devoluções', pageWidth / 2, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, pageWidth / 2, 28, { align: 'center' });
+    
+    // Filters applied
+    doc.setFontSize(11);
+    doc.text('Filtros aplicados:', 14, 40);
+    doc.setFontSize(10);
+    const periodoLabel = { '7d': 'Últimos 7 dias', '30d': 'Últimos 30 dias', '90d': 'Últimos 90 dias', 'all': 'Todo período' };
+    doc.text(`Período: ${periodoLabel[periodoSelecionado]}`, 14, 47);
+    doc.text(`Fornecedor: ${fornecedorSelecionado === 'todos' ? 'Todos' : fornecedorSelecionado}`, 14, 54);
+    
+    // Metrics summary
+    doc.setFontSize(12);
+    doc.text('Resumo:', 14, 68);
+    doc.setFontSize(10);
+    doc.text(`Total de registros: ${metrics.total}`, 14, 76);
+    doc.text(`Trocas: ${metrics.trocas}`, 14, 83);
+    doc.text(`Devoluções: ${metrics.devolucoes}`, 14, 90);
+    doc.text(`Pendentes: ${metrics.pendentes}`, 100, 76);
+    doc.text(`Concluídos: ${metrics.concluidos}`, 100, 83);
+    doc.text(`Peças afetadas: ${metrics.totalPecas.toLocaleString()}`, 100, 90);
+    
+    // Table
+    let yPos = 105;
+    doc.setFontSize(12);
+    doc.text('Registros:', 14, yPos);
+    yPos += 8;
+    
+    // Table header
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ID', 14, yPos);
+    doc.text('Tipo', 35, yPos);
+    doc.text('Status', 55, yPos);
+    doc.text('Produto', 80, yPos);
+    doc.text('Qtd', 130, yPos);
+    doc.text('Fornecedor', 145, yPos);
+    doc.text('Data', 185, yPos);
+    yPos += 5;
+    
+    doc.setFont('helvetica', 'normal');
+    
+    registrosFiltrados.forEach((r, idx) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 20;
+      }
+      
+      doc.text(r.id, 14, yPos);
+      doc.text(r.tipo === 'troca' ? 'Troca' : 'Dev.', 35, yPos);
+      doc.text(r.status.substring(0, 10), 55, yPos);
+      doc.text(r.produto.substring(0, 20), 80, yPos);
+      doc.text(r.quantidade.toString(), 130, yPos);
+      doc.text(r.fornecedor.substring(0, 15), 145, yPos);
+      doc.text(r.dataCriacao.toLocaleDateString('pt-BR'), 185, yPos);
+      yPos += 5;
+    });
+    
+    doc.save(`trocas-devolucoes-${new Date().toISOString().split('T')[0]}.pdf`);
+    toast.success('Exportado para PDF com sucesso!');
+  }, [registrosFiltrados, metrics, periodoSelecionado, fornecedorSelecionado]);
   
   return (
     <AppLayout 
@@ -340,7 +442,7 @@ export default function DashboardTrocas() {
               </Select>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {fornecedorSelecionado !== 'todos' && (
               <Badge variant="secondary" className="gap-1">
                 {fornecedorSelecionado}
@@ -355,6 +457,16 @@ export default function DashboardTrocas() {
             <Badge variant="outline" className="text-muted-foreground">
               {registrosFiltrados.length} registro(s)
             </Badge>
+            <div className="flex items-center gap-1 ml-2">
+              <Button variant="outline" size="sm" onClick={exportToExcel} className="gap-1">
+                <FileSpreadsheet className="h-4 w-4" />
+                <span className="hidden sm:inline">Excel</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={exportToPDF} className="gap-1">
+                <FileText className="h-4 w-4" />
+                <span className="hidden sm:inline">PDF</span>
+              </Button>
+            </div>
           </div>
         </div>
         
