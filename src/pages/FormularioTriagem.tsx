@@ -37,6 +37,7 @@ import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias, useFotosLote } from "@/components/triagem/FotosLoteObrigatorias";
+import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
 // Dados mockados do item para triagem
@@ -160,6 +161,28 @@ export default function FormularioTriagem() {
   const [requerTeste, setRequerTeste] = useState(false);
   const [tipoTeste, setTipoTeste] = useState("");
   const [resultadoTeste, setResultadoTeste] = useState<"aprovado" | "reprovado" | "">("");
+
+  // Estado da amostragem
+  const [amostragemConfig, setAmostragemConfig] = useState<{
+    tamanho: number;
+    metodo: string;
+    criterios: { aceite: number; rejeite: number };
+  } | null>(null);
+  const [itensVerificados, setItensVerificados] = useState(0);
+
+  const handleConfirmarAmostra = (tamanho: number, metodo: string, criterios: { aceite: number; rejeite: number }) => {
+    setAmostragemConfig({ tamanho, metodo, criterios });
+  };
+
+  // Atualiza itens verificados quando volumes são conferidos
+  useEffect(() => {
+    const volumesConferidos = volumes.filter(v => v.conferido).length;
+    if (amostragemConfig && volumesConferidos > 0) {
+      // Simula verificação proporcional aos volumes conferidos
+      const proporcao = volumesConferidos / mockItem.totalVolumes;
+      setItensVerificados(Math.floor(amostragemConfig.tamanho * proporcao));
+    }
+  }, [volumes, amostragemConfig]);
 
   // Cálculos
   const checklistCompleto = Object.values(checklist).every((v) => v);
@@ -364,6 +387,14 @@ export default function FormularioTriagem() {
               onPause={timer.pause}
               onReset={timer.reset}
               startTime={timer.startTime}
+            />
+
+            {/* Amostragem Automática */}
+            <AmostragemAutomatica
+              tamanhoLote={mockItem.qtdTotal}
+              onConfirmarAmostra={handleConfirmarAmostra}
+              itensVerificados={itensVerificados}
+              defeitosEncontrados={totalDefeitosQtd}
             />
 
             {/* Checklist de Inspeção */}
