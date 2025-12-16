@@ -98,6 +98,7 @@ export default function DashboardTrocas() {
   const [periodoSelecionado, setPeriodoSelecionado] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState<string>('todos');
   const [drillDown, setDrillDown] = useState<{ type: 'fornecedor' | 'motivo' | null; value: string | null }>({ type: null, value: null });
+  const [drillDownStatusFilter, setDrillDownStatusFilter] = useState<string>('todos');
 
   // Get unique suppliers
   const fornecedoresUnicos = useMemo(() => {
@@ -305,7 +306,7 @@ export default function DashboardTrocas() {
   const drillDownData = useMemo(() => {
     if (!drillDown.type || !drillDown.value) return [];
     
-    return registrosFiltrados.filter(r => {
+    let filtered = registrosFiltrados.filter(r => {
       if (drillDown.type === 'fornecedor') {
         return r.fornecedor === drillDown.value;
       }
@@ -314,17 +315,26 @@ export default function DashboardTrocas() {
       }
       return false;
     });
-  }, [registrosFiltrados, drillDown]);
+
+    // Apply status filter
+    if (drillDownStatusFilter !== 'todos') {
+      filtered = filtered.filter(r => r.status === drillDownStatusFilter);
+    }
+
+    return filtered;
+  }, [registrosFiltrados, drillDown, drillDownStatusFilter]);
 
   // Handle chart clicks
   const handleFornecedorClick = useCallback((data: any) => {
     if (data?.activePayload?.[0]?.payload?.fornecedorFull) {
+      setDrillDownStatusFilter('todos');
       setDrillDown({ type: 'fornecedor', value: data.activePayload[0].payload.fornecedorFull });
     }
   }, []);
 
   const handleMotivoClick = useCallback((data: any) => {
     if (data?.motivoFull) {
+      setDrillDownStatusFilter('todos');
       setDrillDown({ type: 'motivo', value: data.motivoFull });
     }
   }, []);
@@ -1069,6 +1079,25 @@ export default function DashboardTrocas() {
           </SheetHeader>
           
           <div className="mt-6 space-y-4">
+            {/* Status Filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Filtrar por Status</label>
+              <Select value={drillDownStatusFilter} onValueChange={setDrillDownStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos os status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os status</SelectItem>
+                  <SelectItem value="pendente">Pendente</SelectItem>
+                  <SelectItem value="em_analise">Em Análise</SelectItem>
+                  <SelectItem value="autorizado">Autorizado</SelectItem>
+                  <SelectItem value="enviado">Enviado</SelectItem>
+                  <SelectItem value="concluido">Concluído</SelectItem>
+                  <SelectItem value="recusado">Recusado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Export Buttons */}
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={exportDrillDownToExcel} className="flex-1">
