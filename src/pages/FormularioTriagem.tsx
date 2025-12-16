@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   Camera, 
@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useTriagemTimer } from "@/hooks/useTriagemTimer";
+import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
 // Dados mockados do item para triagem
@@ -86,6 +88,15 @@ export default function FormularioTriagem() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const defeitoFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Timer de triagem
+  const timer = useTriagemTimer();
+
+  // Auto-iniciar timer ao montar o componente
+  useEffect(() => {
+    timer.start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Estado do checklist
   const [checklist, setChecklist] = useState<ChecklistState>({
@@ -205,26 +216,37 @@ export default function FormularioTriagem() {
     }));
   };
 
+  // Formata tempo em minutos/segundos para exibição
+  const formatTimeForDisplay = (seconds: number): string => {
+    if (seconds < 60) return `${seconds} segundos`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return secs > 0 ? `${mins}min ${secs}s` : `${mins} minutos`;
+  };
+
   const handleAprovar = () => {
+    const tempoGasto = timer.stop();
     toast({
       title: "Triagem aprovada!",
-      description: `${qtdAprovada} unidades aprovadas (${percentualAprovacao.toFixed(1)}%)`,
+      description: `${qtdAprovada} unidades aprovadas (${percentualAprovacao.toFixed(1)}%) em ${formatTimeForDisplay(tempoGasto)}`,
     });
     navigate("/triagem");
   };
 
   const handleRessalva = () => {
+    const tempoGasto = timer.stop();
     toast({
       title: "Triagem com ressalva",
-      description: `${qtdAprovada} unidades aprovadas com ${defeitos.length} tipo(s) de defeito registrado(s)`,
+      description: `${qtdAprovada} unidades aprovadas com ${defeitos.length} defeito(s) em ${formatTimeForDisplay(tempoGasto)}`,
     });
     navigate("/triagem");
   };
 
   const handleReprovar = () => {
+    const tempoGasto = timer.stop();
     toast({
       title: "Triagem reprovada",
-      description: "O lote foi marcado para análise",
+      description: `Lote marcado para análise. Tempo: ${formatTimeForDisplay(tempoGasto)}`,
       variant: "destructive",
     });
     navigate("/triagem");
@@ -233,6 +255,17 @@ export default function FormularioTriagem() {
   return (
     <AppLayout title={`Triagem #${mockItem.pedido}`} showBack>
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in pb-32">
+        {/* Timer de Triagem */}
+        <TriagemTimer
+          formattedTime={timer.formattedTime}
+          elapsedSeconds={timer.elapsedSeconds}
+          isRunning={timer.isRunning}
+          onStart={timer.start}
+          onPause={timer.pause}
+          onReset={timer.reset}
+          startTime={timer.startTime}
+        />
+
         {/* Info do Produto */}
         <section className="bg-card rounded-xl p-4 border border-border">
           <div className="flex items-start justify-between">
