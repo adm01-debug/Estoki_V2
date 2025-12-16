@@ -9,7 +9,9 @@ import {
   Circle,
   Plus,
   Trash2,
-  Search
+  Search,
+  RotateCcw,
+  Package
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -156,6 +158,18 @@ export default function FormularioTriagem() {
     quantidade: 1,
   });
   const [editingDefeitoId, setEditingDefeitoId] = useState<number | null>(null);
+
+  // Estado do modal de troca/devolução
+  const [showTrocaDevolucaoModal, setShowTrocaDevolucaoModal] = useState(false);
+  const [trocaDevolucaoData, setTrocaDevolucaoData] = useState<{
+    tipo: "troca" | "devolucao";
+    motivo: string;
+    observacoes: string;
+  }>({
+    tipo: "devolucao",
+    motivo: "",
+    observacoes: "",
+  });
 
   // Estado do teste funcional
   const [requerTeste, setRequerTeste] = useState(false);
@@ -316,12 +330,32 @@ export default function FormularioTriagem() {
   };
 
   const handleReprovar = () => {
+    // Abre modal de troca/devolução ao invés de reprovar diretamente
+    setShowTrocaDevolucaoModal(true);
+  };
+
+  const handleConfirmarTrocaDevolucao = () => {
+    const tempoGasto = timer.stop();
+    const tipoLabel = trocaDevolucaoData.tipo === "troca" ? "Troca" : "Devolução";
+    
+    toast({
+      title: `Triagem reprovada - ${tipoLabel} registrada`,
+      description: `${tipoLabel} criada para ${mockItem.qtdTotal} unidades. Motivo: ${trocaDevolucaoData.motivo || "Não especificado"}. Tempo: ${formatTimeForDisplay(tempoGasto)}`,
+      variant: "destructive",
+    });
+    
+    setShowTrocaDevolucaoModal(false);
+    navigate("/trocas-devolucoes");
+  };
+
+  const handleReprovarSemRegistro = () => {
     const tempoGasto = timer.stop();
     toast({
       title: "Triagem reprovada",
       description: `Lote marcado para análise. Tempo: ${formatTimeForDisplay(tempoGasto)}`,
       variant: "destructive",
     });
+    setShowTrocaDevolucaoModal(false);
     navigate("/triagem");
   };
 
@@ -799,6 +833,115 @@ export default function FormularioTriagem() {
                 </Button>
                 <Button className="flex-1" onClick={handleSaveDefeito}>
                   {editingDefeitoId ? "Salvar" : "Adicionar"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de Troca/Devolução */}
+        <Dialog open={showTrocaDevolucaoModal} onOpenChange={setShowTrocaDevolucaoModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <XCircle className="h-5 w-5 text-destructive" />
+                Registrar Troca/Devolução
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-sm text-foreground font-medium">{mockItem.produto}</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Pedido #{mockItem.pedido} • {mockItem.fornecedor} • {mockItem.qtdTotal} un
+                </p>
+              </div>
+
+              {/* Tipo */}
+              <div>
+                <Label className="text-xs text-muted-foreground mb-2 block">Tipo de Solicitação</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant={trocaDevolucaoData.tipo === "troca" ? "default" : "outline"}
+                    className="h-16 flex flex-col gap-1"
+                    onClick={() => setTrocaDevolucaoData(prev => ({ ...prev, tipo: "troca" }))}
+                  >
+                    <RotateCcw className="h-5 w-5" />
+                    <span>Troca</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={trocaDevolucaoData.tipo === "devolucao" ? "default" : "outline"}
+                    className="h-16 flex flex-col gap-1"
+                    onClick={() => setTrocaDevolucaoData(prev => ({ ...prev, tipo: "devolucao" }))}
+                  >
+                    <Package className="h-5 w-5" />
+                    <span>Devolução</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Motivo */}
+              <div>
+                <Label className="text-xs text-muted-foreground">Motivo</Label>
+                <Select
+                  value={trocaDevolucaoData.motivo}
+                  onValueChange={(v) => setTrocaDevolucaoData(prev => ({ ...prev, motivo: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o motivo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="defeito_fabricacao">Defeito de Fabricação</SelectItem>
+                    <SelectItem value="cor_diferente">Cor Diferente do Pedido</SelectItem>
+                    <SelectItem value="tamanho_errado">Tamanho Errado</SelectItem>
+                    <SelectItem value="produto_danificado">Produto Danificado</SelectItem>
+                    <SelectItem value="quantidade_incorreta">Quantidade Incorreta</SelectItem>
+                    <SelectItem value="produto_errado">Produto Errado</SelectItem>
+                    <SelectItem value="fora_especificacao">Fora da Especificação</SelectItem>
+                    <SelectItem value="outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Observações */}
+              <div>
+                <Label className="text-xs text-muted-foreground">Observações</Label>
+                <Textarea
+                  placeholder="Detalhes adicionais sobre o problema..."
+                  value={trocaDevolucaoData.observacoes}
+                  onChange={(e) => setTrocaDevolucaoData(prev => ({ ...prev, observacoes: e.target.value }))}
+                  rows={3}
+                />
+              </div>
+
+              {/* Ações */}
+              <div className="flex flex-col gap-2 pt-2">
+                <Button 
+                  className="w-full gap-2"
+                  onClick={handleConfirmarTrocaDevolucao}
+                  disabled={!trocaDevolucaoData.motivo}
+                >
+                  {trocaDevolucaoData.tipo === "troca" ? (
+                    <><RotateCcw className="h-4 w-4" /> Registrar Troca</>
+                  ) : (
+                    <><Package className="h-4 w-4" /> Registrar Devolução</>
+                  )}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={handleReprovarSemRegistro}
+                >
+                  Reprovar sem Registro
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="w-full"
+                  onClick={() => setShowTrocaDevolucaoModal(false)}
+                >
+                  Cancelar
                 </Button>
               </div>
             </div>
