@@ -9,7 +9,8 @@ import {
   ArrowLeftRight,
   Settings,
   User,
-  ChevronLeft
+  ChevronLeft,
+  BarChart3
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ interface AppLayoutProps {
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, label: "Início" },
+  { path: "/dashboard", icon: BarChart3, label: "Dashboard" },
   { path: "/recebimento", icon: Package, label: "Receber" },
   { path: "/triagem", icon: Search, label: "Triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque" },
