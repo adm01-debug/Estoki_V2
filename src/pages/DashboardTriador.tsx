@@ -46,6 +46,7 @@ import {
 import { ConquistasResumo, useConquistas } from "@/components/gamificacao/ConquistasSystem";
 import { useConquistaNotificacoes } from "@/components/gamificacao/ConquistaNotificacoes";
 import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
+import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
 
 // Dados do triador atual (simulando usuário logado)
 const triadorAtual = {
@@ -289,13 +290,16 @@ export default function DashboardTriador() {
           />
         </div>
 
-        {/* Conquistas */}
-        <ConquistasResumo
-          conquistas={gamificacao.conquistas}
-          pontosTotal={gamificacao.pontosTotal}
-          nivel={gamificacao.nivel}
-          pontosProximoNivel={gamificacao.pontosProximoNivel}
-        />
+        {/* Conquistas e Desafios */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <ConquistasResumo
+            conquistas={gamificacao.conquistas}
+            pontosTotal={gamificacao.pontosTotal}
+            nivel={gamificacao.nivel}
+            pontosProximoNivel={gamificacao.pontosProximoNivel}
+          />
+          <DesafiosDiarios />
+        </div>
 
         {/* Resumo visual aprovados/reprovados */}
         <Card>
