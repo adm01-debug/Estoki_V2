@@ -35,12 +35,14 @@ import { useToast } from "@/hooks/use-toast";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
+import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
 // Dados mockados do item para triagem
 const mockItem = {
   id: 1,
   pedido: "2638-1",
+  sku: "MOCHILA-EXEC-PRETA",
   produto: "Mochila Executiva Preta",
   qtdTotal: 500,
   totalVolumes: 4,
@@ -379,6 +381,26 @@ export default function FormularioTriagem() {
             </div>
           </div>
         </section>
+
+        {/* Histórico de Defeitos do Produto */}
+        {(() => {
+          const historicoData = mockHistoricoDefeitos[mockItem.sku];
+          return historicoData ? (
+            <DefeitoHistorico
+              sku={mockItem.sku}
+              produto={mockItem.produto}
+              historico={historicoData.historico}
+              totalTriagens={historicoData.totalTriagens}
+            />
+          ) : (
+            <DefeitoHistorico
+              sku={mockItem.sku}
+              produto={mockItem.produto}
+              historico={[]}
+              totalTriagens={0}
+            />
+          );
+        })()}
 
         {/* Contagem por Volume */}
         <VolumeContagem
