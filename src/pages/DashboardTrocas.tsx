@@ -89,8 +89,15 @@ const motivosDefeito = [
 export default function DashboardTrocas() {
   const navigate = useNavigate();
   const [periodoSelecionado, setPeriodoSelecionado] = useState<'7d' | '30d' | '90d' | 'all'>('30d');
+  const [fornecedorSelecionado, setFornecedorSelecionado] = useState<string>('todos');
+
+  // Get unique suppliers
+  const fornecedoresUnicos = useMemo(() => {
+    const fornecedores = [...new Set(mockRegistros.map(r => r.fornecedor))];
+    return fornecedores.sort();
+  }, []);
   
-  // Filter by period
+  // Filter by period and supplier
   const registrosFiltrados = useMemo(() => {
     const now = new Date();
     let cutoffDate = new Date(0);
@@ -110,8 +117,12 @@ export default function DashboardTrocas() {
         cutoffDate = new Date(0);
     }
     
-    return mockRegistros.filter(r => r.dataCriacao >= cutoffDate);
-  }, [periodoSelecionado]);
+    return mockRegistros.filter(r => {
+      const matchesPeriod = r.dataCriacao >= cutoffDate;
+      const matchesFornecedor = fornecedorSelecionado === 'todos' || r.fornecedor === fornecedorSelecionado;
+      return matchesPeriod && matchesFornecedor;
+    });
+  }, [periodoSelecionado, fornecedorSelecionado]);
   
   // Metrics
   const metrics = useMemo(() => {
@@ -293,26 +304,58 @@ export default function DashboardTrocas() {
       }
     >
       <div className="space-y-6">
-        {/* Period Filter */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Período:</span>
-            <Select value={periodoSelecionado} onValueChange={(v) => setPeriodoSelecionado(v as any)}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7d">Últimos 7 dias</SelectItem>
-                <SelectItem value="30d">Últimos 30 dias</SelectItem>
-                <SelectItem value="90d">Últimos 90 dias</SelectItem>
-                <SelectItem value="all">Todo período</SelectItem>
-              </SelectContent>
-            </Select>
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Período:</span>
+              <Select value={periodoSelecionado} onValueChange={(v) => setPeriodoSelecionado(v as any)}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                  <SelectItem value="30d">Últimos 30 dias</SelectItem>
+                  <SelectItem value="90d">Últimos 90 dias</SelectItem>
+                  <SelectItem value="all">Todo período</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">Fornecedor:</span>
+              <Select value={fornecedorSelecionado} onValueChange={setFornecedorSelecionado}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Todos" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os fornecedores</SelectItem>
+                  {fornecedoresUnicos.map(fornecedor => (
+                    <SelectItem key={fornecedor} value={fornecedor}>
+                      {fornecedor}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <Badge variant="outline" className="text-muted-foreground">
-            {registrosFiltrados.length} registro(s) no período
-          </Badge>
+          <div className="flex items-center gap-2">
+            {fornecedorSelecionado !== 'todos' && (
+              <Badge variant="secondary" className="gap-1">
+                {fornecedorSelecionado}
+                <button 
+                  onClick={() => setFornecedorSelecionado('todos')}
+                  className="ml-1 hover:text-destructive"
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+            <Badge variant="outline" className="text-muted-foreground">
+              {registrosFiltrados.length} registro(s)
+            </Badge>
+          </div>
         </div>
         
         {/* KPI Cards */}
