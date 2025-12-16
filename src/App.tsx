@@ -22,6 +22,7 @@ import InventarioCiclico from "./pages/InventarioCiclico";
 import CurvaABC from "./pages/CurvaABC";
 import GestaoTarefas from "./pages/GestaoTarefas";
 import AlertasInteligentes from "./pages/AlertasInteligentes";
+import KPIsOperacionais from "./pages/KPIsOperacionais";
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -50,6 +51,7 @@ function AnimatedRoutes() {
         <Route path="/curva-abc" element={<CurvaABC />} />
         <Route path="/gestao-tarefas" element={<GestaoTarefas />} />
         <Route path="/alertas" element={<AlertasInteligentes />} />
+        <Route path="/kpis" element={<KPIsOperacionais />} />
         <Route path="/inventario" element={<Estoque />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
