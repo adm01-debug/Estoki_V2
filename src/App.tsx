@@ -3,10 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import Recebimento from "./pages/Recebimento";
 import ConferenciaRecebimento from "./pages/ConferenciaRecebimento";
 import Triagem from "./pages/Triagem";
@@ -27,24 +24,21 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-            <Route path="/recebimento" element={<ProtectedRoute><Recebimento /></ProtectedRoute>} />
-            <Route path="/recebimento/:id" element={<ProtectedRoute><ConferenciaRecebimento /></ProtectedRoute>} />
-            <Route path="/triagem" element={<ProtectedRoute><Triagem /></ProtectedRoute>} />
-            <Route path="/triagem/:id" element={<ProtectedRoute><FormularioTriagem /></ProtectedRoute>} />
-            <Route path="/estoque" element={<ProtectedRoute><Estoque /></ProtectedRoute>} />
-            <Route path="/scanner" element={<ProtectedRoute><Scanner /></ProtectedRoute>} />
-            <Route path="/movimentacao" element={<ProtectedRoute><Movimentacao /></ProtectedRoute>} />
-            <Route path="/armazenamento" element={<ProtectedRoute><Armazenamento /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute allowedRoles={["supervisor", "admin"]}><Dashboard /></ProtectedRoute>} />
-            <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
-            <Route path="/inventario" element={<ProtectedRoute><Estoque /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </AuthProvider>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/recebimento" element={<Recebimento />} />
+          <Route path="/recebimento/:id" element={<ConferenciaRecebimento />} />
+          <Route path="/triagem" element={<Triagem />} />
+          <Route path="/triagem/:id" element={<FormularioTriagem />} />
+          <Route path="/estoque" element={<Estoque />} />
+          <Route path="/scanner" element={<Scanner />} />
+          <Route path="/movimentacao" element={<Movimentacao />} />
+          <Route path="/armazenamento" element={<Armazenamento />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
+          <Route path="/inventario" element={<Estoque />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
