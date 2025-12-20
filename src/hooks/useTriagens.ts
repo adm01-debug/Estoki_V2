@@ -3,59 +3,22 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type StatusTriagem = 
-  | 'aguardando' 
-  | 'em_triagem' 
-  | 'aprovado' 
-  | 'ressalva' 
-  | 'reprovado' 
-  | 'conserto' 
-  | 'descarte';
+// Note: Using eventos_triagem table which exists in the schema
 
-export type Prioridade = 'urgente' | 'alta' | 'normal' | 'baixa';
-
-export interface ChecklistTriagem {
-  corConforme: boolean;
-  tamanhoOk: boolean;
-  produtoLimpo: boolean;
-  semAvarias: boolean;
-  embalagemIntegra: boolean;
-  componentesCompletos: boolean;
-  funcionalidadeOk: boolean;
-}
-
-export interface Defeito {
-  tipo: string;
-  descricao?: string;
-  fotos?: string[];
-}
+export type StatusTriagem = 'em_andamento' | 'aprovado' | 'reprovado' | 'ressalva';
 
 export interface Triagem {
   id: string;
-  recebimento_id?: string;
-  pedido: string;
-  produto: string;
-  qtd_total: number;
-  total_volumes: number;
-  qtd_aprovada: number;
-  qtd_reprovada: number;
-  percentual_aprovacao: number;
-  checklist: ChecklistTriagem;
-  defeitos: Defeito[];
-  requer_teste: boolean;
-  tipo_teste?: string;
-  resultado_teste?: string;
-  prioridade: Prioridade;
-  cliente_vip: boolean;
-  cliente_nome?: string;
-  prazo_entrega?: string;
-  status: StatusTriagem;
+  lote_id?: string;
+  produto_id?: string;
+  produto_nome?: string;
   operador_id?: string;
   operador_nome?: string;
-  data_inicio?: string;
+  resultado?: string;
+  observacoes?: string;
+  data_inicio: string;
   data_fim?: string;
   created_at: string;
-  updated_at: string;
 }
 
 export function useTriagens() {
@@ -71,24 +34,31 @@ export function useTriagens() {
       setError(null);
 
       const { data, error: fetchError } = await supabase
-        .from('triagens')
-        .select('*')
+        .from('eventos_triagem')
+        .select(`
+          *,
+          produtos (nome),
+          profiles:operador_id (nome)
+        `)
         .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
-      // Parse JSONB fields
-      const parsed = (data || []).map(item => ({
-        ...item,
-        checklist: typeof item.checklist === 'string' 
-          ? JSON.parse(item.checklist) 
-          : item.checklist,
-        defeitos: typeof item.defeitos === 'string'
-          ? JSON.parse(item.defeitos)
-          : item.defeitos || [],
+      const mapped: Triagem[] = (data || []).map(item => ({
+        id: item.id,
+        lote_id: item.lote_id || undefined,
+        produto_id: item.produto_id || undefined,
+        produto_nome: item.produtos?.nome || undefined,
+        operador_id: item.operador_id || undefined,
+        operador_nome: item.profiles?.nome || undefined,
+        resultado: item.resultado || undefined,
+        observacoes: item.observacoes || undefined,
+        data_inicio: item.data_inicio,
+        data_fim: item.data_fim || undefined,
+        created_at: item.created_at,
       }));
 
-      setTriagens(parsed);
+      setTriagens(mapped);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar triagens';
       setError(message);
@@ -105,7 +75,7 @@ export function useTriagens() {
       .channel('triagens_changes')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'triagens' },
+        { event: '*', schema: 'public', table: 'eventos_triagem' },
         () => fetchTriagens()
       )
       .subscribe();
@@ -115,100 +85,66 @@ export function useTriagens() {
     };
   }, [fetchTriagens]);
 
-  const iniciarTriagem = async (id: string): Promise<boolean> => {
+  const iniciarTriagem = async (
+    produtoId?: string,
+    loteId?: string
+  ): Promise<Triagem | null> => {
     try {
-      const { error: updateError } = await supabase
-        .from('triagens')
-        .update({
-          status: 'em_triagem',
+      const { data, error: insertError } = await supabase
+        .from('eventos_triagem')
+        .insert({
+          produto_id: produtoId,
+          lote_id: loteId,
           operador_id: user?.id,
-          operador_nome: profile?.nome || user?.email,
           data_inicio: new Date().toISOString(),
         })
-        .eq('id', id);
+        .select(`
+          *,
+          produtos (nome),
+          profiles:operador_id (nome)
+        `)
+        .single();
 
-      if (updateError) throw updateError;
+      if (insertError) throw insertError;
 
       toast({
         title: 'Triagem iniciada',
         description: 'Você está agora triando este item',
       });
 
-      return true;
+      return {
+        id: data.id,
+        lote_id: data.lote_id || undefined,
+        produto_id: data.produto_id || undefined,
+        produto_nome: data.produtos?.nome || undefined,
+        operador_id: data.operador_id || undefined,
+        operador_nome: data.profiles?.nome || undefined,
+        resultado: data.resultado || undefined,
+        observacoes: data.observacoes || undefined,
+        data_inicio: data.data_inicio,
+        data_fim: data.data_fim || undefined,
+        created_at: data.created_at,
+      };
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao iniciar triagem';
       toast({ title: 'Erro', description: message, variant: 'destructive' });
-      return false;
-    }
-  };
-
-  const atualizarChecklist = async (
-    id: string, 
-    checklist: ChecklistTriagem
-  ): Promise<boolean> => {
-    try {
-      const { error: updateError } = await supabase
-        .from('triagens')
-        .update({ checklist })
-        .eq('id', id);
-
-      if (updateError) throw updateError;
-      return true;
-    } catch (err) {
-      console.error('Erro ao atualizar checklist:', err);
-      return false;
-    }
-  };
-
-  const registrarDefeito = async (
-    id: string,
-    defeito: Defeito
-  ): Promise<boolean> => {
-    try {
-      const triagem = triagens.find(t => t.id === id);
-      if (!triagem) return false;
-
-      const novosDefeitos = [...triagem.defeitos, defeito];
-
-      const { error: updateError } = await supabase
-        .from('triagens')
-        .update({ defeitos: novosDefeitos })
-        .eq('id', id);
-
-      if (updateError) throw updateError;
-
-      toast({
-        title: 'Defeito registrado',
-        description: `Tipo: ${defeito.tipo}`,
-      });
-
-      return true;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao registrar defeito';
-      toast({ title: 'Erro', description: message, variant: 'destructive' });
-      return false;
+      return null;
     }
   };
 
   const finalizarTriagem = async (
     id: string,
     dados: {
-      qtd_aprovada: number;
-      qtd_reprovada: number;
-      resultado_teste?: string;
-      status: StatusTriagem;
+      resultado: string;
+      observacoes?: string;
     }
   ): Promise<boolean> => {
     try {
-      const percentual = dados.qtd_aprovada + dados.qtd_reprovada > 0
-        ? (dados.qtd_aprovada / (dados.qtd_aprovada + dados.qtd_reprovada)) * 100
-        : 0;
-
       const { error: updateError } = await supabase
-        .from('triagens')
+        .from('eventos_triagem')
         .update({
-          ...dados,
-          percentual_aprovacao: percentual,
+          resultado: dados.resultado,
+          observacoes: dados.observacoes,
           data_fim: new Date().toISOString(),
         })
         .eq('id', id);
@@ -217,7 +153,7 @@ export function useTriagens() {
 
       toast({
         title: 'Triagem finalizada',
-        description: `${dados.qtd_aprovada} aprovados, ${dados.qtd_reprovada} reprovados (${percentual.toFixed(1)}%)`,
+        description: `Resultado: ${dados.resultado}`,
       });
 
       return true;
@@ -231,21 +167,29 @@ export function useTriagens() {
   const getTriagemById = async (id: string): Promise<Triagem | null> => {
     try {
       const { data, error: fetchError } = await supabase
-        .from('triagens')
-        .select('*')
+        .from('eventos_triagem')
+        .select(`
+          *,
+          produtos (nome),
+          profiles:operador_id (nome)
+        `)
         .eq('id', id)
         .single();
 
       if (fetchError) throw fetchError;
 
       return {
-        ...data,
-        checklist: typeof data.checklist === 'string'
-          ? JSON.parse(data.checklist)
-          : data.checklist,
-        defeitos: typeof data.defeitos === 'string'
-          ? JSON.parse(data.defeitos)
-          : data.defeitos || [],
+        id: data.id,
+        lote_id: data.lote_id || undefined,
+        produto_id: data.produto_id || undefined,
+        produto_nome: data.produtos?.nome || undefined,
+        operador_id: data.operador_id || undefined,
+        operador_nome: data.profiles?.nome || undefined,
+        resultado: data.resultado || undefined,
+        observacoes: data.observacoes || undefined,
+        data_inicio: data.data_inicio,
+        data_fim: data.data_fim || undefined,
+        created_at: data.created_at,
       };
     } catch (err) {
       console.error('Erro ao buscar triagem:', err);
@@ -262,16 +206,17 @@ export function useTriagens() {
       hoje.setHours(0, 0, 0, 0);
 
       const { data, error } = await supabase
-        .from('triagens')
+        .from('eventos_triagem')
         .select('*')
         .eq('operador_id', user.id)
-        .gte('data_fim', hoje.toISOString());
+        .gte('data_fim', hoje.toISOString())
+        .not('data_fim', 'is', null);
 
       if (error) throw error;
 
       const triagensHoje = data || [];
       const totalHoje = triagensHoje.length;
-      const aprovadas = triagensHoje.filter(t => t.status === 'aprovado').length;
+      const aprovadas = triagensHoje.filter(t => t.resultado === 'aprovado').length;
       const tempoMedio = triagensHoje.reduce((acc, t) => {
         if (t.data_inicio && t.data_fim) {
           const inicio = new Date(t.data_inicio);
@@ -299,8 +244,6 @@ export function useTriagens() {
     error,
     refetch: fetchTriagens,
     iniciarTriagem,
-    atualizarChecklist,
-    registrarDefeito,
     finalizarTriagem,
     getTriagemById,
     getEstatisticasOperador,

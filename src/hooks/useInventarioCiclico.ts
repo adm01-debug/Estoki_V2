@@ -3,8 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type StatusCiclo = 'agendado' | 'em_andamento' | 'pausado' | 'concluido' | 'cancelado';
+export type StatusCiclo = 'agendado' | 'em_andamento' | 'concluido' | 'cancelado';
 export type TipoCiclo = 'completo' | 'amostragem' | 'curva_a' | 'curva_b' | 'curva_c' | 'posicao' | 'zona';
+export type StatusContagem = 'pendente' | 'em_andamento' | 'concluido' | 'divergencia';
 
 export interface Ciclo {
   id: string;
@@ -38,7 +39,7 @@ export interface Contagem {
   quantidade_sistema: number;
   quantidade_contada?: number;
   quantidade_recontada?: number;
-  status: 'pendente' | 'contado' | 'divergente' | 'ajustado';
+  status: StatusContagem;
   recontagem_necessaria: boolean;
   contado_por?: string;
   recontado_por?: string;
@@ -136,7 +137,7 @@ export function useInventarioCiclico() {
           nome: dados.nome,
           descricao: dados.descricao,
           tipo: dados.tipo,
-          status: 'agendado',
+          status: 'agendado' as const,
           data_agendada: dados.data_agendada,
           zona_alvo: dados.zona_alvo,
           porta_palete_alvo: dados.porta_palete_alvo,
@@ -189,7 +190,7 @@ export function useInventarioCiclico() {
       const { error: updateError } = await supabase
         .from('inventario_ciclos')
         .update({
-          status: 'em_andamento',
+          status: 'em_andamento' as const,
           data_inicio: new Date().toISOString(),
         })
         .eq('id', id);
@@ -211,9 +212,10 @@ export function useInventarioCiclico() {
 
   const pausarCiclo = async (id: string): Promise<boolean> => {
     try {
+      // Pausar não existe no enum, então volta para agendado
       const { error: updateError } = await supabase
         .from('inventario_ciclos')
-        .update({ status: 'pausado' })
+        .update({ status: 'agendado' as const })
         .eq('id', id);
 
       if (updateError) throw updateError;
@@ -232,7 +234,7 @@ export function useInventarioCiclico() {
       const { error: updateError } = await supabase
         .from('inventario_ciclos')
         .update({
-          status: 'concluido',
+          status: 'concluido' as const,
           data_fim: new Date().toISOString(),
         })
         .eq('id', id);
@@ -269,12 +271,13 @@ export function useInventarioCiclico() {
 
       if (contagem) {
         const divergencia = quantidadeContada !== contagem.quantidade_sistema;
+        const newStatus: StatusContagem = divergencia ? 'divergencia' : 'concluido';
         
         const { error: updateError } = await supabase
           .from('inventario_contagens')
           .update({
             quantidade_contada: quantidadeContada,
-            status: divergencia ? 'divergente' : 'contado',
+            status: newStatus,
             recontagem_necessaria: divergencia,
             contado_por: user?.id,
             data_contagem: new Date().toISOString(),
@@ -287,17 +290,17 @@ export function useInventarioCiclico() {
         // Criar nova contagem
         const { error: insertError } = await supabase
           .from('inventario_contagens')
-          .insert({
+          .insert([{
             ciclo_id: cicloId,
             posicao_id: posicaoId,
             quantidade_sistema: 0,
             quantidade_contada: quantidadeContada,
-            status: 'contado',
+            status: 'concluido' as StatusContagem,
             recontagem_necessaria: false,
             contado_por: user?.id,
             data_contagem: new Date().toISOString(),
             observacoes: observacao,
-          });
+          }]);
 
         if (insertError) throw insertError;
       }
@@ -365,7 +368,7 @@ export function useInventarioCiclico() {
         quantidade_sistema: c.quantidade_sistema,
         quantidade_contada: c.quantidade_contada || undefined,
         quantidade_recontada: c.quantidade_recontada || undefined,
-        status: c.status as Contagem['status'],
+        status: c.status as StatusContagem,
         recontagem_necessaria: c.recontagem_necessaria || false,
         contado_por: c.contado_por || undefined,
         recontado_por: c.recontado_por || undefined,

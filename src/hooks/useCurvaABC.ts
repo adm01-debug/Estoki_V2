@@ -80,10 +80,10 @@ export function useCurvaABC() {
         .select('produto_id, quantidade, tipo_evento')
         .gte('created_at', trintaDiasAtras.toISOString());
 
-      // Calcular giro por produto (usando tipo_evento)
+      // Calcular giro por produto (usando tipo_evento - saida_transporte ou separacao indicam saída)
       const girosPorProduto: Record<string, number> = {};
       (movimentacoes || []).forEach(mov => {
-        if (mov.produto_id && mov.tipo_evento === 'expedicao') {
+        if (mov.produto_id && (mov.tipo_evento === 'saida_transporte' || mov.tipo_evento === 'separacao')) {
           girosPorProduto[mov.produto_id] = (girosPorProduto[mov.produto_id] || 0) + (mov.quantidade || 0);
         }
       });
@@ -134,7 +134,7 @@ export function useCurvaABC() {
 
       // Calcular percentuais e classificação
       let acumulado = 0;
-      produtosProcessados.forEach((p, index) => {
+      produtosProcessados.forEach((p) => {
         p.percentual_valor = valorTotalGeral > 0 
           ? (p.valor_total / valorTotalGeral) * 100 
           : 0;

@@ -39,17 +39,23 @@ export function useProdutividade() {
         .select(`
           id,
           nome,
-          email,
-          user_roles (role)
+          email
         `);
 
       if (profilesError) throw profilesError;
+
+      // Fetch roles separately
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      const rolesMap = new Map((roles || []).map(r => [r.user_id, r.role]));
 
       const ops = (profiles || []).map(p => ({
         id: p.id,
         nome: p.nome || p.email || 'Sem nome',
         email: p.email || '',
-        role: p.user_roles?.[0]?.role || 'operador',
+        role: rolesMap.get(p.id) || 'operador',
       }));
 
       setOperadores(ops);
@@ -69,7 +75,7 @@ export function useProdutividade() {
 
       // Calcular data de início do período
       const agora = new Date();
-      let dataInicio = new Date();
+      const dataInicio = new Date();
       
       switch (periodo) {
         case 'hoje':
@@ -86,10 +92,10 @@ export function useProdutividade() {
       const metricasCalculadas: MetricaOperador[] = [];
 
       for (const op of ops) {
-        // Buscar triagens do operador
+        // Buscar eventos de triagem do operador (tabela eventos_triagem)
         const { data: triagens } = await supabase
-          .from('triagens')
-          .select('*')
+          .from('eventos_triagem')
+          .select('id, data_inicio, data_fim, resultado')
           .eq('operador_id', op.id)
           .gte('data_fim', dataInicio.toISOString())
           .not('data_fim', 'is', null);
@@ -97,7 +103,7 @@ export function useProdutividade() {
         // Buscar tarefas concluídas
         const { data: tarefas } = await supabase
           .from('tarefas')
-          .select('*')
+          .select('id')
           .eq('operador_id', op.id)
           .eq('status', 'concluida')
           .gte('updated_at', dataInicio.toISOString());
@@ -113,23 +119,29 @@ export function useProdutividade() {
         const triagensRealizadas = triagens?.length || 0;
         
         let tempoTotal = 0;
-        let aprovacaoTotal = 0;
+        let aprovados = 0;
         
-        triagens?.forEach(t => {
+        (triagens || []).forEach(t => {
           if (t.data_inicio && t.data_fim) {
             const inicio = new Date(t.data_inicio);
             const fim = new Date(t.data_fim);
             tempoTotal += (fim.getTime() - inicio.getTime()) / 60000; // em minutos
           }
-          aprovacaoTotal += t.percentual_aprovacao || 0;
+          if (t.resultado === 'aprovado') {
+            aprovados++;
+          }
         });
+
+        const aprovacaoMedia = triagensRealizadas > 0 
+          ? (aprovados / triagensRealizadas) * 100 
+          : 0;
 
         metricasCalculadas.push({
           operadorId: op.id,
           operadorNome: op.nome,
           triagensRealizadas,
           tempoMedioTriagem: triagensRealizadas > 0 ? Math.round(tempoTotal / triagensRealizadas) : 0,
-          aprovacaoMedia: triagensRealizadas > 0 ? Math.round((aprovacaoTotal / triagensRealizadas) * 10) / 10 : 0,
+          aprovacaoMedia: Math.round(aprovacaoMedia * 10) / 10,
           tarefasConcluidas: tarefas?.length || 0,
           xpTotal: gamificacao?.xp_total || 0,
           nivel: gamificacao?.nivel || 1,
@@ -161,9 +173,9 @@ export function useProdutividade() {
       const dataInicio = new Date();
       dataInicio.setDate(dataInicio.getDate() - dias);
 
-      // Buscar triagens
+      // Buscar triagens (eventos_triagem)
       const { data: triagens } = await supabase
-        .from('triagens')
+        .from('eventos_triagem')
         .select('data_fim, data_inicio')
         .eq('operador_id', operadorId)
         .gte('data_fim', dataInicio.toISOString())
@@ -196,7 +208,8 @@ export function useProdutividade() {
       // Contar triagens e calcular tempo
       const temposPorDia: Record<string, number[]> = {};
       
-      triagens?.forEach(t => {
+      (triagens || []).forEach(t => {
+        if (!t.data_fim) return;
         const dataStr = t.data_fim.split('T')[0];
         if (metricasPorDia[dataStr]) {
           metricasPorDia[dataStr].triagens++;
@@ -223,7 +236,7 @@ export function useProdutividade() {
       });
 
       // Contar tarefas
-      tarefas?.forEach(t => {
+      (tarefas || []).forEach(t => {
         const dataStr = t.updated_at.split('T')[0];
         if (metricasPorDia[dataStr]) {
           metricasPorDia[dataStr].tarefas++;
