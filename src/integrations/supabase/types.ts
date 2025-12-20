@@ -221,6 +221,175 @@ export type Database = {
           },
         ]
       }
+      conquistas_definicoes: {
+        Row: {
+          ativo: boolean
+          categoria: string
+          codigo: string
+          created_at: string
+          criterio: string
+          descricao: string
+          icone: string
+          id: string
+          meta: number | null
+          nome: string
+          pontos: number
+          raridade: string
+        }
+        Insert: {
+          ativo?: boolean
+          categoria?: string
+          codigo: string
+          created_at?: string
+          criterio: string
+          descricao: string
+          icone?: string
+          id?: string
+          meta?: number | null
+          nome: string
+          pontos?: number
+          raridade?: string
+        }
+        Update: {
+          ativo?: boolean
+          categoria?: string
+          codigo?: string
+          created_at?: string
+          criterio?: string
+          descricao?: string
+          icone?: string
+          id?: string
+          meta?: number | null
+          nome?: string
+          pontos?: number
+          raridade?: string
+        }
+        Relationships: []
+      }
+      conquistas_usuarios: {
+        Row: {
+          conquista_id: string
+          created_at: string
+          data_desbloqueio: string | null
+          desbloqueada: boolean
+          id: string
+          progresso: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          conquista_id: string
+          created_at?: string
+          data_desbloqueio?: string | null
+          desbloqueada?: boolean
+          id?: string
+          progresso?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          conquista_id?: string
+          created_at?: string
+          data_desbloqueio?: string | null
+          desbloqueada?: boolean
+          id?: string
+          progresso?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conquistas_usuarios_conquista_id_fkey"
+            columns: ["conquista_id"]
+            isOneToOne: false
+            referencedRelation: "conquistas_definicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      desafios_diarios: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          data_ativo: string
+          descricao: string
+          dificuldade: string
+          id: string
+          meta: number
+          tipo: string
+          titulo: string
+          xp_recompensa: number
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          data_ativo: string
+          descricao: string
+          dificuldade?: string
+          id?: string
+          meta: number
+          tipo: string
+          titulo: string
+          xp_recompensa?: number
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          data_ativo?: string
+          descricao?: string
+          dificuldade?: string
+          id?: string
+          meta?: number
+          tipo?: string
+          titulo?: string
+          xp_recompensa?: number
+        }
+        Relationships: []
+      }
+      desafios_usuarios: {
+        Row: {
+          concluido: boolean
+          created_at: string
+          data_conclusao: string | null
+          desafio_id: string
+          id: string
+          progresso: number
+          updated_at: string
+          user_id: string
+          xp_coletado: boolean
+        }
+        Insert: {
+          concluido?: boolean
+          created_at?: string
+          data_conclusao?: string | null
+          desafio_id: string
+          id?: string
+          progresso?: number
+          updated_at?: string
+          user_id: string
+          xp_coletado?: boolean
+        }
+        Update: {
+          concluido?: boolean
+          created_at?: string
+          data_conclusao?: string | null
+          desafio_id?: string
+          id?: string
+          progresso?: number
+          updated_at?: string
+          user_id?: string
+          xp_coletado?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "desafios_usuarios_desafio_id_fkey"
+            columns: ["desafio_id"]
+            isOneToOne: false
+            referencedRelation: "desafios_diarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       estoque_posicao: {
         Row: {
           created_at: string
@@ -407,6 +576,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gamificacao_usuarios: {
+        Row: {
+          created_at: string
+          id: string
+          nivel: number
+          updated_at: string
+          user_id: string
+          xp_proximo_nivel: number
+          xp_total: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nivel?: number
+          updated_at?: string
+          user_id: string
+          xp_proximo_nivel?: number
+          xp_total?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nivel?: number
+          updated_at?: string
+          user_id?: string
+          xp_proximo_nivel?: number
+          xp_total?: number
+        }
+        Relationships: []
       }
       inventario_ciclos: {
         Row: {
@@ -1327,6 +1526,63 @@ export type Database = {
           },
         ]
       }
+      streaks_historico: {
+        Row: {
+          created_at: string
+          data: string
+          id: string
+          user_id: string
+          xp_ganho: number
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          id?: string
+          user_id: string
+          xp_ganho?: number
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          id?: string
+          user_id?: string
+          xp_ganho?: number
+        }
+        Relationships: []
+      }
+      streaks_usuarios: {
+        Row: {
+          created_at: string
+          id: string
+          streak_atual: number
+          streak_recorde: number
+          ultimo_checkin: string | null
+          updated_at: string
+          user_id: string
+          xp_bonus_coletado: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          streak_atual?: number
+          streak_recorde?: number
+          ultimo_checkin?: string | null
+          updated_at?: string
+          user_id: string
+          xp_bonus_coletado?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          streak_atual?: number
+          streak_recorde?: number
+          ultimo_checkin?: string | null
+          updated_at?: string
+          user_id?: string
+          xp_bonus_coletado?: number
+        }
+        Relationships: []
+      }
       tarefas: {
         Row: {
           created_at: string
@@ -1459,11 +1715,65 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_historico: {
+        Row: {
+          created_at: string
+          descricao: string
+          id: string
+          quantidade: number
+          referencia_id: string | null
+          tipo: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          descricao: string
+          id?: string
+          quantidade: number
+          referencia_id?: string | null
+          tipo: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string
+          id?: string
+          quantidade?: number
+          referencia_id?: string | null
+          tipo?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      adicionar_xp: {
+        Args: {
+          p_descricao: string
+          p_quantidade: number
+          p_referencia_id?: string
+          p_tipo: string
+          p_user_id: string
+        }
+        Returns: {
+          created_at: string
+          id: string
+          nivel: number
+          updated_at: string
+          user_id: string
+          xp_proximo_nivel: number
+          xp_total: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "gamificacao_usuarios"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -1474,6 +1784,25 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      registrar_checkin_diario: {
+        Args: { p_user_id: string }
+        Returns: {
+          created_at: string
+          id: string
+          streak_atual: number
+          streak_recorde: number
+          ultimo_checkin: string | null
+          updated_at: string
+          user_id: string
+          xp_bonus_coletado: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "streaks_usuarios"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
