@@ -134,7 +134,7 @@ export function useRecebimentos() {
     };
   }, [fetchRecebimentos]);
 
-  const createRecebimento = async (input: RecebimentoInput): Promise<Recebimento | null> => {
+  const createRecebimento = async (input: RecebimentoInput & { status?: StatusRecebimento }): Promise<Recebimento | null> => {
     try {
       const { data, error: insertError } = await supabase
         .from('lotes')
@@ -151,7 +151,7 @@ export function useRecebimentos() {
           data_fabricacao: input.data_fabricacao,
           previsao_chegada: input.previsao_chegada,
           pedido_compra: input.pedido_compra,
-          status: 'aguardando',
+          status: input.status || 'aguardando',
         }])
         .select(`
           id,
