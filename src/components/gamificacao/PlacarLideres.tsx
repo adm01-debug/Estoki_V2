@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,34 +16,7 @@ import {
   Award
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-interface RankingEntry {
-  id: string;
-  nome: string;
-  xpTotal: number;
-  xpSemana: number;
-  xpMes: number;
-  conquistas: number;
-  conquistasSemana: number;
-  conquistasMes: number;
-  nivel: number;
-  posicaoAnterior: number;
-  avatar?: string;
-}
-
-// Mock data para demonstração
-const mockRankingData: RankingEntry[] = [
-  { id: '1', nome: 'Carlos Silva', xpTotal: 4850, xpSemana: 850, xpMes: 2400, conquistas: 12, conquistasSemana: 2, conquistasMes: 5, nivel: 8, posicaoAnterior: 2 },
-  { id: '2', nome: 'Ana Santos', xpTotal: 4200, xpSemana: 920, xpMes: 2100, conquistas: 10, conquistasSemana: 3, conquistasMes: 4, nivel: 7, posicaoAnterior: 1 },
-  { id: '3', nome: 'Pedro Costa', xpTotal: 3800, xpSemana: 650, xpMes: 1800, conquistas: 9, conquistasSemana: 1, conquistasMes: 3, nivel: 6, posicaoAnterior: 3 },
-  { id: '4', nome: 'Maria Oliveira', xpTotal: 3500, xpSemana: 780, xpMes: 1650, conquistas: 8, conquistasSemana: 2, conquistasMes: 3, nivel: 6, posicaoAnterior: 5 },
-  { id: '5', nome: 'João Ferreira', xpTotal: 3200, xpSemana: 520, xpMes: 1400, conquistas: 7, conquistasSemana: 1, conquistasMes: 2, nivel: 5, posicaoAnterior: 4 },
-  { id: '6', nome: 'Lucia Mendes', xpTotal: 2900, xpSemana: 480, xpMes: 1200, conquistas: 6, conquistasSemana: 1, conquistasMes: 2, nivel: 5, posicaoAnterior: 7 },
-  { id: '7', nome: 'Roberto Lima', xpTotal: 2600, xpSemana: 350, xpMes: 1100, conquistas: 5, conquistasSemana: 0, conquistasMes: 1, nivel: 4, posicaoAnterior: 6 },
-  { id: '8', nome: 'Fernanda Rocha', xpTotal: 2300, xpSemana: 420, xpMes: 950, conquistas: 5, conquistasSemana: 1, conquistasMes: 2, nivel: 4, posicaoAnterior: 8 },
-];
-
-type PeriodoRanking = 'semanal' | 'mensal' | 'geral';
+import { useRanking, RankingEntry, PeriodoRanking } from '@/hooks/useRanking';
 
 const getPosicaoIcon = (posicao: number) => {
   switch (posicao) {
@@ -58,7 +31,15 @@ const getPosicaoIcon = (posicao: number) => {
   }
 };
 
-const getTendenciaIcon = (posicaoAtual: number, posicaoAnterior: number) => {
+const getTendenciaIcon = (posicaoAtual: number, posicaoAnterior?: number) => {
+  if (!posicaoAnterior) {
+    return (
+      <div className="flex items-center text-muted-foreground">
+        <Minus className="h-4 w-4" />
+      </div>
+    );
+  }
+
   const diff = posicaoAnterior - posicaoAtual;
   if (diff > 0) {
     return (
@@ -106,29 +87,24 @@ const getPodiumColor = (posicao: number) => {
 
 interface RankingItemProps {
   entry: RankingEntry;
-  posicao: number;
-  periodo: PeriodoRanking;
 }
 
-const RankingItem: React.FC<RankingItemProps> = ({ entry, posicao, periodo }) => {
-  const xp = periodo === 'semanal' ? entry.xpSemana : periodo === 'mensal' ? entry.xpMes : entry.xpTotal;
-  const conquistas = periodo === 'semanal' ? entry.conquistasSemana : periodo === 'mensal' ? entry.conquistasMes : entry.conquistas;
-
+const RankingItem: React.FC<RankingItemProps> = ({ entry }) => {
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: posicao * 0.05 }}
+      transition={{ delay: entry.posicao * 0.05 }}
       className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
-        posicao <= 3 ? 'bg-accent/50' : 'hover:bg-accent/30'
+        entry.posicao <= 3 ? 'bg-accent/50' : 'hover:bg-accent/30'
       }`}
     >
       <div className="w-10 flex justify-center">
-        {getPosicaoIcon(posicao)}
+        {getPosicaoIcon(entry.posicao)}
       </div>
 
-      <Avatar className={`h-10 w-10 ${posicao <= 3 ? getPodiumColor(posicao) : ''}`}>
-        <AvatarFallback className={posicao <= 3 ? 'bg-transparent' : ''}>
+      <Avatar className={`h-10 w-10 ${entry.posicao <= 3 ? getPodiumColor(entry.posicao) : ''}`}>
+        <AvatarFallback className={entry.posicao <= 3 ? 'bg-transparent' : ''}>
           {getInitials(entry.nome)}
         </AvatarFallback>
       </Avatar>
@@ -143,17 +119,17 @@ const RankingItem: React.FC<RankingItemProps> = ({ entry, posicao, periodo }) =>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
             <Zap className="h-3 w-3 text-yellow-500" />
-            {xp.toLocaleString()} XP
+            {entry.xp_total.toLocaleString()} XP
           </span>
           <span className="flex items-center gap-1">
             <Award className="h-3 w-3 text-purple-500" />
-            {conquistas} conquistas
+            {entry.conquistas} conquistas
           </span>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {getTendenciaIcon(posicao, entry.posicaoAnterior)}
+        {getTendenciaIcon(entry.posicao, entry.posicao_anterior)}
       </div>
     </motion.div>
   );
@@ -161,14 +137,10 @@ const RankingItem: React.FC<RankingItemProps> = ({ entry, posicao, periodo }) =>
 
 interface PodiumProps {
   top3: RankingEntry[];
-  periodo: PeriodoRanking;
 }
 
-const Podium: React.FC<PodiumProps> = ({ top3, periodo }) => {
+const Podium: React.FC<PodiumProps> = ({ top3 }) => {
   if (top3.length < 3) return null;
-
-  const getXp = (entry: RankingEntry) => 
-    periodo === 'semanal' ? entry.xpSemana : periodo === 'mensal' ? entry.xpMes : entry.xpTotal;
 
   return (
     <div className="flex justify-center items-end gap-4 py-6">
@@ -185,7 +157,7 @@ const Podium: React.FC<PodiumProps> = ({ top3, periodo }) => {
           </AvatarFallback>
         </Avatar>
         <span className="text-sm font-medium text-center max-w-20 truncate">{top3[1].nome}</span>
-        <span className="text-xs text-muted-foreground">{getXp(top3[1]).toLocaleString()} XP</span>
+        <span className="text-xs text-muted-foreground">{top3[1].xp_total.toLocaleString()} XP</span>
         <div className="w-20 h-16 bg-gradient-to-t from-gray-400 to-gray-300 rounded-t-lg mt-2 flex items-center justify-center">
           <Medal className="h-8 w-8 text-white" />
         </div>
@@ -207,7 +179,7 @@ const Podium: React.FC<PodiumProps> = ({ top3, periodo }) => {
           </Avatar>
         </div>
         <span className="text-sm font-medium text-center max-w-24 truncate">{top3[0].nome}</span>
-        <span className="text-xs text-muted-foreground">{getXp(top3[0]).toLocaleString()} XP</span>
+        <span className="text-xs text-muted-foreground">{top3[0].xp_total.toLocaleString()} XP</span>
         <div className="w-24 h-24 bg-gradient-to-t from-yellow-500 to-yellow-400 rounded-t-lg mt-2 flex items-center justify-center">
           <Trophy className="h-10 w-10 text-white" />
         </div>
@@ -226,7 +198,7 @@ const Podium: React.FC<PodiumProps> = ({ top3, periodo }) => {
           </AvatarFallback>
         </Avatar>
         <span className="text-sm font-medium text-center max-w-20 truncate">{top3[2].nome}</span>
-        <span className="text-xs text-muted-foreground">{getXp(top3[2]).toLocaleString()} XP</span>
+        <span className="text-xs text-muted-foreground">{top3[2].xp_total.toLocaleString()} XP</span>
         <div className="w-20 h-12 bg-gradient-to-t from-amber-600 to-amber-500 rounded-t-lg mt-2 flex items-center justify-center">
           <Medal className="h-6 w-6 text-white" />
         </div>
@@ -236,24 +208,59 @@ const Podium: React.FC<PodiumProps> = ({ top3, periodo }) => {
 };
 
 export const PlacarLideres: React.FC = () => {
-  const [periodo, setPeriodo] = useState<PeriodoRanking>('semanal');
+  const {
+    ranking,
+    top3,
+    restante,
+    loading,
+    periodo,
+    setPeriodo
+  } = useRanking();
 
-  const rankingSorted = useMemo(() => {
-    const sorted = [...mockRankingData].sort((a, b) => {
-      switch (periodo) {
-        case 'semanal':
-          return b.xpSemana - a.xpSemana;
-        case 'mensal':
-          return b.xpMes - a.xpMes;
-        default:
-          return b.xpTotal - a.xpTotal;
-      }
-    });
-    return sorted;
-  }, [periodo]);
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            Placar de Líderes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="animate-pulse space-y-4">
+            <div className="flex justify-center items-end gap-4 py-6">
+              <div className="h-32 w-20 bg-muted rounded-t-lg" />
+              <div className="h-40 w-24 bg-muted rounded-t-lg" />
+              <div className="h-24 w-20 bg-muted rounded-t-lg" />
+            </div>
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-16 bg-muted rounded-lg" />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  const top3 = rankingSorted.slice(0, 3);
-  const restOfRanking = rankingSorted.slice(3);
+  if (ranking.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-yellow-500" />
+            Placar de Líderes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <Trophy className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>Nenhum participante no ranking ainda.</p>
+            <p className="text-sm mt-1">Seja o primeiro a ganhar XP!</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -283,18 +290,15 @@ export const PlacarLideres: React.FC = () => {
           </TabsList>
 
           <TabsContent value={periodo} className="mt-0">
-            <Podium top3={top3} periodo={periodo} />
+            {top3.length >= 3 && <Podium top3={top3} />}
 
-            <div className="border-t pt-4 mt-4 space-y-1">
-              {restOfRanking.map((entry, index) => (
-                <RankingItem
-                  key={entry.id}
-                  entry={entry}
-                  posicao={index + 4}
-                  periodo={periodo}
-                />
-              ))}
-            </div>
+            {restante.length > 0 && (
+              <div className="border-t pt-4 mt-4 space-y-1">
+                {restante.map((entry) => (
+                  <RankingItem key={entry.id} entry={entry} />
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>
@@ -304,7 +308,43 @@ export const PlacarLideres: React.FC = () => {
 
 // Componente resumido para exibir no dashboard
 export const PlacarLideresResumo: React.FC = () => {
-  const top3 = mockRankingData.slice(0, 3);
+  const { top3, loading } = useRanking();
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Trophy className="h-4 w-4 text-yellow-500" />
+            Top 3 da Semana
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <div key={i} className="animate-pulse h-12 bg-muted rounded-lg" />
+          ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (top3.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Trophy className="h-4 w-4 text-yellow-500" />
+            Top 3 da Semana
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground text-center py-4">
+            Nenhum participante ainda
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -332,7 +372,7 @@ export const PlacarLideresResumo: React.FC = () => {
               <span className="text-sm font-medium truncate block">{entry.nome}</span>
             </div>
             <span className="text-sm text-muted-foreground">
-              {entry.xpSemana} XP
+              {entry.xp_total.toLocaleString()} XP
             </span>
           </div>
         ))}
