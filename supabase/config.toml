@@ -1,1 +1,4 @@
 project_id = "oztttjpqtbubfyhiypld"
+
+[functions.gerar-desafios-diarios]
+verify_jwt = false

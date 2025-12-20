@@ -2,15 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import type { Database } from '@/integrations/supabase/types';
 
-export type TipoMovimentacao = 
-  | 'recebimento' 
-  | 'armazenamento' 
-  | 'transferencia' 
-  | 'saida_gravacao' 
-  | 'retorno_gravacao' 
-  | 'expedicao' 
-  | 'ajuste';
+type TipoEventoRastreamento = Database['public']['Enums']['tipo_evento_rastreamento'];
+
+export type TipoMovimentacao = TipoEventoRastreamento;
 
 export interface Movimentacao {
   id: string;
@@ -18,13 +14,12 @@ export interface Movimentacao {
   produto_id?: string;
   produto_nome?: string;
   lote_id?: string;
-  lote_codigo?: string;
+  lote_numero?: string;
   quantidade: number;
-  origem?: string;
-  destino?: string;
-  observacao?: string;
-  responsavel_id: string;
-  responsavel_nome?: string;
+  localizacao?: string;
+  descricao: string;
+  operador_id?: string;
+  operador_nome?: string;
   created_at: string;
 }
 
@@ -33,9 +28,8 @@ export interface MovimentacaoInput {
   produto_id?: string;
   lote_id?: string;
   quantidade: number;
-  origem?: string;
-  destino?: string;
-  observacao?: string;
+  localizacao?: string;
+  descricao: string;
 }
 
 export function useMovimentacoes() {
@@ -43,7 +37,7 @@ export function useMovimentacoes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
 
   const fetchMovimentacoes = useCallback(async (limit = 50) => {
     try {
@@ -55,8 +49,8 @@ export function useMovimentacoes() {
         .select(`
           *,
           produtos (nome),
-          lotes (codigo),
-          profiles:responsavel_id (nome)
+          lotes (numero_lote),
+          profiles:operador_id (nome)
         `)
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -65,17 +59,16 @@ export function useMovimentacoes() {
 
       const mapped = (data || []).map(mov => ({
         id: mov.id,
-        tipo: mov.tipo_movimento as TipoMovimentacao,
-        produto_id: mov.produto_id,
-        produto_nome: mov.produtos?.nome,
-        lote_id: mov.lote_id,
-        lote_codigo: mov.lotes?.codigo,
+        tipo: mov.tipo_evento as TipoMovimentacao,
+        produto_id: mov.produto_id || undefined,
+        produto_nome: mov.produtos?.nome || undefined,
+        lote_id: mov.lote_id || undefined,
+        lote_numero: mov.lotes?.numero_lote || undefined,
         quantidade: mov.quantidade || 0,
-        origem: mov.posicao_origem,
-        destino: mov.posicao_destino,
-        observacao: mov.observacao,
-        responsavel_id: mov.responsavel_id,
-        responsavel_nome: mov.profiles?.nome,
+        localizacao: mov.localizacao || undefined,
+        descricao: mov.descricao,
+        operador_id: mov.operador_id || undefined,
+        operador_nome: mov.profiles?.nome || undefined,
         created_at: mov.created_at,
       }));
 
@@ -120,14 +113,13 @@ export function useMovimentacoes() {
       const { error: insertError } = await supabase
         .from('rastreamento_historico')
         .insert({
-          tipo_movimento: input.tipo,
+          tipo_evento: input.tipo,
           produto_id: input.produto_id,
           lote_id: input.lote_id,
           quantidade: input.quantidade,
-          posicao_origem: input.origem,
-          posicao_destino: input.destino,
-          observacao: input.observacao,
-          responsavel_id: user.id,
+          localizacao: input.localizacao,
+          descricao: input.descricao,
+          operador_id: user.id,
         });
 
       if (insertError) throw insertError;
@@ -147,68 +139,66 @@ export function useMovimentacoes() {
 
   const transferir = async (
     loteId: string,
-    origem: string,
-    destino: string,
+    localizacao: string,
     quantidade: number,
-    observacao?: string
+    descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'transferencia',
+      tipo: 'armazenamento',
       lote_id: loteId,
       quantidade,
-      origem,
-      destino,
-      observacao,
+      localizacao,
+      descricao: descricao || 'Transferência de estoque',
     });
   };
 
   const registrarEntrada = async (
     produtoId: string,
     quantidade: number,
-    destino: string,
+    localizacao: string,
     loteId?: string,
-    observacao?: string
+    descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'recebimento',
+      tipo: 'recebimento_nf',
       produto_id: produtoId,
       lote_id: loteId,
       quantidade,
-      destino,
-      observacao,
+      localizacao,
+      descricao: descricao || 'Entrada de material',
     });
   };
 
   const registrarSaida = async (
     produtoId: string,
     quantidade: number,
-    origem: string,
-    tipo: 'expedicao' | 'saida_gravacao' = 'expedicao',
+    localizacao: string,
+    tipo: 'saida_transporte' | 'separacao' = 'saida_transporte',
     loteId?: string,
-    observacao?: string
+    descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
       tipo,
       produto_id: produtoId,
       lote_id: loteId,
       quantidade,
-      origem,
-      observacao,
+      localizacao,
+      descricao: descricao || 'Saída de material',
     });
   };
 
   const ajustarEstoque = async (
     produtoId: string,
     quantidade: number,
-    posicao: string,
-    observacao: string
+    localizacao: string,
+    descricao: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'ajuste',
+      tipo: 'ajuste_estoque',
       produto_id: produtoId,
       quantidade,
-      destino: posicao,
-      observacao,
+      localizacao,
+      descricao,
     });
   };
 
@@ -219,8 +209,8 @@ export function useMovimentacoes() {
         .select(`
           *,
           produtos (nome),
-          lotes (codigo),
-          profiles:responsavel_id (nome)
+          lotes (numero_lote),
+          profiles:operador_id (nome)
         `)
         .eq('produto_id', produtoId)
         .order('created_at', { ascending: false });
@@ -229,17 +219,16 @@ export function useMovimentacoes() {
 
       return (data || []).map(mov => ({
         id: mov.id,
-        tipo: mov.tipo_movimento as TipoMovimentacao,
-        produto_id: mov.produto_id,
-        produto_nome: mov.produtos?.nome,
-        lote_id: mov.lote_id,
-        lote_codigo: mov.lotes?.codigo,
+        tipo: mov.tipo_evento as TipoMovimentacao,
+        produto_id: mov.produto_id || undefined,
+        produto_nome: mov.produtos?.nome || undefined,
+        lote_id: mov.lote_id || undefined,
+        lote_numero: mov.lotes?.numero_lote || undefined,
         quantidade: mov.quantidade || 0,
-        origem: mov.posicao_origem,
-        destino: mov.posicao_destino,
-        observacao: mov.observacao,
-        responsavel_id: mov.responsavel_id,
-        responsavel_nome: mov.profiles?.nome,
+        localizacao: mov.localizacao || undefined,
+        descricao: mov.descricao,
+        operador_id: mov.operador_id || undefined,
+        operador_nome: mov.profiles?.nome || undefined,
         created_at: mov.created_at,
       }));
     } catch (err) {
@@ -255,8 +244,8 @@ export function useMovimentacoes() {
         .select(`
           *,
           produtos (nome),
-          lotes (codigo),
-          profiles:responsavel_id (nome)
+          lotes (numero_lote),
+          profiles:operador_id (nome)
         `)
         .eq('lote_id', loteId)
         .order('created_at', { ascending: false });
@@ -265,17 +254,16 @@ export function useMovimentacoes() {
 
       return (data || []).map(mov => ({
         id: mov.id,
-        tipo: mov.tipo_movimento as TipoMovimentacao,
-        produto_id: mov.produto_id,
-        produto_nome: mov.produtos?.nome,
-        lote_id: mov.lote_id,
-        lote_codigo: mov.lotes?.codigo,
+        tipo: mov.tipo_evento as TipoMovimentacao,
+        produto_id: mov.produto_id || undefined,
+        produto_nome: mov.produtos?.nome || undefined,
+        lote_id: mov.lote_id || undefined,
+        lote_numero: mov.lotes?.numero_lote || undefined,
         quantidade: mov.quantidade || 0,
-        origem: mov.posicao_origem,
-        destino: mov.posicao_destino,
-        observacao: mov.observacao,
-        responsavel_id: mov.responsavel_id,
-        responsavel_nome: mov.profiles?.nome,
+        localizacao: mov.localizacao || undefined,
+        descricao: mov.descricao,
+        operador_id: mov.operador_id || undefined,
+        operador_nome: mov.profiles?.nome || undefined,
         created_at: mov.created_at,
       }));
     } catch (err) {

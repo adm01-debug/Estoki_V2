@@ -22,6 +22,19 @@ export interface Notificacao {
   severidade?: 'info' | 'warning' | 'critical';
 }
 
+// Map database severidade to our internal type
+function mapSeveridade(dbSeveridade: string | null): 'info' | 'warning' | 'critical' {
+  switch (dbSeveridade) {
+    case 'critico':
+    case 'urgente':
+      return 'critical';
+    case 'aviso':
+      return 'warning';
+    default:
+      return 'info';
+  }
+}
+
 export function useNotificacoes() {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +47,7 @@ export function useNotificacoes() {
       // Buscar alertas ativos do sistema
       const { data: alertas, error: alertasError } = await supabase
         .from('alertas_historico')
-        .select('*')
+        .select('id, titulo, mensagem, status, created_at, dados_contexto, severidade')
         .in('status', ['ativo', 'reconhecido'])
         .order('created_at', { ascending: false })
         .limit(20);
@@ -43,38 +56,16 @@ export function useNotificacoes() {
         console.error('Erro ao buscar alertas:', alertasError);
       }
 
-      // Buscar triagens pendentes (gerar notificações automáticas)
-      const { data: triagensPendentes, error: triagensError } = await supabase
-        .from('triagens')
-        .select('id, pedido, produto, prioridade, created_at')
-        .eq('status', 'aguardando')
-        .order('created_at', { ascending: true })
-        .limit(5);
-
-      if (triagensError) {
-        console.error('Erro ao buscar triagens:', triagensError);
-      }
-
-      // Buscar recebimentos recentes
-      const ontemData = new Date();
-      ontemData.setDate(ontemData.getDate() - 1);
-
-      const { data: recebimentos, error: recError } = await supabase
-        .from('recebimentos')
-        .select('id, pedido, fornecedor, status, created_at')
-        .eq('status', 'chegou')
-        .gte('created_at', ontemData.toISOString())
-        .limit(5);
-
-      if (recError) {
-        console.error('Erro ao buscar recebimentos:', recError);
-      }
-
-      // Montar lista de notificações
+      // Montar lista de notificações apenas dos alertas
       const notifs: Notificacao[] = [];
 
       // Alertas do sistema
-      alertas?.forEach(alerta => {
+      (alertas || []).forEach(alerta => {
+        const dadosContexto = alerta.dados_contexto;
+        const dados: Record<string, unknown> = typeof dadosContexto === 'object' && dadosContexto !== null 
+          ? dadosContexto as Record<string, unknown>
+          : {};
+        
         notifs.push({
           id: alerta.id,
           tipo: 'alerta',
@@ -82,42 +73,8 @@ export function useNotificacoes() {
           mensagem: alerta.mensagem,
           lida: alerta.status === 'reconhecido',
           created_at: alerta.created_at,
-          dados: alerta.dados_contexto,
-          severidade: alerta.severidade,
-        });
-      });
-
-      // Triagens pendentes
-      triagensPendentes?.forEach(triagem => {
-        const horasEspera = Math.floor(
-          (Date.now() - new Date(triagem.created_at).getTime()) / (1000 * 60 * 60)
-        );
-
-        if (horasEspera >= 2) { // Só notificar se esperando há mais de 2 horas
-          notifs.push({
-            id: `triagem-${triagem.id}`,
-            tipo: 'triagem_pendente',
-            titulo: 'Triagem Pendente',
-            mensagem: `Pedido #${triagem.pedido} (${triagem.produto}) aguardando há ${horasEspera}h`,
-            lida: false,
-            created_at: triagem.created_at,
-            dados: { pedido: triagem.pedido, prioridade: triagem.prioridade },
-            severidade: triagem.prioridade === 'urgente' ? 'critical' : 'warning',
-          });
-        }
-      });
-
-      // Recebimentos
-      recebimentos?.forEach(rec => {
-        notifs.push({
-          id: `recebimento-${rec.id}`,
-          tipo: 'recebimento',
-          titulo: 'Novo Recebimento',
-          mensagem: `Material de ${rec.fornecedor} chegou - Pedido #${rec.pedido}`,
-          lida: false,
-          created_at: rec.created_at,
-          dados: { pedido: rec.pedido, fornecedor: rec.fornecedor },
-          severidade: 'info',
+          dados,
+          severidade: mapSeveridade(alerta.severidade),
         });
       });
 
