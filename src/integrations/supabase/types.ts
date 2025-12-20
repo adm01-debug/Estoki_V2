@@ -849,7 +849,9 @@ export type Database = {
       }
       lotes: {
         Row: {
+          conferido_por: string | null
           created_at: string
+          data_conferencia: string | null
           data_fabricacao: string | null
           data_recebimento: string
           data_validade: string | null
@@ -857,13 +859,20 @@ export type Database = {
           id: string
           nf_entrada: string | null
           numero_lote: string
+          observacoes_conferencia: string | null
+          pedido_compra: string | null
+          previsao_chegada: string | null
           produto_id: string
           quantidade_atual: number
           quantidade_inicial: number
+          quantidade_pedida: number | null
+          status: Database["public"]["Enums"]["status_recebimento"]
           updated_at: string
         }
         Insert: {
+          conferido_por?: string | null
           created_at?: string
+          data_conferencia?: string | null
           data_fabricacao?: string | null
           data_recebimento?: string
           data_validade?: string | null
@@ -871,13 +880,20 @@ export type Database = {
           id?: string
           nf_entrada?: string | null
           numero_lote: string
+          observacoes_conferencia?: string | null
+          pedido_compra?: string | null
+          previsao_chegada?: string | null
           produto_id: string
           quantidade_atual: number
           quantidade_inicial: number
+          quantidade_pedida?: number | null
+          status?: Database["public"]["Enums"]["status_recebimento"]
           updated_at?: string
         }
         Update: {
+          conferido_por?: string | null
           created_at?: string
+          data_conferencia?: string | null
           data_fabricacao?: string | null
           data_recebimento?: string
           data_validade?: string | null
@@ -885,9 +901,14 @@ export type Database = {
           id?: string
           nf_entrada?: string | null
           numero_lote?: string
+          observacoes_conferencia?: string | null
+          pedido_compra?: string | null
+          previsao_chegada?: string | null
           produto_id?: string
           quantidade_atual?: number
           quantidade_inicial?: number
+          quantidade_pedida?: number | null
+          status?: Database["public"]["Enums"]["status_recebimento"]
           updated_at?: string
         }
         Relationships: [
@@ -1915,6 +1936,14 @@ export type Database = {
         | "reagendado"
       status_onda: "pendente" | "em_andamento" | "concluida" | "cancelada"
       status_posicao: "livre" | "ocupado" | "reservado" | "bloqueado"
+      status_recebimento:
+        | "aguardando"
+        | "em_transito"
+        | "recebido"
+        | "em_conferencia"
+        | "conferido"
+        | "divergencia"
+        | "cancelado"
       status_registro_td:
         | "aberto"
         | "em_analise"
@@ -2125,6 +2154,15 @@ export const Constants = {
       ],
       status_onda: ["pendente", "em_andamento", "concluida", "cancelada"],
       status_posicao: ["livre", "ocupado", "reservado", "bloqueado"],
+      status_recebimento: [
+        "aguardando",
+        "em_transito",
+        "recebido",
+        "em_conferencia",
+        "conferido",
+        "divergencia",
+        "cancelado",
+      ],
       status_registro_td: [
         "aberto",
         "em_analise",
