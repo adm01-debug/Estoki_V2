@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -74,6 +75,7 @@ const configPadrao = {
 };
 
 const ConfiguracoesPage = () => {
+  const { theme, setTheme } = useTheme();
   const [alertas, setAlertas] = useState<ConfiguracaoAlertas>(configPadrao.alertas);
   const [estoque, setEstoque] = useState<ConfiguracaoEstoque>(configPadrao.estoque);
   const [preferencias, setPreferencias] = useState<PreferenciasUsuario>(configPadrao.preferencias);
@@ -346,8 +348,8 @@ const ConfiguracoesPage = () => {
                   Tema
                 </Label>
                 <Select 
-                  value={preferencias.tema}
-                  onValueChange={(v: "light" | "dark" | "system") => updatePreferencias({ tema: v })}
+                  value={theme || "system"}
+                  onValueChange={(v: "light" | "dark" | "system") => setTheme(v)}
                 >
                   <SelectTrigger>
                     <SelectValue />

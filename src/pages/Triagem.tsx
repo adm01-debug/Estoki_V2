@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, QrCode, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Search, QrCode, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2, ChevronLeft } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -21,15 +22,18 @@ const statusConfig: Record<StatusTriagem, { label: string; icon: React.ReactNode
   reprovado: { label: "Reprovado", icon: <AlertTriangle className="h-3 w-3" />, className: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
 };
 
+const ITEMS_PER_PAGE = 10;
 type SortOrder = "data" | "resultado";
 
 export default function TriagemPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { triagens, loading, error, iniciarTriagem } = useTriagens();
   
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
   const [sortOrder, setSortOrder] = useState<SortOrder>("data");
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
 
   const getStatus = (triagem: { resultado?: string; data_fim?: string }): StatusTriagem => {
     if (!triagem.data_fim) return 'em_andamento';
@@ -68,6 +72,22 @@ export default function TriagemPage() {
     return items;
   }, [triagens, searchTerm, statusFilter, sortOrder]);
 
+  // Paginação
+  const totalPages = Math.ceil(filteredAndSortedItems.length / ITEMS_PER_PAGE);
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredAndSortedItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredAndSortedItems, currentPage]);
+
+  // Sync filters to URL
+  useMemo(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("q", searchTerm);
+    if (statusFilter && statusFilter !== "todos") params.set("status", statusFilter);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, statusFilter, currentPage, setSearchParams]);
+
   // Estatísticas
   const stats = useMemo(() => {
     const emAndamento = triagens.filter(i => !i.data_fim).length;
@@ -101,8 +121,25 @@ export default function TriagemPage() {
   if (loading) {
     return (
       <AppLayout title="Triagem" showBack>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="p-4 lg:pl-72 space-y-4">
+          {/* Skeleton Stats */}
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map(i => (
+              <Skeleton key={i} className="h-20 rounded-xl" />
+            ))}
+          </div>
+          {/* Skeleton Filters */}
+          <div className="flex gap-3">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 w-[140px]" />
+            <Skeleton className="h-10 w-10" />
+          </div>
+          {/* Skeleton List */}
+          <div className="space-y-3">
+            {[1, 2, 3, 4, 5].map(i => (
+              <Skeleton key={i} className="h-32 rounded-xl" />
+            ))}
+          </div>
         </div>
       </AppLayout>
     );
@@ -211,7 +248,7 @@ export default function TriagemPage() {
               <p>Nenhuma triagem encontrada</p>
             </div>
           ) : (
-            filteredAndSortedItems.map((item) => {
+            paginatedItems.map((item) => {
               const status = getStatus(item);
               return (
                 <div
@@ -275,6 +312,36 @@ export default function TriagemPage() {
             })
           )}
         </div>
+
+        {/* Paginação */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t">
+            <p className="text-sm text-muted-foreground">
+              Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedItems.length)} de {filteredAndSortedItems.length}
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="text-sm">
+                {currentPage} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </AppLayout>
   );
