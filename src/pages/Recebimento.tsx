@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, Filter, Package, ChevronRight } from "lucide-react";
+import { Plus, Search, Filter, Package, ChevronRight, Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,67 +12,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import type { Recebimento, StatusRecebimento } from "@/types/estoque";
-
-// Dados mockados
-const mockRecebimentos: Recebimento[] = [
-  {
-    id: 1,
-    pedido: "2638-1",
-    fornecedor: "XBZ Brindes",
-    produto: "Mochila Executiva Preta",
-    qtdPedida: 500,
-    status: "aguardando",
-    previsaoChegada: new Date("2025-12-16"),
-  },
-  {
-    id: 2,
-    pedido: "2639-2",
-    fornecedor: "Stricker",
-    produto: "Caneta Metal Prata",
-    qtdPedida: 1000,
-    qtdRecebida: 1000,
-    status: "chegou",
-    dataChegada: new Date("2025-12-15T14:30:00"),
-  },
-  {
-    id: 3,
-    pedido: "2640-1",
-    fornecedor: "Asia Import",
-    produto: "Squeeze 500ml Branco",
-    qtdPedida: 200,
-    qtdRecebida: 180,
-    status: "divergencia",
-    divergencia: -20,
-    percentualDivergencia: -10,
-  },
-  {
-    id: 4,
-    pedido: "2641-1",
-    fornecedor: "Promo Brasil",
-    produto: "Caderno A5 Personalizado",
-    qtdPedida: 300,
-    qtdRecebida: 300,
-    status: "ok",
-    dataChegada: new Date("2025-12-14T10:00:00"),
-  },
-];
+import { useRecebimentos, StatusRecebimento } from "@/hooks/useRecebimentos";
 
 const statusConfig: Record<StatusRecebimento, { label: string; className: string }> = {
-  aguardando: { label: "Aguardando", className: "status-aguardando" },
-  chegou: { label: "Chegou", className: "status-triagem" },
-  conferencia: { label: "Conferência", className: "status-triagem" },
-  divergencia: { label: "Divergência", className: "status-divergencia" },
-  ok: { label: "OK", className: "status-ok" },
-  finalizado: { label: "Finalizado", className: "status-ok" },
+  aguardando: { label: "Aguardando", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200" },
+  chegou: { label: "Chegou", className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
+  conferencia: { label: "Conferência", className: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200" },
+  divergencia: { label: "Divergência", className: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
+  ok: { label: "OK", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
+  finalizado: { label: "Finalizado", className: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200" },
 };
 
 export default function RecebimentoPage() {
   const navigate = useNavigate();
+  const { recebimentos, loading, error } = useRecebimentos();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
 
-  const filteredItems = mockRecebimentos.filter((item) => {
+  const filteredItems = recebimentos.filter((item) => {
     const matchesSearch =
       item.pedido.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.fornecedor.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,6 +40,39 @@ export default function RecebimentoPage() {
 
     return matchesSearch && matchesStatus;
   });
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return null;
+    return new Date(dateString).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  if (loading) {
+    return (
+      <AppLayout title="Recebimento" showBack>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AppLayout title="Recebimento" showBack>
+        <div className="p-4 text-center text-destructive">
+          <p>Erro ao carregar recebimentos: {error}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Tentar novamente
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout
@@ -124,77 +114,70 @@ export default function RecebimentoPage() {
           </Select>
         </div>
 
-        {/* Lista */}
+        {/* Lista de Recebimentos */}
         <div className="space-y-3">
-          {filteredItems.map((item) => (
-            <RecebimentoCard
-              key={item.id}
-              item={item}
-              onClick={() => navigate(`/recebimento/${item.id}`)}
-            />
-          ))}
-
-          {filteredItems.length === 0 && (
+          {filteredItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-3 opacity-50" />
+              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>Nenhum recebimento encontrado</p>
             </div>
+          ) : (
+            filteredItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => navigate(`/recebimento/${item.id}`)}
+                className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-all cursor-pointer active:scale-[0.99]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-primary">
+                        #{item.pedido}
+                      </span>
+                      <Badge className={statusConfig[item.status].className}>
+                        {statusConfig[item.status].label}
+                      </Badge>
+                    </div>
+                    <p className="text-sm font-medium truncate">{item.produto}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {item.fornecedor}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-medium">
+                      {item.qtd_recebida !== undefined && item.qtd_recebida !== null
+                        ? `${item.qtd_recebida}/${item.qtd_pedida}`
+                        : item.qtd_pedida}{" "}
+                      un
+                    </p>
+                    {item.divergencia !== undefined && item.divergencia !== null && item.divergencia !== 0 && (
+                      <p
+                        className={`text-xs font-medium ${
+                          item.divergencia > 0 ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
+                        {item.divergencia > 0 ? "+" : ""}
+                        {item.divergencia} ({item.percentual_divergencia?.toFixed(1)}%)
+                      </p>
+                    )}
+                    {item.previsao_chegada && item.status === "aguardando" && (
+                      <p className="text-xs text-muted-foreground">
+                        Prev: {formatDate(item.previsao_chegada)}
+                      </p>
+                    )}
+                    {item.data_chegada && (
+                      <p className="text-xs text-muted-foreground">
+                        Chegou: {formatDate(item.data_chegada)}
+                      </p>
+                    )}
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>
     </AppLayout>
-  );
-}
-
-interface RecebimentoCardProps {
-  item: Recebimento;
-  onClick: () => void;
-}
-
-function RecebimentoCard({ item, onClick }: RecebimentoCardProps) {
-  const config = statusConfig[item.status];
-
-  return (
-    <button
-      onClick={onClick}
-      className="list-item-card w-full text-left flex items-center gap-4"
-    >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <Badge variant="outline" className={config.className}>
-            {config.label}
-          </Badge>
-        </div>
-        <div className="font-semibold text-foreground">
-          #{item.pedido} | {item.fornecedor}
-        </div>
-        <div className="text-sm text-muted-foreground truncate">
-          {item.produto}
-        </div>
-        <div className="text-sm text-muted-foreground mt-1">
-          {item.qtdPedida} un
-          {item.status === "divergencia" && item.qtdRecebida && (
-            <span className="text-destructive ml-2">
-              | Recebido: {item.qtdRecebida} | {item.percentualDivergencia}%
-            </span>
-          )}
-          {item.previsaoChegada && item.status === "aguardando" && (
-            <span className="ml-2">
-              | Prev: {item.previsaoChegada.toLocaleDateString("pt-BR")}
-            </span>
-          )}
-          {item.dataChegada && item.status !== "aguardando" && (
-            <span className="ml-2">
-              | Chegou: {item.dataChegada.toLocaleDateString("pt-BR")}{" "}
-              {item.dataChegada.toLocaleTimeString("pt-BR", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          )}
-        </div>
-      </div>
-      <ChevronRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-    </button>
   );
 }
