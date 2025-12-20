@@ -31,6 +31,7 @@ import Rastreabilidade from "./pages/Rastreabilidade";
 import RelatorioFornecedores from "./pages/RelatorioFornecedores";
 import TrocasDevolucoes from "./pages/TrocasDevolucoes";
 import DashboardTrocas from "./pages/DashboardTrocas";
+import RelatorioDivergencias from "./pages/RelatorioDivergencias";
 import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
@@ -163,6 +164,11 @@ function AnimatedRoutes() {
         <Route path="/dashboard-trocas" element={
           <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
             <DashboardTrocas />
+          </ProtectedRoute>
+        } />
+        <Route path="/divergencias" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <RelatorioDivergencias />
           </ProtectedRoute>
         } />
         
