@@ -1035,6 +1035,45 @@ export type Database = {
         }
         Relationships: []
       }
+      notificacoes: {
+        Row: {
+          created_at: string
+          data_leitura: string | null
+          id: string
+          lida: boolean
+          mensagem: string
+          referencia_id: string | null
+          referencia_tipo: string | null
+          tipo: string
+          titulo: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data_leitura?: string | null
+          id?: string
+          lida?: boolean
+          mensagem: string
+          referencia_id?: string | null
+          referencia_tipo?: string | null
+          tipo: string
+          titulo: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data_leitura?: string | null
+          id?: string
+          lida?: boolean
+          mensagem?: string
+          referencia_id?: string | null
+          referencia_tipo?: string | null
+          tipo?: string
+          titulo?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ondas_separacao: {
         Row: {
           codigo: string
