@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -21,9 +21,20 @@ const statusConfig: Record<StatusRecebimento, { label: string; variant: "default
 
 export default function RecebimentoPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { recebimentos, loading, error } = useRecebimentos();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("todos");
+  
+  // Initialize from URL params
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
+  const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
+
+  // Sync filters to URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set("q", searchTerm);
+    if (statusFilter && statusFilter !== "todos") params.set("status", statusFilter);
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, statusFilter, setSearchParams]);
 
   const filteredItems = recebimentos.filter((item) => {
     const matchesSearch =
