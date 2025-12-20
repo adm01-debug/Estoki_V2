@@ -38,6 +38,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
 import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
+import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
 import { differenceInDays } from "date-fns";
 
 const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
@@ -723,106 +724,10 @@ export default function EstoquePage() {
           </Tabs>
 
           {/* Position Details Modal */}
-          <AnimatePresence>
-            {selectedPosition && (
-              <motion.div 
-                className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setSelectedPosition(null)}
-              >
-                <motion.div
-                  className="bg-card w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6"
-                  initial={{ y: 100, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: 100, opacity: 0 }}
-                  transition={{ type: "spring", damping: 25 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <MapPin className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-bold">{selectedPosition.codigo}</h3>
-                        <Badge className={cn(
-                          "mt-1",
-                          statusConfig[selectedPosition.status].bg,
-                          statusConfig[selectedPosition.status].color
-                        )}>
-                          {statusConfig[selectedPosition.status].icon} {statusConfig[selectedPosition.status].label}
-                        </Badge>
-                      </div>
-                    </div>
-                    <Button variant="ghost" size="icon" onClick={() => setSelectedPosition(null)}>
-                      <X className="h-5 w-5" />
-                    </Button>
-                  </div>
-
-                  {selectedPosition.status === 'ocupado' && selectedPosition.produto_nome && (
-                    <Card className="mb-4">
-                      <CardContent className="p-4 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">Produto</span>
-                          <span className="font-medium">{selectedPosition.produto_nome}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">Quantidade</span>
-                          <span className="font-medium">{selectedPosition.quantidade || 0} un</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">Armazenado há</span>
-                          <Badge className={cn(
-                            getDiasArmazenado(selectedPosition) > 30 
-                              ? "bg-warning/10 text-warning" 
-                              : "bg-muted text-muted-foreground"
-                          )}>
-                            {getDiasArmazenado(selectedPosition)} dias
-                          </Badge>
-                        </div>
-                        {selectedPosition.capacidade_kg && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-muted-foreground">Capacidade</span>
-                            <span className="font-medium">{selectedPosition.capacidade_kg} kg</span>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  <div className="flex gap-2">
-                    {selectedPosition.status === "ocupado" && (
-                      <>
-                        <Button variant="outline" className="flex-1 gap-2">
-                          <Eye className="h-4 w-4" />
-                          Ver Item
-                        </Button>
-                        <Button variant="outline" className="flex-1 gap-2">
-                          <ArrowLeftRight className="h-4 w-4" />
-                          Mover
-                        </Button>
-                        <Button className="flex-1 gap-2">
-                          <PackageOpen className="h-4 w-4" />
-                          Separar
-                        </Button>
-                      </>
-                    )}
-                    {selectedPosition.status === "livre" && (
-                      <Button className="w-full gap-2" onClick={() => navigate("/armazenamento")}>
-                        <Package className="h-4 w-4" />
-                        Armazenar Item
-                      </Button>
-                    )}
-                    {selectedPosition.status === "reservado" && (
-                      <Button variant="outline" className="w-full">Ver Reserva</Button>
-                    )}
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <PosicaoDetalhesDialog 
+            position={selectedPosition} 
+            onClose={() => setSelectedPosition(null)} 
+          />
         </div>
       </PageTransition>
     </AppLayout>
