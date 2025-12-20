@@ -16,6 +16,7 @@ export interface Triagem {
   operador_nome?: string;
   resultado?: string;
   observacoes?: string;
+  fotos?: string[];
   data_inicio: string;
   data_fim?: string;
   created_at: string;
@@ -53,6 +54,7 @@ export function useTriagens() {
         operador_nome: item.profiles?.nome || undefined,
         resultado: item.resultado || undefined,
         observacoes: item.observacoes || undefined,
+        fotos: item.fotos || [],
         data_inicio: item.data_inicio,
         data_fim: item.data_fim || undefined,
         created_at: item.created_at,
