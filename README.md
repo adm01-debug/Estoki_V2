@@ -1,73 +1,174 @@
-# Welcome to your Lovable project
+# 📦 ESTOKI - Sistema de Gestão de Estoque
 
-## Project info
+Sistema completo de gestão de estoque para operações de recebimento, triagem, armazenamento e expedição, com gamificação para engajamento da equipe.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Funcionalidades
 
-## How can I edit this code?
+### Operações
+- **Recebimento**: Conferência de materiais, registro de divergências, fotos de evidência
+- **Triagem**: Checklist de qualidade (7 critérios), registro de defeitos, amostragem
+- **Armazenamento**: Endereçamento por porta-paletes e boxes, QR Codes
+- **Movimentação**: Transferências, ajustes, rastreabilidade completa
+- **Scanner QR**: Leitura de etiquetas para operações rápidas
 
-There are several ways of editing your application.
+### Gestão
+- **Dashboard**: KPIs em tempo real, ocupação, movimentações
+- **Produtividade**: Métricas por operador, ranking, metas
+- **Relatórios**: Movimentações, inventário, qualidade
+- **Alertas Inteligentes**: Estoque baixo, vencimento, itens parados
 
-**Use Lovable**
+### Qualidade
+- **Inventário Cíclico**: Contagens programadas, divergências
+- **Curva ABC**: Classificação de produtos por valor/giro
+- **Qualidade Fornecedores**: Pontualidade, taxa de problemas
+- **Trocas e Devoluções**: Workflow completo de tratativas
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Gamificação
+- **XP e Níveis**: Pontuação por ações realizadas
+- **Conquistas**: Badges por metas atingidas
+- **Desafios Diários**: Metas rotativas com recompensas
+- **Streaks**: Bônus por dias consecutivos
+- **Ranking**: Leaderboard de produtividade
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Stack Tecnológica
 
-**Use your preferred IDE**
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI/UX**: Tailwind CSS + Radix UI + shadcn/ui + Framer Motion
+- **Backend**: Supabase (PostgreSQL + Auth + RLS + Realtime)
+- **QR Code**: html5-qrcode
+- **PDF**: jsPDF
+- **Gráficos**: Recharts
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📋 Pré-requisitos
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js 18+
+- npm ou yarn
+- Conta Supabase
 
-Follow these steps:
+## 🔧 Instalação
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+# Clonar repositório
+git clone https://github.com/adm01-debug/estoki.git
+cd estoki
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Instalar dependências
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Configurar variáveis de ambiente
+cp .env.example .env
+# Editar .env com suas credenciais Supabase
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Iniciar desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## ⚙️ Variáveis de Ambiente
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```env
+VITE_SUPABASE_PROJECT_ID=seu_project_id
+VITE_SUPABASE_URL=https://seu_projeto.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sua_anon_key
+```
 
-**Use GitHub Codespaces**
+## 📁 Estrutura do Projeto
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+src/
+├── components/
+│   ├── auth/           # Autenticação
+│   ├── dashboard/      # Componentes do dashboard
+│   ├── gamificacao/    # Sistema de XP, conquistas
+│   ├── layout/         # Layout da aplicação
+│   ├── notifications/  # Centro de notificações
+│   ├── scanner/        # Leitor QR Code
+│   ├── triagem/        # Componentes de triagem
+│   └── ui/             # shadcn/ui components
+├── contexts/
+│   ├── AuthContext.tsx
+│   └── NotificationContext.tsx
+├── hooks/
+│   ├── useRecebimentos.ts
+│   ├── useTriagens.ts
+│   ├── useEstoque.ts
+│   ├── useMovimentacoes.ts
+│   ├── useDashboard.ts
+│   ├── useProdutividade.ts
+│   ├── useGamificacao.ts
+│   └── ...
+├── integrations/
+│   └── supabase/
+├── pages/
+│   ├── Dashboard.tsx
+│   ├── Recebimento.tsx
+│   ├── Triagem.tsx
+│   ├── Estoque.tsx
+│   └── ...
+└── types/
+    └── estoque.ts
+```
 
-## What technologies are used for this project?
+## 🔐 Autenticação e Roles
 
-This project is built with:
+O sistema possui 3 níveis de acesso:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+| Role | Acesso |
+|------|--------|
+| **admin** | Todas as funcionalidades + configurações |
+| **supervisor** | Dashboard, relatórios, gestão + operações |
+| **operador** | Operações: recebimento, triagem, estoque |
 
-## How can I deploy this project?
+## 📊 Modelo de Dados
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Tabelas Principais
 
-## Can I connect a custom domain to my Lovable project?
+- `profiles` - Perfis de usuários
+- `user_roles` - Roles (operador, supervisor, admin)
+- `recebimentos` - Registro de recebimentos
+- `triagens` - Fila e histórico de triagem
+- `posicoes_estoque` - Posições físicas (PP, boxes)
+- `estoque_posicao` - Relação produto/posição
+- `rastreamento_historico` - Log de movimentações
+- `trocas_devolucoes` - Workflow de trocas
+- `inventario_ciclos` - Inventários programados
+- `gamificacao_usuarios` - XP, nível, pontos
+- `conquistas_usuarios` - Badges desbloqueadas
+- `alertas_historico` - Alertas do sistema
 
-Yes, you can!
+## 🎮 Sistema de Gamificação
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Eventos que geram XP
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+| Ação | XP Base | Bônus |
+|------|---------|-------|
+| Triagem concluída | 15 | +10 (rápida), +5 (aprovado) |
+| Tarefa concluída | 20 | +15 (urgente), +10 (quantidade ok) |
+| Check-in diário | 5 | +5 (streak) |
+
+### Conquistas
+
+- Primeiro Passo (1ª triagem)
+- Velocista (triagem < 2min)
+- Maratonista (10 triagens/dia)
+- Perfeccionista (100% aprovação)
+- Série de 7 dias
+
+## 🚢 Deploy
+
+```bash
+# Build para produção
+npm run build
+
+# Preview local
+npm run preview
+```
+
+## 📝 Licença
+
+Projeto desenvolvido para **Promo Brindes**.
+
+---
+
+## 🤝 Suporte
+
+Para dúvidas ou suporte, entre em contato com a equipe de desenvolvimento.
