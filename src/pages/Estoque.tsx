@@ -20,7 +20,8 @@ import {
   ZoomIn,
   ZoomOut,
   RotateCcw,
-  Loader2
+  Loader2,
+  Plus
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,7 @@ import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
+import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
 import { differenceInDays } from "date-fns";
 
 const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
@@ -258,9 +260,15 @@ export default function EstoquePage() {
           <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <Warehouse className="h-16 w-16 text-muted-foreground" />
             <h2 className="text-xl font-semibold">Nenhuma posição cadastrada</h2>
-            <p className="text-muted-foreground text-center">
+            <p className="text-muted-foreground text-center max-w-md">
               Cadastre posições de estoque (porta-paletes e boxes) para visualizar o mapa.
             </p>
+            <NovaPosicaoDialog onSuccess={refetch}>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                Cadastrar Posições
+              </Button>
+            </NovaPosicaoDialog>
           </div>
         </PageTransition>
       </AppLayout>
@@ -272,10 +280,18 @@ export default function EstoquePage() {
       title="Estoque"
       showBack
       rightAction={
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
-          <QrCode className="h-4 w-4" />
-          <span className="hidden sm:inline">Scan</span>
-        </Button>
+        <div className="flex gap-2">
+          <NovaPosicaoDialog onSuccess={refetch}>
+            <Button size="sm" variant="default" className="gap-2">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Nova Posição</span>
+            </Button>
+          </NovaPosicaoDialog>
+          <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
+            <QrCode className="h-4 w-4" />
+            <span className="hidden sm:inline">Scan</span>
+          </Button>
+        </div>
       }
     >
       <PageTransition>
