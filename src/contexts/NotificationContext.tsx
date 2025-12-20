@@ -27,6 +27,20 @@ interface NotificationContextType {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
+// Mapear severidade do banco para o tipo local
+const mapSeveridade = (severidade: string): "info" | "warning" | "critical" => {
+  switch (severidade) {
+    case 'critico':
+    case 'urgente':
+      return 'critical';
+    case 'aviso':
+      return 'warning';
+    case 'info':
+    default:
+      return 'info';
+  }
+};
+
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [pushPermission, setPushPermission] = useState<NotificationPermission | "default">("default");
@@ -45,23 +59,22 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         .order('created_at', { ascending: false })
         .limit(20);
 
-      // Buscar triagens pendentes
-      const { data: triagensPendentes } = await supabase
-        .from('triagens')
-        .select('id, pedido, produto, prioridade, created_at')
-        .eq('status', 'aguardando')
+      // Buscar tarefas pendentes como triagens pendentes
+      const { data: tarefasPendentes } = await supabase
+        .from('tarefas')
+        .select('id, tipo, prioridade, created_at, produto_id')
+        .in('status', ['pendente', 'em_andamento'])
         .order('created_at', { ascending: true })
         .limit(5);
 
-      // Buscar recebimentos recentes
+      // Buscar lotes recebidos recentemente
       const ontem = new Date();
       ontem.setDate(ontem.getDate() - 1);
 
-      const { data: recebimentos } = await supabase
-        .from('recebimentos')
-        .select('id, pedido, fornecedor, status, created_at')
-        .eq('status', 'chegou')
-        .gte('created_at', ontem.toISOString())
+      const { data: lotesRecentes } = await supabase
+        .from('lotes')
+        .select('id, numero_lote, fornecedor, created_at')
+        .gte('data_recebimento', ontem.toISOString().split('T')[0])
         .limit(5);
 
       const notifs: Notification[] = [];
@@ -75,41 +88,43 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           message: alerta.mensagem,
           read: alerta.status === 'reconhecido',
           createdAt: new Date(alerta.created_at),
-          data: alerta.dados_contexto,
-          severity: alerta.severidade,
+          data: typeof alerta.dados_contexto === 'object' && alerta.dados_contexto !== null 
+            ? alerta.dados_contexto as Record<string, unknown>
+            : {},
+          severity: mapSeveridade(alerta.severidade),
         });
       });
 
-      // Processar triagens pendentes
-      (triagensPendentes || []).forEach(triagem => {
+      // Processar tarefas pendentes
+      (tarefasPendentes || []).forEach(tarefa => {
         const horasEspera = Math.floor(
-          (Date.now() - new Date(triagem.created_at).getTime()) / (1000 * 60 * 60)
+          (Date.now() - new Date(tarefa.created_at).getTime()) / (1000 * 60 * 60)
         );
 
         if (horasEspera >= 2) {
           notifs.push({
-            id: `triagem-${triagem.id}`,
+            id: `tarefa-${tarefa.id}`,
             type: "triagem_pendente",
-            title: "Triagem Pendente",
-            message: `Pedido #${triagem.pedido} (${triagem.produto}) aguardando há ${horasEspera}h`,
+            title: "Tarefa Pendente",
+            message: `Tarefa ${tarefa.tipo} aguardando há ${horasEspera}h`,
             read: false,
-            createdAt: new Date(triagem.created_at),
-            data: { pedido: triagem.pedido, prioridade: triagem.prioridade },
-            severity: triagem.prioridade === 'urgente' ? 'critical' : 'warning',
+            createdAt: new Date(tarefa.created_at),
+            data: { tipo: tarefa.tipo, prioridade: tarefa.prioridade },
+            severity: tarefa.prioridade === 'urgente' ? 'critical' : 'warning',
           });
         }
       });
 
-      // Processar recebimentos
-      (recebimentos || []).forEach(rec => {
+      // Processar lotes recentes como recebimentos
+      (lotesRecentes || []).forEach(lote => {
         notifs.push({
-          id: `recebimento-${rec.id}`,
+          id: `lote-${lote.id}`,
           type: "recebimento",
           title: "Novo Recebimento",
-          message: `Material de ${rec.fornecedor} chegou - Pedido #${rec.pedido}`,
+          message: `Lote ${lote.numero_lote}${lote.fornecedor ? ` de ${lote.fornecedor}` : ''} recebido`,
           read: false,
-          createdAt: new Date(rec.created_at),
-          data: { pedido: rec.pedido, fornecedor: rec.fornecedor },
+          createdAt: new Date(lote.created_at),
+          data: { lote: lote.numero_lote, fornecedor: lote.fornecedor },
           severity: "info",
         });
       });
@@ -134,7 +149,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       const channel = supabase
         .channel('notifications_changes')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'alertas_historico' }, fetchNotifications)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'recebimentos' }, fetchNotifications)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lotes' }, fetchNotifications)
         .subscribe();
 
       return () => {
@@ -170,7 +185,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const markAsRead = useCallback(async (id: string) => {
     // Atualizar no banco se for alerta real
-    if (!id.startsWith('triagem-') && !id.startsWith('recebimento-')) {
+    if (!id.startsWith('tarefa-') && !id.startsWith('lote-')) {
       try {
         await supabase
           .from('alertas_historico')
@@ -192,7 +207,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const markAllAsRead = useCallback(async () => {
     const alertaIds = notifications
-      .filter(n => !n.read && !n.id.startsWith('triagem-') && !n.id.startsWith('recebimento-'))
+      .filter(n => !n.read && !n.id.startsWith('tarefa-') && !n.id.startsWith('lote-'))
       .map(n => n.id);
 
     if (alertaIds.length > 0) {

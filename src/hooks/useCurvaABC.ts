@@ -60,38 +60,48 @@ export function useCurvaABC() {
           id,
           nome,
           sku,
-          categoria,
-          preco_unitario,
-          lotes (quantidade_atual)
+          curva_abc,
+          giro_mensal
         `);
 
       if (prodError) throw prodError;
 
-      // Buscar movimentações para calcular giro
+      // Buscar lotes para quantidade atual
+      const { data: lotesData } = await supabase
+        .from('lotes')
+        .select('produto_id, quantidade_atual');
+
+      // Buscar movimentações para calcular giro (usando tipo_evento)
       const trintaDiasAtras = new Date();
       trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
 
       const { data: movimentacoes } = await supabase
         .from('rastreamento_historico')
-        .select('produto_id, quantidade, tipo_movimento')
+        .select('produto_id, quantidade, tipo_evento')
         .gte('created_at', trintaDiasAtras.toISOString());
 
-      // Calcular giro por produto
+      // Calcular giro por produto (usando tipo_evento)
       const girosPorProduto: Record<string, number> = {};
       (movimentacoes || []).forEach(mov => {
-        if (mov.produto_id && mov.tipo_movimento === 'expedicao') {
+        if (mov.produto_id && mov.tipo_evento === 'expedicao') {
           girosPorProduto[mov.produto_id] = (girosPorProduto[mov.produto_id] || 0) + (mov.quantidade || 0);
+        }
+      });
+
+      // Calcular quantidade por produto
+      const quantidadePorProduto: Record<string, number> = {};
+      (lotesData || []).forEach(lote => {
+        if (lote.produto_id) {
+          quantidadePorProduto[lote.produto_id] = (quantidadePorProduto[lote.produto_id] || 0) + (lote.quantidade_atual || 0);
         }
       });
 
       // Processar produtos
       const produtosProcessados: ProdutoABC[] = (produtosData || []).map(p => {
-        const quantidadeEstoque = (p.lotes || []).reduce(
-          (acc: number, l: any) => acc + (l.quantidade_atual || 0), 0
-        );
-        const valorUnitario = p.preco_unitario || 0;
+        const quantidadeEstoque = quantidadePorProduto[p.id] || 0;
+        const valorUnitario = 0; // Sem preco_unitario no schema
         const valorTotal = quantidadeEstoque * valorUnitario;
-        const giroMensal = girosPorProduto[p.id] || 0;
+        const giroMensal = girosPorProduto[p.id] || p.giro_mensal || 0;
         const diasCobertura = giroMensal > 0 
           ? Math.round((quantidadeEstoque / giroMensal) * 30) 
           : 999;
@@ -100,7 +110,7 @@ export function useCurvaABC() {
           id: p.id,
           sku: p.sku || 'N/A',
           nome: p.nome || 'Produto',
-          categoria: p.categoria,
+          categoria: p.curva_abc || 'C',
           quantidade_estoque: quantidadeEstoque,
           valor_unitario: valorUnitario,
           valor_total: valorTotal,

@@ -82,7 +82,7 @@ export function useDashboard() {
       ]);
 
       // Ocupação por porta-palete
-      const portaPaletes = posicoes?.filter(p => p.tipo === 'porta-palete') || [];
+      const portaPaletes = posicoes?.filter(p => p.tipo === 'porta_palete') || [];
       const grupos = [...new Set(portaPaletes.map(p => p.porta_palete).filter(Boolean))];
       
       const ocupacaoPorPP = grupos.map(pp => {
@@ -97,35 +97,35 @@ export function useDashboard() {
       });
       setOcupacaoPP(ocupacaoPorPP);
 
-      // 2. Buscar triagens de hoje
+      // 2. Buscar eventos de triagem de hoje
       const { data: triagensHoje, error: triagError } = await supabase
-        .from('triagens')
-        .select('id, status')
-        .gte('updated_at', hoje.toISOString());
+        .from('eventos_triagem')
+        .select('id, resultado')
+        .gte('data_fim', hoje.toISOString());
 
       if (triagError) console.error('Erro triagens:', triagError);
 
       const triagensConcluidas = triagensHoje?.filter(t => 
-        ['aprovado', 'ressalva', 'reprovado'].includes(t.status)
+        t.resultado && ['aprovado', 'ressalva', 'reprovado'].includes(t.resultado)
       ).length || 0;
 
-      // Triagens pendentes (total)
+      // Triagens pendentes (sem data_fim)
       const { data: triagensPend, error: pendError } = await supabase
-        .from('triagens')
+        .from('eventos_triagem')
         .select('id')
-        .in('status', ['aguardando', 'em_triagem']);
+        .is('data_fim', null);
 
       if (pendError) console.error('Erro triagens pendentes:', pendError);
 
-      // 3. Buscar recebimentos de hoje
-      const { data: recebimentosHoje, error: recError } = await supabase
-        .from('recebimentos')
-        .select('id, qtd_recebida')
-        .gte('data_chegada', hoje.toISOString());
+      // 3. Buscar lotes recebidos hoje
+      const { data: lotesHoje, error: lotesError } = await supabase
+        .from('lotes')
+        .select('id, quantidade_inicial')
+        .gte('data_recebimento', hoje.toISOString().split('T')[0]);
 
-      if (recError) console.error('Erro recebimentos:', recError);
+      if (lotesError) console.error('Erro lotes:', lotesError);
 
-      const entradasHoje = recebimentosHoje?.reduce((acc, r) => acc + (r.qtd_recebida || 0), 0) || 0;
+      const entradasHoje = lotesHoje?.reduce((acc, l) => acc + (l.quantidade_inicial || 0), 0) || 0;
 
       // 4. Buscar movimentações dos últimos 7 dias
       const seteDiasAtras = new Date();
@@ -149,9 +149,10 @@ export function useDashboard() {
       movimentacoes?.forEach(mov => {
         const data = new Date(mov.created_at);
         const diaSemana = data.getDay();
-        if (mov.tipo_movimento === 'entrada' || mov.tipo_movimento === 'recebimento') {
+        // Usar tipo_evento existentes no schema
+        if (mov.tipo_evento === 'recebimento_nf' || mov.tipo_evento === 'armazenamento') {
           movPorDia[diaSemana].entradas += mov.quantidade || 1;
-        } else if (mov.tipo_movimento === 'saida' || mov.tipo_movimento === 'expedicao') {
+        } else if (mov.tipo_evento === 'saida_transporte' || mov.tipo_evento === 'carregamento' || mov.tipo_evento === 'separacao') {
           movPorDia[diaSemana].saidas += mov.quantidade || 1;
         }
       });
@@ -168,33 +169,42 @@ export function useDashboard() {
       trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
 
       // Simplificado: buscar lotes antigos
-      const { data: lotesAntigos, error: lotesError } = await supabase
+      const { data: lotesAntigos, error: lotesAntigosError } = await supabase
         .from('lotes')
         .select(`
           id,
-          codigo,
+          numero_lote,
           quantidade_atual,
           created_at,
-          produtos (nome, sku, preco_unitario)
+          produto_id
         `)
         .lt('updated_at', trintaDiasAtras.toISOString())
         .gt('quantidade_atual', 0)
         .limit(10);
 
-      if (lotesError) console.error('Erro lotes antigos:', lotesError);
+      if (lotesAntigosError) console.error('Erro lotes antigos:', lotesAntigosError);
+
+      // Buscar nomes dos produtos
+      const produtoIds = [...new Set((lotesAntigos || []).map(l => l.produto_id).filter(Boolean))];
+      const { data: produtosData } = produtoIds.length > 0 
+        ? await supabase.from('produtos').select('id, nome, sku').in('id', produtoIds)
+        : { data: [] };
+
+      const produtosMap = new Map((produtosData || []).map(p => [p.id, p]));
 
       const itensParadosData: ItemParado[] = (lotesAntigos || []).map(lote => {
         const diasParado = Math.floor(
           (Date.now() - new Date(lote.created_at).getTime()) / (1000 * 60 * 60 * 24)
         );
+        const produto = produtosMap.get(lote.produto_id);
         return {
           id: lote.id,
-          sku: lote.produtos?.sku || lote.codigo || 'N/A',
-          descricao: lote.produtos?.nome || 'Produto',
+          sku: produto?.sku || lote.numero_lote || 'N/A',
+          descricao: produto?.nome || 'Produto',
           posicao: 'Verificar',
           diasParado,
           quantidade: lote.quantidade_atual || 0,
-          valor: (lote.quantidade_atual || 0) * (lote.produtos?.preco_unitario || 0),
+          valor: 0, // Sem preco_unitario no schema
         };
       });
       setItensParados(itensParadosData);

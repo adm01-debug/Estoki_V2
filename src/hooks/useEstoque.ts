@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
-export type TipoPosicao = 'porta-palete' | 'box';
+export type TipoPosicao = 'porta_palete' | 'box';
 
 export interface PosicaoEstoque {
   id: string;
@@ -12,13 +12,14 @@ export interface PosicaoEstoque {
   porta_palete?: string;
   secao?: string;
   nivel?: string;
-  box_numero?: string;
+  box?: string;
+  zona?: string;
   status: StatusPosicao;
   produto_id?: string;
   produto_nome?: string;
   lote_id?: string;
   quantidade?: number;
-  capacidade_maxima: number;
+  capacidade_kg?: number;
   created_at: string;
   updated_at: string;
 }
@@ -72,10 +73,23 @@ export function useEstoque() {
       if (fetchError) throw fetchError;
 
       // Mapear dados
-      const mapped = (data || []).map(pos => ({
-        ...pos,
+      const mapped: PosicaoEstoque[] = (data || []).map(pos => ({
+        id: pos.id,
+        codigo: pos.codigo,
+        tipo: pos.tipo,
+        porta_palete: pos.porta_palete || undefined,
+        secao: pos.secao || undefined,
+        nivel: pos.nivel || undefined,
+        box: pos.box || undefined,
+        zona: pos.zona || undefined,
+        status: pos.status,
+        capacidade_kg: pos.capacidade_kg || undefined,
+        created_at: pos.created_at,
+        updated_at: pos.updated_at,
         produto_nome: pos.estoque_posicao?.[0]?.produtos?.nome,
         quantidade: pos.estoque_posicao?.[0]?.quantidade,
+        produto_id: pos.estoque_posicao?.[0]?.produto_id,
+        lote_id: pos.estoque_posicao?.[0]?.lote_id,
       }));
 
       setPosicoes(mapped);
@@ -119,7 +133,7 @@ export function useEstoque() {
     const taxaOcupacao = totalPosicoes > 0 ? (posicoesOcupadas / totalPosicoes) * 100 : 0;
 
     // Ocupação por porta-palete
-    const portaPaletes = posicoes.filter(p => p.tipo === 'porta-palete');
+    const portaPaletes = posicoes.filter(p => p.tipo === 'porta_palete');
     const ocupacaoPorPortaPalete: Record<string, { ocupado: number; total: number; percentual: number }> = {};
     
     const grupos = new Set(portaPaletes.map(p => p.porta_palete).filter(Boolean));
@@ -268,9 +282,22 @@ export function useEstoque() {
       if (fetchError) throw fetchError;
       
       return {
-        ...data,
+        id: data.id,
+        codigo: data.codigo,
+        tipo: data.tipo,
+        porta_palete: data.porta_palete || undefined,
+        secao: data.secao || undefined,
+        nivel: data.nivel || undefined,
+        box: data.box || undefined,
+        zona: data.zona || undefined,
+        status: data.status,
+        capacidade_kg: data.capacidade_kg || undefined,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
         produto_nome: data.estoque_posicao?.[0]?.produtos?.nome,
         quantidade: data.estoque_posicao?.[0]?.quantidade,
+        produto_id: data.estoque_posicao?.[0]?.produto_id,
+        lote_id: data.estoque_posicao?.[0]?.lote_id,
       };
     } catch (err) {
       console.error('Erro ao buscar posição:', err);
@@ -297,9 +324,22 @@ export function useEstoque() {
       if (fetchError) throw fetchError;
       
       return {
-        ...data,
+        id: data.id,
+        codigo: data.codigo,
+        tipo: data.tipo,
+        porta_palete: data.porta_palete || undefined,
+        secao: data.secao || undefined,
+        nivel: data.nivel || undefined,
+        box: data.box || undefined,
+        zona: data.zona || undefined,
+        status: data.status,
+        capacidade_kg: data.capacidade_kg || undefined,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
         produto_nome: data.estoque_posicao?.[0]?.produtos?.nome,
         quantidade: data.estoque_posicao?.[0]?.quantidade,
+        produto_id: data.estoque_posicao?.[0]?.produto_id,
+        lote_id: data.estoque_posicao?.[0]?.lote_id,
       };
     } catch (err) {
       console.error('Erro ao buscar posição por código:', err);

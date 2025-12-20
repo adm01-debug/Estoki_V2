@@ -4,7 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
 export type StatusCiclo = 'agendado' | 'em_andamento' | 'pausado' | 'concluido' | 'cancelado';
-export type TipoCiclo = 'completo' | 'amostragem' | 'curva_a' | 'curva_b' | 'curva_c' | 'posicao';
+export type TipoCiclo = 'completo' | 'amostragem' | 'curva_a' | 'curva_b' | 'curva_c' | 'posicao' | 'zona';
 
 export interface Ciclo {
   id: string;
@@ -12,17 +12,18 @@ export interface Ciclo {
   descricao?: string;
   tipo: TipoCiclo;
   status: StatusCiclo;
-  data_inicio_prevista: string;
-  data_inicio_real?: string;
-  data_fim_prevista: string;
-  data_fim_real?: string;
-  posicoes_total: number;
+  data_agendada: string;
+  data_inicio?: string;
+  data_fim?: string;
+  total_posicoes: number;
   posicoes_contadas: number;
-  itens_conferidos: number;
-  itens_divergentes: number;
-  percentual_conclusao: number;
+  divergencias_encontradas: number;
+  acuracidade?: number;
+  zona_alvo?: string;
+  porta_palete_alvo?: string;
   responsavel_id?: string;
   responsavel_nome?: string;
+  observacoes?: string;
   created_at: string;
   updated_at: string;
 }
@@ -30,16 +31,23 @@ export interface Ciclo {
 export interface Contagem {
   id: string;
   ciclo_id: string;
-  posicao_codigo: string;
+  posicao_id: string;
   produto_id?: string;
   produto_nome?: string;
+  lote_id?: string;
   quantidade_sistema: number;
   quantidade_contada?: number;
-  divergencia?: number;
-  status: 'pendente' | 'contado' | 'recontagem' | 'ajustado';
+  quantidade_recontada?: number;
+  status: 'pendente' | 'contado' | 'divergente' | 'ajustado';
+  recontagem_necessaria: boolean;
   contado_por?: string;
+  recontado_por?: string;
+  ajustado_por?: string;
   data_contagem?: string;
-  observacao?: string;
+  data_recontagem?: string;
+  data_ajuste?: string;
+  justificativa_ajuste?: string;
+  observacoes?: string;
 }
 
 export function useInventarioCiclico() {
@@ -47,7 +55,7 @@ export function useInventarioCiclico() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
 
   const fetchCiclos = useCallback(async () => {
     try {
@@ -64,9 +72,26 @@ export function useInventarioCiclico() {
 
       if (fetchError) throw fetchError;
 
-      const mapped = (data || []).map(ciclo => ({
-        ...ciclo,
-        responsavel_nome: ciclo.profiles?.nome,
+      const mapped: Ciclo[] = (data || []).map(ciclo => ({
+        id: ciclo.id,
+        nome: ciclo.nome,
+        descricao: ciclo.descricao || undefined,
+        tipo: ciclo.tipo as TipoCiclo,
+        status: ciclo.status as StatusCiclo,
+        data_agendada: ciclo.data_agendada,
+        data_inicio: ciclo.data_inicio || undefined,
+        data_fim: ciclo.data_fim || undefined,
+        total_posicoes: ciclo.total_posicoes || 0,
+        posicoes_contadas: ciclo.posicoes_contadas || 0,
+        divergencias_encontradas: ciclo.divergencias_encontradas || 0,
+        acuracidade: ciclo.acuracidade || undefined,
+        zona_alvo: ciclo.zona_alvo || undefined,
+        porta_palete_alvo: ciclo.porta_palete_alvo || undefined,
+        responsavel_id: ciclo.responsavel_id || undefined,
+        responsavel_nome: ciclo.profiles?.nome || undefined,
+        observacoes: ciclo.observacoes || undefined,
+        created_at: ciclo.created_at,
+        updated_at: ciclo.updated_at,
       }));
 
       setCiclos(mapped);
@@ -100,9 +125,9 @@ export function useInventarioCiclico() {
     nome: string;
     descricao?: string;
     tipo: TipoCiclo;
-    data_inicio_prevista: string;
-    data_fim_prevista: string;
-    posicoes?: string[];
+    data_agendada: string;
+    zona_alvo?: string;
+    porta_palete_alvo?: string;
   }): Promise<Ciclo | null> => {
     try {
       const { data, error: insertError } = await supabase
@@ -112,13 +137,12 @@ export function useInventarioCiclico() {
           descricao: dados.descricao,
           tipo: dados.tipo,
           status: 'agendado',
-          data_inicio_prevista: dados.data_inicio_prevista,
-          data_fim_prevista: dados.data_fim_prevista,
-          posicoes_total: dados.posicoes?.length || 0,
+          data_agendada: dados.data_agendada,
+          zona_alvo: dados.zona_alvo,
+          porta_palete_alvo: dados.porta_palete_alvo,
+          total_posicoes: 0,
           posicoes_contadas: 0,
-          itens_conferidos: 0,
-          itens_divergentes: 0,
-          percentual_conclusao: 0,
+          divergencias_encontradas: 0,
           responsavel_id: user?.id,
         }])
         .select()
@@ -126,24 +150,33 @@ export function useInventarioCiclico() {
 
       if (insertError) throw insertError;
 
-      // Se posições foram especificadas, criar contagens
-      if (dados.posicoes && dados.posicoes.length > 0 && data) {
-        const contagens = dados.posicoes.map(posicao => ({
-          ciclo_id: data.id,
-          posicao_codigo: posicao,
-          quantidade_sistema: 0, // TODO: buscar quantidade real
-          status: 'pendente',
-        }));
-
-        await supabase.from('inventario_contagens').insert(contagens);
-      }
-
       toast({
         title: 'Ciclo criado',
         description: `Inventário "${dados.nome}" agendado`,
       });
 
-      return data;
+      const mapped: Ciclo = {
+        id: data.id,
+        nome: data.nome,
+        descricao: data.descricao || undefined,
+        tipo: data.tipo as TipoCiclo,
+        status: data.status as StatusCiclo,
+        data_agendada: data.data_agendada,
+        data_inicio: data.data_inicio || undefined,
+        data_fim: data.data_fim || undefined,
+        total_posicoes: data.total_posicoes || 0,
+        posicoes_contadas: data.posicoes_contadas || 0,
+        divergencias_encontradas: data.divergencias_encontradas || 0,
+        acuracidade: data.acuracidade || undefined,
+        zona_alvo: data.zona_alvo || undefined,
+        porta_palete_alvo: data.porta_palete_alvo || undefined,
+        responsavel_id: data.responsavel_id || undefined,
+        observacoes: data.observacoes || undefined,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      };
+
+      return mapped;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao criar ciclo';
       toast({ title: 'Erro', description: message, variant: 'destructive' });
@@ -157,7 +190,7 @@ export function useInventarioCiclico() {
         .from('inventario_ciclos')
         .update({
           status: 'em_andamento',
-          data_inicio_real: new Date().toISOString(),
+          data_inicio: new Date().toISOString(),
         })
         .eq('id', id);
 
@@ -200,8 +233,7 @@ export function useInventarioCiclico() {
         .from('inventario_ciclos')
         .update({
           status: 'concluido',
-          data_fim_real: new Date().toISOString(),
-          percentual_conclusao: 100,
+          data_fim: new Date().toISOString(),
         })
         .eq('id', id);
 
@@ -222,7 +254,7 @@ export function useInventarioCiclico() {
 
   const registrarContagem = async (
     cicloId: string,
-    posicaoCodigo: string,
+    posicaoId: string,
     quantidadeContada: number,
     observacao?: string
   ): Promise<boolean> => {
@@ -232,21 +264,21 @@ export function useInventarioCiclico() {
         .from('inventario_contagens')
         .select('*')
         .eq('ciclo_id', cicloId)
-        .eq('posicao_codigo', posicaoCodigo)
+        .eq('posicao_id', posicaoId)
         .single();
 
       if (contagem) {
-        const divergencia = quantidadeContada - contagem.quantidade_sistema;
+        const divergencia = quantidadeContada !== contagem.quantidade_sistema;
         
         const { error: updateError } = await supabase
           .from('inventario_contagens')
           .update({
             quantidade_contada: quantidadeContada,
-            divergencia,
-            status: divergencia === 0 ? 'contado' : 'recontagem',
+            status: divergencia ? 'divergente' : 'contado',
+            recontagem_necessaria: divergencia,
             contado_por: user?.id,
             data_contagem: new Date().toISOString(),
-            observacao,
+            observacoes: observacao,
           })
           .eq('id', contagem.id);
 
@@ -257,14 +289,14 @@ export function useInventarioCiclico() {
           .from('inventario_contagens')
           .insert({
             ciclo_id: cicloId,
-            posicao_codigo: posicaoCodigo,
+            posicao_id: posicaoId,
             quantidade_sistema: 0,
             quantidade_contada: quantidadeContada,
-            divergencia: quantidadeContada,
             status: 'contado',
+            recontagem_necessaria: false,
             contado_por: user?.id,
             data_contagem: new Date().toISOString(),
-            observacao,
+            observacoes: observacao,
           });
 
         if (insertError) throw insertError;
@@ -275,7 +307,7 @@ export function useInventarioCiclico() {
 
       toast({
         title: 'Contagem registrada',
-        description: `Posição ${posicaoCodigo}: ${quantidadeContada} unidades`,
+        description: `${quantidadeContada} unidades contadas`,
       });
 
       return true;
@@ -297,16 +329,16 @@ export function useInventarioCiclico() {
 
       const total = contagens.length;
       const contados = contagens.filter(c => c.status !== 'pendente').length;
-      const divergentes = contagens.filter(c => c.divergencia && c.divergencia !== 0).length;
-      const percentual = total > 0 ? Math.round((contados / total) * 100) : 0;
+      const divergentes = contagens.filter(c => c.recontagem_necessaria).length;
+      const acuracidade = contados > 0 ? ((contados - divergentes) / contados) * 100 : 0;
 
       await supabase
         .from('inventario_ciclos')
         .update({
+          total_posicoes: total,
           posicoes_contadas: contados,
-          itens_conferidos: contados,
-          itens_divergentes: divergentes,
-          percentual_conclusao: percentual,
+          divergencias_encontradas: divergentes,
+          acuracidade: Math.round(acuracidade * 100) / 100,
         })
         .eq('id', cicloId);
     } catch (err) {
@@ -320,10 +352,30 @@ export function useInventarioCiclico() {
         .from('inventario_contagens')
         .select('*')
         .eq('ciclo_id', cicloId)
-        .order('posicao_codigo');
+        .order('created_at');
 
       if (fetchError) throw fetchError;
-      return data || [];
+      
+      return (data || []).map(c => ({
+        id: c.id,
+        ciclo_id: c.ciclo_id,
+        posicao_id: c.posicao_id,
+        produto_id: c.produto_id || undefined,
+        lote_id: c.lote_id || undefined,
+        quantidade_sistema: c.quantidade_sistema,
+        quantidade_contada: c.quantidade_contada || undefined,
+        quantidade_recontada: c.quantidade_recontada || undefined,
+        status: c.status as Contagem['status'],
+        recontagem_necessaria: c.recontagem_necessaria || false,
+        contado_por: c.contado_por || undefined,
+        recontado_por: c.recontado_por || undefined,
+        ajustado_por: c.ajustado_por || undefined,
+        data_contagem: c.data_contagem || undefined,
+        data_recontagem: c.data_recontagem || undefined,
+        data_ajuste: c.data_ajuste || undefined,
+        justificativa_ajuste: c.justificativa_ajuste || undefined,
+        observacoes: c.observacoes || undefined,
+      }));
     } catch (err) {
       console.error('Erro ao buscar contagens:', err);
       return [];
