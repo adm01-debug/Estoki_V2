@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import Recebimento from "./pages/Recebimento";
 import ConferenciaRecebimento from "./pages/ConferenciaRecebimento";
 import Triagem from "./pages/Triagem";
@@ -39,30 +42,138 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
-        <Route path="/recebimento" element={<Recebimento />} />
-        <Route path="/recebimento/:id" element={<ConferenciaRecebimento />} />
-        <Route path="/triagem" element={<Triagem />} />
-        <Route path="/triagem/:id" element={<FormularioTriagem />} />
-        <Route path="/minha-produtividade" element={<DashboardTriador />} />
-        <Route path="/estoque" element={<Estoque />} />
-        <Route path="/scanner" element={<Scanner />} />
-        <Route path="/movimentacao" element={<Movimentacao />} />
-        <Route path="/armazenamento" element={<Armazenamento />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/relatorios" element={<Relatorios />} />
-        <Route path="/produtividade" element={<Produtividade />} />
-        <Route path="/configuracoes" element={<Configuracoes />} />
-        <Route path="/inventario-ciclico" element={<InventarioCiclico />} />
-        <Route path="/curva-abc" element={<CurvaABC />} />
-        <Route path="/gestao-tarefas" element={<GestaoTarefas />} />
-        <Route path="/alertas" element={<AlertasInteligentes />} />
-        <Route path="/kpis" element={<KPIsOperacionais />} />
-        <Route path="/rastreabilidade" element={<Rastreabilidade />} />
-        <Route path="/qualidade-fornecedores" element={<RelatorioFornecedores />} />
-        <Route path="/trocas-devolucoes" element={<TrocasDevolucoes />} />
-        <Route path="/dashboard-trocas" element={<DashboardTrocas />} />
-        <Route path="/inventario" element={<Estoque />} />
+        {/* Rota pública - Login/Registro */}
+        <Route path="/auth" element={<Auth />} />
+        
+        {/* Rotas protegidas - Todos os usuários autenticados */}
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Index />
+          </ProtectedRoute>
+        } />
+        
+        {/* Operações - operador, supervisor, admin */}
+        <Route path="/recebimento" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Recebimento />
+          </ProtectedRoute>
+        } />
+        <Route path="/recebimento/:id" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <ConferenciaRecebimento />
+          </ProtectedRoute>
+        } />
+        <Route path="/triagem" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Triagem />
+          </ProtectedRoute>
+        } />
+        <Route path="/triagem/:id" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <FormularioTriagem />
+          </ProtectedRoute>
+        } />
+        <Route path="/minha-produtividade" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <DashboardTriador />
+          </ProtectedRoute>
+        } />
+        <Route path="/estoque" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Estoque />
+          </ProtectedRoute>
+        } />
+        <Route path="/scanner" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Scanner />
+          </ProtectedRoute>
+        } />
+        <Route path="/movimentacao" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Movimentacao />
+          </ProtectedRoute>
+        } />
+        <Route path="/armazenamento" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Armazenamento />
+          </ProtectedRoute>
+        } />
+        <Route path="/inventario" element={
+          <ProtectedRoute allowedRoles={["operador", "supervisor", "admin"]}>
+            <Estoque />
+          </ProtectedRoute>
+        } />
+        
+        {/* Gestão - supervisor, admin */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/relatorios" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <Relatorios />
+          </ProtectedRoute>
+        } />
+        <Route path="/produtividade" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <Produtividade />
+          </ProtectedRoute>
+        } />
+        <Route path="/inventario-ciclico" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <InventarioCiclico />
+          </ProtectedRoute>
+        } />
+        <Route path="/curva-abc" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <CurvaABC />
+          </ProtectedRoute>
+        } />
+        <Route path="/gestao-tarefas" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <GestaoTarefas />
+          </ProtectedRoute>
+        } />
+        <Route path="/alertas" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <AlertasInteligentes />
+          </ProtectedRoute>
+        } />
+        <Route path="/kpis" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <KPIsOperacionais />
+          </ProtectedRoute>
+        } />
+        <Route path="/rastreabilidade" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <Rastreabilidade />
+          </ProtectedRoute>
+        } />
+        <Route path="/qualidade-fornecedores" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <RelatorioFornecedores />
+          </ProtectedRoute>
+        } />
+        <Route path="/trocas-devolucoes" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <TrocasDevolucoes />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard-trocas" element={
+          <ProtectedRoute allowedRoles={["supervisor", "admin"]}>
+            <DashboardTrocas />
+          </ProtectedRoute>
+        } />
+        
+        {/* Configurações - apenas admin */}
+        <Route path="/configuracoes" element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <Configuracoes />
+          </ProtectedRoute>
+        } />
+        
+        {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
@@ -72,15 +183,17 @@ function AnimatedRoutes() {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <NotificationProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
-      </NotificationProvider>
+      <AuthProvider>
+        <NotificationProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <AnimatedRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+        </NotificationProvider>
+      </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>
 );
