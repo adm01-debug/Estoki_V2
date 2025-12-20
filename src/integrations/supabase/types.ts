@@ -1694,6 +1694,87 @@ export type Database = {
           },
         ]
       }
+      trocas_devolucoes: {
+        Row: {
+          aberto_por: string | null
+          analisado_por: string | null
+          cliente: string
+          created_at: string
+          credito_gerado: boolean | null
+          data_abertura: string
+          data_analise: string | null
+          data_resolucao: string | null
+          descricao_problema: string | null
+          fornecedor: string | null
+          fotos: string[] | null
+          id: string
+          motivo: Database["public"]["Enums"]["motivo_td"]
+          pedido: string
+          produto: string
+          quantidade: number
+          resolucao: string | null
+          sku: string | null
+          status: Database["public"]["Enums"]["status_registro_td"]
+          tipo: Database["public"]["Enums"]["tipo_registro_td"]
+          updated_at: string
+          valor_credito: number | null
+          valor_total: number | null
+          valor_unitario: number | null
+        }
+        Insert: {
+          aberto_por?: string | null
+          analisado_por?: string | null
+          cliente: string
+          created_at?: string
+          credito_gerado?: boolean | null
+          data_abertura?: string
+          data_analise?: string | null
+          data_resolucao?: string | null
+          descricao_problema?: string | null
+          fornecedor?: string | null
+          fotos?: string[] | null
+          id?: string
+          motivo: Database["public"]["Enums"]["motivo_td"]
+          pedido: string
+          produto: string
+          quantidade?: number
+          resolucao?: string | null
+          sku?: string | null
+          status?: Database["public"]["Enums"]["status_registro_td"]
+          tipo: Database["public"]["Enums"]["tipo_registro_td"]
+          updated_at?: string
+          valor_credito?: number | null
+          valor_total?: number | null
+          valor_unitario?: number | null
+        }
+        Update: {
+          aberto_por?: string | null
+          analisado_por?: string | null
+          cliente?: string
+          created_at?: string
+          credito_gerado?: boolean | null
+          data_abertura?: string
+          data_analise?: string | null
+          data_resolucao?: string | null
+          descricao_problema?: string | null
+          fornecedor?: string | null
+          fotos?: string[] | null
+          id?: string
+          motivo?: Database["public"]["Enums"]["motivo_td"]
+          pedido?: string
+          produto?: string
+          quantidade?: number
+          resolucao?: string | null
+          sku?: string | null
+          status?: Database["public"]["Enums"]["status_registro_td"]
+          tipo?: Database["public"]["Enums"]["tipo_registro_td"]
+          updated_at?: string
+          valor_credito?: number | null
+          valor_total?: number | null
+          valor_unitario?: number | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1807,6 +1888,15 @@ export type Database = {
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
+      motivo_td:
+        | "defeito"
+        | "cor_errada"
+        | "tamanho_errado"
+        | "quantidade_errada"
+        | "produto_errado"
+        | "avaria_transporte"
+        | "desistencia"
+        | "outro"
       prioridade_tarefa: "baixa" | "media" | "alta" | "urgente"
       severidade_alerta: "info" | "aviso" | "critico" | "urgente"
       status_alerta: "ativo" | "reconhecido" | "resolvido" | "ignorado"
@@ -1825,6 +1915,14 @@ export type Database = {
         | "reagendado"
       status_onda: "pendente" | "em_andamento" | "concluida" | "cancelada"
       status_posicao: "livre" | "ocupado" | "reservado" | "bloqueado"
+      status_registro_td:
+        | "aberto"
+        | "em_analise"
+        | "aprovado"
+        | "recusado"
+        | "em_transito"
+        | "recebido"
+        | "finalizado"
       status_romaneio:
         | "rascunho"
         | "confirmado"
@@ -1862,6 +1960,7 @@ export type Database = {
         | "devolucao"
         | "ajuste_estoque"
       tipo_posicao: "porta_palete" | "box"
+      tipo_registro_td: "troca" | "devolucao"
       tipo_tarefa:
         | "separacao"
         | "armazenagem"
@@ -1996,6 +2095,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["operador", "supervisor", "admin"],
+      motivo_td: [
+        "defeito",
+        "cor_errada",
+        "tamanho_errado",
+        "quantidade_errada",
+        "produto_errado",
+        "avaria_transporte",
+        "desistencia",
+        "outro",
+      ],
       prioridade_tarefa: ["baixa", "media", "alta", "urgente"],
       severidade_alerta: ["info", "aviso", "critico", "urgente"],
       status_alerta: ["ativo", "reconhecido", "resolvido", "ignorado"],
@@ -2016,6 +2125,15 @@ export const Constants = {
       ],
       status_onda: ["pendente", "em_andamento", "concluida", "cancelada"],
       status_posicao: ["livre", "ocupado", "reservado", "bloqueado"],
+      status_registro_td: [
+        "aberto",
+        "em_analise",
+        "aprovado",
+        "recusado",
+        "em_transito",
+        "recebido",
+        "finalizado",
+      ],
       status_romaneio: [
         "rascunho",
         "confirmado",
@@ -2057,6 +2175,7 @@ export const Constants = {
         "ajuste_estoque",
       ],
       tipo_posicao: ["porta_palete", "box"],
+      tipo_registro_td: ["troca", "devolucao"],
       tipo_tarefa: [
         "separacao",
         "armazenagem",
