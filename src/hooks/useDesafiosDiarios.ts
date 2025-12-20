@@ -225,6 +225,29 @@ export function useDesafiosDiarios() {
     return () => clearInterval(interval);
   }, []);
 
+  // Função para gerar novos desafios via Edge Function
+  const gerarDesafios = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('gerar-desafios-diarios', {
+        body: { data: hoje }
+      });
+
+      if (error) throw error;
+
+      if (data?.success) {
+        toast.success('Novos desafios gerados!');
+        await fetchDesafios();
+        return data.desafios;
+      } else {
+        throw new Error(data?.error || 'Erro ao gerar desafios');
+      }
+    } catch (err) {
+      console.error('Erro ao gerar desafios:', err);
+      toast.error('Não foi possível gerar novos desafios');
+      return [];
+    }
+  }, [hoje, fetchDesafios]);
+
   return {
     desafios: desafiosCompletos,
     loading,
@@ -238,7 +261,10 @@ export function useDesafiosDiarios() {
     tempoRestante,
     todosCompletos: desafiosConcluidos.length === desafiosCompletos.length && desafiosCompletos.length > 0,
     dificuldadeLabels,
+    gerarDesafios,
   };
 }
 
 export default useDesafiosDiarios;
+
+
