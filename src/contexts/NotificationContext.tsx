@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode, useCallback,
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 export interface Notification {
   id: string;
@@ -118,7 +119,15 @@ const showNotificationToast = (notification: { title: string; message: string; t
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [pushPermission, setPushPermission] = useState<NotificationPermission | "default">("default");
+  // Usar hook de push notifications
+  const {
+    permission: pushPermissionFromHook,
+    isSupported: isPushSupported,
+    requestPermission: requestPushFromHook,
+    showNotification: showPushNotification,
+  } = usePushNotifications();
+  
+  const pushPermission = pushPermissionFromHook;
   const [soundEnabled, setSoundEnabled] = useState(() => {
     const saved = localStorage.getItem('notification-sound-enabled');
     return saved !== null ? saved === 'true' : true;
@@ -461,3 +470,5 @@ export function useNotifications() {
   }
   return context;
 }
+
+
