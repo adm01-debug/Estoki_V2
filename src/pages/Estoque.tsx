@@ -21,7 +21,11 @@ import {
   ZoomOut,
   RotateCcw,
   Loader2,
-  Plus
+  Plus,
+  Trash2,
+  Lock,
+  Unlock,
+  CheckSquare
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -37,6 +41,8 @@ import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
+import { useBulkActions } from "@/hooks/useBulkActions";
+import { toast } from "sonner";
 import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
 import { differenceInDays } from "date-fns";
@@ -58,6 +64,46 @@ interface Filters {
 export default function EstoquePage() {
   const navigate = useNavigate();
   const { posicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+
+  // Hook para ações em lote
+  const {
+    selectedIds,
+    selectedItems,
+    allSelected,
+    someSelected,
+    isProcessing,
+    toggleItem,
+    toggleAll,
+    clearSelection,
+    executeAction,
+  } = useBulkActions(posicoes);
+
+  // Ações em lote disponíveis
+  const handleBulkBloquear = async () => {
+    await executeAction({
+      label: "Bloquear",
+      action: async (items) => {
+        for (const item of items) {
+          await atualizarPosicao(item.id, { status: "bloqueado" });
+        }
+        toast.success(`${items.length} posições bloqueadas`);
+      },
+      confirmMessage: `Deseja bloquear ${selectedItems.length} posições?`,
+    });
+  };
+
+  const handleBulkLiberar = async () => {
+    await executeAction({
+      label: "Liberar",
+      action: async (items) => {
+        for (const item of items) {
+          await atualizarPosicao(item.id, { status: "livre" });
+        }
+        toast.success(`${items.length} posições liberadas`);
+      },
+      confirmMessage: `Deseja liberar ${selectedItems.length} posições?`,
+    });
+  };
   
   const [activeTab, setActiveTab] = useState("mapa");
   const [selectedPosition, setSelectedPosition] = useState<PosicaoEstoque | null>(null);
@@ -733,3 +779,5 @@ export default function EstoquePage() {
     </AppLayout>
   );
 }
+
+
