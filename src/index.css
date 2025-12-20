@@ -104,6 +104,14 @@
 
     --kpi-card: 220 20% 14%;
     --kpi-icon-bg: 217 91% 20%;
+
+    /* Chart colors for dark mode */
+    --chart-success: 160 70% 50%;
+    --chart-danger: 0 70% 60%;
+    --chart-warning: 38 85% 55%;
+    --chart-info: 217 85% 65%;
+    --chart-accent: 270 70% 60%;
+    --chart-neutral: 220 10% 50%;
   }
 }
 

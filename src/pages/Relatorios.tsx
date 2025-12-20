@@ -11,11 +11,13 @@ import {
   BarChart3,
   Search,
   Loader2,
-  PieChart
+  PieChart,
+  FileSpreadsheet
 } from "lucide-react";
 import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import jsPDF from "jspdf";
+import { exportToExcel } from "@/utils/exportExcel";
 import {
   AreaChart,
   Area,
@@ -252,6 +254,7 @@ export default function RelatoriosPage() {
   const [buscaTexto, setBuscaTexto] = useState("");
   const [exportandoCSV, setExportandoCSV] = useState(false);
   const [exportandoPDF, setExportandoPDF] = useState(false);
+  const [exportandoExcel, setExportandoExcel] = useState(false);
 
   // Filtragem dos dados
   const dadosFiltrados = useMemo(() => {
@@ -552,6 +555,44 @@ export default function RelatoriosPage() {
       setExportandoPDF(false);
     }
   }, [dadosFiltrados, dataInicio, dataFim, estatisticas]);
+
+  // Exportar Excel
+  const exportarExcel = useCallback(() => {
+    if (dadosFiltrados.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+
+    setExportandoExcel(true);
+
+    try {
+      const excelData = dadosFiltrados.map(mov => ({
+        "Data": format(mov.dataHora, "dd/MM/yyyy"),
+        "Hora": format(mov.dataHora, "HH:mm"),
+        "Tipo": tipoLabels[mov.tipo] || mov.tipo,
+        "Pedido": mov.pedido,
+        "Produto": mov.produto,
+        "Volumes": mov.volumes.join(", "),
+        "Quantidade": mov.quantidade,
+        "Origem": mov.origem || "",
+        "Destino": mov.destino || "",
+        "Responsável": mov.responsavelNome,
+        "Observação": mov.observacao || ""
+      }));
+
+      exportToExcel(excelData, {
+        filename: `relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}`,
+        sheetName: "Movimentações"
+      });
+
+      toast.success(`${dadosFiltrados.length} registros exportados para Excel!`);
+    } catch (error) {
+      toast.error("Erro ao exportar Excel");
+      console.error(error);
+    } finally {
+      setExportandoExcel(false);
+    }
+  }, [dadosFiltrados]);
 
   return (
     <AppLayout title="Relatórios" showBack>
@@ -890,6 +931,15 @@ export default function RelatoriosPage() {
           >
             {exportandoPDF ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
             Gerar PDF
+          </Button>
+          <Button 
+            variant="outline" 
+            className="gap-2"
+            onClick={exportarExcel}
+            disabled={exportandoExcel || dadosFiltrados.length === 0}
+          >
+            {exportandoExcel ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
+            Exportar Excel
           </Button>
         </div>
 
