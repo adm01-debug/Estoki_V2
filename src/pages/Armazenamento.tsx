@@ -27,11 +27,16 @@ import {
 type Rotatividade = "alta" | "media" | "baixa";
 type FaixaPeso = "leve" | "medio" | "pesado";
 
-interface PosicaoSugerida extends PosicaoEstoque {
+interface PosicaoSugerida {
+  id: string;
+  codigo: string;
+  zona?: string;
+  tipo: string;
+  status: string;
   score: number;
   motivos: string[];
   rua: string;
-  nivel: number;
+  nivelNumero: number;
   coluna: number;
 }
 

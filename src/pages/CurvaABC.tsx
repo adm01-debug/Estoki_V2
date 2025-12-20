@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { useCurvaABC, ProdutoABC, Classificacao } from "@/hooks/useCurvaABC";
+import { useCurvaABC, ProdutoABC, ClassificacaoABC } from "@/hooks/useCurvaABC";
+type Classificacao = ClassificacaoABC;
 import { cn } from "@/lib/utils";
 import {
   TrendingUp,
@@ -51,7 +52,8 @@ const COLORS: Record<Classificacao, string> = {
 };
 
 export default function CurvaABCPage() {
-  const { produtos, estatisticas, loading, recalcular } = useCurvaABC();
+  const { produtos, loading, recalcular, getEstatisticas } = useCurvaABC();
+  const estatisticas = getEstatisticas();
 
   const [tab, setTab] = useState("analise");
   const [searchTerm, setSearchTerm] = useState("");

@@ -8,7 +8,7 @@ interface NotificacoesGlobaisProps {
 }
 
 export function NotificacoesGlobais({ enabled = true }: NotificacoesGlobaisProps) {
-  const { notificacoes, naoLidas, marcarComoLida } = useNotificacoes();
+  const { notificacoes, marcarComoLida } = useNotificacoes();
   const notificadasRef = useRef<Set<string>>(new Set());
 
   // Mostrar toast para novas notificações não lidas

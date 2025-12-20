@@ -36,11 +36,17 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function DashboardTriadorPage() {
   const { user } = useAuth();
-  const { gamificacao, loading: loadingGamificacao } = useGamificacao();
-  const { conquistasUsuario, loading: loadingConquistas } = useConquistas();
+  const gamificacaoData = useGamificacao();
+  const gamificacao = gamificacaoData.dados;
+  const loadingGamificacao = gamificacaoData.loading;
+  const conquistasData = useConquistas();
+  const conquistasUsuario = conquistasData.desbloqueadas;
+  const loadingConquistas = conquistasData.loading;
   const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
   const { ranking, minhaposicao, loading: loadingRanking, periodo: periodoRanking } = useRanking();
-  const { streakAtual, loading: loadingStreaks } = useStreaks();
+  const streaksData = useStreaks();
+  const streakAtual = streaksData.streakAtual;
+  const loadingStreaks = streaksData.loading;
   const { metricas, loading: loadingMetricas } = useProdutividade();
 
   const [tab, setTab] = useState("hoje");
@@ -94,10 +100,10 @@ export default function DashboardTriadorPage() {
                       <Zap className="h-3 w-3 text-primary" />
                       {gamificacao?.xp_total || 0} XP
                     </Badge>
-                    {streakAtual && streakAtual.dias_consecutivos > 0 && (
+                    {streakAtual > 0 && (
                       <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
                         <Flame className="h-3 w-3" />
-                        {streakAtual.dias_consecutivos} dias
+                        {streakAtual} dias
                       </Badge>
                     )}
                   </div>
@@ -209,7 +215,7 @@ export default function DashboardTriadorPage() {
               </CardContent>
             </Card>
 
-            {streakAtual && streakAtual.dias_consecutivos > 0 && (
+            {streakAtual > 0 && (
               <Card className="border-orange-500/30 bg-orange-500/5">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
@@ -219,10 +225,10 @@ export default function DashboardTriadorPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">Streak Ativo!</h3>
-                        <p className="text-sm text-muted-foreground">{streakAtual.dias_consecutivos} dias consecutivos</p>
+                        <p className="text-sm text-muted-foreground">{streakAtual} dias consecutivos</p>
                       </div>
                     </div>
-                    <p className="text-2xl font-bold text-orange-500">{streakAtual.dias_consecutivos}</p>
+                    <p className="text-2xl font-bold text-orange-500">{streakAtual}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -248,11 +254,11 @@ export default function DashboardTriadorPage() {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {conquistasUsuario.map((c) => (
                       <div key={c.id} className="p-4 rounded-lg border bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border-yellow-500/30">
-                        <div className="text-3xl mb-2">{c.icone}</div>
-                        <h4 className="font-semibold text-sm">{c.titulo}</h4>
+                        <div className="text-3xl mb-2">🏆</div>
+                        <h4 className="font-semibold text-sm">{c.nome}</h4>
                         <p className="text-xs text-muted-foreground">{c.descricao}</p>
                         <Badge variant="outline" className="mt-2 gap-1">
-                          <Zap className="h-3 w-3" />+{c.xp_bonus} XP
+                          <Zap className="h-3 w-3" />+{c.pontos} XP
                         </Badge>
                       </div>
                     ))}

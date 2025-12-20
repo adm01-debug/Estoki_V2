@@ -34,10 +34,10 @@ export interface MetaKPI {
   tipo: string;
   metrica: string;
   valor_meta: number;
-  valor_alerta: number | null;
   unidade: string | null;
-  ativo: boolean;
+  ativo: boolean | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface KPIConsolidado {
@@ -302,13 +302,15 @@ export function useKPIsOperacionais(diasIniciais: number = 30): UseKPIsOperacion
     const meta = metas.find(m => m.metrica === metrica);
     if (!meta) return 'success';
     
+    const threshold = meta.valor_meta * 0.9; // 90% of target as warning threshold
+    
     if (meta.tipo === 'maior_melhor') {
       if (valor >= meta.valor_meta) return 'success';
-      if (meta.valor_alerta && valor >= meta.valor_alerta) return 'warning';
+      if (valor >= threshold) return 'warning';
       return 'danger';
     } else {
       if (valor <= meta.valor_meta) return 'success';
-      if (meta.valor_alerta && valor <= meta.valor_alerta) return 'warning';
+      if (valor <= meta.valor_meta * 1.1) return 'warning';
       return 'danger';
     }
   }, [metas]);

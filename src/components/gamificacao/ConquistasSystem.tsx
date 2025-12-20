@@ -108,28 +108,29 @@ function BadgeIcon({ conquista, size = "md", showTooltip = true }: BadgeIconProp
 }
 
 export function ConquistasSystem() {
-  const { 
-    conquistas, 
-    estatisticas, 
-    loading, 
-    error 
-  } = useConquistas();
+  const hookData = useConquistas();
+  const conquistas = hookData.conquistas;
+  const loading = hookData.loading;
+  const totalConquistas = hookData.totalConquistas;
+  const pontosTotal = hookData.pontosTotal;
 
-  const desbloqueadas = useMemo(() => 
-    conquistas.filter((c) => c.desbloqueada), 
-    [conquistas]
-  );
+  const estatisticas = useMemo(() => ({
+    xpTotal: pontosTotal,
+    nivel: Math.floor(pontosTotal / 500) + 1,
+    desbloqueadas: conquistas.filter(c => c.desbloqueada).length,
+    total: totalConquistas,
+  }), [pontosTotal, conquistas, totalConquistas]);
 
   const recentes = useMemo(() => 
-    desbloqueadas
-      .filter((c) => c.dataDesbloqueio)
+    conquistas
+      .filter((c) => c.desbloqueada && c.dataDesbloqueio)
       .sort((a, b) => {
         const dateA = a.dataDesbloqueio?.getTime() || 0;
         const dateB = b.dataDesbloqueio?.getTime() || 0;
         return dateB - dateA;
       })
       .slice(0, 3),
-    [desbloqueadas]
+    [conquistas]
   );
 
   const progressoNivel = useMemo(() => {
@@ -147,15 +148,6 @@ export function ConquistasSystem() {
     );
   }
 
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-40 text-muted-foreground">
-          <p>Erro ao carregar conquistas</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <Card>
