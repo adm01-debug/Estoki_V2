@@ -23,37 +23,55 @@ import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const tipoLabels: Record<TipoMovimentacao, string> = {
-  recebimento: "Recebimento",
+  recebimento_nf: "Recebimento NF",
+  conferencia: "Conferência",
+  triagem_inicio: "Triagem Início",
+  triagem_fim: "Triagem Fim",
   armazenamento: "Armazenamento",
-  transferencia: "Transferência",
-  saida_gravacao: "Saída Gravação",
-  retorno_gravacao: "Retorno Gravação",
-  expedicao: "Expedição",
-  ajuste: "Ajuste",
+  reserva: "Reserva",
+  separacao: "Separação",
+  conferencia_expedicao: "Conf. Expedição",
+  carregamento: "Carregamento",
+  saida_transporte: "Saída Transporte",
+  entrega: "Entrega",
+  devolucao: "Devolução",
+  ajuste_estoque: "Ajuste Estoque",
 };
 
 const tipoColors: Record<TipoMovimentacao, string> = {
-  recebimento: "bg-blue-500/10 text-blue-600 border-blue-500/30",
-  armazenamento: "bg-purple-500/10 text-purple-600 border-purple-500/30",
-  transferencia: "bg-amber-500/10 text-amber-600 border-amber-500/30",
-  saida_gravacao: "bg-red-500/10 text-red-600 border-red-500/30",
-  retorno_gravacao: "bg-green-500/10 text-green-600 border-green-500/30",
-  expedicao: "bg-cyan-500/10 text-cyan-600 border-cyan-500/30",
-  ajuste: "bg-gray-500/10 text-gray-600 border-gray-500/30",
+  recebimento_nf: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+  conferencia: "bg-purple-500/10 text-purple-600 border-purple-500/30",
+  triagem_inicio: "bg-amber-500/10 text-amber-600 border-amber-500/30",
+  triagem_fim: "bg-green-500/10 text-green-600 border-green-500/30",
+  armazenamento: "bg-indigo-500/10 text-indigo-600 border-indigo-500/30",
+  reserva: "bg-pink-500/10 text-pink-600 border-pink-500/30",
+  separacao: "bg-orange-500/10 text-orange-600 border-orange-500/30",
+  conferencia_expedicao: "bg-teal-500/10 text-teal-600 border-teal-500/30",
+  carregamento: "bg-cyan-500/10 text-cyan-600 border-cyan-500/30",
+  saida_transporte: "bg-red-500/10 text-red-600 border-red-500/30",
+  entrega: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+  devolucao: "bg-rose-500/10 text-rose-600 border-rose-500/30",
+  ajuste_estoque: "bg-gray-500/10 text-gray-600 border-gray-500/30",
 };
 
 const tipoIcons: Record<TipoMovimentacao, React.ReactNode> = {
-  recebimento: <Package className="h-4 w-4 text-blue-500" />,
-  armazenamento: <MapPin className="h-4 w-4 text-purple-500" />,
-  transferencia: <ArrowRight className="h-4 w-4 text-amber-500" />,
-  saida_gravacao: <RouteIcon className="h-4 w-4 text-red-500" />,
-  retorno_gravacao: <RouteIcon className="h-4 w-4 text-green-500" />,
-  expedicao: <CheckCircle2 className="h-4 w-4 text-cyan-500" />,
-  ajuste: <History className="h-4 w-4 text-gray-500" />,
+  recebimento_nf: <Package className="h-4 w-4 text-blue-500" />,
+  conferencia: <CheckCircle2 className="h-4 w-4 text-purple-500" />,
+  triagem_inicio: <History className="h-4 w-4 text-amber-500" />,
+  triagem_fim: <CheckCircle2 className="h-4 w-4 text-green-500" />,
+  armazenamento: <MapPin className="h-4 w-4 text-indigo-500" />,
+  reserva: <Package className="h-4 w-4 text-pink-500" />,
+  separacao: <ArrowRight className="h-4 w-4 text-orange-500" />,
+  conferencia_expedicao: <CheckCircle2 className="h-4 w-4 text-teal-500" />,
+  carregamento: <RouteIcon className="h-4 w-4 text-cyan-500" />,
+  saida_transporte: <RouteIcon className="h-4 w-4 text-red-500" />,
+  entrega: <CheckCircle2 className="h-4 w-4 text-emerald-500" />,
+  devolucao: <History className="h-4 w-4 text-rose-500" />,
+  ajuste_estoque: <History className="h-4 w-4 text-gray-500" />,
 };
 
 export default function RastreabilidadePage() {
-  const { movimentacoes, loading, getHistoricoProduto } = useMovimentacoes();
+  const { movimentacoes, loading, getMovimentacoesPorProduto } = useMovimentacoes();
 
   const [tab, setTab] = useState("timeline");
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,9 +83,9 @@ export default function RastreabilidadePage() {
   // Estatísticas
   const stats = useMemo(() => ({
     total: movimentacoes.length,
-    recebimentos: movimentacoes.filter(m => m.tipo === "recebimento").length,
-    expedicoes: movimentacoes.filter(m => m.tipo === "expedicao").length,
-    transferencias: movimentacoes.filter(m => m.tipo === "transferencia").length,
+    recebimentos: movimentacoes.filter(m => m.tipo === "recebimento_nf").length,
+    expedicoes: movimentacoes.filter(m => m.tipo === "saida_transporte" || m.tipo === "entrega").length,
+    armazenamentos: movimentacoes.filter(m => m.tipo === "armazenamento").length,
   }), [movimentacoes]);
 
   // Movimentações filtradas
@@ -76,8 +94,8 @@ export default function RastreabilidadePage() {
       const matchSearch = 
         searchTerm === "" ||
         m.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.origem?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.destino?.toLowerCase().includes(searchTerm.toLowerCase());
+        m.localizacao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        m.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase());
       
       const matchTipo = filtroTipo === "todos" || m.tipo === filtroTipo;
       
@@ -90,7 +108,7 @@ export default function RastreabilidadePage() {
     if (!produtoBusca.trim()) return;
     
     setBuscando(true);
-    const historico = await getHistoricoProduto(produtoBusca);
+    const historico = await getMovimentacoesPorProduto(produtoBusca);
     setHistoricoProduto(historico);
     setBuscando(false);
   };
@@ -161,12 +179,12 @@ export default function RastreabilidadePage() {
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-amber-500/10">
-                  <ArrowRight className="h-5 w-5 text-amber-500" />
+                <div className="p-2 rounded-lg bg-indigo-500/10">
+                  <MapPin className="h-5 w-5 text-indigo-500" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Transferências</p>
-                  <p className="text-2xl font-bold">{stats.transferencias}</p>
+                  <p className="text-xs text-muted-foreground">Armazenamentos</p>
+                  <p className="text-2xl font-bold">{stats.armazenamentos}</p>
                 </div>
               </div>
             </CardContent>
@@ -234,32 +252,20 @@ export default function RastreabilidadePage() {
                                 <Badge variant="outline" className={tipoColors[mov.tipo]}>
                                   {tipoLabels[mov.tipo]}
                                 </Badge>
-                                {mov.quantidade && (
+                                {mov.quantidade > 0 && (
                                   <span className="text-sm font-medium">{mov.quantidade} un</span>
                                 )}
                               </div>
-                              <p className="font-medium">{mov.descricao || "Movimentação"}</p>
+                              <p className="font-medium">{mov.descricao || mov.produto_nome || "Movimentação"}</p>
                               
                               <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
-                                {mov.origem && (
+                                {mov.localizacao && (
                                   <span className="flex items-center gap-1">
                                     <MapPin className="h-3 w-3" />
-                                    De: {mov.origem}
-                                  </span>
-                                )}
-                                {mov.destino && (
-                                  <span className="flex items-center gap-1">
-                                    <ArrowRight className="h-3 w-3" />
-                                    Para: {mov.destino}
+                                    {mov.localizacao}
                                   </span>
                                 )}
                               </div>
-                              
-                              {mov.observacao && (
-                                <p className="text-sm text-muted-foreground mt-2 italic">
-                                  {mov.observacao}
-                                </p>
-                              )}
                             </div>
 
                             <div className="text-right text-sm text-muted-foreground">
@@ -270,8 +276,8 @@ export default function RastreabilidadePage() {
                               <p className="text-xs mt-1">
                                 {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm")}
                               </p>
-                              {mov.usuario_nome && (
-                                <p className="text-xs mt-1">{mov.usuario_nome}</p>
+                              {mov.operador_nome && (
+                                <p className="text-xs mt-1">{mov.operador_nome}</p>
                               )}
                             </div>
                           </div>
@@ -302,7 +308,7 @@ export default function RastreabilidadePage() {
               <CardContent>
                 <div className="flex gap-3">
                   <Input
-                    placeholder="Digite o SKU ou nome do produto..."
+                    placeholder="Digite o ID do produto..."
                     value={produtoBusca}
                     onChange={(e) => setProdutoBusca(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleBuscarProduto()}
@@ -332,7 +338,7 @@ export default function RastreabilidadePage() {
                           <div>
                             <p className="font-medium">{tipoLabels[mov.tipo]}</p>
                             <p className="text-sm text-muted-foreground">
-                              {mov.origem} → {mov.destino}
+                              {mov.localizacao || mov.descricao}
                             </p>
                           </div>
                         </div>

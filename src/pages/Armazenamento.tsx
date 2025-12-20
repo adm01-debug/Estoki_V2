@@ -147,13 +147,17 @@ const calcularSugestoes = (
       }
       
       return { 
-        ...p, 
+        id: p.id,
+        codigo: p.codigo,
+        tipo: p.tipo,
+        status: p.status,
+        zona: p.zona,
         score, 
         motivos,
         rua: parsed.rua,
-        nivel: parsed.nivel,
+        nivelNumero: parsed.nivel,
         coluna: parsed.coluna
-      };
+      } as PosicaoSugerida;
     })
     .sort((a, b) => b.score - a.score);
 };
@@ -388,7 +392,7 @@ const ArmazenamentoPage = () => {
                     <div>
                       <p className="font-semibold">Posição Recomendada</p>
                       <p className="text-sm text-muted-foreground">
-                        {melhorSugestao.rua} • Nível {melhorSugestao.nivel} • Coluna {melhorSugestao.coluna}
+                        {melhorSugestao.rua} • Nível {melhorSugestao.nivelNumero} • Coluna {melhorSugestao.coluna}
                       </p>
                     </div>
                   </div>
@@ -438,7 +442,7 @@ const ArmazenamentoPage = () => {
                       </div>
                       <div>
                         <p className="font-medium text-sm">
-                          {pos.rua} • Nível {pos.nivel}
+                          {pos.rua} • Nível {pos.nivelNumero}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {pos.motivos[0]}

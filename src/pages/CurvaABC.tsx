@@ -81,9 +81,9 @@ export default function CurvaABCPage() {
   }, [produtos, searchTerm, curvaFilter, sortBy]);
 
   const dadosPie = useMemo(() => [
-    { name: "Curva A", value: estatisticas.totalA, cor: COLORS.A },
-    { name: "Curva B", value: estatisticas.totalB, cor: COLORS.B },
-    { name: "Curva C", value: estatisticas.totalC, cor: COLORS.C },
+    { name: "Curva A", value: estatisticas.produtosA, cor: COLORS.A },
+    { name: "Curva B", value: estatisticas.produtosB, cor: COLORS.B },
+    { name: "Curva C", value: estatisticas.produtosC, cor: COLORS.C },
   ].filter(d => d.value > 0), [estatisticas]);
 
   const dadosPareto = useMemo(() => {
@@ -134,9 +134,9 @@ export default function CurvaABCPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { label: "Curva A", value: estatisticas.totalA, color: "green" },
-              { label: "Curva B", value: estatisticas.totalB, color: "amber" },
-              { label: "Curva C", value: estatisticas.totalC, color: "blue" },
+              { label: "Curva A", value: estatisticas.produtosA, color: "green" },
+              { label: "Curva B", value: estatisticas.produtosB, color: "amber" },
+              { label: "Curva C", value: estatisticas.produtosC, color: "blue" },
               { label: "Total", value: estatisticas.totalProdutos, color: "primary" },
             ].map((item) => (
               <Card key={item.label}>
@@ -203,7 +203,7 @@ export default function CurvaABCPage() {
               <div className="grid md:grid-cols-3 gap-4">
                 {(["A", "B", "C"] as Classificacao[]).map((curva) => {
                   const config = curvaConfig[curva];
-                  const qtd = curva === "A" ? estatisticas.totalA : curva === "B" ? estatisticas.totalB : estatisticas.totalC;
+                  const qtd = curva === "A" ? estatisticas.produtosA : curva === "B" ? estatisticas.produtosB : estatisticas.produtosC;
                   const pct = estatisticas.totalProdutos > 0 ? (qtd / estatisticas.totalProdutos) * 100 : 0;
                   return (
                     <Card key={curva}>

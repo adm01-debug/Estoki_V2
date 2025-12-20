@@ -141,7 +141,7 @@ export default function RelatorioFornecedoresPage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Fornecedores</p>
-                  <p className="text-2xl font-bold">{estatisticas.totalFornecedores}</p>
+                  <p className="text-2xl font-bold">{estatisticas.total}</p>
                 </div>
               </div>
             </CardContent>

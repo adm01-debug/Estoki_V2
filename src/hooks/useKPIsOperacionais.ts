@@ -150,13 +150,32 @@ export function useKPIsOperacionais(diasIniciais: number = 30): UseKPIsOperacion
       if (meta.id) {
         const { error } = await supabase
           .from('metas_kpi')
-          .update(meta)
+          .update({
+            nome: meta.nome,
+            descricao: meta.descricao,
+            tipo: meta.tipo,
+            metrica: meta.metrica,
+            valor_meta: meta.valor_meta,
+            unidade: meta.unidade,
+            ativo: meta.ativo,
+          })
           .eq('id', meta.id);
         if (error) throw error;
       } else {
+        if (!meta.nome || !meta.tipo || !meta.metrica || meta.valor_meta === undefined) {
+          throw new Error('Campos obrigatórios faltando');
+        }
         const { error } = await supabase
           .from('metas_kpi')
-          .insert(meta);
+          .insert({
+            nome: meta.nome,
+            descricao: meta.descricao,
+            tipo: meta.tipo,
+            metrica: meta.metrica,
+            valor_meta: meta.valor_meta,
+            unidade: meta.unidade,
+            ativo: meta.ativo ?? true,
+          });
         if (error) throw error;
       }
     },
