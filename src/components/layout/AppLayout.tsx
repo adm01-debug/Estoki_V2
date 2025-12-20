@@ -102,6 +102,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                 size="icon" 
                 onClick={() => navigate(-1)}
                 className="touch-friendly"
+                aria-label="Voltar para página anterior"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
@@ -126,7 +127,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             {rightAction}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="touch-friendly relative">
+                <Button variant="ghost" size="icon" className="touch-friendly relative" aria-label="Menu do usuário">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary/10 text-primary text-sm">
                       {getInitials(userName)}
@@ -177,6 +178,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
+                aria-label={`Ir para ${item.label}`}
+                aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors touch-friendly",
                   isActive 
@@ -184,7 +187,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5" aria-hidden="true" />
                 <span className="text-xs font-medium">{item.label}</span>
               </button>
             );

@@ -9,6 +9,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { OnboardingTourProvider } from "@/components/onboarding/OnboardingTour";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Recebimento from "./pages/Recebimento";
@@ -193,13 +194,15 @@ const App = () => (
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <AuthProvider>
           <NotificationProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-                <AnimatedRoutes />
-              </BrowserRouter>
-            </TooltipProvider>
+            <OnboardingTourProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <AnimatedRoutes />
+                </BrowserRouter>
+              </TooltipProvider>
+            </OnboardingTourProvider>
           </NotificationProvider>
         </AuthProvider>
       </ThemeProvider>
