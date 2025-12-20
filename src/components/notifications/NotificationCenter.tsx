@@ -1,4 +1,4 @@
-import { Bell, Package, ClipboardCheck, X, Check, CheckCheck, Trash2, BellRing } from "lucide-react";
+import { Bell, Package, ClipboardCheck, X, Check, CheckCheck, Trash2, BellRing, Volume2, VolumeX, Truck, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,6 +19,16 @@ function NotificationIcon({ type }: { type: Notification["type"] }) {
       return <Package className="h-4 w-4 text-destructive" />;
     case "triagem_pendente":
       return <ClipboardCheck className="h-4 w-4 text-warning" />;
+    case "recebimento_chegou":
+      return <Truck className="h-4 w-4 text-blue-500" />;
+    case "recebimento_divergencia":
+      return <AlertTriangle className="h-4 w-4 text-destructive" />;
+    case "recebimento_conferido":
+      return <Check className="h-4 w-4 text-green-500" />;
+    case "recebimento":
+      return <Package className="h-4 w-4 text-primary" />;
+    case "alerta":
+      return <Bell className="h-4 w-4 text-warning" />;
     default:
       return <Bell className="h-4 w-4 text-muted-foreground" />;
   }
@@ -76,7 +86,9 @@ export function NotificationCenter() {
     markAllAsRead,
     clearAll,
     pushPermission,
-    requestPushPermission
+    requestPushPermission,
+    soundEnabled,
+    setSoundEnabled,
   } = useNotifications();
 
   return (
@@ -99,6 +111,19 @@ export function NotificationCenter() {
         <div className="flex items-center justify-between p-3 border-b">
           <h4 className="font-semibold text-sm">Notificações</h4>
           <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              title={soundEnabled ? "Desativar som" : "Ativar som"}
+            >
+              {soundEnabled ? (
+                <Volume2 className="h-3.5 w-3.5" />
+              ) : (
+                <VolumeX className="h-3.5 w-3.5 text-muted-foreground" />
+              )}
+            </Button>
             {unreadCount > 0 && (
               <Button
                 variant="ghost"
