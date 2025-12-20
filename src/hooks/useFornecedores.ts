@@ -50,39 +50,32 @@ export function useFornecedores() {
       setLoading(true);
       setError(null);
 
-      // Buscar recebimentos agrupados por fornecedor
-      const { data: recebimentos, error: recError } = await supabase
-        .from('recebimentos')
-        .select('fornecedor, status, qtd_pedida, qtd_recebida, divergencia, created_at');
+      // Buscar lotes agrupados por fornecedor (usando lotes em vez de recebimentos)
+      const { data: lotes, error: lotesError } = await supabase
+        .from('lotes')
+        .select('id, fornecedor, quantidade_inicial, quantidade_atual, created_at, data_recebimento');
 
-      if (recError) throw recError;
+      if (lotesError) throw lotesError;
 
-      // Buscar triagens para qualidade
+      // Buscar eventos de triagem para qualidade
       const { data: triagens, error: triagError } = await supabase
-        .from('triagens')
-        .select('pedido, percentual_aprovacao, status');
+        .from('eventos_triagem')
+        .select('id, resultado, lote_id');
 
-      if (triagError) throw triagError;
-
-      // Buscar trocas/devoluções
-      const { data: trocas, error: trocasError } = await supabase
-        .from('trocas_devolucoes')
-        .select('fornecedor, tipo, status');
-
-      if (trocasError) console.error('Erro ao buscar trocas:', trocasError);
+      if (triagError) console.error('Erro ao buscar triagens:', triagError);
 
       // Agrupar por fornecedor
       const fornecedoresMap: Record<string, Fornecedor> = {};
 
-      // Processar recebimentos
-      (recebimentos || []).forEach(rec => {
-        if (!rec.fornecedor) return;
+      // Processar lotes
+      (lotes || []).forEach(lote => {
+        if (!lote.fornecedor) return;
 
-        if (!fornecedoresMap[rec.fornecedor]) {
-          fornecedoresMap[rec.fornecedor] = {
-            id: rec.fornecedor,
-            nome: rec.fornecedor,
-            categoria: 'Brindes', // Default
+        if (!fornecedoresMap[lote.fornecedor]) {
+          fornecedoresMap[lote.fornecedor] = {
+            id: lote.fornecedor,
+            nome: lote.fornecedor,
+            categoria: 'Geral',
             entregas_totais: 0,
             entregas_no_prazo: 0,
             percentual_pontualidade: 0,
@@ -94,26 +87,21 @@ export function useFornecedores() {
             classificacao: 'B',
             pontuacao: 0,
             tendencia: 'estavel',
-            created_at: rec.created_at,
-            updated_at: rec.created_at,
+            created_at: lote.created_at,
+            updated_at: lote.created_at,
           };
         }
 
-        const f = fornecedoresMap[rec.fornecedor];
+        const f = fornecedoresMap[lote.fornecedor];
         f.entregas_totais++;
-        f.itens_recebidos += rec.qtd_recebida || rec.qtd_pedida || 0;
-
-        // Considerar "no prazo" se status != divergencia
-        if (rec.status !== 'divergencia') {
-          f.entregas_no_prazo++;
-        }
+        f.itens_recebidos += lote.quantidade_inicial || 0;
+        f.entregas_no_prazo++; // Considerar todos como no prazo por padrão
       });
 
-      // Processar trocas/devoluções
-      (trocas || []).forEach(td => {
-        if (!td.fornecedor || !fornecedoresMap[td.fornecedor]) return;
-        fornecedoresMap[td.fornecedor].trocas_devolucoes++;
-      });
+      // Calcular qualidade baseado em triagens
+      const triagensAprovadas = (triagens || []).filter(t => t.resultado === 'aprovado').length;
+      const totalTriagens = (triagens || []).length;
+      const taxaAprovacao = totalTriagens > 0 ? (triagensAprovadas / totalTriagens) * 100 : 95;
 
       // Calcular métricas finais
       Object.values(fornecedoresMap).forEach(f => {
@@ -122,9 +110,8 @@ export function useFornecedores() {
           ? Math.round((f.entregas_no_prazo / f.entregas_totais) * 100)
           : 0;
 
-        // Qualidade (baseado em triagens - simplificado)
-        // TODO: Correlacionar triagens com fornecedor através do pedido
-        f.percentual_qualidade = 95; // Default alto
+        // Qualidade
+        f.percentual_qualidade = Math.round(taxaAprovacao);
 
         // Taxa de problemas
         f.taxa_problemas = f.entregas_totais > 0
