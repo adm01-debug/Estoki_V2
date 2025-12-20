@@ -5,8 +5,9 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecebimentos, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { NovoRecebimentoDialog } from "@/components/recebimento/NovoRecebimentoDialog";
 
 const statusConfig: Record<StatusRecebimento, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
   aguardando: { label: "Aguardando", variant: "outline", icon: <Clock className="h-3 w-3" /> },
@@ -84,10 +85,7 @@ export default function RecebimentoPage() {
       title="Recebimento"
       showBack
       rightAction={
-        <Button size="sm" className="gap-2">
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Novo</span>
-        </Button>
+        <NovoRecebimentoDialog />
       }
     >
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
