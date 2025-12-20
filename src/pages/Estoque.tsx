@@ -19,7 +19,8 @@ import {
   Maximize2,
   ZoomIn,
   ZoomOut,
-  RotateCcw
+  RotateCcw,
+  Loader2
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -30,94 +31,12 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
-import type { StatusPosicao } from "@/types/estoque";
-
-// Extended local type with item data
-interface ItemData {
-  sku: string;
-  descricao: string;
-  quantidade: number;
-  diasArmazenado: number;
-}
-
-interface PosicaoLocal {
-  id: string;
-  tipo: "porta-palete" | "box";
-  rua?: string;
-  coluna?: number;
-  nivel?: number;
-  box?: string;
-  status: StatusPosicao;
-  item?: ItemData;
-}
-
-// Generate mock positions
-const generatePPPositions = (): PosicaoLocal[] => {
-  const positions: PosicaoLocal[] = [];
-  const ruas = ["A", "B", "C", "D"];
-  const niveis = [1, 2, 3, 4];
-  const colunas = Array.from({ length: 8 }, (_, i) => i + 1);
-
-  ruas.forEach((rua) => {
-    colunas.forEach((coluna) => {
-      niveis.forEach((nivel) => {
-        const random = Math.random();
-        const status: StatusPosicao =
-          random > 0.3
-            ? "ocupado"
-            : random > 0.15
-            ? "livre"
-            : random > 0.05
-            ? "reservado"
-            : "bloqueado";
-
-        positions.push({
-          id: `${rua}${nivel}-${String(coluna).padStart(2, "0")}`,
-          tipo: "porta-palete",
-          rua,
-          coluna,
-          nivel,
-          status,
-          item: status === "ocupado" ? {
-            sku: `SKU-${Math.floor(Math.random() * 1000)}`,
-            descricao: ["Mochila Executiva", "Caneta Metal", "Squeeze 500ml", "Caderno A5", "Pen Drive"][Math.floor(Math.random() * 5)],
-            quantidade: Math.floor(Math.random() * 500) + 50,
-            diasArmazenado: Math.floor(Math.random() * 60),
-          } : undefined,
-        });
-      });
-    });
-  });
-
-  return positions;
-};
-
-const generateBoxPositions = (): PosicaoLocal[] => {
-  return Array.from({ length: 24 }, (_, i) => {
-    const boxNum = String(i + 1).padStart(2, "0");
-    const random = Math.random();
-    const status: StatusPosicao = random > 0.4 ? "ocupado" : random > 0.1 ? "livre" : "reservado";
-
-    return {
-      id: `BOX-${boxNum}`,
-      tipo: "box",
-      box: boxNum,
-      status,
-      item: status === "ocupado" ? {
-        sku: `SKU-${Math.floor(Math.random() * 1000)}`,
-        descricao: ["Kit Escritório", "Ecobag", "Garrafa Térmica"][Math.floor(Math.random() * 3)],
-        quantidade: Math.floor(Math.random() * 200) + 20,
-        diasArmazenado: Math.floor(Math.random() * 30),
-      } : undefined,
-    };
-  });
-};
-
-const ppPositions = generatePPPositions();
-const boxPositions = generateBoxPositions();
+import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
+import { differenceInDays } from "date-fns";
 
 const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
   livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre", icon: "⬜" },
@@ -129,66 +48,123 @@ const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: s
 interface Filters {
   status: StatusPosicao[];
   ruas: string[];
-  niveis: number[];
+  niveis: string[];
   search: string;
 }
 
 export default function EstoquePage() {
   const navigate = useNavigate();
+  const { posicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+  
   const [activeTab, setActiveTab] = useState("mapa");
-  const [selectedPosition, setSelectedPosition] = useState<PosicaoLocal | null>(null);
+  const [selectedPosition, setSelectedPosition] = useState<PosicaoEstoque | null>(null);
   const [zoom, setZoom] = useState(1);
-  const [filters, setFilters] = useState<Filters>({
-    status: ["livre", "ocupado", "reservado", "bloqueado"],
-    ruas: ["A", "B", "C", "D"],
-    niveis: [1, 2, 3, 4],
-    search: "",
-  });
   const [showFilters, setShowFilters] = useState(false);
 
-  // Calculate stats
-  const ppStats = useMemo(() => ({
-    ocupadas: ppPositions.filter((p) => p.status === "ocupado").length,
-    livres: ppPositions.filter((p) => p.status === "livre").length,
-    reservadas: ppPositions.filter((p) => p.status === "reservado").length,
-    bloqueadas: ppPositions.filter((p) => p.status === "bloqueado").length,
-    total: ppPositions.length,
-  }), []);
+  // Extract unique ruas and niveis from real data
+  const { ruas, niveis } = useMemo(() => {
+    const ppPositions = posicoes.filter(p => p.tipo === 'porta_palete');
+    const ruasSet = new Set<string>();
+    const niveisSet = new Set<string>();
+    
+    ppPositions.forEach(p => {
+      if (p.porta_palete) ruasSet.add(p.porta_palete);
+      if (p.nivel) niveisSet.add(p.nivel);
+    });
+    
+    return {
+      ruas: Array.from(ruasSet).sort(),
+      niveis: Array.from(niveisSet).sort()
+    };
+  }, [posicoes]);
 
-  const boxStats = useMemo(() => ({
-    ocupados: boxPositions.filter((p) => p.status === "ocupado").length,
-    livres: boxPositions.filter((p) => p.status === "livre").length,
-    total: boxPositions.length,
-  }), []);
+  const [filters, setFilters] = useState<Filters>({
+    status: ["livre", "ocupado", "reservado", "bloqueado"],
+    ruas: [],
+    niveis: [],
+    search: "",
+  });
 
-  const ocupacaoTotal = Math.round(((ppStats.ocupadas + boxStats.ocupados) / (ppStats.total + boxStats.total)) * 100);
+  // Initialize filters when data loads
+  useMemo(() => {
+    if (ruas.length > 0 && filters.ruas.length === 0) {
+      setFilters(prev => ({ ...prev, ruas }));
+    }
+    if (niveis.length > 0 && filters.niveis.length === 0) {
+      setFilters(prev => ({ ...prev, niveis }));
+    }
+  }, [ruas, niveis]);
+
+  // Split positions by type
+  const ppPositions = useMemo(() => 
+    posicoes.filter(p => p.tipo === 'porta_palete'), 
+    [posicoes]
+  );
+  
+  const boxPositions = useMemo(() => 
+    posicoes.filter(p => p.tipo === 'box'), 
+    [posicoes]
+  );
+
+  // Calculate stats from real data
+  const stats = useMemo(() => {
+    const estatisticas = getEstatisticas();
+    const ppOcupadas = ppPositions.filter(p => p.status === 'ocupado').length;
+    const ppLivres = ppPositions.filter(p => p.status === 'livre').length;
+    const ppReservadas = ppPositions.filter(p => p.status === 'reservado').length;
+    const ppBloqueadas = ppPositions.filter(p => p.status === 'bloqueado').length;
+    
+    const boxOcupados = boxPositions.filter(p => p.status === 'ocupado').length;
+    const boxLivres = boxPositions.filter(p => p.status === 'livre').length;
+    
+    return {
+      ppStats: {
+        ocupadas: ppOcupadas,
+        livres: ppLivres,
+        reservadas: ppReservadas,
+        bloqueadas: ppBloqueadas,
+        total: ppPositions.length,
+      },
+      boxStats: {
+        ocupados: boxOcupados,
+        livres: boxLivres,
+        total: boxPositions.length,
+      },
+      ocupacaoTotal: Math.round(estatisticas.taxaOcupacao),
+    };
+  }, [getEstatisticas, ppPositions, boxPositions]);
 
   // Filter positions
   const filteredPositions = useMemo(() => {
     return ppPositions.filter(p => {
       if (!filters.status.includes(p.status)) return false;
-      if (p.rua && !filters.ruas.includes(p.rua)) return false;
-      if (p.nivel && !filters.niveis.includes(p.nivel)) return false;
+      if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
+      if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
-        if (!p.id.toLowerCase().includes(searchLower) && 
-            !p.item?.descricao?.toLowerCase().includes(searchLower) &&
-            !p.item?.sku?.toLowerCase().includes(searchLower)) {
+        if (!p.codigo.toLowerCase().includes(searchLower) && 
+            !p.produto_nome?.toLowerCase().includes(searchLower)) {
           return false;
         }
       }
       return true;
     });
-  }, [filters]);
+  }, [ppPositions, filters]);
+
+  // Calculate days stored
+  const getDiasArmazenado = (pos: PosicaoEstoque): number => {
+    if (!pos.created_at) return 0;
+    return differenceInDays(new Date(), new Date(pos.created_at));
+  };
 
   const activeFiltersCount = 
     (4 - filters.status.length) + 
-    (4 - filters.ruas.length) + 
-    (4 - filters.niveis.length);
+    (ruas.length - filters.ruas.length) + 
+    (niveis.length - filters.niveis.length);
 
-  const toggleFilter = (type: keyof Filters, value: string | number | StatusPosicao) => {
+  const toggleFilter = (type: keyof Filters, value: string | StatusPosicao) => {
     setFilters(prev => {
-      const arr = prev[type] as (string | number | StatusPosicao)[];
+      const arr = prev[type] as (string | StatusPosicao)[];
       if (arr.includes(value)) {
         return { ...prev, [type]: arr.filter(v => v !== value) };
       }
@@ -199,11 +175,97 @@ export default function EstoquePage() {
   const resetFilters = () => {
     setFilters({
       status: ["livre", "ocupado", "reservado", "bloqueado"],
-      ruas: ["A", "B", "C", "D"],
-      niveis: [1, 2, 3, 4],
+      ruas,
+      niveis,
       search: "",
     });
   };
+
+  // Group positions by rua for map view
+  const positionsByRua = useMemo(() => {
+    const grouped: Record<string, Record<string, Record<string, PosicaoEstoque>>> = {};
+    
+    filteredPositions.forEach(pos => {
+      const rua = pos.porta_palete || 'SEM_RUA';
+      const nivel = pos.nivel || 'SEM_NIVEL';
+      const secao = pos.secao || pos.codigo;
+      
+      if (!grouped[rua]) grouped[rua] = {};
+      if (!grouped[rua][nivel]) grouped[rua][nivel] = {};
+      grouped[rua][nivel][secao] = pos;
+    });
+    
+    return grouped;
+  }, [filteredPositions]);
+
+  // Get unique sections for grid
+  const secoes = useMemo(() => {
+    const secoesSet = new Set<string>();
+    filteredPositions.forEach(p => {
+      if (p.secao) secoesSet.add(p.secao);
+    });
+    return Array.from(secoesSet).sort((a, b) => parseInt(a) - parseInt(b));
+  }, [filteredPositions]);
+
+  if (loading) {
+    return (
+      <AppLayout title="Estoque" showBack>
+        <PageTransition>
+          <div className="p-4 lg:pl-72 space-y-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map(i => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <Skeleton className="h-16 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <Skeleton className="h-10 w-full" />
+            <div className="grid grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map(i => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <Skeleton className="h-40 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AppLayout title="Estoque" showBack>
+        <PageTransition>
+          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+            <p className="text-destructive">{error}</p>
+            <Button onClick={refetch}>Tentar novamente</Button>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
+
+  // Empty state
+  if (posicoes.length === 0) {
+    return (
+      <AppLayout title="Estoque" showBack>
+        <PageTransition>
+          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+            <Warehouse className="h-16 w-16 text-muted-foreground" />
+            <h2 className="text-xl font-semibold">Nenhuma posição cadastrada</h2>
+            <p className="text-muted-foreground text-center">
+              Cadastre posições de estoque (porta-paletes e boxes) para visualizar o mapa.
+            </p>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout
@@ -227,9 +289,14 @@ export default function EstoquePage() {
           >
             <Card className="col-span-2 lg:col-span-1">
               <CardContent className="p-4 flex items-center gap-4">
-                <ProgressRing value={ocupacaoTotal} size={70} strokeWidth={6} variant={ocupacaoTotal > 90 ? "danger" : ocupacaoTotal > 70 ? "warning" : "success"} />
+                <ProgressRing 
+                  value={stats.ocupacaoTotal} 
+                  size={70} 
+                  strokeWidth={6} 
+                  variant={stats.ocupacaoTotal > 90 ? "danger" : stats.ocupacaoTotal > 70 ? "warning" : "success"} 
+                />
                 <div>
-                  <p className="text-2xl font-bold">{ocupacaoTotal}%</p>
+                  <p className="text-2xl font-bold">{stats.ocupacaoTotal}%</p>
                   <p className="text-xs text-muted-foreground">Ocupação Total</p>
                 </div>
               </CardContent>
@@ -242,7 +309,9 @@ export default function EstoquePage() {
                     <Package className="h-5 w-5 text-success" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-success">{ppStats.ocupadas + boxStats.ocupados}</p>
+                    <p className="text-2xl font-bold text-success">
+                      {stats.ppStats.ocupadas + stats.boxStats.ocupados}
+                    </p>
                     <p className="text-xs text-muted-foreground">Ocupadas</p>
                   </div>
                 </div>
@@ -256,7 +325,9 @@ export default function EstoquePage() {
                     <Box className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold">{ppStats.livres + boxStats.livres}</p>
+                    <p className="text-2xl font-bold">
+                      {stats.ppStats.livres + stats.boxStats.livres}
+                    </p>
                     <p className="text-xs text-muted-foreground">Livres</p>
                   </div>
                 </div>
@@ -270,7 +341,7 @@ export default function EstoquePage() {
                     <Clock className="h-5 w-5 text-warning" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-warning">{ppStats.reservadas}</p>
+                    <p className="text-2xl font-bold text-warning">{stats.ppStats.reservadas}</p>
                     <p className="text-xs text-muted-foreground">Reservadas</p>
                   </div>
                 </div>
@@ -289,7 +360,7 @@ export default function EstoquePage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Buscar posição, produto, SKU..."
+                placeholder="Buscar posição, produto..."
                 className="pl-10"
                 value={filters.search}
                 onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
@@ -349,40 +420,42 @@ export default function EstoquePage() {
                   </div>
 
                   {/* Rua Filter */}
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Ruas</Label>
-                    <div className="flex gap-2">
-                      {["A", "B", "C", "D"].map(rua => (
-                        <Button
-                          key={rua}
-                          variant={filters.ruas.includes(rua) ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => toggleFilter("ruas", rua)}
-                          className="w-10"
-                        >
-                          {rua}
-                        </Button>
-                      ))}
+                  {ruas.length > 0 && (
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Porta-Paletes</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {ruas.map(rua => (
+                          <Button
+                            key={rua}
+                            variant={filters.ruas.includes(rua) ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleFilter("ruas", rua)}
+                          >
+                            {rua}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Nível Filter */}
-                  <div className="space-y-3">
-                    <Label className="text-sm font-medium">Níveis</Label>
-                    <div className="flex gap-2">
-                      {[1, 2, 3, 4].map(nivel => (
-                        <Button
-                          key={nivel}
-                          variant={filters.niveis.includes(nivel) ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => toggleFilter("niveis", nivel)}
-                          className="w-10"
-                        >
-                          N{nivel}
-                        </Button>
-                      ))}
+                  {niveis.length > 0 && (
+                    <div className="space-y-3">
+                      <Label className="text-sm font-medium">Níveis</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {niveis.map(nivel => (
+                          <Button
+                            key={nivel}
+                            variant={filters.niveis.includes(nivel) ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleFilter("niveis", nivel)}
+                          >
+                            N{nivel}
+                          </Button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
@@ -397,7 +470,7 @@ export default function EstoquePage() {
               </TabsTrigger>
               <TabsTrigger value="boxes" className="gap-2">
                 <Box className="h-4 w-4" />
-                Boxes
+                Boxes ({boxPositions.length})
               </TabsTrigger>
               <TabsTrigger value="lista" className="gap-2">
                 <Layers className="h-4 w-4" />
@@ -432,81 +505,97 @@ export default function EstoquePage() {
                   className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-[600px] transition-transform"
                   style={{ transform: `scale(${zoom})`, transformOrigin: "top left" }}
                 >
-                  {["A", "B", "C", "D"].filter(rua => filters.ruas.includes(rua)).map((rua, ruaIndex) => (
-                    <motion.div
-                      key={rua}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: ruaIndex * 0.1 }}
-                    >
-                      <Card>
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-primary" />
-                              Rua {rua}
-                            </span>
-                            <Badge variant="secondary" className="text-xs">
-                              {filteredPositions.filter(p => p.rua === rua && p.status === "ocupado").length}/
-                              {filteredPositions.filter(p => p.rua === rua).length}
-                            </Badge>
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="pb-4">
-                          <div className="space-y-1">
-                            {[4, 3, 2, 1].filter(n => filters.niveis.includes(n)).map(nivel => (
-                              <div key={nivel} className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground w-6 font-medium">N{nivel}</span>
-                                <div className="flex-1 grid grid-cols-8 gap-1">
-                                  {Array.from({ length: 8 }, (_, i) => i + 1).map(coluna => {
-                                    const posId = `${rua}${nivel}-${String(coluna).padStart(2, "0")}`;
-                                    const position = filteredPositions.find(p => p.id === posId);
-                                    
-                                    if (!position) {
-                                      return <div key={coluna} className="h-8 rounded bg-muted/30" />;
-                                    }
-                                    
-                                    const config = statusConfig[position.status];
-                                    
-                                    return (
-                                      <motion.button
-                                        key={posId}
-                                        onClick={() => setSelectedPosition(position)}
-                                        className={cn(
-                                          "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group",
-                                          config.bg, config.border,
-                                          "hover:ring-2 hover:ring-primary hover:ring-offset-1"
-                                        )}
-                                        whileHover={{ scale: 1.1, zIndex: 10 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        title={`${posId} - ${config.label}`}
-                                      >
-                                        {position.item && position.item.diasArmazenado > 30 && (
-                                          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-warning animate-pulse" />
-                                        )}
-                                        <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                          {coluna}
-                                        </span>
-                                      </motion.button>
-                                    );
-                                  })}
+                  {filters.ruas.map((rua, ruaIndex) => {
+                    const ruaPositions = filteredPositions.filter(p => p.porta_palete === rua);
+                    if (ruaPositions.length === 0) return null;
+                    
+                    const ruaNiveis = [...new Set(ruaPositions.map(p => p.nivel).filter(Boolean))].sort().reverse();
+                    const ruaSecoes = [...new Set(ruaPositions.map(p => p.secao).filter(Boolean))].sort((a, b) => parseInt(a!) - parseInt(b!));
+                    
+                    return (
+                      <motion.div
+                        key={rua}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, delay: ruaIndex * 0.1 }}
+                      >
+                        <Card>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-sm flex items-center justify-between">
+                              <span className="flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-primary" />
+                                PP {rua}
+                              </span>
+                              <Badge variant="secondary" className="text-xs">
+                                {ruaPositions.filter(p => p.status === "ocupado").length}/
+                                {ruaPositions.length}
+                              </Badge>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className="pb-4">
+                            <div className="space-y-1">
+                              {ruaNiveis.map(nivel => (
+                                <div key={nivel} className="flex items-center gap-2">
+                                  <span className="text-xs text-muted-foreground w-6 font-medium">N{nivel}</span>
+                                  <div className="flex-1 grid gap-1" style={{ 
+                                    gridTemplateColumns: `repeat(${Math.min(ruaSecoes.length, 10)}, 1fr)` 
+                                  }}>
+                                    {ruaSecoes.slice(0, 10).map(secao => {
+                                      const position = ruaPositions.find(
+                                        p => p.nivel === nivel && p.secao === secao
+                                      );
+                                      
+                                      if (!position) {
+                                        return <div key={secao} className="h-8 rounded bg-muted/30" />;
+                                      }
+                                      
+                                      const config = statusConfig[position.status];
+                                      const diasArmazenado = getDiasArmazenado(position);
+                                      
+                                      return (
+                                        <motion.button
+                                          key={position.id}
+                                          onClick={() => setSelectedPosition(position)}
+                                          className={cn(
+                                            "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group",
+                                            config.bg, config.border,
+                                            "hover:ring-2 hover:ring-primary hover:ring-offset-1"
+                                          )}
+                                          whileHover={{ scale: 1.1, zIndex: 10 }}
+                                          whileTap={{ scale: 0.95 }}
+                                          title={`${position.codigo} - ${config.label}`}
+                                        >
+                                          {position.status === 'ocupado' && diasArmazenado > 30 && (
+                                            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-warning animate-pulse" />
+                                          )}
+                                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {secao}
+                                          </span>
+                                        </motion.button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              ))}
+                              {/* Column labels */}
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="w-6" />
+                                <div className="flex-1 grid gap-1" style={{ 
+                                  gridTemplateColumns: `repeat(${Math.min(ruaSecoes.length, 10)}, 1fr)` 
+                                }}>
+                                  {ruaSecoes.slice(0, 10).map(secao => (
+                                    <span key={secao} className="text-[10px] text-muted-foreground text-center">
+                                      {secao}
+                                    </span>
+                                  ))}
                                 </div>
                               </div>
-                            ))}
-                            {/* Column labels */}
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="w-6" />
-                              <div className="flex-1 grid grid-cols-8 gap-1">
-                                {Array.from({ length: 8 }, (_, i) => (
-                                  <span key={i} className="text-[10px] text-muted-foreground text-center">{i + 1}</span>
-                                ))}
-                              </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -527,34 +616,41 @@ export default function EstoquePage() {
 
             {/* Boxes View */}
             <TabsContent value="boxes" className="space-y-4">
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                {boxPositions.map((box, index) => {
-                  const config = statusConfig[box.status];
-                  return (
-                    <motion.button
-                      key={box.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2, delay: index * 0.02 }}
-                      onClick={() => setSelectedPosition(box)}
-                      className={cn(
-                        "aspect-square rounded-xl flex flex-col items-center justify-center border-2 transition-all",
-                        config.bg, config.border,
-                        "hover:ring-2 hover:ring-primary hover:ring-offset-2"
-                      )}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span className="font-bold text-lg">{box.box}</span>
-                      {box.item && (
-                        <span className="text-xs text-muted-foreground mt-1 truncate px-2 max-w-full">
-                          {box.item.sku}
-                        </span>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
+              {boxPositions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Box className="h-12 w-12 mb-4" />
+                  <p>Nenhum box cadastrado</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                  {boxPositions.map((box, index) => {
+                    const config = statusConfig[box.status];
+                    return (
+                      <motion.button
+                        key={box.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.2, delay: index * 0.02 }}
+                        onClick={() => setSelectedPosition(box)}
+                        className={cn(
+                          "aspect-square rounded-xl flex flex-col items-center justify-center border-2 transition-all",
+                          config.bg, config.border,
+                          "hover:ring-2 hover:ring-primary hover:ring-offset-2"
+                        )}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <span className="font-bold text-lg">{box.box || box.codigo}</span>
+                        {box.produto_nome && (
+                          <span className="text-xs text-muted-foreground mt-1 truncate px-2 max-w-full">
+                            {box.produto_nome}
+                          </span>
+                        )}
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              )}
             </TabsContent>
 
             {/* Lista View */}
@@ -562,41 +658,51 @@ export default function EstoquePage() {
               {filteredPositions
                 .filter(p => p.status === "ocupado")
                 .slice(0, 20)
-                .map((position, index) => (
-                  <motion.div
-                    key={position.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
-                    onClick={() => setSelectedPosition(position)}
-                    className={cn(
-                      "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:shadow-md",
-                      position.item?.diasArmazenado && position.item.diasArmazenado > 30 && "border-l-4 border-l-warning"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono">{position.id}</Badge>
-                        <div>
-                          <p className="font-medium">{position.item?.descricao}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {position.item?.sku} • {position.item?.quantidade} un
-                          </p>
+                .map((position, index) => {
+                  const diasArmazenado = getDiasArmazenado(position);
+                  return (
+                    <motion.div
+                      key={position.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2, delay: index * 0.03 }}
+                      onClick={() => setSelectedPosition(position)}
+                      className={cn(
+                        "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:shadow-md",
+                        diasArmazenado > 30 && "border-l-4 border-l-warning"
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="font-mono">{position.codigo}</Badge>
+                          <div>
+                            <p className="font-medium">{position.produto_nome || 'Produto'}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {position.quantidade || 0} un
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge className={cn(
+                            diasArmazenado > 30 
+                              ? "bg-warning/10 text-warning border-warning/30" 
+                              : "bg-muted text-muted-foreground"
+                          )}>
+                            {diasArmazenado} dias
+                          </Badge>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 ml-auto" />
                         </div>
                       </div>
-                      <div className="text-right">
-                        <Badge className={cn(
-                          position.item?.diasArmazenado && position.item.diasArmazenado > 30 
-                            ? "bg-warning/10 text-warning border-warning/30" 
-                            : "bg-muted text-muted-foreground"
-                        )}>
-                          {position.item?.diasArmazenado} dias
-                        </Badge>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 ml-auto" />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  );
+                })}
+              
+              {filteredPositions.filter(p => p.status === "ocupado").length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Package className="h-12 w-12 mb-4" />
+                  <p>Nenhuma posição ocupada encontrada</p>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
 
@@ -624,7 +730,7 @@ export default function EstoquePage() {
                         <MapPin className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold">{selectedPosition.id}</h3>
+                        <h3 className="text-lg font-bold">{selectedPosition.codigo}</h3>
                         <Badge className={cn(
                           "mt-1",
                           statusConfig[selectedPosition.status].bg,
@@ -639,31 +745,33 @@ export default function EstoquePage() {
                     </Button>
                   </div>
 
-                  {selectedPosition.item && (
+                  {selectedPosition.status === 'ocupado' && selectedPosition.produto_nome && (
                     <Card className="mb-4">
                       <CardContent className="p-4 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">Produto</span>
-                          <span className="font-medium">{selectedPosition.item.descricao}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm text-muted-foreground">SKU</span>
-                          <Badge variant="outline" className="font-mono">{selectedPosition.item.sku}</Badge>
+                          <span className="font-medium">{selectedPosition.produto_nome}</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">Quantidade</span>
-                          <span className="font-medium">{selectedPosition.item.quantidade} un</span>
+                          <span className="font-medium">{selectedPosition.quantidade || 0} un</span>
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm text-muted-foreground">Armazenado há</span>
                           <Badge className={cn(
-                            selectedPosition.item.diasArmazenado > 30 
+                            getDiasArmazenado(selectedPosition) > 30 
                               ? "bg-warning/10 text-warning" 
                               : "bg-muted text-muted-foreground"
                           )}>
-                            {selectedPosition.item.diasArmazenado} dias
+                            {getDiasArmazenado(selectedPosition)} dias
                           </Badge>
                         </div>
+                        {selectedPosition.capacidade_kg && (
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-muted-foreground">Capacidade</span>
+                            <span className="font-medium">{selectedPosition.capacidade_kg} kg</span>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   )}
