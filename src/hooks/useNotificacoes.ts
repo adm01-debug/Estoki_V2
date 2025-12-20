@@ -6,6 +6,9 @@ export type TipoNotificacao =
   | 'estoque_baixo' 
   | 'triagem_pendente' 
   | 'recebimento' 
+  | 'recebimento_chegou'
+  | 'recebimento_divergencia'
+  | 'recebimento_conferido'
   | 'alerta' 
   | 'info' 
   | 'success' 
@@ -20,9 +23,10 @@ export interface Notificacao {
   created_at: string;
   dados?: Record<string, unknown>;
   severidade?: 'info' | 'warning' | 'critical';
+  referencia_tipo?: string;
+  referencia_id?: string;
 }
 
-// Map database severidade to our internal type
 function mapSeveridade(dbSeveridade: string | null): 'info' | 'warning' | 'critical' {
   switch (dbSeveridade) {
     case 'critico':
@@ -35,6 +39,12 @@ function mapSeveridade(dbSeveridade: string | null): 'info' | 'warning' | 'criti
   }
 }
 
+function getTipoSeveridade(tipo: string): 'info' | 'warning' | 'critical' {
+  if (tipo.includes('divergencia')) return 'critical';
+  if (tipo.includes('chegou')) return 'warning';
+  return 'info';
+}
+
 export function useNotificacoes() {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +53,17 @@ export function useNotificacoes() {
   const fetchNotificacoes = useCallback(async () => {
     try {
       setLoading(true);
+
+      // Buscar notificações da tabela notificacoes
+      const { data: notifs, error: notifsError } = await supabase
+        .from('notificacoes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (notifsError) {
+        console.error('Erro ao buscar notificações:', notifsError);
+      }
 
       // Buscar alertas ativos do sistema
       const { data: alertas, error: alertasError } = await supabase
@@ -56,8 +77,22 @@ export function useNotificacoes() {
         console.error('Erro ao buscar alertas:', alertasError);
       }
 
-      // Montar lista de notificações apenas dos alertas
-      const notifs: Notificacao[] = [];
+      const allNotifs: Notificacao[] = [];
+
+      // Notificações da tabela notificacoes
+      (notifs || []).forEach(notif => {
+        allNotifs.push({
+          id: notif.id,
+          tipo: notif.tipo as TipoNotificacao,
+          titulo: notif.titulo,
+          mensagem: notif.mensagem,
+          lida: notif.lida,
+          created_at: notif.created_at,
+          severidade: getTipoSeveridade(notif.tipo),
+          referencia_tipo: notif.referencia_tipo || undefined,
+          referencia_id: notif.referencia_id || undefined,
+        });
+      });
 
       // Alertas do sistema
       (alertas || []).forEach(alerta => {
@@ -66,7 +101,7 @@ export function useNotificacoes() {
           ? dadosContexto as Record<string, unknown>
           : {};
         
-        notifs.push({
+        allNotifs.push({
           id: alerta.id,
           tipo: 'alerta',
           titulo: alerta.titulo,
@@ -78,12 +113,12 @@ export function useNotificacoes() {
         });
       });
 
-      // Ordenar por data (mais recentes primeiro)
-      notifs.sort((a, b) => 
+      // Ordenar por data
+      allNotifs.sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
-      setNotificacoes(notifs);
+      setNotificacoes(allNotifs);
     } catch (err) {
       console.error('Erro ao buscar notificações:', err);
     } finally {
@@ -95,11 +130,20 @@ export function useNotificacoes() {
     if (user) {
       fetchNotificacoes();
 
-      // Atualizar a cada 60 segundos
       const interval = setInterval(fetchNotificacoes, 60000);
 
+      // Realtime para notificações
+      const notifChannel = supabase
+        .channel('notificacoes_changes')
+        .on(
+          'postgres_changes',
+          { event: 'INSERT', schema: 'public', table: 'notificacoes' },
+          () => fetchNotificacoes()
+        )
+        .subscribe();
+
       // Realtime para alertas
-      const channel = supabase
+      const alertaChannel = supabase
         .channel('alertas_changes')
         .on(
           'postgres_changes',
@@ -110,15 +154,18 @@ export function useNotificacoes() {
 
       return () => {
         clearInterval(interval);
-        supabase.removeChannel(channel);
+        supabase.removeChannel(notifChannel);
+        supabase.removeChannel(alertaChannel);
       };
     }
   }, [user, fetchNotificacoes]);
 
   const marcarComoLida = async (id: string): Promise<boolean> => {
     try {
-      // Se for alerta do banco
-      if (!id.startsWith('triagem-') && !id.startsWith('recebimento-')) {
+      // Verificar se é notificação ou alerta
+      const notif = notificacoes.find(n => n.id === id);
+      
+      if (notif?.tipo === 'alerta') {
         const { error } = await supabase
           .from('alertas_historico')
           .update({ 
@@ -129,9 +176,18 @@ export function useNotificacoes() {
           .eq('id', id);
 
         if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('notificacoes')
+          .update({ 
+            lida: true,
+            data_leitura: new Date().toISOString(),
+          })
+          .eq('id', id);
+
+        if (error) throw error;
       }
 
-      // Atualizar estado local
       setNotificacoes(prev => 
         prev.map(n => n.id === id ? { ...n, lida: true } : n)
       );
@@ -145,10 +201,10 @@ export function useNotificacoes() {
 
   const marcarTodasComoLidas = async (): Promise<boolean> => {
     try {
-      // Marcar alertas do banco como reconhecidos
-      const alertaIds = notificacoes
-        .filter(n => !n.lida && !n.id.startsWith('triagem-') && !n.id.startsWith('recebimento-'))
-        .map(n => n.id);
+      const naoLidas = notificacoes.filter(n => !n.lida);
+      
+      const alertaIds = naoLidas.filter(n => n.tipo === 'alerta').map(n => n.id);
+      const notifIds = naoLidas.filter(n => n.tipo !== 'alerta').map(n => n.id);
 
       if (alertaIds.length > 0) {
         const { error } = await supabase
@@ -163,7 +219,18 @@ export function useNotificacoes() {
         if (error) throw error;
       }
 
-      // Atualizar estado local
+      if (notifIds.length > 0) {
+        const { error } = await supabase
+          .from('notificacoes')
+          .update({ 
+            lida: true,
+            data_leitura: new Date().toISOString(),
+          })
+          .in('id', notifIds);
+
+        if (error) throw error;
+      }
+
       setNotificacoes(prev => prev.map(n => ({ ...n, lida: true })));
 
       return true;
@@ -175,8 +242,9 @@ export function useNotificacoes() {
 
   const removerNotificacao = async (id: string): Promise<boolean> => {
     try {
-      // Se for alerta do banco, marcar como resolvido
-      if (!id.startsWith('triagem-') && !id.startsWith('recebimento-')) {
+      const notif = notificacoes.find(n => n.id === id);
+      
+      if (notif?.tipo === 'alerta') {
         const { error } = await supabase
           .from('alertas_historico')
           .update({ 
@@ -188,8 +256,8 @@ export function useNotificacoes() {
 
         if (error) throw error;
       }
+      // Notificações regulares não são deletadas, apenas marcadas como lidas
 
-      // Remover do estado local
       setNotificacoes(prev => prev.filter(n => n.id !== id));
 
       return true;
