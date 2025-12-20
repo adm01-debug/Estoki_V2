@@ -14,7 +14,8 @@ import {
   XCircle,
   ArrowRight,
   BarChart3,
-  Loader2
+  Loader2,
+  Wifi
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { KPICard } from "@/components/dashboard/KPICard";
@@ -30,6 +31,7 @@ import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { useEstoque } from "@/hooks/useEstoque";
+import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
 
 const getActivityIcon = (type: string) => {
   switch (type) {
@@ -65,6 +67,11 @@ export default function Dashboard() {
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
+
+  // Enable realtime updates
+  const realtimeStatus = useRealtimeKPIs({
+    showToasts: false,
+  });
 
   const estatisticas = getEstatisticas();
 
@@ -106,7 +113,15 @@ export default function Dashboard() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-foreground">{getGreeting()}, {userName}! 👋</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-foreground">{getGreeting()}, {userName}! 👋</h1>
+                  {realtimeStatus.isConnected && (
+                    <Badge variant="outline" className="bg-green-500/10 text-green-600 border-green-500/30 gap-1">
+                      <Wifi className="h-3 w-3" />
+                      Ao vivo
+                    </Badge>
+                  )}
+                </div>
                 <p className="text-muted-foreground">Aqui está o resumo do seu estoque</p>
               </div>
               <Button 

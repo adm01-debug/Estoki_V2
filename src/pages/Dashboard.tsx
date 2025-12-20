@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
 import { 
   BarChart, 
   Bar, 
@@ -32,8 +33,11 @@ import {
   Clock,
   BarChart3,
   RefreshCw,
-  Loader2
+  Loader2,
+  Wifi,
+  WifiOff
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const DashboardPage = () => {
   const [exportando, setExportando] = useState(false);
@@ -47,6 +51,14 @@ const DashboardPage = () => {
     error,
     refetch 
   } = useDashboard();
+
+  // Realtime updates
+  const realtimeStatus = useRealtimeKPIs({
+    showToasts: true,
+    onMetricUpdate: () => console.log("Dashboard: metrics updated"),
+    onPositionUpdate: () => console.log("Dashboard: positions updated"),
+    onLoteUpdate: () => console.log("Dashboard: lotes updated"),
+  });
 
   const exportarPDF = () => {
     if (!kpis) return;
@@ -205,10 +217,34 @@ const DashboardPage = () => {
       <div className="p-4 space-y-4 pb-24">
         {/* Header com ações */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-3">
             <p className="text-sm text-muted-foreground">
               Visão geral do inventário
             </p>
+            {/* Realtime status indicator */}
+            <div className={cn(
+              "flex items-center gap-1.5 px-2 py-1 rounded-full text-xs",
+              realtimeStatus.isConnected 
+                ? "bg-green-500/10 text-green-600" 
+                : "bg-muted text-muted-foreground"
+            )}>
+              {realtimeStatus.isConnected ? (
+                <>
+                  <Wifi className="h-3 w-3" />
+                  <span>Ao vivo</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="h-3 w-3" />
+                  <span>Offline</span>
+                </>
+              )}
+            </div>
+            {realtimeStatus.lastUpdate && (
+              <span className="text-xs text-muted-foreground hidden md:block">
+                Atualizado há {Math.round((Date.now() - realtimeStatus.lastUpdate.getTime()) / 1000)}s
+              </span>
+            )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="gap-2" onClick={refetch}>
