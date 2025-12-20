@@ -3,31 +3,19 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Clock,
   CheckCircle,
-  XCircle,
   TrendingUp,
-  TrendingDown,
   Target,
   Award,
   Zap,
-  Calendar,
   Package,
-  AlertTriangle,
-  BarChart3,
   Trophy,
-  Bell,
-  BellOff,
+  Flame,
+  Star,
+  Loader2,
 } from "lucide-react";
 import {
   AreaChart,
@@ -37,495 +25,288 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
 } from "recharts";
-import { ConquistasResumo, useConquistas } from "@/components/gamificacao/ConquistasSystem";
-import { useConquistaNotificacoes } from "@/components/gamificacao/ConquistaNotificacoes";
-import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
-import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
-import { StreakResumo } from "@/components/gamificacao/StreakSystem";
+import { useGamificacao } from "@/hooks/useGamificacao";
+import { useConquistas } from "@/hooks/useConquistas";
+import { useDesafiosDiarios } from "@/hooks/useDesafiosDiarios";
+import { useStreaks } from "@/hooks/useStreaks";
+import { useProdutividade } from "@/hooks/useProdutividade";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Dados do triador atual (simulando usuário logado)
-const triadorAtual = {
-  id: 1,
-  nome: "João Silva",
-  turno: "Manhã",
-  dataAdmissao: new Date("2024-03-15"),
-};
+export default function DashboardTriadorPage() {
+  const { user } = useAuth();
+  const { gamificacao, loading: loadingGamificacao } = useGamificacao();
+  const { conquistasUsuario, loading: loadingConquistas } = useConquistas();
+  const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
+  const { streakAtual, loading: loadingStreaks } = useStreaks();
+  const { metricas, loading: loadingMetricas } = useProdutividade();
 
-// Métricas do dia atual
-const metricasHoje = {
-  itensTriados: 127,
-  itensAprovados: 118,
-  itensReprovados: 9,
-  tempoTotalMinutos: 245,
-  lotesFinalizados: 8,
-  lotesPendentes: 2,
-  tempoMedioMinutos: 1.93,
-  itensHora: 31.1,
-  taxaAprovacao: 92.9,
-};
+  const [tab, setTab] = useState("hoje");
 
-// Métricas da semana
-const metricasSemana = {
-  itensTriados: 623,
-  itensAprovados: 584,
-  itensReprovados: 39,
-  tempoTotalMinutos: 1240,
-  lotesFinalizados: 42,
-  tempoMedioMinutos: 1.99,
-  itensHora: 30.1,
-  taxaAprovacao: 93.7,
-};
+  const minhasMetricas = useMemo(() => {
+    if (!user) return null;
+    return metricas.find(m => m.operadorId === user.id);
+  }, [metricas, user]);
 
-// Metas do triador
-const metas = {
-  itensHora: 25,
-  taxaAprovacao: 90,
-  tempoMedio: 2.5,
-};
+  const historicoSemanal = [
+    { dia: "Seg", itensTriados: 98 },
+    { dia: "Ter", itensTriados: 112 },
+    { dia: "Qua", itensTriados: 105 },
+    { dia: "Qui", itensTriados: 121 },
+    { dia: "Sex", itensTriados: 115 },
+    { dia: "Sáb", itensTriados: 87 },
+    { dia: "Hoje", itensTriados: minhasMetricas?.triagensRealizadas || 0 },
+  ];
 
-// Histórico diário (últimos 7 dias)
-const historicoSemanal = [
-  { dia: "Seg", itensTriados: 98, itensHora: 28, taxaAprovacao: 91, tempoMedio: 2.1 },
-  { dia: "Ter", itensTriados: 112, itensHora: 30, taxaAprovacao: 94, tempoMedio: 2.0 },
-  { dia: "Qua", itensTriados: 105, itensHora: 29, taxaAprovacao: 92, tempoMedio: 2.1 },
-  { dia: "Qui", itensTriados: 121, itensHora: 32, taxaAprovacao: 95, tempoMedio: 1.9 },
-  { dia: "Sex", itensTriados: 87, itensHora: 27, taxaAprovacao: 93, tempoMedio: 2.2 },
-  { dia: "Sáb", itensTriados: 0, itensHora: 0, taxaAprovacao: 0, tempoMedio: 0 },
-  { dia: "Hoje", itensTriados: 127, itensHora: 31, taxaAprovacao: 93, tempoMedio: 1.9 },
-];
+  const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks || loadingMetricas;
 
-// Distribuição de defeitos encontrados
-const defeitosEncontrados = [
-  { tipo: "Avaria", quantidade: 15, cor: "#ef4444" },
-  { tipo: "Cor incorreta", quantidade: 8, cor: "#f59e0b" },
-  { tipo: "Componente faltando", quantidade: 6, cor: "#8b5cf6" },
-  { tipo: "Embalagem danificada", quantidade: 7, cor: "#3b82f6" },
-  { tipo: "Outros", quantidade: 3, cor: "#6b7280" },
-];
-
-// Últimas triagens
-const ultimasTriagens = [
-  { id: 1, pedido: "2638-1", produto: "Mochila Executiva", qtd: 50, status: "aprovado", tempo: 12, taxa: 100 },
-  { id: 2, pedido: "2639-2", produto: "Caneta Metal Prata", qtd: 100, status: "aprovado", tempo: 18, taxa: 98 },
-  { id: 3, pedido: "2640-1", produto: "Power Bank 10000mAh", qtd: 30, status: "ressalva", tempo: 25, taxa: 90 },
-  { id: 4, pedido: "2641-1", produto: "Squeeze 500ml", qtd: 75, status: "aprovado", tempo: 15, taxa: 100 },
-  { id: 5, pedido: "2642-1", produto: "Camiseta Polo", qtd: 40, status: "reprovado", tempo: 20, taxa: 75 },
-];
-
-function MetricCard({
-  title,
-  value,
-  unit,
-  icon: Icon,
-  trend,
-  trendValue,
-  meta,
-  metaLabel,
-}: {
-  title: string;
-  value: number | string;
-  unit?: string;
-  icon: React.ElementType;
-  trend?: "up" | "down" | "neutral";
-  trendValue?: string;
-  meta?: number;
-  metaLabel?: string;
-}) {
-  const atingiuMeta = meta !== undefined && typeof value === "number" && value >= meta;
-  const progressoMeta = meta !== undefined && typeof value === "number" ? Math.min((value / meta) * 100, 100) : 0;
+  if (loading) {
+    return (
+      <AppLayout title="Meu Dashboard" showBack>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
-    <Card className={atingiuMeta ? "border-success/50 bg-success/5" : ""}>
-      <CardContent className="pt-4">
-        <div className="flex items-start justify-between">
-          <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">{title}</p>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold">{value}</span>
-              {unit && <span className="text-sm text-muted-foreground">{unit}</span>}
-            </div>
-            {trend && trendValue && (
-              <div className={`flex items-center gap-1 text-xs ${
-                trend === "up" ? "text-success" : trend === "down" ? "text-destructive" : "text-muted-foreground"
-              }`}>
-                {trend === "up" ? <TrendingUp className="h-3 w-3" /> : 
-                 trend === "down" ? <TrendingDown className="h-3 w-3" /> : null}
-                {trendValue}
+    <AppLayout title="Meu Dashboard" showBack>
+      <div className="p-4 space-y-6 lg:pl-72">
+        {/* Header com XP e Nível */}
+        <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Trophy className="h-8 w-8 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold">{user?.user_metadata?.nome || "Operador"}</h2>
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge variant="outline" className="gap-1">
+                      <Star className="h-3 w-3 text-yellow-500" />
+                      Nível {gamificacao?.nivel || 1}
+                    </Badge>
+                    <Badge variant="outline" className="gap-1">
+                      <Zap className="h-3 w-3 text-primary" />
+                      {gamificacao?.xp_total || 0} XP
+                    </Badge>
+                    {streakAtual && streakAtual.dias_consecutivos > 0 && (
+                      <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
+                        <Flame className="h-3 w-3" />
+                        {streakAtual.dias_consecutivos} dias
+                      </Badge>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-          <div className={`p-2 rounded-lg ${atingiuMeta ? "bg-success/10" : "bg-muted"}`}>
-            <Icon className={`h-5 w-5 ${atingiuMeta ? "text-success" : "text-muted-foreground"}`} />
-          </div>
-        </div>
-        {meta !== undefined && (
-          <div className="mt-3 space-y-1">
-            <div className="flex justify-between text-xs">
-              <span className="text-muted-foreground">Meta: {meta}{metaLabel}</span>
-              <span className={atingiuMeta ? "text-success font-medium" : "text-muted-foreground"}>
-                {progressoMeta.toFixed(0)}%
-              </span>
-            </div>
-            <Progress value={progressoMeta} className={atingiuMeta ? "[&>div]:bg-success" : ""} />
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-export default function DashboardTriador() {
-  const [periodo, setPeriodo] = useState<"hoje" | "semana">("hoje");
-  const gamificacao = useConquistas(triadorAtual.id.toString());
-  
-  // Sistema de notificações de conquistas
-  const notificacoes = useConquistaNotificacoes(gamificacao.conquistas, {
-    enabled: true,
-    showToast: true,
-    showBrowserNotification: true,
-  });
-  
-  const metricas = periodo === "hoje" ? metricasHoje : metricasSemana;
-
-  return (
-    <AppLayout title="Minha Produtividade" showBack>
-      <div className="p-4 lg:pl-72 space-y-6 animate-fade-in">
-        {/* Header com info do triador */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center relative">
-              <span className="text-xl font-bold text-primary">
-                {triadorAtual.nome.charAt(0)}
-              </span>
-              {/* Badge de nível */}
-              <div className="absolute -bottom-1 -right-1 bg-warning text-warning-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-background">
-                {gamificacao.nivel}
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Próximo nível</p>
+                <p className="text-lg font-bold text-primary">
+                  {(gamificacao?.xp_proximo_nivel || 1000) - (gamificacao?.xp_total || 0)} XP
+                </p>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="font-semibold text-lg">{triadorAtual.nome}</h2>
-                <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 text-xs gap-1">
-                  <Trophy className="h-3 w-3" />
-                  {gamificacao.pontosTotal} XP
-                </Badge>
+            <div className="mt-4">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Nível {gamificacao?.nivel || 1}</span>
+                <span>Nível {(gamificacao?.nivel || 1) + 1}</span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Turno: {triadorAtual.turno} • Triador desde {triadorAtual.dataAdmissao.toLocaleDateString("pt-BR")}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Select value={periodo} onValueChange={(v) => setPeriodo(v as "hoje" | "semana")}>
-              <SelectTrigger className="w-[140px]">
-                <Calendar className="h-4 w-4 mr-2" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hoje">Hoje</SelectItem>
-                <SelectItem value="semana">Esta Semana</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {/* Botão de notificações */}
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                if (!notificacoes.hasPermission) {
-                  notificacoes.requestPermission();
-                }
-              }}
-              title={notificacoes.hasPermission ? "Notificações ativadas" : "Ativar notificações"}
-            >
-              {notificacoes.hasPermission ? (
-                <Bell className="h-4 w-4 text-success" />
-              ) : (
-                <BellOff className="h-4 w-4 text-muted-foreground" />
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* KPIs principais */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <MetricCard
-            title="Itens/Hora"
-            value={metricas.itensHora.toFixed(1)}
-            icon={Zap}
-            trend={metricas.itensHora >= metas.itensHora ? "up" : "down"}
-            trendValue={metricas.itensHora >= metas.itensHora ? "Acima da meta" : "Abaixo da meta"}
-            meta={metas.itensHora}
-            metaLabel=""
-          />
-          <MetricCard
-            title="Taxa de Aprovação"
-            value={metricas.taxaAprovacao.toFixed(1)}
-            unit="%"
-            icon={CheckCircle}
-            trend={metricas.taxaAprovacao >= metas.taxaAprovacao ? "up" : "down"}
-            trendValue={metricas.taxaAprovacao >= metas.taxaAprovacao ? "Meta atingida" : "Abaixo da meta"}
-            meta={metas.taxaAprovacao}
-            metaLabel="%"
-          />
-          <MetricCard
-            title="Tempo Médio"
-            value={metricas.tempoMedioMinutos.toFixed(1)}
-            unit="min/item"
-            icon={Clock}
-            trend={metricas.tempoMedioMinutos <= metas.tempoMedio ? "up" : "down"}
-            trendValue={metricas.tempoMedioMinutos <= metas.tempoMedio ? "Dentro da meta" : "Acima da meta"}
-          />
-          <MetricCard
-            title="Itens Triados"
-            value={metricas.itensTriados}
-            icon={Package}
-            trend="neutral"
-            trendValue={`${metricas.lotesFinalizados || metricasHoje.lotesFinalizados} lotes`}
-          />
-        </div>
-
-        {/* Conquistas, Desafios e Streak */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <ConquistasResumo
-            conquistas={gamificacao.conquistas}
-            pontosTotal={gamificacao.pontosTotal}
-            nivel={gamificacao.nivel}
-            pontosProximoNivel={gamificacao.pontosProximoNivel}
-          />
-          <DesafiosDiarios />
-          <StreakResumo />
-        </div>
-
-        {/* Resumo visual aprovados/reprovados */}
-        <Card>
-          <CardContent className="pt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium">Distribuição de Resultados</span>
-              <span className="text-xs text-muted-foreground">
-                {metricas.itensAprovados} aprovados | {metricas.itensReprovados} reprovados
-              </span>
-            </div>
-            <div className="flex h-4 rounded-full overflow-hidden bg-muted">
-              <div 
-                className="bg-success transition-all" 
-                style={{ width: `${metricas.taxaAprovacao}%` }}
-              />
-              <div 
-                className="bg-destructive transition-all" 
-                style={{ width: `${100 - metricas.taxaAprovacao}%` }}
-              />
-            </div>
-            <div className="flex justify-between mt-1 text-xs">
-              <span className="text-success flex items-center gap-1">
-                <CheckCircle className="h-3 w-3" /> {metricas.taxaAprovacao.toFixed(1)}% aprovados
-              </span>
-              <span className="text-destructive flex items-center gap-1">
-                <XCircle className="h-3 w-3" /> {(100 - metricas.taxaAprovacao).toFixed(1)}% reprovados
-              </span>
+              <Progress value={((gamificacao?.xp_total || 0) / (gamificacao?.xp_proximo_nivel || 1000)) * 100} className="h-3" />
             </div>
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="evolucao" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="evolucao">Evolução</TabsTrigger>
-            <TabsTrigger value="defeitos">Defeitos</TabsTrigger>
-            <TabsTrigger value="historico">Histórico</TabsTrigger>
-            <TabsTrigger value="ranking">Ranking</TabsTrigger>
+        {/* KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Package className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Triagens</p>
+                  <p className="text-2xl font-bold">{minhasMetricas?.triagensRealizadas || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500/10">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Aprovação</p>
+                  <p className="text-2xl font-bold">{(minhasMetricas?.aprovacaoMedia || 0).toFixed(1)}%</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-500/10">
+                  <Clock className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Tempo Médio</p>
+                  <p className="text-2xl font-bold">{(minhasMetricas?.tempoMedioTriagem || 0).toFixed(1)}<span className="text-sm font-normal">min</span></p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/10">
+                  <Target className="h-5 w-5 text-amber-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Tarefas</p>
+                  <p className="text-2xl font-bold">{minhasMetricas?.tarefasConcluidas || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="hoje">Hoje</TabsTrigger>
+            <TabsTrigger value="conquistas">Conquistas</TabsTrigger>
+            <TabsTrigger value="desafios">Desafios</TabsTrigger>
           </TabsList>
 
-          {/* Evolução semanal */}
-          <TabsContent value="evolucao" className="space-y-4">
+          <TabsContent value="hoje" className="space-y-4">
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Produtividade Semanal</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Evolução Semanal
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-[250px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={historicoSemanal}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis dataKey="dia" className="text-xs" />
-                      <YAxis className="text-xs" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'hsl(var(--card))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: '8px'
-                        }}
-                      />
-                      <Area 
-                        type="monotone" 
-                        dataKey="itensTriados" 
-                        stroke="hsl(var(--primary))" 
-                        fill="hsl(var(--primary)/0.2)" 
-                        name="Itens Triados"
-                      />
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="dia" />
+                      <YAxis />
+                      <Tooltip />
+                      <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Itens/Hora por Dia</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={historicoSemanal.filter(d => d.itensHora > 0)}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis dataKey="dia" className="text-xs" />
-                        <YAxis className="text-xs" domain={[0, 40]} />
-                        <Tooltip />
-                        <Bar 
-                          dataKey="itensHora" 
-                          fill="hsl(var(--primary))" 
-                          radius={[4, 4, 0, 0]}
-                          name="Itens/Hora"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
+            {streakAtual && streakAtual.dias_consecutivos > 0 && (
+              <Card className="border-orange-500/30 bg-orange-500/5">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-full bg-orange-500/20 flex items-center justify-center">
+                        <Flame className="h-6 w-6 text-orange-500" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">Streak Ativo!</h3>
+                        <p className="text-sm text-muted-foreground">{streakAtual.dias_consecutivos} dias consecutivos</p>
+                      </div>
+                    </div>
+                    <p className="text-2xl font-bold text-orange-500">{streakAtual.dias_consecutivos}</p>
                   </div>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Taxa de Aprovação por Dia</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={historicoSemanal.filter(d => d.taxaAprovacao > 0)}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis dataKey="dia" className="text-xs" />
-                        <YAxis className="text-xs" domain={[80, 100]} />
-                        <Tooltip />
-                        <Bar 
-                          dataKey="taxaAprovacao" 
-                          fill="hsl(var(--success))" 
-                          radius={[4, 4, 0, 0]}
-                          name="Taxa (%)"
-                        />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            )}
           </TabsContent>
 
-          {/* Defeitos encontrados */}
-          <TabsContent value="defeitos" className="space-y-4">
+          <TabsContent value="conquistas" className="space-y-4">
             <Card>
-              <CardHeader className="pb-2">
+              <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-warning" />
-                  Defeitos Identificados (Esta Semana)
+                  <Award className="h-4 w-4" />
+                  Minhas Conquistas ({conquistasUsuario.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={defeitosEncontrados}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          dataKey="quantidade"
-                          nameKey="tipo"
-                          label={({ tipo, quantidade }) => `${tipo}: ${quantidade}`}
-                          labelLine={false}
-                        >
-                          {defeitosEncontrados.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.cor} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
+                {conquistasUsuario.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Award className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Nenhuma conquista ainda</p>
+                    <p className="text-sm">Continue trabalhando para desbloquear!</p>
                   </div>
-                  <div className="space-y-3">
-                    {defeitosEncontrados.map((defeito) => (
-                      <div key={defeito.tipo} className="flex items-center gap-3">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: defeito.cor }}
-                        />
-                        <span className="flex-1 text-sm">{defeito.tipo}</span>
-                        <Badge variant="outline">{defeito.quantidade}</Badge>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {conquistasUsuario.map((c) => (
+                      <div key={c.id} className="p-4 rounded-lg border bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border-yellow-500/30">
+                        <div className="text-3xl mb-2">{c.icone}</div>
+                        <h4 className="font-semibold text-sm">{c.titulo}</h4>
+                        <p className="text-xs text-muted-foreground">{c.descricao}</p>
+                        <Badge variant="outline" className="mt-2 gap-1">
+                          <Zap className="h-3 w-3" />+{c.xp_bonus} XP
+                        </Badge>
                       </div>
                     ))}
-                    <div className="pt-2 border-t">
-                      <div className="flex justify-between text-sm font-medium">
-                        <span>Total de Defeitos</span>
-                        <span>{defeitosEncontrados.reduce((sum, d) => sum + d.quantidade, 0)}</span>
-                      </div>
-                    </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* Histórico de triagens */}
-          <TabsContent value="historico" className="space-y-4">
+          <TabsContent value="desafios" className="space-y-4">
             <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base">Últimas Triagens</CardTitle>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Desafios do Dia
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {ultimasTriagens.map((triagem) => (
-                    <div 
-                      key={triagem.id}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="font-medium text-sm">#{triagem.pedido}</span>
-                          <Badge 
-                            variant="outline"
-                            className={
-                              triagem.status === "aprovado" ? "status-ok" :
-                              triagem.status === "ressalva" ? "status-aguardando" :
-                              "status-divergencia"
-                            }
-                          >
-                            {triagem.status === "aprovado" ? "Aprovado" :
-                             triagem.status === "ressalva" ? "Ressalva" : "Reprovado"}
-                          </Badge>
+                {desafios.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Nenhum desafio ativo hoje</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {desafios.map((d) => {
+                      const pct = d.meta > 0 ? (d.progresso / d.meta) * 100 : 0;
+                      const ok = d.progresso >= d.meta;
+                      return (
+                        <div key={d.id} className={`p-4 rounded-lg border ${ok ? 'bg-green-500/10 border-green-500/30' : ''}`}>
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h4 className="font-semibold flex items-center gap-2">
+                                {ok && <CheckCircle className="h-4 w-4 text-green-500" />}
+                                {d.titulo}
+                              </h4>
+                              <p className="text-sm text-muted-foreground">{d.descricao}</p>
+                            </div>
+                            <Badge variant="outline" className="gap-1">
+                              <Zap className="h-3 w-3" />+{d.xp_recompensa} XP
+                            </Badge>
+                          </div>
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>{d.progresso} / {d.meta}</span>
+                              <span>{pct.toFixed(0)}%</span>
+                            </div>
+                            <Progress value={pct} className="h-2" />
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground truncate">
-                          {triagem.produto} • {triagem.qtd} un
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">{triagem.taxa}%</div>
-                        <div className="text-xs text-muted-foreground">{triagem.tempo} min</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </CardContent>
             </Card>
-          </TabsContent>
-
-          {/* Ranking */}
-          <TabsContent value="ranking" className="space-y-4">
-            <PlacarLideres />
           </TabsContent>
         </Tabs>
       </div>
