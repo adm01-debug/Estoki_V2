@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.previsao-demanda]
 verify_jwt = false
+
+[functions.scanner-ocr]
+verify_jwt = false
