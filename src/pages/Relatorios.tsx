@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { 
   FileText, 
   Filter, 
@@ -68,23 +68,28 @@ import { useMovimentacoes, Movimentacao, TipoMovimentacao } from "@/hooks/useMov
 const CHART_COLORS: Record<string, string> = {
   entradas: "#22c55e",
   saidas: "#ef4444",
-  recebimento: "#3b82f6",
+  recebimento_nf: "#3b82f6",
   armazenamento: "#8b5cf6",
-  transferencia: "#f59e0b",
-  saida_gravacao: "#ef4444",
-  retorno_gravacao: "#22c55e",
-  expedicao: "#06b6d4",
-  ajuste: "#6b7280",
+  separacao: "#f59e0b",
+  saida_transporte: "#ef4444",
+  entrega: "#22c55e",
+  ajuste_estoque: "#6b7280",
 };
 
 const tipoLabels: Record<TipoMovimentacao, string> = {
-  recebimento: "Recebimento",
+  recebimento_nf: "Recebimento NF",
+  conferencia: "Conferência",
+  triagem_inicio: "Triagem Início",
+  triagem_fim: "Triagem Fim",
   armazenamento: "Armazenamento",
-  transferencia: "Transferência",
-  saida_gravacao: "Saída Gravação",
-  retorno_gravacao: "Retorno Gravação",
-  expedicao: "Expedição",
-  ajuste: "Ajuste",
+  reserva: "Reserva",
+  separacao: "Separação",
+  conferencia_expedicao: "Conf. Expedição",
+  carregamento: "Carregamento",
+  saida_transporte: "Saída Transporte",
+  entrega: "Entrega",
+  devolucao: "Devolução",
+  ajuste_estoque: "Ajuste Estoque",
 };
 
 export default function RelatoriosPage() {
@@ -110,7 +115,7 @@ export default function RelatoriosPage() {
   const responsaveisUnicos = useMemo(() => {
     const responsaveis = new Set<string>();
     movimentacoes.forEach(m => {
-      if (m.usuario_nome) responsaveis.add(m.usuario_nome);
+      if (m.operador_nome) responsaveis.add(m.operador_nome);
     });
     return Array.from(responsaveis);
   }, [movimentacoes]);
@@ -126,11 +131,10 @@ export default function RelatoriosPage() {
 
       const matchSearch =
         searchTerm === "" ||
-        mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        mov.observacao?.toLowerCase().includes(searchTerm.toLowerCase());
+        mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
-      const matchResponsavel = responsavelFiltro === "todos" || mov.usuario_nome === responsavelFiltro;
+      const matchResponsavel = responsavelFiltro === "todos" || mov.operador_nome === responsavelFiltro;
       const matchProduto = produtoFiltro === "todos" || mov.descricao === produtoFiltro;
 
       return dentroDoPeriodo && matchSearch && matchTipo && matchResponsavel && matchProduto;
@@ -140,10 +144,10 @@ export default function RelatoriosPage() {
   // KPIs
   const kpis = useMemo(() => {
     const entradas = dadosFiltrados.filter(m => 
-      m.tipo === "recebimento" || m.tipo === "retorno_gravacao"
+      m.tipo === "recebimento_nf" || m.tipo === "devolucao"
     );
     const saidas = dadosFiltrados.filter(m => 
-      m.tipo === "expedicao" || m.tipo === "saida_gravacao"
+      m.tipo === "saida_transporte" || m.tipo === "entrega"
     );
 
     return {
@@ -165,11 +169,11 @@ export default function RelatoriosPage() {
       });
 
       const entradas = movsDia
-        .filter(m => m.tipo === "recebimento" || m.tipo === "retorno_gravacao")
+        .filter(m => m.tipo === "recebimento_nf" || m.tipo === "devolucao")
         .reduce((acc, m) => acc + (m.quantidade || 0), 0);
 
       const saidas = movsDia
-        .filter(m => m.tipo === "expedicao" || m.tipo === "saida_gravacao")
+        .filter(m => m.tipo === "saida_transporte" || m.tipo === "entrega")
         .reduce((acc, m) => acc + (m.quantidade || 0), 0);
 
       return {
@@ -246,13 +250,11 @@ export default function RelatoriosPage() {
         "Tipo": tipoLabels[m.tipo] || m.tipo,
         "Descrição": m.descricao || "",
         "Quantidade": m.quantidade || 0,
-        "Origem": m.origem || "",
-        "Destino": m.destino || "",
-        "Responsável": m.usuario_nome || "",
-        "Observação": m.observacao || "",
+        "Localização": m.localizacao || "",
+        "Responsável": m.operador_nome || "",
       }));
       
-      exportToExcel(dados, `relatorio-movimentacoes-${format(new Date(), "yyyy-MM-dd")}`);
+      exportToExcel(dados, { filename: `relatorio-movimentacoes-${format(new Date(), "yyyy-MM-dd")}` });
       toast.success("Excel exportado com sucesso!");
     } catch (err) {
       toast.error("Erro ao exportar Excel");
@@ -263,15 +265,14 @@ export default function RelatoriosPage() {
 
   const getTipoColor = (tipo: string) => {
     const colors: Record<string, string> = {
-      recebimento: "bg-blue-500/20 text-blue-700 border-blue-500/30",
+      recebimento_nf: "bg-blue-500/20 text-blue-700 border-blue-500/30",
       armazenamento: "bg-purple-500/20 text-purple-700 border-purple-500/30",
-      transferencia: "bg-amber-500/20 text-amber-700 border-amber-500/30",
-      saida_gravacao: "bg-red-500/20 text-red-700 border-red-500/30",
-      retorno_gravacao: "bg-green-500/20 text-green-700 border-green-500/30",
-      expedicao: "bg-cyan-500/20 text-cyan-700 border-cyan-500/30",
-      ajuste: "bg-gray-500/20 text-gray-700 border-gray-500/30",
+      separacao: "bg-amber-500/20 text-amber-700 border-amber-500/30",
+      saida_transporte: "bg-red-500/20 text-red-700 border-red-500/30",
+      entrega: "bg-green-500/20 text-green-700 border-green-500/30",
+      ajuste_estoque: "bg-gray-500/20 text-gray-700 border-gray-500/30",
     };
-    return colors[tipo] || colors.ajuste;
+    return colors[tipo] || "bg-gray-500/20 text-gray-700 border-gray-500/30";
   };
 
   if (loading) {
@@ -501,7 +502,7 @@ export default function RelatoriosPage() {
           </Card>
         </div>
 
-        {/* Tabela */}
+        {/* Tabela de Dados */}
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -510,77 +511,70 @@ export default function RelatoriosPage() {
                 Movimentações ({dadosFiltrados.length})
               </CardTitle>
               <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
                   onClick={handleExportPDF}
                   disabled={exportando}
                 >
-                  {exportando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                  <span className="ml-2 hidden sm:inline">PDF</span>
+                  <Download className="h-4 w-4 mr-2" />
+                  PDF
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
+                <Button 
+                  variant="outline" 
+                  size="sm" 
                   onClick={handleExportExcel}
                   disabled={exportando}
                 >
-                  <FileSpreadsheet className="h-4 w-4" />
-                  <span className="ml-2 hidden sm:inline">Excel</span>
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Excel
                 </Button>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="rounded-md border overflow-x-auto">
-              <Table>
-                <TableHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data/Hora</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead className="text-right">Qtd</TableHead>
+                  <TableHead>Responsável</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {dadosFiltrados.length === 0 ? (
                   <TableRow>
-                    <TableHead>Data/Hora</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Descrição</TableHead>
-                    <TableHead className="text-right">Qtd</TableHead>
-                    <TableHead>Destino</TableHead>
-                    <TableHead>Responsável</TableHead>
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                      Nenhuma movimentação encontrada
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {dadosFiltrados.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                        Nenhuma movimentação encontrada
+                ) : (
+                  dadosFiltrados.slice(0, 50).map((mov) => (
+                    <TableRow key={mov.id}>
+                      <TableCell className="text-sm">
+                        {format(new Date(mov.created_at), "dd/MM/yy HH:mm")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={getTipoColor(mov.tipo)}>
+                          {tipoLabels[mov.tipo]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="max-w-[200px] truncate">
+                        {mov.descricao || mov.produto_nome || "-"}
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        {mov.quantidade || 0}
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {mov.operador_nome || "-"}
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    dadosFiltrados.slice(0, 50).map((mov) => (
-                      <TableRow key={mov.id}>
-                        <TableCell className="whitespace-nowrap">
-                          {format(new Date(mov.created_at), "dd/MM HH:mm")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={getTipoColor(mov.tipo)}>
-                            {tipoLabels[mov.tipo] || mov.tipo}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
-                          {mov.descricao || "-"}
-                        </TableCell>
-                        <TableCell className="text-right font-medium">
-                          {mov.quantidade || 0}
-                        </TableCell>
-                        <TableCell>{mov.destino || "-"}</TableCell>
-                        <TableCell>{mov.usuario_nome || "-"}</TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-            {dadosFiltrados.length > 50 && (
-              <p className="text-xs text-muted-foreground text-center mt-4">
-                Exibindo 50 de {dadosFiltrados.length} movimentações
-              </p>
-            )}
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>

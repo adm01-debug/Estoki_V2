@@ -203,7 +203,7 @@ export default function ProdutividadePage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Aprovação Média</p>
-                    <p className="text-2xl font-bold">{metricasGerais.aprovacaoMedia.toFixed(1)}%</p>
+                    <p className="text-2xl font-bold">{metricasGerais.aprovacaoMediaGeral.toFixed(1)}%</p>
                   </div>
                 </div>
               </CardContent>
@@ -231,7 +231,7 @@ export default function ProdutividadePage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Tempo Médio</p>
-                    <p className="text-2xl font-bold">{metricasGerais.tempoMedioTriagem.toFixed(1)}<span className="text-sm font-normal">min</span></p>
+                    <p className="text-2xl font-bold">{metricasGerais.tempoMedioGeral.toFixed(1)}<span className="text-sm font-normal">min</span></p>
                   </div>
                 </div>
               </CardContent>
