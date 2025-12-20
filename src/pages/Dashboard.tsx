@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
+import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { 
   BarChart, 
   Bar, 
@@ -51,6 +52,9 @@ const DashboardPage = () => {
     error,
     refetch 
   } = useDashboard();
+
+  // Atalhos de teclado
+  useKeyboardShortcuts();
 
   // Realtime updates
   const realtimeStatus = useRealtimeKPIs({
@@ -524,3 +528,5 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
+
