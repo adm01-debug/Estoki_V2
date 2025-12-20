@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Camera, Check, AlertTriangle, Package, Loader2, Clock, Truck, Info } from "lucide-react";
+import { Camera, Check, AlertTriangle, Package, Loader2, Clock, Truck, Info, Scale, Wifi, WifiOff } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useRecebimentos, Recebimento, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { useBalanca } from "@/hooks/useBalanca";
 import { Progress } from "@/components/ui/progress";
 
 type TipoEmbalagem = "original" | "plastica" | "generica";
@@ -30,97 +32,109 @@ const statusConfig: Record<StatusRecebimento, { label: string; color: string }> 
   cancelado: { label: "Cancelado", color: "bg-destructive" },
 };
 
-export default function ConferenciaRecebimentoPage() {
+export default function ConferenciaRecebimento() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getRecebimentoById, confirmarConferencia, atualizarStatus } = useRecebimentos();
-
+  
+  // Hook de integração com balança
+  const {
+    conectada: balancaConectada,
+    leitura: leituraBalanca,
+    suportado: balancaSuportada,
+    conectar: conectarBalanca,
+    desconectar: desconectarBalanca,
+    erro: erroBalanca,
+  } = useBalanca();
+  
+  const { recebimentos, loading, atualizarRecebimento } = useRecebimentos();
+  
   const [recebimento, setRecebimento] = useState<Recebimento | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-
-  const [formData, setFormData] = useState({
-    qtdRecebida: 0,
-    qtdVolumes: 1,
-    qtdPorVolume: 0,
-    tipoEmbalagem: "original" as TipoEmbalagem,
-    descricaoVolumes: "",
-    observacoes: "",
-  });
+  const [quantidadeConferida, setQuantidadeConferida] = useState(0);
+  const [pesoConferido, setPesoConferido] = useState(0);
+  const [tipoEmbalagem, setTipoEmbalagem] = useState<TipoEmbalagem>("original");
+  const [observacoes, setObservacoes] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
   useEffect(() => {
-    const loadRecebimento = async () => {
-      if (!id) return;
-      
-      setLoading(true);
-      const data = await getRecebimentoById(id);
-      
-      if (data) {
-        setRecebimento(data);
-        const qtdPedida = data.quantidade_pedida || data.quantidade_inicial;
-        setFormData({
-          qtdRecebida: data.quantidade_atual || qtdPedida,
-          qtdVolumes: 1,
-          qtdPorVolume: qtdPedida,
-          tipoEmbalagem: "original",
-          descricaoVolumes: "",
-          observacoes: data.observacoes_conferencia || "",
-        });
-      } else {
-        toast({
-          title: "Erro",
-          description: "Recebimento não encontrado",
-          variant: "destructive",
-        });
-        navigate("/recebimento");
+    if (id && recebimentos.length > 0) {
+      const rec = recebimentos.find(r => r.id === id);
+      if (rec) {
+        setRecebimento(rec);
+        setQuantidadeConferida(rec.quantidade_conferida || 0);
+        setPesoConferido(rec.peso_conferido || 0);
+        setObservacoes(rec.observacoes || "");
       }
-      
-      setLoading(false);
-    };
-
-    loadRecebimento();
-  }, [id, getRecebimentoById, navigate, toast]);
-
-  const qtdPedida = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
-  const divergencia = formData.qtdRecebida - qtdPedida;
-  const percentualDivergencia = qtdPedida > 0 
-    ? ((formData.qtdRecebida / qtdPedida) * 100) - 100 
-    : 0;
-  const percentualRecebido = qtdPedida > 0 
-    ? Math.min((formData.qtdRecebida / qtdPedida) * 100, 100)
-    : 0;
-
-  const handleSubmit = async () => {
-    if (!id || !recebimento) return;
-
-    setSubmitting(true);
-    
-    const success = await confirmarConferencia(
-      id,
-      formData.qtdRecebida,
-      formData.observacoes
-    );
-
-    if (success) {
-      navigate("/recebimento");
     }
-    
-    setSubmitting(false);
+  }, [id, recebimentos]);
+
+  // Atualizar peso automaticamente quando balança ler
+  useEffect(() => {
+    if (leituraBalanca && leituraBalanca.estavel) {
+      setPesoConferido(leituraBalanca.peso);
+      toast({
+        title: "Peso capturado",
+        description: `${leituraBalanca.peso} ${leituraBalanca.unidade}`,
+      });
+    }
+  }, [leituraBalanca]);
+
+  const handleConectar = async () => {
+    try {
+      await conectarBalanca();
+      toast({
+        title: "Balança conectada",
+        description: "Pronta para leitura de peso",
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao conectar",
+        description: erroBalanca || "Não foi possível conectar à balança",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleIniciarConferencia = async () => {
-    if (!id) return;
-    await atualizarStatus(id, 'em_conferencia');
-    const data = await getRecebimentoById(id);
-    if (data) setRecebimento(data);
+  const handleSalvar = async () => {
+    if (!recebimento || !id) return;
+    
+    setSalvando(true);
+    try {
+      const temDivergencia = quantidadeConferida !== recebimento.quantidade_esperada;
+      const novoStatus: StatusRecebimento = temDivergencia ? "divergencia" : "conferido";
+      
+      await atualizarRecebimento(id, {
+        quantidade_conferida: quantidadeConferida,
+        peso_conferido: pesoConferido,
+        observacoes,
+        status: novoStatus,
+      });
+      
+      toast({
+        title: temDivergencia ? "Divergência registrada" : "Conferência concluída",
+        description: temDivergencia 
+          ? `Quantidade esperada: ${recebimento.quantidade_esperada}, conferida: ${quantidadeConferida}`
+          : "Recebimento conferido com sucesso",
+        variant: temDivergencia ? "destructive" : "default",
+      });
+      
+      navigate("/recebimento");
+    } catch (err) {
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar a conferência",
+        variant: "destructive",
+      });
+    } finally {
+      setSalvando(false);
+    }
   };
 
   if (loading) {
     return (
       <AppLayout title="Conferência" showBack>
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       </AppLayout>
     );
@@ -130,262 +144,200 @@ export default function ConferenciaRecebimentoPage() {
     return (
       <AppLayout title="Conferência" showBack>
         <div className="p-4 text-center">
-          <p className="text-muted-foreground">Recebimento não encontrado</p>
+          <AlertTriangle className="h-12 w-12 mx-auto text-amber-500 mb-4" />
+          <h2 className="text-xl font-bold">Recebimento não encontrado</h2>
+          <Button onClick={() => navigate("/recebimento")} className="mt-4">
+            Voltar
+          </Button>
         </div>
       </AppLayout>
     );
   }
 
-  const status = statusConfig[recebimento.status];
+  const progresso = recebimento.quantidade_esperada > 0 
+    ? (quantidadeConferida / recebimento.quantidade_esperada) * 100 
+    : 0;
+  const temDivergencia = quantidadeConferida !== recebimento.quantidade_esperada && quantidadeConferida > 0;
 
   return (
-    <AppLayout title={`Conferência - Lote ${recebimento.numero_lote}`} showBack>
-      <div className="p-4 lg:pl-72 space-y-6 animate-fade-in max-w-2xl mx-auto">
-        {/* Cabeçalho do Pedido */}
-        <div className="bg-card rounded-xl p-4 border border-border">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <Package className="h-5 w-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="font-semibold">{recebimento.produto_nome}</h2>
-                <Badge className={`${status.color} text-white`}>
-                  {status.label}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">{recebimento.fornecedor}</p>
-              {recebimento.nf_entrada && (
-                <p className="text-xs text-muted-foreground mt-1">NF: {recebimento.nf_entrada}</p>
-              )}
-              {recebimento.pedido_compra && (
-                <p className="text-xs text-muted-foreground">Pedido: {recebimento.pedido_compra}</p>
-              )}
-            </div>
+    <AppLayout title="Conferência de Recebimento" showBack>
+      <div className="p-4 space-y-6 lg:pl-72">
+        {/* Header do recebimento */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-bold flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Pedido: {recebimento.numero_pedido}
+            </h2>
+            <p className="text-muted-foreground">{recebimento.fornecedor}</p>
           </div>
-
-          {/* Info de quantidades */}
-          <div className="mt-4 pt-4 border-t border-border">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <p className="text-xs text-muted-foreground">Pedida</p>
-                <p className="text-lg font-bold">{qtdPedida}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Inicial</p>
-                <p className="text-lg font-bold">{recebimento.quantidade_inicial}</p>
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Atual</p>
-                <p className="text-lg font-bold">{recebimento.quantidade_atual}</p>
-              </div>
-            </div>
-            {recebimento.previsao_chegada && (
-              <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                <Clock className="h-4 w-4" />
-                <span>Previsão: {new Date(recebimento.previsao_chegada).toLocaleDateString("pt-BR")}</span>
-              </div>
-            )}
-          </div>
+          <Badge className={statusConfig[recebimento.status].color}>
+            {statusConfig[recebimento.status].label}
+          </Badge>
         </div>
 
-        {/* Botão para iniciar conferência se ainda não iniciada */}
-        {recebimento.status === 'recebido' && (
-          <Button 
-            onClick={handleIniciarConferencia} 
-            className="w-full gap-2"
-            size="lg"
-          >
-            <Truck className="h-5 w-5" />
-            Iniciar Conferência
-          </Button>
-        )}
-
-        {/* Formulário de Conferência */}
-        {(recebimento.status === 'em_conferencia' || recebimento.status === 'divergencia') && (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="qtdRecebida">Quantidade Recebida *</Label>
-                <Input
-                  id="qtdRecebida"
-                  type="number"
-                  value={formData.qtdRecebida}
-                  onChange={(e) =>
-                    setFormData({ ...formData, qtdRecebida: parseInt(e.target.value) || 0 })
-                  }
-                  className="text-lg font-semibold"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Divergência</Label>
-                <div
-                  className={`h-10 px-3 rounded-md flex items-center justify-center text-sm font-medium ${
-                    divergencia === 0
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                      : divergencia > 0
-                      ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                      : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                  }`}
-                >
-                  {divergencia === 0 ? (
+        {/* Card de integração com balança */}
+        {balancaSuportada && (
+          <Card className={balancaConectada ? "border-green-500" : ""}>
+            <CardContent className="pt-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Scale className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Balança Digital</p>
+                    <p className="text-sm text-muted-foreground">
+                      {balancaConectada 
+                        ? leituraBalanca 
+                          ? `${leituraBalanca.peso} ${leituraBalanca.unidade} ${leituraBalanca.estavel ? '(estável)' : '(aguardando...)'}`
+                          : "Aguardando leitura..."
+                        : "Desconectada"}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {balancaConectada ? (
                     <>
-                      <Check className="h-4 w-4 mr-1" /> OK
+                      <Wifi className="h-4 w-4 text-green-500" />
+                      <Button variant="outline" size="sm" onClick={desconectarBalanca}>
+                        Desconectar
+                      </Button>
                     </>
                   ) : (
                     <>
-                      <AlertTriangle className="h-4 w-4 mr-1" />
-                      {divergencia > 0 ? "+" : ""}
-                      {divergencia} ({percentualDivergencia.toFixed(1)}%)
+                      <WifiOff className="h-4 w-4 text-muted-foreground" />
+                      <Button variant="default" size="sm" onClick={handleConectar}>
+                        Conectar
+                      </Button>
                     </>
                   )}
                 </div>
               </div>
-            </div>
-
-            {/* Barra de progresso */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Progresso da conferência</span>
-                <span className="font-medium">{percentualRecebido.toFixed(0)}%</span>
-              </div>
-              <Progress value={percentualRecebido} className="h-2" />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="qtdVolumes">Nº de Volumes</Label>
-                <Input
-                  id="qtdVolumes"
-                  type="number"
-                  min={1}
-                  value={formData.qtdVolumes}
-                  onChange={(e) =>
-                    setFormData({ ...formData, qtdVolumes: parseInt(e.target.value) || 1 })
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="qtdPorVolume">Qtd por Volume</Label>
-                <Input
-                  id="qtdPorVolume"
-                  type="number"
-                  value={formData.qtdPorVolume}
-                  onChange={(e) =>
-                    setFormData({ ...formData, qtdPorVolume: parseInt(e.target.value) || 0 })
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tipoEmbalagem">Tipo de Embalagem</Label>
-              <Select
-                value={formData.tipoEmbalagem}
-                onValueChange={(value: TipoEmbalagem) =>
-                  setFormData({ ...formData, tipoEmbalagem: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="original">Original do Fornecedor</SelectItem>
-                  <SelectItem value="plastica">Caixa Plástica</SelectItem>
-                  <SelectItem value="generica">Caixa Genérica</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="descricaoVolumes">Descrição dos Volumes</Label>
-              <Input
-                id="descricaoVolumes"
-                placeholder="Ex: 4 caixas de 125 unidades cada"
-                value={formData.descricaoVolumes}
-                onChange={(e) =>
-                  setFormData({ ...formData, descricaoVolumes: e.target.value })
-                }
-              />
-            </div>
-
-            {/* Fotos */}
-            <div className="space-y-2">
-              <Label>Fotos do Recebimento</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3].map((i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className="aspect-square rounded-lg border-2 border-dashed border-muted-foreground/30 hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-1 text-muted-foreground hover:text-primary"
-                  >
-                    <Camera className="h-6 w-6" />
-                    <span className="text-xs">Foto {i}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="observacoes">Observações</Label>
-              <Textarea
-                id="observacoes"
-                placeholder="Observações sobre o recebimento..."
-                value={formData.observacoes}
-                onChange={(e) =>
-                  setFormData({ ...formData, observacoes: e.target.value })
-                }
-                rows={3}
-              />
-            </div>
-
-            {/* Ações */}
-            <div className="flex gap-3 pt-4">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => navigate("/recebimento")}
-                disabled={submitting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                className="flex-1 gap-2"
-                onClick={handleSubmit}
-                disabled={submitting}
-              >
-                {submitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Check className="h-4 w-4" />
-                )}
-                Confirmar Conferência
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Visualização para status conferido ou outros */}
-        {(recebimento.status === 'conferido' || recebimento.status === 'aguardando' || recebimento.status === 'em_transito') && (
-          <div className="bg-muted/50 rounded-xl p-6 text-center">
-            <Info className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">
-              {recebimento.status === 'conferido' && 'Este recebimento já foi conferido.'}
-              {recebimento.status === 'aguardando' && 'Aguardando chegada do material.'}
-              {recebimento.status === 'em_transito' && 'Material em trânsito.'}
+        {/* Informações do produto */}
+        <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+          <div>
+            <p className="text-sm text-muted-foreground">Produto</p>
+            <p className="font-medium">{recebimento.produto}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Quantidade Esperada</p>
+            <p className="font-medium">{recebimento.quantidade_esperada} unidades</p>
+          </div>
+          {recebimento.peso_esperado && (
+            <div>
+              <p className="text-sm text-muted-foreground">Peso Esperado</p>
+              <p className="font-medium">{recebimento.peso_esperado} kg</p>
+            </div>
+          )}
+          <div>
+            <p className="text-sm text-muted-foreground">Data Prevista</p>
+            <p className="font-medium">{recebimento.data_prevista || "Não informada"}</p>
+          </div>
+        </div>
+
+        {/* Progresso da conferência */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span>Progresso da conferência</span>
+            <span className={temDivergencia ? "text-red-500 font-medium" : ""}>
+              {quantidadeConferida} / {recebimento.quantidade_esperada}
+            </span>
+          </div>
+          <Progress 
+            value={Math.min(progresso, 100)} 
+            className={temDivergencia ? "[&>div]:bg-red-500" : ""} 
+          />
+          {temDivergencia && (
+            <p className="text-sm text-red-500 flex items-center gap-1">
+              <AlertTriangle className="h-4 w-4" />
+              Divergência detectada
             </p>
-            {recebimento.data_conferencia && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Conferido em: {new Date(recebimento.data_conferencia).toLocaleString("pt-BR")}
-              </p>
-            )}
-            {recebimento.observacoes_conferencia && (
-              <p className="text-sm mt-2 p-3 bg-background rounded-lg">
-                {recebimento.observacoes_conferencia}
-              </p>
-            )}
+          )}
+        </div>
+
+        {/* Formulário de conferência */}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="quantidade">Quantidade Conferida</Label>
+            <Input
+              id="quantidade"
+              type="number"
+              value={quantidadeConferida}
+              onChange={(e) => setQuantidadeConferida(Number(e.target.value))}
+              className="mt-1"
+            />
           </div>
-        )}
+
+          <div>
+            <Label htmlFor="peso">Peso Conferido (kg)</Label>
+            <div className="flex gap-2 mt-1">
+              <Input
+                id="peso"
+                type="number"
+                step="0.001"
+                value={pesoConferido}
+                onChange={(e) => setPesoConferido(Number(e.target.value))}
+              />
+              {balancaConectada && leituraBalanca && (
+                <Button 
+                  variant="outline" 
+                  onClick={() => setPesoConferido(leituraBalanca.peso)}
+                >
+                  <Scale className="h-4 w-4 mr-2" />
+                  Capturar
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="embalagem">Tipo de Embalagem</Label>
+            <Select value={tipoEmbalagem} onValueChange={(v) => setTipoEmbalagem(v as TipoEmbalagem)}>
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="original">Original do Fabricante</SelectItem>
+                <SelectItem value="plastica">Caixa Plástica</SelectItem>
+                <SelectItem value="generica">Embalagem Genérica</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="observacoes">Observações</Label>
+            <Textarea
+              id="observacoes"
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              placeholder="Observações sobre o recebimento..."
+              className="mt-1"
+              rows={3}
+            />
+          </div>
+        </div>
+
+        {/* Ações */}
+        <div className="flex gap-3 pt-4">
+          <Button variant="outline" onClick={() => navigate("/recebimento")} className="flex-1">
+            Cancelar
+          </Button>
+          <Button 
+            onClick={handleSalvar} 
+            disabled={salvando || quantidadeConferida === 0}
+            className="flex-1"
+          >
+            {salvando ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <Check className="h-4 w-4 mr-2" />
+            )}
+            {temDivergencia ? "Registrar Divergência" : "Confirmar Conferência"}
+          </Button>
+        </div>
       </div>
     </AppLayout>
   );
