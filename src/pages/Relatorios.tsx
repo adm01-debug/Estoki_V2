@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { 
   FileText, 
   Filter, 
@@ -63,9 +63,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import type { TipoMovimentacao, Movimentacao } from "@/types/estoque";
+import { useMovimentacoes, Movimentacao, TipoMovimentacao } from "@/hooks/useMovimentacoes";
 
-const CHART_COLORS = {
+const CHART_COLORS: Record<string, string> = {
   entradas: "#22c55e",
   saidas: "#ef4444",
   recebimento: "#3b82f6",
@@ -77,149 +77,7 @@ const CHART_COLORS = {
   ajuste: "#6b7280",
 };
 
-// Mock data expandido para relatórios
-const mockMovimentacoes: (Movimentacao & { produto: string })[] = [
-  {
-    id: 1,
-    tipo: "recebimento",
-    itemId: 1,
-    pedido: "2638-1",
-    produto: "Mochila Preta",
-    volumes: [1, 2, 3, 4],
-    quantidade: 500,
-    destino: "Conferência",
-    responsavelId: 3,
-    responsavelNome: "Ana Costa",
-    observacao: "Fornecedor: XBZ Brindes",
-    dataHora: new Date("2025-12-16T14:30:00"),
-  },
-  {
-    id: 2,
-    tipo: "armazenamento",
-    itemId: 1,
-    pedido: "2638-1",
-    produto: "Mochila Preta",
-    volumes: [1, 2, 3, 4],
-    quantidade: 490,
-    origem: "Triagem",
-    destino: "PP1-S05-N2, PP1-S06-N2",
-    responsavelId: 2,
-    responsavelNome: "João Oliveira",
-    dataHora: new Date("2025-12-16T16:30:00"),
-  },
-  {
-    id: 3,
-    tipo: "saida_gravacao",
-    itemId: 1,
-    pedido: "2638-1",
-    produto: "Mochila Preta",
-    volumes: [2],
-    quantidade: 125,
-    origem: "PP1-S05-N2",
-    destino: "Gravação Silk",
-    responsavelId: 1,
-    responsavelNome: "Carlos Silva",
-    dataHora: new Date("2025-12-16T16:45:00"),
-  },
-  {
-    id: 4,
-    tipo: "recebimento",
-    itemId: 2,
-    pedido: "2640-1",
-    produto: "Caneca Branca 350ml",
-    volumes: [1, 2],
-    quantidade: 1000,
-    destino: "Conferência",
-    responsavelId: 3,
-    responsavelNome: "Ana Costa",
-    dataHora: new Date("2025-12-15T10:00:00"),
-  },
-  {
-    id: 5,
-    tipo: "armazenamento",
-    itemId: 2,
-    pedido: "2640-1",
-    produto: "Caneca Branca 350ml",
-    volumes: [1, 2],
-    quantidade: 1000,
-    origem: "Triagem",
-    destino: "PP2-S02-N1",
-    responsavelId: 2,
-    responsavelNome: "João Oliveira",
-    dataHora: new Date("2025-12-15T14:00:00"),
-  },
-  {
-    id: 6,
-    tipo: "expedicao",
-    itemId: 2,
-    pedido: "2640-1",
-    produto: "Caneca Branca 350ml",
-    volumes: [1],
-    quantidade: 500,
-    origem: "PP2-S02-N1",
-    destino: "Box 05",
-    responsavelId: 1,
-    responsavelNome: "Carlos Silva",
-    dataHora: new Date("2025-12-15T16:30:00"),
-  },
-  {
-    id: 7,
-    tipo: "transferencia",
-    itemId: 3,
-    pedido: "2635-2",
-    produto: "Squeeze 500ml",
-    volumes: [1],
-    quantidade: 200,
-    origem: "PP1-S01-N3",
-    destino: "PP3-S08-N1",
-    responsavelId: 2,
-    responsavelNome: "João Oliveira",
-    dataHora: new Date("2025-12-14T11:00:00"),
-  },
-  {
-    id: 8,
-    tipo: "retorno_gravacao",
-    itemId: 3,
-    pedido: "2635-2",
-    produto: "Squeeze 500ml",
-    volumes: [1],
-    quantidade: 195,
-    origem: "Gravação Laser",
-    destino: "PP3-S08-N1",
-    responsavelId: 1,
-    responsavelNome: "Carlos Silva",
-    observacao: "5 unidades com defeito",
-    dataHora: new Date("2025-12-14T17:00:00"),
-  },
-  {
-    id: 9,
-    tipo: "ajuste",
-    itemId: 4,
-    pedido: "2630-1",
-    produto: "Caderno A5",
-    volumes: [1],
-    quantidade: -10,
-    origem: "PP1-S10-N2",
-    destino: "Ajuste Inventário",
-    responsavelId: 3,
-    responsavelNome: "Ana Costa",
-    observacao: "Divergência identificada no inventário",
-    dataHora: new Date("2025-12-13T09:00:00"),
-  },
-];
-
-const tiposMovimento: Array<{ value: string; label: string }> = [
-  { value: "todos", label: "Todos os tipos" },
-  { value: "recebimento", label: "Recebimento" },
-  { value: "armazenamento", label: "Armazenamento" },
-  { value: "transferencia", label: "Transferência" },
-  { value: "saida_gravacao", label: "Saída para Gravação" },
-  { value: "retorno_gravacao", label: "Retorno da Gravação" },
-  { value: "expedicao", label: "Expedição" },
-  { value: "ajuste", label: "Ajuste" },
-];
-
-const tipoLabels: Record<string, string> = {
+const tipoLabels: Record<TipoMovimentacao, string> = {
   recebimento: "Recebimento",
   armazenamento: "Armazenamento",
   transferencia: "Transferência",
@@ -229,793 +87,502 @@ const tipoLabels: Record<string, string> = {
   ajuste: "Ajuste",
 };
 
-const tipoBadgeVariants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-  recebimento: "default",
-  armazenamento: "secondary",
-  transferencia: "outline",
-  saida_gravacao: "destructive",
-  retorno_gravacao: "default",
-  expedicao: "secondary",
-  ajuste: "outline",
-};
-
-// Lista de produtos únicos para o filtro
-const produtosUnicos = [...new Set(mockMovimentacoes.map(m => m.produto))];
-
-// Lista de responsáveis únicos para o filtro
-const responsaveisUnicos = [...new Set(mockMovimentacoes.map(m => m.responsavelNome))];
-
 export default function RelatoriosPage() {
-  const [dataInicio, setDataInicio] = useState<Date | undefined>(subDays(new Date(), 7));
-  const [dataFim, setDataFim] = useState<Date | undefined>(new Date());
-  const [tipoFiltro, setTipoFiltro] = useState("todos");
-  const [produtoFiltro, setProdutoFiltro] = useState("todos");
-  const [responsavelFiltro, setResponsavelFiltro] = useState("todos");
-  const [buscaTexto, setBuscaTexto] = useState("");
-  const [exportandoCSV, setExportandoCSV] = useState(false);
-  const [exportandoPDF, setExportandoPDF] = useState(false);
-  const [exportandoExcel, setExportandoExcel] = useState(false);
+  const { movimentacoes, loading, error } = useMovimentacoes();
+  
+  const [searchTerm, setSearchTerm] = useState("");
+  const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
+  const [responsavelFiltro, setResponsavelFiltro] = useState<string>("todos");
+  const [produtoFiltro, setProdutoFiltro] = useState<string>("todos");
+  const [dataInicio, setDataInicio] = useState<Date>(subDays(new Date(), 30));
+  const [dataFim, setDataFim] = useState<Date>(new Date());
+  const [exportando, setExportando] = useState(false);
 
-  // Filtragem dos dados
+  // Listas únicas para filtros
+  const produtosUnicos = useMemo(() => {
+    const produtos = new Set<string>();
+    movimentacoes.forEach(m => {
+      if (m.descricao) produtos.add(m.descricao);
+    });
+    return Array.from(produtos);
+  }, [movimentacoes]);
+
+  const responsaveisUnicos = useMemo(() => {
+    const responsaveis = new Set<string>();
+    movimentacoes.forEach(m => {
+      if (m.usuario_nome) responsaveis.add(m.usuario_nome);
+    });
+    return Array.from(responsaveis);
+  }, [movimentacoes]);
+
+  // Filtrar movimentações
   const dadosFiltrados = useMemo(() => {
-    return mockMovimentacoes.filter((mov) => {
-      // Filtro por período
-      if (dataInicio && dataFim) {
-        const dentroIntervalo = isWithinInterval(mov.dataHora, {
-          start: startOfDay(dataInicio),
-          end: endOfDay(dataFim),
-        });
-        if (!dentroIntervalo) return false;
-      }
+    return movimentacoes.filter((mov) => {
+      const movDate = new Date(mov.created_at);
+      const dentroDoPeriodo = isWithinInterval(movDate, {
+        start: startOfDay(dataInicio),
+        end: endOfDay(dataFim),
+      });
 
-      // Filtro por tipo
-      if (tipoFiltro !== "todos" && mov.tipo !== tipoFiltro) return false;
+      const matchSearch =
+        searchTerm === "" ||
+        mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        mov.observacao?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // Filtro por produto
-      if (produtoFiltro !== "todos" && mov.produto !== produtoFiltro) return false;
+      const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
+      const matchResponsavel = responsavelFiltro === "todos" || mov.usuario_nome === responsavelFiltro;
+      const matchProduto = produtoFiltro === "todos" || mov.descricao === produtoFiltro;
 
-      // Filtro por responsável
-      if (responsavelFiltro !== "todos" && mov.responsavelNome !== responsavelFiltro) return false;
+      return dentroDoPeriodo && matchSearch && matchTipo && matchResponsavel && matchProduto;
+    });
+  }, [movimentacoes, searchTerm, tipoFiltro, responsavelFiltro, produtoFiltro, dataInicio, dataFim]);
 
-      // Filtro por texto
-      if (buscaTexto) {
-        const texto = buscaTexto.toLowerCase();
-        const match = 
-          mov.pedido.toLowerCase().includes(texto) ||
-          mov.produto.toLowerCase().includes(texto) ||
-          mov.responsavelNome.toLowerCase().includes(texto) ||
-          mov.destino?.toLowerCase().includes(texto) ||
-          mov.origem?.toLowerCase().includes(texto);
-        if (!match) return false;
-      }
+  // KPIs
+  const kpis = useMemo(() => {
+    const entradas = dadosFiltrados.filter(m => 
+      m.tipo === "recebimento" || m.tipo === "retorno_gravacao"
+    );
+    const saidas = dadosFiltrados.filter(m => 
+      m.tipo === "expedicao" || m.tipo === "saida_gravacao"
+    );
 
-      return true;
-    }).sort((a, b) => b.dataHora.getTime() - a.dataHora.getTime());
-  }, [dataInicio, dataFim, tipoFiltro, produtoFiltro, responsavelFiltro, buscaTexto]);
+    return {
+      totalMovimentacoes: dadosFiltrados.length,
+      totalEntradas: entradas.reduce((acc, m) => acc + (m.quantidade || 0), 0),
+      totalSaidas: saidas.reduce((acc, m) => acc + (m.quantidade || 0), 0),
+      mediaDiaria: dadosFiltrados.length / Math.max(1, Math.ceil((dataFim.getTime() - dataInicio.getTime()) / (1000 * 60 * 60 * 24))),
+    };
+  }, [dadosFiltrados, dataInicio, dataFim]);
 
-  // Estatísticas
-  const estatisticas = useMemo(() => {
-    const entradas = dadosFiltrados
-      .filter(m => ["recebimento", "retorno_gravacao"].includes(m.tipo))
-      .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
-    
-    const saidas = dadosFiltrados
-      .filter(m => ["saida_gravacao", "expedicao"].includes(m.tipo))
-      .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
-    
-    const ajustes = dadosFiltrados
-      .filter(m => m.tipo === "ajuste")
-      .reduce((acc, m) => acc + m.quantidade, 0);
-
-    return { entradas, saidas, ajustes, total: dadosFiltrados.length };
-  }, [dadosFiltrados]);
-
-  // Dados para gráfico de linha temporal
-  const dadosGraficoTemporal = useMemo(() => {
-    if (!dataInicio || !dataFim) return [];
-    
+  // Dados para gráfico de área (evolução diária)
+  const dadosEvolucao = useMemo(() => {
     const dias = eachDayOfInterval({ start: dataInicio, end: dataFim });
     
     return dias.map(dia => {
-      const movsDia = dadosFiltrados.filter(m => 
-        format(m.dataHora, "yyyy-MM-dd") === format(dia, "yyyy-MM-dd")
-      );
-      
+      const movsDia = dadosFiltrados.filter(m => {
+        const movDate = new Date(m.created_at);
+        return startOfDay(movDate).getTime() === startOfDay(dia).getTime();
+      });
+
       const entradas = movsDia
-        .filter(m => ["recebimento", "retorno_gravacao"].includes(m.tipo))
-        .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
-      
+        .filter(m => m.tipo === "recebimento" || m.tipo === "retorno_gravacao")
+        .reduce((acc, m) => acc + (m.quantidade || 0), 0);
+
       const saidas = movsDia
-        .filter(m => ["saida_gravacao", "expedicao"].includes(m.tipo))
-        .reduce((acc, m) => acc + Math.abs(m.quantidade), 0);
+        .filter(m => m.tipo === "expedicao" || m.tipo === "saida_gravacao")
+        .reduce((acc, m) => acc + (m.quantidade || 0), 0);
 
       return {
-        data: format(dia, "dd/MM"),
+        data: format(dia, "dd/MM", { locale: ptBR }),
         entradas,
         saidas,
-        saldo: entradas - saidas,
+        total: movsDia.length,
       };
     });
   }, [dadosFiltrados, dataInicio, dataFim]);
 
-  // Dados para gráfico de pizza por tipo
-  const dadosGraficoPizza = useMemo(() => {
-    const contagem: Record<string, number> = {};
+  // Dados para gráfico de pizza (por tipo)
+  const dadosPorTipo = useMemo(() => {
+    const agrupado: Record<string, number> = {};
     
-    dadosFiltrados.forEach(mov => {
-      const tipo = mov.tipo;
-      contagem[tipo] = (contagem[tipo] || 0) + 1;
+    dadosFiltrados.forEach(m => {
+      if (!agrupado[m.tipo]) agrupado[m.tipo] = 0;
+      agrupado[m.tipo]++;
     });
 
-    return Object.entries(contagem).map(([tipo, valor]) => ({
-      name: tipoLabels[tipo] || tipo,
-      value: valor,
-      tipo,
+    return Object.entries(agrupado).map(([tipo, quantidade]) => ({
+      tipo: tipoLabels[tipo as TipoMovimentacao] || tipo,
+      quantidade,
+      cor: CHART_COLORS[tipo] || "#6b7280",
     }));
   }, [dadosFiltrados]);
 
-  // Dados para gráfico de barras por produto
-  const dadosGraficoProduto = useMemo(() => {
-    const porProduto: Record<string, { entradas: number; saidas: number }> = {};
-    
-    dadosFiltrados.forEach(mov => {
-      if (!porProduto[mov.produto]) {
-        porProduto[mov.produto] = { entradas: 0, saidas: 0 };
-      }
-      
-      if (["recebimento", "retorno_gravacao"].includes(mov.tipo)) {
-        porProduto[mov.produto].entradas += Math.abs(mov.quantidade);
-      } else if (["saida_gravacao", "expedicao"].includes(mov.tipo)) {
-        porProduto[mov.produto].saidas += Math.abs(mov.quantidade);
-      }
-    });
-
-    return Object.entries(porProduto)
-      .map(([produto, dados]) => ({
-        produto: produto.length > 15 ? produto.substring(0, 15) + "..." : produto,
-        ...dados,
-      }))
-      .slice(0, 5);
-  }, [dadosFiltrados]);
-
-  const limparFiltros = () => {
-    setDataInicio(subDays(new Date(), 7));
-    setDataFim(new Date());
-    setTipoFiltro("todos");
-    setProdutoFiltro("todos");
-    setResponsavelFiltro("todos");
-    setBuscaTexto("");
-  };
-
-  // Exportar CSV
-  const exportarCSV = useCallback(() => {
-    if (dadosFiltrados.length === 0) {
-      toast.error("Nenhum dado para exportar");
-      return;
-    }
-
-    setExportandoCSV(true);
-
-    try {
-      const headers = ["Data", "Hora", "Tipo", "Pedido", "Produto", "Volumes", "Quantidade", "Origem", "Destino", "Responsavel", "Observacao"];
-      
-      const rows = dadosFiltrados.map(mov => [
-        format(mov.dataHora, "dd/MM/yyyy"),
-        format(mov.dataHora, "HH:mm"),
-        tipoLabels[mov.tipo] || mov.tipo,
-        mov.pedido,
-        mov.produto,
-        mov.volumes.join("; "),
-        mov.quantidade.toString(),
-        mov.origem || "",
-        mov.destino || "",
-        mov.responsavelNome,
-        mov.observacao || ""
-      ]);
-
-      const csvContent = [
-        headers.join(";"),
-        ...rows.map(row => row.map(cell => `"${cell}"`).join(";"))
-      ].join("\n");
-
-      // Add BOM for Excel UTF-8 compatibility
-      const bom = "\uFEFF";
-      const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-
-      toast.success(`${dadosFiltrados.length} registros exportados com sucesso!`);
-    } catch (error) {
-      toast.error("Erro ao exportar CSV");
-      console.error(error);
-    } finally {
-      setExportandoCSV(false);
-    }
-  }, [dadosFiltrados]);
-
   // Exportar PDF
-  const exportarPDF = useCallback(() => {
-    if (dadosFiltrados.length === 0) {
-      toast.error("Nenhum dado para exportar");
-      return;
-    }
-
-    setExportandoPDF(true);
-
+  const handleExportPDF = useCallback(async () => {
+    setExportando(true);
     try {
-      const doc = new jsPDF({ orientation: "landscape" });
-      const pageWidth = doc.internal.pageSize.getWidth();
+      const doc = new jsPDF();
       
-      // Título
       doc.setFontSize(18);
-      doc.setFont("helvetica", "bold");
-      doc.text("Relatorio de Movimentacoes", pageWidth / 2, 15, { align: "center" });
+      doc.text("Relatório de Movimentações", 14, 20);
       
-      // Período
       doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
-      const periodoText = `Periodo: ${dataInicio ? format(dataInicio, "dd/MM/yyyy") : "---"} a ${dataFim ? format(dataFim, "dd/MM/yyyy") : "---"}`;
-      doc.text(periodoText, pageWidth / 2, 22, { align: "center" });
+      doc.text(`Período: ${format(dataInicio, "dd/MM/yyyy")} a ${format(dataFim, "dd/MM/yyyy")}`, 14, 30);
+      doc.text(`Total de movimentações: ${dadosFiltrados.length}`, 14, 36);
       
-      // Data de geração
-      doc.setFontSize(8);
-      doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, pageWidth - 14, 10, { align: "right" });
-
-      // Estatísticas
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "bold");
-      doc.text("Resumo:", 14, 32);
-      doc.setFont("helvetica", "normal");
-      doc.text(`Total de movimentacoes: ${estatisticas.total}`, 14, 38);
-      doc.text(`Entradas: ${estatisticas.entradas.toLocaleString()} un`, 80, 38);
-      doc.text(`Saidas: ${estatisticas.saidas.toLocaleString()} un`, 140, 38);
-      doc.text(`Ajustes: ${estatisticas.ajustes > 0 ? "+" : ""}${estatisticas.ajustes} un`, 200, 38);
-
-      // Tabela
-      const startY = 48;
-      const lineHeight = 7;
-      const colWidths = [25, 35, 45, 30, 25, 35, 35, 30];
-      const headers = ["Data/Hora", "Tipo", "Produto", "Pedido", "Qtd", "Origem", "Destino", "Responsavel"];
+      doc.setFontSize(12);
+      doc.text("Movimentações:", 14, 48);
       
-      // Cabeçalho da tabela
-      doc.setFillColor(240, 240, 240);
-      doc.rect(14, startY, pageWidth - 28, lineHeight, "F");
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(8);
-      
-      let xPos = 14;
-      headers.forEach((header, i) => {
-        doc.text(header, xPos + 2, startY + 5);
-        xPos += colWidths[i];
-      });
-
-      // Dados da tabela
-      doc.setFont("helvetica", "normal");
-      let yPos = startY + lineHeight;
-      
-      dadosFiltrados.forEach((mov, index) => {
-        // Nova página se necessário
-        if (yPos > doc.internal.pageSize.getHeight() - 20) {
+      let y = 56;
+      dadosFiltrados.slice(0, 20).forEach((mov, i) => {
+        if (y > 280) {
           doc.addPage();
-          yPos = 20;
-          
-          // Repetir cabeçalho
-          doc.setFillColor(240, 240, 240);
-          doc.rect(14, yPos, pageWidth - 28, lineHeight, "F");
-          doc.setFont("helvetica", "bold");
-          xPos = 14;
-          headers.forEach((header, i) => {
-            doc.text(header, xPos + 2, yPos + 5);
-            xPos += colWidths[i];
-          });
-          doc.setFont("helvetica", "normal");
-          yPos += lineHeight;
+          y = 20;
         }
-
-        // Linha alternada
-        if (index % 2 === 0) {
-          doc.setFillColor(250, 250, 250);
-          doc.rect(14, yPos, pageWidth - 28, lineHeight, "F");
-        }
-
-        xPos = 14;
-        const rowData = [
-          `${format(mov.dataHora, "dd/MM HH:mm")}`,
-          tipoLabels[mov.tipo] || mov.tipo,
-          mov.produto.substring(0, 20),
-          `#${mov.pedido}`,
-          mov.quantidade.toString(),
-          (mov.origem || "-").substring(0, 15),
-          (mov.destino || "-").substring(0, 15),
-          mov.responsavelNome.split(" ")[0]
-        ];
-
-        rowData.forEach((cell, i) => {
-          doc.text(cell, xPos + 2, yPos + 5);
-          xPos += colWidths[i];
-        });
-
-        yPos += lineHeight;
+        doc.setFontSize(9);
+        doc.text(
+          `${i + 1}. [${tipoLabels[mov.tipo]}] ${mov.descricao || 'Item'} - ${mov.quantidade || 0} un - ${format(new Date(mov.created_at), "dd/MM HH:mm")}`,
+          14,
+          y
+        );
+        y += 6;
       });
-
-      // Salvar PDF
-      doc.save(`relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}.pdf`);
-      toast.success(`PDF gerado com ${dadosFiltrados.length} registros!`);
-    } catch (error) {
-      toast.error("Erro ao gerar PDF");
-      console.error(error);
+      
+      doc.save(`relatorio-movimentacoes-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+      toast.success("PDF exportado com sucesso!");
+    } catch (err) {
+      toast.error("Erro ao exportar PDF");
     } finally {
-      setExportandoPDF(false);
+      setExportando(false);
     }
-  }, [dadosFiltrados, dataInicio, dataFim, estatisticas]);
+  }, [dadosFiltrados, dataInicio, dataFim]);
 
   // Exportar Excel
-  const exportarExcel = useCallback(() => {
-    if (dadosFiltrados.length === 0) {
-      toast.error("Nenhum dado para exportar");
-      return;
-    }
-
-    setExportandoExcel(true);
-
+  const handleExportExcel = useCallback(async () => {
+    setExportando(true);
     try {
-      const excelData = dadosFiltrados.map(mov => ({
-        "Data": format(mov.dataHora, "dd/MM/yyyy"),
-        "Hora": format(mov.dataHora, "HH:mm"),
-        "Tipo": tipoLabels[mov.tipo] || mov.tipo,
-        "Pedido": mov.pedido,
-        "Produto": mov.produto,
-        "Volumes": mov.volumes.join(", "),
-        "Quantidade": mov.quantidade,
-        "Origem": mov.origem || "",
-        "Destino": mov.destino || "",
-        "Responsável": mov.responsavelNome,
-        "Observação": mov.observacao || ""
+      const dados = dadosFiltrados.map(m => ({
+        "Data/Hora": format(new Date(m.created_at), "dd/MM/yyyy HH:mm"),
+        "Tipo": tipoLabels[m.tipo] || m.tipo,
+        "Descrição": m.descricao || "",
+        "Quantidade": m.quantidade || 0,
+        "Origem": m.origem || "",
+        "Destino": m.destino || "",
+        "Responsável": m.usuario_nome || "",
+        "Observação": m.observacao || "",
       }));
-
-      exportToExcel(excelData, {
-        filename: `relatorio_movimentacoes_${format(new Date(), "yyyy-MM-dd_HH-mm")}`,
-        sheetName: "Movimentações"
-      });
-
-      toast.success(`${dadosFiltrados.length} registros exportados para Excel!`);
-    } catch (error) {
+      
+      exportToExcel(dados, `relatorio-movimentacoes-${format(new Date(), "yyyy-MM-dd")}`);
+      toast.success("Excel exportado com sucesso!");
+    } catch (err) {
       toast.error("Erro ao exportar Excel");
-      console.error(error);
     } finally {
-      setExportandoExcel(false);
+      setExportando(false);
     }
   }, [dadosFiltrados]);
+
+  const getTipoColor = (tipo: string) => {
+    const colors: Record<string, string> = {
+      recebimento: "bg-blue-500/20 text-blue-700 border-blue-500/30",
+      armazenamento: "bg-purple-500/20 text-purple-700 border-purple-500/30",
+      transferencia: "bg-amber-500/20 text-amber-700 border-amber-500/30",
+      saida_gravacao: "bg-red-500/20 text-red-700 border-red-500/30",
+      retorno_gravacao: "bg-green-500/20 text-green-700 border-green-500/30",
+      expedicao: "bg-cyan-500/20 text-cyan-700 border-cyan-500/30",
+      ajuste: "bg-gray-500/20 text-gray-700 border-gray-500/30",
+    };
+    return colors[tipo] || colors.ajuste;
+  };
+
+  if (loading) {
+    return (
+      <AppLayout title="Relatórios" showBack>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Relatórios" showBack>
-      <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
-        {/* Cabeçalho com estatísticas */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <BarChart3 className="h-4 w-4" />
-              <span className="text-xs">Movimentações</span>
+      <div className="p-4 lg:pl-72 space-y-6">
+        {/* Filtros */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              Filtros
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Busca */}
+              <div className="space-y-1.5">
+                <Label className="text-xs">Buscar</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+
+              {/* Tipo */}
+              <div className="space-y-1.5">
+                <Label className="text-xs">Tipo</Label>
+                <Select value={tipoFiltro} onValueChange={setTipoFiltro}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    {Object.entries(tipoLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>{label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Período */}
+              <div className="space-y-1.5">
+                <Label className="text-xs">Data Início</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {format(dataInicio, "dd/MM/yyyy")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dataInicio}
+                      onSelect={(date) => date && setDataInicio(date)}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs">Data Fim</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      {format(dataFim, "dd/MM/yyyy")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <CalendarComponent
+                      mode="single"
+                      selected={dataFim}
+                      onSelect={(date) => date && setDataFim(date)}
+                      locale={ptBR}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
-            <div className="text-2xl font-bold">{estatisticas.total}</div>
-          </div>
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 text-green-600 mb-1">
-              <TrendingUp className="h-4 w-4" />
-              <span className="text-xs">Entradas</span>
-            </div>
-            <div className="text-2xl font-bold text-green-600">{estatisticas.entradas.toLocaleString()}</div>
-          </div>
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 text-red-600 mb-1">
-              <TrendingDown className="h-4 w-4" />
-              <span className="text-xs">Saídas</span>
-            </div>
-            <div className="text-2xl font-bold text-red-600">{estatisticas.saidas.toLocaleString()}</div>
-          </div>
-          <div className="bg-card rounded-xl p-4 border border-border">
-            <div className="flex items-center gap-2 text-muted-foreground mb-1">
-              <ArrowRightLeft className="h-4 w-4" />
-              <span className="text-xs">Ajustes</span>
-            </div>
-            <div className={cn("text-2xl font-bold", estatisticas.ajustes >= 0 ? "text-green-600" : "text-red-600")}>
-              {estatisticas.ajustes > 0 ? "+" : ""}{estatisticas.ajustes}
-            </div>
-          </div>
+          </CardContent>
+        </Card>
+
+        {/* KPIs */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <ArrowRightLeft className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total</p>
+                  <p className="text-2xl font-bold">{kpis.totalMovimentacoes}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500/10">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Entradas</p>
+                  <p className="text-2xl font-bold">{kpis.totalEntradas}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-red-500/10">
+                  <TrendingDown className="h-5 w-5 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Saídas</p>
+                  <p className="text-2xl font-bold">{kpis.totalSaidas}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-500/10">
+                  <BarChart3 className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Média/Dia</p>
+                  <p className="text-2xl font-bold">{kpis.mediaDiaria.toFixed(1)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Gráficos */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Gráfico de Área - Movimentações ao longo do tempo */}
+        <div className="grid md:grid-cols-2 gap-4">
+          {/* Evolução */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                Movimentações por Dia
-              </CardTitle>
+              <CardTitle className="text-base">Evolução Diária</CardTitle>
             </CardHeader>
             <CardContent>
-              {dadosGraficoTemporal.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <AreaChart data={dadosGraficoTemporal}>
-                    <defs>
-                      <linearGradient id="colorEntradas" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={CHART_COLORS.entradas} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={CHART_COLORS.entradas} stopOpacity={0}/>
-                      </linearGradient>
-                      <linearGradient id="colorSaidas" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={CHART_COLORS.saidas} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={CHART_COLORS.saidas} stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis 
-                      dataKey="data" 
-                      tick={{ fontSize: 10 }} 
-                      className="text-muted-foreground"
-                    />
-                    <YAxis tick={{ fontSize: 10 }} className="text-muted-foreground" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: "hsl(var(--card))", 
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        fontSize: "12px"
-                      }}
-                    />
+              <div className="h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={dadosEvolucao}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                    <XAxis dataKey="data" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                    <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                    <Tooltip />
+                    <Legend />
                     <Area 
                       type="monotone" 
                       dataKey="entradas" 
                       name="Entradas"
+                      stackId="1"
                       stroke={CHART_COLORS.entradas} 
-                      fillOpacity={1} 
-                      fill="url(#colorEntradas)" 
+                      fill={CHART_COLORS.entradas}
+                      fillOpacity={0.6}
                     />
                     <Area 
                       type="monotone" 
                       dataKey="saidas" 
                       name="Saídas"
+                      stackId="2"
                       stroke={CHART_COLORS.saidas} 
-                      fillOpacity={1} 
-                      fill="url(#colorSaidas)" 
+                      fill={CHART_COLORS.saidas}
+                      fillOpacity={0.6}
                     />
                   </AreaChart>
                 </ResponsiveContainer>
-              ) : (
-                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
-                  Sem dados para o período selecionado
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
 
-          {/* Gráfico de Pizza - Distribuição por Tipo */}
+          {/* Por Tipo */}
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <PieChart className="h-4 w-4 text-primary" />
-                Distribuição por Tipo
-              </CardTitle>
+              <CardTitle className="text-base">Por Tipo</CardTitle>
             </CardHeader>
             <CardContent>
-              {dadosGraficoPizza.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
+              <div className="h-[250px]">
+                <ResponsiveContainer width="100%" height="100%">
                   <RechartsPieChart>
                     <Pie
-                      data={dadosGraficoPizza}
+                      data={dadosPorTipo}
+                      dataKey="quantidade"
+                      nameKey="tipo"
                       cx="50%"
                       cy="50%"
-                      innerRadius={40}
-                      outerRadius={70}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
-                      labelLine={false}
+                      outerRadius={80}
+                      label
                     >
-                      {dadosGraficoPizza.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={CHART_COLORS[entry.tipo as keyof typeof CHART_COLORS] || "#6b7280"} 
-                        />
+                      {dadosPorTipo.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.cor} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: "hsl(var(--card))", 
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        fontSize: "12px"
-                      }}
-                      formatter={(value: number) => [`${value} mov.`, "Quantidade"]}
-                    />
-                    <Legend 
-                      wrapperStyle={{ fontSize: "10px" }}
-                      formatter={(value) => <span className="text-foreground">{value}</span>}
-                    />
+                    <Tooltip />
+                    <Legend />
                   </RechartsPieChart>
                 </ResponsiveContainer>
-              ) : (
-                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
-                  Sem dados para o período selecionado
-                </div>
-              )}
+              </div>
             </CardContent>
           </Card>
+        </div>
 
-          {/* Gráfico de Barras - Por Produto */}
-          <Card className="lg:col-span-2">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-primary" />
-                Top 5 Produtos - Entradas vs Saídas
+        {/* Tabela */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Movimentações ({dadosFiltrados.length})
               </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {dadosGraficoProduto.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={dadosGraficoProduto} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis type="number" tick={{ fontSize: 10 }} />
-                    <YAxis 
-                      type="category" 
-                      dataKey="produto" 
-                      tick={{ fontSize: 10 }} 
-                      width={100}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: "hsl(var(--card))", 
-                        border: "1px solid hsl(var(--border))",
-                        borderRadius: "8px",
-                        fontSize: "12px"
-                      }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: "10px" }} />
-                    <Bar dataKey="entradas" name="Entradas" fill={CHART_COLORS.entradas} radius={[0, 4, 4, 0]} />
-                    <Bar dataKey="saidas" name="Saídas" fill={CHART_COLORS.saidas} radius={[0, 4, 4, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[200px] flex items-center justify-center text-muted-foreground text-sm">
-                  Sem dados para o período selecionado
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Filtros */}
-        <div className="bg-card rounded-xl p-4 border border-border space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-muted-foreground" />
-              <span className="font-medium">Filtros</span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportPDF}
+                  disabled={exportando}
+                >
+                  {exportando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  <span className="ml-2 hidden sm:inline">PDF</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExportExcel}
+                  disabled={exportando}
+                >
+                  <FileSpreadsheet className="h-4 w-4" />
+                  <span className="ml-2 hidden sm:inline">Excel</span>
+                </Button>
+              </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={limparFiltros}>
-              Limpar
-            </Button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Período - Data Início */}
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Data Início</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {dataInicio ? format(dataInicio, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dataInicio}
-                    onSelect={setDataInicio}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Período - Data Fim */}
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Data Fim</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start text-left font-normal">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    {dataFim ? format(dataFim, "dd/MM/yyyy", { locale: ptBR }) : "Selecionar"}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={dataFim}
-                    onSelect={setDataFim}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-
-            {/* Tipo de Movimentação */}
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Tipo de Movimentação</Label>
-              <Select value={tipoFiltro} onValueChange={setTipoFiltro}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {tiposMovimento.map((tipo) => (
-                    <SelectItem key={tipo.value} value={tipo.value}>
-                      {tipo.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Produto */}
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Produto</Label>
-              <Select value={produtoFiltro} onValueChange={setProdutoFiltro}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os produtos</SelectItem>
-                  {produtosUnicos.map((produto) => (
-                    <SelectItem key={produto} value={produto}>
-                      {produto}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Responsável */}
-            <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Responsável</Label>
-              <Select value={responsavelFiltro} onValueChange={setResponsavelFiltro}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os responsáveis</SelectItem>
-                  {responsaveisUnicos.map((responsavel) => (
-                    <SelectItem key={responsavel} value={responsavel}>
-                      {responsavel}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar por pedido, produto, responsável..." 
-              className="pl-10"
-              value={buscaTexto}
-              onChange={(e) => setBuscaTexto(e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Ações */}
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={exportarCSV}
-            disabled={exportandoCSV || dadosFiltrados.length === 0}
-          >
-            {exportandoCSV ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-            Exportar CSV
-          </Button>
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={exportarPDF}
-            disabled={exportandoPDF || dadosFiltrados.length === 0}
-          >
-            {exportandoPDF ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
-            Gerar PDF
-          </Button>
-          <Button 
-            variant="outline" 
-            className="gap-2"
-            onClick={exportarExcel}
-            disabled={exportandoExcel || dadosFiltrados.length === 0}
-          >
-            {exportandoExcel ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileSpreadsheet className="h-4 w-4" />}
-            Exportar Excel
-          </Button>
-        </div>
-
-        {/* Tabela de Resultados */}
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Data/Hora</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Pedido</TableHead>
-                  <TableHead>Produto</TableHead>
-                  <TableHead className="text-right">Qtd</TableHead>
-                  <TableHead>Origem</TableHead>
-                  <TableHead>Destino</TableHead>
-                  <TableHead>Responsável</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {dadosFiltrados.length === 0 ? (
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border overflow-x-auto">
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Nenhuma movimentação encontrada com os filtros aplicados.
-                    </TableCell>
+                    <TableHead>Data/Hora</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Descrição</TableHead>
+                    <TableHead className="text-right">Qtd</TableHead>
+                    <TableHead>Destino</TableHead>
+                    <TableHead>Responsável</TableHead>
                   </TableRow>
-                ) : (
-                  dadosFiltrados.map((mov) => (
-                    <TableRow key={mov.id}>
-                      <TableCell className="whitespace-nowrap">
-                        <div className="text-sm">{format(mov.dataHora, "dd/MM/yyyy", { locale: ptBR })}</div>
-                        <div className="text-xs text-muted-foreground">
-                          {format(mov.dataHora, "HH:mm", { locale: ptBR })}
-                        </div>
+                </TableHeader>
+                <TableBody>
+                  {dadosFiltrados.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        Nenhuma movimentação encontrada
                       </TableCell>
-                      <TableCell>
-                        <Badge variant={tipoBadgeVariants[mov.tipo] || "default"}>
-                          {tipoLabels[mov.tipo]}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="font-mono text-sm">#{mov.pedido}</TableCell>
-                      <TableCell>
-                        <div className="max-w-[150px] truncate" title={mov.produto}>
-                          {mov.produto}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          Vol {mov.volumes.join(", ")}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-right font-medium">
-                        <span className={cn(
-                          mov.quantidade < 0 ? "text-red-600" : "",
-                          ["saida_gravacao", "expedicao"].includes(mov.tipo) ? "text-red-600" : "",
-                          ["recebimento", "retorno_gravacao"].includes(mov.tipo) ? "text-green-600" : ""
-                        )}>
-                          {mov.quantidade > 0 && ["recebimento", "retorno_gravacao"].includes(mov.tipo) ? "+" : ""}
-                          {mov.quantidade.toLocaleString()}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {mov.origem || "-"}
-                      </TableCell>
-                      <TableCell className="text-sm">{mov.destino}</TableCell>
-                      <TableCell className="text-sm">{mov.responsavelNome}</TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-
-        {/* Resumo */}
-        <div className="text-sm text-muted-foreground text-center">
-          Exibindo {dadosFiltrados.length} de {mockMovimentacoes.length} movimentações
-        </div>
+                  ) : (
+                    dadosFiltrados.slice(0, 50).map((mov) => (
+                      <TableRow key={mov.id}>
+                        <TableCell className="whitespace-nowrap">
+                          {format(new Date(mov.created_at), "dd/MM HH:mm")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={getTipoColor(mov.tipo)}>
+                            {tipoLabels[mov.tipo] || mov.tipo}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate">
+                          {mov.descricao || "-"}
+                        </TableCell>
+                        <TableCell className="text-right font-medium">
+                          {mov.quantidade || 0}
+                        </TableCell>
+                        <TableCell>{mov.destino || "-"}</TableCell>
+                        <TableCell>{mov.usuario_nome || "-"}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            {dadosFiltrados.length > 50 && (
+              <p className="text-xs text-muted-foreground text-center mt-4">
+                Exibindo 50 de {dadosFiltrados.length} movimentações
+              </p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );
