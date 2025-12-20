@@ -11,7 +11,8 @@ import {
   Trash2,
   Search,
   RotateCcw,
-  Package
+  Package,
+  Loader2
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -37,40 +38,12 @@ import { useToast } from "@/hooks/use-toast";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
-import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
+import { DefeitoHistorico } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias, useTriagemFotos } from "@/components/triagem/FotosLoteObrigatorias";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
+import { useTriagens, Triagem, ChecklistTriagem, Defeito as DefeitoType } from "@/hooks/useTriagens";
+import { useTrocasDevolucoes } from "@/hooks/useTrocasDevolucoes";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
-
-// Dados mockados do item para triagem
-const mockItem = {
-  id: 1,
-  pedido: "2638-1",
-  sku: "MOCHILA-EXEC-PRETA",
-  produto: "Mochila Executiva Preta",
-  qtdTotal: 500,
-  totalVolumes: 4,
-  fornecedor: "XBZ Brindes",
-  dataRecebimento: new Date("2025-12-16T14:30:00"),
-};
-
-// Gera volumes com quantidades distribuídas
-const generateMockVolumes = (): VolumeData[] => {
-  const volumes: VolumeData[] = [];
-  const qtdPorVolume = Math.floor(mockItem.qtdTotal / mockItem.totalVolumes);
-  const resto = mockItem.qtdTotal % mockItem.totalVolumes;
-
-  for (let i = 1; i <= mockItem.totalVolumes; i++) {
-    volumes.push({
-      id: i,
-      numero: `V${i}`,
-      qtdEsperada: qtdPorVolume + (i <= resto ? 1 : 0),
-      qtdContada: null,
-      conferido: false,
-    });
-  }
-  return volumes;
-};
 
 // Checklist de inspeção (7 itens)
 const checklistItems = [
@@ -111,21 +84,95 @@ export default function FormularioTriagem() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const defeitoFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Hooks de integração com Supabase
+  const { 
+    getTriagemById, 
+    iniciarTriagem, 
+    atualizarChecklist, 
+    registrarDefeito, 
+    finalizarTriagem,
+    loading: triagensLoading 
+  } = useTriagens();
+  const { criarRegistro: criarTrocaDevolucao } = useTrocasDevolucoes();
+
+  // Estado da triagem carregada do banco
+  const [triagem, setTriagem] = useState<Triagem | null>(null);
+  const [loadingTriagem, setLoadingTriagem] = useState(true);
 
   // Timer de triagem
   const timer = useTriagemTimer();
 
-  // Fotos obrigatórias do lote - agora com upload para Supabase
+  // Fotos obrigatórias do lote
   const fotosLote = useTriagemFotos({ triagemId: id });
 
-  // Controle de início da triagem (após fotos obrigatórias)
+  // Controle de início da triagem
   const [triagemIniciada, setTriagemIniciada] = useState(false);
 
+  // Carregar triagem do banco
+  useEffect(() => {
+    const loadTriagem = async () => {
+      if (!id) return;
+      
+      setLoadingTriagem(true);
+      const data = await getTriagemById(id);
+      
+      if (data) {
+        setTriagem(data);
+        
+        // Se já está em triagem, restaurar estado
+        if (data.status === 'em_triagem') {
+          setTriagemIniciada(true);
+          if (data.checklist) {
+            setChecklist(data.checklist as ChecklistState);
+          }
+          if (data.defeitos) {
+            setDefeitos(data.defeitos.map((d: any, i: number) => ({
+              id: i + 1,
+              tipo: d.tipo,
+              descricao: d.descricao || '',
+              fotos: d.fotos || [],
+              quantidade: d.quantidade || 1,
+            })));
+          }
+        }
+      }
+      
+      setLoadingTriagem(false);
+    };
+    
+    loadTriagem();
+  }, [id]);
+
+  // Gerar volumes baseado na triagem carregada
+  const generateVolumes = (): VolumeData[] => {
+    if (!triagem) return [];
+    
+    const volumes: VolumeData[] = [];
+    const totalVolumes = triagem.total_volumes || 1;
+    const qtdTotal = triagem.qtd_total || 0;
+    const qtdPorVolume = Math.floor(qtdTotal / totalVolumes);
+    const resto = qtdTotal % totalVolumes;
+
+    for (let i = 1; i <= totalVolumes; i++) {
+      volumes.push({
+        id: i,
+        numero: `V${i}`,
+        qtdEsperada: qtdPorVolume + (i <= resto ? 1 : 0),
+        qtdContada: null,
+        conferido: false,
+      });
+    }
+    return volumes;
+  };
+
   // Iniciar triagem após fotos
-  const handleIniciarTriagem = () => {
-    if (fotosLote.requisitosAtendidos) {
+  const handleIniciarTriagem = async () => {
+    if (!id || !fotosLote.requisitosAtendidos) return;
+    
+    const success = await iniciarTriagem(id);
+    if (success) {
       setTriagemIniciada(true);
       timer.start();
     }
@@ -143,11 +190,19 @@ export default function FormularioTriagem() {
   });
 
   // Estado da contagem por volumes
-  const [volumes, setVolumes] = useState<VolumeData[]>(generateMockVolumes);
+  const [volumes, setVolumes] = useState<VolumeData[]>([]);
+
+  // Inicializar volumes quando triagem carrega
+  useEffect(() => {
+    if (triagem) {
+      setVolumes(generateVolumes());
+    }
+  }, [triagem]);
 
   // Calcula quantidade aprovada baseada nos volumes conferidos
   const qtdAprovada = volumes.reduce((acc, v) => acc + (v.conferido ? (v.qtdContada || 0) : 0), 0);
-  const todosVolumesConferidos = volumes.every((v) => v.conferido);
+  const todosVolumesConferidos = volumes.length > 0 && volumes.every((v) => v.conferido);
+
   // Estado dos defeitos
   const [defeitos, setDefeitos] = useState<Defeito[]>([]);
   const [showDefeitoModal, setShowDefeitoModal] = useState(false);
@@ -184,25 +239,30 @@ export default function FormularioTriagem() {
   } | null>(null);
   const [itensVerificados, setItensVerificados] = useState(0);
 
+  // Submitting state
+  const [submitting, setSubmitting] = useState(false);
+
   const handleConfirmarAmostra = (tamanho: number, metodo: string, criterios: { aceite: number; rejeite: number }) => {
     setAmostragemConfig({ tamanho, metodo, criterios });
   };
 
   // Atualiza itens verificados quando volumes são conferidos
   useEffect(() => {
+    if (!triagem) return;
+    
     const volumesConferidos = volumes.filter(v => v.conferido).length;
     if (amostragemConfig && volumesConferidos > 0) {
-      // Simula verificação proporcional aos volumes conferidos
-      const proporcao = volumesConferidos / mockItem.totalVolumes;
+      const proporcao = volumesConferidos / (triagem.total_volumes || 1);
       setItensVerificados(Math.floor(amostragemConfig.tamanho * proporcao));
     }
-  }, [volumes, amostragemConfig]);
+  }, [volumes, amostragemConfig, triagem]);
 
   // Cálculos
   const checklistCompleto = Object.values(checklist).every((v) => v);
   const totalDefeitosQtd = defeitos.reduce((acc, d) => acc + d.quantidade, 0);
-  const qtdReprovada = mockItem.qtdTotal - qtdAprovada;
-  const percentualAprovacao = (qtdAprovada / mockItem.qtdTotal) * 100;
+  const qtdTotal = triagem?.qtd_total || 0;
+  const qtdReprovada = qtdTotal - qtdAprovada;
+  const percentualAprovacao = qtdTotal > 0 ? (qtdAprovada / qtdTotal) * 100 : 0;
 
   const getAprovacaoStatus = () => {
     if (percentualAprovacao >= 98) return { color: "text-success", bg: "bg-success/10", label: "Excelente" };
@@ -230,11 +290,18 @@ export default function FormularioTriagem() {
     );
   };
 
-  // Handlers
-  const handleChecklistChange = (itemId: string, checked: boolean) => {
-    setChecklist((prev) => ({ ...prev, [itemId]: checked }));
+  // Handlers de Checklist - salva no banco
+  const handleChecklistChange = async (itemId: string, checked: boolean) => {
+    const newChecklist = { ...checklist, [itemId]: checked };
+    setChecklist(newChecklist);
+    
+    // Salvar no banco
+    if (id) {
+      await atualizarChecklist(id, newChecklist as ChecklistTriagem);
+    }
   };
 
+  // Handlers de Defeitos
   const handleAddDefeito = () => {
     setDefeitoAtual({ tipo: "arranhao", descricao: "", fotos: [], quantidade: 1 });
     setEditingDefeitoId(null);
@@ -251,8 +318,15 @@ export default function FormularioTriagem() {
     setDefeitos((prev) => prev.filter((d) => d.id !== defeitoId));
   };
 
-  const handleSaveDefeito = () => {
-    if (!defeitoAtual.tipo) return;
+  const handleSaveDefeito = async () => {
+    if (!defeitoAtual.tipo || !id) return;
+
+    const novoDefeito: DefeitoType = {
+      tipo: defeitoAtual.tipo,
+      descricao: defeitoAtual.descricao || "",
+      fotos: defeitoAtual.fotos || [],
+      quantidade: defeitoAtual.quantidade || 1,
+    };
 
     if (editingDefeitoId !== null) {
       setDefeitos((prev) =>
@@ -271,6 +345,9 @@ export default function FormularioTriagem() {
         quantidade: defeitoAtual.quantidade || 1,
       };
       setDefeitos((prev) => [...prev, newDefeito]);
+      
+      // Salvar no banco
+      await registrarDefeito(id, novoDefeito);
     }
 
     setShowDefeitoModal(false);
@@ -303,77 +380,118 @@ export default function FormularioTriagem() {
     }));
   };
 
-  // Formata tempo em minutos/segundos para exibição
-  const formatTimeForDisplay = (seconds: number): string => {
-    if (seconds < 60) return `${seconds} segundos`;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return secs > 0 ? `${mins}min ${secs}s` : `${mins} minutos`;
+  // Ações finais - integradas com Supabase
+  const handleFinalizar = async (status: 'aprovado' | 'ressalva' | 'reprovado') => {
+    if (!id || !triagem) return;
+    
+    setSubmitting(true);
+    
+    const defeitosFormatados = defeitos.map(d => ({
+      tipo: d.tipo,
+      descricao: d.descricao,
+      fotos: d.fotos,
+      quantidade: d.quantidade,
+    }));
+    
+    const success = await finalizarTriagem(id, {
+      qtd_aprovada: qtdAprovada,
+      qtd_reprovada: qtdReprovada,
+      checklist: checklist as ChecklistTriagem,
+      defeitos: defeitosFormatados,
+      requer_teste: requerTeste,
+      tipo_teste: tipoTeste,
+      resultado_teste: resultadoTeste || undefined,
+    }, qtdTotal);
+    
+    setSubmitting(false);
+    
+    if (success) {
+      timer.pause();
+      toast({
+        title: status === 'aprovado' ? "Triagem Aprovada! ✅" : 
+               status === 'ressalva' ? "Triagem com Ressalva ⚠️" : 
+               "Triagem Reprovada ❌",
+        description: `${qtdAprovada} unidades aprovadas de ${qtdTotal}`,
+      });
+      navigate("/triagem");
+    }
   };
 
-  const handleAprovar = () => {
-    const tempoGasto = timer.stop();
-    toast({
-      title: "Triagem aprovada!",
-      description: `${qtdAprovada} unidades aprovadas (${percentualAprovacao.toFixed(1)}%) em ${formatTimeForDisplay(tempoGasto)}`,
-    });
-    navigate("/triagem");
-  };
-
-  const handleRessalva = () => {
-    const tempoGasto = timer.stop();
-    toast({
-      title: "Triagem com ressalva",
-      description: `${qtdAprovada} unidades aprovadas com ${defeitos.length} defeito(s) em ${formatTimeForDisplay(tempoGasto)}`,
-    });
-    navigate("/triagem");
-  };
-
+  const handleAprovar = () => handleFinalizar('aprovado');
+  const handleRessalva = () => handleFinalizar('ressalva');
+  
   const handleReprovar = () => {
-    // Abre modal de troca/devolução ao invés de reprovar diretamente
     setShowTrocaDevolucaoModal(true);
   };
 
-  const handleConfirmarTrocaDevolucao = () => {
-    const tempoGasto = timer.stop();
-    const tipoLabel = trocaDevolucaoData.tipo === "troca" ? "Troca" : "Devolução";
-    
-    toast({
-      title: `Triagem reprovada - ${tipoLabel} registrada`,
-      description: `${tipoLabel} criada para ${mockItem.qtdTotal} unidades. Motivo: ${trocaDevolucaoData.motivo || "Não especificado"}. Tempo: ${formatTimeForDisplay(tempoGasto)}`,
-      variant: "destructive",
-    });
-    
+  const handleReprovarSemRegistro = async () => {
+    await handleFinalizar('reprovado');
     setShowTrocaDevolucaoModal(false);
-    navigate("/trocas-devolucoes");
   };
 
-  const handleReprovarSemRegistro = () => {
-    const tempoGasto = timer.stop();
-    toast({
-      title: "Triagem reprovada",
-      description: `Lote marcado para análise. Tempo: ${formatTimeForDisplay(tempoGasto)}`,
-      variant: "destructive",
+  const handleConfirmarTrocaDevolucao = async () => {
+    if (!triagem) return;
+    
+    // Criar registro de troca/devolução
+    await criarTrocaDevolucao({
+      tipo: trocaDevolucaoData.tipo,
+      pedido: triagem.pedido,
+      cliente: triagem.cliente_nome || 'Cliente',
+      produto: triagem.produto,
+      quantidade: qtdTotal,
+      motivo: trocaDevolucaoData.motivo as any,
+      descricao_problema: trocaDevolucaoData.observacoes,
     });
+    
+    toast({
+      title: `${trocaDevolucaoData.tipo === 'troca' ? 'Troca' : 'Devolução'} registrada`,
+      description: `${tiposDefeito.find(t => t.value === trocaDevolucaoData.motivo)?.label || trocaDevolucaoData.motivo} - ${qtdTotal} unidades`,
+    });
+    
+    await handleFinalizar('reprovado');
     setShowTrocaDevolucaoModal(false);
-    navigate("/triagem");
   };
+
+  // Loading state
+  if (loadingTriagem) {
+    return (
+      <AppLayout title="Triagem" showBack>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Triagem não encontrada
+  if (!triagem) {
+    return (
+      <AppLayout title="Triagem" showBack>
+        <div className="p-4 text-center">
+          <p className="text-muted-foreground">Triagem não encontrada</p>
+          <Button onClick={() => navigate("/triagem")} className="mt-4">
+            Voltar para Lista
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
-    <AppLayout title={`Triagem #${mockItem.pedido}`} showBack>
+    <AppLayout title={`Triagem #${triagem.pedido}`} showBack>
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in pb-32">
-        {/* Info do Produto - sempre visível */}
+        {/* Info do Produto */}
         <section className="bg-card rounded-xl p-4 border border-border">
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-semibold text-foreground">{mockItem.produto}</h3>
+              <h3 className="font-semibold text-foreground">{triagem.produto}</h3>
               <p className="text-sm text-muted-foreground">
-                Pedido #{mockItem.pedido} | {mockItem.fornecedor}
+                Pedido #{triagem.pedido} {triagem.cliente_nome && `| ${triagem.cliente_nome}`}
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-primary">{mockItem.qtdTotal} un</div>
-              <div className="text-xs text-muted-foreground">{mockItem.totalVolumes} volumes</div>
+              <div className="text-2xl font-bold text-primary">{qtdTotal} un</div>
+              <div className="text-xs text-muted-foreground">{triagem.total_volumes || 1} volumes</div>
             </div>
           </div>
         </section>
@@ -390,13 +508,14 @@ export default function FormularioTriagem() {
               minFotos={2}
             />
 
-            {/* Botão Iniciar Triagem */}
             <Button
               className="w-full h-14 text-lg gap-3"
               onClick={handleIniciarTriagem}
-              disabled={!fotosLote.requisitosAtendidos}
+              disabled={!fotosLote.requisitosAtendidos || triagensLoading}
             >
-              {fotosLote.requisitosAtendidos ? (
+              {triagensLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : fotosLote.requisitosAtendidos ? (
                 <>
                   <Camera className="h-5 w-5" />
                   Iniciar Triagem
@@ -427,313 +546,301 @@ export default function FormularioTriagem() {
 
             {/* Amostragem Automática */}
             <AmostragemAutomatica
-              tamanhoLote={mockItem.qtdTotal}
+              tamanhoLote={qtdTotal}
               onConfirmarAmostra={handleConfirmarAmostra}
               itensVerificados={itensVerificados}
               defeitosEncontrados={totalDefeitosQtd}
             />
 
             {/* Checklist de Inspeção */}
-        <section className="bg-card rounded-xl p-4 border border-border">
-          <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
-            ✅ CHECKLIST DE INSPEÇÃO
-          </h3>
-          
-          <div className="space-y-3">
-            {checklistItems.map((item) => (
-              <label
-                key={item.id}
-                className={cn(
-                  "flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer",
-                  checklist[item.id]
-                    ? "border-success bg-success/5"
-                    : "border-border hover:border-primary/50"
-                )}
-              >
-                <Checkbox
-                  checked={checklist[item.id]}
-                  onCheckedChange={(checked) => handleChecklistChange(item.id, checked as boolean)}
-                  className="mt-0.5"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    {checklist[item.id] ? (
-                      <CheckCircle2 className="h-4 w-4 text-success" />
-                    ) : (
-                      <Circle className="h-4 w-4 text-muted-foreground" />
+            <section className="bg-card rounded-xl p-4 border border-border">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
+                ✅ CHECKLIST DE INSPEÇÃO
+              </h3>
+              
+              <div className="space-y-3">
+                {checklistItems.map((item) => (
+                  <label
+                    key={item.id}
+                    className={cn(
+                      "flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer",
+                      checklist[item.id]
+                        ? "border-success bg-success/5"
+                        : "border-border hover:border-primary/50"
                     )}
-                    <span className={cn(
-                      "font-medium",
-                      checklist[item.id] && "text-success"
-                    )}>
-                      {item.label}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                  >
+                    <Checkbox
+                      checked={checklist[item.id]}
+                      onCheckedChange={(checked) => handleChecklistChange(item.id, checked as boolean)}
+                      className="mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        {checklist[item.id] ? (
+                          <CheckCircle2 className="h-4 w-4 text-success" />
+                        ) : (
+                          <Circle className="h-4 w-4 text-muted-foreground" />
+                        )}
+                        <span className={cn(
+                          "font-medium",
+                          checklist[item.id] && "text-success"
+                        )}>
+                          {item.label}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                    </div>
+                  </label>
+                ))}
+              </div>
+
+              {/* Progresso do checklist */}
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-muted-foreground">Progresso</span>
+                  <span className="font-medium">
+                    {Object.values(checklist).filter(Boolean).length} / {checklistItems.length}
+                  </span>
                 </div>
-              </label>
-            ))}
-          </div>
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-success transition-all"
+                    style={{ width: `${(Object.values(checklist).filter(Boolean).length / checklistItems.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+            </section>
 
-          {/* Progresso do checklist */}
-          <div className="mt-4 pt-4 border-t border-border">
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Progresso</span>
-              <span className="font-medium">
-                {Object.values(checklist).filter(Boolean).length} / {checklistItems.length}
-              </span>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-success transition-all"
-                style={{ width: `${(Object.values(checklist).filter(Boolean).length / checklistItems.length) * 100}%` }}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* Histórico de Defeitos do Produto */}
-        {(() => {
-          const historicoData = mockHistoricoDefeitos[mockItem.sku];
-          return historicoData ? (
+            {/* Histórico de Defeitos do Produto */}
             <DefeitoHistorico
-              sku={mockItem.sku}
-              produto={mockItem.produto}
-              historico={historicoData.historico}
-              totalTriagens={historicoData.totalTriagens}
-            />
-          ) : (
-            <DefeitoHistorico
-              sku={mockItem.sku}
-              produto={mockItem.produto}
+              sku={triagem.pedido}
+              produto={triagem.produto}
               historico={[]}
               totalTriagens={0}
             />
-          );
-        })()}
 
-        {/* Contagem por Volume */}
-        <VolumeContagem
-          volumes={volumes}
-          onVolumeChange={handleVolumeChange}
-          onVolumeConfirm={handleVolumeConfirm}
-          totalEsperado={mockItem.qtdTotal}
-        />
+            {/* Contagem por Volume */}
+            <VolumeContagem
+              volumes={volumes}
+              onVolumeChange={handleVolumeChange}
+              onVolumeConfirm={handleVolumeConfirm}
+              totalEsperado={qtdTotal}
+            />
 
-        {/* Resumo de Aprovação */}
-        <section className="bg-card rounded-xl p-4 border border-border">
-          <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
-            📊 RESUMO
-          </h3>
+            {/* Resumo de Aprovação */}
+            <section className="bg-card rounded-xl p-4 border border-border">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
+                📊 RESUMO
+              </h3>
 
-          <div className="space-y-4">
-            <div className="grid grid-cols-3 gap-2">
-              <div className="bg-muted/50 rounded-lg p-3 text-center">
-                <div className="text-xs text-muted-foreground">Esperado</div>
-                <div className="text-lg font-bold">{mockItem.qtdTotal} un</div>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3 text-center">
-                <div className="text-xs text-muted-foreground">Contado</div>
-                <div className="text-lg font-bold">{qtdAprovada} un</div>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3 text-center">
-                <div className="text-xs text-muted-foreground">Defeitos</div>
-                <div className="text-lg font-bold text-destructive">{totalDefeitosQtd} un</div>
-              </div>
-            </div>
-
-            {/* Indicador de Aprovação */}
-            {todosVolumesConferidos && (
-              <div className={cn(
-                "rounded-xl p-4 flex items-center justify-between",
-                aprovacaoStatus.bg
-              )}>
-                <div>
-                  <div className="text-sm text-muted-foreground">% Aprovação</div>
-                  <div className={cn("text-3xl font-bold", aprovacaoStatus.color)}>
-                    {percentualAprovacao.toFixed(1)}%
+              <div className="space-y-4">
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <div className="text-xs text-muted-foreground">Esperado</div>
+                    <div className="text-lg font-bold">{qtdTotal} un</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <div className="text-xs text-muted-foreground">Contado</div>
+                    <div className="text-lg font-bold">{qtdAprovada} un</div>
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-3 text-center">
+                    <div className="text-xs text-muted-foreground">Defeitos</div>
+                    <div className="text-lg font-bold text-destructive">{totalDefeitosQtd} un</div>
                   </div>
                 </div>
-                <div className="text-right">
+
+                {todosVolumesConferidos && (
                   <div className={cn(
-                    "text-lg font-bold px-3 py-1 rounded-full",
-                    aprovacaoStatus.bg,
-                    aprovacaoStatus.color
+                    "rounded-xl p-4 flex items-center justify-between",
+                    aprovacaoStatus.bg
                   )}>
-                    {aprovacaoStatus.label}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {qtdReprovada} un reprovadas
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {!todosVolumesConferidos && (
-              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 text-center text-warning text-sm">
-                ⚠️ Confira todos os volumes para ver o resumo de aprovação
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Defeitos Encontrados */}
-        <section className="bg-card rounded-xl p-4 border border-border">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-              ⚠️ DEFEITOS ENCONTRADOS
-            </h3>
-            <Button size="sm" variant="outline" className="gap-1" onClick={handleAddDefeito}>
-              <Plus className="h-4 w-4" />
-              Adicionar
-            </Button>
-          </div>
-
-          {defeitos.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success/50" />
-              <p className="text-sm">Nenhum defeito registrado</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {defeitos.map((defeito) => {
-                const tipoInfo = tiposDefeito.find((t) => t.value === defeito.tipo);
-                return (
-                  <div
-                    key={defeito.id}
-                    className="bg-destructive/5 border border-destructive/20 rounded-lg p-3"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">{tipoInfo?.emoji}</span>
-                        <div>
-                          <div className="font-medium">{tipoInfo?.label}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {defeito.quantidade} unidade(s)
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={() => handleEditDefeito(defeito)}
-                        >
-                          <Search className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8 text-destructive"
-                          onClick={() => handleRemoveDefeito(defeito.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                    <div>
+                      <div className="text-sm text-muted-foreground">% Aprovação</div>
+                      <div className={cn("text-3xl font-bold", aprovacaoStatus.color)}>
+                        {percentualAprovacao.toFixed(1)}%
                       </div>
                     </div>
-                    {defeito.descricao && (
-                      <p className="text-sm text-muted-foreground mt-2">{defeito.descricao}</p>
-                    )}
-                    {defeito.fotos.length > 0 && (
-                      <div className="flex gap-2 mt-2">
-                        {defeito.fotos.map((foto, i) => (
-                          <img
-                            key={i}
-                            src={foto}
-                            alt={`Defeito ${i + 1}`}
-                            className="w-12 h-12 rounded object-cover"
-                          />
-                        ))}
+                    <div className="text-right">
+                      <div className={cn(
+                        "text-lg font-bold px-3 py-1 rounded-full",
+                        aprovacaoStatus.bg,
+                        aprovacaoStatus.color
+                      )}>
+                        {aprovacaoStatus.label}
                       </div>
-                    )}
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {qtdReprovada} un reprovadas
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
+                )}
 
-        {/* Teste Funcional */}
-        <section className="bg-card rounded-xl p-4 border border-border">
-          <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
-            🧪 TESTE FUNCIONAL
-          </h3>
+                {!todosVolumesConferidos && (
+                  <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 text-center text-warning text-sm">
+                    ⚠️ Confira todos os volumes para ver o resumo de aprovação
+                  </div>
+                )}
+              </div>
+            </section>
 
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                id="requerTeste"
-                checked={requerTeste}
-                onCheckedChange={(checked) => setRequerTeste(checked as boolean)}
-              />
-              <Label htmlFor="requerTeste">Requer teste funcional</Label>
-            </div>
+            {/* Defeitos Encontrados */}
+            <section className="bg-card rounded-xl p-4 border border-border">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                  ⚠️ DEFEITOS ENCONTRADOS
+                </h3>
+                <Button size="sm" variant="outline" className="gap-1" onClick={handleAddDefeito}>
+                  <Plus className="h-4 w-4" />
+                  Adicionar
+                </Button>
+              </div>
 
-            {requerTeste && (
-              <>
-                <div>
-                  <Label className="text-xs text-muted-foreground">Tipo de teste</Label>
-                  <Input
-                    placeholder="Ex: Teste de escrita, vedação, resistência..."
-                    value={tipoTeste}
-                    onChange={(e) => setTipoTeste(e.target.value)}
+              {defeitos.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <CheckCircle2 className="h-12 w-12 mx-auto mb-2 text-success/50" />
+                  <p className="text-sm">Nenhum defeito registrado</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {defeitos.map((defeito) => {
+                    const tipoInfo = tiposDefeito.find((t) => t.value === defeito.tipo);
+                    return (
+                      <div
+                        key={defeito.id}
+                        className="bg-destructive/5 border border-destructive/20 rounded-lg p-3"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{tipoInfo?.emoji}</span>
+                            <div>
+                              <div className="font-medium">{tipoInfo?.label}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {defeito.quantidade} unidade(s)
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => handleEditDefeito(defeito)}
+                            >
+                              <Search className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-destructive"
+                              onClick={() => handleRemoveDefeito(defeito.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        {defeito.descricao && (
+                          <p className="text-sm text-muted-foreground mt-2">{defeito.descricao}</p>
+                        )}
+                        {defeito.fotos.length > 0 && (
+                          <div className="flex gap-2 mt-2">
+                            {defeito.fotos.map((foto, i) => (
+                              <img
+                                key={i}
+                                src={foto}
+                                alt={`Defeito ${i + 1}`}
+                                className="w-12 h-12 rounded object-cover"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+
+            {/* Teste Funcional */}
+            <section className="bg-card rounded-xl p-4 border border-border">
+              <h3 className="text-sm font-semibold text-muted-foreground mb-4 flex items-center gap-2">
+                🧪 TESTE FUNCIONAL
+              </h3>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Checkbox
+                    id="requerTeste"
+                    checked={requerTeste}
+                    onCheckedChange={(checked) => setRequerTeste(checked as boolean)}
                   />
+                  <Label htmlFor="requerTeste">Requer teste funcional</Label>
                 </div>
 
-                <div>
-                  <Label className="text-xs text-muted-foreground">Resultado</Label>
-                  <Select value={resultadoTeste} onValueChange={(v) => setResultadoTeste(v as "aprovado" | "reprovado")}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o resultado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="aprovado">✅ Aprovado</SelectItem>
-                      <SelectItem value="reprovado">❌ Reprovado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-          </div>
-        </section>
+                {requerTeste && (
+                  <>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Tipo de teste</Label>
+                      <Input
+                        placeholder="Ex: Teste de escrita, vedação, resistência..."
+                        value={tipoTeste}
+                        onChange={(e) => setTipoTeste(e.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Resultado</Label>
+                      <Select value={resultadoTeste} onValueChange={(v) => setResultadoTeste(v as "aprovado" | "reprovado")}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o resultado" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="aprovado">✅ Aprovado</SelectItem>
+                          <SelectItem value="reprovado">❌ Reprovado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+              </div>
+            </section>
           </>
         )}
 
-        {/* Ações Fixas - só mostra após triagem iniciada */}
+        {/* Ações Fixas */}
         {triagemIniciada && (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border lg:pl-72">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant="outline"
-                className="h-12 gap-2 border-success text-success hover:bg-success/10"
-                onClick={handleAprovar}
-                disabled={!checklistCompleto || !todosVolumesConferidos || defeitos.length > 0}
-              >
-                <CheckCircle2 className="h-5 w-5" />
-                <span className="hidden sm:inline">Aprovar</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="h-12 gap-2 border-warning text-warning hover:bg-warning/10"
-                onClick={handleRessalva}
-                disabled={!checklistCompleto || !todosVolumesConferidos}
-              >
-                <AlertTriangle className="h-5 w-5" />
-                <span className="hidden sm:inline">Ressalva</span>
-              </Button>
-              <Button
-                variant="outline"
-                className="h-12 gap-2 border-destructive text-destructive hover:bg-destructive/10"
-                onClick={handleReprovar}
-              >
-                <XCircle className="h-5 w-5" />
-                <span className="hidden sm:inline">Reprovar</span>
-              </Button>
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border lg:pl-72">
+            <div className="max-w-7xl mx-auto">
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  variant="outline"
+                  className="h-12 gap-2 border-success text-success hover:bg-success/10"
+                  onClick={handleAprovar}
+                  disabled={!checklistCompleto || !todosVolumesConferidos || defeitos.length > 0 || submitting}
+                >
+                  {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle2 className="h-5 w-5" />}
+                  <span className="hidden sm:inline">Aprovar</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-12 gap-2 border-warning text-warning hover:bg-warning/10"
+                  onClick={handleRessalva}
+                  disabled={!checklistCompleto || !todosVolumesConferidos || submitting}
+                >
+                  {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <AlertTriangle className="h-5 w-5" />}
+                  <span className="hidden sm:inline">Ressalva</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-12 gap-2 border-destructive text-destructive hover:bg-destructive/10"
+                  onClick={handleReprovar}
+                  disabled={submitting}
+                >
+                  {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <XCircle className="h-5 w-5" />}
+                  <span className="hidden sm:inline">Reprovar</span>
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
         )}
 
         {/* Modal de Defeito */}
@@ -853,9 +960,9 @@ export default function FormularioTriagem() {
 
             <div className="space-y-4">
               <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
-                <p className="text-sm text-foreground font-medium">{mockItem.produto}</p>
+                <p className="text-sm text-foreground font-medium">{triagem.produto}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Pedido #{mockItem.pedido} • {mockItem.fornecedor} • {mockItem.qtdTotal} un
+                  Pedido #{triagem.pedido} • {qtdTotal} un
                 </p>
               </div>
 
@@ -895,13 +1002,12 @@ export default function FormularioTriagem() {
                     <SelectValue placeholder="Selecione o motivo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="defeito_fabricacao">Defeito de Fabricação</SelectItem>
-                    <SelectItem value="cor_diferente">Cor Diferente do Pedido</SelectItem>
+                    <SelectItem value="defeito">Defeito de Fabricação</SelectItem>
+                    <SelectItem value="cor_errada">Cor Diferente do Pedido</SelectItem>
                     <SelectItem value="tamanho_errado">Tamanho Errado</SelectItem>
-                    <SelectItem value="produto_danificado">Produto Danificado</SelectItem>
-                    <SelectItem value="quantidade_incorreta">Quantidade Incorreta</SelectItem>
+                    <SelectItem value="avaria_transporte">Produto Danificado</SelectItem>
+                    <SelectItem value="quantidade_errada">Quantidade Incorreta</SelectItem>
                     <SelectItem value="produto_errado">Produto Errado</SelectItem>
-                    <SelectItem value="fora_especificacao">Fora da Especificação</SelectItem>
                     <SelectItem value="outro">Outro</SelectItem>
                   </SelectContent>
                 </Select>
@@ -923,9 +1029,11 @@ export default function FormularioTriagem() {
                 <Button 
                   className="w-full gap-2"
                   onClick={handleConfirmarTrocaDevolucao}
-                  disabled={!trocaDevolucaoData.motivo}
+                  disabled={!trocaDevolucaoData.motivo || submitting}
                 >
-                  {trocaDevolucaoData.tipo === "troca" ? (
+                  {submitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : trocaDevolucaoData.tipo === "troca" ? (
                     <><RotateCcw className="h-4 w-4" /> Registrar Troca</>
                   ) : (
                     <><Package className="h-4 w-4" /> Registrar Devolução</>
@@ -935,6 +1043,7 @@ export default function FormularioTriagem() {
                   variant="outline" 
                   className="w-full"
                   onClick={handleReprovarSemRegistro}
+                  disabled={submitting}
                 >
                   Reprovar sem Registro
                 </Button>
