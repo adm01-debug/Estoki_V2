@@ -1,8 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-
-// Note: There's no 'trocas_devolucoes' table in the schema.
-// This hook provides a mock implementation for the UI to work.
+import { supabase } from '@/integrations/supabase/client';
 
 export type TipoRegistro = 'troca' | 'devolucao';
 export type StatusRegistro = 'aberto' | 'em_analise' | 'aprovado' | 'recusado' | 'em_transito' | 'recebido' | 'finalizado';
@@ -49,76 +47,87 @@ export interface TrocaDevolucaoInput {
   fotos?: string[];
 }
 
-// Mock data for demonstration
-const mockRegistros: TrocaDevolucao[] = [
-  {
-    id: '1',
-    tipo: 'devolucao',
-    pedido: 'PED-2024-001',
-    cliente: 'Cliente Exemplo',
-    fornecedor: 'Fornecedor ABC',
-    produto: 'Produto Teste',
-    sku: 'SKU-001',
-    quantidade: 10,
-    valor_unitario: 25.00,
-    valor_total: 250.00,
-    motivo: 'defeito',
-    descricao_problema: 'Produto com defeito de fabricação',
-    status: 'aberto',
-    data_abertura: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
 export function useTrocasDevolucoes() {
-  const [registros, setRegistros] = useState<TrocaDevolucao[]>(mockRegistros);
+  const [registros, setRegistros] = useState<TrocaDevolucao[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const fetchRegistros = useCallback(async () => {
-    // Mock fetch - in production this would query a real table
     setLoading(true);
     setError(null);
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setLoading(false);
+    
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('trocas_devolucoes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+      
+      setRegistros((data || []) as TrocaDevolucao[]);
+    } catch (err: any) {
+      console.error('Erro ao buscar registros:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchRegistros();
+  }, [fetchRegistros]);
 
   const criarRegistro = async (input: TrocaDevolucaoInput): Promise<TrocaDevolucao | null> => {
     const valorTotal = input.valor_unitario 
       ? input.valor_unitario * input.quantidade 
       : undefined;
 
-    const novoRegistro: TrocaDevolucao = {
-      id: crypto.randomUUID(),
-      ...input,
-      valor_total: valorTotal,
-      status: 'aberto',
-      data_abertura: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
+    try {
+      const { data, error: insertError } = await supabase
+        .from('trocas_devolucoes')
+        .insert({
+          tipo: input.tipo,
+          pedido: input.pedido,
+          cliente: input.cliente,
+          fornecedor: input.fornecedor,
+          produto: input.produto,
+          sku: input.sku,
+          quantidade: input.quantidade,
+          valor_unitario: input.valor_unitario,
+          valor_total: valorTotal,
+          motivo: input.motivo,
+          descricao_problema: input.descricao_problema,
+          fotos: input.fotos,
+        })
+        .select()
+        .single();
 
-    setRegistros(prev => [novoRegistro, ...prev]);
+      if (insertError) throw insertError;
 
-    toast({
-      title: `${input.tipo === 'troca' ? 'Troca' : 'Devolução'} registrada`,
-      description: `Pedido #${input.pedido} - ${input.produto}`,
-    });
+      const novoRegistro = data as TrocaDevolucao;
+      setRegistros(prev => [novoRegistro, ...prev]);
 
-    return novoRegistro;
+      toast({
+        title: `${input.tipo === 'troca' ? 'Troca' : 'Devolução'} registrada`,
+        description: `Pedido #${input.pedido} - ${input.produto}`,
+      });
+
+      return novoRegistro;
+    } catch (err: any) {
+      console.error('Erro ao criar registro:', err);
+      toast({
+        title: 'Erro ao criar registro',
+        description: err.message,
+        variant: 'destructive',
+      });
+      return null;
+    }
   };
 
   const atualizarStatus = async (id: string, status: StatusRegistro, resolucao?: string): Promise<boolean> => {
-    setRegistros(prev => prev.map(r => {
-      if (r.id !== id) return r;
-      
-      const updates: Partial<TrocaDevolucao> = { 
-        status, 
-        updated_at: new Date().toISOString() 
-      };
+    try {
+      const updates: Record<string, any> = { status };
 
       if (status === 'em_analise') {
         updates.data_analise = new Date().toISOString();
@@ -129,34 +138,65 @@ export function useTrocasDevolucoes() {
         if (resolucao) updates.resolucao = resolucao;
       }
 
-      return { ...r, ...updates };
-    }));
+      const { error: updateError } = await supabase
+        .from('trocas_devolucoes')
+        .update(updates)
+        .eq('id', id);
 
-    toast({
-      title: 'Status atualizado',
-      description: `Registro movido para: ${status}`,
-    });
+      if (updateError) throw updateError;
 
-    return true;
+      setRegistros(prev => prev.map(r => 
+        r.id === id ? { ...r, ...updates, updated_at: new Date().toISOString() } : r
+      ));
+
+      toast({
+        title: 'Status atualizado',
+        description: `Registro movido para: ${status}`,
+      });
+
+      return true;
+    } catch (err: any) {
+      console.error('Erro ao atualizar status:', err);
+      toast({
+        title: 'Erro ao atualizar status',
+        description: err.message,
+        variant: 'destructive',
+      });
+      return false;
+    }
   };
 
   const gerarCredito = async (id: string, valor: number): Promise<boolean> => {
-    setRegistros(prev => prev.map(r => {
-      if (r.id !== id) return r;
-      return {
-        ...r,
-        credito_gerado: true,
-        valor_credito: valor,
-        updated_at: new Date().toISOString(),
-      };
-    }));
+    try {
+      const { error: updateError } = await supabase
+        .from('trocas_devolucoes')
+        .update({
+          credito_gerado: true,
+          valor_credito: valor,
+        })
+        .eq('id', id);
 
-    toast({
-      title: 'Crédito gerado',
-      description: `R$ ${valor.toFixed(2)} creditado`,
-    });
+      if (updateError) throw updateError;
 
-    return true;
+      setRegistros(prev => prev.map(r => 
+        r.id === id ? { ...r, credito_gerado: true, valor_credito: valor, updated_at: new Date().toISOString() } : r
+      ));
+
+      toast({
+        title: 'Crédito gerado',
+        description: `R$ ${valor.toFixed(2)} creditado`,
+      });
+
+      return true;
+    } catch (err: any) {
+      console.error('Erro ao gerar crédito:', err);
+      toast({
+        title: 'Erro ao gerar crédito',
+        description: err.message,
+        variant: 'destructive',
+      });
+      return false;
+    }
   };
 
   const getEstatisticas = useCallback(() => {
@@ -172,7 +212,6 @@ export function useTrocasDevolucoes() {
       .filter(r => r.credito_gerado)
       .reduce((acc, r) => acc + (r.valor_credito || 0), 0);
 
-    // Por fornecedor
     const porFornecedor: Record<string, number> = {};
     registros.forEach(r => {
       if (r.fornecedor) {
@@ -180,7 +219,6 @@ export function useTrocasDevolucoes() {
       }
     });
 
-    // Por motivo
     const porMotivo: Record<string, number> = {};
     registros.forEach(r => {
       porMotivo[r.motivo] = (porMotivo[r.motivo] || 0) + 1;
