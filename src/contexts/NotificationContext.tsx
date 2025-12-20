@@ -1,16 +1,19 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export interface Notification {
   id: string;
-  type: "estoque_baixo" | "triagem_pendente" | "recebimento" | "alerta" | "info" | "success" | "warning";
+  type: "estoque_baixo" | "triagem_pendente" | "recebimento" | "recebimento_chegou" | "recebimento_divergencia" | "recebimento_conferido" | "alerta" | "info" | "success" | "warning";
   title: string;
   message: string;
   read: boolean;
   createdAt: Date;
   data?: Record<string, unknown>;
   severity?: "info" | "warning" | "critical";
+  referencia_tipo?: string;
+  referencia_id?: string;
 }
 
 interface NotificationContextType {
@@ -23,6 +26,8 @@ interface NotificationContextType {
   clearAll: () => void;
   pushPermission: NotificationPermission | "default";
   requestPushPermission: () => Promise<boolean>;
+  soundEnabled: boolean;
+  setSoundEnabled: (enabled: boolean) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -41,16 +46,104 @@ const mapSeveridade = (severidade: string): "info" | "warning" | "critical" => {
   }
 };
 
+const getTipoSeveridade = (tipo: string): "info" | "warning" | "critical" => {
+  if (tipo.includes('divergencia')) return 'critical';
+  if (tipo.includes('chegou')) return 'warning';
+  return 'info';
+};
+
+// Generate notification sound using Web Audio API
+const playNotificationSound = (type: 'info' | 'warning' | 'critical' = 'info') => {
+  try {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Different frequencies for different types
+    const frequencies = {
+      info: [523.25, 659.25], // C5, E5 - pleasant chime
+      warning: [440, 554.37, 659.25], // A4, C#5, E5 - attention grabbing
+      critical: [349.23, 440, 349.23, 440], // F4, A4, F4, A4 - urgent
+    };
+    
+    const freqs = frequencies[type];
+    const duration = type === 'critical' ? 0.15 : 0.1;
+    
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    
+    let time = audioContext.currentTime;
+    freqs.forEach((freq, i) => {
+      oscillator.frequency.setValueAtTime(freq, time + i * duration);
+    });
+    
+    const totalDuration = freqs.length * duration;
+    gainNode.gain.exponentialRampToValueAtTime(0.01, time + totalDuration);
+    
+    oscillator.start(time);
+    oscillator.stop(time + totalDuration + 0.05);
+  } catch (e) {
+    console.log('Audio not available');
+  }
+};
+
+// Show toast notification based on type
+const showNotificationToast = (notification: { title: string; message: string; type: string }) => {
+  const severity = getTipoSeveridade(notification.type);
+  
+  if (severity === 'critical' || notification.type.includes('divergencia')) {
+    toast.error(notification.title, {
+      description: notification.message,
+      duration: 8000,
+      action: {
+        label: "Ver",
+        onClick: () => {},
+      },
+    });
+  } else if (severity === 'warning' || notification.type.includes('chegou')) {
+    toast.warning(notification.title, {
+      description: notification.message,
+      duration: 6000,
+    });
+  } else {
+    toast.success(notification.title, {
+      description: notification.message,
+      duration: 5000,
+    });
+  }
+};
+
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [pushPermission, setPushPermission] = useState<NotificationPermission | "default">("default");
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    const saved = localStorage.getItem('notification-sound-enabled');
+    return saved !== null ? saved === 'true' : true;
+  });
   const { user } = useAuth();
+  const lastNotificationIds = useRef<Set<string>>(new Set());
+  const isInitialLoad = useRef(true);
+
+  // Save sound preference
+  useEffect(() => {
+    localStorage.setItem('notification-sound-enabled', String(soundEnabled));
+  }, [soundEnabled]);
 
   // Buscar notificações do Supabase
   const fetchNotifications = useCallback(async () => {
     if (!user) return;
 
     try {
+      // Buscar notificações da nova tabela
+      const { data: notificacoesDb } = await supabase
+        .from('notificacoes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(30);
+
       // Buscar alertas ativos
       const { data: alertas } = await supabase
         .from('alertas_historico')
@@ -67,17 +160,22 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         .order('created_at', { ascending: true })
         .limit(5);
 
-      // Buscar lotes recebidos recentemente
-      const ontem = new Date();
-      ontem.setDate(ontem.getDate() - 1);
-
-      const { data: lotesRecentes } = await supabase
-        .from('lotes')
-        .select('id, numero_lote, fornecedor, created_at')
-        .gte('data_recebimento', ontem.toISOString().split('T')[0])
-        .limit(5);
-
       const notifs: Notification[] = [];
+
+      // Processar notificações da tabela
+      (notificacoesDb || []).forEach(notif => {
+        notifs.push({
+          id: notif.id,
+          type: notif.tipo as Notification['type'],
+          title: notif.titulo,
+          message: notif.mensagem,
+          read: notif.lida,
+          createdAt: new Date(notif.created_at),
+          severity: getTipoSeveridade(notif.tipo),
+          referencia_tipo: notif.referencia_tipo || undefined,
+          referencia_id: notif.referencia_id || undefined,
+        });
+      });
 
       // Processar alertas
       (alertas || []).forEach(alerta => {
@@ -115,28 +213,63 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         }
       });
 
-      // Processar lotes recentes como recebimentos
-      (lotesRecentes || []).forEach(lote => {
-        notifs.push({
-          id: `lote-${lote.id}`,
-          type: "recebimento",
-          title: "Novo Recebimento",
-          message: `Lote ${lote.numero_lote}${lote.fornecedor ? ` de ${lote.fornecedor}` : ''} recebido`,
-          read: false,
-          createdAt: new Date(lote.created_at),
-          data: { lote: lote.numero_lote, fornecedor: lote.fornecedor },
-          severity: "info",
-        });
-      });
-
       // Ordenar por data
       notifs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       setNotifications(notifs);
+      
+      // Update tracked IDs for future comparison
+      lastNotificationIds.current = new Set(notifs.map(n => n.id));
+      isInitialLoad.current = false;
     } catch (err) {
       console.error('Erro ao buscar notificações:', err);
     }
   }, [user]);
+
+  // Handle new notification from realtime
+  const handleNewNotification = useCallback((payload: any) => {
+    const newNotif = payload.new;
+    if (!newNotif || lastNotificationIds.current.has(newNotif.id)) return;
+
+    // Add to tracked IDs
+    lastNotificationIds.current.add(newNotif.id);
+
+    const notification: Notification = {
+      id: newNotif.id,
+      type: newNotif.tipo as Notification['type'],
+      title: newNotif.titulo,
+      message: newNotif.mensagem,
+      read: newNotif.lida || false,
+      createdAt: new Date(newNotif.created_at),
+      severity: getTipoSeveridade(newNotif.tipo),
+      referencia_tipo: newNotif.referencia_tipo,
+      referencia_id: newNotif.referencia_id,
+    };
+
+    // Add to state
+    setNotifications(prev => [notification, ...prev]);
+
+    // Play sound
+    if (soundEnabled) {
+      playNotificationSound(notification.severity || 'info');
+    }
+
+    // Show toast
+    showNotificationToast({
+      title: notification.title,
+      message: notification.message,
+      type: notification.type,
+    });
+
+    // Push notification if permitted
+    if (pushPermission === "granted" && "Notification" in window) {
+      new window.Notification(notification.title, {
+        body: notification.message,
+        icon: "/favicon.ico",
+        tag: notification.id,
+      });
+    }
+  }, [soundEnabled, pushPermission]);
 
   useEffect(() => {
     if (user) {
@@ -145,19 +278,29 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       // Atualizar a cada 60 segundos
       const interval = setInterval(fetchNotifications, 60000);
 
-      // Realtime
-      const channel = supabase
-        .channel('notifications_changes')
+      // Realtime for new notifications
+      const notifChannel = supabase
+        .channel('realtime_notificacoes')
+        .on(
+          'postgres_changes', 
+          { event: 'INSERT', schema: 'public', table: 'notificacoes' }, 
+          handleNewNotification
+        )
+        .subscribe();
+
+      // Realtime for alerts
+      const alertChannel = supabase
+        .channel('realtime_alertas')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'alertas_historico' }, fetchNotifications)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'lotes' }, fetchNotifications)
         .subscribe();
 
       return () => {
         clearInterval(interval);
-        supabase.removeChannel(channel);
+        supabase.removeChannel(notifChannel);
+        supabase.removeChannel(alertChannel);
       };
     }
-  }, [user, fetchNotifications]);
+  }, [user, fetchNotifications, handleNewNotification]);
 
   useEffect(() => {
     if ("Notification" in window) {
@@ -174,6 +317,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     };
     setNotifications(prev => [newNotification, ...prev]);
 
+    // Play sound
+    if (soundEnabled) {
+      playNotificationSound(notification.severity || 'info');
+    }
+
+    // Show toast
+    showNotificationToast({
+      title: notification.title,
+      message: notification.message,
+      type: notification.type,
+    });
+
     // Push notification se permitido
     if (pushPermission === "granted" && "Notification" in window) {
       new window.Notification(notification.title, {
@@ -181,20 +336,29 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         icon: "/favicon.ico",
       });
     }
-  }, [pushPermission]);
+  }, [pushPermission, soundEnabled]);
 
   const markAsRead = useCallback(async (id: string) => {
     // Atualizar no banco se for alerta real
     if (!id.startsWith('tarefa-') && !id.startsWith('lote-')) {
       try {
-        await supabase
-          .from('alertas_historico')
-          .update({ 
-            status: 'reconhecido',
-            data_reconhecimento: new Date().toISOString(),
-            reconhecido_por: user?.id,
-          })
+        // Try notificacoes table first
+        const { error: notifError } = await supabase
+          .from('notificacoes')
+          .update({ lida: true, data_leitura: new Date().toISOString() })
           .eq('id', id);
+        
+        if (notifError) {
+          // Try alertas_historico
+          await supabase
+            .from('alertas_historico')
+            .update({ 
+              status: 'reconhecido',
+              data_reconhecimento: new Date().toISOString(),
+              reconhecido_por: user?.id,
+            })
+            .eq('id', id);
+        }
       } catch (err) {
         console.error('Erro ao marcar como lida:', err);
       }
@@ -206,8 +370,14 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, [user?.id]);
 
   const markAllAsRead = useCallback(async () => {
-    const alertaIds = notifications
-      .filter(n => !n.read && !n.id.startsWith('tarefa-') && !n.id.startsWith('lote-'))
+    const naoLidas = notifications.filter(n => !n.read);
+    
+    const alertaIds = naoLidas
+      .filter(n => n.type === 'alerta')
+      .map(n => n.id);
+    
+    const notifIds = naoLidas
+      .filter(n => n.type !== 'alerta' && !n.id.startsWith('tarefa-'))
       .map(n => n.id);
 
     if (alertaIds.length > 0) {
@@ -221,7 +391,18 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           })
           .in('id', alertaIds);
       } catch (err) {
-        console.error('Erro ao marcar todas como lidas:', err);
+        console.error('Erro ao marcar alertas como lidos:', err);
+      }
+    }
+
+    if (notifIds.length > 0) {
+      try {
+        await supabase
+          .from('notificacoes')
+          .update({ lida: true, data_leitura: new Date().toISOString() })
+          .in('id', notifIds);
+      } catch (err) {
+        console.error('Erro ao marcar notificações como lidas:', err);
       }
     }
 
@@ -264,6 +445,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         clearAll,
         pushPermission,
         requestPushPermission,
+        soundEnabled,
+        setSoundEnabled,
       }}
     >
       {children}
