@@ -66,6 +66,7 @@ const tipoLabels: Record<TipoCiclo, string> = {
   curva_b: "Curva B",
   curva_c: "Curva C",
   posicao: "Por Posição",
+  zona: "Por Zona",
 };
 
 const COLORS = ['hsl(var(--primary))', 'hsl(142, 76%, 36%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)'];

@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  ConquistaUsuario, 
-  ConquistaDefinicao,
-  conquistasDefinicoes,
-  BadgeRarity 
-} from "./ConquistasSystem";
-import { Trophy, Star, Zap, Award } from "lucide-react";
+import { Trophy } from "lucide-react";
+import { ConquistaCompleta, BadgeRarity } from "@/hooks/useConquistas";
 
 // Simula storage de conquistas já notificadas
 const NOTIFIED_KEY = "notified_achievements";
@@ -89,11 +84,11 @@ interface UseConquistaNotificacoesOptions {
   enabled?: boolean;
   showToast?: boolean;
   showBrowserNotification?: boolean;
-  onNewAchievement?: (conquista: ConquistaUsuario) => void;
+  onNewAchievement?: (conquista: ConquistaCompleta) => void;
 }
 
 export function useConquistaNotificacoes(
-  conquistas: ConquistaUsuario[],
+  conquistas: ConquistaCompleta[],
   options: UseConquistaNotificacoesOptions = {}
 ) {
   const {
@@ -115,7 +110,7 @@ export function useConquistaNotificacoes(
   }, [showBrowserNotification, enabled]);
 
   // Notificar novas conquistas
-  const notifyAchievement = useCallback((conquista: ConquistaUsuario) => {
+  const notifyAchievement = useCallback((conquista: ConquistaCompleta) => {
     const config = raridadeNotificacao[conquista.raridade];
 
     // Toast notification
@@ -198,13 +193,13 @@ export function useConquistaNotificacoes(
 
 // Componente visual de celebração para conquista
 interface ConquistaCelebracaoProps {
-  conquista: ConquistaUsuario;
+  conquista: ConquistaCompleta;
   onClose: () => void;
 }
 
 export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoProps) {
   const config = raridadeNotificacao[conquista.raridade];
-  const IconComponent = conquista.icone;
+  const IconComponent = conquista.IconComponent;
 
   useEffect(() => {
     // Auto-fechar após 5 segundos

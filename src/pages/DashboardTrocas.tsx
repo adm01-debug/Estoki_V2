@@ -33,20 +33,24 @@ import { useNavigate } from "react-router-dom";
 import { useTrocasDevolucoes, TipoRegistro, StatusRegistro } from "@/hooks/useTrocasDevolucoes";
 
 const statusConfig: Record<StatusRegistro, { label: string; color: string; icon: React.ReactNode }> = {
-  pendente: { label: "Pendente", color: "bg-yellow-500/10 text-yellow-700 border-yellow-500/30", icon: <Clock className="h-3 w-3" /> },
+  aberto: { label: "Aberto", color: "bg-yellow-500/10 text-yellow-700 border-yellow-500/30", icon: <Clock className="h-3 w-3" /> },
   em_analise: { label: "Em Análise", color: "bg-blue-500/10 text-blue-700 border-blue-500/30", icon: <AlertTriangle className="h-3 w-3" /> },
-  aguardando_fornecedor: { label: "Aguardando Fornecedor", color: "bg-purple-500/10 text-purple-700 border-purple-500/30", icon: <Building2 className="h-3 w-3" /> },
+  aprovado: { label: "Aprovado", color: "bg-green-500/10 text-green-700 border-green-500/30", icon: <CheckCircle2 className="h-3 w-3" /> },
+  recusado: { label: "Recusado", color: "bg-red-500/10 text-red-700 border-red-500/30", icon: <AlertTriangle className="h-3 w-3" /> },
   em_transito: { label: "Em Trânsito", color: "bg-cyan-500/10 text-cyan-700 border-cyan-500/30", icon: <Package className="h-3 w-3" /> },
-  concluido: { label: "Concluído", color: "bg-green-500/10 text-green-700 border-green-500/30", icon: <CheckCircle2 className="h-3 w-3" /> },
-  cancelado: { label: "Cancelado", color: "bg-gray-500/10 text-gray-700 border-gray-500/30", icon: <AlertTriangle className="h-3 w-3" /> },
-  credito_gerado: { label: "Crédito Gerado", color: "bg-emerald-500/10 text-emerald-700 border-emerald-500/30", icon: <CheckCircle2 className="h-3 w-3" /> },
+  recebido: { label: "Recebido", color: "bg-purple-500/10 text-purple-700 border-purple-500/30", icon: <Package className="h-3 w-3" /> },
+  finalizado: { label: "Finalizado", color: "bg-green-500/10 text-green-700 border-green-500/30", icon: <CheckCircle2 className="h-3 w-3" /> },
 };
 
 const COLORS = ['hsl(var(--primary))', 'hsl(142, 76%, 36%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)', 'hsl(221, 83%, 53%)'];
 
 export default function DashboardTrocasPage() {
   const navigate = useNavigate();
-  const { registros, estatisticas, loading, error } = useTrocasDevolucoes();
+  const hookData = useTrocasDevolucoes();
+  const registros = hookData.registros;
+  const loading = hookData.loading;
+  const error = hookData.error;
+  const estatisticas = hookData.getEstatisticas();
 
   const [filtroTipo, setFiltroTipo] = useState<string>("todos");
   const [filtroFornecedor, setFiltroFornecedor] = useState<string>("todos");
@@ -318,7 +322,7 @@ export default function DashboardTrocasPage() {
                 <p className="text-center py-8 text-muted-foreground">Nenhum registro encontrado</p>
               ) : (
                 registrosFiltrados.slice(0, 5).map((registro) => {
-                  const status = statusConfig[registro.status] || statusConfig.pendente;
+                  const status = statusConfig[registro.status] || statusConfig.aberto;
                   
                   return (
                     <div key={registro.id} className="flex items-center justify-between p-3 border rounded-lg">

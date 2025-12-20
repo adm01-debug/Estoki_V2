@@ -311,11 +311,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
   }, [user, fetchNotifications, handleNewNotification]);
 
-  useEffect(() => {
-    if ("Notification" in window) {
-      setPushPermission(Notification.permission);
-    }
-  }, []);
+  // Push permission is already handled by usePushNotifications hook
 
   const addNotification = useCallback((notification: Omit<Notification, "id" | "read" | "createdAt">) => {
     const newNotification: Notification = {
@@ -427,18 +423,8 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const requestPushPermission = useCallback(async (): Promise<boolean> => {
-    if (!("Notification" in window)) {
-      return false;
-    }
-
-    try {
-      const permission = await Notification.requestPermission();
-      setPushPermission(permission);
-      return permission === "granted";
-    } catch {
-      return false;
-    }
-  }, []);
+    return await requestPushFromHook();
+  }, [requestPushFromHook]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
