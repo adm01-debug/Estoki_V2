@@ -1,13 +1,16 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface Notification {
   id: string;
-  type: "estoque_baixo" | "triagem_pendente" | "info" | "success" | "warning";
+  type: "estoque_baixo" | "triagem_pendente" | "recebimento" | "alerta" | "info" | "success" | "warning";
   title: string;
   message: string;
   read: boolean;
   createdAt: Date;
   data?: Record<string, unknown>;
+  severity?: "info" | "warning" | "critical";
 }
 
 interface NotificationContextType {
@@ -24,49 +27,122 @@ interface NotificationContextType {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-// Mock notifications for demo
-const mockNotifications: Notification[] = [
-  {
-    id: "1",
-    type: "estoque_baixo",
-    title: "Estoque Baixo",
-    message: "Caneta BIC Azul - Apenas 15 unidades restantes",
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 5),
-    data: { produto: "Caneta BIC Azul", quantidade: 15 }
-  },
-  {
-    id: "2",
-    type: "triagem_pendente",
-    title: "Triagem Pendente",
-    message: "NF 12345 aguardando triagem há 2 horas",
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 30),
-    data: { nf: "12345" }
-  },
-  {
-    id: "3",
-    type: "estoque_baixo",
-    title: "Estoque Crítico",
-    message: "Chaveiro Metal - Apenas 5 unidades restantes",
-    read: false,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60),
-    data: { produto: "Chaveiro Metal", quantidade: 5 }
-  },
-  {
-    id: "4",
-    type: "triagem_pendente",
-    title: "Triagem Atrasada",
-    message: "NF 12340 aguardando triagem há 1 dia",
-    read: true,
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24),
-    data: { nf: "12340" }
-  }
-];
-
 export function NotificationProvider({ children }: { children: ReactNode }) {
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [pushPermission, setPushPermission] = useState<NotificationPermission | "default">("default");
+  const { user } = useAuth();
+
+  // Buscar notificações do Supabase
+  const fetchNotifications = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      // Buscar alertas ativos
+      const { data: alertas } = await supabase
+        .from('alertas_historico')
+        .select('*')
+        .in('status', ['ativo', 'reconhecido'])
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      // Buscar triagens pendentes
+      const { data: triagensPendentes } = await supabase
+        .from('triagens')
+        .select('id, pedido, produto, prioridade, created_at')
+        .eq('status', 'aguardando')
+        .order('created_at', { ascending: true })
+        .limit(5);
+
+      // Buscar recebimentos recentes
+      const ontem = new Date();
+      ontem.setDate(ontem.getDate() - 1);
+
+      const { data: recebimentos } = await supabase
+        .from('recebimentos')
+        .select('id, pedido, fornecedor, status, created_at')
+        .eq('status', 'chegou')
+        .gte('created_at', ontem.toISOString())
+        .limit(5);
+
+      const notifs: Notification[] = [];
+
+      // Processar alertas
+      (alertas || []).forEach(alerta => {
+        notifs.push({
+          id: alerta.id,
+          type: "alerta",
+          title: alerta.titulo,
+          message: alerta.mensagem,
+          read: alerta.status === 'reconhecido',
+          createdAt: new Date(alerta.created_at),
+          data: alerta.dados_contexto,
+          severity: alerta.severidade,
+        });
+      });
+
+      // Processar triagens pendentes
+      (triagensPendentes || []).forEach(triagem => {
+        const horasEspera = Math.floor(
+          (Date.now() - new Date(triagem.created_at).getTime()) / (1000 * 60 * 60)
+        );
+
+        if (horasEspera >= 2) {
+          notifs.push({
+            id: `triagem-${triagem.id}`,
+            type: "triagem_pendente",
+            title: "Triagem Pendente",
+            message: `Pedido #${triagem.pedido} (${triagem.produto}) aguardando há ${horasEspera}h`,
+            read: false,
+            createdAt: new Date(triagem.created_at),
+            data: { pedido: triagem.pedido, prioridade: triagem.prioridade },
+            severity: triagem.prioridade === 'urgente' ? 'critical' : 'warning',
+          });
+        }
+      });
+
+      // Processar recebimentos
+      (recebimentos || []).forEach(rec => {
+        notifs.push({
+          id: `recebimento-${rec.id}`,
+          type: "recebimento",
+          title: "Novo Recebimento",
+          message: `Material de ${rec.fornecedor} chegou - Pedido #${rec.pedido}`,
+          read: false,
+          createdAt: new Date(rec.created_at),
+          data: { pedido: rec.pedido, fornecedor: rec.fornecedor },
+          severity: "info",
+        });
+      });
+
+      // Ordenar por data
+      notifs.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+      setNotifications(notifs);
+    } catch (err) {
+      console.error('Erro ao buscar notificações:', err);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+
+      // Atualizar a cada 60 segundos
+      const interval = setInterval(fetchNotifications, 60000);
+
+      // Realtime
+      const channel = supabase
+        .channel('notifications_changes')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'alertas_historico' }, fetchNotifications)
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'recebimentos' }, fetchNotifications)
+        .subscribe();
+
+      return () => {
+        clearInterval(interval);
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [user, fetchNotifications]);
 
   useEffect(() => {
     if ("Notification" in window) {
@@ -74,38 +150,68 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
   const addNotification = useCallback((notification: Omit<Notification, "id" | "read" | "createdAt">) => {
     const newNotification: Notification = {
       ...notification,
       id: crypto.randomUUID(),
       read: false,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
-
     setNotifications(prev => [newNotification, ...prev]);
 
-    // Send push notification if permitted
+    // Push notification se permitido
     if (pushPermission === "granted" && "Notification" in window) {
-      new Notification(notification.title, {
+      new window.Notification(notification.title, {
         body: notification.message,
         icon: "/favicon.ico",
-        badge: "/favicon.ico",
-        tag: newNotification.id
       });
     }
   }, [pushPermission]);
 
-  const markAsRead = useCallback((id: string) => {
+  const markAsRead = useCallback(async (id: string) => {
+    // Atualizar no banco se for alerta real
+    if (!id.startsWith('triagem-') && !id.startsWith('recebimento-')) {
+      try {
+        await supabase
+          .from('alertas_historico')
+          .update({ 
+            status: 'reconhecido',
+            data_reconhecimento: new Date().toISOString(),
+            reconhecido_por: user?.id,
+          })
+          .eq('id', id);
+      } catch (err) {
+        console.error('Erro ao marcar como lida:', err);
+      }
+    }
+
     setNotifications(prev =>
       prev.map(n => (n.id === id ? { ...n, read: true } : n))
     );
-  }, []);
+  }, [user?.id]);
 
-  const markAllAsRead = useCallback(() => {
+  const markAllAsRead = useCallback(async () => {
+    const alertaIds = notifications
+      .filter(n => !n.read && !n.id.startsWith('triagem-') && !n.id.startsWith('recebimento-'))
+      .map(n => n.id);
+
+    if (alertaIds.length > 0) {
+      try {
+        await supabase
+          .from('alertas_historico')
+          .update({ 
+            status: 'reconhecido',
+            data_reconhecimento: new Date().toISOString(),
+            reconhecido_por: user?.id,
+          })
+          .in('id', alertaIds);
+      } catch (err) {
+        console.error('Erro ao marcar todas como lidas:', err);
+      }
+    }
+
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-  }, []);
+  }, [notifications, user?.id]);
 
   const removeNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
@@ -117,27 +223,19 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   const requestPushPermission = useCallback(async (): Promise<boolean> => {
     if (!("Notification" in window)) {
-      console.log("Este navegador não suporta notificações push");
       return false;
     }
 
     try {
       const permission = await Notification.requestPermission();
       setPushPermission(permission);
-      
-      if (permission === "granted") {
-        new Notification("Notificações Ativadas!", {
-          body: "Você receberá alertas de estoque baixo e triagens pendentes.",
-          icon: "/favicon.ico"
-        });
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error("Erro ao solicitar permissão:", error);
+      return permission === "granted";
+    } catch {
       return false;
     }
   }, []);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <NotificationContext.Provider
@@ -150,7 +248,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         removeNotification,
         clearAll,
         pushPermission,
-        requestPushPermission
+        requestPushPermission,
       }}
     >
       {children}
@@ -160,7 +258,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
 export function useNotifications() {
   const context = useContext(NotificationContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error("useNotifications must be used within a NotificationProvider");
   }
   return context;
