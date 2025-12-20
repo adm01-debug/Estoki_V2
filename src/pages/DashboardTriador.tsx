@@ -31,6 +31,7 @@ import { useConquistas } from "@/hooks/useConquistas";
 import { useDesafiosDiarios } from "@/hooks/useDesafiosDiarios";
 import { useStreaks } from "@/hooks/useStreaks";
 import { useProdutividade } from "@/hooks/useProdutividade";
+import { useRanking } from "@/hooks/useRanking";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function DashboardTriadorPage() {
@@ -38,6 +39,7 @@ export default function DashboardTriadorPage() {
   const { gamificacao, loading: loadingGamificacao } = useGamificacao();
   const { conquistasUsuario, loading: loadingConquistas } = useConquistas();
   const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
+  const { ranking, minhaposicao, loading: loadingRanking, periodo: periodoRanking } = useRanking();
   const { streakAtual, loading: loadingStreaks } = useStreaks();
   const { metricas, loading: loadingMetricas } = useProdutividade();
 
@@ -313,3 +315,5 @@ export default function DashboardTriadorPage() {
     </AppLayout>
   );
 }
+
+
