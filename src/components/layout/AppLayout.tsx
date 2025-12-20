@@ -20,7 +20,9 @@ import {
   BellRing,
   Activity,
   Route,
-  Building2
+  Building2,
+  FileText,
+  AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -36,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -43,13 +46,6 @@ interface AppLayoutProps {
   showBack?: boolean;
   rightAction?: ReactNode;
 }
-
-// Mock user data for prototyping
-const mockUser = {
-  nome: "João Silva",
-  email: "joao@promobrindes.com",
-  role: "admin" as const,
-};
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, label: "Início" },
@@ -79,9 +75,19 @@ const getRoleLabel = (role: string) => {
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, profile, role, signOut } = useAuth();
+
+  const userName = profile?.nome || user?.email?.split('@')[0] || 'Usuário';
+  const userEmail = profile?.email || user?.email || '';
+  const currentRole = role || 'operador';
 
   const getInitials = (nome: string) => {
     return nome.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
   };
 
   return (
@@ -123,7 +129,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                 <Button variant="ghost" size="icon" className="touch-friendly relative">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                      {getInitials(mockUser.nome)}
+                      {getInitials(userName)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -131,11 +137,11 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <DropdownMenuContent align="end" className="w-56 bg-popover">
                 <DropdownMenuLabel>
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">{mockUser.nome}</span>
-                    <span className="text-xs text-muted-foreground font-normal">{mockUser.email}</span>
-                    <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(mockUser.role))}>
+                    <span className="font-medium">{userName}</span>
+                    <span className="text-xs text-muted-foreground font-normal">{userEmail}</span>
+                    <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(currentRole))}>
                       <Shield className="h-3 w-3 mr-1" />
-                      {getRoleLabel(mockUser.role)}
+                      {getRoleLabel(currentRole)}
                     </Badge>
                   </div>
                 </DropdownMenuLabel>
@@ -145,7 +151,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                   Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
+                <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -205,15 +211,15 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent/50">
             <Avatar className="h-9 w-9">
               <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm">
-                {getInitials(mockUser.nome)}
+                {getInitials(userName)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {mockUser.nome}
+                {userName}
               </p>
-              <Badge variant="outline" className={cn("text-xs scale-90 origin-left", getRoleBadgeColor(mockUser.role))}>
-                {getRoleLabel(mockUser.role)}
+              <Badge variant="outline" className={cn("text-xs scale-90 origin-left", getRoleBadgeColor(currentRole))}>
+                {getRoleLabel(currentRole)}
               </Badge>
             </div>
           </div>
