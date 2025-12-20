@@ -38,7 +38,7 @@ import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
 import { VolumeContagem, type VolumeData } from "@/components/triagem/VolumeContagem";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
-import { FotosLoteObrigatorias, useFotosLote } from "@/components/triagem/FotosLoteObrigatorias";
+import { FotosLoteObrigatorias, useTriagemFotos } from "@/components/triagem/FotosLoteObrigatorias";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import type { TipoDefeito, StatusTriagem } from "@/types/estoque";
 
@@ -117,8 +117,8 @@ export default function FormularioTriagem() {
   // Timer de triagem
   const timer = useTriagemTimer();
 
-  // Fotos obrigatórias do lote
-  const fotosLote = useFotosLote();
+  // Fotos obrigatórias do lote - agora com upload para Supabase
+  const fotosLote = useTriagemFotos({ triagemId: id });
 
   // Controle de início da triagem (após fotos obrigatórias)
   const [triagemIniciada, setTriagemIniciada] = useState(false);
@@ -382,9 +382,11 @@ export default function FormularioTriagem() {
         {!triagemIniciada && (
           <>
             <FotosLoteObrigatorias
+              triagemId={id}
               fotos={fotosLote.fotos}
-              onAddFoto={fotosLote.addFoto}
+              onAddFoto={fotosLote.addFotoFromFile}
               onRemoveFoto={fotosLote.removeFoto}
+              uploading={fotosLote.uploading}
               minFotos={2}
             />
 

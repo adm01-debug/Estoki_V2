@@ -524,6 +524,7 @@ export type Database = {
           created_at: string
           data_fim: string | null
           data_inicio: string
+          fotos: string[] | null
           id: string
           lote_id: string | null
           observacoes: string | null
@@ -535,6 +536,7 @@ export type Database = {
           created_at?: string
           data_fim?: string | null
           data_inicio?: string
+          fotos?: string[] | null
           id?: string
           lote_id?: string | null
           observacoes?: string | null
@@ -546,6 +548,7 @@ export type Database = {
           created_at?: string
           data_fim?: string | null
           data_inicio?: string
+          fotos?: string[] | null
           id?: string
           lote_id?: string | null
           observacoes?: string | null

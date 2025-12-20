@@ -1,20 +1,16 @@
 import { useState, useRef } from "react";
-import { Camera, X, CheckCircle2, AlertCircle, ImagePlus } from "lucide-react";
+import { Camera, X, CheckCircle2, AlertCircle, ImagePlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-
-interface FotoLote {
-  id: number;
-  url: string;
-  tipo: "geral" | "etiqueta" | "detalhe";
-  timestamp: Date;
-}
+import { useTriagemFotos, type FotoTriagem } from "@/hooks/useTriagemFotos";
 
 interface FotosLoteProps {
-  fotos: FotoLote[];
-  onAddFoto: (foto: Omit<FotoLote, "id" | "timestamp">) => void;
-  onRemoveFoto: (id: number) => void;
+  triagemId?: string;
+  fotos: FotoTriagem[];
+  onAddFoto: (file: File, tipo: FotoTriagem['tipo']) => Promise<FotoTriagem | null>;
+  onRemoveFoto: (id: string) => void;
+  uploading?: boolean;
   minFotos?: number;
   className?: string;
 }
@@ -26,34 +22,27 @@ const tiposFoto = [
 ];
 
 export function FotosLoteObrigatorias({
+  triagemId,
   fotos,
   onAddFoto,
   onRemoveFoto,
+  uploading = false,
   minFotos = 2,
   className,
 }: FotosLoteProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [tipoSelecionado, setTipoSelecionado] = useState<"geral" | "etiqueta" | "detalhe">("geral");
+  const [tipoSelecionado, setTipoSelecionado] = useState<FotoTriagem['tipo']>("geral");
 
-  const fotosCompletas = fotos.length >= minFotos;
-  const temFotoGeral = fotos.some((f) => f.tipo === "geral");
-  const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta");
+  const fotosCompletas = fotos.filter(f => !f.uploading).length >= minFotos;
+  const temFotoGeral = fotos.some((f) => f.tipo === "geral" && !f.uploading);
+  const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta" && !f.uploading);
   const requisitosAtendidos = temFotoGeral && temFotoEtiqueta;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const file = files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target?.result) {
-          onAddFoto({
-            url: event.target.result as string,
-            tipo: tipoSelecionado,
-          });
-        }
-      };
-      reader.readAsDataURL(file);
+      await onAddFoto(file, tipoSelecionado);
     }
     // Reset input
     if (fileInputRef.current) {
@@ -61,7 +50,7 @@ export function FotosLoteObrigatorias({
     }
   };
 
-  const handleCapture = (tipo: "geral" | "etiqueta" | "detalhe") => {
+  const handleCapture = (tipo: FotoTriagem['tipo']) => {
     setTipoSelecionado(tipo);
     fileInputRef.current?.click();
   };
@@ -78,9 +67,12 @@ export function FotosLoteObrigatorias({
           <Badge variant="destructive" className="text-[10px]">
             Obrigatório
           </Badge>
+          {uploading && (
+            <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          )}
         </div>
         <Badge variant={requisitosAtendidos ? "default" : "secondary"} className={requisitosAtendidos ? "bg-success" : ""}>
-          {fotos.length}/{minFotos} mín.
+          {fotos.filter(f => !f.uploading).length}/{minFotos} mín.
         </Badge>
       </div>
 
@@ -118,15 +110,16 @@ export function FotosLoteObrigatorias({
       {/* Botões de Captura */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         {tiposFoto.map((tipo) => {
-          const temFoto = fotos.some((f) => f.tipo === tipo.tipo);
+          const temFoto = fotos.some((f) => f.tipo === tipo.tipo && !f.uploading);
           const isObrigatorio = tipo.tipo !== "detalhe";
 
           return (
             <button
               key={tipo.tipo}
               onClick={() => handleCapture(tipo.tipo)}
+              disabled={uploading}
               className={cn(
-                "p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all",
+                "p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all disabled:opacity-50",
                 temFoto
                   ? "border-success bg-success/5 hover:bg-success/10"
                   : isObrigatorio
@@ -154,17 +147,27 @@ export function FotosLoteObrigatorias({
                   <img
                     src={foto.url}
                     alt={tipoInfo?.label || "Foto"}
-                    className="w-full aspect-square object-cover rounded-lg border border-border"
+                    className={cn(
+                      "w-full aspect-square object-cover rounded-lg border border-border",
+                      foto.uploading && "opacity-50"
+                    )}
                   />
+                  {foto.uploading && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    </div>
+                  )}
                   <div className="absolute bottom-1 left-1 bg-background/90 rounded px-1.5 py-0.5 text-[10px] font-medium">
                     {tipoInfo?.emoji} {tipoInfo?.label}
                   </div>
-                  <button
-                    onClick={() => onRemoveFoto(foto.id)}
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
+                  {!foto.uploading && (
+                    <button
+                      onClick={() => onRemoveFoto(foto.id)}
+                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -172,7 +175,8 @@ export function FotosLoteObrigatorias({
             {/* Botão adicionar mais */}
             <button
               onClick={() => handleCapture("detalhe")}
-              className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              disabled={uploading}
+              className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
             >
               <ImagePlus className="h-6 w-6" />
               <span className="text-[10px] mt-1">Adicionar</span>
@@ -186,7 +190,7 @@ export function FotosLoteObrigatorias({
         <div className="text-center py-4 text-muted-foreground">
           <Camera className="h-10 w-10 mx-auto mb-2 opacity-50" />
           <p className="text-sm">Capture as fotos obrigatórias do lote</p>
-          <p className="text-xs mt-1">Necessário para iniciar a triagem</p>
+          <p className="text-xs mt-1">Fotos são salvas automaticamente na nuvem</p>
         </div>
       )}
 
@@ -200,33 +204,6 @@ export function FotosLoteObrigatorias({
   );
 }
 
-// Hook para gerenciar fotos do lote
-export function useFotosLote() {
-  const [fotos, setFotos] = useState<FotoLote[]>([]);
-
-  const addFoto = (foto: Omit<FotoLote, "id" | "timestamp">) => {
-    const newFoto: FotoLote = {
-      ...foto,
-      id: Date.now(),
-      timestamp: new Date(),
-    };
-    setFotos((prev) => [...prev, newFoto]);
-  };
-
-  const removeFoto = (id: number) => {
-    setFotos((prev) => prev.filter((f) => f.id !== id));
-  };
-
-  const temFotoGeral = fotos.some((f) => f.tipo === "geral");
-  const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta");
-  const requisitosAtendidos = temFotoGeral && temFotoEtiqueta;
-
-  return {
-    fotos,
-    addFoto,
-    removeFoto,
-    requisitosAtendidos,
-    temFotoGeral,
-    temFotoEtiqueta,
-  };
-}
+// Re-export hook for convenience
+export { useTriagemFotos } from "@/hooks/useTriagemFotos";
+export type { FotoTriagem } from "@/hooks/useTriagemFotos";
