@@ -366,6 +366,54 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <Undo2 className="h-5 w-5" />
               <span className="font-medium">Trocas/Devoluções</span>
             </button>
+            <button
+              onClick={() => navigate("/dashboard-trocas")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/dashboard-trocas"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <BarChart3 className="h-5 w-5" />
+              <span className="font-medium">Dashboard Trocas</span>
+            </button>
+            <button
+              onClick={() => navigate("/divergencias")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/divergencias"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <AlertTriangle className="h-5 w-5" />
+              <span className="font-medium">Divergências</span>
+            </button>
+            <button
+              onClick={() => navigate("/relatorios")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/relatorios"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <FileText className="h-5 w-5" />
+              <span className="font-medium">Relatórios</span>
+            </button>
+            <button
+              onClick={() => navigate("/minha-produtividade")}
+              className={cn(
+                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+                location.pathname === "/minha-produtividade"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+                  : "text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Activity className="h-5 w-5" />
+              <span className="font-medium">Minha Produtividade</span>
+            </button>
           </div>
         </nav>
 
@@ -383,6 +431,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <span className="font-medium">Configurações</span>
           </button>
           <button 
+            onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
           >
             <LogOut className="h-5 w-5" />
