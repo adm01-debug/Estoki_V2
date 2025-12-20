@@ -28,7 +28,7 @@ interface ScanResult {
 const fetchItemData = async (qrData: string): Promise<ScanResult | null> => {
   try {
     // Tentar parsear como JSON (QR codes gerados pelo sistema)
-    let parsed: any = null;
+    let parsed: Record<string, unknown> | null = null;
     try {
       parsed = JSON.parse(qrData);
     } catch {
@@ -54,68 +54,32 @@ const fetchItemData = async (qrData: string): Promise<ScanResult | null> => {
             posicoes_estoque (codigo)
           )
         `)
-        .eq('id', parsed.lote_id || parsed.loteId)
-        .single();
+        .eq('id', (parsed.lote_id || parsed.loteId) as string)
+        .maybeSingle();
 
       if (lote) {
+        const estoquePosicao = lote.estoque_posicao as Array<{
+          posicao_id: string;
+          quantidade: number;
+          posicoes_estoque: { codigo: string } | null;
+        }> | null;
+        
         return {
           id: lote.id,
-          pedido: lote.codigo || 'N/A',
-          produto: lote.produtos?.nome || 'Produto',
-          lote: lote.codigo,
+          pedido: lote.numero_lote || 'N/A',
+          produto: (lote.produtos as { nome: string; sku: string } | null)?.nome || 'Produto',
+          lote: lote.numero_lote,
           quantidade: lote.quantidade_atual || 0,
-          localizacao: lote.estoque_posicao?.[0]?.posicoes_estoque?.codigo || 'Não alocado',
-          status: lote.status || 'Em estoque',
+          localizacao: estoquePosicao?.[0]?.posicoes_estoque?.codigo || 'Não alocado',
+          status: 'Em estoque',
           tipo: 'lote',
-        };
-      }
-    }
-
-    // Se tem pedido, buscar recebimento ou triagem
-    if (parsed.pedido) {
-      // Tentar buscar em recebimentos
-      const { data: recebimento } = await supabase
-        .from('recebimentos')
-        .select('*')
-        .eq('pedido', parsed.pedido)
-        .single();
-
-      if (recebimento) {
-        return {
-          id: recebimento.id,
-          pedido: recebimento.pedido,
-          produto: recebimento.produto,
-          quantidade: recebimento.qtd_recebida || recebimento.qtd_pedida,
-          status: recebimento.status,
-          dataRecebimento: recebimento.data_chegada,
-          tipo: 'recebimento',
-        };
-      }
-
-      // Tentar buscar em triagens
-      const { data: triagem } = await supabase
-        .from('triagens')
-        .select('*')
-        .eq('pedido', parsed.pedido)
-        .single();
-
-      if (triagem) {
-        return {
-          id: triagem.id,
-          pedido: triagem.pedido,
-          produto: triagem.produto,
-          quantidade: triagem.qtd_total,
-          totalVolumes: triagem.total_volumes,
-          status: triagem.status,
-          dataTriagem: triagem.data_fim,
-          tipo: 'triagem',
         };
       }
     }
 
     // Se tem código de posição
     if (parsed.posicao || parsed.codigo) {
-      const codigo = parsed.posicao || parsed.codigo;
+      const codigo = (parsed.posicao || parsed.codigo) as string;
       const { data: posicao } = await supabase
         .from('posicoes_estoque')
         .select(`
@@ -126,17 +90,48 @@ const fetchItemData = async (qrData: string): Promise<ScanResult | null> => {
           )
         `)
         .eq('codigo', codigo)
-        .single();
+        .maybeSingle();
 
       if (posicao) {
+        const estoquePosicao = posicao.estoque_posicao as Array<{
+          quantidade: number;
+          produtos: { nome: string; sku: string } | null;
+        }> | null;
+        
         return {
           id: posicao.id,
           pedido: 'Posição',
-          produto: posicao.estoque_posicao?.[0]?.produtos?.nome || 'Vazia',
-          quantidade: posicao.estoque_posicao?.[0]?.quantidade || 0,
+          produto: estoquePosicao?.[0]?.produtos?.nome || 'Vazia',
+          quantidade: estoquePosicao?.[0]?.quantidade || 0,
           localizacao: posicao.codigo,
           status: posicao.status,
           tipo: 'posicao',
+        };
+      }
+    }
+
+    // Buscar em lotes pelo número
+    if (parsed.numero_lote || parsed.lote) {
+      const numeroLote = (parsed.numero_lote || parsed.lote) as string;
+      const { data: lote } = await supabase
+        .from('lotes')
+        .select(`
+          *,
+          produtos (nome, sku)
+        `)
+        .eq('numero_lote', numeroLote)
+        .maybeSingle();
+
+      if (lote) {
+        return {
+          id: lote.id,
+          pedido: lote.numero_lote,
+          produto: (lote.produtos as { nome: string; sku: string } | null)?.nome || 'Produto',
+          lote: lote.numero_lote,
+          quantidade: lote.quantidade_atual,
+          status: 'Em estoque',
+          dataRecebimento: lote.data_recebimento,
+          tipo: 'lote',
         };
       }
     }
@@ -214,7 +209,7 @@ export default function ScannerPage() {
 
   const getActionsByTipo = (tipo: string, id: string) => {
     switch (tipo) {
-      case 'recebimento':
+      case 'lote':
         return (
           <>
             <Button 
@@ -223,7 +218,7 @@ export default function ScannerPage() {
               onClick={() => navigate(`/recebimento/${id}`)}
             >
               <Package className="h-5 w-5" />
-              <span className="text-xs">Conferir</span>
+              <span className="text-xs">Ver Lote</span>
             </Button>
             <Button 
               variant="outline" 
@@ -235,28 +230,6 @@ export default function ScannerPage() {
             </Button>
           </>
         );
-      case 'triagem':
-        return (
-          <>
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3 gap-1"
-              onClick={() => navigate(`/triagem/${id}`)}
-            >
-              <Package className="h-5 w-5" />
-              <span className="text-xs">Ver Triagem</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="flex-col h-auto py-3 gap-1"
-              onClick={() => navigate("/armazenamento")}
-            >
-              <MapPin className="h-5 w-5" />
-              <span className="text-xs">Armazenar</span>
-            </Button>
-          </>
-        );
-      case 'lote':
       case 'posicao':
         return (
           <>
@@ -279,7 +252,26 @@ export default function ScannerPage() {
           </>
         );
       default:
-        return null;
+        return (
+          <>
+            <Button 
+              variant="outline" 
+              className="flex-col h-auto py-3 gap-1"
+              onClick={() => navigate("/movimentacao")}
+            >
+              <ArrowRight className="h-5 w-5" />
+              <span className="text-xs">Mover</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex-col h-auto py-3 gap-1"
+              onClick={() => navigate("/rastreabilidade")}
+            >
+              <History className="h-5 w-5" />
+              <span className="text-xs">Histórico</span>
+            </Button>
+          </>
+        );
     }
   };
 
