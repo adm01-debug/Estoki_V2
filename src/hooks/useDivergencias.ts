@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { subDays } from "date-fns";
+import { toast } from "sonner";
 
 export interface DivergenciaRecord {
   id: string;
@@ -34,17 +35,27 @@ export interface DivergenciasKPIs {
   tendencia: 'up' | 'down' | 'stable';
 }
 
+export interface AlertaResult {
+  enviado: boolean;
+  fornecedor: string;
+  email?: string;
+  mensagem: string;
+}
+
 export interface UseDivergenciasReturn {
   divergencias: DivergenciaRecord[];
   metricasFornecedor: FornecedorMetrica[];
   kpis: DivergenciasKPIs;
   loading: boolean;
   error: string | null;
+  alertaLoading: boolean;
   refetch: (dias?: number) => Promise<void>;
   getDivergenciasPorFornecedor: (fornecedor: string) => DivergenciaRecord[];
   getDivergenciasPorTipo: (tipo: 'falta' | 'sobra') => DivergenciaRecord[];
   getEvolucaoDiaria: () => { data: string; faltas: number; sobras: number }[];
   getTopFornecedoresCriticos: (limit?: number) => FornecedorMetrica[];
+  enviarAlertaDivergencia: (fornecedor: string, divergencias: DivergenciaRecord[]) => Promise<AlertaResult>;
+  enviarAlertasCriticos: () => Promise<AlertaResult[]>;
 }
 
 export function useDivergencias(diasIniciais: number = 30): UseDivergenciasReturn {
@@ -52,75 +63,44 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
   const [metricasFornecedor, setMetricasFornecedor] = useState<FornecedorMetrica[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [alertaLoading, setAlertaLoading] = useState(false);
 
   const fetchData = useCallback(async (dias: number = diasIniciais) => {
     setLoading(true);
     setError(null);
-    
-    try {
-      const dataInicio = subDays(new Date(), dias);
 
-      // Buscar lotes com divergência ou conferidos
-      const { data: lotes, error: lotesError } = await supabase
+    try {
+      const dataInicio = subDays(new Date(), dias).toISOString();
+      
+      const { data: lotes, error: queryError } = await supabase
         .from('lotes')
         .select(`
           id,
           numero_lote,
-          fornecedor,
-          quantidade_inicial,
-          quantidade_atual,
+          numero_pedido,
           quantidade_pedida,
-          status,
-          data_conferencia,
-          created_at,
+          quantidade_total,
+          data_recebimento,
+          fornecedor,
           produtos (nome)
         `)
-        .gte('created_at', dataInicio.toISOString())
-        .in('status', ['conferido', 'divergencia'])
-        .order('created_at', { ascending: false });
+        .gte('data_recebimento', dataInicio)
+        .not('quantidade_pedida', 'is', null)
+        .not('quantidade_total', 'is', null);
 
-      if (lotesError) throw lotesError;
+      if (queryError) throw queryError;
 
-      // Processar divergências
-      const divergenciasProcessadas: DivergenciaRecord[] = (lotes || [])
-        .filter((lote: any) => {
-          const pedida = lote.quantidade_pedida || lote.quantidade_inicial || 0;
-          const recebida = lote.quantidade_atual || 0;
-          return pedida !== recebida;
-        })
-        .map((lote: any) => {
-          const pedida = lote.quantidade_pedida || lote.quantidade_inicial || 0;
-          const recebida = lote.quantidade_atual || 0;
-          const diferenca = recebida - pedida;
-          const percentual = pedida > 0 ? Math.abs((diferenca / pedida) * 100) : 0;
-
-          return {
-            id: lote.id,
-            numero_lote: lote.numero_lote || '-',
-            fornecedor: lote.fornecedor || 'Não informado',
-            produto_nome: lote.produtos?.nome || 'Produto não identificado',
-            quantidade_pedida: pedida,
-            quantidade_recebida: recebida,
-            diferenca: Math.abs(diferenca),
-            percentual,
-            data_conferencia: lote.data_conferencia || lote.created_at,
-            tipo: diferenca < 0 ? 'falta' as const : 'sobra' as const,
-          };
-        });
-
-      setDivergencias(divergenciasProcessadas);
-
-      // Calcular métricas por fornecedor
+      const divergenciasProcessadas: DivergenciaRecord[] = [];
       const fornecedoresMap = new Map<string, FornecedorMetrica>();
-      
-      (lotes || []).forEach((lote: any) => {
-        const fornecedor = lote.fornecedor || 'Não informado';
-        const pedida = lote.quantidade_pedida || lote.quantidade_inicial || 0;
-        const recebida = lote.quantidade_atual || 0;
-        const hasDivergencia = pedida !== recebida;
-        const diferenca = Math.abs(recebida - pedida);
-        const percentual = pedida > 0 ? (diferenca / pedida) * 100 : 0;
 
+      (lotes || []).forEach((lote: any) => {
+        const pedida = lote.quantidade_pedida || 0;
+        const recebida = lote.quantidade_total || 0;
+        const diferenca = recebida - pedida;
+        const percentual = pedida > 0 ? (Math.abs(diferenca) / pedida) * 100 : 0;
+        const fornecedor = lote.fornecedor || 'Não informado';
+
+        // Inicializar fornecedor no mapa
         if (!fornecedoresMap.has(fornecedor)) {
           fornecedoresMap.set(fornecedor, {
             fornecedor,
@@ -134,9 +114,24 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
 
         const metrica = fornecedoresMap.get(fornecedor)!;
         metrica.total_recebimentos++;
-        if (hasDivergencia) {
+
+        // Considerar divergência se diferença > 0
+        if (diferenca !== 0) {
+          divergenciasProcessadas.push({
+            id: lote.id,
+            numero_lote: lote.numero_lote || lote.numero_pedido || 'N/A',
+            fornecedor,
+            produto_nome: lote.produtos?.nome || 'Produto desconhecido',
+            quantidade_pedida: pedida,
+            quantidade_recebida: recebida,
+            diferenca: Math.abs(diferenca),
+            percentual,
+            data_conferencia: lote.data_recebimento || new Date().toISOString(),
+            tipo: diferenca < 0 ? 'falta' : 'sobra',
+          });
+
           metrica.total_divergencias++;
-          metrica.valor_total_diferenca += diferenca;
+          metrica.valor_total_diferenca += Math.abs(diferenca);
           metrica.media_diferenca_percentual = 
             (metrica.media_diferenca_percentual * (metrica.total_divergencias - 1) + percentual) / 
             metrica.total_divergencias;
@@ -144,6 +139,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
         metrica.taxa_divergencia = (metrica.total_divergencias / metrica.total_recebimentos) * 100;
       });
 
+      setDivergencias(divergenciasProcessadas);
       setMetricasFornecedor(Array.from(fornecedoresMap.values()));
 
     } catch (err) {
@@ -157,6 +153,77 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Enviar alerta de divergência via Edge Function
+  const enviarAlertaDivergencia = useCallback(async (
+    fornecedor: string, 
+    divergenciasDoFornecedor: DivergenciaRecord[]
+  ): Promise<AlertaResult> => {
+    setAlertaLoading(true);
+    
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('alerta-divergencia-fornecedor', {
+        body: {
+          fornecedor,
+          divergencias: divergenciasDoFornecedor.map(d => ({
+            lote: d.numero_lote,
+            produto: d.produto_nome,
+            pedido: d.quantidade_pedida,
+            recebido: d.quantidade_recebida,
+            diferenca: d.diferenca,
+            tipo: d.tipo,
+            data: d.data_conferencia
+          })),
+          metricas: {
+            total: divergenciasDoFornecedor.length,
+            faltas: divergenciasDoFornecedor.filter(d => d.tipo === 'falta').length,
+            sobras: divergenciasDoFornecedor.filter(d => d.tipo === 'sobra').length,
+            valorTotal: divergenciasDoFornecedor.reduce((acc, d) => acc + d.diferenca, 0)
+          }
+        }
+      });
+
+      if (fnError) {
+        throw new Error(fnError.message || 'Erro ao enviar alerta');
+      }
+
+      toast.success(`Alerta enviado para ${fornecedor}`);
+      
+      return {
+        enviado: true,
+        fornecedor,
+        email: data?.email,
+        mensagem: data?.mensagem || 'Alerta enviado com sucesso'
+      };
+    } catch (err) {
+      const mensagem = err instanceof Error ? err.message : 'Erro ao enviar alerta';
+      toast.error(`Erro ao enviar alerta: ${mensagem}`);
+      
+      return {
+        enviado: false,
+        fornecedor,
+        mensagem
+      };
+    } finally {
+      setAlertaLoading(false);
+    }
+  }, []);
+
+  // Enviar alertas para todos os fornecedores críticos
+  const enviarAlertasCriticos = useCallback(async (): Promise<AlertaResult[]> => {
+    const criticos = getTopFornecedoresCriticos(5)
+      .filter(f => f.taxa_divergencia > 10); // Apenas com taxa > 10%
+    
+    const resultados: AlertaResult[] = [];
+    
+    for (const fornecedor of criticos) {
+      const divergenciasDoFornecedor = divergencias.filter(d => d.fornecedor === fornecedor.fornecedor);
+      const resultado = await enviarAlertaDivergencia(fornecedor.fornecedor, divergenciasDoFornecedor);
+      resultados.push(resultado);
+    }
+    
+    return resultados;
+  }, [divergencias, enviarAlertaDivergencia]);
 
   // KPIs calculados
   const kpis = useMemo<DivergenciasKPIs>(() => {
@@ -230,10 +297,13 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
     kpis,
     loading,
     error,
+    alertaLoading,
     refetch: fetchData,
     getDivergenciasPorFornecedor,
     getDivergenciasPorTipo,
     getEvolucaoDiaria,
     getTopFornecedoresCriticos,
+    enviarAlertaDivergencia,
+    enviarAlertasCriticos,
   };
 }
