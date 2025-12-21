@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useRecebimentos, Recebimento, StatusRecebimento } from "@/hooks/useRecebimentos";
 import { useBalanca } from "@/hooks/useBalanca";
+import { VolumeContagem, VolumeData } from "@/components/triagem/VolumeContagem";
 import { Progress } from "@/components/ui/progress";
 
 type TipoEmbalagem = "original" | "plastica" | "generica";
@@ -55,6 +56,45 @@ export default function ConferenciaRecebimento() {
   const [tipoEmbalagem, setTipoEmbalagem] = useState<TipoEmbalagem>("original");
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
+  
+  // Estado para volumes (mock para demonstração)
+  const [volumes, setVolumes] = useState<VolumeData[]>([]);
+  
+  // Inicializar volumes quando recebimento carregar
+  useEffect(() => {
+    if (recebimento && recebimento.quantidade_esperada > 0) {
+      // Criar volumes baseado na quantidade (1 volume para cada 100 unidades ou mínimo 1)
+      const numVolumes = Math.max(1, Math.ceil(recebimento.quantidade_esperada / 100));
+      const qtdPorVolume = Math.ceil(recebimento.quantidade_esperada / numVolumes);
+      
+      const newVolumes: VolumeData[] = Array.from({ length: numVolumes }, (_, i) => ({
+        id: i + 1,
+        numero: String(i + 1).padStart(2, '0'),
+        qtdEsperada: i === numVolumes - 1 
+          ? recebimento.quantidade_esperada - (qtdPorVolume * (numVolumes - 1))
+          : qtdPorVolume,
+        qtdContada: null,
+        conferido: false,
+      }));
+      
+      setVolumes(newVolumes);
+    }
+  }, [recebimento]);
+  
+  const handleVolumeChange = (volumeId: number, qtdContada: number) => {
+    setVolumes(prev => prev.map(v => 
+      v.id === volumeId ? { ...v, qtdContada } : v
+    ));
+  };
+  
+  const handleVolumeConfirm = (volumeId: number) => {
+    setVolumes(prev => prev.map(v => 
+      v.id === volumeId ? { ...v, conferido: true } : v
+    ));
+    // Atualizar quantidade conferida total
+    const total = volumes.reduce((acc, v) => acc + (v.id === volumeId ? (v.qtdContada || 0) : (v.conferido ? (v.qtdContada || 0) : 0)), 0);
+    setQuantidadeConferida(total);
+  };
 
   useEffect(() => {
     if (id && recebimentos.length > 0) {
@@ -262,6 +302,18 @@ export default function ConferenciaRecebimento() {
         <div className="space-y-4">
           <div>
             <Label htmlFor="quantidade">Quantidade Conferida</Label>
+
+            {/* Contagem por Volume */}
+            {volumes.length > 1 && (
+              <VolumeContagem
+                volumes={volumes}
+                onVolumeChange={handleVolumeChange}
+                onVolumeConfirm={handleVolumeConfirm}
+                totalEsperado={recebimento?.quantidade_esperada || 0}
+                className="mb-4"
+              />
+            )}
+            
             <Input
               id="quantidade"
               type="number"
