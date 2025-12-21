@@ -17,10 +17,22 @@ export interface ScanResult {
   tipo: 'recebimento' | 'triagem' | 'lote' | 'posicao' | 'desconhecido';
 }
 
+export interface OCRResult {
+  text: string;
+  confidence: number;
+  extractedData?: {
+    pedido?: string;
+    lote?: string;
+    quantidade?: number;
+    produto?: string;
+  };
+}
+
 export interface ScanHistoryItem {
   qrData: string;
   result: ScanResult | null;
   timestamp: Date;
+  source?: 'qr' | 'ocr';
 }
 
 export interface UseScannerReturn {
@@ -30,9 +42,11 @@ export interface UseScannerReturn {
   lastResult: ScanResult | null;
   scanHistory: ScanHistoryItem[];
   error: string | null;
+  ocrResult: OCRResult | null;
   
   // Ações
   processQRCode: (qrData: string) => Promise<ScanResult | null>;
+  processImageOCR: (imageBase64: string) => Promise<OCRResult | null>;
   clearLastResult: () => void;
   clearHistory: () => void;
   setScanning: (value: boolean) => void;
@@ -44,6 +58,59 @@ export function useScanner(): UseScannerReturn {
   const [lastResult, setLastResult] = useState<ScanResult | null>(null);
   const [scanHistory, setScanHistory] = useState<ScanHistoryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
+
+  // Processar imagem com OCR via Edge Function
+  const processImageOCR = useCallback(async (imageBase64: string): Promise<OCRResult | null> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: fnError } = await supabase.functions.invoke('scanner-ocr', {
+        body: { 
+          image: imageBase64,
+          extractData: true 
+        }
+      });
+
+      if (fnError) {
+        throw new Error(fnError.message || 'Erro ao processar OCR');
+      }
+
+      if (!data) {
+        throw new Error('Nenhum resultado do OCR');
+      }
+
+      const result: OCRResult = {
+        text: data.text || '',
+        confidence: data.confidence || 0,
+        extractedData: data.extractedData || {}
+      };
+
+      setOcrResult(result);
+
+      // Se encontrou dados estruturados, tentar processar como QR
+      if (result.extractedData?.pedido || result.extractedData?.lote) {
+        const qrData = JSON.stringify(result.extractedData);
+        const scanResult = await processQRCode(qrData);
+        
+        if (scanResult) {
+          setScanHistory(prev => [
+            { qrData, result: scanResult, timestamp: new Date(), source: 'ocr' },
+            ...prev.slice(0, 9)
+          ]);
+        }
+      }
+
+      return result;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao processar OCR';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   const processQRCode = useCallback(async (qrData: string): Promise<ScanResult | null> => {
     setIsLoading(true);
@@ -183,7 +250,7 @@ export function useScanner(): UseScannerReturn {
 
       setLastResult(result);
       setScanHistory(prev => [
-        { qrData, result, timestamp: new Date() },
+        { qrData, result, timestamp: new Date(), source: 'qr' },
         ...prev.slice(0, 9) // Manter últimos 10
       ]);
 
@@ -199,6 +266,7 @@ export function useScanner(): UseScannerReturn {
 
   const clearLastResult = useCallback(() => {
     setLastResult(null);
+    setOcrResult(null);
     setError(null);
   }, []);
 
@@ -210,6 +278,7 @@ export function useScanner(): UseScannerReturn {
     setIsScanning(value);
     if (value) {
       setLastResult(null);
+      setOcrResult(null);
       setError(null);
     }
   }, []);
@@ -220,7 +289,9 @@ export function useScanner(): UseScannerReturn {
     lastResult,
     scanHistory,
     error,
+    ocrResult,
     processQRCode,
+    processImageOCR,
     clearLastResult,
     clearHistory,
     setScanning,
