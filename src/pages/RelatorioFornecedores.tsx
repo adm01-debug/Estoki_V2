@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { DashboardFornecedores } from "@/components/fornecedores/DashboardFornecedores";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -192,10 +193,11 @@ export default function RelatorioFornecedoresPage() {
 
         {/* Tabs */}
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="visao-geral">Visão Geral</TabsTrigger>
             <TabsTrigger value="ranking">Ranking</TabsTrigger>
             <TabsTrigger value="criticos">Críticos</TabsTrigger>
+            <TabsTrigger value="painel">Painel</TabsTrigger>
           </TabsList>
 
           {/* Visão Geral */}
@@ -405,8 +407,12 @@ export default function RelatorioFornecedoresPage() {
               </div>
             )}
           </TabsContent>
+                <TabsContent value="painel" className="space-y-4">
+            <DashboardFornecedores />
+          </TabsContent>
         </Tabs>
       </div>
     </AppLayout>
   );
 }
+
