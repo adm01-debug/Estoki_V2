@@ -7,6 +7,7 @@ import {
   Warehouse, 
   QrCode, 
   ArrowLeftRight,
+  Truck,
   Undo2,
   Settings,
   ChevronLeft,
@@ -54,6 +55,7 @@ const navItems = [
   { path: "/triagem", icon: Search, label: "Triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque" },
   { path: "/scanner", icon: QrCode, label: "Scanner" },
+  { path: "/romaneios", icon: Truck, label: "Romaneios" },
 ];
 
 const getRoleBadgeColor = (role: string) => {
@@ -445,3 +447,4 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     </div>
   );
 }
+
