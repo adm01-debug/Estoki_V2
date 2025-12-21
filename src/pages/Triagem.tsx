@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
+import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, QrCode, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2, ChevronLeft } from "lucide-react";
+import { Search, QrCode, Calculator, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2, ChevronLeft } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ export default function TriagemPage() {
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
   const [sortOrder, setSortOrder] = useState<SortOrder>("data");
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
+  const [showAmostragem, setShowAmostragem] = useState(false);
 
   const getStatus = (triagem: { resultado?: string; data_fim?: string }): StatusTriagem => {
     if (!triagem.data_fim) return 'em_andamento';
@@ -168,6 +170,10 @@ export default function TriagemPage() {
             <QrCode className="h-4 w-4" />
             <span className="hidden sm:inline">Scanner</span>
           </Button>
+          <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="gap-2" onClick={() => setShowAmostragem(!showAmostragem)}>
+            <Calculator className="h-4 w-4" />
+            <span className="hidden sm:inline">Amostragem</span>
+          </Button>
           <Button size="sm" className="gap-2" onClick={handleIniciarTriagem}>
             <Play className="h-4 w-4" />
             <span className="hidden sm:inline">Nova</span>
@@ -176,6 +182,13 @@ export default function TriagemPage() {
       }
     >
       <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+        {/* Calculadora de Amostragem */}
+        {showAmostragem && (
+          <AmostragemAutomatica
+            tamanhoLote={triagemAtual?.quantidade || 100}
+            onCalculate={(resultado) => console.log("Amostragem:", resultado)}
+          />
+        )}
         {/* Cards de estatísticas */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card rounded-xl p-3 border border-border">
@@ -346,3 +359,4 @@ export default function TriagemPage() {
     </AppLayout>
   );
 }
+
