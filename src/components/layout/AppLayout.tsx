@@ -50,13 +50,13 @@ interface AppLayoutProps {
 }
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Início" },
-  { path: "/dashboard", icon: BarChart3, label: "Dashboard" },
-  { path: "/recebimento", icon: Package, label: "Receber" },
-  { path: "/triagem", icon: Search, label: "Triagem" },
-  { path: "/estoque", icon: Warehouse, label: "Estoque" },
-  { path: "/scanner", icon: QrCode, label: "Scanner" },
-  { path: "/romaneios", icon: Truck, label: "Romaneios" },
+  { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
+  { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
+  { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
+  { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
+  { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner" },
+  { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios" },
 ];
 
 const getRoleBadgeColor = (role: string) => {
@@ -188,6 +188,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             return (
               <button
                 key={item.path}
+                data-tour={item.tour}
                 onClick={() => navigate(item.path)}
                 aria-label={`Ir para ${item.label}`}
                 aria-current={isActive ? "page" : undefined}
@@ -245,6 +246,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             return (
               <button
                 key={item.path}
+                data-tour={item.tour}
                 onClick={() => navigate(item.path)}
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
@@ -456,5 +458,6 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     </div>
   );
 }
+
 
 
