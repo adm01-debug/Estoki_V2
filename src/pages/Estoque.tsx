@@ -36,6 +36,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -333,6 +334,26 @@ export default function EstoquePage() {
                 Cadastrar Posições
               </Button>
             </NovaPosicaoDialog>
+
+      {/* Dialog de Etiquetas */}
+      <Dialog open={showEtiquetas} onOpenChange={setShowEtiquetas}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Gerar Etiquetas</DialogTitle>
+          </DialogHeader>
+          {etiquetaData && (
+            <GeradorEtiquetas
+              pedido={etiquetaData.pedido}
+              produto={etiquetaData.produto}
+              lote={etiquetaData.lote}
+              fornecedor={etiquetaData.fornecedor}
+              totalVolumes={etiquetaData.totalVolumes}
+              qtdPorVolume={etiquetaData.qtdPorVolume}
+              dataRecebimento={etiquetaData.dataRecebimento}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
           </div>
         </PageTransition>
       </AppLayout>
@@ -351,6 +372,8 @@ export default function EstoquePage() {
               <span className="hidden sm:inline">Nova Posição</span>
             </Button>
           </NovaPosicaoDialog>
+
+      
           <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
             <QrCode className="h-4 w-4" />
             <span className="hidden sm:inline">Scan</span>
