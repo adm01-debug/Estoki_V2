@@ -12,6 +12,7 @@ import { useTriagens } from "@/hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos } from "@/hooks/useTriagemFotos";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
+import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
 import { 
@@ -72,6 +73,8 @@ export default function FormularioTriagem() {
   const [observacoes, setObservacoes] = useState("");
   const [quantidadeAprovada, setQuantidadeAprovada] = useState(0);
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
+  const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
+  const [tamanhoAmostra, setTamanhoAmostra] = useState(0);
 
   useEffect(() => {
     const carregarTriagem = async () => {
@@ -228,6 +231,14 @@ export default function FormularioTriagem() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Amostragem Estatística */}
+        {mostrarAmostragem && triagem?.quantidade_total > 0 && (
+          <AmostragemAutomatica
+            quantidadeTotal={triagem.quantidade_total}
+            onAmostraCalculada={(tamanho) => setTamanhoAmostra(tamanho)}
+          />
+        )}
 
         {/* Checklist de inspeção */}
         <Card>
