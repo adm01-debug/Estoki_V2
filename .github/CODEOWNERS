@@ -1,0 +1,19 @@
+# Default owners for everything in the repo
+* @adm01-debug
+
+# Frontend code
+/src/ @adm01-debug
+
+# Supabase/Backend
+/supabase/ @adm01-debug
+
+# Documentation
+/docs/ @adm01-debug
+*.md @adm01-debug
+
+# CI/CD
+/.github/ @adm01-debug
+
+# Configuration files
+*.config.* @adm01-debug
+*.json @adm01-debug
