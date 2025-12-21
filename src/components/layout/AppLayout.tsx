@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -78,6 +79,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut } = useAuth();
+  const { permission, isSupported, requestPermission } = usePushNotifications();
+
+  // Solicitar permissão de push notifications na primeira visita
+  useEffect(() => {
+    if (isSupported && permission === "default") {
+      requestPermission();
+    }
+  }, [isSupported, permission, requestPermission]);
 
   const userName = profile?.nome || user?.email?.split('@')[0] || 'Usuário';
   const userEmail = profile?.email || user?.email || '';
@@ -447,4 +456,5 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     </div>
   );
 }
+
 
