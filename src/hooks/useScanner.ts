@@ -160,14 +160,14 @@ export function useScanner(): UseScannerReturn {
 
           result = {
             id: lote.id,
-            pedido: lote.numero_pedido || 'N/A',
+            pedido: lote.pedido_compra || 'N/A',
             produto: lote.produtos?.nome || 'Produto desconhecido',
             lote: lote.numero_lote,
-            quantidade: lote.quantidade_total || 0,
+            quantidade: lote.quantidade_atual || 0,
             localizacao,
-            status: lote.status_triagem || 'pendente',
+            status: lote.status || 'pendente',
             dataRecebimento: lote.data_recebimento,
-            dataTriagem: lote.data_triagem,
+            dataTriagem: lote.data_conferencia,
             tipo: 'lote',
           };
         }
@@ -217,20 +217,20 @@ export function useScanner(): UseScannerReturn {
             *,
             produtos (nome, sku)
           `)
-          .eq('numero_pedido', parsed.pedido as string)
+          .eq('pedido_compra', parsed.pedido as string)
           .limit(5);
 
         if (recebimentos && recebimentos.length > 0) {
           const primeiro = recebimentos[0];
           result = {
             id: primeiro.id,
-            pedido: primeiro.numero_pedido || 'N/A',
+            pedido: primeiro.pedido_compra || 'N/A',
             produto: primeiro.produtos?.nome || 'Produto desconhecido',
             lote: primeiro.numero_lote,
             volume: 1,
             totalVolumes: recebimentos.length,
-            quantidade: recebimentos.reduce((acc, r) => acc + (r.quantidade_total || 0), 0),
-            status: primeiro.status_triagem || 'pendente',
+            quantidade: recebimentos.reduce((acc, r) => acc + (r.quantidade_atual || 0), 0),
+            status: primeiro.status || 'pendente',
             dataRecebimento: primeiro.data_recebimento,
             tipo: 'recebimento',
           };

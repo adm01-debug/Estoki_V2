@@ -2,7 +2,7 @@
 export { useDebounce, useDebouncedCallback } from "./useDebounce";
 export { useThrottle, useThrottledValue } from "./useThrottle";
 export { useLocalStorage } from "./useLocalStorage";
-export { useOnlineStatus, OnlineIndicator } from "./useOnlineStatus";
+export { useOnlineStatus } from "./useOnlineStatus";
 export { useMediaQuery, useBreakpoint, useUserPreferences } from "./useMediaQuery";
 export { useClipboard } from "./useClipboard";
 export { usePagination } from "./usePagination";
