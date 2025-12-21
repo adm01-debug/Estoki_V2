@@ -39,6 +39,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useTrocasDevolucoes, type TrocaDevolucao, type TrocaDevolucaoInput, type StatusRegistro, type MotivoTD } from "@/hooks/useTrocasDevolucoes";
+import { StatusBadge, TipoBadge, WorkflowProgress, statusConfig, statusWorkflow, UIStatus } from "@/components/trocas";
 
 // Map database status to UI status
 type UIStatus = 'pendente' | 'em_analise' | 'autorizado' | 'enviado' | 'concluido' | 'recusado';
