@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
-import '@/types/web-serial.d.ts';
+import type { SerialPort } from '@/types/web-serial';
 
 export interface BalancaConfig {
   baudRate: number;
-  dataBits: number;
-  stopBits: number;
+  dataBits: 7 | 8;
+  stopBits: 1 | 2;
   parity: 'none' | 'even' | 'odd';
   flowControl: 'none' | 'hardware';
 }
