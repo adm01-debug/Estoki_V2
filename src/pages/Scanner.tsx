@@ -1,5 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Package, MapPin, ArrowRight, RotateCcw, AlertCircle, Loader2, History } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from "react";
+import { ScannerOCR } from "@/components/scanner/ScannerOCR";
+import { Package, FileText, MapPin, ArrowRight, RotateCcw, AlertCircle, Loader2, History } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { QRScanner } from "@/components/scanner/QRScanner";
@@ -90,8 +93,36 @@ export default function ScannerPage() {
   };
 
   return (
-    <AppLayout title="Scanner QR Code" showBack>
+    <AppLayout title="Scanner" showBack>
       <div className="p-4 space-y-6 lg:pl-72">
+        {/* Seletor de Modo */}
+        <div className="flex gap-2 mb-4">
+          <Button
+            variant={mode === "qr" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setMode("qr")}
+            className="gap-2"
+          >
+            <Package className="h-4 w-4" />
+            QR Code
+          </Button>
+          <Button
+            variant={mode === "ocr" ? "default" : "outline"}
+            size="sm"
+            onClick={() => setMode("ocr")}
+            className="gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            OCR/Documento
+          </Button>
+        </div>
+
+        {mode === "ocr" && (
+          <ScannerOCR />
+        )}
+
+        {mode === "qr" && (
+          <>
         {/* Scanner ativo */}
         {isScanning && !lastResult && (
           <Card>
@@ -280,3 +311,4 @@ export default function ScannerPage() {
     </AppLayout>
   );
 }
+
