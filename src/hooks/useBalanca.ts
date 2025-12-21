@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { toast } from 'sonner';
+import '@/types/web-serial.d.ts';
 
 export interface BalancaConfig {
   baudRate: number;

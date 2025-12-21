@@ -6,6 +6,7 @@ interface ThemeProviderProps {
   attribute?: "class" | "data-theme";
   defaultTheme?: string;
   enableSystem?: boolean;
+  storageKey?: string;
 }
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
