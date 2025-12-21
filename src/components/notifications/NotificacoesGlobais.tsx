@@ -1,17 +1,28 @@
 import { useEffect, useRef } from "react";
 import { useNotificacoes } from "@/hooks/useNotificacoes";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { toast } from "sonner";
 import { Bell, AlertTriangle, CheckCircle, Info, Package, ClipboardCheck } from "lucide-react";
 
 interface NotificacoesGlobaisProps {
   enabled?: boolean;
+  enablePush?: boolean;
 }
 
-export function NotificacoesGlobais({ enabled = true }: NotificacoesGlobaisProps) {
+export function NotificacoesGlobais({ enabled = true, enablePush = true }: NotificacoesGlobaisProps) {
   const { notificacoes, marcarComoLida } = useNotificacoes();
+  const { permission, isSupported, requestPermission, showNotification } = usePushNotifications();
   const notificadasRef = useRef<Set<string>>(new Set());
+  const pushNotificadasRef = useRef<Set<string>>(new Set());
 
-  // Mostrar toast para novas notificações não lidas
+  // Solicitar permissão de push notification ao montar
+  useEffect(() => {
+    if (enablePush && isSupported && permission === 'default') {
+      requestPermission();
+    }
+  }, [enablePush, isSupported, permission, requestPermission]);
+
+  // Mostrar toast e push notification para novas notificações não lidas
   useEffect(() => {
     if (!enabled) return;
     
@@ -28,7 +39,19 @@ export function NotificacoesGlobais({ enabled = true }: NotificacoesGlobaisProps
     notificacoesRecentes.forEach(notif => {
       notificadasRef.current.add(notif.id);
       
-      const icone = getIcone(notif.tipo);
+      // Push notification nativa (se habilitado e permitido)
+      if (enablePush && permission === 'granted' && !pushNotificadasRef.current.has(notif.id)) {
+        pushNotificadasRef.current.add(notif.id);
+        showNotification(notif.titulo, {
+          body: notif.mensagem,
+          icon: '/icon-192.png',
+          badge: '/icon-72.png',
+          tag: notif.id,
+          data: { notificationId: notif.id, tipo: notif.tipo }
+        });
+      }
+      
+      // Toast notification (sempre)
       const tipo = getTipoToast(notif.severidade);
       
       if (tipo === 'error') {
@@ -65,29 +88,9 @@ export function NotificacoesGlobais({ enabled = true }: NotificacoesGlobaisProps
         });
       }
     });
-  }, [notificacoes, enabled, marcarComoLida]);
+  }, [notificacoes, enabled, enablePush, permission, marcarComoLida, showNotification]);
 
-  return null; // Componente invisível - apenas gerencia toasts
-}
-
-function getIcone(tipo: string) {
-  switch (tipo) {
-    case 'estoque_baixo':
-      return <Package className="h-4 w-4 text-orange-500" />;
-    case 'triagem_pendente':
-      return <ClipboardCheck className="h-4 w-4 text-blue-500" />;
-    case 'recebimento_divergencia':
-      return <AlertTriangle className="h-4 w-4 text-red-500" />;
-    case 'recebimento_chegou':
-      return <Package className="h-4 w-4 text-green-500" />;
-    case 'success':
-      return <CheckCircle className="h-4 w-4 text-green-500" />;
-    case 'warning':
-    case 'alerta':
-      return <AlertTriangle className="h-4 w-4 text-amber-500" />;
-    default:
-      return <Bell className="h-4 w-4 text-blue-500" />;
-  }
+  return null; // Componente invisível - apenas gerencia toasts e push
 }
 
 function getTipoToast(severidade?: 'info' | 'warning' | 'critical'): 'info' | 'warning' | 'error' | 'success' {
