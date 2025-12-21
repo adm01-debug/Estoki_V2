@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { useNavigate } from "react-router-dom";
 import { 
   QrCode, 
@@ -27,6 +28,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { useMovimentacoes, type TipoMovimentacao } from "@/hooks/useMovimentacoes";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -80,6 +82,7 @@ export default function MovimentacaoPage() {
     error, 
     registrarMovimentacao 
   } = useMovimentacoes();
+  const { logAction } = useAuditLog();
   
   const [activeTab, setActiveTab] = useState("registrar");
   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");
@@ -149,6 +152,13 @@ export default function MovimentacaoPage() {
       });
       
       if (success) {
+        // Log de auditoria
+        logAction.mutate({
+          action: "create",
+          entity_type: "movimentacao",
+          entity_label: tipoMovimento,
+          new_values: { tipo: tipoMovimento, quantidade: formData.quantidade, localizacao: formData.localizacao, descricao: formData.descricao }
+        });
         setFormData({ localizacao: "", quantidade: 1, descricao: "" });
         setActiveTab("historico");
       }
@@ -360,3 +370,4 @@ export default function MovimentacaoPage() {
     </AppLayout>
   );
 }
+
