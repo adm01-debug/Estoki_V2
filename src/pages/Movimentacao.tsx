@@ -28,7 +28,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { useAuditLog } from "@/hooks/useAuditLog";
 import { useMovimentacoes, type TipoMovimentacao } from "@/hooks/useMovimentacoes";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
