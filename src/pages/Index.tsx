@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { useCallback, useRef } from "react";
+import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { motion } from "framer-motion";
 import { 
   Package, 
@@ -69,6 +71,14 @@ export default function Dashboard() {
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
 
   // Enable realtime updates
+  // Pull to refresh
+  const containerRef = useRef<HTMLDivElement>(null);
+  const handleRefresh = useCallback(async () => {
+    // Força reload leve - o realtime já cuida do resto
+    window.location.reload();
+  }, []);
+  const { bind, isRefreshing, pullDistance, pullThreshold } = usePullToRefresh(handleRefresh);
+
   const realtimeStatus = useRealtimeKPIs({
     showToasts: false,
   });
@@ -407,3 +417,4 @@ export default function Dashboard() {
     </AppLayout>
   );
 }
+
