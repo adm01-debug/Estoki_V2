@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+import { usePullToRefresh } from "@/hooks/useTouchGestures";
+import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Search, QrCode, Calculator, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2, ChevronLeft } from "lucide-react";
@@ -29,13 +31,25 @@ type SortOrder = "data" | "resultado";
 export default function TriagemPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { triagens, loading, error, iniciarTriagem } = useTriagens();
+  const { triagens, loading, error, iniciarTriagem, refetch } = useTriagens();
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
   const [sortOrder, setSortOrder] = useState<SortOrder>("data");
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [showAmostragem, setShowAmostragem] = useState(false);
+
+  // Pull-to-refresh para mobile
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { bind: bindPullRefresh, isRefreshing, pullDistance, pullThreshold } = usePullToRefresh(async () => {
+    await refetch();
+  });
+
+  useEffect(() => {
+    if (containerRef.current) {
+      bindPullRefresh(containerRef.current);
+    }
+  }, [bindPullRefresh]);
 
   const getStatus = (triagem: { resultado?: string; data_fim?: string }): StatusTriagem => {
     if (!triagem.data_fim) return 'em_andamento';
@@ -181,7 +195,13 @@ export default function TriagemPage() {
         </div>
       }
     >
-      <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+      <div ref={containerRef} className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+        {/* Pull-to-refresh indicator */}
+        <PullToRefreshIndicator 
+          pullDistance={pullDistance} 
+          threshold={pullThreshold} 
+          isRefreshing={isRefreshing} 
+        />
         {/* Calculadora de Amostragem */}
         {showAmostragem && (
           <AmostragemAutomatica
