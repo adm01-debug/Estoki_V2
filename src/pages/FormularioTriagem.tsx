@@ -12,6 +12,7 @@ import { useTriagens } from "@/hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos } from "@/hooks/useTriagemFotos";
 import { TriagemTimer } from "@/components/triagem/TriagemTimer";
+import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
 import { 
   Package, 
@@ -263,6 +264,17 @@ export default function FormularioTriagem() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Histórico de Defeitos do Produto */}
+        {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
+          <DefeitoHistorico
+            sku={triagem.produto_sku}
+            produto={triagem.produto_nome || "Produto"}
+            historico={mockHistoricoDefeitos[triagem.produto_sku].historico}
+            totalTriagens={mockHistoricoDefeitos[triagem.produto_sku].totalTriagens}
+          />
+        )}
+
 
         {/* Fotos obrigatórias */}
         <Card>
