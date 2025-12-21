@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { 
+import { Printer, useState, useMemo } from "react";
+import { Printer, GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
+import { Printer, useNavigate } from "react-router-dom";
+import { Printer, motion, AnimatePresence } from "framer-motion";
+import { Printer, 
   QrCode, 
   Warehouse, 
   Package, 
@@ -27,25 +28,25 @@ import {
   Unlock,
   CheckSquare
 } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { PageTransition } from "@/components/layout/PageTransition";
-import { ProgressRing } from "@/components/dashboard/ProgressRing";
-import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
-import { useBulkActions } from "@/hooks/useBulkActions";
-import { toast } from "sonner";
-import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
-import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
-import { differenceInDays } from "date-fns";
+import { Printer, AppLayout } from "@/components/layout/AppLayout";
+import { Printer, Button } from "@/components/ui/button";
+import { Printer, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Printer, Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Printer, Badge } from "@/components/ui/badge";
+import { Printer, Input } from "@/components/ui/input";
+import { Printer, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Printer, Checkbox } from "@/components/ui/checkbox";
+import { Printer, Label } from "@/components/ui/label";
+import { Printer, Skeleton } from "@/components/ui/skeleton";
+import { Printer, cn } from "@/lib/utils";
+import { Printer, PageTransition } from "@/components/layout/PageTransition";
+import { Printer, ProgressRing } from "@/components/dashboard/ProgressRing";
+import { Printer, useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
+import { Printer, useBulkActions } from "@/hooks/useBulkActions";
+import { Printer, toast } from "sonner";
+import { Printer, NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
+import { Printer, PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
+import { Printer, differenceInDays } from "date-fns";
 
 const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
   livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre", icon: "⬜" },
@@ -109,6 +110,16 @@ export default function EstoquePage() {
   const [selectedPosition, setSelectedPosition] = useState<PosicaoEstoque | null>(null);
   const [zoom, setZoom] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
+  const [showEtiquetas, setShowEtiquetas] = useState(false);
+  const etiquetaData = selectedPosicao ? {
+    pedido: selectedPosicao.codigo || "N/A",
+    produto: "Posição de Estoque",
+    lote: selectedPosicao.id || "",
+    fornecedor: "ESTOKI",
+    totalVolumes: 1,
+    qtdPorVolume: 1,
+    dataRecebimento: new Date()
+  } : null;
 
   // Extract unique ruas and niveis from real data
   const { ruas, niveis } = useMemo(() => {
@@ -779,5 +790,6 @@ export default function EstoquePage() {
     </AppLayout>
   );
 }
+
 
 
