@@ -1,37 +1,69 @@
-# Security Policy
+# 🔒 Política de Segurança - ESTOKI
 
-## Supported Versions
+## Versões Suportadas
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.x.x   | :white_check_mark: |
+| Versão | Suportada |
+|--------|-----------|
+| 1.0.x  | ✅        |
 
-## Reporting a Vulnerability
+## Reportando Vulnerabilidades
 
-If you discover a security vulnerability, please:
+Se você descobrir uma vulnerabilidade de segurança:
 
-1. **DO NOT** create a public GitHub issue
-2. Email: security@promobrindes.com.br
-3. Include details about the vulnerability
-4. Wait for acknowledgment before disclosure
+1. **NÃO** abra uma issue pública
+2. Envie email para: security@estoki.com
+3. Inclua:
+   - Descrição detalhada
+   - Passos para reproduzir
+   - Impacto potencial
+   - Sugestão de correção (se tiver)
 
-### Response Timeline
+## Práticas de Segurança
 
-- Initial response: 48 hours
-- Fix timeline: Based on severity
+### Credenciais
+- ✅ Variáveis de ambiente para secrets
+- ✅ .env no .gitignore
+- ✅ Rotação periódica de chaves
+- ❌ NUNCA commitar credenciais
 
-### Severity Levels
+### Autenticação
+- JWT com expiração
+- Refresh tokens seguros
+- Rate limiting ativo
+- Bloqueio após tentativas falhas
 
-- **Critical**: Immediate patch
-- **High**: 7 days
-- **Medium**: 30 days
-- **Low**: Next release
+### Banco de Dados
+- RLS (Row Level Security) em todas as tabelas
+- Políticas por usuário/role
+- Conexões criptografadas (SSL)
 
-## Security Best Practices
+### Frontend
+- Sanitização de inputs
+- CSP headers configurados
+- HTTPS obrigatório
 
-- All data encrypted in transit (HTTPS)
-- Row Level Security (RLS) on all tables
-- JWT authentication via Supabase
-- Regular dependency updates
+### CI/CD
+- Secrets do GitHub Actions
+- Scans de segurança automáticos
+- Dependabot habilitado
 
-Thank you for helping keep ESTOKI secure!
+## Checklist de Segurança
+
+- [ ] Credenciais não expostas no código
+- [ ] RLS ativo em novas tabelas
+- [ ] Inputs validados e sanitizados
+- [ ] Dependências atualizadas
+- [ ] Logs não expõem dados sensíveis
+
+## Incidentes
+
+Em caso de incidente:
+1. Isolar o problema
+2. Revogar credenciais comprometidas
+3. Investigar a causa
+4. Corrigir a vulnerabilidade
+5. Documentar o incidente
+6. Comunicar stakeholders
+
+---
+*Última atualização: Dezembro 2025*
