@@ -88,7 +88,25 @@ export function useDashboard() {
       const ocupacaoPorPP = grupos.map(pp => {
         const doPP = portaPaletes.filter(p => p.porta_palete === pp);
         const ocupadas = doPP.filter(p => p.status === 'ocupado').length;
-        return {
+        
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return {
           nome: pp as string,
           ocupado: ocupadas,
           total: doPP.length,
@@ -197,7 +215,25 @@ export function useDashboard() {
           (Date.now() - new Date(lote.created_at).getTime()) / (1000 * 60 * 60 * 24)
         );
         const produto = produtosMap.get(lote.produto_id);
-        return {
+        
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return {
           id: lote.id,
           sku: produto?.sku || lote.numero_lote || 'N/A',
           descricao: produto?.nome || 'Produto',
@@ -240,6 +276,24 @@ export function useDashboard() {
 
     return () => clearInterval(interval);
   }, [fetchDashboardData]);
+
+  
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel('dashboard-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
+        refetch();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
+        refetch();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return {
     kpis,
