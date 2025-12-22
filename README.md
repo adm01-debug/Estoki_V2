@@ -1,174 +1,90 @@
 # 📦 ESTOKI - Sistema de Gestão de Estoque
 
-Sistema completo de gestão de estoque para operações de recebimento, triagem, armazenamento e expedição, com gamificação para engajamento da equipe.
+[![CI](https://github.com/adm01-debug/estoki/actions/workflows/ci.yml/badge.svg)](https://github.com/adm01-debug/estoki/actions/workflows/ci.yml)
+[![Deploy](https://github.com/adm01-debug/estoki/actions/workflows/deploy.yml/badge.svg)](https://github.com/adm01-debug/estoki/actions/workflows/deploy.yml)
 
-## 🚀 Funcionalidades
+Sistema WMS (Warehouse Management System) completo para gestão de estoque e operações logísticas.
 
-### Operações
-- **Recebimento**: Conferência de materiais, registro de divergências, fotos de evidência
-- **Triagem**: Checklist de qualidade (7 critérios), registro de defeitos, amostragem
-- **Armazenamento**: Endereçamento por porta-paletes e boxes, QR Codes
-- **Movimentação**: Transferências, ajustes, rastreabilidade completa
-- **Scanner QR**: Leitura de etiquetas para operações rápidas
+## ✨ Funcionalidades
 
-### Gestão
-- **Dashboard**: KPIs em tempo real, ocupação, movimentações
-- **Produtividade**: Métricas por operador, ranking, metas
-- **Relatórios**: Movimentações, inventário, qualidade
-- **Alertas Inteligentes**: Estoque baixo, vencimento, itens parados
+- 📊 **Dashboard** - Visão geral em tempo real
+- 📦 **Gestão de Estoque** - Posições, lotes, movimentações
+- 🔍 **Triagem** - Conferência com fotos obrigatórias
+- 📥 **Recebimento** - Import de NF-e XML
+- 🎮 **Gamificação** - XP, conquistas, desafios diários
+- 📱 **PWA** - Funciona offline no celular
+- 📊 **KPIs** - Métricas operacionais
+- 🔔 **Notificações** - Push e tempo real
 
-### Qualidade
-- **Inventário Cíclico**: Contagens programadas, divergências
-- **Curva ABC**: Classificação de produtos por valor/giro
-- **Qualidade Fornecedores**: Pontualidade, taxa de problemas
-- **Trocas e Devoluções**: Workflow completo de tratativas
-
-### Gamificação
-- **XP e Níveis**: Pontuação por ações realizadas
-- **Conquistas**: Badges por metas atingidas
-- **Desafios Diários**: Metas rotativas com recompensas
-- **Streaks**: Bônus por dias consecutivos
-- **Ranking**: Leaderboard de produtividade
-
-## 🛠️ Stack Tecnológica
-
-- **Frontend**: React 18 + TypeScript + Vite
-- **UI/UX**: Tailwind CSS + Radix UI + shadcn/ui + Framer Motion
-- **Backend**: Supabase (PostgreSQL + Auth + RLS + Realtime)
-- **QR Code**: html5-qrcode
-- **PDF**: jsPDF
-- **Gráficos**: Recharts
-
-## 📋 Pré-requisitos
-
-- Node.js 18+
-- npm ou yarn
-- Conta Supabase
-
-## 🔧 Instalação
+## 🚀 Quick Start
 
 ```bash
-# Clonar repositório
+# Clonar
 git clone https://github.com/adm01-debug/estoki.git
 cd estoki
 
-# Instalar dependências
+# Instalar
 npm install
 
-# Configurar variáveis de ambiente
-cp .env.example .env
-# Editar .env com suas credenciais Supabase
+# Configurar
+cp .env.example .env.local
+# Editar .env.local com suas credenciais Supabase
 
-# Iniciar desenvolvimento
+# Rodar
 npm run dev
 ```
 
-## ⚙️ Variáveis de Ambiente
+## 📋 Scripts
 
-```env
-VITE_SUPABASE_PROJECT_ID=seu_project_id
-VITE_SUPABASE_URL=https://seu_projeto.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sua_anon_key
-```
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Desenvolvimento |
+| `npm run build` | Build produção |
+| `npm run test` | Testes unitários |
+| `npm run test:e2e` | Testes E2E |
+| `npm run lint` | Lint código |
 
-## 📁 Estrutura do Projeto
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: Tailwind CSS + shadcn/ui
+- **Backend**: Supabase (PostgreSQL + Auth + Realtime)
+- **Testes**: Vitest + Playwright
+- **CI/CD**: GitHub Actions + Vercel
+
+## 📁 Estrutura
 
 ```
 src/
-├── components/
-│   ├── auth/           # Autenticação
-│   ├── dashboard/      # Componentes do dashboard
-│   ├── gamificacao/    # Sistema de XP, conquistas
-│   ├── layout/         # Layout da aplicação
-│   ├── notifications/  # Centro de notificações
-│   ├── scanner/        # Leitor QR Code
-│   ├── triagem/        # Componentes de triagem
-│   └── ui/             # shadcn/ui components
-├── contexts/
-│   ├── AuthContext.tsx
-│   └── NotificationContext.tsx
-├── hooks/
-│   ├── useRecebimentos.ts
-│   ├── useTriagens.ts
-│   ├── useEstoque.ts
-│   ├── useMovimentacoes.ts
-│   ├── useDashboard.ts
-│   ├── useProdutividade.ts
-│   ├── useGamificacao.ts
-│   └── ...
-├── integrations/
-│   └── supabase/
-├── pages/
-│   ├── Dashboard.tsx
-│   ├── Recebimento.tsx
-│   ├── Triagem.tsx
-│   ├── Estoque.tsx
-│   └── ...
-└── types/
-    └── estoque.ts
+├── components/   # Componentes React
+├── hooks/        # Custom hooks
+├── pages/        # Páginas/rotas
+├── services/     # Serviços API
+├── contexts/     # React contexts
+├── lib/          # Utilitários
+└── types/        # TypeScript types
 ```
 
-## 🔐 Autenticação e Roles
+## 📚 Documentação
 
-O sistema possui 3 níveis de acesso:
+- [Guia de Desenvolvimento](docs/DEVELOPMENT.md)
+- [Guia do Administrador](docs/ADMIN_GUIDE.md)
+- [Integrações](docs/INTEGRATIONS.md)
+- [Schema do Banco](docs/DATABASE_SCHEMA.md)
+- [CI/CD Setup](docs/CI_CD_SETUP.md)
 
-| Role | Acesso |
-|------|--------|
-| **admin** | Todas as funcionalidades + configurações |
-| **supervisor** | Dashboard, relatórios, gestão + operações |
-| **operador** | Operações: recebimento, triagem, estoque |
+## 🤝 Contribuindo
 
-## 📊 Modelo de Dados
+1. Fork o projeto
+2. Crie sua branch (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'feat: add amazing feature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-### Tabelas Principais
+## 📄 Licença
 
-- `profiles` - Perfis de usuários
-- `user_roles` - Roles (operador, supervisor, admin)
-- `recebimentos` - Registro de recebimentos
-- `triagens` - Fila e histórico de triagem
-- `posicoes_estoque` - Posições físicas (PP, boxes)
-- `estoque_posicao` - Relação produto/posição
-- `rastreamento_historico` - Log de movimentações
-- `trocas_devolucoes` - Workflow de trocas
-- `inventario_ciclos` - Inventários programados
-- `gamificacao_usuarios` - XP, nível, pontos
-- `conquistas_usuarios` - Badges desbloqueadas
-- `alertas_historico` - Alertas do sistema
-
-## 🎮 Sistema de Gamificação
-
-### Eventos que geram XP
-
-| Ação | XP Base | Bônus |
-|------|---------|-------|
-| Triagem concluída | 15 | +10 (rápida), +5 (aprovado) |
-| Tarefa concluída | 20 | +15 (urgente), +10 (quantidade ok) |
-| Check-in diário | 5 | +5 (streak) |
-
-### Conquistas
-
-- Primeiro Passo (1ª triagem)
-- Velocista (triagem < 2min)
-- Maratonista (10 triagens/dia)
-- Perfeccionista (100% aprovação)
-- Série de 7 dias
-
-## 🚢 Deploy
-
-```bash
-# Build para produção
-npm run build
-
-# Preview local
-npm run preview
-```
-
-## 📝 Licença
-
-Projeto desenvolvido para **Promo Brindes**.
+MIT License - veja [LICENSE](LICENSE)
 
 ---
 
-## 🤝 Suporte
-
-Para dúvidas ou suporte, entre em contato com a equipe de desenvolvimento.
+Desenvolvido com ❤️ para Promo Brindes
