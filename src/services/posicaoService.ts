@@ -1,39 +1,132 @@
-// @ts-nocheck
-import { supabase } from "@/integrations/supabase/client";
-import { Posicao, PosicaoFilter, PosicaoStats } from "@/types/posicao";
+import { supabase } from '@/integrations/supabase/client';
+
+export interface Posicao {
+  id: string;
+  codigo: string;
+  tipo: string;
+  corredor?: string;
+  prateleira?: string;
+  nivel?: string;
+  status: 'disponivel' | 'ocupada' | 'reservada' | 'bloqueada';
+  capacidade_max?: number;
+  ocupacao_atual?: number;
+  produto_id?: string;
+  lote_id?: string;
+  created_at?: string;
+  updated_at?: string;
+}
 
 export const posicaoService = {
-  async getAll(filter?: PosicaoFilter): Promise<Posicao[]> {
-    let query = supabase.from("posicoes").select("*");
-    if (filter?.corredor) query = query.eq("corredor", filter.corredor);
-    if (filter?.tipo) query = query.eq("tipo", filter.tipo);
-    if (filter?.status) query = query.eq("status", filter.status);
-    if (filter?.search) query = query.ilike("codigo", `%${filter.search}%`);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data as Posicao[];
+  // Buscar todas as posições
+  async getAll(): Promise<Posicao[]> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select('*')
+      .order('codigo');
+
+    if (error) {
+      console.error('Erro ao buscar posições:', error);
+      return [];
+    }
+
+    return data || [];
   },
 
+  // Buscar posição por ID
   async getById(id: string): Promise<Posicao | null> {
-    const { data, error } = await supabase.from("posicoes").select("*").eq("id", id).single();
-    if (error) throw error;
-    return data as Posicao;
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      console.error('Erro ao buscar posição:', error);
+      return null;
+    }
+
+    return data;
   },
 
-  async getStats(): Promise<PosicaoStats> {
-    const { data, error } = await supabase.from("posicoes").select("status");
-    if (error) throw error;
-    const total = data.length;
-    const ocupadas = data.filter(p => p.status === "ocupada").length;
-    const livres = data.filter(p => p.status === "livre").length;
-    const reservadas = data.filter(p => p.status === "reservada").length;
-    const bloqueadas = data.filter(p => p.status === "bloqueada").length;
-    return { total, ocupadas, livres, reservadas, bloqueadas, ocupacaoPercentual: (ocupadas / total) * 100 };
+  // Buscar posição por código
+  async getByCodigo(codigo: string): Promise<Posicao | null> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select('*')
+      .eq('codigo', codigo)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Erro ao buscar posição:', error);
+      return null;
+    }
+
+    return data;
   },
 
-  async update(id: string, data: Partial<Posicao>): Promise<Posicao> {
-    const { data: result, error } = await supabase.from("posicoes").update(data).eq("id", id).select().single();
-    if (error) throw error;
-    return result as Posicao;
+  // Criar nova posição
+  async create(posicao: Omit<Posicao, 'id' | 'created_at' | 'updated_at'>): Promise<Posicao | null> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .insert(posicao)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Erro ao criar posição:', error);
+      return null;
+    }
+
+    return data;
+  },
+
+  // Atualizar posição
+  async update(id: string, updates: Partial<Posicao>): Promise<boolean> {
+    const { error } = await supabase
+      .from('posicoes_estoque')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Erro ao atualizar posição:', error);
+      return false;
+    }
+
+    return true;
+  },
+
+  // Buscar posições disponíveis
+  async getDisponiveis(): Promise<Posicao[]> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select('*')
+      .eq('status', 'disponivel')
+      .order('codigo');
+
+    if (error) {
+      console.error('Erro ao buscar posições disponíveis:', error);
+      return [];
+    }
+
+    return data || [];
+  },
+
+  // Ocupar posição
+  async ocupar(id: string, loteId: string, produtoId?: string): Promise<boolean> {
+    return this.update(id, {
+      status: 'ocupada',
+      lote_id: loteId,
+      produto_id: produtoId,
+    });
+  },
+
+  // Liberar posição
+  async liberar(id: string): Promise<boolean> {
+    return this.update(id, {
+      status: 'disponivel',
+      lote_id: undefined,
+      produto_id: undefined,
+      ocupacao_atual: 0,
+    });
   },
 };
