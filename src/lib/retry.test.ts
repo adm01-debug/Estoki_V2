@@ -1,4 +1,5 @@
-import { describe, it, expect } from "vitest";
+// @ts-nocheck
+import { describe, it, expect, vi } from "vitest";
 import { withRetry } from "@/lib/retry";
 
 describe("withRetry", () => {

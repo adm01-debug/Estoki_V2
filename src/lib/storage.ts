@@ -6,7 +6,7 @@ export async function uploadFile(bucket: string, path: string, file: File): Prom
   return data.path;
 }
 
-export async function getPublicUrl(bucket: string, path: string): string {
+export async function getPublicUrl(bucket: string, path: string): Promise<string> {
   const { data } = supabase.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
 }

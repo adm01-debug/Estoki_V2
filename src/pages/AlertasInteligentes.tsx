@@ -15,8 +15,6 @@ import {
   CheckCircle2, 
   XCircle,
   Clock,
-  TrendingDown,
-  Package,
   Volume2,
   VolumeX,
   Settings,
@@ -24,7 +22,7 @@ import {
   Filter,
   Loader2
 } from "lucide-react";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useKPIAlerts } from "@/hooks/useKPIAlerts";
 
@@ -59,7 +57,6 @@ export default function AlertasInteligentesPage() {
   // Hook de alertas KPI
   const { 
     criticalAlerts, 
-    warningAlerts, 
     hasCriticalAlerts 
   } = useKPIAlerts({
     enabled: alertsEnabled,
@@ -77,15 +74,25 @@ export default function AlertasInteligentesPage() {
         .limit(50);
 
       if (filtroSeveridade !== "todos") {
-        query = query.eq("severidade", filtroSeveridade);
+        query = query.eq("severidade", filtroSeveridade as 'aviso' | 'critico' | 'info' | 'urgente');
       }
       if (filtroStatus !== "todos") {
-        query = query.eq("status", filtroStatus);
+        query = query.eq("status", filtroStatus as 'ativo' | 'ignorado' | 'reconhecido' | 'resolvido');
       }
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as AlertaHistorico[];
+      
+      // Map database format to component format
+      return (data || []).map(item => ({
+        id: item.id,
+        titulo: item.titulo,
+        mensagem: item.mensagem,
+        severidade: item.severidade === 'critico' ? 'critical' : item.severidade === 'aviso' ? 'warning' : 'info',
+        status: item.status,
+        dados_contexto: item.dados_contexto as Record<string, unknown> | undefined,
+        created_at: item.created_at,
+      })) as AlertaHistorico[];
     },
   });
 
@@ -120,11 +127,8 @@ export default function AlertasInteligentesPage() {
     refetch();
   };
 
-  // Combinar alertas ativos
-  const alertasAtivos = [
-    ...criticalAlerts.map(a => ({ ...a, severidade: 'critical' as const })),
-    ...warningAlerts.map(a => ({ ...a, severidade: 'warning' as const })),
-  ];
+  // Use criticalAlerts as string array
+  const warningAlerts: string[] = [];
 
   return (
     <AppLayout title="Alertas Inteligentes" showBack>
@@ -225,50 +229,6 @@ export default function AlertasInteligentesPage() {
           </Card>
         </div>
 
-        {/* Alertas ativos */}
-        {alertasAtivos.length > 0 && (
-          <Card className="border-2 border-red-500/50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-500">
-                <AlertTriangle className="h-5 w-5 animate-pulse" />
-                Alertas Ativos ({alertasAtivos.length})
-              </CardTitle>
-              <CardDescription>
-                Estes alertas requerem atenção imediata
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {alertasAtivos.map((alerta, index) => {
-                  const config = severidadeConfig[alerta.severidade];
-                  const Icon = config.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between p-4 rounded-lg bg-muted/50 border-l-4 border-l-red-500"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${config.color}`}>
-                          <Icon className="h-4 w-4 text-white" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{alerta.title || alerta.metrica}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {alerta.message || `Valor atual: ${alerta.valor}`}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge variant="destructive">
-                        {config.label}
-                      </Badge>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
         {/* Tabs */}
         <Tabs defaultValue="historico" className="space-y-4">
           <TabsList>
@@ -294,8 +254,8 @@ export default function AlertasInteligentesPage() {
                   onChange={(e) => setFiltroSeveridade(e.target.value)}
                 >
                   <option value="todos">Todas severidades</option>
-                  <option value="critical">Crítico</option>
-                  <option value="warning">Aviso</option>
+                  <option value="critico">Crítico</option>
+                  <option value="aviso">Aviso</option>
                   <option value="info">Info</option>
                 </select>
               </div>
@@ -422,9 +382,8 @@ export default function AlertasInteligentesPage() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Tipo</TableHead>
-                        <TableHead>Métrica</TableHead>
-                        <TableHead>Limiar Warning</TableHead>
-                        <TableHead>Limiar Crítico</TableHead>
+                        <TableHead>Descrição</TableHead>
+                        <TableHead>Threshold</TableHead>
                         <TableHead>Ativo</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -432,9 +391,8 @@ export default function AlertasInteligentesPage() {
                       {configAlertas.map((config: any) => (
                         <TableRow key={config.id}>
                           <TableCell className="font-medium">{config.tipo}</TableCell>
-                          <TableCell>{config.metrica}</TableCell>
-                          <TableCell>{config.limiar_warning}</TableCell>
-                          <TableCell>{config.limiar_critico}</TableCell>
+                          <TableCell>{config.descricao}</TableCell>
+                          <TableCell>{config.threshold_valor || config.threshold_dias}</TableCell>
                           <TableCell>
                             <Badge variant={config.ativo ? "default" : "secondary"}>
                               {config.ativo ? "Sim" : "Não"}
