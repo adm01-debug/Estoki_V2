@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -20,6 +21,7 @@ interface XpHistorico {
 }
 
 export function useGamificacao() {
+  const { toast } = useToast();
   const { user } = useAuth();
   const [dados, setDados] = useState<GamificacaoUsuario | null>(null);
   const [historico, setHistorico] = useState<XpHistorico[]>([]);
