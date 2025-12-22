@@ -3,55 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WMS - Offline</title>
+  <title>ESTOKI - Offline</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      color: #fff;
+      color: white;
+      padding: 20px;
     }
     .container {
       text-align: center;
-      padding: 2rem;
+      max-width: 400px;
     }
     .icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
     h1 {
-      font-size: 1.5rem;
-      margin-bottom: 0.5rem;
+      font-size: 28px;
+      margin-bottom: 16px;
+      font-weight: 600;
     }
     p {
-      color: #a0aec0;
-      margin-bottom: 1.5rem;
+      font-size: 16px;
+      opacity: 0.9;
+      margin-bottom: 24px;
+      line-height: 1.5;
     }
-    button {
-      background: #3182ce;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s;
+    .btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: white;
+      color: #1e3a8a;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    button:hover {
-      background: #2c5282;
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .status {
+      margin-top: 32px;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="icon">📡</div>
+    <div class="icon">📦</div>
     <h1>Você está offline</h1>
-    <p>Verifique sua conexão com a internet e tente novamente.</p>
-    <button onclick="window.location.reload()">Tentar novamente</button>
+    <p>Não foi possível conectar ao ESTOKI. Verifique sua conexão com a internet e tente novamente.</p>
+    <a href="/" class="btn" onclick="window.location.reload()">Tentar Novamente</a>
+    <div class="status">
+      <strong>ESTOKI</strong> - Sistema de Gestão de Estoque
+    </div>
   </div>
+  <script>
+    window.addEventListener('online', () => window.location.reload());
+  </script>
 </body>
 </html>
