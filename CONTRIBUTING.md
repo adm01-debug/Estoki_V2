@@ -1,91 +1,92 @@
-# Contribuindo para ESTOKI
+# 🤝 Contribuindo para o ESTOKI
 
-Obrigado por considerar contribuir para o ESTOKI! Este documento fornece diretrizes e informações sobre como contribuir.
+Obrigado por considerar contribuir!
 
-## 🚀 Como Começar
+## Como Contribuir
 
-1. **Fork o repositório**
-2. **Clone seu fork:**
-   ```bash
-   git clone https://github.com/seu-usuario/estoki.git
-   cd estoki
-   ```
-3. **Instale as dependências:**
-   ```bash
-   npm install
-   ```
-4. **Crie uma branch para sua feature:**
-   ```bash
-   git checkout -b feature/minha-feature
-   ```
-
-## 📁 Estrutura do Projeto
-
-```
-src/
-├── components/     # Componentes React reutilizáveis
-├── contexts/       # Context providers
-├── hooks/          # Custom hooks
-├── integrations/   # Integrações externas (Supabase)
-├── lib/           # Utilitários e helpers
-├── pages/         # Páginas da aplicação
-└── types/         # TypeScript types
+### 1. Fork e Clone
+```bash
+git clone https://github.com/SEU_USER/estoki.git
+cd estoki
+npm install
 ```
 
-## 🎯 Padrões de Código
+### 2. Crie uma Branch
+```bash
+git checkout -b feature/minha-feature
+# ou
+git checkout -b fix/meu-fix
+```
 
-### Commits
-Usamos [Conventional Commits](https://www.conventionalcommits.org/):
+### 3. Faça suas Alterações
+- Siga os padrões de código
+- Adicione testes para novas features
+- Atualize a documentação se necessário
 
-- `feat:` Nova funcionalidade
-- `fix:` Correção de bug
-- `docs:` Documentação
-- `style:` Formatação
-- `refactor:` Refatoração de código
-- `test:` Testes
-- `chore:` Manutenção
+### 4. Commit
+Usamos Conventional Commits:
+```bash
+git commit -m "feat: adiciona nova funcionalidade"
+git commit -m "fix: corrige bug no dashboard"
+git commit -m "docs: atualiza README"
+```
 
-Exemplo: `feat(triagem): adicionar timer automático`
+Tipos aceitos:
+- `feat`: Nova funcionalidade
+- `fix`: Correção de bug
+- `docs`: Documentação
+- `style`: Formatação
+- `refactor`: Refatoração
+- `test`: Testes
+- `chore`: Manutenção
+
+### 5. Push e PR
+```bash
+git push origin feature/minha-feature
+```
+Abra um Pull Request no GitHub.
+
+## Padrões de Código
 
 ### TypeScript
-- Use tipos explícitos
-- Evite `any`
-- Crie interfaces para props de componentes
+- Tipar todas as props e funções
+- Evitar `any`
+- Usar interfaces para objetos complexos
 
-### Componentes
-- Um componente por arquivo
-- Use function components com hooks
-- Extraia lógica complexa para custom hooks
+### React
+- Componentes funcionais
+- Custom hooks para lógica reutilizável
+- Props destruturation
 
-### Testes
-- Crie testes para hooks críticos
-- Use Vitest e Testing Library
-- Mantenha cobertura acima de 70%
+### CSS
+- Tailwind CSS
+- Classes utilitárias
+- Evitar CSS customizado
 
-## 🔄 Fluxo de Trabalho
+## Testes
 
-1. Crie uma branch da `main`
-2. Faça suas alterações
-3. Execute linting: `npm run lint`
-4. Execute testes: `npm test`
-5. Faça commit das alterações
-6. Abra um Pull Request
+```bash
+# Unitários
+npm run test
 
-## 🐛 Reportando Bugs
+# E2E
+npm run test:e2e
 
-Abra uma issue com:
-- Descrição clara do problema
-- Passos para reproduzir
-- Comportamento esperado vs atual
-- Screenshots (se aplicável)
+# Coverage
+npm run test:coverage
+```
 
-## ✨ Sugerindo Features
+## Code Review
 
-Abra uma issue com:
-- Descrição da feature
-- Caso de uso
-- Benefícios esperados
+Todo PR passa por:
+1. Lint automático
+2. Testes automatizados
+3. Review de código
+4. Aprovação de maintainer
 
-## 📝 Licença
+## Dúvidas?
 
-Ao contribuir, você concorda que suas contribuições serão licenciadas sob a mesma licença do projeto.
+Abra uma issue com a label `question`.
+
+---
+*Bem-vindo à comunidade ESTOKI!*
