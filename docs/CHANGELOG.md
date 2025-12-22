@@ -1,39 +1,64 @@
-# Changelog
+# 📝 Changelog - ESTOKI
 
-All notable changes to this project will be documented in this file.
+## [1.0.0] - 2025-12-22
 
-## [Unreleased]
+### ✨ Novas Funcionalidades
+- Sistema completo de gestão de estoque
+- Gamificação com XP, conquistas e desafios
+- Scanner de código de barras e QR Code
+- Triagem com fotos obrigatórias
+- Dashboard operacional em tempo real
+- KPIs e métricas automatizadas
+- Sistema de notificações push
+- PWA com suporte offline
+- Integração Supabase completa
+- Edge Functions para processamento
 
-### Added
-- Comprehensive documentation
-- E2E tests with Playwright
-- Unit tests for hooks
-- Utility hooks library
-- Form components
-- Accessibility features
-- Performance optimizations
+### 🔧 Melhorias Técnicas
+- 33 tabelas no banco de dados
+- 28 páginas implementadas
+- 60+ hooks customizados
+- 150+ componentes React
+- Testes E2E com Playwright
+- Testes unitários com Vitest
+- CI/CD com GitHub Actions
+- Documentação completa
 
-### Changed
-- Improved project structure
-- Better TypeScript types
+### 🐛 Correções
+- Services corrigidos para tabelas corretas
+- CORS adicionado às Edge Functions
+- Componentes duplicados removidos
+- Placeholders limpos
+- .gitignore atualizado
 
-### Fixed
-- Security: removed .env from repository
+### 🔒 Segurança
+- .env removido do repositório
+- RLS ativo em todas as tabelas
+- Autenticação JWT
+- Rate limiting implementado
 
-## [1.0.0] - 2025-01-01
-
-### Added
-- Initial release
-- Dashboard with KPIs
-- Stock management
-- Quality triagem
-- Receiving module
-- Movement tracking
-- Reports
-- Gamification system
-- PWA support
+### 📚 Documentação
+- ADMIN_GUIDE completo
+- DEVELOPMENT guide
+- INTEGRATIONS documentação
+- DATABASE_SCHEMA atualizado
+- API_ENDPOINTS detalhado
 
 ---
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## Próximas Versões
+
+### [1.1.0] - Planejado
+- [ ] Lazy loading nas rotas
+- [ ] Storybook para componentes
+- [ ] Bundle analyzer
+- [ ] Otimização de imagens
+
+### [1.2.0] - Futuro
+- [ ] Integração ERP
+- [ ] App mobile nativo
+- [ ] BI avançado
+- [ ] Machine Learning
+
+---
+*Mantido por equipe ESTOKI*
