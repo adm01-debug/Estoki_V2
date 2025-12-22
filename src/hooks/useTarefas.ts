@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -66,6 +67,7 @@ interface UseTarefasReturn {
 
 export function useTarefas(): UseTarefasReturn {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
