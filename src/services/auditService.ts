@@ -1,27 +1,88 @@
-// @ts-nocheck
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
+
+export interface AuditLogEntry {
+  id?: string;
+  user_id: string;
+  action: string;
+  entity_type: string;
+  entity_id: string;
+  old_values?: Record<string, unknown>;
+  new_values?: Record<string, unknown>;
+  ip_address?: string;
+  user_agent?: string;
+  created_at?: string;
+}
 
 export const auditService = {
-  async getAll(filters?: { table_name?: string; record_id?: string; user_id?: string; limit?: number }) {
-    let query = supabase.from("audit_log").select("*").order("created_at", { ascending: false });
-    if (filters?.table_name) query = query.eq("table_name", filters.table_name);
-    if (filters?.record_id) query = query.eq("record_id", filters.record_id);
-    if (filters?.user_id) query = query.eq("user_id", filters.user_id);
-    if (filters?.limit) query = query.limit(filters.limit);
-    const { data, error } = await query;
-    if (error) throw error;
-    return data;
+  async log(entry: Omit<AuditLogEntry, 'id' | 'created_at'>): Promise<void> {
+    // Usar alertas_historico como tabela de audit temporária
+    // TODO: Criar tabela audit_log dedicada quando necessário
+    const { error } = await supabase
+      .from('alertas_historico')
+      .insert({
+        tipo: entry.action,
+        mensagem: `${entry.entity_type}:${entry.entity_id}`,
+        dados: {
+          user_id: entry.user_id,
+          old_values: entry.old_values,
+          new_values: entry.new_values,
+          ip_address: entry.ip_address,
+          user_agent: entry.user_agent,
+        },
+      });
+
+    if (error) {
+      console.error('Erro ao registrar audit log:', error);
+    }
   },
 
-  async getByRecord(tableName: string, recordId: string) {
-    const { data, error } = await supabase.from("audit_log").select("*").eq("table_name", tableName).eq("record_id", recordId).order("created_at", { ascending: false });
-    if (error) throw error;
-    return data;
+  async getByEntity(entityType: string, entityId: string): Promise<AuditLogEntry[]> {
+    const { data, error } = await supabase
+      .from('alertas_historico')
+      .select('*')
+      .ilike('mensagem', `${entityType}:${entityId}%`)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Erro ao buscar audit logs:', error);
+      return [];
+    }
+
+    return (data || []).map(item => ({
+      id: item.id,
+      user_id: item.dados?.user_id || '',
+      action: item.tipo,
+      entity_type: entityType,
+      entity_id: entityId,
+      old_values: item.dados?.old_values,
+      new_values: item.dados?.new_values,
+      created_at: item.created_at,
+    }));
   },
 
-  async getRecent(limit = 50) {
-    const { data, error } = await supabase.from("audit_log").select("*").order("created_at", { ascending: false }).limit(limit);
-    if (error) throw error;
-    return data;
+  async getByUser(userId: string, limit = 50): Promise<AuditLogEntry[]> {
+    const { data, error } = await supabase
+      .from('alertas_historico')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      console.error('Erro ao buscar audit logs do usuário:', error);
+      return [];
+    }
+
+    return (data || [])
+      .filter(item => item.dados?.user_id === userId)
+      .map(item => ({
+        id: item.id,
+        user_id: userId,
+        action: item.tipo,
+        entity_type: item.mensagem?.split(':')[0] || '',
+        entity_id: item.mensagem?.split(':')[1] || '',
+        old_values: item.dados?.old_values,
+        new_values: item.dados?.new_values,
+        created_at: item.created_at,
+      }));
   },
 };
