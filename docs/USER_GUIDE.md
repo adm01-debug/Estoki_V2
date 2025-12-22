@@ -1,97 +1,129 @@
-# Manual do Usuário - ESTOKI
+# 📖 Guia do Usuário - ESTOKI
 
 ## Bem-vindo ao ESTOKI!
 
-Sistema de gestão de estoque e warehouse para Promo Brindes.
+Este guia ajudará você a utilizar todas as funcionalidades do sistema.
 
-## Primeiros Passos
+## 🏠 Dashboard
 
-### 1. Login
-1. Acesse o sistema
-2. Digite seu email e senha
-3. Clique em "Entrar"
+A tela inicial mostra uma visão geral do estoque:
+- **Total de Posições**: Quantidade de locais de armazenamento
+- **Ocupação**: Percentual de posições ocupadas
+- **Triagens Pendentes**: Conferências a realizar
+- **Movimentações Hoje**: Entradas e saídas do dia
 
-### 2. Dashboard
-Após login, você verá:
-- Resumo de KPIs
-- Tarefas pendentes
-- Alertas importantes
+## 📦 Gestão de Estoque
 
-## Módulos Principais
+### Visualizar Posições
+1. Acesse **Estoque** no menu lateral
+2. Use os filtros para encontrar posições específicas
+3. Clique em uma posição para ver detalhes
 
-### 📦 Recebimento
-**Para registrar mercadoria recebida:**
-1. Menu > Recebimento
-2. "Novo Recebimento"
-3. Preencha NF e fornecedor
-4. Confira itens recebidos
-5. Finalize a conferência
+### Criar Nova Posição
+1. Clique no botão **+ Nova Posição**
+2. Preencha o código (ex: A-01-01)
+3. Selecione o tipo (pallet, prateleira, etc)
+4. Defina a capacidade máxima
+5. Salve
 
-### 🔍 Triagem
-**Para triar produtos:**
-1. Menu > Triagem
-2. Selecione lote para triar
-3. Preencha formulário de qualidade
-4. Fotografe amostras
-5. Aprove ou reprove
+## 🔍 Triagem
 
-### 📊 Estoque
-**Para consultar posições:**
-1. Menu > Estoque
-2. Use filtros de busca
-3. Veja ocupação por corredor
-4. Clique para detalhes
+### Realizar Triagem
+1. Acesse **Triagem** no menu
+2. Selecione o lote a conferir
+3. Tire as fotos obrigatórias
+4. Registre quantidades e observações
+5. Finalize a triagem
 
-### 📋 Movimentação
-**Para transferir produtos:**
-1. Menu > Movimentação
-2. Selecione origem
-3. Selecione destino
-4. Confirme transferência
+### Registrar Divergência
+1. Durante a triagem, clique em **Divergência**
+2. Descreva o problema encontrado
+3. Anexe fotos como evidência
+4. O sistema notificará os responsáveis
 
-### 🔄 Trocas e Devoluções
-**Para registrar TD:**
-1. Menu > Trocas/Devoluções
-2. "Novo Registro"
-3. Selecione tipo (troca/devolução)
-4. Preencha motivo
-5. Anexe fotos se necessário
+## 📥 Recebimento
 
-## Scanner
+### Importar NF-e
+1. Acesse **Recebimento**
+2. Clique em **Importar NF**
+3. Selecione o arquivo XML
+4. Confira os dados extraídos
+5. Confirme o recebimento
 
-### Usando o Scanner
-1. Menu > Scanner
-2. Aponte câmera para código
-3. Aguarde leitura automática
-4. Confirme informações
+### Conferência de Mercadoria
+1. Compare os itens físicos com a NF
+2. Registre divergências se houver
+3. Direcione para posições de estoque
+4. Finalize o recebimento
 
-## Gamificação
+## 🎮 Gamificação
 
-### Conquistas
-- Complete tarefas para ganhar XP
-- Desbloqueie conquistas
-- Suba de nível
+### Como Funciona
+- Ganhe **XP** realizando tarefas
+- Suba de **nível** conforme acumula XP
+- Complete **desafios diários** para bônus
+- Conquiste **badges** por marcos atingidos
 
 ### Desafios Diários
-- Novos desafios todo dia
-- Complete para XP bônus
-- Mantenha sua streak!
+- Novos desafios a cada dia
+- Complete antes da meia-noite
+- Ganhe XP extra ao completar todos
 
-### Ranking
-- Compete com colegas
-- Ranking diário/semanal/mensal
+## 📊 KPIs
 
-## Dicas Rápidas
+### Métricas Disponíveis
+- **Tempo médio de triagem**
+- **Taxa de ocupação**
+- **Divergências por período**
+- **Produtividade por operador**
+
+### Exportar Relatórios
+1. Acesse **Relatórios**
+2. Selecione o tipo de relatório
+3. Defina o período
+4. Clique em **Exportar**
+
+## 🔔 Notificações
+
+### Configurar Alertas
+1. Acesse **Configurações > Notificações**
+2. Ative os tipos desejados:
+   - Estoque baixo
+   - Triagens pendentes
+   - Divergências
+3. Escolha o canal (push, email)
+
+## 📱 Uso Mobile
+
+### Instalar como App
+1. Acesse o ESTOKI no celular
+2. Clique em "Adicionar à tela inicial"
+3. Use como um aplicativo nativo
+
+### Modo Offline
+- O sistema funciona sem internet
+- Dados são sincronizados ao reconectar
+- Indicador mostra status da conexão
+
+## ⌨️ Atalhos de Teclado
 
 | Atalho | Ação |
 |--------|------|
-| Ctrl+K | Busca rápida |
-| Ctrl+N | Novo registro |
-| Esc | Fechar modal |
+| `Ctrl+K` | Busca rápida |
+| `Ctrl+N` | Nova entrada |
+| `Esc` | Fechar modal |
+| `?` | Ajuda |
 
-## Precisa de Ajuda?
+## ❓ Dúvidas Frequentes
 
-- 📖 Consulte este manual
-- 💬 Fale com seu supervisor
-- 🐛 Reporte bugs pelo sistema
+**P: Esqueci minha senha**
+R: Clique em "Esqueci a senha" na tela de login
 
+**P: Como alterar meus dados?**
+R: Acesse Configurações > Perfil
+
+**P: Posso usar no celular?**
+R: Sim! O sistema é responsivo e funciona como PWA
+
+---
+*Precisa de mais ajuda? Contate o suporte.*
