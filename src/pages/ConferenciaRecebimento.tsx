@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Camera, Check, AlertTriangle, Package, Loader2, Clock, Truck, Info, Scale, Wifi, WifiOff } from "lucide-react";
+import { Camera, Check, AlertTriangle, Package, Loader2, Clock, Truck, Scale, Wifi, WifiOff } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,7 @@ export default function ConferenciaRecebimento() {
     erro: erroBalanca,
   } = useBalanca();
   
-  const { recebimentos, loading, atualizarRecebimento } = useRecebimentos();
+  const { recebimentos, loading, confirmarConferencia, atualizarStatus } = useRecebimentos();
   
   const [recebimento, setRecebimento] = useState<Recebimento | null>(null);
   const [quantidadeConferida, setQuantidadeConferida] = useState(0);
@@ -59,19 +59,22 @@ export default function ConferenciaRecebimento() {
   
   // Estado para volumes (mock para demonstração)
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
+
+  // Get quantidade esperada from the recebimento
+  const quantidadeEsperada = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
   
   // Inicializar volumes quando recebimento carregar
   useEffect(() => {
-    if (recebimento && recebimento.quantidade_esperada > 0) {
+    if (recebimento && quantidadeEsperada > 0) {
       // Criar volumes baseado na quantidade (1 volume para cada 100 unidades ou mínimo 1)
-      const numVolumes = Math.max(1, Math.ceil(recebimento.quantidade_esperada / 100));
-      const qtdPorVolume = Math.ceil(recebimento.quantidade_esperada / numVolumes);
+      const numVolumes = Math.max(1, Math.ceil(quantidadeEsperada / 100));
+      const qtdPorVolume = Math.ceil(quantidadeEsperada / numVolumes);
       
       const newVolumes: VolumeData[] = Array.from({ length: numVolumes }, (_, i) => ({
         id: i + 1,
         numero: String(i + 1).padStart(2, '0'),
         qtdEsperada: i === numVolumes - 1 
-          ? recebimento.quantidade_esperada - (qtdPorVolume * (numVolumes - 1))
+          ? quantidadeEsperada - (qtdPorVolume * (numVolumes - 1))
           : qtdPorVolume,
         qtdContada: null,
         conferido: false,
@@ -79,7 +82,7 @@ export default function ConferenciaRecebimento() {
       
       setVolumes(newVolumes);
     }
-  }, [recebimento]);
+  }, [recebimento, quantidadeEsperada]);
   
   const handleVolumeChange = (volumeId: number, qtdContada: number) => {
     setVolumes(prev => prev.map(v => 
@@ -101,9 +104,8 @@ export default function ConferenciaRecebimento() {
       const rec = recebimentos.find(r => r.id === id);
       if (rec) {
         setRecebimento(rec);
-        setQuantidadeConferida(rec.quantidade_conferida || 0);
-        setPesoConferido(rec.peso_conferido || 0);
-        setObservacoes(rec.observacoes || "");
+        setQuantidadeConferida(rec.quantidade_atual || 0);
+        setObservacoes(rec.observacoes_conferencia || "");
       }
     }
   }, [id, recebimentos]);
@@ -140,24 +142,7 @@ export default function ConferenciaRecebimento() {
     
     setSalvando(true);
     try {
-      const temDivergencia = quantidadeConferida !== recebimento.quantidade_esperada;
-      const novoStatus: StatusRecebimento = temDivergencia ? "divergencia" : "conferido";
-      
-      await atualizarRecebimento(id, {
-        quantidade_conferida: quantidadeConferida,
-        peso_conferido: pesoConferido,
-        observacoes,
-        status: novoStatus,
-      });
-      
-      toast({
-        title: temDivergencia ? "Divergência registrada" : "Conferência concluída",
-        description: temDivergencia 
-          ? `Quantidade esperada: ${recebimento.quantidade_esperada}, conferida: ${quantidadeConferida}`
-          : "Recebimento conferido com sucesso",
-        variant: temDivergencia ? "destructive" : "default",
-      });
-      
+      await confirmarConferencia(id, quantidadeConferida, observacoes);
       navigate("/recebimento");
     } catch (err) {
       toast({
@@ -194,10 +179,10 @@ export default function ConferenciaRecebimento() {
     );
   }
 
-  const progresso = recebimento.quantidade_esperada > 0 
-    ? (quantidadeConferida / recebimento.quantidade_esperada) * 100 
+  const progresso = quantidadeEsperada > 0 
+    ? (quantidadeConferida / quantidadeEsperada) * 100 
     : 0;
-  const temDivergencia = quantidadeConferida !== recebimento.quantidade_esperada && quantidadeConferida > 0;
+  const temDivergencia = quantidadeConferida !== quantidadeEsperada && quantidadeConferida > 0;
 
   return (
     <AppLayout title="Conferência de Recebimento" showBack>
@@ -207,7 +192,7 @@ export default function ConferenciaRecebimento() {
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Package className="h-5 w-5" />
-              Pedido: {recebimento.numero_pedido}
+              Lote: {recebimento.numero_lote}
             </h2>
             <p className="text-muted-foreground">{recebimento.fornecedor}</p>
           </div>
@@ -260,21 +245,21 @@ export default function ConferenciaRecebimento() {
         <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
           <div>
             <p className="text-sm text-muted-foreground">Produto</p>
-            <p className="font-medium">{recebimento.produto}</p>
+            <p className="font-medium">{recebimento.produto_nome}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Quantidade Esperada</p>
-            <p className="font-medium">{recebimento.quantidade_esperada} unidades</p>
+            <p className="font-medium">{quantidadeEsperada} unidades</p>
           </div>
-          {recebimento.peso_esperado && (
+          {recebimento.pedido_compra && (
             <div>
-              <p className="text-sm text-muted-foreground">Peso Esperado</p>
-              <p className="font-medium">{recebimento.peso_esperado} kg</p>
+              <p className="text-sm text-muted-foreground">Pedido de Compra</p>
+              <p className="font-medium">{recebimento.pedido_compra}</p>
             </div>
           )}
           <div>
             <p className="text-sm text-muted-foreground">Data Prevista</p>
-            <p className="font-medium">{recebimento.data_prevista || "Não informada"}</p>
+            <p className="font-medium">{recebimento.previsao_chegada || "Não informada"}</p>
           </div>
         </div>
 
@@ -283,7 +268,7 @@ export default function ConferenciaRecebimento() {
           <div className="flex justify-between text-sm">
             <span>Progresso da conferência</span>
             <span className={temDivergencia ? "text-red-500 font-medium" : ""}>
-              {quantidadeConferida} / {recebimento.quantidade_esperada}
+              {quantidadeConferida} / {quantidadeEsperada}
             </span>
           </div>
           <Progress 
@@ -309,7 +294,7 @@ export default function ConferenciaRecebimento() {
                 volumes={volumes}
                 onVolumeChange={handleVolumeChange}
                 onVolumeConfirm={handleVolumeConfirm}
-                totalEsperado={recebimento?.quantidade_esperada || 0}
+                totalEsperado={quantidadeEsperada}
                 className="mb-4"
               />
             )}
