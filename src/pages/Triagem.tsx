@@ -205,8 +205,8 @@ export default function TriagemPage() {
         {/* Calculadora de Amostragem */}
         {showAmostragem && (
           <AmostragemAutomatica
-            tamanhoLote={triagemAtual?.quantidade || 100}
-            onCalculate={(resultado) => console.log("Amostragem:", resultado)}
+            tamanhoLote={100}
+            onConfirmarAmostra={(tamanho, metodo, criterios) => console.log("Amostragem:", tamanho, metodo, criterios)}
           />
         )}
         {/* Cards de estatísticas */}

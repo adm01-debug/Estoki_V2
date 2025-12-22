@@ -133,8 +133,8 @@ export default function ScannerPage() {
                 <CardContent>
                   <div className="max-w-md mx-auto">
                     <QRScanner
-                      onScanSuccess={handleScanSuccess}
-                      onScanError={(err) => {
+                      onScan={handleScanSuccess}
+                      onError={(err) => {
                         toast({
                           title: "Erro no scanner",
                           description: err,
