@@ -7,7 +7,6 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -17,21 +16,17 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Calcular KPIs operacionais
     const hoje = new Date().toISOString().split('T')[0];
 
-    // Buscar eventos do dia
     const { data: eventos } = await supabase
       .from('eventos_triagem')
       .select('*')
       .gte('created_at', hoje);
 
-    // Buscar posições
     const { data: posicoes } = await supabase
       .from('posicoes_estoque')
       .select('*');
 
-    // Calcular métricas
     const totalTriagens = eventos?.length || 0;
     const totalPosicoes = posicoes?.length || 0;
     const posicoesOcupadas = posicoes?.filter(p => p.status === 'ocupada').length || 0;
@@ -45,7 +40,6 @@ Deno.serve(async (req) => {
       calculated_at: new Date().toISOString(),
     };
 
-    // Salvar métricas
     await supabase.from('metricas_operacionais').insert({
       tipo: 'kpi_diario',
       valor: totalTriagens,
