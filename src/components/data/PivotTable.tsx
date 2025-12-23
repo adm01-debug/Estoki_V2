@@ -1,0 +1,9 @@
+import React, { useMemo, useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+interface PivotTableProps { data: any[]; rowField: string; colField: string; valueField: string; aggregation?: 'sum' | 'count' | 'avg'; }
+export function PivotTable({ data, rowField, colField, valueField, aggregation = 'sum' }: PivotTableProps) {
+  const { rows, cols, pivotData } = useMemo(() => { const rowValues = [...new Set(data.map(d => d[rowField]))]; const colValues = [...new Set(data.map(d => d[colField]))]; const pivot: Record<string, Record<string, number[]>> = {}; data.forEach(d => { const r = d[rowField], c = d[colField], v = Number(d[valueField]) || 0; if (!pivot[r]) pivot[r] = {}; if (!pivot[r][c]) pivot[r][c] = []; pivot[r][c].push(v); }); return { rows: rowValues, cols: colValues, pivotData: pivot }; }, [data, rowField, colField, valueField]);
+  const aggregate = (values: number[]) => { if (!values?.length) return 0; if (aggregation === 'sum') return values.reduce((a, b) => a + b, 0); if (aggregation === 'count') return values.length; if (aggregation === 'avg') return values.reduce((a, b) => a + b, 0) / values.length; return 0; };
+  return (<Table><TableHeader><TableRow><TableHead>{rowField}</TableHead>{cols.map(c => <TableHead key={c}>{c}</TableHead>)}<TableHead>Total</TableHead></TableRow></TableHeader><TableBody>{rows.map(r => <TableRow key={r}><TableCell className="font-medium">{r}</TableCell>{cols.map(c => <TableCell key={c}>{aggregate(pivotData[r]?.[c] || []).toFixed(2)}</TableCell>)}<TableCell className="font-bold">{cols.reduce((sum, c) => sum + aggregate(pivotData[r]?.[c] || []), 0).toFixed(2)}</TableCell></TableRow>)}</TableBody></Table>);
+}
