@@ -1,283 +1,104 @@
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { NotificationProvider } from "@/contexts/NotificationContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { OnboardingTourProvider } from "@/components/onboarding/OnboardingTour";
-import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import Recebimento from "./pages/Recebimento";
-import ConferenciaRecebimento from "./pages/ConferenciaRecebimento";
-import Triagem from "./pages/Triagem";
-import FormularioTriagem from "./pages/FormularioTriagem";
-import Estoque from "./pages/Estoque";
-import Scanner from "./pages/Scanner";
-import Movimentacao from "./pages/Movimentacao";
-import Armazenamento from "./pages/Armazenamento";
-import Dashboard from "./pages/Dashboard";
-import DashboardTriador from "./pages/DashboardTriador";
-import Relatorios from "./pages/Relatorios";
-import Produtividade from "./pages/Produtividade";
-import InventarioCiclico from "./pages/InventarioCiclico";
-import CurvaABC from "./pages/CurvaABC";
-import GestaoTarefas from "./pages/GestaoTarefas";
-import AlertasInteligentes from "./pages/AlertasInteligentes";
-import KPIsOperacionais from "./pages/KPIsOperacionais";
-import Rastreabilidade from "./pages/Rastreabilidade";
-import RelatorioFornecedores from "./pages/RelatorioFornecedores";
-import TrocasDevolucoes from "./pages/TrocasDevolucoes";
-import DashboardTrocas from "./pages/DashboardTrocas";
-import RelatorioDivergencias from "./pages/RelatorioDivergencias";
-import Configuracoes from "./pages/Configuracoes";
-import Romaneios from "./pages/Romaneios";
-import NotFound from "./pages/NotFound";
+import { AppProvider } from "@/contexts/AppContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { LoadingFallback } from "@/components/common/LoadingFallback";
+import AppLayout from "./components/layout/AppLayout";
 
-const queryClient = new QueryClient();
+// Lazy loaded pages for better performance
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Estoque = lazy(() => import("./pages/Estoque"));
+const Triagem = lazy(() => import("./pages/Triagem"));
+const Recebimento = lazy(() => import("./pages/Recebimento"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Configuracoes = lazy(() => import("./pages/Configuracoes"));
+const Relatorios = lazy(() => import("./pages/Relatorios"));
+const Scanner = lazy(() => import("./pages/Scanner"));
+const Movimentacao = lazy(() => import("./pages/Movimentacao"));
+const Rastreabilidade = lazy(() => import("./pages/Rastreabilidade"));
+const KPIsOperacionais = lazy(() => import("./pages/KPIsOperacionais"));
+const Produtividade = lazy(() => import("./pages/Produtividade"));
+const AlertasInteligentes = lazy(() => import("./pages/AlertasInteligentes"));
+const InventarioCiclico = lazy(() => import("./pages/InventarioCiclico"));
+const CurvaABC = lazy(() => import("./pages/CurvaABC"));
+const GestaoTarefas = lazy(() => import("./pages/GestaoTarefas"));
+const Armazenamento = lazy(() => import("./pages/Armazenamento"));
+const DashboardTriador = lazy(() => import("./pages/DashboardTriador"));
+const FormularioTriagem = lazy(() => import("./pages/FormularioTriagem"));
+const ConferenciaRecebimento = lazy(() => import("./pages/ConferenciaRecebimento"));
+const TrocasDevolucoes = lazy(() => import("./pages/TrocasDevolucoes"));
+const DashboardTrocas = lazy(() => import("./pages/DashboardTrocas"));
+const Romaneios = lazy(() => import("./pages/Romaneios"));
+const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias"));
+const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
 
-function AnimatedRoutes() {
-  const location = useLocation();
-  
-  return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/auth" element={<Auth />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Index />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/recebimento"
-          element={
-            <ProtectedRoute>
-              <Recebimento />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/recebimento/:id"
-          element={
-            <ProtectedRoute>
-              <ConferenciaRecebimento />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/triagem"
-          element={
-            <ProtectedRoute>
-              <Triagem />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/triagem/:id"
-          element={
-            <ProtectedRoute>
-              <FormularioTriagem />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/minha-produtividade"
-          element={
-            <ProtectedRoute>
-              <DashboardTriador />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/estoque"
-          element={
-            <ProtectedRoute>
-              <Estoque />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/scanner"
-          element={
-            <ProtectedRoute>
-              <Scanner />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/movimentacao"
-          element={
-            <ProtectedRoute>
-              <Movimentacao />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/armazenamento"
-          element={
-            <ProtectedRoute>
-              <Armazenamento />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventario"
-          element={
-            <ProtectedRoute>
-              <InventarioCiclico />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/relatorios"
-          element={
-            <ProtectedRoute>
-              <Relatorios />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/produtividade"
-          element={
-            <ProtectedRoute>
-              <Produtividade />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/inventario-ciclico"
-          element={
-            <ProtectedRoute>
-              <InventarioCiclico />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/curva-abc"
-          element={
-            <ProtectedRoute>
-              <CurvaABC />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/gestao-tarefas"
-          element={
-            <ProtectedRoute>
-              <GestaoTarefas />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/alertas"
-          element={
-            <ProtectedRoute>
-              <AlertasInteligentes />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/kpis"
-          element={
-            <ProtectedRoute>
-              <KPIsOperacionais />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/rastreabilidade"
-          element={
-            <ProtectedRoute>
-              <Rastreabilidade />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/qualidade-fornecedores"
-          element={
-            <ProtectedRoute>
-              <RelatorioFornecedores />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/trocas-devolucoes"
-          element={
-            <ProtectedRoute>
-              <TrocasDevolucoes />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/dashboard-trocas"
-          element={
-            <ProtectedRoute>
-              <DashboardTrocas />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/divergencias"
-          element={
-            <ProtectedRoute>
-              <RelatorioDivergencias />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/romaneios"
-          element={
-            <ProtectedRoute>
-              <Romaneios />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/configuracoes"
-          element={
-            <ProtectedRoute>
-              <Configuracoes />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="light" storageKey="estoki-theme">
-        <TooltipProvider>
-          <NotificationProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AuthProvider>
-                <OnboardingTourProvider>
-                  <AnimatedRoutes />
-                </OnboardingTourProvider>
-              </AuthProvider>
-            </BrowserRouter>
-          </NotificationProvider>
-        </TooltipProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppProvider>
+            <NotificationProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                  <Suspense fallback={<LoadingFallback />}>
+                    <Routes>
+                      <Route path="/auth" element={<Auth />} />
+                      <Route path="/" element={<AppLayout />}>
+                        <Route index element={<Index />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="estoque" element={<Estoque />} />
+                        <Route path="triagem" element={<Triagem />} />
+                        <Route path="recebimento" element={<Recebimento />} />
+                        <Route path="configuracoes" element={<Configuracoes />} />
+                        <Route path="relatorios" element={<Relatorios />} />
+                        <Route path="scanner" element={<Scanner />} />
+                        <Route path="movimentacao" element={<Movimentacao />} />
+                        <Route path="rastreabilidade" element={<Rastreabilidade />} />
+                        <Route path="kpis" element={<KPIsOperacionais />} />
+                        <Route path="produtividade" element={<Produtividade />} />
+                        <Route path="alertas" element={<AlertasInteligentes />} />
+                        <Route path="inventario" element={<InventarioCiclico />} />
+                        <Route path="curva-abc" element={<CurvaABC />} />
+                        <Route path="tarefas" element={<GestaoTarefas />} />
+                        <Route path="armazenamento" element={<Armazenamento />} />
+                        <Route path="triador" element={<DashboardTriador />} />
+                        <Route path="formulario-triagem" element={<FormularioTriagem />} />
+                        <Route path="conferencia" element={<ConferenciaRecebimento />} />
+                        <Route path="trocas" element={<TrocasDevolucoes />} />
+                        <Route path="trocas-dashboard" element={<DashboardTrocas />} />
+                        <Route path="romaneios" element={<Romaneios />} />
+                        <Route path="divergencias" element={<RelatorioDivergencias />} />
+                        <Route path="fornecedores" element={<RelatorioFornecedores />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
+                  </Suspense>
+                </BrowserRouter>
+              </TooltipProvider>
+            </NotificationProvider>
+          </AppProvider>
+        </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
