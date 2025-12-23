@@ -1,0 +1,13 @@
+import React, { useState, useMemo } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ChevronUp, ChevronDown, Search } from 'lucide-react';
+interface Column<T> { key: keyof T; header: string; sortable?: boolean; render?: (value: any, row: T) => React.ReactNode; }
+interface DataGridProps<T> { data: T[]; columns: Column<T>[]; pageSize?: number; searchable?: boolean; }
+export function DataGrid<T extends { id: string | number }>({ data, columns, pageSize = 10, searchable = true }: DataGridProps<T>) {
+  const [search, setSearch] = useState(''); const [sortKey, setSortKey] = useState<keyof T | null>(null); const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc'); const [page, setPage] = useState(0);
+  const filtered = useMemo(() => { let result = [...data]; if (search) result = result.filter(row => Object.values(row).some(v => String(v).toLowerCase().includes(search.toLowerCase()))); if (sortKey) result.sort((a, b) => { const av = a[sortKey], bv = b[sortKey]; return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1); }); return result; }, [data, search, sortKey, sortDir]);
+  const paged = filtered.slice(page * pageSize, (page + 1) * pageSize); const totalPages = Math.ceil(filtered.length / pageSize);
+  return (<div className="space-y-4">{searchable && <div className="flex items-center gap-2"><Search className="w-4 h-4" /><Input placeholder="Buscar..." value={search} onChange={e => setSearch(e.target.value)} className="max-w-sm" /></div>}<Table><TableHeader><TableRow>{columns.map(col => <TableHead key={String(col.key)} className="cursor-pointer" onClick={() => { if (col.sortable !== false) { setSortKey(col.key); setSortDir(d => d === 'asc' ? 'desc' : 'asc'); } }}>{col.header} {sortKey === col.key && (sortDir === 'asc' ? <ChevronUp className="inline w-4 h-4" /> : <ChevronDown className="inline w-4 h-4" />)}</TableHead>)}</TableRow></TableHeader><TableBody>{paged.map(row => <TableRow key={row.id}>{columns.map(col => <TableCell key={String(col.key)}>{col.render ? col.render(row[col.key], row) : String(row[col.key])}</TableCell>)}</TableRow>)}</TableBody></Table><div className="flex justify-between items-center"><span>Página {page + 1} de {totalPages}</span><div className="flex gap-2"><Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage(p => p - 1)}>Anterior</Button><Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}>Próximo</Button></div></div></div>);
+}
