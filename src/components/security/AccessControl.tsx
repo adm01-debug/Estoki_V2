@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Users, Lock, Settings, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { Shield, Users, Lock, Settings, CheckCircle2, XCircle, ArrowRight, Globe } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePermissions } from '@/hooks/usePermissions';
 import { PermissionsManager } from './PermissionsManager';
+import { GeoBlockingManager } from './GeoBlockingManager';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const AccessControl: React.FC = () => {
@@ -78,14 +79,18 @@ export const AccessControl: React.FC = () => {
 
   return (
     <Tabs defaultValue="my-access" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="my-access" className="flex items-center gap-2">
           <Lock className="h-4 w-4" />
           Meu Acesso
         </TabsTrigger>
         <TabsTrigger value="manage" className="flex items-center gap-2">
           <Settings className="h-4 w-4" />
-          Gerenciar Permissões
+          Permissões
+        </TabsTrigger>
+        <TabsTrigger value="geo" className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          Bloqueio Geo
         </TabsTrigger>
       </TabsList>
 
@@ -222,6 +227,10 @@ export const AccessControl: React.FC = () => {
 
       <TabsContent value="manage">
         <PermissionsManager />
+      </TabsContent>
+
+      <TabsContent value="geo">
+        <GeoBlockingManager />
       </TabsContent>
     </Tabs>
   );
