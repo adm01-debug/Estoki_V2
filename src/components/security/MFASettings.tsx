@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Key, Smartphone, Mail, Shield, ShieldOff, QrCode, Copy, AlertTriangle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import PasskeySettings from './PasskeySettings';
 
 export const MFASettings: React.FC = () => {
   const { user } = useAuth();
@@ -42,6 +43,9 @@ export const MFASettings: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Passkeys / Biometric Login */}
+      <PasskeySettings />
+
       {/* MFA Status Card */}
       <Card className="border-yellow-500/30 bg-yellow-500/5">
         <CardHeader>
