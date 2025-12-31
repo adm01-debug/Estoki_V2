@@ -907,6 +907,39 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempts: number
+          created_at: string
+          email: string
+          id: string
+          ip_address: unknown
+          last_attempt_at: string
+          locked_until: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          email: string
+          id?: string
+          ip_address?: unknown
+          last_attempt_at?: string
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          email?: string
+          id?: string
+          ip_address?: unknown
+          last_attempt_at?: string
+          locked_until?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       login_logs: {
         Row: {
           browser: string | null
@@ -2237,6 +2270,19 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      calculate_lockout_duration: {
+        Args: { attempt_count: number }
+        Returns: unknown
+      }
+      check_login_lockout: {
+        Args: { p_email: string }
+        Returns: {
+          attempts_count: number
+          is_locked: boolean
+          locked_until: string
+          seconds_remaining: number
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -2247,6 +2293,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      record_failed_login: {
+        Args: { p_email: string; p_ip_address?: unknown }
+        Returns: {
+          attempts_count: number
+          is_locked: boolean
+          locked_until: string
+          seconds_remaining: number
+        }[]
       }
       registrar_checkin_diario: {
         Args: { p_user_id: string }
@@ -2267,6 +2322,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      reset_login_attempts: { Args: { p_email: string }; Returns: undefined }
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
