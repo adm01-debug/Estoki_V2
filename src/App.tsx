@@ -41,6 +41,7 @@ const Romaneios = lazy(() => import("./pages/Romaneios"));
 const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias"));
 const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
 const Seguranca = lazy(() => import("./pages/Seguranca"));
+const TwoFactorAuth = lazy(() => import("./pages/TwoFactorAuth"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,6 +66,7 @@ const App = () => (
                   <Suspense fallback={<LoadingFallback />}>
                     <Routes>
                       <Route path="/auth" element={<Auth />} />
+                      <Route path="/2fa" element={<TwoFactorAuth />} />
                       <Route path="/" element={<AppLayout />}>
                         <Route index element={<Index />} />
                         <Route path="dashboard" element={<Dashboard />} />

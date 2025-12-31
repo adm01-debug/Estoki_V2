@@ -18,23 +18,101 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
     );
 
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+      console.error('Auth error:', userError);
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    const body = await req.json();
-    
-    // Function: auth-2fa-setup
-    const result = { success: true, function: 'auth-2fa-setup', timestamp: new Date().toISOString() };
+    const { action } = await req.json();
+    console.log('2FA Setup action:', action, 'for user:', user.id);
 
-    return new Response(JSON.stringify(result), {
+    if (action === 'enroll') {
+      // Start MFA enrollment - generates TOTP secret
+      const { data, error } = await supabaseClient.auth.mfa.enroll({
+        factorType: 'totp',
+        friendlyName: 'Estoki TOTP'
+      });
+
+      if (error) {
+        console.error('MFA enroll error:', error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log('MFA enrollment started, factor_id:', data.id);
+      
+      return new Response(JSON.stringify({
+        success: true,
+        factorId: data.id,
+        qrCode: data.totp.qr_code,
+        secret: data.totp.secret,
+        uri: data.totp.uri
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (action === 'list') {
+      // List all MFA factors for the user
+      const { data, error } = await supabaseClient.auth.mfa.listFactors();
+
+      if (error) {
+        console.error('MFA list error:', error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      return new Response(JSON.stringify({
+        success: true,
+        factors: data.totp || [],
+        all: data.all || []
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (action === 'unenroll') {
+      const { factorId } = await req.json();
+      
+      if (!factorId) {
+        return new Response(JSON.stringify({ error: 'Factor ID required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const { error } = await supabaseClient.auth.mfa.unenroll({ factorId });
+
+      if (error) {
+        console.error('MFA unenroll error:', error);
+        return new Response(JSON.stringify({ error: error.message }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      console.log('MFA factor unenrolled:', factorId);
+      
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({ error: 'Invalid action' }), {
+      status: 400,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
+
   } catch (error) {
+    console.error('2FA Setup error:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
