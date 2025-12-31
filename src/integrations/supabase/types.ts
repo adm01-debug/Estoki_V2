@@ -1282,6 +1282,51 @@ export type Database = {
         }
         Relationships: []
       }
+      password_reset_requests: {
+        Row: {
+          aprovado_em: string | null
+          aprovado_por: string | null
+          created_at: string
+          expira_em: string
+          id: string
+          motivo: string | null
+          observacao_admin: string | null
+          solicitado_em: string
+          status: string
+          updated_at: string
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          created_at?: string
+          expira_em?: string
+          id?: string
+          motivo?: string | null
+          observacao_admin?: string | null
+          solicitado_em?: string
+          status?: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          aprovado_em?: string | null
+          aprovado_por?: string | null
+          created_at?: string
+          expira_em?: string
+          id?: string
+          motivo?: string | null
+          observacao_admin?: string | null
+          solicitado_em?: string
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           category: string
