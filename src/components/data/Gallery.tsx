@@ -5,7 +5,7 @@ export function Gallery({ images, columns = 3 }: GalleryProps) {
   const [selected, setSelected] = useState<number | null>(null);
   return (
     <>
-      <div className="grid gap-4" style={{ gridTemplateColumns: \`repeat(\${columns}, 1fr)\` }}>
+      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
         {images.map((img, i) => (<img key={i} src={img.src} alt={img.alt} className="w-full h-48 object-cover rounded cursor-pointer hover:opacity-80" onClick={() => setSelected(i)} />))}
       </div>
       <Dialog open={selected !== null} onOpenChange={() => setSelected(null)}>

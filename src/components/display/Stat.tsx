@@ -17,5 +17,5 @@ export function Stat({ label, value, change, icon, className }: StatProps) {
 }
 interface StatGroupProps { children: React.ReactNode; columns?: number; className?: string; }
 export function StatGroup({ children, columns = 4, className }: StatGroupProps) {
-  return <div className={cn('grid gap-4', className)} style={{ gridTemplateColumns: \`repeat(\${columns}, 1fr)\` }}>{children}</div>;
+  return <div className={cn('grid gap-4', className)} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>{children}</div>;
 }

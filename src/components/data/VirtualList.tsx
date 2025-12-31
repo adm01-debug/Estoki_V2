@@ -10,7 +10,7 @@ export function VirtualList<T>({ items, height, itemHeight, renderItem }: Virtua
     <div ref={parentRef} style={{ height, overflow: 'auto' }}>
       <div style={{ height: virtualizer.getTotalSize(), position: 'relative' }}>
         {virtualizer.getVirtualItems().map(virtualRow => (
-          <div key={virtualRow.key} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: \`translateY(\${virtualRow.start}px)\` }}>
+          <div key={virtualRow.key} style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: `translateY(${virtualRow.start}px)` }}>
             {renderItem(items[virtualRow.index], virtualRow.index)}
           </div>
         ))}

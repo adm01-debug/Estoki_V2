@@ -6,7 +6,7 @@ interface TimePickerProps { value?: string; onChange?: (time: string) => void; l
 export function TimePicker({ value = '12:00', onChange, label }: TimePickerProps) {
   const [hours, setHours] = useState(value.split(':')[0]);
   const [minutes, setMinutes] = useState(value.split(':')[1]);
-  const updateTime = (h: string, m: string) => { onChange?.(\`\${h.padStart(2, '0')}:\${m.padStart(2, '0')}\`); };
+  const updateTime = (h: string, m: string) => { onChange?.(`${h.padStart(2, '0')}:${m.padStart(2, '0')}`); };
   return (
     <div>
       {label && <Label className="mb-1">{label}</Label>}
