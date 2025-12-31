@@ -40,6 +40,7 @@ const DashboardTrocas = lazy(() => import("./pages/DashboardTrocas"));
 const Romaneios = lazy(() => import("./pages/Romaneios"));
 const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias"));
 const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
+const Seguranca = lazy(() => import("./pages/Seguranca"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,6 +91,7 @@ const App = () => (
                         <Route path="romaneios" element={<Romaneios />} />
                         <Route path="divergencias" element={<RelatorioDivergencias />} />
                         <Route path="fornecedores" element={<RelatorioFornecedores />} />
+                        <Route path="seguranca" element={<Seguranca />} />
                         <Route path="*" element={<NotFound />} />
                       </Route>
                     </Routes>

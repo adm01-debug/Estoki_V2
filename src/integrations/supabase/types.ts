@@ -850,6 +850,56 @@ export type Database = {
           },
         ]
       }
+      login_logs: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_id: string | null
+          id: string
+          ip_address: unknown
+          is_new_device: boolean | null
+          location: string | null
+          login_at: string | null
+          os: string | null
+          success: boolean | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          id?: string
+          ip_address?: unknown
+          is_new_device?: boolean | null
+          location?: string | null
+          login_at?: string | null
+          os?: string | null
+          success?: boolean | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          id?: string
+          ip_address?: unknown
+          is_new_device?: boolean | null
+          location?: string | null
+          login_at?: string | null
+          os?: string | null
+          success?: boolean | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "login_logs_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "user_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lotes: {
         Row: {
           conferido_por: string | null
@@ -1835,6 +1885,48 @@ export type Database = {
           valor_credito?: number | null
           valor_total?: number | null
           valor_unitario?: number | null
+        }
+        Relationships: []
+      }
+      user_devices: {
+        Row: {
+          browser: string | null
+          created_at: string | null
+          device_fingerprint: string
+          first_seen_at: string | null
+          id: string
+          ip_address: unknown
+          is_trusted: boolean | null
+          last_seen_at: string | null
+          location: string | null
+          os: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint: string
+          first_seen_at?: string | null
+          id?: string
+          ip_address?: unknown
+          is_trusted?: boolean | null
+          last_seen_at?: string | null
+          location?: string | null
+          os?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string | null
+          device_fingerprint?: string
+          first_seen_at?: string | null
+          id?: string
+          ip_address?: unknown
+          is_trusted?: boolean | null
+          last_seen_at?: string | null
+          location?: string | null
+          os?: string | null
+          user_id?: string
         }
         Relationships: []
       }
