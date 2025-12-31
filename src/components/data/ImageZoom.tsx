@@ -9,7 +9,7 @@ export function ImageZoom({ src, alt, className }: ImageZoomProps) {
       <img src={src} alt={alt} className={className + ' cursor-zoom-in'} onClick={() => setIsOpen(true)} />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-[90vw] max-h-[90vh] overflow-auto">
-          <img src={src} alt={alt} style={{ transform: \`scale(\${scale})\` }} onClick={() => setScale(s => s === 1 ? 2 : 1)} className="cursor-zoom-in transition-transform" />
+          <img src={src} alt={alt} style={{ transform: `scale(${scale})` }} onClick={() => setScale(s => s === 1 ? 2 : 1)} className="cursor-zoom-in transition-transform" />
         </DialogContent>
       </Dialog>
     </>
