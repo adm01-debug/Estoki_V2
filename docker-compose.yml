@@ -1,34 +1,73 @@
-version: "3.9"
+# ESTOKI WMS - Docker Compose for Production
+version: '3.8'
 
 services:
+  # Main Application
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3000:80"
-    environment:
-      - NODE_ENV=production
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
+        VITE_APP_ENV: production
+    container_name: estoki-wms
     restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - TZ=America/Sao_Paulo
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
+    networks:
+      - estoki-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.estoki.rule=Host(`estoki.promobrindes.com.br`)"
+      - "traefik.http.routers.estoki.tls=true"
+      - "traefik.http.routers.estoki.tls.certresolver=letsencrypt"
 
-  # Development with hot reload
-  dev:
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - .:/app
-      - /app/node_modules
+  # Redis Cache (opcional)
+  redis:
+    image: redis:7-alpine
+    container_name: estoki-redis
+    restart: unless-stopped
     ports:
-      - "5173:5173"
-    command: npm run dev -- --host
-    environment:
-      - NODE_ENV=development
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - estoki-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Nginx Reverse Proxy (se não usar Traefik)
+  # nginx-proxy:
+  #   image: nginx:1.25-alpine
+  #   container_name: estoki-proxy
+  #   restart: unless-stopped
+  #   ports:
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx-proxy.conf:/etc/nginx/nginx.conf:ro
+  #     - ./certs:/etc/nginx/certs:ro
+  #   depends_on:
+  #     - app
+  #   networks:
+  #     - estoki-network
 
 networks:
-  default:
-    name: estoki-network
+  estoki-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+    driver: local
