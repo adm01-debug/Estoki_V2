@@ -1,1 +1,2 @@
-export { FilterBar } from "./FilterBar";
+// Filter Components
+export { SavedFiltersDropdown } from "./SavedFiltersDropdown";
