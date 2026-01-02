@@ -1,28 +1,166 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-interface UseDuplicateOptions { tableName: string; queryKey: string[]; excludeFields?: string[]; transformData?: (data: Record<string, unknown>) => Record<string, unknown>; }
+interface DuplicateOptions<T> {
+  table: string;
+  queryKey: string[];
+  excludeFields?: string[];
+  transformData?: (data: T) => Partial<T>;
+  nameField?: string;
+  nameSuffix?: string;
+  onSuccess?: (newRecord: T) => void;
+  onError?: (error: Error) => void;
+}
 
-export function useDuplicate<T extends { id: string }>({ tableName, queryKey, excludeFields = ['id', 'created_at', 'updated_at'], transformData }: UseDuplicateOptions) {
+const DEFAULT_EXCLUDE_FIELDS = [
+  "id",
+  "created_at",
+  "updated_at",
+  "deleted_at",
+];
+
+export function useDuplicate<T extends Record<string, any>>(
+  options: DuplicateOptions<T>
+) {
+  const {
+    table,
+    queryKey,
+    excludeFields = [],
+    transformData,
+    nameField = "name",
+    nameSuffix = " (cópia)",
+    onSuccess,
+    onError,
+  } = options;
+
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (item: T) => {
-      const duplicateData = { ...item } as Record<string, unknown>;
-      excludeFields.forEach(f => delete duplicateData[f]);
-      if (duplicateData.name) duplicateData.name = `${duplicateData.name} (Cópia)`;
-      if (duplicateData.titulo) duplicateData.titulo = `${duplicateData.titulo} (Cópia)`;
-      const finalData = transformData ? transformData(duplicateData) : duplicateData;
-      const { data, error } = await supabase.from(tableName).insert(finalData).select().single();
-      if (error) throw error;
-      return data as T;
+  const allExcludeFields = [...DEFAULT_EXCLUDE_FIELDS, ...excludeFields];
+
+  const duplicateMutation = useMutation({
+    mutationFn: async (sourceId: string) => {
+      const { data: sourceRecord, error: fetchError } = await supabase
+        .from(table)
+        .select("*")
+        .eq("id", sourceId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!sourceRecord) throw new Error("Registro não encontrado");
+
+      let newData = { ...sourceRecord };
+
+      allExcludeFields.forEach((field) => {
+        delete newData[field];
+      });
+
+      if (nameField && newData[nameField]) {
+        newData[nameField] = `${newData[nameField]}${nameSuffix}`;
+      }
+
+      if (transformData) {
+        newData = { ...newData, ...transformData(sourceRecord as T) };
+      }
+
+      const { data: newRecord, error: insertError } = await supabase
+        .from(table)
+        .insert(newData)
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      return newRecord as T;
     },
-    onSuccess: (data) => {
+    onSuccess: (newRecord) => {
       queryClient.invalidateQueries({ queryKey });
-      toast.success('Item duplicado com sucesso!');
-      return data;
+      toast.success("Registro duplicado com sucesso!");
+      onSuccess?.(newRecord);
     },
-    onError: (error) => toast.error(`Erro ao duplicar: ${error.message}`),
+    onError: (error: Error) => {
+      toast.error(`Erro ao duplicar: ${error.message}`);
+      onError?.(error);
+    },
   });
+
+  const duplicateWithRelationsMutation = useMutation({
+    mutationFn: async ({
+      sourceId,
+      relations,
+    }: {
+      sourceId: string;
+      relations: Array<{
+        table: string;
+        foreignKey: string;
+        excludeFields?: string[];
+      }>;
+    }) => {
+      const { data: sourceRecord, error: fetchError } = await supabase
+        .from(table)
+        .select("*")
+        .eq("id", sourceId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      let newData = { ...sourceRecord };
+      allExcludeFields.forEach((field) => {
+        delete newData[field];
+      });
+
+      if (nameField && newData[nameField]) {
+        newData[nameField] = `${newData[nameField]}${nameSuffix}`;
+      }
+
+      if (transformData) {
+        newData = { ...newData, ...transformData(sourceRecord as T) };
+      }
+
+      const { data: newRecord, error: insertError } = await supabase
+        .from(table)
+        .insert(newData)
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      for (const relation of relations) {
+        const { data: relatedRecords } = await supabase
+          .from(relation.table)
+          .select("*")
+          .eq(relation.foreignKey, sourceId);
+
+        if (relatedRecords && relatedRecords.length > 0) {
+          const newRelatedRecords = relatedRecords.map((record) => {
+            const newRelRecord = { ...record };
+            [...DEFAULT_EXCLUDE_FIELDS, ...(relation.excludeFields || [])].forEach(
+              (field) => delete newRelRecord[field]
+            );
+            newRelRecord[relation.foreignKey] = newRecord.id;
+            return newRelRecord;
+          });
+
+          await supabase.from(relation.table).insert(newRelatedRecords);
+        }
+      }
+
+      return newRecord as T;
+    },
+    onSuccess: (newRecord) => {
+      queryClient.invalidateQueries({ queryKey });
+      toast.success("Registro e relacionamentos duplicados!");
+      onSuccess?.(newRecord);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao duplicar: ${error.message}`);
+      onError?.(error);
+    },
+  });
+
+  return {
+    duplicate: duplicateMutation.mutate,
+    duplicateWithRelations: duplicateWithRelationsMutation.mutate,
+    isDuplicating:
+      duplicateMutation.isPending || duplicateWithRelationsMutation.isPending,
+  };
 }
