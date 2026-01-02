@@ -1,29 +1,27 @@
-import { useState, useCallback } from 'react';
-import { toast } from 'sonner';
+import { useState, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-export interface BulkActionItem {
-  id: string;
-  [key: string]: unknown;
+export type BulkActionType = "delete" | "update" | "duplicate" | "export" | "restore" | "archive";
+
+interface BulkActionOptions {
+  table: string;
+  queryKey: string[];
+  onSuccess?: (action: BulkActionType, count: number) => void;
+  onError?: (action: BulkActionType, error: Error) => void;
 }
 
-export interface BulkAction<T extends BulkActionItem> {
-  label: string;
-  icon?: React.ReactNode;
-  variant?: 'default' | 'destructive' | 'outline';
-  action: (items: T[]) => Promise<void> | void;
-  confirmMessage?: string;
-}
+export function useBulkActions<T extends { id: string }>(options: BulkActionOptions) {
+  const { table, queryKey, onSuccess, onError } = options;
+  const queryClient = useQueryClient();
 
-export function useBulkActions<T extends BulkActionItem>(items: T[]) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  const selectedItems = items.filter(item => selectedIds.has(item.id));
-  const allSelected = items.length > 0 && selectedIds.size === items.length;
-  const someSelected = selectedIds.size > 0 && selectedIds.size < items.length;
-  
-  const toggleItem = useCallback((id: string) => {
-    setSelectedIds(prev => {
+  const [progress, setProgress] = useState(0);
+
+  const toggleSelection = useCallback((id: string) => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -33,65 +31,209 @@ export function useBulkActions<T extends BulkActionItem>(items: T[]) {
       return next;
     });
   }, []);
-  
-  const toggleAll = useCallback(() => {
-    if (allSelected) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(items.map(item => item.id)));
-    }
-  }, [items, allSelected]);
-  
+
+  const selectAll = useCallback((ids: string[]) => {
+    setSelectedIds(new Set(ids));
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set());
   }, []);
-  
-  const selectAll = useCallback(() => {
-    setSelectedIds(new Set(items.map(item => item.id)));
-  }, [items]);
-  
-  const isSelected = useCallback((id: string) => {
-    return selectedIds.has(id);
-  }, [selectedIds]);
-  
-  const executeAction = useCallback(async (action: BulkAction<T>) => {
-    if (selectedItems.length === 0) {
-      toast.error('Selecione pelo menos um item');
-      return;
-    }
-    
-    if (action.confirmMessage) {
-      const confirmed = window.confirm(
-        action.confirmMessage.replace('{count}', String(selectedItems.length))
-      );
-      if (!confirmed) return;
-    }
-    
-    setIsProcessing(true);
-    try {
-      await action.action(selectedItems);
-      toast.success(`Ação executada em ${selectedItems.length} item(s)`);
+
+  const isSelected = useCallback(
+    (id: string) => selectedIds.has(id),
+    [selectedIds]
+  );
+
+  const bulkDeleteMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      setIsProcessing(true);
+      setProgress(0);
+
+      const batchSize = 50;
+      const batches = Math.ceil(ids.length / batchSize);
+
+      for (let i = 0; i < batches; i++) {
+        const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
+        const { error } = await supabase
+          .from(table)
+          .delete()
+          .in("id", batch);
+
+        if (error) throw error;
+        setProgress(((i + 1) / batches) * 100);
+      }
+
+      return ids.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey });
       clearSelection();
-    } catch (error) {
-      toast.error('Erro ao executar ação');
-      console.error(error);
-    } finally {
+      toast.success(`${count} registro(s) excluído(s)`);
+      onSuccess?.("delete", count);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao excluir: ${error.message}`);
+      onError?.("delete", error);
+    },
+    onSettled: () => {
       setIsProcessing(false);
-    }
-  }, [selectedItems, clearSelection]);
-  
+      setProgress(0);
+    },
+  });
+
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async ({
+      ids,
+      updates,
+    }: {
+      ids: string[];
+      updates: Partial<T>;
+    }) => {
+      setIsProcessing(true);
+      setProgress(0);
+
+      const batchSize = 50;
+      const batches = Math.ceil(ids.length / batchSize);
+
+      for (let i = 0; i < batches; i++) {
+        const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
+        const { error } = await supabase
+          .from(table)
+          .update(updates)
+          .in("id", batch);
+
+        if (error) throw error;
+        setProgress(((i + 1) / batches) * 100);
+      }
+
+      return ids.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey });
+      clearSelection();
+      toast.success(`${count} registro(s) atualizado(s)`);
+      onSuccess?.("update", count);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao atualizar: ${error.message}`);
+      onError?.("update", error);
+    },
+    onSettled: () => {
+      setIsProcessing(false);
+      setProgress(0);
+    },
+  });
+
+  const bulkDuplicateMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      setIsProcessing(true);
+      setProgress(0);
+
+      const { data: records, error: fetchError } = await supabase
+        .from(table)
+        .select("*")
+        .in("id", ids);
+
+      if (fetchError) throw fetchError;
+
+      const duplicates = records.map((record) => {
+        const { id, created_at, updated_at, ...rest } = record;
+        return {
+          ...rest,
+          name: record.name ? `${record.name} (cópia)` : undefined,
+        };
+      });
+
+      const batchSize = 50;
+      const batches = Math.ceil(duplicates.length / batchSize);
+
+      for (let i = 0; i < batches; i++) {
+        const batch = duplicates.slice(i * batchSize, (i + 1) * batchSize);
+        const { error } = await supabase.from(table).insert(batch);
+
+        if (error) throw error;
+        setProgress(((i + 1) / batches) * 100);
+      }
+
+      return duplicates.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey });
+      clearSelection();
+      toast.success(`${count} registro(s) duplicado(s)`);
+      onSuccess?.("duplicate", count);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao duplicar: ${error.message}`);
+      onError?.("duplicate", error);
+    },
+    onSettled: () => {
+      setIsProcessing(false);
+      setProgress(0);
+    },
+  });
+
+  const bulkRestoreMutation = useMutation({
+    mutationFn: async (ids: string[]) => {
+      setIsProcessing(true);
+      setProgress(0);
+
+      const batchSize = 50;
+      const batches = Math.ceil(ids.length / batchSize);
+
+      for (let i = 0; i < batches; i++) {
+        const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
+        const { error } = await supabase
+          .from(table)
+          .update({ deleted_at: null })
+          .in("id", batch);
+
+        if (error) throw error;
+        setProgress(((i + 1) / batches) * 100);
+      }
+
+      return ids.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey });
+      clearSelection();
+      toast.success(`${count} registro(s) restaurado(s)`);
+      onSuccess?.("restore", count);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao restaurar: ${error.message}`);
+      onError?.("restore", error);
+    },
+    onSettled: () => {
+      setIsProcessing(false);
+      setProgress(0);
+    },
+  });
+
   return {
-    selectedIds,
-    selectedItems,
+    selectedIds: Array.from(selectedIds),
     selectedCount: selectedIds.size,
-    allSelected,
-    someSelected,
     isProcessing,
-    toggleItem,
-    toggleAll,
-    clearSelection,
+    progress,
+    toggleSelection,
     selectAll,
+    clearSelection,
     isSelected,
-    executeAction
+    bulkDelete: (ids?: string[]) =>
+      bulkDeleteMutation.mutate(ids || Array.from(selectedIds)),
+    bulkUpdate: (updates: Partial<T>, ids?: string[]) =>
+      bulkUpdateMutation.mutate({
+        ids: ids || Array.from(selectedIds),
+        updates,
+      }),
+    bulkDuplicate: (ids?: string[]) =>
+      bulkDuplicateMutation.mutate(ids || Array.from(selectedIds)),
+    bulkRestore: (ids?: string[]) =>
+      bulkRestoreMutation.mutate(ids || Array.from(selectedIds)),
+    isDeleting: bulkDeleteMutation.isPending,
+    isUpdating: bulkUpdateMutation.isPending,
+    isDuplicating: bulkDuplicateMutation.isPending,
+    isRestoring: bulkRestoreMutation.isPending,
   };
 }
