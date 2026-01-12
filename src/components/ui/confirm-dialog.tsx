@@ -1,111 +1,44 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { AlertTriangle, Trash2, Info } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ConfirmDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
   title: string;
   description?: string;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm: () => void;
-  variant?: "default" | "destructive";
-  loading?: boolean;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  variant?: 'default' | 'destructive' | 'warning';
+  isLoading?: boolean;
 }
 
-export function ConfirmDialog({
-  open,
-  onOpenChange,
-  title,
-  description,
-  confirmText = "Confirmar",
-  cancelText = "Cancelar",
-  onConfirm,
-  variant = "default",
-  loading = false,
-}: ConfirmDialogProps) {
+const variantConfig = {
+  default: { icon: Info, iconClass: 'text-blue-500', buttonClass: '' },
+  destructive: { icon: Trash2, iconClass: 'text-red-500', buttonClass: 'bg-red-600 hover:bg-red-700' },
+  warning: { icon: AlertTriangle, iconClass: 'text-yellow-500', buttonClass: 'bg-yellow-600 hover:bg-yellow-700' },
+};
+
+export function ConfirmDialog({ open, onOpenChange, onConfirm, title, description, confirmLabel = 'Confirmar', cancelLabel = 'Cancelar', variant = 'default', isLoading = false }: ConfirmDialogProps) {
+  const { icon: Icon, iconClass, buttonClass } = variantConfig[variant];
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          {description && (
-            <AlertDialogDescription>{description}</AlertDialogDescription>
-          )}
+          <div className="flex items-center gap-3">
+            <div className={cn('p-2 rounded-full bg-muted', iconClass)}><Icon className="h-5 w-5" /></div>
+            <AlertDialogTitle>{title}</AlertDialogTitle>
+          </div>
+          {description && <AlertDialogDescription className="ml-12">{description}</AlertDialogDescription>}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={(e) => {
-              e.preventDefault();
-              onConfirm();
-            }}
-            className={cn(
-              variant === "destructive" &&
-                buttonVariants({ variant: "destructive" })
-            )}
-            disabled={loading}
-          >
-            {loading ? "Aguarde..." : confirmText}
-          </AlertDialogAction>
+          <AlertDialogCancel disabled={isLoading}>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} disabled={isLoading} className={buttonClass}>{isLoading ? 'Processando...' : confirmLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
-
-// Hook para usar o dialog de forma declarativa
-import { useState, useCallback } from "react";
-
-export function useConfirmDialog() {
-  const [state, setState] = useState<{
-    open: boolean;
-    title: string;
-    description?: string;
-    onConfirm: () => void;
-    variant?: "default" | "destructive";
-  }>({
-    open: false,
-    title: "",
-    onConfirm: () => {},
-  });
-
-  const confirm = useCallback(
-    (options: {
-      title: string;
-      description?: string;
-      variant?: "default" | "destructive";
-    }) => {
-      return new Promise<boolean>((resolve) => {
-        setState({
-          open: true,
-          ...options,
-          onConfirm: () => {
-            setState((s) => ({ ...s, open: false }));
-            resolve(true);
-          },
-        });
-      });
-    },
-    []
-  );
-
-  const Dialog = (
-    <ConfirmDialog
-      {...state}
-      onOpenChange={(open) => setState((s) => ({ ...s, open }))}
-    />
-  );
-
-  return { confirm, Dialog };
-}
+export default ConfirmDialog;
