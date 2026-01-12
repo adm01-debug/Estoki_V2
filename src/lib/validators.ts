@@ -1,16 +1,12 @@
 // Validadores para o Brasil
-
 export function isValidCPF(cpf: string): boolean {
   const cleaned = cpf.replace(/\D/g, '');
-  if (cleaned.length !== 11) return false;
-  if (/^(\d)\1+$/.test(cleaned)) return false;
-  
+  if (cleaned.length !== 11 || /^(\d)\1+$/.test(cleaned)) return false;
   let sum = 0;
   for (let i = 0; i < 9; i++) sum += parseInt(cleaned[i]) * (10 - i);
   let digit = (sum * 10) % 11;
   if (digit === 10) digit = 0;
   if (digit !== parseInt(cleaned[9])) return false;
-
   sum = 0;
   for (let i = 0; i < 10; i++) sum += parseInt(cleaned[i]) * (11 - i);
   digit = (sum * 10) % 11;
@@ -20,17 +16,13 @@ export function isValidCPF(cpf: string): boolean {
 
 export function isValidCNPJ(cnpj: string): boolean {
   const cleaned = cnpj.replace(/\D/g, '');
-  if (cleaned.length !== 14) return false;
-  if (/^(\d)\1+$/.test(cleaned)) return false;
-
+  if (cleaned.length !== 14 || /^(\d)\1+$/.test(cleaned)) return false;
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-
   let sum = 0;
   for (let i = 0; i < 12; i++) sum += parseInt(cleaned[i]) * weights1[i];
   let digit = sum % 11 < 2 ? 0 : 11 - (sum % 11);
   if (digit !== parseInt(cleaned[12])) return false;
-
   sum = 0;
   for (let i = 0; i < 13; i++) sum += parseInt(cleaned[i]) * weights2[i];
   digit = sum % 11 < 2 ? 0 : 11 - (sum % 11);
@@ -61,14 +53,14 @@ export function isValidEAN13(ean: string): boolean {
 export function isValidPassword(password: string, options: { minLength?: number; requireNumber?: boolean; requireSpecial?: boolean; requireUppercase?: boolean } = {}): { valid: boolean; errors: string[] } {
   const { minLength = 8, requireNumber = true, requireSpecial = true, requireUppercase = true } = options;
   const errors: string[] = [];
-  if (password.length < minLength) errors.push('Minimo ' + minLength + ' caracteres');
-  if (requireNumber && !/\d/.test(password)) errors.push('Precisa ter numero');
+  if (password.length < minLength) errors.push(`Mínimo ${minLength} caracteres`);
+  if (requireNumber && !/\d/.test(password)) errors.push('Precisa ter número');
   if (requireSpecial && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('Precisa ter caractere especial');
-  if (requireUppercase && !/[A-Z]/.test(password)) errors.push('Precisa ter letra maiuscula');
+  if (requireUppercase && !/[A-Z]/.test(password)) errors.push('Precisa ter letra maiúscula');
   return { valid: errors.length === 0, errors };
 }
 
-export function isNotEmpty(value: unknown): boolean {
+export function isNotEmpty(value: any): boolean {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string') return value.trim().length > 0;
   if (Array.isArray(value)) return value.length > 0;
@@ -76,7 +68,16 @@ export function isNotEmpty(value: unknown): boolean {
   return true;
 }
 
-export function isPositiveNumber(value: unknown): boolean {
-  const num = parseFloat(String(value));
+export function isPositiveNumber(value: any): boolean {
+  const num = parseFloat(value);
   return !isNaN(num) && num > 0;
+}
+
+export function isValidURL(url: string): boolean {
+  try { new URL(url); return true; } catch { return false; }
+}
+
+export function isValidDate(date: string): boolean {
+  const d = new Date(date);
+  return d instanceof Date && !isNaN(d.getTime());
 }
