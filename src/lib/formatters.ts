@@ -1,5 +1,4 @@
 // Formatadores para o Brasil
-
 export function formatCurrency(value: number, currency = 'BRL'): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency }).format(value);
 }
@@ -65,8 +64,15 @@ export function formatWeight(grams: number): string {
   return `${grams} g`;
 }
 
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
 export function formatDimensions(width: number, height: number, depth: number, unit = 'cm'): string {
-  return `${width} x ${height} x ${depth} ${unit}`;
+  return `${width} × ${height} × ${depth} ${unit}`;
 }
 
 export function truncate(str: string, length: number): string {
@@ -76,4 +82,12 @@ export function truncate(str: string, length: number): string {
 
 export function slugify(str: string): string {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+export function titleCase(str: string): string {
+  return str.split(' ').map(capitalize).join(' ');
 }
