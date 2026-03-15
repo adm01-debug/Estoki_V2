@@ -50,7 +50,7 @@ export const useGamificacao = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gamificacao_usuarios' }, () => {
         queryClient.invalidateQueries({ queryKey: ['gamificacao-perfil'] });
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'conquistas' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conquistas_definicoes' }, () => {
         queryClient.invalidateQueries({ queryKey: ['gamificacao-conquistas'] });
       })
       .subscribe();
