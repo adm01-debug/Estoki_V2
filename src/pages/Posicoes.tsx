@@ -191,13 +191,10 @@ export default function PosicoesPage() {
         </div>
       </PageTransition>
 
-      {selectedPosicao && (
-        <PosicaoDetalhesDialog
-          posicao={selectedPosicao}
-          open={!!selectedPosicao}
-          onClose={() => setSelectedPosicao(null)}
-        />
-      )}
+      <PosicaoDetalhesDialog
+        position={selectedPosicao}
+        onClose={() => setSelectedPosicao(null)}
+      />
     </AppLayout>
   );
 }

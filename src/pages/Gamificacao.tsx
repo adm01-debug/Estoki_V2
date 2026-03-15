@@ -136,7 +136,7 @@ export default function GamificacaoPage() {
             </TabsList>
 
             <TabsContent value="visao-geral" className="space-y-4">
-              <StreakSystem />
+              <StreakResumo />
               <DesafiosDiarios />
             </TabsContent>
 
