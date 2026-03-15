@@ -12,7 +12,7 @@ export function withAuth<P extends object>(
   WrappedComponent: ComponentType<P>,
   options: WithAuthOptions = {}
 ) {
-  const { redirectTo = '/login', LoadingComponent } = options;
+  const { redirectTo = '/auth', LoadingComponent } = options;
 
   const WithAuthComponent: React.FC<P> = (props) => {
     const { user, loading: isLoading } = useAuth();

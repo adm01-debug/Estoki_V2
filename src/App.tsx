@@ -23,6 +23,7 @@ const Recebimento = lazy(() => import("./pages/Recebimento"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Unauthorized = lazy(() => import("./pages/Unauthorized"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Scanner = lazy(() => import("./pages/Scanner"));
@@ -98,6 +99,7 @@ const App = () => (
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/2fa" element={<TwoFactorAuth />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
                     <Route path="/" element={<AppLayout />}>
                       <Route index element={<Index />} />
                       <Route path="dashboard" element={<Dashboard />} />
@@ -124,7 +126,7 @@ const App = () => (
                       <Route path="romaneios" element={<Romaneios />} />
                       <Route path="divergencias" element={<RelatorioDivergencias />} />
                       <Route path="fornecedores" element={<RelatorioFornecedores />} />
-                      <Route path="seguranca" element={<Seguranca />} />
+                      <Route path="seguranca" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Seguranca /></ProtectedRoute>} />
                       <Route path="produtos" element={<Produtos />} />
                       <Route path="lotes" element={<Lotes />} />
                       <Route path="posicoes" element={<Posicoes />} />
