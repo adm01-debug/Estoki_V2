@@ -85,7 +85,7 @@ export default function GamificacaoPage() {
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-primary/10"><Zap className="h-5 w-5 text-primary" /></div>
                   <div>
-                    <p className="text-2xl font-bold">{usuario?.xp_total || 0}</p>
+                    <p className="text-2xl font-bold">{perfil?.xp_total || 0}</p>
                     <p className="text-xs text-muted-foreground">XP Total</p>
                   </div>
                 </div>
