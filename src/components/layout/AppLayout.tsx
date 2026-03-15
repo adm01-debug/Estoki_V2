@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Package, 
