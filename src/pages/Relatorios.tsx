@@ -404,63 +404,57 @@ export default function RelatoriosPage() {
           </CardContent>
         </Card>
 
+        {/* Comparação Toggle */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium text-muted-foreground">KPIs do Período</h2>
+          <Button
+            variant={comparar ? "default" : "outline"}
+            size="sm"
+            onClick={() => setComparar(!comparar)}
+          >
+            <GitCompareArrows className="h-4 w-4 mr-2" />
+            {comparar ? "Comparando" : "Comparar período anterior"}
+          </Button>
+        </div>
+
+        {comparar && dadosPeriodoAnterior && (
+          <p className="text-xs text-muted-foreground -mt-4">
+            Comparando com: {dadosPeriodoAnterior.label}
+          </p>
+        )}
+
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <ArrowRightLeft className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Total</p>
-                  <p className="text-2xl font-bold">{kpis.totalMovimentacoes}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Entradas</p>
-                  <p className="text-2xl font-bold">{kpis.totalEntradas}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-red-500/10">
-                  <TrendingDown className="h-5 w-5 text-red-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Saídas</p>
-                  <p className="text-2xl font-bold">{kpis.totalSaidas}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <BarChart3 className="h-5 w-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Média/Dia</p>
-                  <p className="text-2xl font-bold">{kpis.mediaDiaria.toFixed(1)}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {[
+            { label: "Total", value: kpis.totalMovimentacoes, prev: dadosPeriodoAnterior?.totalMovimentacoes, icon: ArrowRightLeft, color: "primary" },
+            { label: "Entradas", value: kpis.totalEntradas, prev: dadosPeriodoAnterior?.totalEntradas, icon: TrendingUp, color: "green-500" },
+            { label: "Saídas", value: kpis.totalSaidas, prev: dadosPeriodoAnterior?.totalSaidas, icon: TrendingDown, color: "red-500" },
+            { label: "Média/Dia", value: Number(kpis.mediaDiaria.toFixed(1)), prev: dadosPeriodoAnterior ? Number(dadosPeriodoAnterior.mediaDiaria.toFixed(1)) : undefined, icon: BarChart3, color: "blue-500" },
+          ].map((kpi) => {
+            const delta = comparar && kpi.prev != null ? calcDelta(kpi.value, kpi.prev) : null;
+            return (
+              <Card key={kpi.label}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg bg-${kpi.color}/10`}>
+                      <kpi.icon className={`h-5 w-5 text-${kpi.color}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground">{kpi.label}</p>
+                      <p className="text-2xl font-bold">{kpi.value}</p>
+                      {delta !== null && (
+                        <div className={cn("flex items-center gap-1 text-xs mt-0.5", delta >= 0 ? "text-green-600" : "text-red-600")}>
+                          {delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                          {delta >= 0 ? "+" : ""}{delta.toFixed(1)}%
+                          <span className="text-muted-foreground ml-1">vs ant.</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Gráficos */}
