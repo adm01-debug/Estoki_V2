@@ -19,15 +19,17 @@ describe('useDashboard', () => {
 
   it('deve retornar estado inicial correto', () => {
     const { result } = renderHook(() => useDashboard(), { wrapper: createWrapper() });
-    expect(result.current.loading).toBeDefined();
-    expect(result.current.kpis).toBeDefined();
+    expect(result.current.isLoading).toBeDefined();
+    expect(result.current.stats).toBeDefined();
   });
 
-  it('deve ter KPIs com estrutura esperada', async () => {
+  it('deve ter stats com estrutura esperada', async () => {
     const { result } = renderHook(() => useDashboard(), { wrapper: createWrapper() });
-    await waitFor(() => expect(result.current.loading).toBe(false));
-    if (result.current.kpis) {
-      expect(typeof result.current.kpis.recebimentosPendentes).toBe('number');
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    if (result.current.stats) {
+      expect(typeof result.current.stats.totalRecebimentos).toBe('number');
+      expect(typeof result.current.stats.totalTriagens).toBe('number');
+      expect(typeof result.current.stats.totalPosicoes).toBe('number');
     }
   });
 });
