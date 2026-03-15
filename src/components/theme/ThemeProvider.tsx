@@ -1,14 +1,14 @@
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ReactNode } from "react";
+import { ThemeProvider as ContextThemeProvider } from "@/contexts/ThemeContext";
 
 interface ThemeProviderProps {
   children: ReactNode;
-  attribute?: "class" | "data-theme";
+  attribute?: string;
   defaultTheme?: string;
   enableSystem?: boolean;
   storageKey?: string;
 }
 
-export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  return <ContextThemeProvider>{children}</ContextThemeProvider>;
 }
