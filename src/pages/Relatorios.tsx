@@ -160,6 +160,36 @@ export default function RelatoriosPage() {
     };
   }, [dadosFiltrados, dataInicio, dataFim]);
 
+  // Comparação com período anterior
+  const periodDays = useMemo(() => differenceInDays(dataFim, dataInicio) + 1, [dataInicio, dataFim]);
+  
+  const dadosPeriodoAnterior = useMemo(() => {
+    if (!comparar) return null;
+    const prevEnd = subDays(dataInicio, 1);
+    const prevStart = subDays(prevEnd, periodDays - 1);
+    
+    const filtered = movimentacoes.filter((mov) => {
+      const movDate = new Date(mov.created_at);
+      return isWithinInterval(movDate, { start: startOfDay(prevStart), end: endOfDay(prevEnd) });
+    });
+
+    const entradas = filtered.filter(m => m.tipo === "recebimento_nf" || m.tipo === "devolucao");
+    const saidas = filtered.filter(m => m.tipo === "saida_transporte" || m.tipo === "entrega");
+
+    return {
+      totalMovimentacoes: filtered.length,
+      totalEntradas: entradas.reduce((acc, m) => acc + (m.quantidade || 0), 0),
+      totalSaidas: saidas.reduce((acc, m) => acc + (m.quantidade || 0), 0),
+      mediaDiaria: filtered.length / Math.max(1, periodDays),
+      label: `${format(prevStart, "dd/MM")} - ${format(prevEnd, "dd/MM")}`,
+    };
+  }, [comparar, movimentacoes, dataInicio, periodDays]);
+
+  const calcDelta = (current: number, previous: number) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return ((current - previous) / previous) * 100;
+  };
+
   // Dados para gráfico de área (evolução diária)
   const dadosEvolucao = useMemo(() => {
     const dias = eachDayOfInterval({ start: dataInicio, end: dataFim });
