@@ -279,7 +279,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 space-y-4">
+          <div className="p-4 space-y-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {[1, 2, 3, 4].map(i => (
                 <Card key={i}>
