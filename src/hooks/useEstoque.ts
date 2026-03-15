@@ -3,6 +3,24 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
+export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
+export type TipoPosicao = 'porta_palete' | 'box';
+
+export interface PosicaoEstoque {
+  id: string;
+  codigo: string;
+  tipo: TipoPosicao;
+  status: StatusPosicao;
+  zona?: string | null;
+  secao?: string | null;
+  nivel?: string | null;
+  porta_palete?: string | null;
+  box?: string | null;
+  capacidade_kg?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useEstoque = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
