@@ -10,7 +10,7 @@ export const useRecebimentos = () => {
   const { data: recebimentos, isLoading, error, refetch } = useQuery({
     queryKey: ['recebimentos'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('recebimentos').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('lotes').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     }
@@ -18,7 +18,21 @@ export const useRecebimentos = () => {
 
   const createRecebimento = useMutation({
     mutationFn: async (novo: any) => {
-      const { data, error } = await supabase.from('recebimentos').insert(novo).select().single();
+      const payload = {
+        numero_lote: novo.numero_lote,
+        produto_id: novo.produto_id,
+        quantidade_inicial: novo.quantidade || novo.quantidade_inicial || 0,
+        quantidade_atual: novo.quantidade || novo.quantidade_atual || 0,
+        quantidade_pedida: novo.quantidade_pedida,
+        fornecedor: novo.fornecedor,
+        nf_entrada: novo.nf_entrada,
+        previsao_chegada: novo.previsao_chegada,
+        pedido_compra: novo.pedido_compra,
+        data_validade: novo.data_validade,
+        data_fabricacao: novo.data_fabricacao,
+        status: novo.status || 'aguardando',
+      };
+      const { data, error } = await supabase.from('lotes').insert(payload).select().single();
       if (error) throw error;
       return data;
     },
@@ -34,7 +48,7 @@ export const useRecebimentos = () => {
   useEffect(() => {
     const channel = supabase
       .channel('recebimentos-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'recebimentos' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
         queryClient.invalidateQueries({ queryKey: ['recebimentos'] });
       })
       .subscribe();

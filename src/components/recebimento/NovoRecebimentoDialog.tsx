@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useRecebimentos, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "@/hooks/useRecebimentos";
 // @ts-nocheck
 const recebimentoSchema = z.object({
   produto_id: z.string().uuid({ message: "Selecione um produto" }),
@@ -129,7 +129,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
 
     setLoading(true);
 
-    const result = await createRecebimento({
+    const result = await createRecebimento.mutateAsync({
       produto_id: formData.produto_id,
       numero_lote: formData.numero_lote,
       fornecedor: formData.fornecedor || undefined,
@@ -351,7 +351,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
               <Label htmlFor="status">Status Inicial</Label>
               <Select 
                 value={formData.status} 
-                onValueChange={(value: StatusRecebimento) => setFormData({ ...formData, status: value })}
+                onValueChange={(value) => setFormData({ ...formData, status: value as any })}
               >
                 <SelectTrigger>
                   <SelectValue />

@@ -11,7 +11,7 @@ export const useDashboard = () => {
       const [posicoes, triagens, recebimentos] = await Promise.all([
         supabase.from('posicoes_estoque').select('*', { count: 'exact', head: true }),
         supabase.from('eventos_triagem').select('*', { count: 'exact', head: true }),
-        supabase.from('recebimentos').select('*', { count: 'exact', head: true })
+        supabase.from('lotes').select('*', { count: 'exact', head: true })
       ]);
       return {
         totalPosicoes: posicoes.count || 0,
@@ -30,7 +30,7 @@ export const useDashboard = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'recebimentos' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       })
       .subscribe();

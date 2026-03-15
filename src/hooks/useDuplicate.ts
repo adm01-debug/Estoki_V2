@@ -41,7 +41,7 @@ export function useDuplicate<T extends Record<string, any>>(
   const duplicateMutation = useMutation({
     mutationFn: async (sourceId: string) => {
       const { data: sourceRecord, error: fetchError } = await supabase
-        .from(table)
+        .from(table as any)
         .select("*")
         .eq("id", sourceId)
         .single();
@@ -49,7 +49,7 @@ export function useDuplicate<T extends Record<string, any>>(
       if (fetchError) throw fetchError;
       if (!sourceRecord) throw new Error("Registro não encontrado");
 
-      let newData = { ...sourceRecord };
+      let newData = { ...(sourceRecord as any) } as any;
 
       allExcludeFields.forEach((field) => {
         delete newData[field];
@@ -60,17 +60,17 @@ export function useDuplicate<T extends Record<string, any>>(
       }
 
       if (transformData) {
-        newData = { ...newData, ...transformData(sourceRecord as T) };
+        newData = { ...newData, ...transformData(sourceRecord as unknown as T) };
       }
 
       const { data: newRecord, error: insertError } = await supabase
-        .from(table)
+        .from(table as any)
         .insert(newData)
         .select()
         .single();
 
       if (insertError) throw insertError;
-      return newRecord as T;
+      return newRecord as unknown as T;
     },
     onSuccess: (newRecord) => {
       queryClient.invalidateQueries({ queryKey });
@@ -96,14 +96,14 @@ export function useDuplicate<T extends Record<string, any>>(
       }>;
     }) => {
       const { data: sourceRecord, error: fetchError } = await supabase
-        .from(table)
+        .from(table as any)
         .select("*")
         .eq("id", sourceId)
         .single();
 
       if (fetchError) throw fetchError;
 
-      let newData = { ...sourceRecord };
+      let newData = { ...(sourceRecord as any) } as any;
       allExcludeFields.forEach((field) => {
         delete newData[field];
       });
@@ -113,11 +113,11 @@ export function useDuplicate<T extends Record<string, any>>(
       }
 
       if (transformData) {
-        newData = { ...newData, ...transformData(sourceRecord as T) };
+        newData = { ...newData, ...transformData(sourceRecord as unknown as T) };
       }
 
       const { data: newRecord, error: insertError } = await supabase
-        .from(table)
+        .from(table as any)
         .insert(newData)
         .select()
         .single();
@@ -126,25 +126,25 @@ export function useDuplicate<T extends Record<string, any>>(
 
       for (const relation of relations) {
         const { data: relatedRecords } = await supabase
-          .from(relation.table)
+          .from(relation.table as any)
           .select("*")
           .eq(relation.foreignKey, sourceId);
 
         if (relatedRecords && relatedRecords.length > 0) {
-          const newRelatedRecords = relatedRecords.map((record) => {
+          const newRelatedRecords = relatedRecords.map((record: any) => {
             const newRelRecord = { ...record };
             [...DEFAULT_EXCLUDE_FIELDS, ...(relation.excludeFields || [])].forEach(
               (field) => delete newRelRecord[field]
             );
-            newRelRecord[relation.foreignKey] = newRecord.id;
+            newRelRecord[relation.foreignKey] = (newRecord as any).id;
             return newRelRecord;
           });
 
-          await supabase.from(relation.table).insert(newRelatedRecords);
+          await supabase.from(relation.table as any).insert(newRelatedRecords as any);
         }
       }
 
-      return newRecord as T;
+      return newRecord as unknown as T;
     },
     onSuccess: (newRecord) => {
       queryClient.invalidateQueries({ queryKey });

@@ -19,21 +19,28 @@ export const useGamificacao = () => {
   const { data: conquistas } = useQuery({
     queryKey: ['gamificacao-conquistas'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('conquistas').select('*');
+      const { data, error } = await supabase.from('conquistas_definicoes').select('*');
       if (error) throw error;
       return data;
     }
   });
 
-  const adicionarPontos = useMutation({
-    mutationFn: async (pontos: number) => {
-      const { data, error } = await supabase.rpc('adicionar_pontos', { p_pontos: pontos });
+  const adicionarXp = useMutation({
+    mutationFn: async ({ quantidade, tipo, descricao }: { quantidade: number; tipo: string; descricao: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+      const { data, error } = await supabase.rpc('adicionar_xp', { 
+        p_user_id: user.id, 
+        p_quantidade: quantidade, 
+        p_tipo: tipo, 
+        p_descricao: descricao 
+      });
       if (error) throw error;
       return data;
     },
-    onSuccess: (_, pontos) => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ['gamificacao-perfil'] });
-      toast({ title: 'Pontos!', description: `+${pontos} pontos adicionados!` });
+      toast({ title: 'XP!', description: `+${vars.quantidade} XP!` });
     }
   });
 
@@ -43,12 +50,12 @@ export const useGamificacao = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'gamificacao_usuarios' }, () => {
         queryClient.invalidateQueries({ queryKey: ['gamificacao-perfil'] });
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'conquistas' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'conquistas_definicoes' }, () => {
         queryClient.invalidateQueries({ queryKey: ['gamificacao-conquistas'] });
       })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  return { perfil, conquistas, isLoading, error, refetch, adicionarPontos };
+  return { perfil, conquistas, isLoading, error, refetch, adicionarXp };
 };

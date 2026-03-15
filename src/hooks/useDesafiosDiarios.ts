@@ -178,11 +178,11 @@ export function useDesafiosDiarios() {
       if (error) throw error;
 
       // Add XP
-      await adicionarXp(
-        desafio.xp_recompensa,
-        'desafio',
-        `Desafio "${desafio.titulo}" completado`
-      );
+      await adicionarXp.mutateAsync({
+        quantidade: desafio.xp_recompensa,
+        tipo: 'desafio',
+        descricao: `Desafio "${desafio.titulo}" completado`
+      });
 
       toast.success(`+${desafio.xp_recompensa} XP!`, {
         description: `Recompensa do desafio "${desafio.titulo}" coletada!`

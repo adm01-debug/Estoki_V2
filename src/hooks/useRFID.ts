@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useCallback, useRef } from 'react';
 export function useRFID() {
   const [lastRead, setLastRead] = useState<string | null>(null);
