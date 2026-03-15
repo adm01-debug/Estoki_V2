@@ -20,7 +20,7 @@ import {
   Loader2,
   Wifi
 } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+// AppLayout is provided by the router, no need to import
 import { KPICard } from "@/components/dashboard/KPICard";
 import { MenuButton } from "@/components/dashboard/MenuButton";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
