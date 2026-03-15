@@ -43,7 +43,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
   title?: string;
   showBack?: boolean;
   rightAction?: ReactNode;
