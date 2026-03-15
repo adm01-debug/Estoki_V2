@@ -11,7 +11,7 @@ export const useDashboard = () => {
       const [posicoes, triagens, recebimentos] = await Promise.all([
         supabase.from('posicoes_estoque').select('*', { count: 'exact', head: true }),
         supabase.from('eventos_triagem').select('*', { count: 'exact', head: true }),
-        supabase.from('recebimentos').select('*', { count: 'exact', head: true })
+        supabase.from('lotes').select('*', { count: 'exact', head: true })
       ]);
       return {
         totalPosicoes: posicoes.count || 0,
