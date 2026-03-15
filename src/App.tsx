@@ -23,6 +23,7 @@ const Recebimento = lazy(() => import("./pages/Recebimento"));
 const Auth = lazy(() => import("./pages/Auth"));
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Unauthorized = lazy(() => import("./pages/Unauthorized"));
 const Configuracoes = lazy(() => import("./pages/Configuracoes"));
 const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Scanner = lazy(() => import("./pages/Scanner"));
