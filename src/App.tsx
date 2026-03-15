@@ -99,6 +99,7 @@ const App = () => (
                   <Routes>
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/2fa" element={<TwoFactorAuth />} />
+                    <Route path="/unauthorized" element={<Unauthorized />} />
                     <Route path="/" element={<AppLayout />}>
                       <Route index element={<Index />} />
                       <Route path="dashboard" element={<Dashboard />} />
