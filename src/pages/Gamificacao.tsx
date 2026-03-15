@@ -12,7 +12,7 @@ import { useStreaks } from "@/hooks/useStreaks";
 import { XPBar } from "@/components/gamificacao/XPBar";
 import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
 import { ConquistasSystem } from "@/components/gamificacao/ConquistasSystem";
-import { StreakSystem } from "@/components/gamificacao/StreakSystem";
+import { StreakResumo } from "@/components/gamificacao/StreakSystem";
 import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -27,10 +27,10 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function GamificacaoPage() {
-  const { usuario, loading: loadingGamificacao } = useGamificacao();
-  const { conquistas, loading: loadingConquistas } = useConquistas();
-  const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
-  const { streak, loading: loadingStreaks } = useStreaks();
+  const { perfil, isLoading: loadingGamificacao } = useGamificacao();
+  const { conquistas, loading: loadingConquistas, desbloqueadas } = useConquistas();
+  const { desafios, loading: loadingDesafios, desafiosConcluidos: numConcluidos, totalDesafios: numTotal } = useDesafiosDiarios();
+  const { streak, loading: loadingStreaks, streakAtual } = useStreaks();
   const [tab, setTab] = useState("visao-geral");
 
   const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks;
@@ -52,10 +52,9 @@ export default function GamificacaoPage() {
     );
   }
 
-  const conquistasDesbloqueadas = conquistas?.filter((c) => c.desbloqueada)?.length || 0;
-  const totalConquistas = conquistas?.length || 0;
-  const desafiosConcluidos = desafios?.filter((d) => d.concluido)?.length || 0;
-  const totalDesafios = desafios?.length || 0;
+  const conquistasDesbloqueadas = desbloqueadas?.length || 0;
+  const desafiosConcluidos = numConcluidos || 0;
+  const totalDesafios = numTotal || 0;
 
   return (
     <AppLayout title="Gamificação" showBack>
@@ -70,11 +69,11 @@ export default function GamificacaoPage() {
                     <Trophy className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Nível {usuario?.nivel || 1}</h2>
-                    <p className="text-muted-foreground">{usuario?.xp_total || 0} XP Total</p>
+                    <h2 className="text-2xl font-bold">Nível {perfil?.nivel || 1}</h2>
+                    <p className="text-muted-foreground">{perfil?.xp_total || 0} XP Total</p>
                   </div>
                 </div>
-                <XPBar />
+                <XPBar xp={perfil?.xp_total || 0} level={perfil?.nivel || 1} xpForNextLevel={perfil?.xp_proximo_nivel || 100} />
               </CardContent>
             </Card>
           </motion.div>
@@ -86,7 +85,7 @@ export default function GamificacaoPage() {
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-primary/10"><Zap className="h-5 w-5 text-primary" /></div>
                   <div>
-                    <p className="text-2xl font-bold">{usuario?.xp_total || 0}</p>
+                    <p className="text-2xl font-bold">{perfil?.xp_total || 0}</p>
                     <p className="text-xs text-muted-foreground">XP Total</p>
                   </div>
                 </div>
@@ -97,7 +96,7 @@ export default function GamificacaoPage() {
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-warning/10"><Flame className="h-5 w-5 text-warning" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-warning">{streak?.streak_atual || 0}</p>
+                    <p className="text-2xl font-bold text-warning">{streakAtual}</p>
                     <p className="text-xs text-muted-foreground">Streak</p>
                   </div>
                 </div>
@@ -137,7 +136,7 @@ export default function GamificacaoPage() {
             </TabsList>
 
             <TabsContent value="visao-geral" className="space-y-4">
-              <StreakSystem />
+              <StreakResumo />
               <DesafiosDiarios />
             </TabsContent>
 

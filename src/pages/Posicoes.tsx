@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,8 +34,8 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
 };
 
 export default function PosicoesPage() {
-  const navigate = useNavigate();
-  const { posicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+  const { posicoes: rawPosicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+  const posicoes = rawPosicoes || [];
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [tipoFilter, setTipoFilter] = useState<string>("todos");
@@ -191,13 +191,10 @@ export default function PosicoesPage() {
         </div>
       </PageTransition>
 
-      {selectedPosicao && (
-        <PosicaoDetalhesDialog
-          posicao={selectedPosicao}
-          open={!!selectedPosicao}
-          onClose={() => setSelectedPosicao(null)}
-        />
-      )}
+      <PosicaoDetalhesDialog
+        position={selectedPosicao}
+        onClose={() => setSelectedPosicao(null)}
+      />
     </AppLayout>
   );
 }

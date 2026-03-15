@@ -3,6 +3,24 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
+export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
+export type TipoPosicao = 'porta_palete' | 'box';
+
+export interface PosicaoEstoque {
+  id: string;
+  codigo: string;
+  tipo: TipoPosicao;
+  status: StatusPosicao;
+  zona?: string | null;
+  secao?: string | null;
+  nivel?: string | null;
+  porta_palete?: string | null;
+  box?: string | null;
+  capacidade_kg?: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export const useEstoque = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -70,14 +88,21 @@ export const useEstoque = () => {
     const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
     const livres = lista.filter((p: any) => p.status === 'livre').length;
     const bloqueadas = lista.filter((p: any) => p.status === 'bloqueado').length;
+    const reservadas = lista.filter((p: any) => p.status === 'reservado').length;
     const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
 
     return {
+      total,
+      ocupadas,
+      livres,
+      bloqueadas,
+      reservadas,
+      taxaOcupacao,
+      // Legacy aliases
       totalPosicoes: total,
       posicoesOcupadas: ocupadas,
       posicoesLivres: livres,
       posicoesBloqueadas: bloqueadas,
-      taxaOcupacao,
     };
   }, [posicoes]);
 
