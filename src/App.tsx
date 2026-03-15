@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -59,47 +59,45 @@ const App = () => (
         <AuthProvider>
           <AppProvider>
             <NotificationProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <Suspense fallback={<LoadingFallback />}>
-                    <Routes>
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/2fa" element={<TwoFactorAuth />} />
-                      <Route path="/" element={<AppLayout />}>
-                        <Route index element={<Index />} />
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="estoque" element={<Estoque />} />
-                        <Route path="triagem" element={<Triagem />} />
-                        <Route path="recebimento" element={<Recebimento />} />
-                        <Route path="configuracoes" element={<Configuracoes />} />
-                        <Route path="relatorios" element={<Relatorios />} />
-                        <Route path="scanner" element={<Scanner />} />
-                        <Route path="movimentacao" element={<Movimentacao />} />
-                        <Route path="rastreabilidade" element={<Rastreabilidade />} />
-                        <Route path="kpis" element={<KPIsOperacionais />} />
-                        <Route path="produtividade" element={<Produtividade />} />
-                        <Route path="alertas" element={<AlertasInteligentes />} />
-                        <Route path="inventario" element={<InventarioCiclico />} />
-                        <Route path="curva-abc" element={<CurvaABC />} />
-                        <Route path="tarefas" element={<GestaoTarefas />} />
-                        <Route path="armazenamento" element={<Armazenamento />} />
-                        <Route path="triador" element={<DashboardTriador />} />
-                        <Route path="formulario-triagem" element={<FormularioTriagem />} />
-                        <Route path="conferencia" element={<ConferenciaRecebimento />} />
-                        <Route path="trocas" element={<TrocasDevolucoes />} />
-                        <Route path="trocas-dashboard" element={<DashboardTrocas />} />
-                        <Route path="romaneios" element={<Romaneios />} />
-                        <Route path="divergencias" element={<RelatorioDivergencias />} />
-                        <Route path="fornecedores" element={<RelatorioFornecedores />} />
-                        <Route path="seguranca" element={<Seguranca />} />
-                        <Route path="*" element={<NotFound />} />
-                      </Route>
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-              </TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/2fa" element={<TwoFactorAuth />} />
+                    <Route path="/" element={<AppLayout />}>
+                      <Route index element={<Index />} />
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="estoque" element={<Estoque />} />
+                      <Route path="triagem" element={<Triagem />} />
+                      <Route path="recebimento" element={<Recebimento />} />
+                      <Route path="configuracoes" element={<Configuracoes />} />
+                      <Route path="relatorios" element={<Relatorios />} />
+                      <Route path="scanner" element={<Scanner />} />
+                      <Route path="movimentacao" element={<Movimentacao />} />
+                      <Route path="rastreabilidade" element={<Rastreabilidade />} />
+                      <Route path="kpis" element={<KPIsOperacionais />} />
+                      <Route path="produtividade" element={<Produtividade />} />
+                      <Route path="alertas" element={<AlertasInteligentes />} />
+                      <Route path="inventario" element={<InventarioCiclico />} />
+                      <Route path="curva-abc" element={<CurvaABC />} />
+                      <Route path="tarefas" element={<GestaoTarefas />} />
+                      <Route path="armazenamento" element={<Armazenamento />} />
+                      <Route path="triador" element={<DashboardTriador />} />
+                      <Route path="formulario-triagem" element={<FormularioTriagem />} />
+                      <Route path="conferencia" element={<ConferenciaRecebimento />} />
+                      <Route path="trocas" element={<TrocasDevolucoes />} />
+                      <Route path="trocas-dashboard" element={<DashboardTrocas />} />
+                      <Route path="romaneios" element={<Romaneios />} />
+                      <Route path="divergencias" element={<RelatorioDivergencias />} />
+                      <Route path="fornecedores" element={<RelatorioFornecedores />} />
+                      <Route path="seguranca" element={<Seguranca />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
             </NotificationProvider>
           </AppProvider>
         </AuthProvider>
