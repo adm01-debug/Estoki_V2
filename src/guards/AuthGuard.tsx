@@ -12,7 +12,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
   children, 
   redirectTo = '/login' 
 }) => {
-  const { user, isLoading } = useAuth();
+  const { user, loading: isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
