@@ -411,9 +411,8 @@ export default function Dashboard() {
               </Card>
             </motion.section>
           </div>
-        </div>
-      </PageTransition>
-    </AppLayout>
+      </div>
+    </PageTransition>
   );
 }
 
