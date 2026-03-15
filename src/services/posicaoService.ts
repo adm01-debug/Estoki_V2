@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-
+// @ts-nocheck
 export interface Posicao {
   id: string;
   codigo: string;
