@@ -201,6 +201,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </div>
 
           <div className="flex items-center gap-1">
+            <LanguageSwitcher />
             <NotificationCenter />
             <ThemeToggle />
             {rightAction}
