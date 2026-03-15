@@ -1178,6 +1178,101 @@ export type Database = {
         }
         Relationships: []
       }
+      nfe_documents: {
+        Row: {
+          access_key: string
+          created_at: string
+          emitter_cnpj: string | null
+          emitter_name: string | null
+          id: string
+          imported_at: string | null
+          issue_date: string | null
+          number: number | null
+          operation_type: string | null
+          series: number | null
+          status: string | null
+          total_nfe: number | null
+          total_products: number | null
+          updated_at: string
+          xml_content: string | null
+        }
+        Insert: {
+          access_key: string
+          created_at?: string
+          emitter_cnpj?: string | null
+          emitter_name?: string | null
+          id?: string
+          imported_at?: string | null
+          issue_date?: string | null
+          number?: number | null
+          operation_type?: string | null
+          series?: number | null
+          status?: string | null
+          total_nfe?: number | null
+          total_products?: number | null
+          updated_at?: string
+          xml_content?: string | null
+        }
+        Update: {
+          access_key?: string
+          created_at?: string
+          emitter_cnpj?: string | null
+          emitter_name?: string | null
+          id?: string
+          imported_at?: string | null
+          issue_date?: string | null
+          number?: number | null
+          operation_type?: string | null
+          series?: number | null
+          status?: string | null
+          total_nfe?: number | null
+          total_products?: number | null
+          updated_at?: string
+          xml_content?: string | null
+        }
+        Relationships: []
+      }
+      nfe_items: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          nfe_id: string | null
+          product_code: string | null
+          quantity: number | null
+          total: number | null
+          unit_price: number | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          nfe_id?: string | null
+          product_code?: string | null
+          quantity?: number | null
+          total?: number | null
+          unit_price?: number | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          nfe_id?: string | null
+          product_code?: string | null
+          quantity?: number | null
+          total?: number | null
+          unit_price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nfe_items_nfe_id_fkey"
+            columns: ["nfe_id"]
+            isOneToOne: false
+            referencedRelation: "nfe_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notificacoes: {
         Row: {
           created_at: string
