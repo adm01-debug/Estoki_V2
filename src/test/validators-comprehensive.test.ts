@@ -79,10 +79,13 @@ describe('CNPJ Validation (lib/validators)', () => {
   it('rejects wrong check digit', () => expect(isValidCNPJ('11222333000182')).toBe(false));
 });
 
-// GAP: security.ts validateCNPJ only checks length
-describe('GAP: security.ts CNPJ validation is weak', () => {
-  it('security.ts accepts invalid CNPJ with correct length (BUG)', () => {
-    expect(secValidateCNPJ('12345678901234')).toBe(true); // Should be false
+// FIXED: security.ts validateCNPJ now validates check digits
+describe('FIXED: security.ts CNPJ validation with check digits', () => {
+  it('security.ts now rejects invalid CNPJ with correct length', () => {
+    expect(secValidateCNPJ('12345678901234')).toBe(false);
+  });
+  it('security.ts accepts valid CNPJ', () => {
+    expect(secValidateCNPJ('11222333000181')).toBe(true);
   });
 });
 
