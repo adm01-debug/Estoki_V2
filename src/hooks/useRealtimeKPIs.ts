@@ -199,7 +199,8 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
       supabase.removeChannel(channel);
       setStatus(prev => ({ ...prev, isConnected: false }));
     };
-  }, [invalidateQueries, options, showToasts]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invalidateQueries, showToasts]);
 
   return status;
 }
