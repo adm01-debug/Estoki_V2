@@ -138,7 +138,7 @@ export default function TriagemPage() {
   if (loading) {
     return (
       <AppLayout title="Triagem" showBack>
-        <div className="p-4 lg:pl-72 space-y-4">
+        <div className="p-4 space-y-4">
           {/* Skeleton Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[1, 2, 3].map(i => (
