@@ -102,6 +102,12 @@ const App = () => (
                       <Route path="divergencias" element={<RelatorioDivergencias />} />
                       <Route path="fornecedores" element={<RelatorioFornecedores />} />
                       <Route path="seguranca" element={<Seguranca />} />
+                      <Route path="produtos" element={<Produtos />} />
+                      <Route path="lotes" element={<Lotes />} />
+                      <Route path="posicoes" element={<Posicoes />} />
+                      <Route path="ondas" element={<Ondas />} />
+                      <Route path="gamificacao" element={<Gamificacao />} />
+                      <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                   </Routes>
