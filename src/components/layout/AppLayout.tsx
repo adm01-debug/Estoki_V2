@@ -176,7 +176,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         <div className="max-w-7xl mx-auto">
-          {children}
+          {children || <Outlet />}
         </div>
       </main>
 
