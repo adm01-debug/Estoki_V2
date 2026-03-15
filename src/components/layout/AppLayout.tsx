@@ -82,7 +82,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const isNested = useContext(AppLayoutContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, profile, role, signOut } = useAuth();
+  const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
 
   // Solicitar permissão de push notifications na primeira visita
@@ -95,6 +95,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   // If already inside an AppLayout, just render children
   if (isNested) {
     return <>{children}</>;
+  }
+
+  if (loading) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
   }
 
   const userName = profile?.nome || user?.email?.split('@')[0] || 'Usuário';
