@@ -12,7 +12,7 @@ import { useStreaks } from "@/hooks/useStreaks";
 import { XPBar } from "@/components/gamificacao/XPBar";
 import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
 import { ConquistasSystem } from "@/components/gamificacao/ConquistasSystem";
-import { StreakSystem } from "@/components/gamificacao/StreakSystem";
+import { StreakResumo } from "@/components/gamificacao/StreakSystem";
 import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
