@@ -103,6 +103,7 @@ export default function RelatoriosPage() {
   const [dataInicio, setDataInicio] = useState<Date>(subDays(new Date(), 30));
   const [dataFim, setDataFim] = useState<Date>(new Date());
   const [exportando, setExportando] = useState(false);
+  const [comparar, setComparar] = useState(false);
 
   // Listas únicas para filtros
   const produtosUnicos = useMemo(() => {
