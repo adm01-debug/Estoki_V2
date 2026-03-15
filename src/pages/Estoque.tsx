@@ -309,7 +309,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+          <div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <p className="text-destructive">{error}</p>
             <Button onClick={refetch}>Tentar novamente</Button>
           </div>
