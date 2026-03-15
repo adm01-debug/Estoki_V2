@@ -17,7 +17,7 @@ export function DuplicateButton<T extends { id: string }>({
   const { duplicate, isDuplicating: isPending } = useDuplicate<T>({ table: tableName, queryKey });
 
   return (
-    <Button variant={variant} size={size} onClick={() => mutate(item, { onSuccess })} disabled={isPending} title="Duplicar">
+    <Button variant={variant} size={size} onClick={() => duplicate(item.id)} disabled={isPending} title="Duplicar">
       {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
     </Button>
   );

@@ -459,5 +459,5 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   );
 }
 
-
+export default AppLayout;
 

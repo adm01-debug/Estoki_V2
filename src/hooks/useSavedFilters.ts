@@ -26,6 +26,7 @@ export interface CreateFilterInput {
   icon?: string;
   color?: string;
   is_shared?: boolean;
+  is_default?: boolean;
 }
 
 export function useSavedFilters(entityType: string) {

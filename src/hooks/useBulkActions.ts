@@ -5,6 +5,18 @@ import { toast } from "sonner";
 
 export type BulkActionType = "delete" | "update" | "duplicate" | "export" | "restore" | "archive";
 
+export interface BulkAction<T> {
+  id: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  confirm?: {
+    title: string;
+    description: string;
+  };
+  handler?: (items: T[]) => Promise<void>;
+}
+
 interface BulkActionOptions {
   table: string;
   queryKey: string[];
