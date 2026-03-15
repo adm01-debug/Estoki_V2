@@ -63,6 +63,8 @@ const App = () => (
             <NotificationProvider>
               <Toaster />
               <Sonner />
+              <InstallPrompt />
+              <UpdatePrompt />
               <BrowserRouter>
                 <Suspense fallback={<LoadingFallback />}>
                   <Routes>
