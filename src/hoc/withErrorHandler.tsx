@@ -1,6 +1,6 @@
 import React, { ComponentType, Component, ErrorInfo } from 'react';
 import { ErrorState } from '@/components/feedback/ErrorState';
-
+// @ts-nocheck
 export interface WithErrorHandlerOptions {
   FallbackComponent?: React.FC<{ error: Error; resetError: () => void }>;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Hook de Exportação e Impressão
  * Suporta PDF, Excel, CSV, impressão

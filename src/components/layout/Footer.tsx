@@ -1,4 +1,4 @@
-import { SPA_CONFIG } from "@/config";
+const APP_CONFIG = { name: 'WMS', version: '1.0.0', company: 'Promo Brindes' };
 
 const APP_CONFIG = { name: SPA_CONFIG?.appName || 'WMS', version: '1.0.0', company: 'Promo Brindes' };
 
