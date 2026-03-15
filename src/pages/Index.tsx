@@ -112,9 +112,8 @@ export default function Dashboard() {
   }
 
   return (
-    <AppLayout>
-      <PageTransition>
-        <div className="p-4 lg:pl-72 space-y-6">
+    <PageTransition>
+      <div className="p-4 lg:pl-72 space-y-6">
           {/* Hero Section */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
