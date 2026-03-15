@@ -2,7 +2,6 @@ import { ReactNode, useEffect, createContext, useContext } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 
-// Context to prevent double-rendering when AppLayout is nested
 const AppLayoutContext = createContext(false);
 import { 
   LayoutDashboard, 
@@ -27,7 +26,8 @@ import {
   Route,
   Building2,
   FileText,
-  AlertTriangle
+  AlertTriangle,
+  type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
@@ -52,7 +52,24 @@ interface AppLayoutProps {
   rightAction?: ReactNode;
 }
 
-const navItems = [
+interface NavItem {
+  path: string;
+  icon: LucideIcon;
+  label: string;
+  tour?: string;
+}
+
+// Bottom nav (mobile) - most used
+const mobileNavItems: NavItem[] = [
+  { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
+  { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
+  { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
+  { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
+];
+
+// Main sidebar sections
+const sidebarMainItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
@@ -60,6 +77,22 @@ const navItems = [
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
   { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner" },
   { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios" },
+];
+
+const sidebarSecondaryItems: NavItem[] = [
+  { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentação" },
+  { path: "/produtividade", icon: Users, label: "Produtividade" },
+  { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
+  { path: "/curva-abc", icon: Layers, label: "Curva ABC" },
+  { path: "/tarefas", icon: ListTodo, label: "Gestão Tarefas" },
+  { path: "/alertas", icon: BellRing, label: "Alertas" },
+  { path: "/kpis", icon: Activity, label: "KPIs" },
+  { path: "/rastreabilidade", icon: Route, label: "Rastreabilidade" },
+  { path: "/fornecedores", icon: Building2, label: "Qualidade Fornec." },
+  { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
+  { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
+  { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
+  { path: "/relatorios", icon: FileText, label: "Relatórios" },
 ];
 
 const getRoleBadgeColor = (role: string) => {
@@ -78,6 +111,24 @@ const getRoleLabel = (role: string) => {
   }
 };
 
+function SidebarNavButton({ item, isActive, onClick }: { item: NavItem; isActive: boolean; onClick: () => void }) {
+  return (
+    <button
+      data-tour={item.tour}
+      onClick={onClick}
+      className={cn(
+        "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+        isActive 
+          ? "bg-sidebar-primary text-sidebar-primary-foreground" 
+          : "text-sidebar-foreground hover:bg-sidebar-accent"
+      )}
+    >
+      <item.icon className="h-5 w-5" />
+      <span className="font-medium">{item.label}</span>
+    </button>
+  );
+}
+
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const isNested = useContext(AppLayoutContext);
   const location = useLocation();
@@ -85,14 +136,12 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
 
-  // Solicitar permissão de push notifications na primeira visita
   useEffect(() => {
     if (isSupported && permission === "default") {
       requestPermission();
     }
   }, [isSupported, permission, requestPermission]);
 
-  // If already inside an AppLayout, just render children
   if (isNested) {
     return <>{children}</>;
   }
@@ -201,7 +250,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Bottom Navigation (Mobile) */}
       <nav className="sticky bottom-0 bg-card border-t border-border px-2 py-2 md:hidden">
         <div className="flex items-center justify-around">
-          {navItems.slice(0, 5).map((item) => {
+          {mobileNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <button
@@ -258,212 +307,34 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </div>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <button
-                key={item.path}
-                data-tour={item.tour}
-                onClick={() => navigate(item.path)}
-                className={cn(
-                  "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                  isActive 
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                    : "text-sidebar-foreground hover:bg-sidebar-accent"
-                )}
-              >
-                <item.icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
-              </button>
-            );
-          })}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+          {sidebarMainItems.map((item) => (
+            <SidebarNavButton
+              key={item.path}
+              item={item}
+              isActive={location.pathname === item.path}
+              onClick={() => navigate(item.path)}
+            />
+          ))}
           
           <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
-            <button
-              onClick={() => navigate("/movimentacao")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/movimentacao"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <ArrowLeftRight className="h-5 w-5" />
-              <span className="font-medium">Movimentação</span>
-            </button>
-            <button
-              onClick={() => navigate("/produtividade")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/produtividade"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Users className="h-5 w-5" />
-              <span className="font-medium">Produtividade</span>
-            </button>
-            <button
-              onClick={() => navigate("/inventario")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/inventario"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <ClipboardList className="h-5 w-5" />
-              <span className="font-medium">Inventário Cíclico</span>
-            </button>
-            <button
-              onClick={() => navigate("/curva-abc")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/curva-abc"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Layers className="h-5 w-5" />
-              <span className="font-medium">Curva ABC</span>
-            </button>
-            <button
-              onClick={() => navigate("/tarefas")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/tarefas"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <ListTodo className="h-5 w-5" />
-              <span className="font-medium">Gestão Tarefas</span>
-            </button>
-            <button
-              onClick={() => navigate("/alertas")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/alertas"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <BellRing className="h-5 w-5" />
-              <span className="font-medium">Alertas</span>
-            </button>
-            <button
-              onClick={() => navigate("/kpis")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/kpis"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Activity className="h-5 w-5" />
-              <span className="font-medium">KPIs</span>
-            </button>
-            <button
-              onClick={() => navigate("/rastreabilidade")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/rastreabilidade"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Route className="h-5 w-5" />
-              <span className="font-medium">Rastreabilidade</span>
-            </button>
-            <button
-              onClick={() => navigate("/fornecedores")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/fornecedores"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Building2 className="h-5 w-5" />
-              <span className="font-medium">Qualidade Fornec.</span>
-            </button>
-            <button
-              onClick={() => navigate("/trocas")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/trocas"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Undo2 className="h-5 w-5" />
-              <span className="font-medium">Trocas/Devoluções</span>
-            </button>
-            <button
-              onClick={() => navigate("/trocas-dashboard")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/trocas-dashboard"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="font-medium">Dashboard Trocas</span>
-            </button>
-            <button
-              onClick={() => navigate("/divergencias")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/divergencias"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <AlertTriangle className="h-5 w-5" />
-              <span className="font-medium">Divergências</span>
-            </button>
-            <button
-              onClick={() => navigate("/relatorios")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/relatorios"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <FileText className="h-5 w-5" />
-              <span className="font-medium">Relatórios</span>
-            </button>
-            <button
-              onClick={() => navigate("/produtividade")}
-              className={cn(
-                "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/produtividade"
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-                  : "text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Activity className="h-5 w-5" />
-              <span className="font-medium">Minha Produtividade</span>
-            </button>
+            {sidebarSecondaryItems.map((item) => (
+              <SidebarNavButton
+                key={item.path}
+                item={item}
+                isActive={location.pathname === item.path}
+                onClick={() => navigate(item.path)}
+              />
+            ))}
           </div>
         </nav>
 
         <div className="p-3 border-t border-sidebar-border space-y-1">
-          <button 
+          <SidebarNavButton
+            item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
+            isActive={location.pathname === "/configuracoes"}
             onClick={() => navigate("/configuracoes")}
-            className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-              location.pathname === "/configuracoes"
-                ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-accent"
-            )}
-          >
-            <Settings className="h-5 w-5" />
-            <span className="font-medium">Configurações</span>
-          </button>
+          />
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
@@ -479,4 +350,3 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 }
 
 export default AppLayout;
-
