@@ -27,6 +27,11 @@ import {
   Building2,
   FileText,
   AlertTriangle,
+  UserCircle,
+  HelpCircle,
+  Bell,
+  FolderTree,
+  Scan,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
