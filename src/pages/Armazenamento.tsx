@@ -304,7 +304,7 @@ const ArmazenamentoPage = () => {
 
   return (
     <AppLayout title="Armazenamento" showBack>
-      <div className="p-4 lg:pl-72 space-y-4 pb-24">
+      <div className="p-4 space-y-4 pb-24">
         {/* Card do Item */}
         <Card>
           <CardHeader className="pb-3">
