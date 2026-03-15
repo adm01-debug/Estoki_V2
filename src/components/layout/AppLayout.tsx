@@ -369,10 +369,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Rastreabilidade</span>
             </button>
             <button
-              onClick={() => navigate("/qualidade-fornecedores")}
+              onClick={() => navigate("/fornecedores")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/qualidade-fornecedores"
+                location.pathname === "/fornecedores"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
