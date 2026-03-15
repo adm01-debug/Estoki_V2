@@ -125,7 +125,7 @@ const App = () => (
                       <Route path="romaneios" element={<Romaneios />} />
                       <Route path="divergencias" element={<RelatorioDivergencias />} />
                       <Route path="fornecedores" element={<RelatorioFornecedores />} />
-                      <Route path="seguranca" element={<Seguranca />} />
+                      <Route path="seguranca" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Seguranca /></ProtectedRoute>} />
                       <Route path="produtos" element={<Produtos />} />
                       <Route path="lotes" element={<Lotes />} />
                       <Route path="posicoes" element={<Posicoes />} />
