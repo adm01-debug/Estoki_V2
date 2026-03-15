@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useRecebimentos, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "@/hooks/useRecebimentos";
 // @ts-nocheck
 const recebimentoSchema = z.object({
   produto_id: z.string().uuid({ message: "Selecione um produto" }),

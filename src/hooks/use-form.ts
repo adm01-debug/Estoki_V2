@@ -1,12 +1,12 @@
 import { useState, useCallback, useMemo } from 'react';
 // @ts-nocheck
 type ValidationRule<T> = {
-  validate: (value: T[keyof T], values: T) => boolean;
+  validate: (value: any, values: T) => boolean;
   message: string;
 };
 
 type FieldConfig<T> = {
-  initialValue: T[keyof T];
+  initialValue: any;
   rules?: ValidationRule<T>[];
 };
 

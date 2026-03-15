@@ -44,7 +44,7 @@ export function withErrorHandler<P extends object>(
         return (
           <ErrorState
             title="Algo deu errado"
-            description={this.state.error.message}
+            message={this.state.error.message}
             onRetry={this.resetError}
           />
         );
