@@ -21,7 +21,7 @@ export function useAuthorization(requiredRoles: string[] = []) {
           .select('role')
           .eq('user_id', session.user.id);
 
-        const roles = data?.map(r => r.role) || [];
+        const roles = data?.map(r => r.role as string) || [];
         setUserRoles(roles);
         setIsAuthorized(
           requiredRoles.length === 0 || requiredRoles.some(r => roles.includes(r))
