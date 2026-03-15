@@ -130,6 +130,28 @@ const App = () => (
                       <Route path="ondas" element={<Ondas />} />
                       <Route path="gamificacao" element={<Gamificacao />} />
                       <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
+                      {/* Admin */}
+                      <Route path="admin/usuarios" element={<UsersPage />} />
+                      <Route path="admin/roles" element={<RolesPage />} />
+                      <Route path="admin/configuracoes" element={<AdminSettingsPage />} />
+                      <Route path="admin/auditoria" element={<AuditLogPage />} />
+                      <Route path="admin/integracoes" element={<IntegrationsPage />} />
+                      {/* Cadastros */}
+                      <Route path="categorias" element={<CategoriesPage />} />
+                      <Route path="clientes" element={<CustomersPage />} />
+                      <Route path="clientes/:id" element={<CustomerDetailPage />} />
+                      <Route path="pedidos" element={<OrdersPage />} />
+                      <Route path="pedidos/:id" element={<OrderDetailPage />} />
+                      <Route path="seriais" element={<SerialsPage />} />
+                      <Route path="expedicao" element={<ShippingPage />} />
+                      <Route path="armazens" element={<WarehousesPage />} />
+                      <Route path="armazens/:id" element={<WarehouseDetailPage />} />
+                      <Route path="perfil" element={<ProfilePage />} />
+                      <Route path="ajuda" element={<HelpPage />} />
+                      <Route path="notificacoes" element={<NotificationsPage />} />
+                      <Route path="picking" element={<PickingPage />} />
+                      <Route path="putaway" element={<PutawayPage />} />
+                      <Route path="qualidade" element={<QualityPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                   </Routes>
