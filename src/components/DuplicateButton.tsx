@@ -14,7 +14,7 @@ interface DuplicateButtonProps<T extends { id: string }> {
 export function DuplicateButton<T extends { id: string }>({
   item, tableName, queryKey, onSuccess, variant = 'ghost', size = 'icon'
 }: DuplicateButtonProps<T>) {
-  const { mutate, isPending } = useDuplicate<T>({ tableName, queryKey });
+  const { duplicate, isDuplicating: isPending } = useDuplicate<T>({ table: tableName, queryKey });
 
   return (
     <Button variant={variant} size={size} onClick={() => mutate(item, { onSuccess })} disabled={isPending} title="Duplicar">
