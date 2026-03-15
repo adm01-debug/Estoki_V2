@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export const useEstoque = () => {
@@ -64,5 +64,32 @@ export const useEstoque = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  return { posicoes, isLoading, error, refetch, createPosicao, updatePosicao, deletePosicao };
+  const getEstatisticas = useCallback(() => {
+    const lista = posicoes || [];
+    const total = lista.length;
+    const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
+    const livres = lista.filter((p: any) => p.status === 'livre').length;
+    const bloqueadas = lista.filter((p: any) => p.status === 'bloqueado').length;
+    const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
+
+    return {
+      totalPosicoes: total,
+      posicoesOcupadas: ocupadas,
+      posicoesLivres: livres,
+      posicoesBloqueadas: bloqueadas,
+      taxaOcupacao,
+    };
+  }, [posicoes]);
+
+  return {
+    posicoes,
+    loading: isLoading,
+    isLoading,
+    error,
+    refetch,
+    createPosicao,
+    updatePosicao,
+    deletePosicao,
+    getEstatisticas,
+  };
 };
