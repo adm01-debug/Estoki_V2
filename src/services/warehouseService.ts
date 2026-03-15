@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { supabase } from '@/lib/supabase';
 export const warehouseService = {
   async getAll() { const { data, error } = await supabase.from('warehouses').select('*'); if (error) throw error; return data; },

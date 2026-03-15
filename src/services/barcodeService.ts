@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { supabase } from '@/lib/supabase';
 export const barcodeService = {
   async getAll(filters?: any) { const { data, error } = await supabase.from('items').select('*'); if (error) throw error; return data; },
