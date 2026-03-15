@@ -130,12 +130,12 @@ const App = () => (
                       <Route path="posicoes" element={<Posicoes />} />
                       <Route path="ondas" element={<Ondas />} />
                       <Route path="gamificacao" element={<Gamificacao />} />
-                      {/* Admin */}
-                      <Route path="admin/usuarios" element={<UsersPage />} />
-                      <Route path="admin/roles" element={<RolesPage />} />
-                      <Route path="admin/configuracoes" element={<AdminSettingsPage />} />
-                      <Route path="admin/auditoria" element={<AuditLogPage />} />
-                      <Route path="admin/integracoes" element={<IntegrationsPage />} />
+                      {/* Admin - Protected */}
+                      <Route path="admin/usuarios" element={<ProtectedRoute allowedRoles={["admin"]}><UsersPage /></ProtectedRoute>} />
+                      <Route path="admin/roles" element={<ProtectedRoute allowedRoles={["admin"]}><RolesPage /></ProtectedRoute>} />
+                      <Route path="admin/configuracoes" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettingsPage /></ProtectedRoute>} />
+                      <Route path="admin/auditoria" element={<ProtectedRoute allowedRoles={["admin"]}><AuditLogPage /></ProtectedRoute>} />
+                      <Route path="admin/integracoes" element={<ProtectedRoute allowedRoles={["admin"]}><IntegrationsPage /></ProtectedRoute>} />
                       {/* Cadastros */}
                       <Route path="categorias" element={<CategoriesPage />} />
                       <Route path="clientes" element={<CustomersPage />} />
