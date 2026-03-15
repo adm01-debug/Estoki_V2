@@ -281,8 +281,8 @@ export default function Dashboard() {
                   ))
                 ) : (
                   [
-                    { icon: CheckCircle2, value: kpis?.entradasHoje || 0, label: "Entradas", color: "success" },
-                    { icon: Search, value: kpis?.triagensHoje || 0, label: "Triagens Concluídas", color: "primary" },
+                    { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", color: "success" },
+                    { icon: Search, value: stats?.totalTriagens || 0, label: "Triagens Concluídas", color: "primary" },
                     { icon: XCircle, value: divergencias, label: "Divergências", color: "destructive" },
                   ].map((stat, index) => (
                     <motion.div 
