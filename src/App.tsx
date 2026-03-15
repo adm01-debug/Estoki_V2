@@ -11,6 +11,7 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingFallback } from "@/components/common/LoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { InstallPrompt } from "./components/pwa/InstallPrompt";
 import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
