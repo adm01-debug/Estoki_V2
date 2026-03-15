@@ -278,9 +278,9 @@ export default function Dashboard() {
                   ))
                 ) : (
                   [
-                    { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", color: "success" },
-                    { icon: Search, value: stats?.totalTriagens || 0, label: "Triagens Concluídas", color: "primary" },
-                    { icon: XCircle, value: divergencias, label: "Divergências", color: "destructive" },
+                    { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", bgClass: "bg-green-500/10", textClass: "text-green-600" },
+                    { icon: Search, value: stats?.totalTriagens || 0, label: "Triagens Concluídas", bgClass: "bg-primary/10", textClass: "text-primary" },
+                    { icon: XCircle, value: divergencias, label: "Divergências", bgClass: "bg-destructive/10", textClass: "text-destructive" },
                   ].map((stat, index) => (
                     <motion.div 
                       key={stat.label}
@@ -290,11 +290,11 @@ export default function Dashboard() {
                       transition={{ duration: 0.3, delay: 0.5 + index * 0.1 }}
                     >
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg bg-${stat.color}/10 flex items-center justify-center`}>
-                          <stat.icon className={`h-5 w-5 text-${stat.color}`} />
+                        <div className={`w-10 h-10 rounded-lg ${stat.bgClass} flex items-center justify-center`}>
+                          <stat.icon className={`h-5 w-5 ${stat.textClass}`} />
                         </div>
                         <div>
-                          <p className={`text-2xl font-bold text-${stat.color}`}>{stat.value}</p>
+                          <p className={`text-2xl font-bold ${stat.textClass}`}>{stat.value}</p>
                           <p className="text-xs text-muted-foreground">{stat.label}</p>
                         </div>
                       </div>
