@@ -108,7 +108,7 @@ const App = () => (
                       <Route path="scanner" element={<Scanner />} />
                       <Route path="movimentacao" element={<Movimentacao />} />
                       <Route path="rastreabilidade" element={<Rastreabilidade />} />
-                      <Route path="kpis" element={<KPIsOperacionais />} />
+                      <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
                       <Route path="produtividade" element={<Produtividade />} />
                       <Route path="alertas" element={<AlertasInteligentes />} />
                       <Route path="inventario" element={<InventarioCiclico />} />
