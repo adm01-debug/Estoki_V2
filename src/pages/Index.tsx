@@ -66,7 +66,7 @@ const getGreeting = () => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile } = useAuth();
-  const { kpis, loading: loadingKpis } = useDashboard();
+  const { stats, isLoading: loadingKpis } = useDashboard();
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
@@ -87,13 +87,14 @@ export default function Dashboard() {
   const estatisticas = getEstatisticas();
 
   // Calcular KPIs baseados em dados reais
-  const aguardandoRecebimento = recebimentos.filter(r => 
+  const recebimentosList = recebimentos || [];
+  const aguardandoRecebimento = recebimentosList.filter(r => 
     r.status === 'aguardando' || r.status === 'em_transito'
   ).length;
   
-  const divergencias = recebimentos.filter(r => r.status === 'divergencia').length;
+  const divergencias = recebimentosList.filter(r => r.status === 'divergencia').length;
   
-  const triagemPendente = kpis?.triagensPendentes || 0;
+  const triagemPendente = stats?.totalTriagens || 0;
   const itensEstoque = estatisticas.posicoesOcupadas;
   const ocupacaoPP = Math.round(estatisticas.taxaOcupacao);
   const ocupacaoBoxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
