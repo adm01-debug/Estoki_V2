@@ -184,7 +184,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto lg:pl-64">
         <div className="max-w-7xl mx-auto">
           {children || <Outlet />}
         </div>
