@@ -323,7 +323,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+          <div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <Warehouse className="h-16 w-16 text-muted-foreground" />
             <h2 className="text-xl font-semibold">Nenhuma posição cadastrada</h2>
             <p className="text-muted-foreground text-center max-w-md">
