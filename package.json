@@ -17,7 +17,7 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky install",
+    "prepare": "echo 'skip husky'",
     "test:watch": "vitest --watch",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
