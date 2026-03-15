@@ -69,11 +69,11 @@ export default function GamificacaoPage() {
                     <Trophy className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold">Nível {usuario?.nivel || 1}</h2>
-                    <p className="text-muted-foreground">{usuario?.xp_total || 0} XP Total</p>
+                    <h2 className="text-2xl font-bold">Nível {perfil?.nivel || 1}</h2>
+                    <p className="text-muted-foreground">{perfil?.xp_total || 0} XP Total</p>
                   </div>
                 </div>
-                <XPBar />
+                <XPBar xp={perfil?.xp_total || 0} level={perfil?.nivel || 1} xpForNextLevel={perfil?.xp_proximo_nivel || 100} />
               </CardContent>
             </Card>
           </motion.div>
