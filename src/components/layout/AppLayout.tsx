@@ -81,19 +81,33 @@ const sidebarMainItems: NavItem[] = [
 ];
 
 const sidebarSecondaryItems: NavItem[] = [
+  { path: "/produtos", icon: Package, label: "Produtos" },
+  { path: "/lotes", icon: Layers, label: "Lotes" },
+  { path: "/posicoes", icon: Warehouse, label: "Posições" },
   { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentação" },
-  { path: "/produtividade", icon: Users, label: "Produtividade" },
+  { path: "/armazenamento", icon: Building2, label: "Armazenamento" },
+  { path: "/picking", icon: ListTodo, label: "Picking" },
+  { path: "/putaway", icon: Package, label: "Putaway" },
+  { path: "/ondas", icon: Route, label: "Ondas" },
+  { path: "/qualidade", icon: ClipboardList, label: "Qualidade" },
+  { path: "/expedicao", icon: Truck, label: "Expedição" },
   { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
   { path: "/curva-abc", icon: Layers, label: "Curva ABC" },
   { path: "/tarefas", icon: ListTodo, label: "Gestão Tarefas" },
   { path: "/alertas", icon: BellRing, label: "Alertas" },
-  { path: "/kpis", icon: Activity, label: "KPIs" },
+  { path: "/kpis-operacionais", icon: Activity, label: "KPIs" },
+  { path: "/produtividade", icon: Users, label: "Produtividade" },
+  { path: "/gamificacao", icon: Activity, label: "Gamificação" },
   { path: "/rastreabilidade", icon: Route, label: "Rastreabilidade" },
+  { path: "/seriais", icon: QrCode, label: "Seriais" },
+  { path: "/pedidos", icon: FileText, label: "Pedidos" },
+  { path: "/clientes", icon: Users, label: "Clientes" },
   { path: "/fornecedores", icon: Building2, label: "Qualidade Fornec." },
   { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
   { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
   { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
+  { path: "/seguranca", icon: Shield, label: "Segurança" },
 ];
 
 const getRoleBadgeColor = (role: string) => {
