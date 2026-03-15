@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { supabase } from '@/integrations/supabase/client';
 
 export async function authMiddleware(): Promise<boolean> {
@@ -9,12 +8,13 @@ export async function authMiddleware(): Promise<boolean> {
 export async function adminMiddleware(): Promise<boolean> {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return false;
-  const { data: user } = await supabase
-    .from('profiles')
+  // Use user_roles table (not profiles) to prevent privilege escalation
+  const { data } = await supabase
+    .from('user_roles')
     .select('role')
-    .eq('id', session.user.id)
+    .eq('user_id', session.user.id)
     .single();
-  return user?.role === 'admin';
+  return data?.role === 'admin';
 }
 
 export default { authMiddleware, adminMiddleware };
