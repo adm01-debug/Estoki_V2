@@ -19,7 +19,7 @@ export const useGamificacao = () => {
   const { data: conquistas } = useQuery({
     queryKey: ['gamificacao-conquistas'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('conquistas').select('*');
+      const { data, error } = await supabase.from('conquistas_definicoes').select('*');
       if (error) throw error;
       return data;
     }
