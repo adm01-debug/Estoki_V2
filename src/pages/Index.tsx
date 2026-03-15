@@ -20,7 +20,7 @@ import {
   Loader2,
   Wifi
 } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+// AppLayout is provided by the router, no need to import
 import { KPICard } from "@/components/dashboard/KPICard";
 import { MenuButton } from "@/components/dashboard/MenuButton";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
@@ -66,7 +66,7 @@ const getGreeting = () => {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile } = useAuth();
-  const { kpis, loading: loadingKpis } = useDashboard();
+  const { stats, isLoading: loadingKpis } = useDashboard();
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
@@ -87,13 +87,14 @@ export default function Dashboard() {
   const estatisticas = getEstatisticas();
 
   // Calcular KPIs baseados em dados reais
-  const aguardandoRecebimento = recebimentos.filter(r => 
+  const recebimentosList = recebimentos || [];
+  const aguardandoRecebimento = recebimentosList.filter(r => 
     r.status === 'aguardando' || r.status === 'em_transito'
   ).length;
   
-  const divergencias = recebimentos.filter(r => r.status === 'divergencia').length;
+  const divergencias = recebimentosList.filter(r => r.status === 'divergencia').length;
   
-  const triagemPendente = kpis?.triagensPendentes || 0;
+  const triagemPendente = stats?.totalTriagens || 0;
   const itensEstoque = estatisticas.posicoesOcupadas;
   const ocupacaoPP = Math.round(estatisticas.taxaOcupacao);
   const ocupacaoBoxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
@@ -102,20 +103,17 @@ export default function Dashboard() {
 
   if (loadingKpis && loadingEstoque) {
     return (
-      <AppLayout>
-        <div className="p-4 lg:pl-72 space-y-6">
-          <div className="flex items-center justify-center h-64">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
+      <div className="p-4 lg:pl-72 space-y-6">
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   return (
-    <AppLayout>
-      <PageTransition>
-        <div className="p-4 lg:pl-72 space-y-6">
+    <PageTransition>
+      <div className="p-4 lg:pl-72 space-y-6">
           {/* Hero Section */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -280,8 +278,8 @@ export default function Dashboard() {
                   ))
                 ) : (
                   [
-                    { icon: CheckCircle2, value: kpis?.entradasHoje || 0, label: "Entradas", color: "success" },
-                    { icon: Search, value: kpis?.triagensHoje || 0, label: "Triagens Concluídas", color: "primary" },
+                    { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", color: "success" },
+                    { icon: Search, value: stats?.totalTriagens || 0, label: "Triagens Concluídas", color: "primary" },
                     { icon: XCircle, value: divergencias, label: "Divergências", color: "destructive" },
                   ].map((stat, index) => (
                     <motion.div 
@@ -413,9 +411,8 @@ export default function Dashboard() {
               </Card>
             </motion.section>
           </div>
-        </div>
-      </PageTransition>
-    </AppLayout>
+      </div>
+    </PageTransition>
   );
 }
 
