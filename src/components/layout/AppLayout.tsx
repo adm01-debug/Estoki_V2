@@ -1,6 +1,9 @@
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, createContext, useContext } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
+
+// Context to prevent double-rendering when AppLayout is nested
+const AppLayoutContext = createContext(false);
 import { 
   LayoutDashboard, 
   Package, 
