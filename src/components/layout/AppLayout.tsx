@@ -184,7 +184,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto lg:pl-64">
         <div className="max-w-7xl mx-auto">
           {children || <Outlet />}
         </div>
@@ -297,10 +297,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Produtividade</span>
             </button>
             <button
-              onClick={() => navigate("/inventario-ciclico")}
+              onClick={() => navigate("/inventario")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/inventario-ciclico"
+                location.pathname === "/inventario"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
@@ -321,10 +321,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Curva ABC</span>
             </button>
             <button
-              onClick={() => navigate("/gestao-tarefas")}
+              onClick={() => navigate("/tarefas")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/gestao-tarefas"
+                location.pathname === "/tarefas"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
@@ -369,10 +369,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Rastreabilidade</span>
             </button>
             <button
-              onClick={() => navigate("/qualidade-fornecedores")}
+              onClick={() => navigate("/fornecedores")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/qualidade-fornecedores"
+                location.pathname === "/fornecedores"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
@@ -381,10 +381,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Qualidade Fornec.</span>
             </button>
             <button
-              onClick={() => navigate("/trocas-devolucoes")}
+              onClick={() => navigate("/trocas")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/trocas-devolucoes"
+                location.pathname === "/trocas"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
@@ -393,10 +393,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Trocas/Devoluções</span>
             </button>
             <button
-              onClick={() => navigate("/dashboard-trocas")}
+              onClick={() => navigate("/trocas-dashboard")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/dashboard-trocas"
+                location.pathname === "/trocas-dashboard"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
@@ -429,10 +429,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Relatórios</span>
             </button>
             <button
-              onClick={() => navigate("/minha-produtividade")}
+              onClick={() => navigate("/produtividade")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/minha-produtividade"
+                location.pathname === "/produtividade"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}

@@ -103,7 +103,7 @@ export default function Dashboard() {
 
   if (loadingKpis && loadingEstoque) {
     return (
-      <div className="p-4 lg:pl-72 space-y-6">
+      <div className="p-4 space-y-6">
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
   return (
     <PageTransition>
-      <div className="p-4 lg:pl-72 space-y-6">
+      <div className="p-4 space-y-6">
           {/* Hero Section */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}

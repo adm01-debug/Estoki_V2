@@ -81,7 +81,7 @@ export default function DashboardTriadorPage() {
 
   return (
     <AppLayout title="Meu Dashboard" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header com XP e Nível */}
         <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
           <CardContent className="p-4">

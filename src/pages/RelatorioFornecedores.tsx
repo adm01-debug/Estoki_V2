@@ -125,7 +125,7 @@ export default function RelatorioFornecedoresPage() {
 
   return (
     <AppLayout title="Relatório Fornecedores" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header */}
         <div>
           <h2 className="text-lg font-semibold">Qualidade de Fornecedores</h2>

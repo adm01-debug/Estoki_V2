@@ -279,7 +279,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 space-y-4">
+          <div className="p-4 space-y-4">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {[1, 2, 3, 4].map(i => (
                 <Card key={i}>
@@ -309,7 +309,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+          <div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <p className="text-destructive">{error}</p>
             <Button onClick={refetch}>Tentar novamente</Button>
           </div>
@@ -323,7 +323,7 @@ export default function EstoquePage() {
     return (
       <AppLayout title="Estoque" showBack>
         <PageTransition>
-          <div className="p-4 lg:pl-72 flex flex-col items-center justify-center min-h-[50vh] gap-4">
+          <div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4">
             <Warehouse className="h-16 w-16 text-muted-foreground" />
             <h2 className="text-xl font-semibold">Nenhuma posição cadastrada</h2>
             <p className="text-muted-foreground text-center max-w-md">
@@ -383,7 +383,7 @@ export default function EstoquePage() {
       }
     >
       <PageTransition>
-        <div className="p-4 lg:pl-72 space-y-4">
+        <div className="p-4 space-y-4">
           {/* Stats Overview */}
           <motion.div 
             className="grid grid-cols-2 lg:grid-cols-4 gap-3"

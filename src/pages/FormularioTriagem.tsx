@@ -198,7 +198,7 @@ export default function FormularioTriagem() {
 
   return (
     <AppLayout title="Formulário de Triagem" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header com informações do lote */}
         <Card>
           <CardHeader className="pb-2">

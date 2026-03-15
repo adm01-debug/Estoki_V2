@@ -110,7 +110,7 @@ export default function RelatorioDivergenciasPage() {
 
   return (
     <AppLayout title="Relatório de Divergências" showBack>
-      <div className="p-4 lg:pl-72 space-y-6">
+      <div className="p-4 space-y-6">
         {/* Filtros */}
         <Card>
           <CardHeader className="pb-3">

@@ -304,7 +304,7 @@ const ArmazenamentoPage = () => {
 
   return (
     <AppLayout title="Armazenamento" showBack>
-      <div className="p-4 lg:pl-72 space-y-4 pb-24">
+      <div className="p-4 space-y-4 pb-24">
         {/* Card do Item */}
         <Card>
           <CardHeader className="pb-3">
@@ -551,7 +551,7 @@ const ArmazenamentoPage = () => {
       </div>
       
       {/* Footer Fixo */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t lg:pl-72">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t lg:pl-64">
         <div className="max-w-lg mx-auto">
           {posicaoSelecionada ? (
             <div className="space-y-3">
