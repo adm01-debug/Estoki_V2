@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'node',
-    setupFiles: [],
+    environment: 'jsdom',
+    setupFiles: ['./tests/setup.ts'],
     include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache'],
     coverage: {
@@ -21,9 +21,8 @@ export default defineConfig({
         '**/index.ts',
       ],
     },
-    testTimeout: 30000,
+    testTimeout: 10000,
     hookTimeout: 10000,
-    pool: 'forks',
   },
   resolve: {
     alias: {
