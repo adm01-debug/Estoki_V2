@@ -25,15 +25,22 @@ export const useGamificacao = () => {
     }
   });
 
-  const adicionarPontos = useMutation({
-    mutationFn: async (pontos: number) => {
-      const { data, error } = await supabase.rpc('adicionar_pontos', { p_pontos: pontos });
+  const adicionarXp = useMutation({
+    mutationFn: async ({ quantidade, tipo, descricao }: { quantidade: number; tipo: string; descricao: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+      const { data, error } = await supabase.rpc('adicionar_xp', { 
+        p_user_id: user.id, 
+        p_quantidade: quantidade, 
+        p_tipo: tipo, 
+        p_descricao: descricao 
+      });
       if (error) throw error;
       return data;
     },
-    onSuccess: (_, pontos) => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ['gamificacao-perfil'] });
-      toast({ title: 'Pontos!', description: `+${pontos} pontos adicionados!` });
+      toast({ title: 'XP!', description: `+${vars.quantidade} XP!` });
     }
   });
 
