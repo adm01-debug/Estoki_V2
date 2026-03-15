@@ -27,10 +27,10 @@ import {
 import { cn } from "@/lib/utils";
 
 export default function GamificacaoPage() {
-  const { usuario, loading: loadingGamificacao } = useGamificacao();
-  const { conquistas, loading: loadingConquistas } = useConquistas();
-  const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
-  const { streak, loading: loadingStreaks } = useStreaks();
+  const { perfil, isLoading: loadingGamificacao } = useGamificacao();
+  const { conquistas, loading: loadingConquistas, desbloqueadas } = useConquistas();
+  const { desafios, loading: loadingDesafios, desafiosConcluidos: numConcluidos, totalDesafios: numTotal } = useDesafiosDiarios();
+  const { streak, loading: loadingStreaks, streakAtual } = useStreaks();
   const [tab, setTab] = useState("visao-geral");
 
   const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks;
