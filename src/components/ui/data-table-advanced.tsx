@@ -163,7 +163,7 @@ export function DataTableAdvanced<T extends Record<string, any>>({
     } else if (!sortable) return;
 
     setSortConfig(prev => {
-      const newDirection = prev?.key === key && prev.direction === 'asc' ? 'desc' : 'asc';
+      const newDirection: 'asc' | 'desc' = prev?.key === key && prev.direction === 'asc' ? 'desc' : 'asc';
       const newConfig = { key, direction: newDirection };
       onSort?.(key, newDirection);
       return newConfig;

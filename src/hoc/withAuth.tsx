@@ -15,7 +15,7 @@ export function withAuth<P extends object>(
   const { redirectTo = '/login', LoadingComponent } = options;
 
   const WithAuthComponent: React.FC<P> = (props) => {
-    const { user, isLoading } = useAuth();
+    const { user, loading: isLoading } = useAuth();
     const location = useLocation();
 
     if (isLoading) {

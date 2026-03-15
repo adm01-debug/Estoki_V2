@@ -2272,7 +2272,7 @@ export type Database = {
       }
       calculate_lockout_duration: {
         Args: { attempt_count: number }
-        Returns: unknown
+        Returns: string
       }
       check_login_lockout: {
         Args: { p_email: string }

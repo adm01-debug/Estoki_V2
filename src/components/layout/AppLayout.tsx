@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import { 
   LayoutDashboard, 
   Package, 
@@ -43,7 +43,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface AppLayoutProps {
-  children: ReactNode;
+  children?: ReactNode;
   title?: string;
   showBack?: boolean;
   rightAction?: ReactNode;
@@ -176,7 +176,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Main Content */}
       <main className="flex-1 overflow-auto">
         <div className="max-w-7xl mx-auto">
-          {children}
+          {children || <Outlet />}
         </div>
       </main>
 
@@ -459,5 +459,5 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   );
 }
 
-
+export default AppLayout;
 

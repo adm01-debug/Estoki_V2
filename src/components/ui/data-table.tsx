@@ -1,6 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
-import { NoResults, NoData } from "@/components/ui/empty-state";
+import { EmptyState } from "@/components/ui/empty-state";
+const NoResults = ({ message }: { message?: string }) => <EmptyState variant="search" title={message || "Nenhum resultado encontrado"} />;
+const NoData = ({ message }: { message?: string }) => <EmptyState variant="no-data" title={message || "Nenhum dado disponível"} />;
 
 interface Column<T> {
   key: keyof T | string;

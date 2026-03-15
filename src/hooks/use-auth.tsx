@@ -89,11 +89,17 @@ export function useAuth(): AuthState & AuthActions {
 
       if (error) throw error;
 
-      const permissions = ROLE_PERMISSIONS[data.role] || [];
+      const role = (data as any).role || 'viewer';
+      const permissions = ROLE_PERMISSIONS[role] || [];
       
       return {
-        ...data,
+        id: data.id,
+        email: data.email || '',
+        full_name: data.nome || '',
+        role,
         permissions,
+        is_active: true,
+        created_at: data.created_at,
       };
     } catch (error) {
       console.error('[Auth] Error loading profile:', error);

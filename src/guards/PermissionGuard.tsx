@@ -37,7 +37,7 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   redirectTo = '/unauthorized',
   fallback
 }) => {
-  const { user, isLoading } = useAuth();
+  const { user, loading: isLoading } = useAuth();
 
   if (isLoading) {
     return (
