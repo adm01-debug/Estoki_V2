@@ -129,7 +129,6 @@ const App = () => (
                       <Route path="posicoes" element={<Posicoes />} />
                       <Route path="ondas" element={<Ondas />} />
                       <Route path="gamificacao" element={<Gamificacao />} />
-                      <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
                       {/* Admin */}
                       <Route path="admin/usuarios" element={<UsersPage />} />
                       <Route path="admin/roles" element={<RolesPage />} />
