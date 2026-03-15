@@ -34,8 +34,8 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
 };
 
 export default function PosicoesPage() {
-  const navigate = useNavigate();
-  const { posicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+  const { posicoes: rawPosicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+  const posicoes = rawPosicoes || [];
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [tipoFilter, setTipoFilter] = useState<string>("todos");
