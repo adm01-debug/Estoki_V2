@@ -52,10 +52,9 @@ export default function GamificacaoPage() {
     );
   }
 
-  const conquistasDesbloqueadas = conquistas?.filter((c) => c.desbloqueada)?.length || 0;
-  const totalConquistas = conquistas?.length || 0;
-  const desafiosConcluidos = desafios?.filter((d) => d.concluido)?.length || 0;
-  const totalDesafios = desafios?.length || 0;
+  const conquistasDesbloqueadas = desbloqueadas?.length || 0;
+  const desafiosConcluidos = numConcluidos || 0;
+  const totalDesafios = numTotal || 0;
 
   return (
     <AppLayout title="Gamificação" showBack>
