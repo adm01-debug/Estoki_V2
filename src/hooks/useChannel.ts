@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
-import { supabase } from '@/integrations/client';
+import { supabase } from '@/integrations/supabase/client';
 export function useChannel(channelName: string) {
   const [messages, setMessages] = useState<any[]>([]);
   const channelRef = useRef<any>(null);

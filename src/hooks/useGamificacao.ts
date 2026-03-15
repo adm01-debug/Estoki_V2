@@ -57,5 +57,5 @@ export const useGamificacao = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  return { perfil, conquistas, isLoading, error, refetch, adicionarPontos };
+  return { perfil, conquistas, isLoading, error, refetch, adicionarXp };
 };

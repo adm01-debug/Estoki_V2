@@ -67,7 +67,7 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
       // Nota: produto_id seria necessário - aqui usamos um placeholder
       // Em produção, seria necessário mapear o código do produto para o ID no banco
       for (const produto of nfeData.produtos) {
-        await createRecebimento({
+        await createRecebimento.mutateAsync({
           numero_lote: `${nfeData.numero}-${produto.codigo}`,
           fornecedor: nfeData.emitente.razaoSocial,
           quantidade: Math.round(produto.quantidade),

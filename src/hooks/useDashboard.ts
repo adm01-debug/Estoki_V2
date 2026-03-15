@@ -30,7 +30,7 @@ export const useDashboard = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'recebimentos' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
         queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       })
       .subscribe();

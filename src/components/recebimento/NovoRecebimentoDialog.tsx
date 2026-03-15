@@ -129,7 +129,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
 
     setLoading(true);
 
-    const result = await createRecebimento({
+    const result = await createRecebimento.mutateAsync({
       produto_id: formData.produto_id,
       numero_lote: formData.numero_lote,
       fornecedor: formData.fornecedor || undefined,
