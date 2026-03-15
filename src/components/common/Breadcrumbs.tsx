@@ -1,5 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface BreadcrumbItem {
   label: string;
@@ -7,12 +8,15 @@ interface BreadcrumbItem {
 }
 
 interface BreadcrumbsProps {
-  items: BreadcrumbItem[];
+  items?: BreadcrumbItem[];
+  className?: string;
 }
 
-export function Breadcrumbs({ items }: BreadcrumbsProps) {
+export function Breadcrumbs({ items = [], className }: BreadcrumbsProps) {
+  if (items.length === 0) return null;
+
   return (
-    <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+    <nav className={cn('flex items-center gap-1 text-sm text-muted-foreground', className)}>
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-1">
           {i > 0 && <ChevronRight className="h-3 w-3" />}

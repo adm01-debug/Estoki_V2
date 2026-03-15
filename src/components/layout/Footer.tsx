@@ -1,4 +1,6 @@
-import { APP_CONFIG } from "@/config";
+import { SPA_CONFIG } from "@/config";
+
+const APP_CONFIG = { name: SPA_CONFIG?.appName || 'WMS', version: '1.0.0', company: 'Promo Brindes' };
 
 export function Footer() {
   return (

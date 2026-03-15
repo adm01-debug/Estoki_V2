@@ -1,6 +1,5 @@
 /**
  * Config Module - Barrel Export
- * Centraliza todas as configurações de produção
  */
 
 // Environment
@@ -62,23 +61,31 @@ export {
   type FeatureFlags,
 } from './feature-flags';
 
+// App Config
+export const APP_CONFIG = {
+  name: 'WMS',
+  version: '1.0.0',
+  company: 'Promo Brindes',
+};
+
 // Inicialização global
 export function initializeApp(): void {
-  // Validar configuração
-  const { valid, errors } = validateConfig();
+  const { validateConfig: validate } = require('./environment');
+  const { setupGlobalErrorHandler: setupErrors } = require('./error-handler');
+  const { initPerformanceTracking: initPerf } = require('./analytics');
+  const { isProduction: isProd, envConfig: env } = require('./environment');
+  const { debugFeatureFlags: debugFlags } = require('./feature-flags');
+
+  const { valid, errors } = validate();
   if (!valid) {
     console.warn('[CONFIG] Validation warnings:', errors);
   }
 
-  // Setup error handler global
-  setupGlobalErrorHandler();
+  setupErrors();
+  initPerf();
 
-  // Iniciar tracking de performance
-  initPerformanceTracking();
-
-  // Log de inicialização
-  if (!isProduction()) {
-    console.log('[APP] Initialized in', envConfig.name, 'mode');
-    debugFeatureFlags();
+  if (!isProd()) {
+    console.log('[APP] Initialized in', env.name, 'mode');
+    debugFlags();
   }
 }
