@@ -32,6 +32,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -200,6 +201,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </div>
 
           <div className="flex items-center gap-1">
+            <LanguageSwitcher />
             <NotificationCenter />
             <ThemeToggle />
             {rightAction}
