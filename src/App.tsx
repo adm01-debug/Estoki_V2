@@ -11,6 +11,8 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingFallback } from "@/components/common/LoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
+import { InstallPrompt } from "./components/pwa/InstallPrompt";
+import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
 // Lazy loaded pages for better performance
 const Dashboard = lazy(() => import("./pages/Dashboard"));
