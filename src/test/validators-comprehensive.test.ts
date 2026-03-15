@@ -49,11 +49,13 @@ describe('CPF Validation (lib/validators)', () => {
   it('rejects short', () => expect(isValidCPF('123')).toBe(false));
 });
 
-// GAP DETECTED: lib/security.ts validateCPF only checks length, not check digits
-describe('GAP: security.ts CPF validation is weak', () => {
-  it('security.ts accepts invalid CPF with correct length (BUG)', () => {
-    // This is a gap: validateCPF in security.ts doesn't validate check digits
-    expect(secValidateCPF('12345678901')).toBe(true); // Should be false but returns true
+// FIXED: lib/security.ts now validates check digits properly
+describe('FIXED: security.ts CPF validation with check digits', () => {
+  it('security.ts now rejects invalid CPF with correct length', () => {
+    expect(secValidateCPF('12345678901')).toBe(false);
+  });
+  it('security.ts accepts valid CPF', () => {
+    expect(secValidateCPF('52998224725')).toBe(true);
   });
 });
 

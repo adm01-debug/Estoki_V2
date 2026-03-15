@@ -11,13 +11,17 @@ describe('security', () => {
     expect(validateEmail('invalid')).toBe(false);
   });
 
-  it('should validate CPF length', () => {
-    expect(validateCPF('12345678901')).toBe(true);
+  it('should validate CPF with check digits', () => {
+    expect(validateCPF('52998224725')).toBe(true);
+    expect(validateCPF('12345678901')).toBe(false); // invalid check digits
     expect(validateCPF('123')).toBe(false);
+    expect(validateCPF('11111111111')).toBe(false); // all same digits
   });
 
-  it('should validate CNPJ length', () => {
-    expect(validateCNPJ('12345678901234')).toBe(true);
+  it('should validate CNPJ with check digits', () => {
+    expect(validateCNPJ('11222333000181')).toBe(true);
+    expect(validateCNPJ('12345678901234')).toBe(false); // invalid check digits
     expect(validateCNPJ('123')).toBe(false);
+    expect(validateCNPJ('11111111111111')).toBe(false); // all same digits
   });
 });
