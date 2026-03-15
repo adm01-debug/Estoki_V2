@@ -96,7 +96,7 @@ export default function GamificacaoPage() {
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-warning/10"><Flame className="h-5 w-5 text-warning" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-warning">{streak?.streak_atual || 0}</p>
+                    <p className="text-2xl font-bold text-warning">{streakAtual}</p>
                     <p className="text-xs text-muted-foreground">Streak</p>
                   </div>
                 </div>
