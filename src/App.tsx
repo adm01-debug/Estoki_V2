@@ -50,6 +50,28 @@ const Posicoes = lazy(() => import("./pages/Posicoes"));
 const Ondas = lazy(() => import("./pages/Ondas"));
 const Gamificacao = lazy(() => import("./pages/Gamificacao"));
 
+// Additional pages
+const UsersPage = lazy(() => import("./pages/admin/UsersPage"));
+const RolesPage = lazy(() => import("./pages/admin/RolesPage"));
+const AdminSettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
+const AuditLogPage = lazy(() => import("./pages/admin/AuditLogPage"));
+const IntegrationsPage = lazy(() => import("./pages/admin/IntegrationsPage"));
+const CategoriesPage = lazy(() => import("./pages/categories/CategoriesPage"));
+const CustomersPage = lazy(() => import("./pages/customers/CustomersPage"));
+const CustomerDetailPage = lazy(() => import("./pages/customers/CustomerDetailPage"));
+const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
+const OrderDetailPage = lazy(() => import("./pages/orders/OrderDetailPage"));
+const SerialsPage = lazy(() => import("./pages/serials/SerialsPage"));
+const ShippingPage = lazy(() => import("./pages/shipping/ShippingPage"));
+const WarehousesPage = lazy(() => import("./pages/warehouses/WarehousesPage"));
+const WarehouseDetailPage = lazy(() => import("./pages/warehouses/WarehouseDetailPage"));
+const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
+const HelpPage = lazy(() => import("./pages/help/HelpPage"));
+const NotificationsPage = lazy(() => import("./pages/notifications/NotificationsPage"));
+const PickingPage = lazy(() => import("./pages/picking/PickingPage"));
+const PutawayPage = lazy(() => import("./pages/putaway/PutawayPage"));
+const QualityPage = lazy(() => import("./pages/quality/QualityPage"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -108,6 +130,28 @@ const App = () => (
                       <Route path="ondas" element={<Ondas />} />
                       <Route path="gamificacao" element={<Gamificacao />} />
                       <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
+                      {/* Admin */}
+                      <Route path="admin/usuarios" element={<UsersPage />} />
+                      <Route path="admin/roles" element={<RolesPage />} />
+                      <Route path="admin/configuracoes" element={<AdminSettingsPage />} />
+                      <Route path="admin/auditoria" element={<AuditLogPage />} />
+                      <Route path="admin/integracoes" element={<IntegrationsPage />} />
+                      {/* Cadastros */}
+                      <Route path="categorias" element={<CategoriesPage />} />
+                      <Route path="clientes" element={<CustomersPage />} />
+                      <Route path="clientes/:id" element={<CustomerDetailPage />} />
+                      <Route path="pedidos" element={<OrdersPage />} />
+                      <Route path="pedidos/:id" element={<OrderDetailPage />} />
+                      <Route path="seriais" element={<SerialsPage />} />
+                      <Route path="expedicao" element={<ShippingPage />} />
+                      <Route path="armazens" element={<WarehousesPage />} />
+                      <Route path="armazens/:id" element={<WarehouseDetailPage />} />
+                      <Route path="perfil" element={<ProfilePage />} />
+                      <Route path="ajuda" element={<HelpPage />} />
+                      <Route path="notificacoes" element={<NotificationsPage />} />
+                      <Route path="picking" element={<PickingPage />} />
+                      <Route path="putaway" element={<PutawayPage />} />
+                      <Route path="qualidade" element={<QualityPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                   </Routes>
