@@ -287,7 +287,7 @@ export default function RelatoriosPage() {
 
   return (
     <AppLayout title="Relatórios" showBack>
-      <div className="p-4 lg:pl-72 space-y-6">
+      <div className="p-4 space-y-6">
         {/* Filtros */}
         <Card>
           <CardHeader className="pb-3">

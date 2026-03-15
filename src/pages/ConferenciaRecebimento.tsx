@@ -187,7 +187,7 @@ export default function ConferenciaRecebimento() {
 
   return (
     <AppLayout title="Conferência de Recebimento" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header do recebimento */}
         <div className="flex items-start justify-between">
           <div>

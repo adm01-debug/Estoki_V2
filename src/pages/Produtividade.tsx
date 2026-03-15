@@ -148,7 +148,7 @@ export default function ProdutividadePage() {
   return (
     <AppLayout title="Produtividade" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6 lg:pl-72">
+        <div className="p-4 space-y-6">
           {/* Filtros */}
           <div className="flex flex-wrap gap-3 items-center justify-between">
             <div className="flex gap-3 flex-wrap">

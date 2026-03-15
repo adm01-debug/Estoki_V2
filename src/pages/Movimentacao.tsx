@@ -169,7 +169,7 @@ export default function MovimentacaoPage() {
 
   return (
     <AppLayout title="Movimentação" showBack>
-      <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+      <div className="p-4 space-y-4 animate-fade-in">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="registrar" className="gap-2">

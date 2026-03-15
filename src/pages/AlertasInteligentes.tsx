@@ -132,7 +132,7 @@ export default function AlertasInteligentesPage() {
 
   return (
     <AppLayout title="Alertas Inteligentes" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header com controles */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>

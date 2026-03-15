@@ -120,7 +120,7 @@ export default function CurvaABCPage() {
   return (
     <AppLayout title="Curva ABC" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6 lg:pl-72">
+        <div className="p-4 space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold">Análise Curva ABC</h2>

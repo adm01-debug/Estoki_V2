@@ -125,7 +125,7 @@ export default function RastreabilidadePage() {
 
   return (
     <AppLayout title="Rastreabilidade" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header */}
         <div>
           <h2 className="text-lg font-semibold">Rastreabilidade</h2>

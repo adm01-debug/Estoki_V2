@@ -100,7 +100,7 @@ export default function RecebimentoPage() {
         <NovoRecebimentoDialog />
       }
     >
-      <div className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+      <div className="p-4 space-y-4 animate-fade-in">
         {/* Filtros */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">

@@ -383,7 +383,7 @@ export default function EstoquePage() {
       }
     >
       <PageTransition>
-        <div className="p-4 lg:pl-72 space-y-4">
+        <div className="p-4 space-y-4">
           {/* Stats Overview */}
           <motion.div 
             className="grid grid-cols-2 lg:grid-cols-4 gap-3"

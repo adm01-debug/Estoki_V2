@@ -184,7 +184,7 @@ export default function GestaoTarefasPage() {
 
   return (
     <AppLayout title="Gestão de Tarefas" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>

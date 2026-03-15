@@ -94,7 +94,7 @@ export default function ScannerPage() {
 
   return (
     <AppLayout title="Scanner" showBack>
-      <div className="p-4 space-y-6 lg:pl-72">
+      <div className="p-4 space-y-6">
         {/* Seletor de Modo */}
         <div className="flex gap-2 mb-4">
           <Button

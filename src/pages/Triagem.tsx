@@ -196,7 +196,7 @@ export default function TriagemPage() {
         </div>
       }
     >
-      <div ref={containerRef} className="p-4 lg:pl-72 space-y-4 animate-fade-in">
+      <div ref={containerRef} className="p-4 space-y-4 animate-fade-in">
         {/* Pull-to-refresh indicator */}
         <PullToRefreshIndicator 
           pullDistance={pullDistance} 
