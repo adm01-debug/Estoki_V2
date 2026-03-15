@@ -44,6 +44,11 @@ const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias")
 const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
 const Seguranca = lazy(() => import("./pages/Seguranca"));
 const TwoFactorAuth = lazy(() => import("./pages/TwoFactorAuth"));
+const Produtos = lazy(() => import("./pages/Produtos"));
+const Lotes = lazy(() => import("./pages/Lotes"));
+const Posicoes = lazy(() => import("./pages/Posicoes"));
+const Ondas = lazy(() => import("./pages/Ondas"));
+const Gamificacao = lazy(() => import("./pages/Gamificacao"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,6 +102,12 @@ const App = () => (
                       <Route path="divergencias" element={<RelatorioDivergencias />} />
                       <Route path="fornecedores" element={<RelatorioFornecedores />} />
                       <Route path="seguranca" element={<Seguranca />} />
+                      <Route path="produtos" element={<Produtos />} />
+                      <Route path="lotes" element={<Lotes />} />
+                      <Route path="posicoes" element={<Posicoes />} />
+                      <Route path="ondas" element={<Ondas />} />
+                      <Route path="gamificacao" element={<Gamificacao />} />
+                      <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
                       <Route path="*" element={<NotFound />} />
                     </Route>
                   </Routes>
