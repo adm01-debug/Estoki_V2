@@ -44,6 +44,11 @@ const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias")
 const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
 const Seguranca = lazy(() => import("./pages/Seguranca"));
 const TwoFactorAuth = lazy(() => import("./pages/TwoFactorAuth"));
+const Produtos = lazy(() => import("./pages/Produtos"));
+const Lotes = lazy(() => import("./pages/Lotes"));
+const Posicoes = lazy(() => import("./pages/Posicoes"));
+const Ondas = lazy(() => import("./pages/Ondas"));
+const Gamificacao = lazy(() => import("./pages/Gamificacao"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
