@@ -79,6 +79,7 @@ const getRoleLabel = (role: string) => {
 };
 
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
+  const isNested = useContext(AppLayoutContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut } = useAuth();
@@ -90,6 +91,11 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       requestPermission();
     }
   }, [isSupported, permission, requestPermission]);
+
+  // If already inside an AppLayout, just render children
+  if (isNested) {
+    return <>{children}</>;
+  }
 
   const userName = profile?.nome || user?.email?.split('@')[0] || 'Usuário';
   const userEmail = profile?.email || user?.email || '';
@@ -105,6 +111,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   };
 
   return (
+    <AppLayoutContext.Provider value={true}>
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-card border-b border-border px-4 py-3">
