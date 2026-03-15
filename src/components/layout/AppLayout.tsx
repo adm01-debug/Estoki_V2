@@ -27,6 +27,11 @@ import {
   Building2,
   FileText,
   AlertTriangle,
+  UserCircle,
+  HelpCircle,
+  Bell,
+  FolderTree,
+  Scan,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -84,12 +89,14 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/produtos", icon: Package, label: "Produtos" },
   { path: "/lotes", icon: Layers, label: "Lotes" },
   { path: "/posicoes", icon: Warehouse, label: "Posições" },
+  { path: "/categorias", icon: FolderTree, label: "Categorias" },
   { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentação" },
   { path: "/armazenamento", icon: Building2, label: "Armazenamento" },
   { path: "/picking", icon: ListTodo, label: "Picking" },
   { path: "/putaway", icon: Package, label: "Putaway" },
   { path: "/ondas", icon: Route, label: "Ondas" },
   { path: "/qualidade", icon: ClipboardList, label: "Qualidade" },
+  { path: "/conferencia", icon: Scan, label: "Conferência" },
   { path: "/expedicao", icon: Truck, label: "Expedição" },
   { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
   { path: "/curva-abc", icon: Layers, label: "Curva ABC" },
@@ -102,12 +109,27 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/seriais", icon: QrCode, label: "Seriais" },
   { path: "/pedidos", icon: FileText, label: "Pedidos" },
   { path: "/clientes", icon: Users, label: "Clientes" },
+  { path: "/armazens", icon: Building2, label: "Armazéns" },
   { path: "/fornecedores", icon: Building2, label: "Qualidade Fornec." },
   { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
   { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
   { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
+];
+
+const sidebarAdminItems: NavItem[] = [
+  { path: "/admin/usuarios", icon: Users, label: "Usuários" },
+  { path: "/admin/roles", icon: Shield, label: "Papéis" },
+  { path: "/admin/configuracoes", icon: Settings, label: "Config Admin" },
+  { path: "/admin/auditoria", icon: ClipboardList, label: "Auditoria" },
+  { path: "/admin/integracoes", icon: Activity, label: "Integrações" },
+];
+
+const sidebarUtilityItems: NavItem[] = [
+  { path: "/perfil", icon: UserCircle, label: "Meu Perfil" },
+  { path: "/notificacoes", icon: Bell, label: "Notificações" },
+  { path: "/ajuda", icon: HelpCircle, label: "Ajuda" },
 ];
 
 const getRoleBadgeColor = (role: string) => {
@@ -334,7 +356,33 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           ))}
           
           <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
+            <p className="px-4 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-2">Operações</p>
             {sidebarSecondaryItems.map((item) => (
+              <SidebarNavButton
+                key={item.path}
+                item={item}
+                isActive={location.pathname === item.path}
+                onClick={() => navigate(item.path)}
+              />
+            ))}
+          </div>
+
+          {currentRole === 'admin' && (
+            <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
+              <p className="px-4 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-2">Administração</p>
+              {sidebarAdminItems.map((item) => (
+                <SidebarNavButton
+                  key={item.path}
+                  item={item}
+                  isActive={location.pathname === item.path}
+                  onClick={() => navigate(item.path)}
+                />
+              ))}
+            </div>
+          )}
+
+          <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
+            {sidebarUtilityItems.map((item) => (
               <SidebarNavButton
                 key={item.path}
                 item={item}
