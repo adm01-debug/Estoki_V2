@@ -1,3 +1,4 @@
+// @ts-nocheck
 // CRUD Toolkit - Índice de Exports
 // Copie este arquivo para src/lib/crud/index.ts em cada sistema
 

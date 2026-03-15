@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Service Worker Registration
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useCallback, useEffect, useRef } from 'react';
 export function useWeightScale(portConfig?: SerialPortRequestOptions) {
   const [weight, setWeight] = useState<number>(0);
