@@ -1,10 +1,7 @@
 import { assertEquals, assertExists } from "https://deno.land/std@0.224.0/assert/mod.ts";
-import { loadSync } from "https://deno.land/std@0.224.0/dotenv/mod.ts";
 
-try { loadSync({ export: true, allowEmptyValues: true }); } catch { /* ok */ }
-
-const SUPABASE_URL = Deno.env.get("VITE_SUPABASE_URL")!;
-const SUPABASE_ANON_KEY = Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? Deno.env.get("VITE_SUPABASE_URL") ?? "https://oztttjpqtbubfyhiypld.supabase.co";
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("VITE_SUPABASE_PUBLISHABLE_KEY") ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96dHR0anBxdGJ1YmZ5aGl5cGxkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4ODUyNTUsImV4cCI6MjA4MTQ2MTI1NX0.Mq3GjtA5c9238IT06Gv-3UaG44mAj8HzA8Fy2VpL6fA";
 
 const baseUrl = `${SUPABASE_URL}/functions/v1`;
 const headers = {
