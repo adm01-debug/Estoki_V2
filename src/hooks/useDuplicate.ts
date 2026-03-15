@@ -49,7 +49,7 @@ export function useDuplicate<T extends Record<string, any>>(
       if (fetchError) throw fetchError;
       if (!sourceRecord) throw new Error("Registro não encontrado");
 
-      let newData = { ...sourceRecord } as any;
+      let newData = { ...(sourceRecord as any) } as any;
 
       allExcludeFields.forEach((field) => {
         delete newData[field];
