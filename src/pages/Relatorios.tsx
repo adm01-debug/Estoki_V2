@@ -12,9 +12,10 @@ import {
   Search,
   Loader2,
   PieChart,
-  FileSpreadsheet
+  FileSpreadsheet,
+  GitCompareArrows
 } from "lucide-react";
-import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval } from "date-fns";
+import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import jsPDF from "jspdf";
 import { exportToExcel } from "@/utils/exportExcel";
