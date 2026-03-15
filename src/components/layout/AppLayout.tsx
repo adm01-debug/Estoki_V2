@@ -297,10 +297,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <span className="font-medium">Produtividade</span>
             </button>
             <button
-              onClick={() => navigate("/inventario-ciclico")}
+              onClick={() => navigate("/inventario")}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
-                location.pathname === "/inventario-ciclico"
+                location.pathname === "/inventario"
                   ? "bg-sidebar-primary text-sidebar-primary-foreground" 
                   : "text-sidebar-foreground hover:bg-sidebar-accent"
               )}
