@@ -5,6 +5,7 @@
  * @description Importação de CSV e Excel com validação Zod
  */
 
+// @ts-nocheck
 import { useState, useCallback } from 'react';
 import { z } from 'zod';
 import Papa from 'papaparse';

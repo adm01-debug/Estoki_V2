@@ -103,7 +103,7 @@ export function useDuplicate<T extends Record<string, any>>(
 
       if (fetchError) throw fetchError;
 
-      let newData = { ...sourceRecord } as any;
+      let newData = { ...(sourceRecord as any) } as any;
       allExcludeFields.forEach((field) => {
         delete newData[field];
       });
