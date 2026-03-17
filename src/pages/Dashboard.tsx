@@ -60,9 +60,6 @@ const DashboardPage = () => {
   // Realtime updates
   const realtimeStatus = useRealtimeKPIs({
     showToasts: true,
-    onMetricUpdate: () => console.log("Dashboard: metrics updated"),
-    onPositionUpdate: () => console.log("Dashboard: positions updated"),
-    onLoteUpdate: () => console.log("Dashboard: lotes updated"),
   });
 
   const exportarPDF = async () => {
