@@ -92,6 +92,7 @@ const mobileNavItems: NavItem[] = [
 const sidebarMainItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  { path: "/dashboard-realtime", icon: Radio, label: "Tempo Real", tour: "realtime" },
   { path: "/monitor", icon: Activity, label: "Monitor Live", tour: "monitor" },
   { path: "/assistente-ia", icon: Sparkles, label: "Assistente IA", tour: "assistente-ia" },
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
