@@ -162,74 +162,15 @@ export function useConquistas() {
     });
   }, [definicoes, conquistasUsuario]);
 
-  const atualizarProgresso = useCallback(async (
-    conquistaId: string,
-    novoProgresso: number
-  ) => {
-    if (!user?.id) return;
+  const atualizarProgresso = useCallback(async () => {
+    toast.info('O progresso das conquistas é atualizado automaticamente pelo sistema.');
+    await fetchConquistas();
+  }, [fetchConquistas]);
 
-    try {
-      const definicao = definicoes.find(d => d.id === conquistaId);
-      if (!definicao) return;
-
-      const desbloqueada = definicao.meta ? novoProgresso >= definicao.meta : false;
-
-      const { error } = await supabase
-        .from('conquistas_usuarios')
-        .upsert({
-          user_id: user.id,
-          conquista_id: conquistaId,
-          progresso: novoProgresso,
-          desbloqueada,
-          data_desbloqueio: desbloqueada ? new Date().toISOString() : null,
-        }, {
-          onConflict: 'user_id,conquista_id'
-        });
-
-      if (error) throw error;
-
-      if (desbloqueada) {
-        toast.success(`🏆 Conquista Desbloqueada!`, {
-          description: `${definicao.nome} - +${definicao.pontos} pontos!`
-        });
-      }
-
-      await fetchConquistas();
-    } catch (error) {
-      console.error('Erro ao atualizar progresso:', error);
-    }
-  }, [user?.id, definicoes, fetchConquistas]);
-
-  const desbloquearConquista = useCallback(async (conquistaId: string) => {
-    if (!user?.id) return;
-
-    try {
-      const definicao = definicoes.find(d => d.id === conquistaId);
-      if (!definicao) return;
-
-      const { error } = await supabase
-        .from('conquistas_usuarios')
-        .upsert({
-          user_id: user.id,
-          conquista_id: conquistaId,
-          progresso: definicao.meta || 1,
-          desbloqueada: true,
-          data_desbloqueio: new Date().toISOString(),
-        }, {
-          onConflict: 'user_id,conquista_id'
-        });
-
-      if (error) throw error;
-
-      toast.success(`🏆 Conquista Desbloqueada!`, {
-        description: `${definicao.nome} - +${definicao.pontos} pontos!`
-      });
-
-      await fetchConquistas();
-    } catch (error) {
-      console.error('Erro ao desbloquear conquista:', error);
-    }
-  }, [user?.id, definicoes, fetchConquistas]);
+  const desbloquearConquista = useCallback(async () => {
+    toast.info('As conquistas são liberadas automaticamente conforme suas ações no sistema.');
+    await fetchConquistas();
+  }, [fetchConquistas]);
 
   // Calculated values
   const desbloqueadas = conquistas.filter(c => c.desbloqueada);
