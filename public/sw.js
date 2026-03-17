@@ -3,12 +3,11 @@
  * Suporte offline, cache e sincronização em background
  */
 
-const CACHE_NAME = 'estoki-v1';
-const STATIC_CACHE = 'estoki-static-v1';
-const DYNAMIC_CACHE = 'estoki-dynamic-v1';
-const API_CACHE = 'estoki-api-v1';
+const CACHE_NAME = 'estoki-v2';
+const STATIC_CACHE = 'estoki-static-v2';
+const DYNAMIC_CACHE = 'estoki-dynamic-v2';
+const API_CACHE = 'estoki-api-v2';
 
-// Arquivos para cache estático
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -16,54 +15,56 @@ const STATIC_ASSETS = [
   '/offline.html',
 ];
 
-// URLs de API que devem ser cacheadas
-const API_ROUTES = [
-  '/api/products',
-  '/api/locations',
-  '/api/categories',
-];
-
-// Instalação - cachear assets estáticos
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then((cache) => {
-        console.log('[SW] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
-      })
-      .then(() => self.skipWaiting())
-  );
-});
-
-// Ativação - limpar caches antigos
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys()
-      .then((keys) => {
-        return Promise.all(
-          keys
-            .filter((key) => key !== STATIC_CACHE && key !== DYNAMIC_CACHE && key !== API_CACHE)
-            .map((key) => caches.delete(key))
-        );
-      })
-      .then(() => self.clients.claim())
-  );
-});
-
-// Estratégia de cache
 function isApiRequest(url) {
   return url.pathname.startsWith('/api/') || url.hostname.includes('supabase');
 }
 
-function isStaticAsset(url) {
-  return /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/.test(url.pathname);
+function isAppStaticAsset(url) {
+  return /\.(css|png|jpg|jpeg|gif|svg|ico|woff|woff2|webp)$/.test(url.pathname);
 }
 
-// Cache First para assets estáticos
+function shouldBypassRequest(request, url) {
+  if (request.method !== 'GET') return true;
+
+  if (url.origin !== location.origin && !url.hostname.includes('supabase')) {
+    return true;
+  }
+
+  return (
+    url.pathname.startsWith('/src/') ||
+    url.pathname.startsWith('/node_modules/') ||
+    url.pathname.startsWith('/@vite/') ||
+    url.pathname.startsWith('/@fs/') ||
+    url.pathname.startsWith('/@id/') ||
+    url.pathname.startsWith('/@react-refresh') ||
+    url.searchParams.has('v')
+  );
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(STATIC_CACHE)
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys()
+      .then((keys) => Promise.all(
+        keys
+          .filter((key) => ![STATIC_CACHE, DYNAMIC_CACHE, API_CACHE].includes(key))
+          .map((key) => caches.delete(key))
+      ))
+      .then(() => self.clients.claim())
+  );
+});
+
 async function cacheFirst(request, cacheName) {
   const cached = await caches.match(request);
   if (cached) return cached;
-  
+
   try {
     const response = await fetch(request);
     if (response.ok) {
@@ -76,7 +77,6 @@ async function cacheFirst(request, cacheName) {
   }
 }
 
-// Network First para API
 async function networkFirst(request, cacheName) {
   try {
     const response = await fetch(request);
@@ -88,8 +88,7 @@ async function networkFirst(request, cacheName) {
   } catch {
     const cached = await caches.match(request);
     if (cached) return cached;
-    
-    // Retornar resposta de erro offline
+
     return new Response(
       JSON.stringify({ error: 'offline', message: 'Você está offline' }),
       { headers: { 'Content-Type': 'application/json' }, status: 503 }
@@ -97,44 +96,40 @@ async function networkFirst(request, cacheName) {
   }
 }
 
-// Stale While Revalidate
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  
+
   const networkPromise = fetch(request).then((response) => {
     if (response.ok) {
       cache.put(request, response.clone());
     }
     return response;
   });
-  
+
   return cached || networkPromise;
 }
 
-// Interceptar requisições
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
-  
-  // Ignorar requisições de outros domínios (exceto Supabase)
-  if (url.origin !== location.origin && !url.hostname.includes('supabase')) {
+
+  if (shouldBypassRequest(event.request, url)) {
     return;
   }
-  
-  // APIs - Network First
+
   if (isApiRequest(url)) {
     event.respondWith(networkFirst(event.request, API_CACHE));
     return;
   }
-  
-  // Assets estáticos - Cache First
-  if (isStaticAsset(url)) {
+
+  if (isAppStaticAsset(url)) {
     event.respondWith(cacheFirst(event.request, STATIC_CACHE));
     return;
   }
-  
-  // Páginas HTML - Stale While Revalidate
-  event.respondWith(staleWhileRevalidate(event.request, DYNAMIC_CACHE));
+
+  if (event.request.mode === 'navigate') {
+    event.respondWith(staleWhileRevalidate(event.request, DYNAMIC_CACHE));
+  }
 });
 
 // Background Sync para operações offline
