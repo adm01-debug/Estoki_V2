@@ -230,7 +230,7 @@ const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClic
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <button type="button" onClick={onClick} data-tour={item.tour} className={buttonProps.className}>
+          <button type="button" onClick={onClick} onMouseEnter={() => onHover?.(item.path)} data-tour={item.tour} className={buttonProps.className}>
             {content}
           </button>
         </TooltipTrigger>
@@ -241,8 +241,8 @@ const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClic
     );
   }
 
-  return <motion.button {...buttonProps}>{content}</motion.button>;
-}
+  return <motion.button {...buttonProps} onMouseEnter={() => onHover?.(item.path)}>{content}</motion.button>;
+});
 
 function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: boolean }) {
   if (collapsed) return <div className="my-3 mx-3 border-t border-sidebar-border/50" />;
