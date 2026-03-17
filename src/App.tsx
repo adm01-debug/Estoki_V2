@@ -130,6 +130,7 @@ const App = () => (
                   <Route path="/" element={<AppLayout />}>
                     <Route index element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense>} />
                     <Route path="dashboard" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense>} />
+                    <Route path="monitor" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense>} />
 
                     {/* WMS Operations - table skeletons */}
                     <Route path="estoque" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Estoque /></Suspense>} />
