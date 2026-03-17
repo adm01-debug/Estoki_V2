@@ -291,8 +291,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         </div>
       </main>
 
-      {/* Bottom Navigation (Mobile) */}
-      <nav className="sticky bottom-0 bg-card border-t border-border px-2 py-2 md:hidden">
+      {/* Bottom Navigation (Mobile) - Enhanced touch targets */}
+      <nav className="sticky bottom-0 bg-card/95 backdrop-blur-lg border-t border-border px-1 py-1 md:hidden safe-area-bottom">
         <div className="flex items-center justify-around">
           {mobileNavItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -304,14 +304,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                 aria-label={`Ir para ${item.label}`}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-colors touch-friendly",
+                  "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 active:scale-95",
                   isActive 
-                    ? "text-primary bg-primary/10" 
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "text-primary bg-primary/10 shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground active:bg-muted"
                 )}
               >
-                <item.icon className="h-5 w-5" aria-hidden="true" />
-                <span className="text-xs font-medium">{item.label}</span>
+                <item.icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} aria-hidden="true" />
+                <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-semibold")}>{item.label}</span>
               </button>
             );
           })}
