@@ -39,6 +39,9 @@ import {
   Radio,
   CalendarClock,
   ShieldCheck,
+  WifiOff,
+  MapPin,
+  Brain,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
