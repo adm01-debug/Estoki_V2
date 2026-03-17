@@ -34,6 +34,8 @@ import {
   FolderTree,
   Scan,
   Sparkles,
+  Menu,
+  X,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -57,6 +59,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -70,6 +73,7 @@ interface NavItem {
   icon: LucideIcon;
   label: string;
   tour?: string;
+  badge?: number;
 }
 
 // Bottom nav (mobile) - most used
@@ -160,38 +164,54 @@ const getRoleLabel = (role: string) => {
 
 function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean }) {
   const button = (
-    <button
+    <motion.button
       data-tour={item.tour}
       onClick={onClick}
+      whileHover={{ x: collapsed ? 0 : 4 }}
+      whileTap={{ scale: 0.97 }}
       className={cn(
-        "w-full flex items-center gap-3 rounded-lg transition-all duration-200 group relative",
+        "w-full flex items-center gap-3 rounded-xl transition-all duration-200 group relative",
         collapsed ? "px-3 py-3 justify-center" : "px-3 py-2.5",
         isActive 
-          ? "bg-primary/10 text-primary sidebar-active-glow" 
-          : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+          ? "bg-primary/15 text-primary" 
+          : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/80"
       )}
     >
-      <item.icon className={cn(
-        "h-[18px] w-[18px] shrink-0 transition-colors",
-        isActive ? "text-primary" : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80"
-      )} />
+      {isActive && (
+        <motion.div 
+          layoutId="sidebar-indicator"
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-primary rounded-r-full"
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        />
+      )}
+      <div className={cn(
+        "relative flex items-center justify-center",
+        isActive && "drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]"
+      )}>
+        <item.icon className={cn(
+          "h-[18px] w-[18px] shrink-0 transition-all duration-200",
+          isActive ? "text-primary" : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/70"
+        )} />
+      </div>
       {!collapsed && (
         <span className={cn(
-          "text-sm transition-colors",
+          "text-sm transition-colors truncate",
           isActive ? "font-semibold" : "font-medium"
         )}>{item.label}</span>
       )}
-      {isActive && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+      {item.badge && item.badge > 0 && !collapsed && (
+        <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold bg-destructive text-destructive-foreground rounded-full">
+          {item.badge}
+        </span>
       )}
-    </button>
+    </motion.button>
   );
 
   if (collapsed) {
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent side="right" className="bg-popover text-popover-foreground border-border">
+        <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
           {item.label}
         </TooltipContent>
       </Tooltip>
@@ -202,9 +222,10 @@ function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavIte
 }
 
 function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: boolean }) {
-  if (collapsed) return <div className="my-3 mx-3 border-t border-sidebar-border" />;
+  if (collapsed) return <div className="my-3 mx-3 border-t border-sidebar-border/50" />;
   return (
-    <p className="px-3 text-[10px] font-semibold text-sidebar-foreground/30 uppercase tracking-[0.15em] mb-1.5 mt-5">
+    <p className="px-3 text-[10px] font-bold text-primary/50 uppercase tracking-[0.2em] mb-1.5 mt-5 flex items-center gap-2">
+      <span className="w-4 h-px bg-primary/20" />
       {label}
     </p>
   );
@@ -217,12 +238,17 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isSupported && permission === "default") {
       requestPermission();
     }
   }, [isSupported, permission, requestPermission]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   if (isNested) {
     return <>{children}</>;
@@ -231,14 +257,28 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
-            <Warehouse className="h-6 w-6 text-primary" />
+        <motion.div 
+          className="flex flex-col items-center gap-4"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
+          <div className="relative">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
+              <Warehouse className="h-7 w-7 text-primary-foreground" />
+            </div>
+            <div className="absolute -inset-2 rounded-2xl bg-primary/20 animate-ping" />
           </div>
-          <div className="h-1 w-24 bg-primary/20 rounded-full overflow-hidden">
-            <div className="h-full w-1/2 bg-primary rounded-full shimmer" />
+          <div className="flex items-center gap-1">
+            {[0, 1, 2].map((i) => (
+              <motion.div 
+                key={i}
+                className="w-2 h-2 rounded-full bg-primary"
+                animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+              />
+            ))}
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
@@ -260,254 +300,342 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     navigate('/auth');
   };
 
-  const sidebarWidth = sidebarCollapsed ? "w-[68px]" : "w-64";
-  const mainPadding = sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-64";
+  const sidebarWidth = sidebarCollapsed ? "w-[72px]" : "w-[260px]";
+  const mainPadding = sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[260px]";
+
+  const renderSidebarContent = (isMobile = false) => (
+    <>
+      {/* Logo */}
+      <div className={cn("p-4 border-b border-sidebar-border/50", sidebarCollapsed && !isMobile && "p-3")}>
+        <div className={cn("flex items-center", (sidebarCollapsed && !isMobile) ? "justify-center" : "gap-3")}>
+          <motion.div 
+            className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/50 flex items-center justify-center shadow-glow shrink-0"
+            whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Warehouse className="h-5 w-5 text-primary-foreground" />
+          </motion.div>
+          {(!sidebarCollapsed || isMobile) && (
+            <div className="min-w-0">
+              <h1 className="font-extrabold text-sidebar-foreground text-base tracking-tight gradient-text">ESTOKI</h1>
+              <p className="text-[10px] text-sidebar-foreground/30 font-medium tracking-wide">WMS Pro</p>
+            </div>
+          )}
+          {isMobile && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setMobileMenuOpen(false)}
+              className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* User Info */}
+      {(!sidebarCollapsed || isMobile) && (
+        <div className="px-3 py-3 border-b border-sidebar-border/50">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/30">
+            <div className="relative">
+              <Avatar className="h-9 w-9 ring-2 ring-primary/30 ring-offset-1 ring-offset-sidebar">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/50 text-primary-foreground text-xs font-bold">
+                  {getInitials(userName)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-sidebar" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-sidebar-foreground truncate">
+                {userName}
+              </p>
+              <Badge variant="outline" className={cn("text-[9px] h-4 px-1.5 rounded-md", getRoleBadgeColor(currentRole))}>
+                {getRoleLabel(currentRole)}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <ScrollArea className="flex-1">
+        <nav className="p-2 space-y-0.5">
+          <SidebarSectionLabel label="Principal" collapsed={sidebarCollapsed && !isMobile} />
+          {sidebarMainItems.map((item) => (
+            <SidebarNavButton
+              key={item.path}
+              item={item}
+              isActive={location.pathname === item.path}
+              onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+              collapsed={sidebarCollapsed && !isMobile}
+            />
+          ))}
+          
+          <SidebarSectionLabel label="Operações" collapsed={sidebarCollapsed && !isMobile} />
+          {sidebarSecondaryItems.map((item) => (
+            <SidebarNavButton
+              key={item.path}
+              item={item}
+              isActive={location.pathname === item.path}
+              onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+              collapsed={sidebarCollapsed && !isMobile}
+            />
+          ))}
+
+          {currentRole === 'admin' && (
+            <>
+              <SidebarSectionLabel label="Administração" collapsed={sidebarCollapsed && !isMobile} />
+              {sidebarAdminItems.map((item) => (
+                <SidebarNavButton
+                  key={item.path}
+                  item={item}
+                  isActive={location.pathname === item.path}
+                  onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+                  collapsed={sidebarCollapsed && !isMobile}
+                />
+              ))}
+            </>
+          )}
+
+          <SidebarSectionLabel label="Conta" collapsed={sidebarCollapsed && !isMobile} />
+          {sidebarUtilityItems.map((item) => (
+            <SidebarNavButton
+              key={item.path}
+              item={item}
+              isActive={location.pathname === item.path}
+              onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+              collapsed={sidebarCollapsed && !isMobile}
+            />
+          ))}
+        </nav>
+      </ScrollArea>
+
+      {/* Footer */}
+      <div className="p-2 border-t border-sidebar-border/50 space-y-0.5">
+        <SidebarNavButton
+          item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
+          isActive={location.pathname === "/configuracoes"}
+          onClick={() => { navigate("/configuracoes"); if (isMobile) setMobileMenuOpen(false); }}
+          collapsed={sidebarCollapsed && !isMobile}
+        />
+        {(sidebarCollapsed && !isMobile) ? (
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <button 
+                onClick={handleLogout}
+                className="w-full flex items-center justify-center px-3 py-3 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all"
+              >
+                <LogOut className="h-[18px] w-[18px]" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">Sair</TooltipContent>
+          </Tooltip>
+        ) : (
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all"
+          >
+            <LogOut className="h-[18px] w-[18px]" />
+            <span className="text-sm font-medium">Sair</span>
+          </button>
+        )}
+      </div>
+    </>
+  );
 
   return (
     <AppLayoutContext.Provider value={true}>
     <TooltipProvider>
-    <div className="min-h-screen bg-background flex flex-col ambient-bg">
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Ambient Background */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div className="absolute -top-[40%] -right-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
+        <div className="absolute -bottom-[30%] -left-[10%] w-[40%] h-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
+      </div>
+
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border/50 px-4 py-2.5">
-        <div className={cn("flex items-center justify-between max-w-[1600px] mx-auto transition-all", mainPadding)}>
+      <header className="sticky top-0 z-50 border-b border-border/40">
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
+        <div className={cn("relative flex items-center justify-between h-14 px-4 max-w-[1600px] mx-auto transition-all duration-300", mainPadding)}>
           <div className="flex items-center gap-3">
-            {showBack ? (
+            {/* Mobile menu button */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setMobileMenuOpen(true)}
+              className="lg:hidden touch-friendly hover:bg-primary/10"
+              aria-label="Abrir menu"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            
+            {showBack && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => navigate(-1)}
                 className="touch-friendly hover:bg-primary/10"
-                aria-label="Voltar para página anterior"
+                aria-label="Voltar"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
-            ) : (
-              <div className="flex items-center gap-2 lg:hidden">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
-                  <Warehouse className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-foreground hidden sm:block">
-                  ESTOKI
-                </span>
+            )}
+            
+            {/* Mobile logo */}
+            <div className="flex items-center gap-2 lg:hidden">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
+                <Warehouse className="h-4 w-4 text-primary-foreground" />
               </div>
-            )}
+              <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
+            </div>
+
             {title && (
-              <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+              <h1 className="text-lg font-semibold text-foreground hidden sm:block">{title}</h1>
             )}
+            
+            {/* Breadcrumbs in header on desktop */}
+            <div className="hidden lg:block">
+              <Breadcrumbs />
+            </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <GlobalSearch />
             <LanguageSwitcher />
             <NotificationCenter />
             <ThemeToggle />
             {rightAction}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10" aria-label="Menu do usuário">
-                  <Avatar className="h-8 w-8 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
-                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-xs font-bold">
-                      {getInitials(userName)}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl border-border/50">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col gap-1">
-                    <span className="font-semibold">{userName}</span>
-                    <span className="text-xs text-muted-foreground font-normal">{userEmail}</span>
-                    <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(currentRole))}>
-                      <Shield className="h-3 w-3 mr-1" />
-                      {getRoleLabel(currentRole)}
-                    </Badge>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
-                  <Settings className="h-4 w-4 mr-2" />
-                  Configurações
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive cursor-pointer" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sair
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            
+            <div className="ml-1 pl-2 border-l border-border/40">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10 rounded-xl" aria-label="Menu do usuário">
+                    <div className="relative">
+                      <Avatar className="h-8 w-8 ring-2 ring-primary/20 ring-offset-1 ring-offset-background">
+                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-xs font-bold">
+                          {getInitials(userName)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border-2 border-background" />
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl border-border/50">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col gap-1">
+                      <span className="font-semibold">{userName}</span>
+                      <span className="text-xs text-muted-foreground font-normal">{userEmail}</span>
+                      <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(currentRole))}>
+                        <Shield className="h-3 w-3 mr-1" />
+                        {getRoleLabel(currentRole)}
+                      </Badge>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configurações
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive cursor-pointer" onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sair
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className={cn("flex-1 overflow-auto transition-all duration-300", mainPadding)}>
-        <div className="max-w-[1600px] mx-auto relative z-10">
-          <Breadcrumbs />
+      <main className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)}>
+        <div className="max-w-[1600px] mx-auto">
+          {/* Mobile breadcrumbs */}
+          <div className="lg:hidden">
+            <Breadcrumbs />
+          </div>
           {children || <Outlet />}
         </div>
       </main>
 
       {/* Bottom Navigation (Mobile) */}
-      <nav className="sticky bottom-0 bg-card/90 backdrop-blur-xl border-t border-border/50 px-1 py-1 md:hidden safe-area-bottom">
-        <div className="flex items-center justify-around">
+      <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative">
+        <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl" />
+        <div className="relative flex items-center justify-around">
           {mobileNavItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
-              <button
+              <motion.button
                 key={item.path}
                 data-tour={item.tour}
                 onClick={() => navigate(item.path)}
+                whileTap={{ scale: 0.9 }}
                 aria-label={`Ir para ${item.label}`}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 active:scale-95",
+                  "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
                   isActive 
-                    ? "text-primary bg-primary/10" 
-                    : "text-muted-foreground hover:text-foreground active:bg-muted"
+                    ? "text-primary" 
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
+                {isActive && (
+                  <motion.div 
+                    layoutId="bottomnav-indicator"
+                    className="absolute -top-1 w-8 h-1 bg-primary rounded-full shadow-glow-sm"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
                 <item.icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} aria-hidden="true" />
                 <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-bold text-primary")}>{item.label}</span>
-                {isActive && (
-                  <div className="absolute bottom-0.5 w-5 h-0.5 bg-primary rounded-full" />
-                )}
-              </button>
+              </motion.button>
             );
           })}
         </div>
       </nav>
 
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.aside 
+              className="fixed left-0 top-0 h-full w-[280px] bg-sidebar border-r border-sidebar-border/50 flex flex-col z-50 lg:hidden"
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              {renderSidebarContent(true)}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Desktop Sidebar */}
       <aside className={cn(
-        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border hidden lg:flex flex-col z-40 transition-all duration-300",
+        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border/50 hidden lg:flex flex-col z-40 transition-all duration-300",
         sidebarWidth
       )}>
-        {/* Logo */}
-        <div className="p-3 border-b border-sidebar-border">
-          <div className={cn("flex items-center", sidebarCollapsed ? "justify-center" : "gap-3 px-1")}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
-              <Warehouse className="h-5 w-5 text-primary-foreground" />
-            </div>
-            {!sidebarCollapsed && (
-              <div className="min-w-0">
-                <h1 className="font-bold text-sidebar-foreground text-sm tracking-tight">ESTOKI</h1>
-                <p className="text-[10px] text-sidebar-foreground/40 font-medium">Promo Brindes WMS</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* User Info */}
-        {!sidebarCollapsed && (
-          <div className="px-3 py-2.5 border-b border-sidebar-border">
-            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-sidebar-accent/50">
-              <Avatar className="h-8 w-8 ring-1 ring-primary/20">
-                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-[10px] font-bold">
-                  {getInitials(userName)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-sidebar-foreground truncate">
-                  {userName}
-                </p>
-                <Badge variant="outline" className={cn("text-[9px] h-4 px-1", getRoleBadgeColor(currentRole))}>
-                  {getRoleLabel(currentRole)}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation */}
-        <ScrollArea className="flex-1">
-          <nav className="p-2 space-y-0.5">
-            {sidebarMainItems.map((item) => (
-              <SidebarNavButton
-                key={item.path}
-                item={item}
-                isActive={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                collapsed={sidebarCollapsed}
-              />
-            ))}
-            
-            <SidebarSectionLabel label="Operações" collapsed={sidebarCollapsed} />
-            {sidebarSecondaryItems.map((item) => (
-              <SidebarNavButton
-                key={item.path}
-                item={item}
-                isActive={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                collapsed={sidebarCollapsed}
-              />
-            ))}
-
-            {currentRole === 'admin' && (
-              <>
-                <SidebarSectionLabel label="Administração" collapsed={sidebarCollapsed} />
-                {sidebarAdminItems.map((item) => (
-                  <SidebarNavButton
-                    key={item.path}
-                    item={item}
-                    isActive={location.pathname === item.path}
-                    onClick={() => navigate(item.path)}
-                    collapsed={sidebarCollapsed}
-                  />
-                ))}
-              </>
-            )}
-
-            <SidebarSectionLabel label="Conta" collapsed={sidebarCollapsed} />
-            {sidebarUtilityItems.map((item) => (
-              <SidebarNavButton
-                key={item.path}
-                item={item}
-                isActive={location.pathname === item.path}
-                onClick={() => navigate(item.path)}
-                collapsed={sidebarCollapsed}
-              />
-            ))}
-          </nav>
-        </ScrollArea>
-
-        {/* Footer */}
-        <div className="p-2 border-t border-sidebar-border space-y-0.5">
-          <SidebarNavButton
-            item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
-            isActive={location.pathname === "/configuracoes"}
-            onClick={() => navigate("/configuracoes")}
-            collapsed={sidebarCollapsed}
-          />
-          {sidebarCollapsed ? (
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <button 
-                  onClick={handleLogout}
-                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
-                >
-                  <LogOut className="h-[18px] w-[18px]" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">Sair</TooltipContent>
-            </Tooltip>
-          ) : (
-            <button 
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
-            >
-              <LogOut className="h-[18px] w-[18px]" />
-              <span className="text-sm font-medium">Sair</span>
-            </button>
-          )}
-        </div>
+        {renderSidebarContent(false)}
 
         {/* Collapse toggle */}
-        <button
+        <motion.button
           onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all shadow-sm z-50"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="absolute -right-3.5 top-20 w-7 h-7 rounded-full bg-card border border-border/50 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all shadow-md z-50"
         >
-          <ChevronLeft className={cn("h-3 w-3 text-muted-foreground transition-transform", sidebarCollapsed && "rotate-180")} />
-        </button>
+          <ChevronLeft className={cn("h-3.5 w-3.5 text-muted-foreground transition-transform duration-300", sidebarCollapsed && "rotate-180")} />
+        </motion.button>
       </aside>
       <OnboardingTour />
     </div>
