@@ -45,7 +45,20 @@
   </head>
 
   <body>
-    <div id="root"></div>
+    <!-- Inline critical CSS for instant first paint -->
+    <style>
+      #root { min-height: 100vh; }
+      .initial-loader { display:flex; align-items:center; justify-content:center; min-height:100vh; background:#0f172a; }
+      .initial-loader svg { width:48px; height:48px; animation:spin 1s linear infinite; color:#f59e0b; }
+      @keyframes spin { to { transform:rotate(360deg); } }
+    </style>
+    <div id="root">
+      <div class="initial-loader" aria-label="Carregando...">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

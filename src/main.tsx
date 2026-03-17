@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "./i18n";
+import { prefetchCriticalRoutes } from "./lib/prefetch";
 
 const rootElement = document.getElementById("root");
 
@@ -40,6 +41,11 @@ async function bootstrap() {
   }
 
   createRoot(rootElement).render(<App />);
+
+  // Prefetch critical routes after initial render
+  requestAnimationFrame(() => {
+    prefetchCriticalRoutes();
+  });
 }
 
 bootstrap();
