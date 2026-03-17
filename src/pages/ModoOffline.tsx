@@ -85,9 +85,12 @@ export default function ModoOffline() {
 
   useEffect(() => {
     if (autoSync && isOnline) {
-      const interval = setInterval(syncAll, 5 * 60 * 1000);
+      const interval = setInterval(() => {
+        tables.forEach(t => syncTable(t));
+      }, 5 * 60 * 1000);
       return () => clearInterval(interval);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSync, isOnline]);
 
   const totalCached = tables.reduce((s, t) => s + t.count, 0);

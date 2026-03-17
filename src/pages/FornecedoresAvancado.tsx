@@ -15,8 +15,8 @@ interface FornecedorScore {
   total_entregas: number;
   entregas_conformes: number;
   entregas_divergentes: number;
-  lead_time_medio_dias: number;
-  score: number;
+  lead_time_medio_dias: number | null;
+  score: number | null;
   ultima_entrega: string | null;
 }
 
@@ -92,13 +92,13 @@ export default function FornecedoresAvancado() {
 
   const chartData = fornecedores.slice(0, 10).map(f => ({
     name: f.fornecedor.length > 15 ? f.fornecedor.slice(0, 15) + '...' : f.fornecedor,
-    score: f.score,
-    fill: getScoreBg(f.score),
+    score: f.score ?? 0,
+    fill: getScoreBg(f.score ?? 0),
   }));
 
   const totalEntregas = fornecedores.reduce((s, f) => s + f.total_entregas, 0);
   const totalDivergentes = fornecedores.reduce((s, f) => s + f.entregas_divergentes, 0);
-  const avgScore = fornecedores.length > 0 ? Math.round(fornecedores.reduce((s, f) => s + f.score, 0) / fornecedores.length) : 0;
+  const avgScore = fornecedores.length > 0 ? Math.round(fornecedores.reduce((s, f) => s + (f.score ?? 0), 0) / fornecedores.length) : 0;
 
   return (
     <div className="p-4 md:p-6 space-y-6">
