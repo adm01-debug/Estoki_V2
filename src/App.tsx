@@ -10,70 +10,89 @@ import { AppProvider } from "@/contexts/AppContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { LoadingFallback } from "@/components/common/LoadingFallback";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { InstallPrompt } from "./components/pwa/InstallPrompt";
 import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
-// Lazy loaded pages for better performance
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Estoque = lazy(() => import("./pages/Estoque"));
-const Triagem = lazy(() => import("./pages/Triagem"));
-const Recebimento = lazy(() => import("./pages/Recebimento"));
-const Auth = lazy(() => import("./pages/Auth"));
-const Index = lazy(() => import("./pages/Index"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Unauthorized = lazy(() => import("./pages/Unauthorized"));
-const Configuracoes = lazy(() => import("./pages/Configuracoes"));
-const Relatorios = lazy(() => import("./pages/Relatorios"));
-const Scanner = lazy(() => import("./pages/Scanner"));
-const Movimentacao = lazy(() => import("./pages/Movimentacao"));
-const Rastreabilidade = lazy(() => import("./pages/Rastreabilidade"));
-const KPIsOperacionais = lazy(() => import("./pages/KPIsOperacionais"));
-const Produtividade = lazy(() => import("./pages/Produtividade"));
-const AlertasInteligentes = lazy(() => import("./pages/AlertasInteligentes"));
-const InventarioCiclico = lazy(() => import("./pages/InventarioCiclico"));
-const CurvaABC = lazy(() => import("./pages/CurvaABC"));
-const GestaoTarefas = lazy(() => import("./pages/GestaoTarefas"));
-const Armazenamento = lazy(() => import("./pages/Armazenamento"));
-const DashboardTriador = lazy(() => import("./pages/DashboardTriador"));
-const FormularioTriagem = lazy(() => import("./pages/FormularioTriagem"));
-const ConferenciaRecebimento = lazy(() => import("./pages/ConferenciaRecebimento"));
-const TrocasDevolucoes = lazy(() => import("./pages/TrocasDevolucoes"));
-const DashboardTrocas = lazy(() => import("./pages/DashboardTrocas"));
-const Romaneios = lazy(() => import("./pages/Romaneios"));
-const RelatorioDivergencias = lazy(() => import("./pages/RelatorioDivergencias"));
-const RelatorioFornecedores = lazy(() => import("./pages/RelatorioFornecedores"));
-const Seguranca = lazy(() => import("./pages/Seguranca"));
-const TwoFactorAuth = lazy(() => import("./pages/TwoFactorAuth"));
-const Produtos = lazy(() => import("./pages/Produtos"));
-const Lotes = lazy(() => import("./pages/Lotes"));
-const Posicoes = lazy(() => import("./pages/Posicoes"));
-const Ondas = lazy(() => import("./pages/Ondas"));
-const Gamificacao = lazy(() => import("./pages/Gamificacao"));
-const OcupacaoVisual = lazy(() => import("./pages/OcupacaoVisual"));
+// ── Core pages (loaded first) ──
+const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "./pages/Dashboard"));
+const Index = lazy(() => import(/* webpackChunkName: "index" */ "./pages/Index"));
+const Auth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/Auth"));
 
-// Additional pages
-const UsersPage = lazy(() => import("./pages/admin/UsersPage"));
-const RolesPage = lazy(() => import("./pages/admin/RolesPage"));
-const AdminSettingsPage = lazy(() => import("./pages/admin/SettingsPage"));
-const AuditLogPage = lazy(() => import("./pages/admin/AuditLogPage"));
-const IntegrationsPage = lazy(() => import("./pages/admin/IntegrationsPage"));
-const CategoriesPage = lazy(() => import("./pages/categories/CategoriesPage"));
-const CustomersPage = lazy(() => import("./pages/customers/CustomersPage"));
-const CustomerDetailPage = lazy(() => import("./pages/customers/CustomerDetailPage"));
-const OrdersPage = lazy(() => import("./pages/orders/OrdersPage"));
-const OrderDetailPage = lazy(() => import("./pages/orders/OrderDetailPage"));
-const SerialsPage = lazy(() => import("./pages/serials/SerialsPage"));
-const ShippingPage = lazy(() => import("./pages/shipping/ShippingPage"));
-const WarehousesPage = lazy(() => import("./pages/warehouses/WarehousesPage"));
-const WarehouseDetailPage = lazy(() => import("./pages/warehouses/WarehouseDetailPage"));
-const ProfilePage = lazy(() => import("./pages/profile/ProfilePage"));
-const HelpPage = lazy(() => import("./pages/help/HelpPage"));
-const NotificationsPage = lazy(() => import("./pages/notifications/NotificationsPage"));
-const PickingPage = lazy(() => import("./pages/picking/PickingPage"));
-const PutawayPage = lazy(() => import("./pages/putaway/PutawayPage"));
-const QualityPage = lazy(() => import("./pages/quality/QualityPage"));
+// ── WMS Operations ──
+const Estoque = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Estoque"));
+const Triagem = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Triagem"));
+const Recebimento = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Recebimento"));
+const Movimentacao = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Movimentacao"));
+const Armazenamento = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Armazenamento"));
+const ConferenciaRecebimento = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/ConferenciaRecebimento"));
+const Scanner = lazy(() => import(/* webpackChunkName: "scanner" */ "./pages/Scanner"));
+
+// ── Products & Inventory ──
+const Produtos = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/Produtos"));
+const Lotes = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/Lotes"));
+const Posicoes = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/Posicoes"));
+const InventarioCiclico = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/InventarioCiclico"));
+const CurvaABC = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/CurvaABC"));
+const OcupacaoVisual = lazy(() => import(/* webpackChunkName: "inventory" */ "./pages/OcupacaoVisual"));
+
+// ── Picking & Waves ──
+const PickingPage = lazy(() => import(/* webpackChunkName: "picking" */ "./pages/picking/PickingPage"));
+const PutawayPage = lazy(() => import(/* webpackChunkName: "picking" */ "./pages/putaway/PutawayPage"));
+const Ondas = lazy(() => import(/* webpackChunkName: "picking" */ "./pages/Ondas"));
+const GestaoTarefas = lazy(() => import(/* webpackChunkName: "picking" */ "./pages/GestaoTarefas"));
+
+// ── Shipping & Delivery ──
+const Romaneios = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/Romaneios"));
+const ShippingPage = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/shipping/ShippingPage"));
+
+// ── Triagem Detail ──
+const DashboardTriador = lazy(() => import(/* webpackChunkName: "triagem-detail" */ "./pages/DashboardTriador"));
+const FormularioTriagem = lazy(() => import(/* webpackChunkName: "triagem-detail" */ "./pages/FormularioTriagem"));
+const QualityPage = lazy(() => import(/* webpackChunkName: "triagem-detail" */ "./pages/quality/QualityPage"));
+
+// ── Analytics & Reports ──
+const Relatorios = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/Relatorios"));
+const KPIsOperacionais = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/KPIsOperacionais"));
+const Produtividade = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/Produtividade"));
+const Rastreabilidade = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/Rastreabilidade"));
+const RelatorioDivergencias = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/RelatorioDivergencias"));
+const RelatorioFornecedores = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/RelatorioFornecedores"));
+const AlertasInteligentes = lazy(() => import(/* webpackChunkName: "analytics" */ "./pages/AlertasInteligentes"));
+
+// ── Returns ──
+const TrocasDevolucoes = lazy(() => import(/* webpackChunkName: "returns" */ "./pages/TrocasDevolucoes"));
+const DashboardTrocas = lazy(() => import(/* webpackChunkName: "returns" */ "./pages/DashboardTrocas"));
+
+// ── Customers & Orders ──
+const CustomersPage = lazy(() => import(/* webpackChunkName: "customers" */ "./pages/customers/CustomersPage"));
+const CustomerDetailPage = lazy(() => import(/* webpackChunkName: "customers" */ "./pages/customers/CustomerDetailPage"));
+const OrdersPage = lazy(() => import(/* webpackChunkName: "orders" */ "./pages/orders/OrdersPage"));
+const OrderDetailPage = lazy(() => import(/* webpackChunkName: "orders" */ "./pages/orders/OrderDetailPage"));
+const SerialsPage = lazy(() => import(/* webpackChunkName: "serials" */ "./pages/serials/SerialsPage"));
+const CategoriesPage = lazy(() => import(/* webpackChunkName: "categories" */ "./pages/categories/CategoriesPage"));
+const WarehousesPage = lazy(() => import(/* webpackChunkName: "warehouses" */ "./pages/warehouses/WarehousesPage"));
+const WarehouseDetailPage = lazy(() => import(/* webpackChunkName: "warehouses" */ "./pages/warehouses/WarehouseDetailPage"));
+
+// ── Admin ──
+const UsersPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/UsersPage"));
+const RolesPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/RolesPage"));
+const AdminSettingsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/SettingsPage"));
+const AuditLogPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/AuditLogPage"));
+const IntegrationsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/IntegrationsPage"));
+const Seguranca = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/Seguranca"));
+
+// ── User & Misc ──
+const Configuracoes = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Configuracoes"));
+const ProfilePage = lazy(() => import(/* webpackChunkName: "user" */ "./pages/profile/ProfilePage"));
+const HelpPage = lazy(() => import(/* webpackChunkName: "user" */ "./pages/help/HelpPage"));
+const NotificationsPage = lazy(() => import(/* webpackChunkName: "user" */ "./pages/notifications/NotificationsPage"));
+const Gamificacao = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Gamificacao"));
+const TwoFactorAuth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/TwoFactorAuth"));
+const NotFound = lazy(() => import(/* webpackChunkName: "user" */ "./pages/NotFound"));
+const Unauthorized = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Unauthorized"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,70 +119,90 @@ const App = () => (
               <InstallPrompt />
               <UpdatePrompt />
               <BrowserRouter>
-                <Suspense fallback={<LoadingFallback />}>
-                  <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/2fa" element={<TwoFactorAuth />} />
-                    <Route path="/unauthorized" element={<Unauthorized />} />
-                    <Route path="/" element={<AppLayout />}>
-                      <Route index element={<Index />} />
-                      <Route path="dashboard" element={<Dashboard />} />
-                      <Route path="estoque" element={<Estoque />} />
-                      <Route path="triagem" element={<Triagem />} />
-                      <Route path="recebimento" element={<Recebimento />} />
-                      <Route path="configuracoes" element={<Configuracoes />} />
-                      <Route path="relatorios" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Relatorios /></ProtectedRoute>} />
-                      <Route path="scanner" element={<Scanner />} />
-                      <Route path="movimentacao" element={<Movimentacao />} />
-                      <Route path="rastreabilidade" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Rastreabilidade /></ProtectedRoute>} />
-                      <Route path="kpis-operacionais" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><KPIsOperacionais /></ProtectedRoute>} />
-                      <Route path="produtividade" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Produtividade /></ProtectedRoute>} />
-                      <Route path="alertas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><AlertasInteligentes /></ProtectedRoute>} />
-                      <Route path="inventario" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><InventarioCiclico /></ProtectedRoute>} />
-                      <Route path="curva-abc" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><CurvaABC /></ProtectedRoute>} />
-                      <Route path="tarefas" element={<GestaoTarefas />} />
-                      <Route path="armazenamento" element={<Armazenamento />} />
-                      <Route path="triador" element={<DashboardTriador />} />
-                      <Route path="formulario-triagem" element={<FormularioTriagem />} />
-                      <Route path="conferencia" element={<ConferenciaRecebimento />} />
-                      <Route path="trocas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><TrocasDevolucoes /></ProtectedRoute>} />
-                      <Route path="trocas-dashboard" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><DashboardTrocas /></ProtectedRoute>} />
-                      <Route path="romaneios" element={<Romaneios />} />
-                      <Route path="divergencias" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioDivergencias /></ProtectedRoute>} />
-                      <Route path="fornecedores" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioFornecedores /></ProtectedRoute>} />
-                      <Route path="seguranca" element={<ProtectedRoute allowedRoles={["admin"]}><Seguranca /></ProtectedRoute>} />
-                      <Route path="produtos" element={<Produtos />} />
-                      <Route path="lotes" element={<Lotes />} />
-                      <Route path="posicoes" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Posicoes /></ProtectedRoute>} />
-                      <Route path="ondas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute>} />
-                      <Route path="gamificacao" element={<Gamificacao />} />
-                      <Route path="ocupacao" element={<OcupacaoVisual />} />
-                      {/* Admin - Protected */}
-                      <Route path="admin/usuarios" element={<ProtectedRoute allowedRoles={["admin"]}><UsersPage /></ProtectedRoute>} />
-                      <Route path="admin/roles" element={<ProtectedRoute allowedRoles={["admin"]}><RolesPage /></ProtectedRoute>} />
-                      <Route path="admin/configuracoes" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettingsPage /></ProtectedRoute>} />
-                      <Route path="admin/auditoria" element={<ProtectedRoute allowedRoles={["admin"]}><AuditLogPage /></ProtectedRoute>} />
-                      <Route path="admin/integracoes" element={<ProtectedRoute allowedRoles={["admin"]}><IntegrationsPage /></ProtectedRoute>} />
-                      {/* Cadastros */}
-                      <Route path="categorias" element={<CategoriesPage />} />
-                      <Route path="clientes" element={<CustomersPage />} />
-                      <Route path="clientes/:id" element={<CustomerDetailPage />} />
-                      <Route path="pedidos" element={<OrdersPage />} />
-                      <Route path="pedidos/:id" element={<OrderDetailPage />} />
-                      <Route path="seriais" element={<SerialsPage />} />
-                      <Route path="expedicao" element={<ShippingPage />} />
-                      <Route path="armazens" element={<WarehousesPage />} />
-                      <Route path="armazens/:id" element={<WarehouseDetailPage />} />
-                      <Route path="perfil" element={<ProfilePage />} />
-                      <Route path="ajuda" element={<HelpPage />} />
-                      <Route path="notificacoes" element={<NotificationsPage />} />
-                      <Route path="picking" element={<PickingPage />} />
-                      <Route path="putaway" element={<PutawayPage />} />
-                      <Route path="qualidade" element={<QualityPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Route>
-                  </Routes>
-                </Suspense>
+                <Routes>
+                  {/* Public routes - minimal fallback */}
+                  <Route path="/auth" element={<Suspense fallback={<LoadingFallback />}><Auth /></Suspense>} />
+                  <Route path="/2fa" element={<Suspense fallback={<LoadingFallback />}><TwoFactorAuth /></Suspense>} />
+                  <Route path="/unauthorized" element={<Suspense fallback={<LoadingFallback />}><Unauthorized /></Suspense>} />
+
+                  {/* Protected routes with contextual skeletons */}
+                  <Route path="/" element={<AppLayout />}>
+                    <Route index element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense>} />
+                    <Route path="dashboard" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense>} />
+
+                    {/* WMS Operations - table skeletons */}
+                    <Route path="estoque" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Estoque /></Suspense>} />
+                    <Route path="triagem" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Triagem /></Suspense>} />
+                    <Route path="recebimento" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Recebimento /></Suspense>} />
+                    <Route path="movimentacao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Movimentacao /></Suspense>} />
+                    <Route path="armazenamento" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Armazenamento /></Suspense>} />
+                    <Route path="conferencia" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ConferenciaRecebimento /></Suspense>} />
+                    <Route path="scanner" element={<Suspense fallback={<LoadingFallback />}><Scanner /></Suspense>} />
+
+                    {/* Products & Inventory */}
+                    <Route path="produtos" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Produtos /></Suspense>} />
+                    <Route path="lotes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Lotes /></Suspense>} />
+                    <Route path="posicoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Posicoes /></ProtectedRoute></Suspense>} />
+                    <Route path="inventario" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><InventarioCiclico /></ProtectedRoute></Suspense>} />
+                    <Route path="curva-abc" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><CurvaABC /></ProtectedRoute></Suspense>} />
+                    <Route path="ocupacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><OcupacaoVisual /></Suspense>} />
+
+                    {/* Picking & Waves */}
+                    <Route path="picking" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><PickingPage /></Suspense>} />
+                    <Route path="putaway" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><PutawayPage /></Suspense>} />
+                    <Route path="ondas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute></Suspense>} />
+                    <Route path="tarefas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><GestaoTarefas /></Suspense>} />
+
+                    {/* Shipping */}
+                    <Route path="romaneios" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense>} />
+                    <Route path="expedicao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ShippingPage /></Suspense>} />
+
+                    {/* Triagem Detail */}
+                    <Route path="triador" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense>} />
+                    <Route path="formulario-triagem" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><FormularioTriagem /></Suspense>} />
+                    <Route path="qualidade" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><QualityPage /></Suspense>} />
+
+                    {/* Analytics & Reports */}
+                    <Route path="relatorios" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Relatorios /></ProtectedRoute></Suspense>} />
+                    <Route path="kpis-operacionais" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><KPIsOperacionais /></ProtectedRoute></Suspense>} />
+                    <Route path="produtividade" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Produtividade /></ProtectedRoute></Suspense>} />
+                    <Route path="alertas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AlertasInteligentes /></ProtectedRoute></Suspense>} />
+                    <Route path="rastreabilidade" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Rastreabilidade /></ProtectedRoute></Suspense>} />
+                    <Route path="divergencias" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioDivergencias /></ProtectedRoute></Suspense>} />
+                    <Route path="fornecedores" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioFornecedores /></ProtectedRoute></Suspense>} />
+
+                    {/* Returns */}
+                    <Route path="trocas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><TrocasDevolucoes /></ProtectedRoute></Suspense>} />
+                    <Route path="trocas-dashboard" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><DashboardTrocas /></ProtectedRoute></Suspense>} />
+
+                    {/* Customers & Orders */}
+                    <Route path="categorias" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><CategoriesPage /></Suspense>} />
+                    <Route path="clientes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><CustomersPage /></Suspense>} />
+                    <Route path="clientes/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><CustomerDetailPage /></Suspense>} />
+                    <Route path="pedidos" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense>} />
+                    <Route path="pedidos/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><OrderDetailPage /></Suspense>} />
+                    <Route path="seriais" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><SerialsPage /></Suspense>} />
+                    <Route path="armazens" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><WarehousesPage /></Suspense>} />
+                    <Route path="armazens/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><WarehouseDetailPage /></Suspense>} />
+
+                    {/* Admin */}
+                    <Route path="admin/usuarios" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><UsersPage /></ProtectedRoute></Suspense>} />
+                    <Route path="admin/roles" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><RolesPage /></ProtectedRoute></Suspense>} />
+                    <Route path="admin/configuracoes" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProtectedRoute allowedRoles={["admin"]}><AdminSettingsPage /></ProtectedRoute></Suspense>} />
+                    <Route path="admin/auditoria" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><AuditLogPage /></ProtectedRoute></Suspense>} />
+                    <Route path="admin/integracoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><IntegrationsPage /></ProtectedRoute></Suspense>} />
+                    <Route path="seguranca" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProtectedRoute allowedRoles={["admin"]}><Seguranca /></ProtectedRoute></Suspense>} />
+
+                    {/* User */}
+                    <Route path="configuracoes" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Configuracoes /></Suspense>} />
+                    <Route path="perfil" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProfilePage /></Suspense>} />
+                    <Route path="ajuda" element={<Suspense fallback={<LoadingFallback />}><HelpPage /></Suspense>} />
+                    <Route path="notificacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><NotificationsPage /></Suspense>} />
+                    <Route path="gamificacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Gamificacao /></Suspense>} />
+
+                    <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
+                  </Route>
+                </Routes>
               </BrowserRouter>
             </NotificationProvider>
           </AppProvider>

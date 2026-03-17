@@ -211,4 +211,12 @@
     min-height: 44px;
     min-width: 44px;
   }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-top {
+    padding-top: max(0.25rem, env(safe-area-inset-top));
+  }
 }

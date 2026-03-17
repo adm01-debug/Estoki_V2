@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB limit
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
@@ -59,6 +59,60 @@ export default defineConfig(({ mode }) => ({
     },
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "react-router-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    include: [
+      "react",
+      "react-dom",
+      "react-router-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@tanstack/react-query",
+      "lucide-react",
+      "clsx",
+      "tailwind-merge",
+    ],
+  },
+  build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Core React ecosystem
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          // UI framework
+          "vendor-ui": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-toast",
+            "class-variance-authority",
+            "clsx",
+            "tailwind-merge",
+          ],
+          // Data & state
+          "vendor-data": [
+            "@tanstack/react-query",
+            "@supabase/supabase-js",
+            "zustand",
+          ],
+          // Charts (heavy)
+          "vendor-charts": ["recharts"],
+          // Icons
+          "vendor-icons": ["lucide-react"],
+          // Date utils
+          "vendor-date": ["date-fns", "dayjs"],
+          // Forms
+          "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
+          // Export/PDF
+          "vendor-export": ["jspdf", "exceljs", "xlsx", "papaparse"],
+          // Animation
+          "vendor-motion": ["framer-motion"],
+        },
+      },
+    },
   },
 }));
