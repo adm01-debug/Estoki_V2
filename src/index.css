@@ -216,11 +216,12 @@
 
   /* Menu Buttons */
   .menu-button {
-    @apply flex items-center gap-4 p-4 rounded-xl bg-card border border-border/50 shadow-sm transition-all duration-300;
+    @apply flex items-center gap-4 p-4 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/40 shadow-sm transition-all duration-300;
   }
   
   .menu-button:hover {
-    @apply shadow-lg border-primary/30 -translate-y-0.5;
+    @apply shadow-xl border-primary/30;
+    box-shadow: 0 8px 24px hsl(var(--primary) / 0.08);
   }
   
   .menu-button:active {
