@@ -96,21 +96,20 @@ export default function Dashboard() {
     showToasts: false,
   });
 
-  const estatisticas = getEstatisticas();
+  const estatisticas = useMemo(() => getEstatisticas(), [getEstatisticas]);
 
-  const recebimentosList = recebimentos || [];
-  const aguardandoRecebimento = recebimentosList.filter(r => 
-    r.status === 'aguardando' || r.status === 'em_transito'
-  ).length;
-  
-  const divergencias = recebimentosList.filter(r => r.status === 'divergencia').length;
-  
-  const triagemPendente = stats?.totalTriagens || 0;
-  const itensEstoque = estatisticas.posicoesOcupadas;
-  const ocupacaoPP = Math.round(estatisticas.taxaOcupacao);
-  const ocupacaoBoxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
-
-  const userName = profile?.nome?.split(' ')[0] || 'Operador';
+  const { aguardandoRecebimento, divergencias, triagemPendente, itensEstoque, ocupacaoPP, ocupacaoBoxes } = useMemo(() => {
+    const recebimentosList = recebimentos || [];
+    const aguardando = recebimentosList.filter(r => 
+      r.status === 'aguardando' || r.status === 'em_transito'
+    ).length;
+    const div = recebimentosList.filter(r => r.status === 'divergencia').length;
+    const triagem = stats?.totalTriagens || 0;
+    const itens = estatisticas.posicoesOcupadas;
+    const pp = Math.round(estatisticas.taxaOcupacao);
+    const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
+    return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
+  }, [recebimentos, stats, estatisticas]);
 
   if (loadingKpis && loadingEstoque) {
     return (
