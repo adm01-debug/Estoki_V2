@@ -85,6 +85,7 @@ const sidebarMainItems: NavItem[] = [
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
   { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
+  { path: "/governanca", icon: Shield, label: "Governança", tour: "governanca" },
   { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner" },
   { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios" },
 ];

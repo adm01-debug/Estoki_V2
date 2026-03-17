@@ -84,6 +84,7 @@ const AdminSettingsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./p
 const AuditLogPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/AuditLogPage"));
 const IntegrationsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/IntegrationsPage"));
 const Seguranca = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/Seguranca"));
+const Governanca = lazy(() => import(/* webpackChunkName: "governance" */ "./pages/Governanca"));
 
 // ── User & Misc ──
 const Configuracoes = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Configuracoes"));
@@ -194,6 +195,7 @@ const App = () => (
                     <Route path="admin/auditoria" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><AuditLogPage /></ProtectedRoute></Suspense>} />
                     <Route path="admin/integracoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><IntegrationsPage /></ProtectedRoute></Suspense>} />
                     <Route path="seguranca" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProtectedRoute allowedRoles={["admin"]}><Seguranca /></ProtectedRoute></Suspense>} />
+                    <Route path="governanca" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Governanca /></Suspense>} />
 
                     {/* User */}
                     <Route path="configuracoes" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Configuracoes /></Suspense>} />
