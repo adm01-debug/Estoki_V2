@@ -1,6 +1,8 @@
-import { ReactNode, useEffect, createContext, useContext, useState } from "react";
+import { ReactNode, useEffect, createContext, useContext, useState, useMemo, useCallback, memo } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
+import { useRoutePreload } from "@/hooks/useRoutePreload";
+import { prefetchCriticalRoutes } from "@/lib/prefetch";
 
 const AppLayoutContext = createContext(false);
 import { 
@@ -179,7 +181,7 @@ const getRoleLabel = (role: string) => {
   }
 };
 
-function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean }) {
+const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean; onHover?: (path: string) => void }) {
   const buttonProps = {
     "data-tour": item.tour,
     onClick,
@@ -230,7 +232,7 @@ function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavIte
     return (
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
-          <button type="button" onClick={onClick} data-tour={item.tour} className={buttonProps.className}>
+          <button type="button" onClick={onClick} onMouseEnter={() => onHover?.(item.path)} data-tour={item.tour} className={buttonProps.className}>
             {content}
           </button>
         </TooltipTrigger>
@@ -241,8 +243,8 @@ function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavIte
     );
   }
 
-  return <motion.button {...buttonProps}>{content}</motion.button>;
-}
+  return <motion.button {...buttonProps} onMouseEnter={() => onHover?.(item.path)}>{content}</motion.button>;
+});
 
 function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: boolean }) {
   if (collapsed) return <div className="my-3 mx-3 border-t border-sidebar-border/50" />;
@@ -260,8 +262,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const navigate = useNavigate();
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
+  const preloadRoute = useRoutePreload();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Prefetch critical routes after mount
+  useEffect(() => {
+    prefetchCriticalRoutes();
+  }, []);
 
   useEffect(() => {
     if (isSupported && permission === "default") {
@@ -392,6 +400,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               isActive={location.pathname === item.path}
               onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
               collapsed={sidebarCollapsed && !isMobile}
+              onHover={preloadRoute}
             />
           ))}
           
@@ -403,6 +412,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               isActive={location.pathname === item.path}
               onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
               collapsed={sidebarCollapsed && !isMobile}
+              onHover={preloadRoute}
             />
           ))}
 
@@ -416,6 +426,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                   isActive={location.pathname === item.path}
                   onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
                   collapsed={sidebarCollapsed && !isMobile}
+                  onHover={preloadRoute}
                 />
               ))}
             </>
@@ -429,6 +440,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               isActive={location.pathname === item.path}
               onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
               collapsed={sidebarCollapsed && !isMobile}
+              onHover={preloadRoute}
             />
           ))}
         </nav>
@@ -441,6 +453,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           isActive={location.pathname === "/configuracoes"}
           onClick={() => { navigate("/configuracoes"); if (isMobile) setMobileMenuOpen(false); }}
           collapsed={sidebarCollapsed && !isMobile}
+          onHover={preloadRoute}
         />
         {(sidebarCollapsed && !isMobile) ? (
           <Tooltip delayDuration={0}>
