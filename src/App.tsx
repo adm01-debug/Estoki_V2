@@ -195,7 +195,7 @@ const App = () => (
                     <Route path="admin/auditoria" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><AuditLogPage /></ProtectedRoute></Suspense>} />
                     <Route path="admin/integracoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><IntegrationsPage /></ProtectedRoute></Suspense>} />
                     <Route path="seguranca" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProtectedRoute allowedRoles={["admin"]}><Seguranca /></ProtectedRoute></Suspense>} />
-                    <Route path="governanca" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Governanca /></Suspense>} />
+                    <Route path="governanca" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Governanca /></ProtectedRoute></Suspense>} />
 
                     {/* User */}
                     <Route path="configuracoes" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Configuracoes /></Suspense>} />
