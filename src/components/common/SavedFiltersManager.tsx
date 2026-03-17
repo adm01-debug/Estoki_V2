@@ -15,24 +15,32 @@ interface SavedFiltersManagerProps {
   onApplyFilter: (filters: Record<string, unknown>) => void;
 }
 
+interface SavedFilter {
+  id: string;
+  nome: string;
+  modulo: string;
+  filtros: Record<string, unknown>;
+  created_at: string;
+}
+
 export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: SavedFiltersManagerProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [filterName, setFilterName] = useState('');
 
-  const { data: savedFilters = [] } = useQuery({
+  const { data: savedFilters = [] } = useQuery<SavedFilter[]>({
     queryKey: ['saved-filters', modulo, user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
-        .from('saved_filters')
+        .from('saved_filters' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('modulo', modulo)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return (data || []) as unknown as SavedFilter[];
     },
     enabled: !!user?.id,
   });
@@ -40,12 +48,12 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
   const saveMutation = useMutation({
     mutationFn: async (nome: string) => {
       if (!user?.id) throw new Error('Não autenticado');
-      const { error } = await supabase.from('saved_filters').insert({
+      const { error } = await supabase.from('saved_filters' as any).insert({
         user_id: user.id,
         nome,
         modulo,
         filtros: currentFilters,
-      });
+      } as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -59,7 +67,7 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('saved_filters').delete().eq('id', id);
+      const { error } = await supabase.from('saved_filters' as any).delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -90,11 +98,11 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>Filtros Salvos</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {savedFilters.map((filter: any) => (
+              {savedFilters.map((filter) => (
                 <DropdownMenuItem key={filter.id} className="flex items-center justify-between">
                   <span
                     className="flex-1 cursor-pointer"
-                    onClick={() => onApplyFilter(filter.filtros as Record<string, unknown>)}
+                    onClick={() => onApplyFilter(filter.filtros)}
                   >
                     {filter.nome}
                   </span>
