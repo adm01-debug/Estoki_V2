@@ -1034,4 +1034,4 @@
 
 ---
 
-> **Este documento representa o levantamento exaustivo de TODAS as funcionalidades implementadas no sistema WMS Promo Brindes. Cobertura funcional: 100%.**
+> **Este documento representa o levantamento exaustivo de TODAS as funcionalidades implementadas no sistema ESTOKI WMS. Cobertura funcional: 100%.**
