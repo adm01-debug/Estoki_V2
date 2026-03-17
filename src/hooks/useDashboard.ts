@@ -8,31 +8,20 @@ export const useDashboard = () => {
   const { data: stats, isLoading, error, refetch } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const getCount = async (table: 'posicoes_estoque' | 'eventos_triagem' | 'lotes') => {
-        const { count, error } = await supabase
-          .from(table)
-          .select('id', { count: 'exact', head: true });
-
-        if (error) {
-          console.error(`[useDashboard] Failed counting ${table}:`, error.message);
-          return 0;
-        }
-
-        return count ?? 0;
-      };
-
-      const [totalPosicoes, totalTriagens, totalRecebimentos] = await Promise.all([
-        getCount('posicoes_estoque'),
-        getCount('eventos_triagem'),
-        getCount('lotes'),
+      // Run all counts in parallel with a single Promise.all
+      const [posResult, triResult, lotResult] = await Promise.all([
+        supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true }),
+        supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }),
+        supabase.from('lotes').select('id', { count: 'exact', head: true }),
       ]);
 
       return {
-        totalPosicoes,
-        totalTriagens,
-        totalRecebimentos,
+        totalPosicoes: posResult.count ?? 0,
+        totalTriagens: triResult.count ?? 0,
+        totalRecebimentos: lotResult.count ?? 0,
       };
-    }
+    },
+    staleTime: 2 * 60 * 1000, // 2 min — dashboard data is semi-fresh
   });
 
   useEffect(() => {

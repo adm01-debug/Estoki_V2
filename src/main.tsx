@@ -41,6 +41,11 @@ async function bootstrap() {
   }
 
   createRoot(rootElement).render(<App />);
+
+  // Prefetch critical routes after initial render
+  requestAnimationFrame(() => {
+    prefetchCriticalRoutes();
+  });
 }
 
 bootstrap();
