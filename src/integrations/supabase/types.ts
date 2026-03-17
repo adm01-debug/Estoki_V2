@@ -149,6 +149,82 @@ export type Database = {
           },
         ]
       }
+      aprovacoes_movimentacao: {
+        Row: {
+          aprovador_id: string | null
+          created_at: string
+          data_decisao: string | null
+          data_solicitacao: string
+          id: string
+          lote_id: string | null
+          motivo: string | null
+          observacao_aprovador: string | null
+          posicao_id: string | null
+          produto_id: string | null
+          quantidade: number
+          solicitante_id: string
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          aprovador_id?: string | null
+          created_at?: string
+          data_decisao?: string | null
+          data_solicitacao?: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          observacao_aprovador?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          solicitante_id: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Update: {
+          aprovador_id?: string | null
+          created_at?: string
+          data_decisao?: string | null
+          data_solicitacao?: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          observacao_aprovador?: string | null
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          solicitante_id?: string
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aprovacoes_movimentacao_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aprovacoes_movimentacao_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "aprovacoes_movimentacao_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       checkpoints_zona: {
         Row: {
           created_at: string
@@ -709,6 +785,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      fornecedor_scores: {
+        Row: {
+          created_at: string
+          entregas_conformes: number
+          entregas_divergentes: number
+          fornecedor: string
+          id: string
+          lead_time_medio_dias: number | null
+          score: number | null
+          total_entregas: number
+          ultima_entrega: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entregas_conformes?: number
+          entregas_divergentes?: number
+          fornecedor: string
+          id?: string
+          lead_time_medio_dias?: number | null
+          score?: number | null
+          total_entregas?: number
+          ultima_entrega?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entregas_conformes?: number
+          entregas_divergentes?: number
+          fornecedor?: string
+          id?: string
+          lead_time_medio_dias?: number | null
+          score?: number | null
+          total_entregas?: number
+          ultima_entrega?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       gamificacao_usuarios: {
         Row: {
@@ -2015,6 +2130,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      relatorios_agendados: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          criado_por: string | null
+          destinatarios: string[]
+          frequencia: string
+          id: string
+          nome: string
+          proximo_envio: string | null
+          tipo: string
+          ultimo_envio: string | null
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          destinatarios?: string[]
+          frequencia?: string
+          id?: string
+          nome: string
+          proximo_envio?: string | null
+          tipo: string
+          ultimo_envio?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          criado_por?: string | null
+          destinatarios?: string[]
+          frequencia?: string
+          id?: string
+          nome?: string
+          proximo_envio?: string | null
+          tipo?: string
+          ultimo_envio?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       role_permissions: {
         Row: {
