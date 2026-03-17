@@ -128,6 +128,8 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
   { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
   { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
+  { path: "/import-export", icon: FileText, label: "Import/Export" },
+  { path: "/automacoes", icon: Sparkles, label: "Automações" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
