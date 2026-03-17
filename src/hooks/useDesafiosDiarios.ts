@@ -140,7 +140,7 @@ export function useDesafiosDiarios() {
         description: `Recompensa do desafio "${desafio.titulo}" coletada!`,
       });
 
-      if (data?.success) {
+      if (data && typeof data === 'object' && 'success' in data && (data as Record<string, unknown>).success) {
         await fetchDesafios();
       }
 

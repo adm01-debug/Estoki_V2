@@ -20,7 +20,9 @@ export const notificacaoService = {
   },
 
   async create(notification: { user_id: string; tipo: string; titulo: string; mensagem?: string; data?: unknown }) {
-    const { data, error } = await supabase.from("notificacoes").insert(notification).select().single();
+    const { mensagem, ...rest } = notification;
+    const payload = { ...rest, mensagem: mensagem ?? "" };
+    const { data, error } = await supabase.from("notificacoes").insert([payload]).select().single();
     if (error) throw error;
     return data;
   },
