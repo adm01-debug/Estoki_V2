@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useDebouncedCallback } from '@/hooks/use-debounce';
+import { useDebouncedCallback } from '@/hooks/useDebounce';
 
 interface SearchInputProps {
   value?: string;
