@@ -36,6 +36,9 @@ import {
   Sparkles,
   Menu,
   X,
+  Radio,
+  CalendarClock,
+  ShieldCheck,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
