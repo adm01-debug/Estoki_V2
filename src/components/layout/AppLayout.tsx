@@ -282,6 +282,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Main Content */}
       <main className="flex-1 overflow-auto lg:pl-64">
         <div className="max-w-7xl mx-auto">
+          <Breadcrumbs />
           {children || <Outlet />}
         </div>
       </main>
