@@ -11,7 +11,6 @@ import {
   Clock,
   Package,
   Search,
-  Truck,
   Warehouse,
   Wifi,
   WifiOff,
