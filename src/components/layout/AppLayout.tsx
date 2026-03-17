@@ -147,7 +147,6 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
-  { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
 ];
 
 const sidebarAdminItems: NavItem[] = [
@@ -181,22 +180,24 @@ const getRoleLabel = (role: string) => {
 };
 
 function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean }) {
-  const button = (
-    <motion.button
-      data-tour={item.tour}
-      onClick={onClick}
-      whileHover={{ x: collapsed ? 0 : 4 }}
-      whileTap={{ scale: 0.97 }}
-      className={cn(
-        "w-full flex items-center gap-3 rounded-xl transition-all duration-200 group relative",
-        collapsed ? "px-3 py-3 justify-center" : "px-3 py-2.5",
-        isActive 
-          ? "bg-primary/15 text-primary" 
-          : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/80"
-      )}
-    >
+  const buttonProps = {
+    "data-tour": item.tour,
+    onClick,
+    whileHover: { x: collapsed ? 0 : 4 },
+    whileTap: { scale: 0.97 },
+    className: cn(
+      "w-full flex items-center gap-3 rounded-xl transition-all duration-200 group relative",
+      collapsed ? "px-3 py-3 justify-center" : "px-3 py-2.5",
+      isActive
+        ? "bg-primary/15 text-primary"
+        : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/80"
+    ),
+  };
+
+  const content = (
+    <>
       {isActive && (
-        <motion.div 
+        <motion.div
           layoutId="sidebar-indicator"
           className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 bg-primary rounded-r-full"
           transition={{ type: "spring", stiffness: 350, damping: 30 }}
@@ -222,13 +223,17 @@ function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavIte
           {item.badge}
         </span>
       )}
-    </motion.button>
+    </>
   );
 
   if (collapsed) {
     return (
       <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <button type="button" onClick={onClick} data-tour={item.tour} className={buttonProps.className}>
+            {content}
+          </button>
+        </TooltipTrigger>
         <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
           {item.label}
         </TooltipContent>
@@ -236,7 +241,7 @@ function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavIte
     );
   }
 
-  return button;
+  return <motion.button {...buttonProps}>{content}</motion.button>;
 }
 
 function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: boolean }) {
