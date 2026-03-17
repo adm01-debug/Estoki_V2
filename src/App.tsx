@@ -96,6 +96,11 @@ const TwoFactorAuth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/
 const NotFound = lazy(() => import(/* webpackChunkName: "user" */ "./pages/NotFound"));
 const Unauthorized = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Unauthorized"));
 
+// ── New Features ──
+const AssistenteIA = lazy(() => import(/* webpackChunkName: "ai" */ "./pages/AssistenteIA"));
+const ImportExport = lazy(() => import(/* webpackChunkName: "import-export" */ "./pages/ImportExport"));
+const Automacoes = lazy(() => import(/* webpackChunkName: "automacoes" */ "./pages/Automacoes"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -203,6 +208,9 @@ const App = () => (
                     <Route path="ajuda" element={<Suspense fallback={<LoadingFallback />}><HelpPage /></Suspense>} />
                     <Route path="notificacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><NotificationsPage /></Suspense>} />
                     <Route path="gamificacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Gamificacao /></Suspense>} />
+                    <Route path="assistente-ia" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense>} />
+                    <Route path="import-export" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense>} />
+                    <Route path="automacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>
