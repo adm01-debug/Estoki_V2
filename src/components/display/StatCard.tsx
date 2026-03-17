@@ -21,4 +21,4 @@ export const StatCard = memo(function StatCard({ title, value, change, changeLab
       </CardContent>
     </Card>
   );
-}
+});

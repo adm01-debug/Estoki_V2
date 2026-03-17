@@ -116,4 +116,4 @@ export const KPICard = memo(function KPICard({
       </div>
     </button>
   );
-}
+});
