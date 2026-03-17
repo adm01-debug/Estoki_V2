@@ -15,8 +15,8 @@ interface FornecedorScore {
   total_entregas: number;
   entregas_conformes: number;
   entregas_divergentes: number;
-  lead_time_medio_dias: number;
-  score: number;
+  lead_time_medio_dias: number | null;
+  score: number | null;
   ultima_entrega: string | null;
 }
 

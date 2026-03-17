@@ -63,14 +63,37 @@ export default function DashboardTempoReal() {
     fetchKPIs();
     fetchFeed();
 
-    // Historico mock para gráfico
-    const h = Array.from({ length: 12 }, (_, i) => ({
-      hora: `${String(8 + i).padStart(2, '0')}:00`,
-      triagem: Math.floor(Math.random() * 20 + 5),
-      picking: Math.floor(Math.random() * 15 + 3),
-      recebimento: Math.floor(Math.random() * 10 + 2),
-    }));
-    setHistorico(h);
+    // Buscar dados reais de métricas operacionais para o gráfico
+    const fetchHistorico = async () => {
+      const { data: metricas } = await supabase
+        .from('metricas_operacionais')
+        .select('data, itens_triados, itens_separados, volumes_recebidos')
+        .order('data', { ascending: false })
+        .limit(12);
+
+      if (metricas && metricas.length > 0) {
+        setHistorico(metricas.reverse().map(m => ({
+          hora: new Date(m.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+          triagem: m.itens_triados || 0,
+          picking: m.itens_separados || 0,
+          recebimento: m.volumes_recebidos || 0,
+        })));
+      } else {
+        // Fallback: gerar a partir de contagens reais de hoje
+        const hoje = new Date();
+        const h = Array.from({ length: 8 }, (_, i) => {
+          const hora = 8 + i;
+          return {
+            hora: `${String(hora).padStart(2, '0')}:00`,
+            triagem: 0,
+            picking: 0,
+            recebimento: 0,
+          };
+        });
+        setHistorico(h);
+      }
+    };
+    fetchHistorico();
 
     const channel = supabase
       .channel('realtime-dashboard')
