@@ -39,5 +39,5 @@ Este repositório passou por uma transformação completa com 247 melhorias:
 
 ---
 
-*Projeto desenvolvido com excelência para Promo Brindes*
+*Projeto desenvolvido com excelência por ESTOKI*
 *Dezembro 2025*

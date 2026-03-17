@@ -87,4 +87,4 @@ MIT License - veja [LICENSE](LICENSE)
 
 ---
 
-Desenvolvido com ❤️ para Promo Brindes
+Desenvolvido com ❤️ por ESTOKI

@@ -86,5 +86,5 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📄 Licença
 
-Proprietário - Promo Brindes © 2025
+Proprietário - ESTOKI © 2025
 
