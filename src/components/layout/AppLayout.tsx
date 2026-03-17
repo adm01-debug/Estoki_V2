@@ -453,6 +453,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           isActive={location.pathname === "/configuracoes"}
           onClick={() => { navigate("/configuracoes"); if (isMobile) setMobileMenuOpen(false); }}
           collapsed={sidebarCollapsed && !isMobile}
+          onHover={preloadRoute}
         />
         {(sidebarCollapsed && !isMobile) ? (
           <Tooltip delayDuration={0}>
