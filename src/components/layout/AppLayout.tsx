@@ -3,6 +3,8 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { prefetchCriticalRoutes } from "@/lib/prefetch";
+
+const AppLayoutContext = createContext(false);
 import { 
   LayoutDashboard, 
   Package, 
