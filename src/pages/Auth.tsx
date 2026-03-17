@@ -186,7 +186,7 @@ const AuthPage = () => {
             <Warehouse className="h-8 w-8 text-primary-foreground" />
           </div>
           <h1 className="text-3xl font-bold text-white tracking-tight">ESTOKI</h1>
-          <p className="text-sm text-[hsl(220,10%,50%)] mt-1">Promo Brindes • WMS</p>
+          <p className="text-sm text-[hsl(220,10%,50%)] mt-1">Sistema de Gestão de Estoque</p>
         </div>
 
         <Card className="bg-[hsl(220,25%,8%)]/80 backdrop-blur-xl border-[hsl(220,20%,14%)] shadow-2xl">
