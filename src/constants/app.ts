@@ -1,8 +1,8 @@
 // Constantes da aplicação ESTOKI
 
-export const APP_NAME = 'ESTOKI WMS';
+export const APP_NAME = 'ESTOKI';
 export const APP_VERSION = '1.0.0';
-export const COMPANY_NAME = 'Promo Brindes';
+export const COMPANY_NAME = 'ESTOKI';
 
 export const STOCK_MOVEMENT_TYPES = {
   IN: 'in',

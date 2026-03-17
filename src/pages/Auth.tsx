@@ -374,7 +374,7 @@ const AuthPage = () => {
         </Card>
 
         <p className="text-center text-[hsl(220,10%,30%)] text-xs mt-6">
-          © 2026 ESTOKI WMS • Promo Brindes
+          © 2026 ESTOKI
         </p>
       </div>
     </div>

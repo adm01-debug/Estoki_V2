@@ -70,7 +70,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Estoki WMS</CardTitle>
+          <CardTitle className="text-2xl">ESTOKI</CardTitle>
           <p className="text-muted-foreground">Sistema de Gestão de Estoque</p>
         </CardHeader>
         <CardContent>

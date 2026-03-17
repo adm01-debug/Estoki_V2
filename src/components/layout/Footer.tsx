@@ -1,4 +1,4 @@
-const APP_CONFIG = { name: 'WMS', version: '1.0.0', company: 'Promo Brindes' };
+const APP_CONFIG = { name: 'ESTOKI', version: '1.0.0', company: 'ESTOKI' };
 
 export function Footer() {
   return (

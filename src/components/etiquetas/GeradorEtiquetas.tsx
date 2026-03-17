@@ -286,7 +286,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
             >
               {/* Header */}
               <div className="bg-primary text-primary-foreground text-center py-1.5 text-xs font-bold">
-                PROMO BRINDES - ESTOQUE
+                ESTOKI - ESTOQUE
               </div>
               
               {/* Conteúdo */}
