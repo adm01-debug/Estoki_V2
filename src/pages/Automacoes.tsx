@@ -139,13 +139,16 @@ export default function Automacoes() {
           for (const p of produtos || []) {
             const qtdAtual = estoqueMap[p.id] || 0;
             if (p.ponto_pedido && qtdAtual <= p.ponto_pedido) {
-              await supabase.from("notificacoes").insert({
-                tipo: "estoque_baixo",
-                titulo: "📦 Estoque Baixo",
-                mensagem: `${p.nome} (${p.sku}) está com ${qtdAtual} un. Ponto de pedido: ${p.ponto_pedido} un.`,
-                referencia_tipo: "produto",
-                referencia_id: p.id,
-              });
+              if (user?.id) {
+                await supabase.from("notificacoes").insert({
+                  user_id: user.id,
+                  tipo: "estoque_baixo",
+                  titulo: "📦 Estoque Baixo",
+                  mensagem: `${p.nome} (${p.sku}) está com ${qtdAtual} un. Ponto de pedido: ${p.ponto_pedido} un.`,
+                  referencia_tipo: "produto",
+                  referencia_id: p.id,
+                });
+              }
               alertas++;
             }
           }
