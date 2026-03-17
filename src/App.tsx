@@ -208,6 +208,9 @@ const App = () => (
                     <Route path="ajuda" element={<Suspense fallback={<LoadingFallback />}><HelpPage /></Suspense>} />
                     <Route path="notificacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><NotificationsPage /></Suspense>} />
                     <Route path="gamificacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Gamificacao /></Suspense>} />
+                    <Route path="assistente-ia" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense>} />
+                    <Route path="import-export" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense>} />
+                    <Route path="automacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>
