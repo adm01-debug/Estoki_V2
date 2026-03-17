@@ -1,4 +1,4 @@
-# 🔍 Auditoria Exaustiva de Funcionalidades — WMS Promo Brindes
+# 🔍 Auditoria Exaustiva de Funcionalidades — ESTOKI WMS
 
 > **Data:** 15/03/2026  
 > **Objetivo:** Verificar se TODAS as funcionalidades documentadas estão de fato implementadas, com código funcional e integração ao backend.

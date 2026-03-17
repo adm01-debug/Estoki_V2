@@ -34,4 +34,4 @@
 ---
 
 📦 **ESTOKI** - Sistema de Gestão de Estoque  
-*Desenvolvido para Promo Brindes*
+*Desenvolvido por ESTOKI*
