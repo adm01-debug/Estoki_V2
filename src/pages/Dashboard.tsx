@@ -26,7 +26,7 @@ import {
   Line,
   Legend
 } from "recharts";
-import jsPDF from "jspdf";
+// jsPDF loaded dynamically on export to avoid blocking initial render
 import { 
   Download, 
   AlertTriangle, 
