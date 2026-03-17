@@ -13,8 +13,6 @@ import {
   MapPin,
   AlertTriangle,
   CheckCircle2,
-  Clock,
-  Search,
   Plus,
   ArrowRight,
   FileWarning,
