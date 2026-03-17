@@ -1,8 +1,8 @@
-import { ReactNode, useEffect, createContext, useContext, useState } from "react";
+import { ReactNode, useEffect, createContext, useContext, useState, useMemo, useCallback, memo } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
-
-const AppLayoutContext = createContext(false);
+import { useRoutePreload } from "@/hooks/useRoutePreload";
+import { prefetchCriticalRoutes } from "@/lib/prefetch";
 import { 
   LayoutDashboard, 
   Package, 
