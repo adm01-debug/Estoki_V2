@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Target, Zap, CheckCircle, Flame, Star, LucideIcon } from 'lucide-react';
-import { useGamificacao } from './useGamificacao';
 
 type Dificuldade = 'facil' | 'normal' | 'dificil';
 
@@ -61,7 +60,6 @@ const dificuldadeLabels = {
 
 export function useDesafiosDiarios() {
   const { user } = useAuth();
-  const { adicionarXp } = useGamificacao();
   const [desafios, setDesafios] = useState<DesafioDB[]>([]);
   const [desafiosUsuario, setDesafiosUsuario] = useState<DesafioUsuario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +68,6 @@ export function useDesafiosDiarios() {
 
   const fetchDesafios = useCallback(async () => {
     try {
-      // Fetch today's challenges
       const { data: desafiosData, error: desafiosError } = await supabase
         .from('desafios_diarios')
         .select('*')
@@ -78,8 +75,7 @@ export function useDesafiosDiarios() {
         .eq('ativo', true);
 
       if (desafiosError) throw desafiosError;
-      
-      // Cast to proper types
+
       const typedDesafios: DesafioDB[] = (desafiosData || []).map(d => ({
         ...d,
         dificuldade: d.dificuldade as Dificuldade,
@@ -87,7 +83,6 @@ export function useDesafiosDiarios() {
       setDesafios(typedDesafios);
 
       if (user?.id && desafiosData?.length) {
-        // Fetch user's progress
         const desafioIds = desafiosData.map(d => d.id);
         const { data: progressData, error: progressError } = await supabase
           .from('desafios_usuarios')
@@ -112,7 +107,7 @@ export function useDesafiosDiarios() {
   const desafiosCompletos = useMemo((): DesafioCompleto[] => {
     return desafios.map(desafio => {
       const userProgress = desafiosUsuario.find(d => d.desafio_id === desafio.id);
-      
+
       return {
         ...desafio,
         progresso: userProgress?.progresso || 0,
@@ -123,43 +118,10 @@ export function useDesafiosDiarios() {
     });
   }, [desafios, desafiosUsuario]);
 
-  const atualizarProgresso = useCallback(async (
-    desafioId: string,
-    novoProgresso: number
-  ) => {
-    if (!user?.id) return;
-
-    try {
-      const desafio = desafios.find(d => d.id === desafioId);
-      if (!desafio) return;
-
-      const concluido = novoProgresso >= desafio.meta;
-
-      const { error } = await supabase
-        .from('desafios_usuarios')
-        .upsert({
-          user_id: user.id,
-          desafio_id: desafioId,
-          progresso: novoProgresso,
-          concluido,
-          data_conclusao: concluido ? new Date().toISOString() : null,
-        }, {
-          onConflict: 'user_id,desafio_id'
-        });
-
-      if (error) throw error;
-
-      if (concluido) {
-        toast.success('Desafio Completo!', {
-          description: `${desafio.titulo} - Colete sua recompensa!`
-        });
-      }
-
-      await fetchDesafios();
-    } catch (error) {
-      console.error('Erro ao atualizar progresso:', error);
-    }
-  }, [user?.id, desafios, fetchDesafios]);
+  const atualizarProgresso = useCallback(async () => {
+    toast.info('O progresso dos desafios é atualizado automaticamente pelo sistema.');
+    await fetchDesafios();
+  }, [fetchDesafios]);
 
   const coletarRecompensa = useCallback(async (desafioId: string) => {
     if (!user?.id) return false;
@@ -168,44 +130,35 @@ export function useDesafiosDiarios() {
       const desafio = desafiosCompletos.find(d => d.id === desafioId);
       if (!desafio || !desafio.concluido || desafio.xpColetado) return false;
 
-      // Mark as collected
-      const { error } = await supabase
-        .from('desafios_usuarios')
-        .update({ xp_coletado: true })
-        .eq('user_id', user.id)
-        .eq('desafio_id', desafioId);
+      const { data, error } = await supabase.rpc('collect_challenge_reward', {
+        p_desafio_id: desafioId,
+      });
 
       if (error) throw error;
 
-      // Add XP
-      await adicionarXp.mutateAsync({
-        quantidade: desafio.xp_recompensa,
-        tipo: 'desafio',
-        descricao: `Desafio "${desafio.titulo}" completado`
-      });
-
       toast.success(`+${desafio.xp_recompensa} XP!`, {
-        description: `Recompensa do desafio "${desafio.titulo}" coletada!`
+        description: `Recompensa do desafio "${desafio.titulo}" coletada!`,
       });
 
-      await fetchDesafios();
+      if (data?.success) {
+        await fetchDesafios();
+      }
+
       return true;
     } catch (error) {
       console.error('Erro ao coletar recompensa:', error);
       return false;
     }
-  }, [user?.id, desafiosCompletos, adicionarXp, fetchDesafios]);
+  }, [user?.id, desafiosCompletos, fetchDesafios]);
 
-  // Calculated values
   const desafiosConcluidos = desafiosCompletos.filter(d => d.concluido);
   const xpDisponivel = desafiosCompletos
     .filter(d => d.concluido && !d.xpColetado)
     .reduce((acc, d) => acc + d.xp_recompensa, 0);
   const xpTotal = desafiosCompletos.reduce((acc, d) => acc + d.xp_recompensa, 0);
 
-  // Time remaining until midnight
   const [tempoRestante, setTempoRestante] = useState('');
-  
+
   useEffect(() => {
     const atualizarTempo = () => {
       const agora = new Date();
@@ -225,7 +178,6 @@ export function useDesafiosDiarios() {
     return () => clearInterval(interval);
   }, []);
 
-  // Função para gerar novos desafios via Edge Function
   const gerarDesafios = useCallback(async () => {
     try {
       const { data, error } = await supabase.functions.invoke('gerar-desafios-diarios', {
@@ -238,9 +190,9 @@ export function useDesafiosDiarios() {
         toast.success('Novos desafios gerados!');
         await fetchDesafios();
         return data.desafios;
-      } else {
-        throw new Error(data?.error || 'Erro ao gerar desafios');
       }
+
+      throw new Error(data?.error || 'Erro ao gerar desafios');
     } catch (err) {
       console.error('Erro ao gerar desafios:', err);
       toast.error('Não foi possível gerar novos desafios');

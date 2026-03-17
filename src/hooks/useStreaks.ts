@@ -45,8 +45,7 @@ export function useStreaks() {
     }
 
     try {
-      // Get or create streak record
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('streaks_usuarios')
         .select('*')
         .eq('user_id', user.id)
@@ -54,20 +53,8 @@ export function useStreaks() {
 
       if (error) throw error;
 
-      if (!data) {
-        const { data: newData, error: insertError } = await supabase
-          .from('streaks_usuarios')
-          .insert({ user_id: user.id, streak_atual: 0 })
-          .select()
-          .single();
+      setStreak(data ?? null);
 
-        if (insertError) throw insertError;
-        data = newData;
-      }
-
-      setStreak(data);
-
-      // Fetch streak history (last 30 days)
       const { data: historicoData } = await supabase
         .from('streaks_historico')
         .select('data, xp_ganho')

@@ -117,8 +117,16 @@ export function useNotifications(userId?: string): NotificationState & Notificat
   const addNotification = useCallback(async (notification: Omit<Notification, 'id' | 'read' | 'created_at'>) => {
     if (!userId) return;
     try {
-      await supabase.from('notificacoes').insert({ user_id: userId, titulo: notification.title, mensagem: notification.message, tipo: notification.type, lida: false });
-    } catch (error) { console.error('[Notifications] Error adding:', error); }
+      await supabase.from('notificacoes').insert({
+        user_id: userId,
+        titulo: notification.title,
+        mensagem: notification.message,
+        tipo: notification.type,
+        lida: false,
+      });
+    } catch (error) {
+      console.error('[Notifications] Error adding:', error);
+    }
   }, [userId]);
 
   const markAsRead = useCallback(async (id: string) => {

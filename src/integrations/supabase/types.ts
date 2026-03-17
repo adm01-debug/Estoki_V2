@@ -2799,6 +2799,10 @@ export type Database = {
           seconds_remaining: number
         }[]
       }
+      collect_challenge_reward: {
+        Args: { p_desafio_id: string }
+        Returns: Json
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]

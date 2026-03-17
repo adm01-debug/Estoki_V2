@@ -64,7 +64,7 @@ const defaultWorkflows: Workflow[] = [
 ];
 
 export default function Automacoes() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const [workflows, setWorkflows] = useState<Workflow[]>(defaultWorkflows);
   const [executing, setExecuting] = useState<string | null>(null);
 
@@ -103,14 +103,16 @@ export default function Automacoes() {
             
             if (!updateError) {
               blocked++;
-              // Create notification
-              await supabase.from("notificacoes").insert({
-                tipo: "lote_vencido",
-                titulo: "⚠️ Lote Vencido Bloqueado",
-                mensagem: `Lote ${lote.numero_lote} foi bloqueado automaticamente por estar vencido.`,
-                referencia_tipo: "lote",
-                referencia_id: lote.id,
-              });
+              if (user?.id) {
+                await supabase.from("notificacoes").insert({
+                  user_id: user.id,
+                  tipo: "lote_vencido",
+                  titulo: "⚠️ Lote Vencido Bloqueado",
+                  mensagem: `Lote ${lote.numero_lote} foi bloqueado automaticamente por estar vencido.`,
+                  referencia_tipo: "lote",
+                  referencia_id: lote.id,
+                });
+              }
             }
           }
 
@@ -137,13 +139,16 @@ export default function Automacoes() {
           for (const p of produtos || []) {
             const qtdAtual = estoqueMap[p.id] || 0;
             if (p.ponto_pedido && qtdAtual <= p.ponto_pedido) {
-              await supabase.from("notificacoes").insert({
-                tipo: "estoque_baixo",
-                titulo: "📦 Estoque Baixo",
-                mensagem: `${p.nome} (${p.sku}) está com ${qtdAtual} un. Ponto de pedido: ${p.ponto_pedido} un.`,
-                referencia_tipo: "produto",
-                referencia_id: p.id,
-              });
+              if (user?.id) {
+                await supabase.from("notificacoes").insert({
+                  user_id: user.id,
+                  tipo: "estoque_baixo",
+                  titulo: "📦 Estoque Baixo",
+                  mensagem: `${p.nome} (${p.sku}) está com ${qtdAtual} un. Ponto de pedido: ${p.ponto_pedido} un.`,
+                  referencia_tipo: "produto",
+                  referencia_id: p.id,
+                });
+              }
               alertas++;
             }
           }
