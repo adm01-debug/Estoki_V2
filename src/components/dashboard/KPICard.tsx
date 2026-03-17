@@ -34,7 +34,7 @@ const gradientStyles = {
   danger: "from-destructive/5 to-destructive/0",
 };
 
-export function KPICard({ 
+export const KPICard = memo(function KPICard({ 
   icon: Icon, 
   value, 
   label, 
