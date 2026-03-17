@@ -103,14 +103,16 @@ export default function Automacoes() {
             
             if (!updateError) {
               blocked++;
-              // Create notification
-              await supabase.from("notificacoes").insert({
-                tipo: "lote_vencido",
-                titulo: "⚠️ Lote Vencido Bloqueado",
-                mensagem: `Lote ${lote.numero_lote} foi bloqueado automaticamente por estar vencido.`,
-                referencia_tipo: "lote",
-                referencia_id: lote.id,
-              });
+              if (user?.id) {
+                await supabase.from("notificacoes").insert({
+                  user_id: user.id,
+                  tipo: "lote_vencido",
+                  titulo: "⚠️ Lote Vencido Bloqueado",
+                  mensagem: `Lote ${lote.numero_lote} foi bloqueado automaticamente por estar vencido.`,
+                  referencia_tipo: "lote",
+                  referencia_id: lote.id,
+                });
+              }
             }
           }
 
