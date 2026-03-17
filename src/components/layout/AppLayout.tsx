@@ -147,7 +147,6 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
-  { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
 ];
 
 const sidebarAdminItems: NavItem[] = [
