@@ -262,8 +262,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const navigate = useNavigate();
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
+  const preloadRoute = useRoutePreload();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Prefetch critical routes after mount
+  useEffect(() => {
+    prefetchCriticalRoutes();
+  }, []);
 
   useEffect(() => {
     if (isSupported && permission === "default") {
