@@ -149,6 +149,67 @@ export type Database = {
           },
         ]
       }
+      checkpoints_zona: {
+        Row: {
+          created_at: string
+          id: string
+          lote_id: string | null
+          observacoes: string | null
+          operador_id: string
+          posicao_id: string | null
+          produto_id: string | null
+          quantidade: number
+          tipo: string
+          zona: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id: string
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          tipo?: string
+          zona: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id?: string
+          posicao_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          tipo?: string
+          zona?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkpoints_zona_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkpoints_zona_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "checkpoints_zona_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comprovantes_entrega: {
         Row: {
           assinatura_url: string | null
@@ -303,6 +364,75 @@ export type Database = {
             columns: ["conquista_id"]
             isOneToOne: false
             referencedRelation: "conquistas_definicoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custodia_transferencias: {
+        Row: {
+          assinatura_destino: boolean
+          assinatura_origem: boolean
+          confirmado_em: string | null
+          created_at: string
+          id: string
+          lote_id: string | null
+          motivo: string | null
+          observacoes: string | null
+          operador_destino_id: string
+          operador_origem_id: string
+          produto_id: string | null
+          quantidade: number
+          status: string
+          zona_destino: string
+          zona_origem: string
+        }
+        Insert: {
+          assinatura_destino?: boolean
+          assinatura_origem?: boolean
+          confirmado_em?: string | null
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          observacoes?: string | null
+          operador_destino_id: string
+          operador_origem_id: string
+          produto_id?: string | null
+          quantidade?: number
+          status?: string
+          zona_destino: string
+          zona_origem: string
+        }
+        Update: {
+          assinatura_destino?: boolean
+          assinatura_origem?: boolean
+          confirmado_em?: string | null
+          created_at?: string
+          id?: string
+          lote_id?: string | null
+          motivo?: string | null
+          observacoes?: string | null
+          operador_destino_id?: string
+          operador_origem_id?: string
+          produto_id?: string | null
+          quantidade?: number
+          status?: string
+          zona_destino?: string
+          zona_origem?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custodia_transferencias_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "custodia_transferencias_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
             referencedColumns: ["id"]
           },
         ]
@@ -1311,6 +1441,104 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      ocorrencias_perda: {
+        Row: {
+          acao_corretiva: string | null
+          codigo: string
+          created_at: string
+          data_encerramento: string | null
+          data_investigacao: string | null
+          id: string
+          investigado_por: string | null
+          lote_id: string | null
+          parecer: string | null
+          produto_id: string | null
+          quantidade: number
+          reportado_por: string
+          status: string
+          tipo: string
+          ultima_custodia_id: string | null
+          ultimo_checkpoint_id: string | null
+          ultimo_operador_id: string | null
+          updated_at: string
+          valor_prejuizo: number | null
+          zona_detectada: string | null
+        }
+        Insert: {
+          acao_corretiva?: string | null
+          codigo: string
+          created_at?: string
+          data_encerramento?: string | null
+          data_investigacao?: string | null
+          id?: string
+          investigado_por?: string | null
+          lote_id?: string | null
+          parecer?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          reportado_por: string
+          status?: string
+          tipo?: string
+          ultima_custodia_id?: string | null
+          ultimo_checkpoint_id?: string | null
+          ultimo_operador_id?: string | null
+          updated_at?: string
+          valor_prejuizo?: number | null
+          zona_detectada?: string | null
+        }
+        Update: {
+          acao_corretiva?: string | null
+          codigo?: string
+          created_at?: string
+          data_encerramento?: string | null
+          data_investigacao?: string | null
+          id?: string
+          investigado_por?: string | null
+          lote_id?: string | null
+          parecer?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          reportado_por?: string
+          status?: string
+          tipo?: string
+          ultima_custodia_id?: string | null
+          ultimo_checkpoint_id?: string | null
+          ultimo_operador_id?: string | null
+          updated_at?: string
+          valor_prejuizo?: number | null
+          zona_detectada?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ocorrencias_perda_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocorrencias_perda_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocorrencias_perda_ultima_custodia_id_fkey"
+            columns: ["ultima_custodia_id"]
+            isOneToOne: false
+            referencedRelation: "custodia_transferencias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocorrencias_perda_ultimo_checkpoint_id_fkey"
+            columns: ["ultimo_checkpoint_id"]
+            isOneToOne: false
+            referencedRelation: "checkpoints_zona"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ondas_separacao: {
         Row: {
