@@ -413,6 +413,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </button>
         </div>
       </aside>
+      <OnboardingTour />
     </div>
     </AppLayoutContext.Provider>
   );
