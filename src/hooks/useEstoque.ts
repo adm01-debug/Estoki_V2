@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
@@ -82,7 +82,7 @@ export const useEstoque = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  const getEstatisticas = useCallback(() => {
+  const estatisticas = useMemo(() => {
     const lista = posicoes || [];
     const total = lista.length;
     const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
@@ -98,13 +98,15 @@ export const useEstoque = () => {
       bloqueadas,
       reservadas,
       taxaOcupacao,
-      // Legacy aliases
       totalPosicoes: total,
       posicoesOcupadas: ocupadas,
       posicoesLivres: livres,
       posicoesBloqueadas: bloqueadas,
     };
   }, [posicoes]);
+
+  // Keep getEstatisticas for backward compat but use memoized value
+  const getEstatisticas = useCallback(() => estatisticas, [estatisticas]);
 
   return {
     posicoes,

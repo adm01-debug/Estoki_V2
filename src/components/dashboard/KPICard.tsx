@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +34,7 @@ const gradientStyles = {
   danger: "from-destructive/5 to-destructive/0",
 };
 
-export function KPICard({ 
+export const KPICard = memo(function KPICard({ 
   icon: Icon, 
   value, 
   label, 
@@ -115,4 +116,4 @@ export function KPICard({
       </div>
     </button>
   );
-}
+});

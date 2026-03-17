@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -29,53 +29,49 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
 
   const showToasts = options.showToasts ?? false;
 
+  // Debounced invalidation — batches rapid updates into a single invalidation
+  const pendingKeysRef = useRef<Set<string>>(new Set());
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
   const invalidateQueries = useCallback((queryKeys: string[][]) => {
     queryKeys.forEach(key => {
-      queryClient.invalidateQueries({ queryKey: key });
+      pendingKeysRef.current.add(JSON.stringify(key));
     });
-    setStatus(prev => ({
-      ...prev,
-      lastUpdate: new Date(),
-      updatesCount: prev.updatesCount + 1,
-    }));
+
+    // Debounce: batch invalidations within 300ms window
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      const keys = Array.from(pendingKeysRef.current);
+      pendingKeysRef.current.clear();
+      keys.forEach(keyStr => {
+        queryClient.invalidateQueries({ queryKey: JSON.parse(keyStr) });
+      });
+      setStatus(prev => ({
+        ...prev,
+        lastUpdate: new Date(),
+        updatesCount: prev.updatesCount + 1,
+      }));
+    }, 300);
   }, [queryClient]);
 
   useEffect(() => {
-    console.log("[Realtime KPIs] Setting up realtime subscriptions...");
-
     const channel = supabase
       .channel("kpi-realtime-updates")
-      // Listen to metricas_operacionais changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "metricas_operacionais",
-        },
+        { event: "*", schema: "public", table: "metricas_operacionais" },
         (payload) => {
-          console.log("[Realtime] Metrics update:", payload.eventType);
           invalidateQueries([["metricas_operacionais"], ["dashboard"]]);
           options.onMetricUpdate?.();
-          
           if (showToasts && payload.eventType === "INSERT") {
-            toast.info("KPIs atualizados", {
-              description: "Métricas operacionais atualizadas automaticamente",
-              duration: 3000,
-            });
+            toast.info("KPIs atualizados", { duration: 3000 });
           }
         }
       )
-      // Listen to posicoes_estoque changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "posicoes_estoque",
-        },
-        (payload) => {
-          console.log("[Realtime] Position update:", payload.eventType);
+        { event: "*", schema: "public", table: "posicoes_estoque" },
+        () => {
           invalidateQueries([
             ["posicoes_estoque"],
             ["posicoes_estoque_count"],
@@ -85,16 +81,10 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
           options.onPositionUpdate?.();
         }
       )
-      // Listen to estoque_posicao changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "estoque_posicao",
-        },
-        (payload) => {
-          console.log("[Realtime] Stock position update:", payload.eventType);
+        { event: "*", schema: "public", table: "estoque_posicao" },
+        () => {
           invalidateQueries([
             ["estoque_posicao"],
             ["posicoes_estoque"],
@@ -103,99 +93,62 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
           options.onPositionUpdate?.();
         }
       )
-      // Listen to eventos_triagem changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "eventos_triagem",
-        },
+        { event: "*", schema: "public", table: "eventos_triagem" },
         (payload) => {
-          console.log("[Realtime] Triage event update:", payload.eventType);
           invalidateQueries([
             ["triagem_por_produto"],
             ["eventos_triagem"],
             ["dashboard"],
           ]);
           options.onTriageUpdate?.();
-          
           if (showToasts && payload.eventType === "INSERT") {
             toast.success("Triagem registrada", { duration: 2000 });
           }
         }
       )
-      // Listen to eventos_picking changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "eventos_picking",
-        },
-        (payload) => {
-          console.log("[Realtime] Picking event update:", payload.eventType);
+        { event: "*", schema: "public", table: "eventos_picking" },
+        () => {
           invalidateQueries([["metricas_operacionais"], ["eventos_picking"], ["dashboard"]]);
           options.onPickingUpdate?.();
         }
       )
-      // Listen to tarefas changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "tarefas",
-        },
-        (payload) => {
-          console.log("[Realtime] Task update:", payload.eventType);
+        { event: "*", schema: "public", table: "tarefas" },
+        () => {
           invalidateQueries([["tarefas"], ["ondas_separacao"], ["dashboard"]]);
           options.onTaskUpdate?.();
         }
       )
-      // Listen to lotes changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "lotes",
-        },
+        { event: "*", schema: "public", table: "lotes" },
         (payload) => {
-          console.log("[Realtime] Lote update:", payload.eventType);
           invalidateQueries([["lotes"], ["recebimentos"], ["dashboard"]]);
           options.onLoteUpdate?.();
-          
           if (showToasts && payload.eventType === "INSERT") {
             toast.info("Novo lote recebido", { duration: 2000 });
           }
         }
       )
-      // Listen to alertas_historico changes
       .on(
         "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "alertas_historico",
-        },
-        (payload) => {
-          console.log("[Realtime] Alert update:", payload.eventType);
+        { event: "*", schema: "public", table: "alertas_historico" },
+        () => {
           invalidateQueries([["alertas"], ["alertas_historico"], ["dashboard"]]);
         }
       )
       .subscribe((subscriptionStatus) => {
-        console.log("[Realtime KPIs] Subscription status:", subscriptionStatus);
         const isConnected = subscriptionStatus === "SUBSCRIBED";
         setStatus(prev => ({ ...prev, isConnected }));
-        
-        if (isConnected) {
-          console.log("[Realtime KPIs] Successfully subscribed to all channels");
-        }
       });
 
     return () => {
-      console.log("[Realtime KPIs] Cleaning up subscriptions...");
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
       supabase.removeChannel(channel);
       setStatus(prev => ({ ...prev, isConnected: false }));
     };

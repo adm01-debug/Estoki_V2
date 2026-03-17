@@ -26,7 +26,7 @@ import {
   Line,
   Legend
 } from "recharts";
-import jsPDF from "jspdf";
+// jsPDF loaded dynamically on export to avoid blocking initial render
 import { 
   Download, 
   AlertTriangle, 
@@ -60,16 +60,14 @@ const DashboardPage = () => {
   // Realtime updates
   const realtimeStatus = useRealtimeKPIs({
     showToasts: true,
-    onMetricUpdate: () => console.log("Dashboard: metrics updated"),
-    onPositionUpdate: () => console.log("Dashboard: positions updated"),
-    onLoteUpdate: () => console.log("Dashboard: lotes updated"),
   });
 
-  const exportarPDF = () => {
+  const exportarPDF = async () => {
     if (!kpis) return;
     
     setExportando(true);
     
+    const { default: jsPDF } = await import("jspdf");
     const doc = new jsPDF();
     const dataAtual = new Date().toLocaleDateString("pt-BR");
     const horaAtual = new Date().toLocaleTimeString("pt-BR");
