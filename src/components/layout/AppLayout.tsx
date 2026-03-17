@@ -134,8 +134,12 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
   { path: "/import-export", icon: FileText, label: "Import/Export" },
   { path: "/automacoes", icon: Sparkles, label: "Automações" },
+  { path: "/aprovacoes", icon: ShieldCheck, label: "Aprovações" },
+  { path: "/relatorios-agendados", icon: CalendarClock, label: "Relat. Agendados" },
+  { path: "/fornecedores-avancado", icon: Building2, label: "Fornecedores Score" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
+  { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
 ];
 
