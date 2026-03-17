@@ -179,7 +179,7 @@ const getRoleLabel = (role: string) => {
   }
 };
 
-function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean }) {
+const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean; onHover?: (path: string) => void }) {
   const buttonProps = {
     "data-tour": item.tour,
     onClick,
