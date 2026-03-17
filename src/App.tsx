@@ -23,8 +23,8 @@ const Index = lazy(() => import(/* webpackChunkName: "index", webpackPrefetch: t
 const Auth = lazy(() => import(/* webpackChunkName: "auth", webpackPrefetch: true */ "./pages/Auth"));
 
 // ── WMS Operations ──
-const Estoque = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Estoque"));
-const Triagem = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Triagem"));
+const Estoque = lazy(() => import(/* webpackChunkName: "wms-ops", webpackPrefetch: true */ "./pages/Estoque"));
+const Triagem = lazy(() => import(/* webpackChunkName: "wms-ops", webpackPrefetch: true */ "./pages/Triagem"));
 const Recebimento = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Recebimento"));
 const Movimentacao = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Movimentacao"));
 const Armazenamento = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Armazenamento"));
