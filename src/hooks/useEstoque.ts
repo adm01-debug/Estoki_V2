@@ -82,7 +82,7 @@ export const useEstoque = () => {
     return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
-  const getEstatisticas = useCallback(() => {
+  const estatisticas = useMemo(() => {
     const lista = posicoes || [];
     const total = lista.length;
     const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
@@ -98,13 +98,15 @@ export const useEstoque = () => {
       bloqueadas,
       reservadas,
       taxaOcupacao,
-      // Legacy aliases
       totalPosicoes: total,
       posicoesOcupadas: ocupadas,
       posicoesLivres: livres,
       posicoesBloqueadas: bloqueadas,
     };
   }, [posicoes]);
+
+  // Keep getEstatisticas for backward compat but use memoized value
+  const getEstatisticas = useCallback(() => estatisticas, [estatisticas]);
 
   return {
     posicoes,
