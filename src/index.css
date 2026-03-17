@@ -309,4 +309,16 @@
   .safe-area-top {
     padding-top: max(0.25rem, env(safe-area-inset-top));
   }
+
+  /* Performance: skip rendering of off-screen sections */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+
+  /* GPU acceleration for animated elements */
+  .gpu-accelerated {
+    will-change: transform;
+    transform: translateZ(0);
+  }
 }

@@ -73,6 +73,9 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     target: "es2020",
+    modulePreload: {
+      polyfill: false, // Modern browsers support modulepreload natively
+    },
     cssCodeSplit: true,
     sourcemap: false,
     minify: "terser",
