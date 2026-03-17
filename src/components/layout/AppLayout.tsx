@@ -349,7 +349,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           {(!sidebarCollapsed || isMobile) && (
             <div className="min-w-0">
               <h1 className="font-extrabold text-sidebar-foreground text-base tracking-tight gradient-text">ESTOKI</h1>
-              <p className="text-[10px] text-sidebar-foreground/30 font-medium tracking-wide">WMS Pro</p>
+              <p className="text-[10px] text-sidebar-foreground/30 font-medium tracking-wide">ESTOQUE INTELIGENTE</p>
             </div>
           )}
           {isMobile && (
