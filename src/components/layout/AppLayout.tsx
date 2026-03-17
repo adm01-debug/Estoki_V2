@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, createContext, useContext } from "react";
+import { ReactNode, useEffect, createContext, useContext, useState } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 
@@ -14,6 +14,7 @@ import {
   Undo2,
   Settings,
   ChevronLeft,
+  ChevronRight,
   BarChart3,
   LogOut,
   Shield,
@@ -32,6 +33,7 @@ import {
   Bell,
   FolderTree,
   Scan,
+  Sparkles,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -53,6 +55,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -140,9 +144,9 @@ const sidebarUtilityItems: NavItem[] = [
 
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
-    case "admin": return "bg-red-500/20 text-red-700 border-red-500/30";
-    case "supervisor": return "bg-blue-500/20 text-blue-700 border-blue-500/30";
-    default: return "bg-green-500/20 text-green-700 border-green-500/30";
+    case "admin": return "bg-primary/20 text-primary border-primary/30";
+    case "supervisor": return "bg-info/20 text-info border-info/30";
+    default: return "bg-success/20 text-success border-success/30";
   }
 };
 
@@ -154,21 +158,55 @@ const getRoleLabel = (role: string) => {
   }
 };
 
-function SidebarNavButton({ item, isActive, onClick }: { item: NavItem; isActive: boolean; onClick: () => void }) {
-  return (
+function SidebarNavButton({ item, isActive, onClick, collapsed }: { item: NavItem; isActive: boolean; onClick: () => void; collapsed: boolean }) {
+  const button = (
     <button
       data-tour={item.tour}
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all",
+        "w-full flex items-center gap-3 rounded-lg transition-all duration-200 group relative",
+        collapsed ? "px-3 py-3 justify-center" : "px-3 py-2.5",
         isActive 
-          ? "bg-sidebar-primary text-sidebar-primary-foreground" 
-          : "text-sidebar-foreground hover:bg-sidebar-accent"
+          ? "bg-primary/10 text-primary sidebar-active-glow" 
+          : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
       )}
     >
-      <item.icon className="h-5 w-5" />
-      <span className="font-medium">{item.label}</span>
+      <item.icon className={cn(
+        "h-[18px] w-[18px] shrink-0 transition-colors",
+        isActive ? "text-primary" : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80"
+      )} />
+      {!collapsed && (
+        <span className={cn(
+          "text-sm transition-colors",
+          isActive ? "font-semibold" : "font-medium"
+        )}>{item.label}</span>
+      )}
+      {isActive && (
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-primary rounded-r-full" />
+      )}
     </button>
+  );
+
+  if (collapsed) {
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent side="right" className="bg-popover text-popover-foreground border-border">
+          {item.label}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return button;
+}
+
+function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: boolean }) {
+  if (collapsed) return <div className="my-3 mx-3 border-t border-sidebar-border" />;
+  return (
+    <p className="px-3 text-[10px] font-semibold text-sidebar-foreground/30 uppercase tracking-[0.15em] mb-1.5 mt-5">
+      {label}
+    </p>
   );
 }
 
@@ -178,6 +216,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const navigate = useNavigate();
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (isSupported && permission === "default") {
@@ -190,7 +229,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   }
 
   if (loading) {
-    return <div className="min-h-screen bg-background" />;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center animate-pulse">
+            <Warehouse className="h-6 w-6 text-primary" />
+          </div>
+          <div className="h-1 w-24 bg-primary/20 rounded-full overflow-hidden">
+            <div className="h-full w-1/2 bg-primary rounded-full shimmer" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
@@ -210,30 +260,34 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     navigate('/auth');
   };
 
+  const sidebarWidth = sidebarCollapsed ? "w-[68px]" : "w-64";
+  const mainPadding = sidebarCollapsed ? "lg:pl-[68px]" : "lg:pl-64";
+
   return (
     <AppLayoutContext.Provider value={true}>
-    <div className="min-h-screen bg-background flex flex-col">
+    <TooltipProvider>
+    <div className="min-h-screen bg-background flex flex-col ambient-bg">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-card border-b border-border px-4 py-3">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
+      <header className="sticky top-0 z-50 bg-card/80 backdrop-blur-xl border-b border-border/50 px-4 py-2.5">
+        <div className={cn("flex items-center justify-between max-w-[1600px] mx-auto transition-all", mainPadding)}>
           <div className="flex items-center gap-3">
             {showBack ? (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => navigate(-1)}
-                className="touch-friendly"
+                className="touch-friendly hover:bg-primary/10"
                 aria-label="Voltar para página anterior"
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
             ) : (
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Warehouse className="h-5 w-5 text-primary-foreground" />
+              <div className="flex items-center gap-2 lg:hidden">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
+                  <Warehouse className="h-4 w-4 text-primary-foreground" />
                 </div>
-                <span className="font-semibold text-foreground hidden sm:block">
-                  Estoque & Triagem
+                <span className="font-bold text-foreground hidden sm:block">
+                  ESTOKI
                 </span>
               </div>
             )}
@@ -250,18 +304,18 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             {rightAction}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="touch-friendly relative" aria-label="Menu do usuário">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
+                <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10" aria-label="Menu do usuário">
+                  <Avatar className="h-8 w-8 ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+                    <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-primary-foreground text-xs font-bold">
                       {getInitials(userName)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-popover">
+              <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl border-border/50">
                 <DropdownMenuLabel>
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">{userName}</span>
+                    <span className="font-semibold">{userName}</span>
                     <span className="text-xs text-muted-foreground font-normal">{userEmail}</span>
                     <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(currentRole))}>
                       <Shield className="h-3 w-3 mr-1" />
@@ -270,12 +324,12 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate("/configuracoes")}>
+                <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
                   <Settings className="h-4 w-4 mr-2" />
                   Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
+                <DropdownMenuItem className="text-destructive cursor-pointer" onClick={handleLogout}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </DropdownMenuItem>
@@ -286,15 +340,15 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto lg:pl-64">
-        <div className="max-w-7xl mx-auto">
+      <main className={cn("flex-1 overflow-auto transition-all duration-300", mainPadding)}>
+        <div className="max-w-[1600px] mx-auto relative z-10">
           <Breadcrumbs />
           {children || <Outlet />}
         </div>
       </main>
 
-      {/* Bottom Navigation (Mobile) - Enhanced touch targets */}
-      <nav className="sticky bottom-0 bg-card/95 backdrop-blur-lg border-t border-border px-1 py-1 md:hidden safe-area-bottom">
+      {/* Bottom Navigation (Mobile) */}
+      <nav className="sticky bottom-0 bg-card/90 backdrop-blur-xl border-t border-border/50 px-1 py-1 md:hidden safe-area-bottom">
         <div className="flex items-center justify-around">
           {mobileNavItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -308,12 +362,15 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 active:scale-95",
                   isActive 
-                    ? "text-primary bg-primary/10 shadow-sm" 
+                    ? "text-primary bg-primary/10" 
                     : "text-muted-foreground hover:text-foreground active:bg-muted"
                 )}
               >
                 <item.icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} aria-hidden="true" />
-                <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-semibold")}>{item.label}</span>
+                <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-bold text-primary")}>{item.label}</span>
+                {isActive && (
+                  <div className="absolute bottom-0.5 w-5 h-0.5 bg-primary rounded-full" />
+                )}
               </button>
             );
           })}
@@ -321,103 +378,140 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </nav>
 
       {/* Desktop Sidebar */}
-      <aside className="fixed left-0 top-0 h-full w-64 bg-sidebar border-r border-sidebar-border hidden lg:flex flex-col z-40">
-        <div className="p-4 border-b border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sidebar-primary flex items-center justify-center">
-              <Warehouse className="h-6 w-6 text-sidebar-primary-foreground" />
+      <aside className={cn(
+        "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border hidden lg:flex flex-col z-40 transition-all duration-300",
+        sidebarWidth
+      )}>
+        {/* Logo */}
+        <div className="p-3 border-b border-sidebar-border">
+          <div className={cn("flex items-center", sidebarCollapsed ? "justify-center" : "gap-3 px-1")}>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+              <Warehouse className="h-5 w-5 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="font-bold text-sidebar-foreground">Promo Brindes</h1>
-              <p className="text-xs text-sidebar-foreground/60">Estoque & Triagem</p>
-            </div>
+            {!sidebarCollapsed && (
+              <div className="min-w-0">
+                <h1 className="font-bold text-sidebar-foreground text-sm tracking-tight">ESTOKI</h1>
+                <p className="text-[10px] text-sidebar-foreground/40 font-medium">Promo Brindes WMS</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* User Info */}
-        <div className="p-3 border-b border-sidebar-border">
-          <div className="flex items-center gap-3 p-2 rounded-lg bg-sidebar-accent/50">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm">
-                {getInitials(userName)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
-                {userName}
-              </p>
-              <Badge variant="outline" className={cn("text-xs scale-90 origin-left", getRoleBadgeColor(currentRole))}>
-                {getRoleLabel(currentRole)}
-              </Badge>
+        {!sidebarCollapsed && (
+          <div className="px-3 py-2.5 border-b border-sidebar-border">
+            <div className="flex items-center gap-2.5 p-2 rounded-lg bg-sidebar-accent/50">
+              <Avatar className="h-8 w-8 ring-1 ring-primary/20">
+                <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-[10px] font-bold">
+                  {getInitials(userName)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-sidebar-foreground truncate">
+                  {userName}
+                </p>
+                <Badge variant="outline" className={cn("text-[9px] h-4 px-1", getRoleBadgeColor(currentRole))}>
+                  {getRoleLabel(currentRole)}
+                </Badge>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {sidebarMainItems.map((item) => (
-            <SidebarNavButton
-              key={item.path}
-              item={item}
-              isActive={location.pathname === item.path}
-              onClick={() => navigate(item.path)}
-            />
-          ))}
-          
-          <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
-            <p className="px-4 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-2">Operações</p>
+        {/* Navigation */}
+        <ScrollArea className="flex-1">
+          <nav className="p-2 space-y-0.5">
+            {sidebarMainItems.map((item) => (
+              <SidebarNavButton
+                key={item.path}
+                item={item}
+                isActive={location.pathname === item.path}
+                onClick={() => navigate(item.path)}
+                collapsed={sidebarCollapsed}
+              />
+            ))}
+            
+            <SidebarSectionLabel label="Operações" collapsed={sidebarCollapsed} />
             {sidebarSecondaryItems.map((item) => (
               <SidebarNavButton
                 key={item.path}
                 item={item}
                 isActive={location.pathname === item.path}
                 onClick={() => navigate(item.path)}
+                collapsed={sidebarCollapsed}
               />
             ))}
-          </div>
 
-          {currentRole === 'admin' && (
-            <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
-              <p className="px-4 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-2">Administração</p>
-              {sidebarAdminItems.map((item) => (
-                <SidebarNavButton
-                  key={item.path}
-                  item={item}
-                  isActive={location.pathname === item.path}
-                  onClick={() => navigate(item.path)}
-                />
-              ))}
-            </div>
-          )}
+            {currentRole === 'admin' && (
+              <>
+                <SidebarSectionLabel label="Administração" collapsed={sidebarCollapsed} />
+                {sidebarAdminItems.map((item) => (
+                  <SidebarNavButton
+                    key={item.path}
+                    item={item}
+                    isActive={location.pathname === item.path}
+                    onClick={() => navigate(item.path)}
+                    collapsed={sidebarCollapsed}
+                  />
+                ))}
+              </>
+            )}
 
-          <div className="pt-4 border-t border-sidebar-border mt-4 space-y-1">
+            <SidebarSectionLabel label="Conta" collapsed={sidebarCollapsed} />
             {sidebarUtilityItems.map((item) => (
               <SidebarNavButton
                 key={item.path}
                 item={item}
                 isActive={location.pathname === item.path}
                 onClick={() => navigate(item.path)}
+                collapsed={sidebarCollapsed}
               />
             ))}
-          </div>
-        </nav>
+          </nav>
+        </ScrollArea>
 
-        <div className="p-3 border-t border-sidebar-border space-y-1">
+        {/* Footer */}
+        <div className="p-2 border-t border-sidebar-border space-y-0.5">
           <SidebarNavButton
             item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
             isActive={location.pathname === "/configuracoes"}
             onClick={() => navigate("/configuracoes")}
+            collapsed={sidebarCollapsed}
           />
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
-          >
-            <LogOut className="h-5 w-5" />
-            <span className="font-medium">Sair</span>
-          </button>
+          {sidebarCollapsed ? (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button 
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center px-3 py-3 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
+                >
+                  <LogOut className="h-[18px] w-[18px]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="right">Sair</TooltipContent>
+            </Tooltip>
+          ) : (
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-destructive/70 hover:text-destructive hover:bg-destructive/10 transition-all"
+            >
+              <LogOut className="h-[18px] w-[18px]" />
+              <span className="text-sm font-medium">Sair</span>
+            </button>
+          )}
         </div>
+
+        {/* Collapse toggle */}
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-card border border-border flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all shadow-sm z-50"
+        >
+          <ChevronLeft className={cn("h-3 w-3 text-muted-foreground transition-transform", sidebarCollapsed && "rotate-180")} />
+        </button>
       </aside>
       <OnboardingTour />
     </div>
+    </TooltipProvider>
     </AppLayoutContext.Provider>
   );
 }

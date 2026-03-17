@@ -2,23 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-/* PROMO BRINDES - Sistema de Estoque e Triagem
-   Design System Colors (HSL)
+/* ESTOKI WMS - Premium Dark Design System
+   Inspired by modern SaaS aesthetics: deep blacks, warm amber accents, glassmorphism
 */
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 20% 10%;
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 220 25% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 220 25% 10%;
 
-    /* Primary - Azul principal */
-    --primary: 217 91% 60%;
+    --primary: 24 95% 53%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 96%;
@@ -27,7 +26,7 @@
     --muted: 220 14% 96%;
     --muted-foreground: 220 10% 46%;
 
-    --accent: 217 91% 60%;
+    --accent: 24 95% 53%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -35,7 +34,7 @@
 
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 217 91% 60%;
+    --ring: 24 95% 53%;
 
     --radius: 0.75rem;
 
@@ -49,68 +48,72 @@
     --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
 
-    /* Sidebar */
-    --sidebar-background: 220 20% 14%;
-    --sidebar-foreground: 220 10% 90%;
-    --sidebar-primary: 217 91% 60%;
+    /* Sidebar - Dark even in light mode for contrast */
+    --sidebar-background: 220 25% 7%;
+    --sidebar-foreground: 220 10% 85%;
+    --sidebar-primary: 24 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 20%;
+    --sidebar-accent: 220 25% 12%;
     --sidebar-accent-foreground: 220 10% 90%;
-    --sidebar-border: 220 20% 20%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 220 20% 14%;
+    --sidebar-ring: 24 95% 53%;
 
     /* Custom */
     --kpi-card: 0 0% 100%;
-    --kpi-icon-bg: 217 91% 95%;
+    --kpi-icon-bg: 24 95% 95%;
+
+    /* Glow */
+    --glow-primary: 24 95% 53%;
+    --glow-secondary: 30 100% 45%;
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 220 10% 98%;
+    --background: 220 25% 5%;
+    --foreground: 220 10% 95%;
 
-    --card: 220 20% 14%;
-    --card-foreground: 220 10% 98%;
+    --card: 220 25% 8%;
+    --card-foreground: 220 10% 95%;
 
-    --popover: 220 20% 14%;
-    --popover-foreground: 220 10% 98%;
+    --popover: 220 25% 8%;
+    --popover-foreground: 220 10% 95%;
 
-    --primary: 217 91% 60%;
+    --primary: 24 95% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 20% 20%;
-    --secondary-foreground: 220 10% 90%;
+    --secondary: 220 25% 12%;
+    --secondary-foreground: 220 10% 85%;
 
-    --muted: 220 20% 20%;
-    --muted-foreground: 220 10% 60%;
+    --muted: 220 25% 12%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 217 91% 60%;
+    --accent: 24 95% 53%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 20%;
-    --input: 220 20% 20%;
-    --ring: 217 91% 60%;
+    --border: 220 20% 14%;
+    --input: 220 20% 14%;
+    --ring: 24 95% 53%;
 
-    --sidebar-background: 220 20% 8%;
-    --sidebar-foreground: 220 10% 90%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-background: 220 30% 4%;
+    --sidebar-foreground: 220 10% 85%;
+    --sidebar-primary: 24 95% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 14%;
+    --sidebar-accent: 220 25% 10%;
     --sidebar-accent-foreground: 220 10% 90%;
-    --sidebar-border: 220 20% 14%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 220 20% 10%;
+    --sidebar-ring: 24 95% 53%;
 
-    --kpi-card: 220 20% 14%;
-    --kpi-icon-bg: 217 91% 20%;
+    --kpi-card: 220 25% 8%;
+    --kpi-icon-bg: 24 95% 15%;
 
     /* Chart colors for dark mode */
     --chart-success: 160 70% 50%;
     --chart-danger: 0 70% 60%;
     --chart-warning: 38 85% 55%;
     --chart-info: 217 85% 65%;
-    --chart-accent: 270 70% 60%;
+    --chart-accent: 24 90% 55%;
     --chart-neutral: 220 10% 50%;
   }
 }
@@ -127,13 +130,52 @@
 }
 
 @layer components {
-  /* KPI Cards */
+  /* Glass morphism card */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-xl rounded-xl border border-border/50 shadow-lg;
+  }
+
+  /* KPI Cards with glow effect */
   .kpi-card {
-    @apply bg-card rounded-xl p-4 shadow-sm border border-border/50 transition-all duration-300;
+    @apply bg-card rounded-xl p-4 shadow-sm border border-border/50 transition-all duration-300 relative overflow-hidden;
+  }
+  
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
   
   .kpi-card:hover {
     @apply shadow-lg border-primary/30 -translate-y-1;
+  }
+  
+  .kpi-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(30 100% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow button */
+  .glow-button {
+    @apply relative overflow-hidden;
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+  
+  .glow-button:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
 
   /* Status Badges */
@@ -188,6 +230,28 @@
     @apply bg-destructive/20 border-2 border-destructive;
   }
 
+  /* Sidebar glow indicator */
+  .sidebar-active-glow {
+    box-shadow: inset 3px 0 0 hsl(var(--primary)), 0 0 12px hsl(var(--primary) / 0.15);
+  }
+
+  /* Ambient background gradient */
+  .ambient-bg {
+    position: relative;
+  }
+  
+  .ambient-bg::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, hsl(var(--primary) / 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   /* Animations */
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
@@ -203,6 +267,17 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
   }
 }
 
