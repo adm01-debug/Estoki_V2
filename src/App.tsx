@@ -79,6 +79,10 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000,
       retry: 1,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 0,
     },
   },
 });
@@ -107,30 +111,30 @@ const App = () => (
                       <Route path="triagem" element={<Triagem />} />
                       <Route path="recebimento" element={<Recebimento />} />
                       <Route path="configuracoes" element={<Configuracoes />} />
-                      <Route path="relatorios" element={<Relatorios />} />
+                      <Route path="relatorios" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Relatorios /></ProtectedRoute>} />
                       <Route path="scanner" element={<Scanner />} />
                       <Route path="movimentacao" element={<Movimentacao />} />
-                      <Route path="rastreabilidade" element={<Rastreabilidade />} />
-                      <Route path="kpis-operacionais" element={<KPIsOperacionais />} />
-                      <Route path="produtividade" element={<Produtividade />} />
-                      <Route path="alertas" element={<AlertasInteligentes />} />
-                      <Route path="inventario" element={<InventarioCiclico />} />
-                      <Route path="curva-abc" element={<CurvaABC />} />
+                      <Route path="rastreabilidade" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Rastreabilidade /></ProtectedRoute>} />
+                      <Route path="kpis-operacionais" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><KPIsOperacionais /></ProtectedRoute>} />
+                      <Route path="produtividade" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Produtividade /></ProtectedRoute>} />
+                      <Route path="alertas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><AlertasInteligentes /></ProtectedRoute>} />
+                      <Route path="inventario" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><InventarioCiclico /></ProtectedRoute>} />
+                      <Route path="curva-abc" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><CurvaABC /></ProtectedRoute>} />
                       <Route path="tarefas" element={<GestaoTarefas />} />
                       <Route path="armazenamento" element={<Armazenamento />} />
                       <Route path="triador" element={<DashboardTriador />} />
                       <Route path="formulario-triagem" element={<FormularioTriagem />} />
                       <Route path="conferencia" element={<ConferenciaRecebimento />} />
-                      <Route path="trocas" element={<TrocasDevolucoes />} />
-                      <Route path="trocas-dashboard" element={<DashboardTrocas />} />
+                      <Route path="trocas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><TrocasDevolucoes /></ProtectedRoute>} />
+                      <Route path="trocas-dashboard" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><DashboardTrocas /></ProtectedRoute>} />
                       <Route path="romaneios" element={<Romaneios />} />
-                      <Route path="divergencias" element={<RelatorioDivergencias />} />
-                      <Route path="fornecedores" element={<RelatorioFornecedores />} />
-                      <Route path="seguranca" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Seguranca /></ProtectedRoute>} />
+                      <Route path="divergencias" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioDivergencias /></ProtectedRoute>} />
+                      <Route path="fornecedores" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioFornecedores /></ProtectedRoute>} />
+                      <Route path="seguranca" element={<ProtectedRoute allowedRoles={["admin"]}><Seguranca /></ProtectedRoute>} />
                       <Route path="produtos" element={<Produtos />} />
                       <Route path="lotes" element={<Lotes />} />
-                      <Route path="posicoes" element={<Posicoes />} />
-                      <Route path="ondas" element={<Ondas />} />
+                      <Route path="posicoes" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Posicoes /></ProtectedRoute>} />
+                      <Route path="ondas" element={<ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute>} />
                       <Route path="gamificacao" element={<Gamificacao />} />
                       {/* Admin - Protected */}
                       <Route path="admin/usuarios" element={<ProtectedRoute allowedRoles={["admin"]}><UsersPage /></ProtectedRoute>} />

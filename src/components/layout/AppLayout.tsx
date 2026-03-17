@@ -38,6 +38,7 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -281,6 +282,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Main Content */}
       <main className="flex-1 overflow-auto lg:pl-64">
         <div className="max-w-7xl mx-auto">
+          <Breadcrumbs />
           {children || <Outlet />}
         </div>
       </main>
