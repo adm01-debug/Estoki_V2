@@ -223,6 +223,10 @@ const App = () => (
                     <Route path="relatorios-agendados" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatoriosAgendados /></ProtectedRoute></Suspense>} />
                     <Route path="aprovacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AprovacaoMovimentacoes /></ProtectedRoute></Suspense>} />
                     <Route path="fornecedores-avancado" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><FornecedoresAvancado /></ProtectedRoute></Suspense>} />
+                    <Route path="modo-offline" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ModoOffline /></Suspense>} />
+                    <Route path="enderecamento" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><EndereçamentoAutomatico /></Suspense>} />
+                    <Route path="transportadoras" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><IntegracaoTransportadoras /></Suspense>} />
+                    <Route path="previsao-demanda" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><PrevisaoDemandaIA /></ProtectedRoute></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>
