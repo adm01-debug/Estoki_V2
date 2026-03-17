@@ -100,6 +100,10 @@ const Unauthorized = lazy(() => import(/* webpackChunkName: "user" */ "./pages/U
 const AssistenteIA = lazy(() => import(/* webpackChunkName: "ai" */ "./pages/AssistenteIA"));
 const ImportExport = lazy(() => import(/* webpackChunkName: "import-export" */ "./pages/ImportExport"));
 const Automacoes = lazy(() => import(/* webpackChunkName: "automacoes" */ "./pages/Automacoes"));
+const DashboardTempoReal = lazy(() => import(/* webpackChunkName: "realtime" */ "./pages/DashboardTempoReal"));
+const RelatoriosAgendados = lazy(() => import(/* webpackChunkName: "reports" */ "./pages/RelatoriosAgendados"));
+const AprovacaoMovimentacoes = lazy(() => import(/* webpackChunkName: "approvals" */ "./pages/AprovacaoMovimentacoes"));
+const FornecedoresAvancado = lazy(() => import(/* webpackChunkName: "suppliers" */ "./pages/FornecedoresAvancado"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -211,6 +215,10 @@ const App = () => (
                     <Route path="assistente-ia" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense>} />
                     <Route path="import-export" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense>} />
                     <Route path="automacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense>} />
+                    <Route path="dashboard-realtime" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTempoReal /></Suspense>} />
+                    <Route path="relatorios-agendados" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatoriosAgendados /></ProtectedRoute></Suspense>} />
+                    <Route path="aprovacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AprovacaoMovimentacoes /></ProtectedRoute></Suspense>} />
+                    <Route path="fornecedores-avancado" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><FornecedoresAvancado /></ProtectedRoute></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>

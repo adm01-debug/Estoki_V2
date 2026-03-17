@@ -36,6 +36,9 @@ import {
   Sparkles,
   Menu,
   X,
+  Radio,
+  CalendarClock,
+  ShieldCheck,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -89,6 +92,7 @@ const mobileNavItems: NavItem[] = [
 const sidebarMainItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  { path: "/dashboard-realtime", icon: Radio, label: "Tempo Real", tour: "realtime" },
   { path: "/monitor", icon: Activity, label: "Monitor Live", tour: "monitor" },
   { path: "/assistente-ia", icon: Sparkles, label: "Assistente IA", tour: "assistente-ia" },
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
@@ -130,8 +134,12 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
   { path: "/import-export", icon: FileText, label: "Import/Export" },
   { path: "/automacoes", icon: Sparkles, label: "Automações" },
+  { path: "/aprovacoes", icon: ShieldCheck, label: "Aprovações" },
+  { path: "/relatorios-agendados", icon: CalendarClock, label: "Relat. Agendados" },
+  { path: "/fornecedores-avancado", icon: Building2, label: "Fornecedores Score" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
+  { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
 ];
 
