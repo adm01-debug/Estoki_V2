@@ -63,9 +63,9 @@ export {
 
 // App Config
 export const APP_CONFIG = {
-  name: 'WMS',
+  name: 'ESTOKI',
   version: '1.0.0',
-  company: 'Promo Brindes',
+  company: 'ESTOKI',
 };
 
 // Inicialização global

@@ -57,7 +57,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Criar Conta</CardTitle>
-          <p className="text-muted-foreground">Estoki WMS</p>
+          <p className="text-muted-foreground">ESTOKI</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleRegister} className="space-y-4">

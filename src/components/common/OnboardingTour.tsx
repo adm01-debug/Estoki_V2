@@ -15,8 +15,8 @@ interface TourStep {
 
 const tourSteps: TourStep[] = [
   {
-    title: '🚀 Bem-vindo ao WMS!',
-    content: 'Este é seu sistema de gestão de armazém. Vamos fazer um tour rápido pelos módulos principais.',
+    title: '🚀 Bem-vindo ao ESTOKI!',
+    content: 'Este é seu sistema de gestão de estoque. Vamos fazer um tour rápido pelos módulos principais.',
   },
   {
     title: '📊 Dashboard',
