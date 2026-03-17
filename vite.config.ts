@@ -75,6 +75,17 @@ export default defineConfig(({ mode }) => ({
     target: "es2020",
     cssCodeSplit: true,
     sourcemap: false,
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ["console.log", "console.debug", "console.info"],
+        passes: 2,
+      },
+      mangle: { safari10: true },
+    },
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -101,16 +112,18 @@ export default defineConfig(({ mode }) => ({
           ],
           // Charts (heavy)
           "vendor-charts": ["recharts"],
-          // Icons
+          // Icons - tree-shaken per route
           "vendor-icons": ["lucide-react"],
           // Date utils
           "vendor-date": ["date-fns", "dayjs"],
           // Forms
           "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
-          // Export/PDF
+          // Export/PDF - only loaded when needed
           "vendor-export": ["jspdf", "exceljs", "xlsx", "papaparse"],
           // Animation
           "vendor-motion": ["framer-motion"],
+          // i18n
+          "vendor-i18n": ["i18next", "react-i18next", "i18next-browser-languagedetector"],
         },
       },
     },
