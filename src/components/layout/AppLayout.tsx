@@ -440,6 +440,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               isActive={location.pathname === item.path}
               onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
               collapsed={sidebarCollapsed && !isMobile}
+              onHover={preloadRoute}
             />
           ))}
         </nav>
