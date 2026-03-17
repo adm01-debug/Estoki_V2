@@ -111,7 +111,7 @@ export default function Dashboard() {
     return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
   }, [recebimentos, stats, estatisticas]);
 
-  if (loadingKpis && loadingEstoque) {
+  const userName = profile?.nome?.split(' ')[0] || 'Operador';
     return (
       <div className="p-4 md:p-6 space-y-6">
         <div className="flex items-center justify-center h-64">
