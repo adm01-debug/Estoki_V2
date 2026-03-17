@@ -39,6 +39,9 @@ import {
   Radio,
   CalendarClock,
   ShieldCheck,
+  WifiOff,
+  MapPin,
+  Brain,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -137,6 +140,10 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/aprovacoes", icon: ShieldCheck, label: "Aprovações" },
   { path: "/relatorios-agendados", icon: CalendarClock, label: "Relat. Agendados" },
   { path: "/fornecedores-avancado", icon: Building2, label: "Fornecedores Score" },
+  { path: "/enderecamento", icon: MapPin, label: "Endereçamento Auto" },
+  { path: "/transportadoras", icon: Truck, label: "Transportadoras" },
+  { path: "/previsao-demanda", icon: Brain, label: "Previsão Demanda" },
+  { path: "/modo-offline", icon: WifiOff, label: "Modo Offline" },
   { path: "/relatorios", icon: FileText, label: "Relatórios" },
   { path: "/seguranca", icon: Shield, label: "Segurança" },
   { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
