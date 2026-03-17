@@ -18,6 +18,7 @@ import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
 // ── Core pages (loaded first) ──
 const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "./pages/Dashboard"));
+const DashboardOperacional = lazy(() => import(/* webpackChunkName: "dashboard" */ "./pages/DashboardOperacional"));
 const Index = lazy(() => import(/* webpackChunkName: "index" */ "./pages/Index"));
 const Auth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/Auth"));
 
