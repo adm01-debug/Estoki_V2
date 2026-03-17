@@ -125,4 +125,4 @@ Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ## Licença
 
-Proprietário - Promo Brindes © 2025
+Proprietário - ESTOKI © 2025

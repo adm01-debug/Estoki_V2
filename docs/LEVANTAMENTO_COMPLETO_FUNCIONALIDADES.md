@@ -1,8 +1,8 @@
-# 📋 Levantamento Exaustivo de Funcionalidades — WMS Promo Brindes
+# 📋 Levantamento Exaustivo de Funcionalidades — ESTOKI WMS
 
 > **Documento gerado em:** 15/03/2026  
-> **Sistema:** WMS (Warehouse Management System) — Promo Brindes  
-> **Domínio:** Gestão de Estoque e Triagem para empresa de brindes promocionais  
+> **Sistema:** ESTOKI — WMS (Warehouse Management System)  
+> **Domínio:** Gestão de Estoque e Triagem
 > **Stack:** React + Vite + TypeScript + Tailwind CSS + Lovable Cloud (Supabase)
 
 ---
@@ -1034,4 +1034,4 @@
 
 ---
 
-> **Este documento representa o levantamento exaustivo de TODAS as funcionalidades implementadas no sistema WMS Promo Brindes. Cobertura funcional: 100%.**
+> **Este documento representa o levantamento exaustivo de TODAS as funcionalidades implementadas no sistema ESTOKI WMS. Cobertura funcional: 100%.**

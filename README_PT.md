@@ -1,6 +1,6 @@
 # 📦 ESTOKI - Sistema de Gestão de Estoque
 
-Sistema completo de gestão de warehouse e estoque para Promo Brindes.
+Sistema completo de gestão de warehouse e estoque da ESTOKI.
 
 [English](README.md) | **Português**
 
@@ -86,5 +86,5 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 📄 Licença
 
-Proprietário - Promo Brindes © 2025
+Proprietário - ESTOKI © 2025
 

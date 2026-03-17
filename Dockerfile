@@ -62,7 +62,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 EXPOSE 80
 
 # Labels
-LABEL maintainer="Promo Brindes <ti@promobrindes.com.br>"
+LABEL maintainer="ESTOKI <contato@estoki.com.br>"
 LABEL version="1.0"
 LABEL description="ESTOKI WMS - Sistema de Gestão de Estoque"
 
