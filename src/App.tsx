@@ -112,12 +112,16 @@ const PrevisaoDemandaIA = lazy(() => import(/* webpackChunkName: "demand" */ "./
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,      // 5 min — avoid refetching fresh data
+      gcTime: 10 * 60 * 1000,         // 10 min — keep cache in memory longer
       retry: 1,
       refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
+      networkMode: 'offlineFirst',     // use cache when offline
     },
     mutations: {
       retry: 0,
+      networkMode: 'online',
     },
   },
 });
