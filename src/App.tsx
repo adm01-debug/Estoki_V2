@@ -84,6 +84,7 @@ const AdminSettingsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./p
 const AuditLogPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/AuditLogPage"));
 const IntegrationsPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/IntegrationsPage"));
 const Seguranca = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/Seguranca"));
+const Governanca = lazy(() => import(/* webpackChunkName: "governance" */ "./pages/Governanca"));
 
 // ── User & Misc ──
 const Configuracoes = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Configuracoes"));
