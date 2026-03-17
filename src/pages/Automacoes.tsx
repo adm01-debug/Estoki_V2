@@ -64,7 +64,7 @@ const defaultWorkflows: Workflow[] = [
 ];
 
 export default function Automacoes() {
-  const { role } = useAuth();
+  const { role, user } = useAuth();
   const [workflows, setWorkflows] = useState<Workflow[]>(defaultWorkflows);
   const [executing, setExecuting] = useState<string | null>(null);
 
