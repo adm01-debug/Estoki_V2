@@ -215,6 +215,10 @@ const App = () => (
                     <Route path="assistente-ia" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense>} />
                     <Route path="import-export" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense>} />
                     <Route path="automacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense>} />
+                    <Route path="dashboard-realtime" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTempoReal /></Suspense>} />
+                    <Route path="relatorios-agendados" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatoriosAgendados /></ProtectedRoute></Suspense>} />
+                    <Route path="aprovacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AprovacaoMovimentacoes /></ProtectedRoute></Suspense>} />
+                    <Route path="fornecedores-avancado" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><FornecedoresAvancado /></ProtectedRoute></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>
