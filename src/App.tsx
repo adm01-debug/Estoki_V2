@@ -104,6 +104,10 @@ const DashboardTempoReal = lazy(() => import(/* webpackChunkName: "realtime" */ 
 const RelatoriosAgendados = lazy(() => import(/* webpackChunkName: "reports" */ "./pages/RelatoriosAgendados"));
 const AprovacaoMovimentacoes = lazy(() => import(/* webpackChunkName: "approvals" */ "./pages/AprovacaoMovimentacoes"));
 const FornecedoresAvancado = lazy(() => import(/* webpackChunkName: "suppliers" */ "./pages/FornecedoresAvancado"));
+const ModoOffline = lazy(() => import(/* webpackChunkName: "offline" */ "./pages/ModoOffline"));
+const EndereçamentoAutomatico = lazy(() => import(/* webpackChunkName: "addressing" */ "./pages/EndereçamentoAutomatico"));
+const IntegracaoTransportadoras = lazy(() => import(/* webpackChunkName: "carriers" */ "./pages/IntegracaoTransportadoras"));
+const PrevisaoDemandaIA = lazy(() => import(/* webpackChunkName: "demand" */ "./pages/PrevisaoDemandaIA"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
