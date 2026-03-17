@@ -96,6 +96,11 @@ const TwoFactorAuth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/
 const NotFound = lazy(() => import(/* webpackChunkName: "user" */ "./pages/NotFound"));
 const Unauthorized = lazy(() => import(/* webpackChunkName: "user" */ "./pages/Unauthorized"));
 
+// ── New Features ──
+const AssistenteIA = lazy(() => import(/* webpackChunkName: "ai" */ "./pages/AssistenteIA"));
+const ImportExport = lazy(() => import(/* webpackChunkName: "import-export" */ "./pages/ImportExport"));
+const Automacoes = lazy(() => import(/* webpackChunkName: "automacoes" */ "./pages/Automacoes"));
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
