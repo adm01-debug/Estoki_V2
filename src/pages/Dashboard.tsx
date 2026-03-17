@@ -65,11 +65,12 @@ const DashboardPage = () => {
     onLoteUpdate: () => console.log("Dashboard: lotes updated"),
   });
 
-  const exportarPDF = () => {
+  const exportarPDF = async () => {
     if (!kpis) return;
     
     setExportando(true);
     
+    const { default: jsPDF } = await import("jspdf");
     const doc = new jsPDF();
     const dataAtual = new Date().toLocaleDateString("pt-BR");
     const horaAtual = new Date().toLocaleTimeString("pt-BR");
