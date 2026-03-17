@@ -40,6 +40,7 @@ const routeLabels: Record<string, string> = {
   '/divergencias': 'Divergências',
   '/relatorios': 'Relatórios',
   '/seguranca': 'Segurança',
+  '/ocupacao': 'Ocupação Visual',
   '/configuracoes': 'Configurações',
   '/perfil': 'Meu Perfil',
   '/notificacoes': 'Notificações',

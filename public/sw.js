@@ -165,33 +165,49 @@ async function syncPendingOperations() {
 
 // Push Notifications
 self.addEventListener('push', (event) => {
-  if (!event.data) return;
+  let data = { title: 'ESTOKI WMS', body: 'Nova notificação', tag: 'default' };
   
-  const data = event.data.json();
+  try {
+    if (event.data) {
+      const parsed = event.data.json();
+      data = { ...data, ...parsed };
+    }
+  } catch {
+    if (event.data) {
+      data.body = event.data.text();
+    }
+  }
   
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'ESTOKI WMS', {
-      body: data.body,
-      icon: '/icon-192.png',
-      badge: '/badge-72.png',
-      tag: data.tag || 'default',
-      data: data.data,
-      actions: data.actions || [],
-    })
-  );
+  const options = {
+    body: data.body,
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
+    tag: data.tag || 'wms-notification',
+    data: data.data || {},
+    vibrate: [200, 100, 200],
+    requireInteraction: data.severity === 'critical',
+    actions: data.actions || [
+      { action: 'open', title: 'Abrir' },
+      { action: 'dismiss', title: 'Dispensar' },
+    ],
+  };
+  
+  event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
 // Clique em notificação
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   
+  if (event.action === 'dismiss') return;
+  
   const url = event.notification.data?.url || '/';
   
   event.waitUntil(
-    clients.matchAll({ type: 'window' }).then((windowClients) => {
-      // Foca janela existente ou abre nova
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
       for (const client of windowClients) {
-        if (client.url === url && 'focus' in client) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(url);
           return client.focus();
         }
       }
