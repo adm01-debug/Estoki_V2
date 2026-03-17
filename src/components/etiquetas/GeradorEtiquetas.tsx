@@ -120,7 +120,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(8);
         doc.setFont("helvetica", "bold");
-        doc.text("PROMO BRINDES - ESTOQUE", width / 2, 5.5, { align: "center" });
+        doc.text("ESTOKI - ESTOQUE", width / 2, 5.5, { align: "center" });
 
         // Reset cor do texto
         doc.setTextColor(0, 0, 0);
