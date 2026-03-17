@@ -16,11 +16,11 @@ import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { InstallPrompt } from "./components/pwa/InstallPrompt";
 import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
-// ── Core pages (loaded first) ──
-const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard" */ "./pages/Dashboard"));
+// ── Core pages (prefetched — loaded first) ──
+const Dashboard = lazy(() => import(/* webpackChunkName: "dashboard", webpackPrefetch: true */ "./pages/Dashboard"));
 const DashboardOperacional = lazy(() => import(/* webpackChunkName: "dashboard" */ "./pages/DashboardOperacional"));
-const Index = lazy(() => import(/* webpackChunkName: "index" */ "./pages/Index"));
-const Auth = lazy(() => import(/* webpackChunkName: "auth" */ "./pages/Auth"));
+const Index = lazy(() => import(/* webpackChunkName: "index", webpackPrefetch: true */ "./pages/Index"));
+const Auth = lazy(() => import(/* webpackChunkName: "auth", webpackPrefetch: true */ "./pages/Auth"));
 
 // ── WMS Operations ──
 const Estoque = lazy(() => import(/* webpackChunkName: "wms-ops" */ "./pages/Estoque"));
