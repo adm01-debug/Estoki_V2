@@ -90,6 +90,7 @@ const sidebarMainItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
   { path: "/monitor", icon: Activity, label: "Monitor Live", tour: "monitor" },
+  { path: "/assistente-ia", icon: Sparkles, label: "Assistente IA", tour: "assistente-ia" },
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
   { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
