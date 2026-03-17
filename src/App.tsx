@@ -100,6 +100,10 @@ const Unauthorized = lazy(() => import(/* webpackChunkName: "user" */ "./pages/U
 const AssistenteIA = lazy(() => import(/* webpackChunkName: "ai" */ "./pages/AssistenteIA"));
 const ImportExport = lazy(() => import(/* webpackChunkName: "import-export" */ "./pages/ImportExport"));
 const Automacoes = lazy(() => import(/* webpackChunkName: "automacoes" */ "./pages/Automacoes"));
+const DashboardTempoReal = lazy(() => import(/* webpackChunkName: "realtime" */ "./pages/DashboardTempoReal"));
+const RelatoriosAgendados = lazy(() => import(/* webpackChunkName: "reports" */ "./pages/RelatoriosAgendados"));
+const AprovacaoMovimentacoes = lazy(() => import(/* webpackChunkName: "approvals" */ "./pages/AprovacaoMovimentacoes"));
+const FornecedoresAvancado = lazy(() => import(/* webpackChunkName: "suppliers" */ "./pages/FornecedoresAvancado"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
