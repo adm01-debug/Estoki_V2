@@ -39,6 +39,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { GlobalSearch } from "@/components/common/GlobalSearch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
