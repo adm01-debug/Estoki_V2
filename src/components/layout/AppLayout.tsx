@@ -40,6 +40,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
+import { OnboardingTour } from "@/components/common/OnboardingTour";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
