@@ -51,6 +51,7 @@ const Lotes = lazy(() => import("./pages/Lotes"));
 const Posicoes = lazy(() => import("./pages/Posicoes"));
 const Ondas = lazy(() => import("./pages/Ondas"));
 const Gamificacao = lazy(() => import("./pages/Gamificacao"));
+const OcupacaoVisual = lazy(() => import("./pages/OcupacaoVisual"));
 
 // Additional pages
 const UsersPage = lazy(() => import("./pages/admin/UsersPage"));
