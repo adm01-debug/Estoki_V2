@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ErrorFallback from './ErrorFallback';
+import { ErrorFallback } from './ErrorFallback';
 
 describe('ErrorFallback', () => {
   it('should render error message', () => {
