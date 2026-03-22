@@ -296,7 +296,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         >
           <div className="relative">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
-              <Warehouse className="h-7 w-7 text-primary-foreground" />
+              <Box className="h-7 w-7 text-primary-foreground" />
             </div>
             <div className="absolute -inset-2 rounded-2xl bg-primary/20 animate-ping" />
           </div>
