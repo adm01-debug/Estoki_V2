@@ -3,6 +3,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { prefetchCriticalRoutes } from "@/lib/prefetch";
+import { useSwipeBack } from "@/hooks/useSwipeBack";
 
 const AppLayoutContext = createContext(false);
 import { 
@@ -260,6 +261,17 @@ function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: b
   );
 }
 
+// Determine parent route for smart back navigation
+function getParentRoute(pathname: string): string {
+  // If deep route like /admin/usuarios, go to parent section
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length > 1) {
+    return "/" + segments.slice(0, -1).join("/");
+  }
+  // For top-level routes, go to home
+  return "/";
+}
+
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const isNested = useContext(AppLayoutContext);
   const location = useLocation();
@@ -269,6 +281,35 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const preloadRoute = useRoutePreload();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Smart back: always show on non-home routes
+  const isHome = location.pathname === "/";
+  const shouldShowBack = showBack || !isHome;
+  const parentRoute = getParentRoute(location.pathname);
+
+  const handleBack = useCallback(() => {
+    // If there's browser history, use it; otherwise go to parent route
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate(parentRoute);
+    }
+  }, [navigate, parentRoute]);
+
+  // Keyboard shortcut: Alt+Left for back navigation
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === "ArrowLeft" && !isHome) {
+        e.preventDefault();
+        handleBack();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleBack, isHome]);
+
+  // Enable swipe-from-edge back gesture on mobile
+  useSwipeBack(!isHome);
 
   // Prefetch critical routes after mount
   useEffect(() => {
@@ -289,7 +330,6 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     return <>{children}</>;
   }
 
-  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div 
@@ -510,16 +550,23 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <Menu className="h-5 w-5" />
             </Button>
             
-            {showBack && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate(-1)}
-                className="touch-friendly hover:bg-primary/10"
-                aria-label="Voltar"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
+            {shouldShowBack && (
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={handleBack}
+                    className="touch-friendly hover:bg-primary/10"
+                    aria-label="Voltar (Alt+←)"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
+                </TooltipContent>
+              </Tooltip>
             )}
             
             {/* Mobile logo */}
@@ -596,7 +643,17 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           <div className="lg:hidden">
             <Breadcrumbs />
           </div>
-          {children || <Outlet />}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              {children || <Outlet />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 
