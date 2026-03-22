@@ -95,7 +95,7 @@ export const useDashboard = () => {
           if (!ppMap.has(pp)) ppMap.set(pp, { total: 0, ocupado: 0 });
           const entry = ppMap.get(pp)!;
           entry.total++;
-          if (pos.status === 'ocupada') entry.ocupado++;
+          if (pos.status === 'ocupado') entry.ocupado++;
         }
       }
       const ocupacaoPP: OcupacaoPP[] = Array.from(ppMap.entries()).map(([nome, { total, ocupado }]) => ({
