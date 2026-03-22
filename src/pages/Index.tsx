@@ -80,7 +80,7 @@ const itemVariants = {
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
   const { stats, isLoading: loadingKpis } = useDashboard();
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
