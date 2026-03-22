@@ -72,12 +72,12 @@ export const useDashboard = () => {
         posicoesData,
         itensParadosData,
       ] = await Promise.all([
-        getCount('posicoes_estoque'),
-        getCount('posicoes_estoque', { status: 'ocupada' }),
-        getCount('eventos_triagem'),
-        getCount('eventos_triagem', { resultado: null }),
-        getCount('lotes', { status: 'recebido' }),
-        getCount('lotes', { status: 'conferido' }),
+        getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true })),
+        getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true }).eq('status', 'ocupado')),
+        getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true })),
+        getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
+        getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
+        getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
         supabase.from('posicoes_estoque').select('porta_palete, status').limit(1000),
         supabase.from('estoque_posicao')
           .select('id, quantidade, posicao_id, produto_id, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
