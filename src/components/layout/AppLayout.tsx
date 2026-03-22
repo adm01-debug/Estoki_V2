@@ -330,6 +330,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     return <>{children}</>;
   }
 
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div 
