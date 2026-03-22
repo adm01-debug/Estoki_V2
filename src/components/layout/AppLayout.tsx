@@ -9,8 +9,9 @@ import {
   LayoutDashboard, 
   Package, 
   Search, 
-  Warehouse, 
-  QrCode, 
+  Warehouse,
+  Box, 
+  QrCode,
   ArrowLeftRight,
   Truck,
   Undo2,
@@ -295,7 +296,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         >
           <div className="relative">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
-              <Warehouse className="h-7 w-7 text-primary-foreground" />
+              <Box className="h-7 w-7 text-primary-foreground" />
             </div>
             <div className="absolute -inset-2 rounded-2xl bg-primary/20 animate-ping" />
           </div>
@@ -344,7 +345,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
             transition={{ duration: 0.5 }}
           >
-            <Warehouse className="h-5 w-5 text-primary-foreground" />
+            <Box className="h-5 w-5 text-primary-foreground" />
           </motion.div>
           {(!sidebarCollapsed || isMobile) && (
             <div className="min-w-0">
@@ -521,7 +522,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             {/* Mobile logo */}
             <div className="flex items-center gap-2 lg:hidden">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
-                <Warehouse className="h-4 w-4 text-primary-foreground" />
+                <Box className="h-4 w-4 text-primary-foreground" />
               </div>
               <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
             </div>
