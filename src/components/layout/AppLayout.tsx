@@ -261,6 +261,17 @@ function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: b
   );
 }
 
+// Determine parent route for smart back navigation
+function getParentRoute(pathname: string): string {
+  // If deep route like /admin/usuarios, go to parent section
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length > 1) {
+    return "/" + segments.slice(0, -1).join("/");
+  }
+  // For top-level routes, go to home
+  return "/";
+}
+
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const isNested = useContext(AppLayoutContext);
   const location = useLocation();
@@ -271,24 +282,34 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Prefetch critical routes after mount
-  useEffect(() => {
-    prefetchCriticalRoutes();
-  }, []);
+  // Smart back: always show on non-home routes
+  const isHome = location.pathname === "/";
+  const shouldShowBack = showBack || !isHome;
+  const parentRoute = getParentRoute(location.pathname);
 
-  useEffect(() => {
-    if (isSupported && permission === "default") {
-      requestPermission();
+  const handleBack = useCallback(() => {
+    // If there's browser history, use it; otherwise go to parent route
+    if (window.history.length > 2) {
+      navigate(-1);
+    } else {
+      navigate(parentRoute);
     }
-  }, [isSupported, permission, requestPermission]);
+  }, [navigate, parentRoute]);
 
+  // Keyboard shortcut: Alt+Left for back navigation
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location.pathname]);
+    const handler = (e: KeyboardEvent) => {
+      if (e.altKey && e.key === "ArrowLeft" && !isHome) {
+        e.preventDefault();
+        handleBack();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handleBack, isHome]);
 
-  if (isNested) {
-    return <>{children}</>;
-  }
+  // Enable swipe-from-edge back gesture on mobile
+  useSwipeBack(!isHome);
 
   if (loading) {
     return (
