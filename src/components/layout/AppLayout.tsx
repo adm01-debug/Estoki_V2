@@ -345,7 +345,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
             transition={{ duration: 0.5 }}
           >
-            <Warehouse className="h-5 w-5 text-primary-foreground" />
+            <Box className="h-5 w-5 text-primary-foreground" />
           </motion.div>
           {(!sidebarCollapsed || isMobile) && (
             <div className="min-w-0">
