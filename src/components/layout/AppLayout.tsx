@@ -45,6 +45,7 @@ import {
   WifiOff,
   MapPin,
   Brain,
+  Tag,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -132,6 +133,7 @@ const sidebarSecondaryItems: NavItem[] = [
   { path: "/gamificacao", icon: Activity, label: "Gamificação" },
   { path: "/rastreabilidade", icon: Route, label: "Rastreabilidade" },
   { path: "/seriais", icon: QrCode, label: "Seriais" },
+  { path: "/etiquetas", icon: Tag, label: "Etiquetas QR" },
   { path: "/pedidos", icon: FileText, label: "Pedidos" },
   { path: "/clientes", icon: Users, label: "Clientes" },
   { path: "/armazens", icon: Building2, label: "Armazéns" },
