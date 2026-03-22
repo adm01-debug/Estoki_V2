@@ -109,6 +109,7 @@ const ModoOffline = lazy(() => import(/* webpackChunkName: "offline" */ "./pages
 const EndereçamentoAutomatico = lazy(() => import(/* webpackChunkName: "addressing" */ "./pages/EndereçamentoAutomatico"));
 const IntegracaoTransportadoras = lazy(() => import(/* webpackChunkName: "carriers" */ "./pages/IntegracaoTransportadoras"));
 const PrevisaoDemandaIA = lazy(() => import(/* webpackChunkName: "demand" */ "./pages/PrevisaoDemandaIA"));
+const Etiquetas = lazy(() => import(/* webpackChunkName: "etiquetas" */ "./pages/Etiquetas"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
