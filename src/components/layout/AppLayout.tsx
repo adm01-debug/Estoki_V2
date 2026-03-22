@@ -550,16 +550,23 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <Menu className="h-5 w-5" />
             </Button>
             
-            {showBack && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate(-1)}
-                className="touch-friendly hover:bg-primary/10"
-                aria-label="Voltar"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
+            {shouldShowBack && (
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={handleBack}
+                    className="touch-friendly hover:bg-primary/10"
+                    aria-label="Voltar (Alt+←)"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
+                </TooltipContent>
+              </Tooltip>
             )}
             
             {/* Mobile logo */}
