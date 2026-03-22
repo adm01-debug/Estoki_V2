@@ -234,6 +234,7 @@ const App = () => (
                     <Route path="enderecamento" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><EndereçamentoAutomatico /></Suspense>} />
                     <Route path="transportadoras" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><IntegracaoTransportadoras /></Suspense>} />
                     <Route path="previsao-demanda" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><PrevisaoDemandaIA /></ProtectedRoute></Suspense>} />
+                    <Route path="etiquetas" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Etiquetas /></Suspense>} />
 
                     <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
                   </Route>
