@@ -48,6 +48,7 @@ const GestaoTarefas = lazy(() => import(/* webpackChunkName: "picking" */ "./pag
 // ── Shipping & Delivery ──
 const Romaneios = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/Romaneios"));
 const ShippingPage = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/shipping/ShippingPage"));
+const KanbanPipeline = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/KanbanPipeline"));
 
 // ── Triagem Detail ──
 const DashboardTriador = lazy(() => import(/* webpackChunkName: "triagem-detail" */ "./pages/DashboardTriador"));
