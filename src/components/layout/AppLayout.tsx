@@ -107,6 +107,7 @@ const sidebarMainItems: NavItem[] = [
   { path: "/governanca", icon: Shield, label: "Governança", tour: "governanca" },
   { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner" },
   { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios" },
+  { path: "/kanban", icon: Layers, label: "Kanban Pipeline", tour: "kanban" },
 ];
 
 const sidebarSecondaryItems: NavItem[] = [

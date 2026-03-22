@@ -177,6 +177,7 @@ const App = () => (
                     {/* Shipping */}
                     <Route path="romaneios" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense>} />
                     <Route path="expedicao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ShippingPage /></Suspense>} />
+                    <Route path="kanban" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><KanbanPipeline /></Suspense>} />
 
                     {/* Triagem Detail */}
                     <Route path="triador" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense>} />
