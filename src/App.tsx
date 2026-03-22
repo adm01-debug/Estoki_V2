@@ -48,6 +48,7 @@ const GestaoTarefas = lazy(() => import(/* webpackChunkName: "picking" */ "./pag
 // ── Shipping & Delivery ──
 const Romaneios = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/Romaneios"));
 const ShippingPage = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/shipping/ShippingPage"));
+const KanbanPipeline = lazy(() => import(/* webpackChunkName: "shipping" */ "./pages/KanbanPipeline"));
 
 // ── Triagem Detail ──
 const DashboardTriador = lazy(() => import(/* webpackChunkName: "triagem-detail" */ "./pages/DashboardTriador"));
@@ -176,6 +177,7 @@ const App = () => (
                     {/* Shipping */}
                     <Route path="romaneios" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense>} />
                     <Route path="expedicao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ShippingPage /></Suspense>} />
+                    <Route path="kanban" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><KanbanPipeline /></Suspense>} />
 
                     {/* Triagem Detail */}
                     <Route path="triador" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense>} />
