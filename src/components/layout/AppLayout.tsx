@@ -522,7 +522,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             {/* Mobile logo */}
             <div className="flex items-center gap-2 lg:hidden">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
-                <Warehouse className="h-4 w-4 text-primary-foreground" />
+                <Box className="h-4 w-4 text-primary-foreground" />
               </div>
               <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
             </div>
