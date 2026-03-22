@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import ErrorFallback from './ErrorFallback';
+import { ErrorFallback } from './ErrorFallback';
 
 describe('ErrorFallback', () => {
   it('should render error message', () => {
@@ -11,7 +11,9 @@ describe('ErrorFallback', () => {
   it('should call reset on button click', () => {
     const reset = vi.fn();
     render(<ErrorFallback error={new Error('Test')} resetErrorBoundary={reset} />);
-    const btn = screen.queryByRole('button');
-    if (btn) fireEvent.click(btn);
+    const btns = screen.getAllByRole('button');
+    const retryBtn = btns.find(b => b.textContent?.includes('Tentar'));
+    if (retryBtn) fireEvent.click(retryBtn);
+    expect(reset).toHaveBeenCalled();
   });
 });
