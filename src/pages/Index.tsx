@@ -111,7 +111,7 @@ export default function Dashboard() {
     return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
   }, [recebimentos, stats, estatisticas]);
 
-  const userName = profile?.nome?.split(' ')[0] || 'Operador';
+  const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
 
   if (loadingKpis && loadingEstoque) {
     return (
