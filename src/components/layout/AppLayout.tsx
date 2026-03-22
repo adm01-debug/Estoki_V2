@@ -311,7 +311,25 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   // Enable swipe-from-edge back gesture on mobile
   useSwipeBack(!isHome);
 
-  if (loading) {
+  // Prefetch critical routes after mount
+  useEffect(() => {
+    prefetchCriticalRoutes();
+  }, []);
+
+  useEffect(() => {
+    if (isSupported && permission === "default") {
+      requestPermission();
+    }
+  }, [isSupported, permission, requestPermission]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  if (isNested) {
+    return <>{children}</>;
+  }
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <motion.div 
