@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { menuItems } from "@/config/menu";
-import { Package } from "lucide-react";
+import { Box } from "lucide-react";
 
 interface SidebarProps { open?: boolean; onClose?: () => void; }
 
