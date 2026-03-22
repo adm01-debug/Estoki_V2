@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
-import SimpleLineChart from './SimpleLineChart';
+import { SimpleLineChart } from './SimpleLineChart';
 
 vi.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
