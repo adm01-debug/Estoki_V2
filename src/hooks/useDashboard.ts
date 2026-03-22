@@ -44,14 +44,8 @@ interface ItemParado {
   valor: number;
 }
 
-async function getCount(table: string, filter?: Record<string, any>): Promise<number> {
+async function getCount(query: any): Promise<number> {
   try {
-    let query = supabase.from(table).select('id', { count: 'exact', head: true });
-    if (filter) {
-      Object.entries(filter).forEach(([key, value]) => {
-        query = query.eq(key, value);
-      });
-    }
     const { count } = await query;
     return count ?? 0;
   } catch {
