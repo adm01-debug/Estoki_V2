@@ -38,7 +38,7 @@ export function BarcodeScanner({
         // @ts-ignore - BarcodeDetector is not in TypeScript types yet
         detectorRef.current = new BarcodeDetector({ formats });
       } catch (err) {
-        console.warn('BarcodeDetector not supported, falling back to manual input');
+        if (import.meta.env.DEV) console.warn("BarcodeDetector not supported");
         setError('Scanner não suportado neste dispositivo');
       }
     } else {
@@ -106,7 +106,7 @@ export function BarcodeScanner({
       });
       setFlashOn(!flashOn);
     } catch (err) {
-      console.error('Failed to toggle flash:', err);
+      if (import.meta.env.DEV) console.error("Flash toggle failed:", err);
     }
   }, [flashOn, hasFlash]);
 

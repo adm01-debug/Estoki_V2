@@ -26,7 +26,7 @@ function markAsNotified(achievementId: string) {
 // Solicitar permissão para notificações push
 export async function requestNotificationPermission(): Promise<boolean> {
   if (!("Notification" in window)) {
-    console.log("Este navegador não suporta notificações");
+    if (import.meta.env.DEV) console.log("Este navegador não suporta notificações");
     return false;
   }
 
