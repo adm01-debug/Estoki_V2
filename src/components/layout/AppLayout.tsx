@@ -642,7 +642,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </header>
 
       {/* Main Content */}
-      <main className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)}>
+      <main id="main-content" className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)} aria-label="Conteúdo principal">
         <div className="max-w-[1600px] mx-auto">
           {/* Mobile breadcrumbs */}
           <div className="lg:hidden">
