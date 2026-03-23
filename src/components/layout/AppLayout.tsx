@@ -723,7 +723,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className={cn(
+      <aside aria-label="Navegação principal" className={cn(
         "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border/50 hidden lg:flex flex-col z-40 transition-all duration-300",
         sidebarWidth
       )}>
