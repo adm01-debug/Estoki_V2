@@ -15,25 +15,17 @@ describe('exportToCSV', () => {
     expect(() => exportToCSV([], 'test')).not.toThrow();
   });
 
-  it('should create CSV with headers and rows', () => {
-    const mockClick = vi.fn();
-    const mockAppend = vi.fn();
-    const mockRemove = vi.fn();
-    const mockRevoke = vi.fn();
-
-    vi.spyOn(document, 'createElement').mockReturnValue({
-      href: '',
-      download: '',
-      click: mockClick,
-    } as unknown as HTMLElement);
-    vi.spyOn(document.body, 'appendChild').mockImplementation(mockAppend);
-    vi.spyOn(document.body, 'removeChild').mockImplementation(mockRemove);
-    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:test');
-    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(mockRevoke);
+  it('should create and download CSV', () => {
+    const mockElement = { href: '', download: '', click: vi.fn() } as unknown as HTMLAnchorElement;
+    vi.spyOn(document, 'createElement').mockReturnValue(mockElement);
+    vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockElement);
+    vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockElement);
+    global.URL.createObjectURL = vi.fn(() => 'blob:test');
+    global.URL.revokeObjectURL = vi.fn();
 
     exportToCSV([{ name: 'Test', value: 42 }], 'output');
-    expect(mockClick).toHaveBeenCalled();
-    expect(mockRevoke).toHaveBeenCalledWith('blob:test');
+    expect(mockElement.click).toHaveBeenCalled();
+    expect(global.URL.revokeObjectURL).toHaveBeenCalledWith('blob:test');
   });
 });
 

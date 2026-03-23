@@ -43,9 +43,9 @@ describe('sanitize', () => {
 
   it('should sanitize JSON against prototype pollution', () => {
     const malicious = '{"__proto__": {"isAdmin": true}, "name": "test"}';
-    const result = JSON.parse(sanitizeJSON(malicious));
-    expect(result.__proto__).toBeUndefined();
-    expect(result.name).toBe('test');
+    const result = sanitizeJSON(malicious);
+    expect(result).not.toContain('__proto__');
+    expect(JSON.parse(result).name).toBe('test');
   });
 
   it('should handle null/empty inputs', () => {
