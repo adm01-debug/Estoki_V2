@@ -663,7 +663,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </main>
 
       {/* Bottom Navigation (Mobile) */}
-      <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative">
+      <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative" aria-label="Navegação mobile">
         <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl" />
         <div className="relative flex items-center justify-around">
           {mobileNavItems.map((item) => {
