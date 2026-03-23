@@ -122,7 +122,7 @@ export default defineConfig(({ mode }) => ({
           // Forms
           "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
           // Export/PDF - only loaded when needed
-          "vendor-export": ["jspdf", "exceljs", "xlsx", "papaparse"],
+          "vendor-export": ["jspdf", "exceljs", "papaparse"],
           // Animation
           "vendor-motion": ["framer-motion"],
           // i18n
