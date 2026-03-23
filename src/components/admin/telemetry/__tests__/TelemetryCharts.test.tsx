@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "tests/utils/render";
+import { render, screen } from "@testing-library/react";
 import { TelemetryCharts } from "../TelemetryCharts";
 
 // Mock recharts
