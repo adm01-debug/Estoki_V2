@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 export interface Location { id: string; code: string; warehouse_id: string; zone: string; aisle: string; rack?: string; level: number; position?: string; type: 'storage' | 'picking' | 'staging' | 'receiving' | 'shipping'; status: 'available' | 'occupied' | 'reserved' | 'blocked'; max_capacity: number; current_occupancy: number; }
 export const locationService = {
   async getAll(warehouseId?: string) { let query = supabase.from('locations').select('*'); if (warehouseId) query = query.eq('warehouse_id', warehouseId); const { data, error } = await query.order('zone').order('aisle').order('level'); if (error) throw error; return data as Location[]; },

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 export interface StockMovement { id: string; product_id: string; location_id?: string; type: 'IN' | 'OUT' | 'TRANSFER' | 'ADJUSTMENT'; quantity: number; reference?: string; reason?: string; user_id: string; previous_qty: number; new_qty: number; created_at: string; }
 export const stockService = {
   async getMovements(productId?: string, dateRange?: { start: Date; end: Date }) {

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 export interface Order { id: string; order_number: string; type: 'sales' | 'purchase'; customer_id?: string; supplier_id?: string; items: { productId: string; quantity: number; unitPrice: number }[]; subtotal: number; tax?: number; shipping?: number; total: number; status: string; notes?: string; created_at: string; }
 export const orderService = {
   async getAll(type?: 'sales' | 'purchase', status?: string) { let query = supabase.from('orders').select('*, customers(name), suppliers(name)'); if (type) query = query.eq('type', type); if (status) query = query.eq('status', status); const { data, error } = await query.order('created_at', { ascending: false }); if (error) throw error; return data as Order[]; },

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 export const abcService = {
   async getAll(filters?: any) { const { data, error } = await supabase.from('items').select('*'); if (error) throw error; return data; },
   async getById(id: string) { const { data, error } = await supabase.from('items').select('*').eq('id', id).single(); if (error) throw error; return data; },
