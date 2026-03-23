@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useState, useCallback } from 'react';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { toast } from 'sonner';
@@ -35,13 +35,22 @@ export function useExportData<T extends Record<string, unknown>>(options: { colu
     link.click();
   }, [columns, formatData, fileName]);
 
-  const exportExcel = useCallback((data: T[]) => {
+  const exportExcel = useCallback(async (data: T[]) => {
     const formatted = formatData(data);
-    const ws = XLSX.utils.json_to_sheet(formatted);
-    ws['!cols'] = columns.map(col => ({ wch: col.width ?? 15 }));
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Dados');
-    XLSX.writeFile(wb, `${fileName}.xlsx`);
+    const headers = columns.map(c => c.header);
+    const workbook = new ExcelJS.Workbook();
+    const ws = workbook.addWorksheet('Dados');
+    ws.addRow(headers);
+    const headerRow = ws.getRow(1);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3B82F6' } };
+    formatted.forEach(row => ws.addRow(headers.map(h => row[h] ?? '')));
+    columns.forEach((col, i) => { ws.getColumn(i + 1).width = col.width ?? 15; });
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a'); link.href = url; link.download = `${fileName}.xlsx`; link.click();
+    URL.revokeObjectURL(url);
   }, [columns, formatData, fileName]);
 
   const exportPDF = useCallback((data: T[], title?: string) => {
@@ -59,7 +68,7 @@ export function useExportData<T extends Record<string, unknown>>(options: { colu
     setIsExporting(true);
     try {
       if (format === 'csv') exportCSV(data);
-      else if (format === 'xlsx') exportExcel(data);
+      else if (format === 'xlsx') await exportExcel(data);
       else exportPDF(data, opts?.title);
       toast.success(`Exportado ${data.length} registros`);
     } catch (e) { toast.error(`Erro: ${e instanceof Error ? e.message : 'desconhecido'}`); }
