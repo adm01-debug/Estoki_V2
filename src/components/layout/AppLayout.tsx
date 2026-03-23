@@ -528,7 +528,11 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   return (
     <AppLayoutContext.Provider value={true}>
     <TooltipProvider>
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="ESTOKI WMS">
+      {/* Skip to content link for keyboard/screen reader users */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
+        Pular para conteúdo principal
+      </a>
       {/* Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-[40%] -right-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
