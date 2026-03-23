@@ -528,7 +528,11 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   return (
     <AppLayoutContext.Provider value={true}>
     <TooltipProvider>
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="ESTOKI WMS">
+      {/* Skip to content link for keyboard/screen reader users */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
+        Pular para conteúdo principal
+      </a>
       {/* Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-[40%] -right-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
@@ -638,7 +642,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </header>
 
       {/* Main Content */}
-      <main className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)}>
+      <main id="main-content" className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)} aria-label="Conteúdo principal">
         <div className="max-w-[1600px] mx-auto">
           {/* Mobile breadcrumbs */}
           <div className="lg:hidden">
@@ -659,7 +663,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </main>
 
       {/* Bottom Navigation (Mobile) */}
-      <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative">
+      <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative" aria-label="Navegação mobile">
         <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl" />
         <div className="relative flex items-center justify-around">
           {mobileNavItems.map((item) => {
@@ -719,7 +723,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       </AnimatePresence>
 
       {/* Desktop Sidebar */}
-      <aside className={cn(
+      <aside aria-label="Navegação principal" className={cn(
         "fixed left-0 top-0 h-full bg-sidebar border-r border-sidebar-border/50 hidden lg:flex flex-col z-40 transition-all duration-300",
         sidebarWidth
       )}>
