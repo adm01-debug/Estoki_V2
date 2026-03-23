@@ -1,4 +1,4 @@
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { z } from "zod";
 import { ImportResult } from "./csvImporter";
 
@@ -24,143 +24,126 @@ export async function importExcel<T>(
 ): Promise<ImportResult<T>> {
   const opts = { ...defaultOptions, ...options };
 
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+  const arrayBuffer = await file.arrayBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(arrayBuffer);
 
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: "array", cellDates: true });
+  const worksheet = opts.sheetName
+    ? workbook.getWorksheet(opts.sheetName)
+    : workbook.worksheets[opts.sheetIndex || 0];
 
-        const sheetName = opts.sheetName || workbook.SheetNames[opts.sheetIndex || 0];
-        const sheet = workbook.Sheets[sheetName];
+  if (!worksheet) {
+    throw new Error(`Planilha "${opts.sheetName || opts.sheetIndex}" não encontrada`);
+  }
 
-        if (!sheet) {
-          reject(new Error(`Planilha "${sheetName}" não encontrada`));
-          return;
-        }
-
-        const jsonData = XLSX.utils.sheet_to_json(sheet, {
-          header: 1,
-          raw: false,
-          dateNF: "yyyy-mm-dd",
-        }) as any[][];
-
-        const headers = (jsonData[0] || []).map((h: any) =>
-          String(h || "")
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, "_")
-        );
-
-        const success: T[] = [];
-        const errors: { row: number; field: string; error: string }[] = [];
-        const warnings: { row: number; message: string }[] = [];
-
-        for (let i = 1; i < jsonData.length; i++) {
-          const row = jsonData[i];
-          const rowNumber = i + 1;
-
-          if (!row || row.every((cell) => cell === null || cell === undefined || cell === "")) {
-            continue;
-          }
-
-          const rowObj: Record<string, any> = {};
-          headers.forEach((header, index) => {
-            if (header) {
-              let value = row[index];
-              if (opts.trimValues && typeof value === "string") {
-                value = value.trim();
-              }
-              rowObj[header] = value;
-            }
-          });
-
-          try {
-            const validated = schema.parse(rowObj);
-            success.push(validated);
-          } catch (error) {
-            if (error instanceof z.ZodError) {
-              error.errors.forEach((err) => {
-                errors.push({
-                  row: rowNumber,
-                  field: err.path.join("."),
-                  error: err.message,
-                });
-              });
-            }
-          }
-        }
-
-        resolve({
-          success,
-          errors,
-          total: jsonData.length - 1,
-          warnings,
-        });
-      } catch (error) {
-        reject(new Error(`Erro ao processar Excel: ${(error as Error).message}`));
-      }
-    };
-
-    reader.onerror = () => {
-      reject(new Error("Erro ao ler arquivo"));
-    };
-
-    reader.readAsArrayBuffer(file);
+  // Extract headers from first row
+  const headers: string[] = [];
+  const headerRow = worksheet.getRow(1);
+  headerRow.eachCell((cell, colNumber) => {
+    headers[colNumber - 1] = String(cell.value ?? "")
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "_");
   });
+
+  const success: T[] = [];
+  const errors: { row: number; field: string; error: string }[] = [];
+  const warnings: { row: number; message: string }[] = [];
+
+  for (let i = 2; i <= worksheet.rowCount; i++) {
+    const row = worksheet.getRow(i);
+    const rowObj: Record<string, unknown> = {};
+    let hasData = false;
+
+    headers.forEach((header, idx) => {
+      if (!header) return;
+      let value = row.getCell(idx + 1).value;
+      if (opts.trimValues && typeof value === "string") value = value.trim();
+      if (value !== null && value !== undefined && value !== "") hasData = true;
+      rowObj[header] = value;
+    });
+
+    if (!hasData) continue;
+
+    try {
+      const validated = schema.parse(rowObj);
+      success.push(validated);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          errors.push({ row: i + 1, field: err.path.join("."), error: err.message });
+        });
+      }
+    }
+  }
+
+  return { success, errors, total: worksheet.rowCount - 1, warnings };
 }
 
 export function getExcelSheets(file: File): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      try {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: "array" });
-        resolve(workbook.SheetNames);
-      } catch (error) {
-        reject(error);
-      }
-    };
-
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+      resolve(workbook.worksheets.map(ws => ws.name));
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
-export function downloadExcel(data: any[], filename: string, sheetName = "Dados"): void {
-  const worksheet = XLSX.utils.json_to_sheet(data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+export async function downloadExcel(data: Record<string, unknown>[], filename: string, sheetName = "Dados"): Promise<void> {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet(sheetName);
 
-  const colWidths = Object.keys(data[0] || {}).map((key) => ({
-    wch: Math.max(key.length, 15),
-  }));
-  worksheet["!cols"] = colWidths;
+  if (!data.length) return;
 
-  XLSX.writeFile(workbook, `${filename}.xlsx`);
+  const headers = Object.keys(data[0]);
+  worksheet.addRow(headers);
+  const headerRow = worksheet.getRow(1);
+  headerRow.font = { bold: true };
+
+  data.forEach(row => worksheet.addRow(headers.map(h => row[h] ?? '')));
+
+  headers.forEach((key, i) => {
+    worksheet.getColumn(i + 1).width = Math.max(key.length, 15);
+  });
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${filename}.xlsx`; a.click();
+  URL.revokeObjectURL(url);
 }
 
-export function generateExcelTemplate(
+export async function generateExcelTemplate(
   headers: string[],
   filename: string,
-  exampleData?: Record<string, any>[]
-): void {
-  const worksheet = XLSX.utils.aoa_to_sheet([headers]);
+  exampleData?: Record<string, unknown>[]
+): Promise<void> {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Template");
 
-  if (exampleData && exampleData.length > 0) {
-    XLSX.utils.sheet_add_json(worksheet, exampleData, {
-      skipHeader: true,
-      origin: "A2",
+  worksheet.addRow(headers);
+  const headerRow = worksheet.getRow(1);
+  headerRow.font = { bold: true };
+
+  if (exampleData) {
+    exampleData.forEach(row => {
+      worksheet.addRow(headers.map(h => row[h] ?? ''));
     });
   }
 
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+  headers.forEach((h, i) => {
+    worksheet.getColumn(i + 1).width = Math.max(h.length + 5, 15);
+  });
 
-  worksheet["!cols"] = headers.map((h) => ({ wch: Math.max(h.length + 5, 15) }));
-
-  XLSX.writeFile(workbook, `${filename}_template.xlsx`);
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${filename}_template.xlsx`; a.click();
+  URL.revokeObjectURL(url);
 }
