@@ -48,7 +48,6 @@ const App = () => (
         <AuthProvider>
           <AppProvider>
             <NotificationProvider>
-              <Toaster />
               <Sonner />
               <InstallPrompt />
               <UpdatePrompt />
