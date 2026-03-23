@@ -110,6 +110,7 @@ const EndereçamentoAutomatico = lazy(() => import(/* webpackChunkName: "address
 const IntegracaoTransportadoras = lazy(() => import(/* webpackChunkName: "carriers" */ "./pages/IntegracaoTransportadoras"));
 const PrevisaoDemandaIA = lazy(() => import(/* webpackChunkName: "demand" */ "./pages/PrevisaoDemandaIA"));
 const Etiquetas = lazy(() => import(/* webpackChunkName: "etiquetas" */ "./pages/Etiquetas"));
+const AdminTelemetriaPage = lazy(() => import(/* webpackChunkName: "admin" */ "./pages/admin/AdminTelemetriaPage"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
