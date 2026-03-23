@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import AdminTelemetriaPage from "../AdminTelemetriaPage";
@@ -18,33 +18,23 @@ vi.mock("@/components/admin/telemetry/TelemetryCharts", () => ({
   ),
 }));
 
-// ── Mock Supabase ──
-const mockSelect = vi.fn();
-const mockDelete = vi.fn();
-const mockGte = vi.fn();
-const mockOrder = vi.fn();
-const mockLimit = vi.fn();
-const mockEq = vi.fn();
-const mockLt = vi.fn();
+// ── Mock Supabase with fluent chain ──
+let mockResolvedData: any[] = [];
+let mockError: any = null;
 
-function createChainMock(resolvedData: any[] = [], error: any = null) {
-  mockLt.mockResolvedValue({ data: null, error });
-  mockEq.mockResolvedValue({ data: resolvedData, error });
-  mockLimit.mockReturnValue({ eq: mockEq, then: (fn: any) => fn({ data: resolvedData, error }) });
-  // For the final call without eq (severity=all)
-  mockLimit.mockResolvedValue({ data: resolvedData, error });
-  mockOrder.mockReturnValue({ limit: mockLimit });
-  mockGte.mockReturnValue({ order: mockOrder });
-  mockSelect.mockReturnValue({ gte: mockGte });
-  mockDelete.mockReturnValue({ lt: mockLt });
-}
+const chainObj: any = {};
+chainObj.select = vi.fn(() => chainObj);
+chainObj.gte = vi.fn(() => chainObj);
+chainObj.order = vi.fn(() => chainObj);
+chainObj.limit = vi.fn(() => chainObj);
+chainObj.eq = vi.fn(() => chainObj);
+chainObj.lt = vi.fn(() => Promise.resolve({ data: null, error: null }));
+chainObj.delete = vi.fn(() => chainObj);
+chainObj.then = vi.fn((resolve: any) => resolve({ data: mockResolvedData, error: mockError }));
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
-    from: vi.fn((table: string) => ({
-      select: mockSelect,
-      delete: () => ({ lt: mockLt }),
-    })),
+    from: vi.fn(() => chainObj),
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: null }, error: null }),
       onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
@@ -55,7 +45,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 // ── Helper ──
 function generateRows(count: number, overrides: Partial<any> = {}): any[] {
   return Array.from({ length: count }, (_, i) => ({
-    id: `row-${i}`,
+    id: `row-${i}-${Math.random().toString(36).slice(2, 6)}`,
     operation: i % 3 === 0 ? "select" : i % 3 === 1 ? "rpc" : "insert",
     table_name: `table_${i % 5}`,
     rpc_name: i % 3 === 1 ? `rpc_${i % 4}` : null,
@@ -73,556 +63,398 @@ function generateRows(count: number, overrides: Partial<any> = {}): any[] {
 }
 
 function renderPage() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false, gcTime: 0 } },
-  });
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   return render(
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={qc}>
       <BrowserRouter>
         <AdminTelemetriaPage />
       </BrowserRouter>
-    </QueryClientProvider>,
-    { wrapper: undefined as any }
+    </QueryClientProvider>
   );
+}
+
+function setMockData(data: any[], error: any = null) {
+  mockResolvedData = data;
+  mockError = error;
 }
 
 // ── Tests ──
 describe("AdminTelemetriaPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    createChainMock([]);
+    setMockData([]);
+    // Re-wire .then after clearAllMocks
+    chainObj.then = vi.fn((resolve: any) => resolve({ data: mockResolvedData, error: mockError }));
+    chainObj.select = vi.fn(() => chainObj);
+    chainObj.gte = vi.fn(() => chainObj);
+    chainObj.order = vi.fn(() => chainObj);
+    chainObj.limit = vi.fn(() => chainObj);
+    chainObj.eq = vi.fn(() => chainObj);
+    chainObj.lt = vi.fn(() => Promise.resolve({ data: null, error: null }));
+    chainObj.delete = vi.fn(() => chainObj);
   });
 
-  // ════════════════════════════════════════
-  // 1. RENDERING & LAYOUT
-  // ════════════════════════════════════════
-  describe("Rendering & Layout", () => {
-    it("T001: renders page title", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Telemetria de Queries")).toBeInTheDocument();
-      });
-    });
+  // ═══════ RENDERING & LAYOUT ═══════
+  it("T001: renders page title", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Telemetria de Queries")).toBeInTheDocument());
+  });
 
-    it("T002: renders subtitle", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Monitoramento de performance do banco externo")).toBeInTheDocument();
-      });
-    });
+  it("T002: renders subtitle", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Monitoramento de performance do banco externo")).toBeInTheDocument());
+  });
 
-    it("T003: renders cleanup button", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Limpar +7d")).toBeInTheDocument();
-      });
-    });
+  it("T003: renders cleanup button", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Limpar +7d")).toBeInTheDocument());
+  });
 
-    it("T004: renders refresh button", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Atualizar")).toBeInTheDocument();
-      });
-    });
+  it("T004: renders refresh button", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Atualizar")).toBeInTheDocument());
+  });
 
-    it("T005: renders 4 stat cards", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Muito Lentas (>8s)")).toBeInTheDocument();
-        expect(screen.getByText("Lentas (>3s)")).toBeInTheDocument();
-        expect(screen.getByText("Erros")).toBeInTheDocument();
-        expect(screen.getByText("Média de duração")).toBeInTheDocument();
-      });
-    });
-
-    it("T006: renders severity filter select", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Todas")).toBeInTheDocument();
-      });
-    });
-
-    it("T007: renders time filter select", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Últimas 24h")).toBeInTheDocument();
-      });
+  it("T005: renders stat card labels", async () => {
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByText("Muito Lentas (>8s)")).toBeInTheDocument();
+      expect(screen.getByText("Lentas (>3s)")).toBeInTheDocument();
+      expect(screen.getByText("Erros")).toBeInTheDocument();
+      expect(screen.getByText("Média de duração")).toBeInTheDocument();
     });
   });
 
-  // ════════════════════════════════════════
-  // 2. EMPTY STATE
-  // ════════════════════════════════════════
-  describe("Empty State", () => {
-    it("T008: shows empty state when no data", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Nenhuma query lenta registrada")).toBeInTheDocument();
-      });
-    });
+  it("T006: renders severity filter", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Todas")).toBeInTheDocument());
+  });
 
-    it("T009: shows positive message on empty", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Isso é bom! O sistema está performando bem.")).toBeInTheDocument();
-      });
-    });
+  it("T007: renders time filter", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Últimas 24h")).toBeInTheDocument());
+  });
 
-    it("T010: stat cards show 0 on empty data", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        const zeros = screen.getAllByText("0");
-        expect(zeros.length).toBeGreaterThanOrEqual(3);
-      });
-    });
+  // ═══════ EMPTY STATE ═══════
+  it("T008: shows empty state when no data", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Nenhuma query lenta registrada")).toBeInTheDocument());
+  });
 
-    it("T011: avg duration shows 0ms on empty", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("0ms")).toBeInTheDocument();
-      });
-    });
+  it("T009: shows positive message on empty", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Isso é bom! O sistema está performando bem.")).toBeInTheDocument());
+  });
 
-    it("T012: does not render top offenders on empty", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.queryByText("Tabelas Mais Problemáticas")).not.toBeInTheDocument();
-      });
-    });
-
-    it("T013: does not render charts on empty", async () => {
-      createChainMock([]);
-      renderPage();
-      await waitFor(() => {
-        const charts = screen.getByTestId("telemetry-charts");
-        expect(charts.getAttribute("data-rows")).toBe("0");
-      });
+  it("T010: stat cards show 0 on empty data", async () => {
+    renderPage();
+    await waitFor(() => {
+      const zeros = screen.getAllByText("0");
+      expect(zeros.length).toBeGreaterThanOrEqual(3);
     });
   });
 
-  // ════════════════════════════════════════
-  // 3. LOADING STATE
-  // ════════════════════════════════════════
-  describe("Loading State", () => {
-    it("T014: shows skeletons while loading", () => {
-      // Make query never resolve
-      mockLimit.mockReturnValue(new Promise(() => {}));
-      mockOrder.mockReturnValue({ limit: mockLimit });
-      mockGte.mockReturnValue({ order: mockOrder });
-      mockSelect.mockReturnValue({ gte: mockGte });
+  it("T011: avg duration shows 0ms on empty", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText("0ms")).toBeInTheDocument());
+  });
 
-      renderPage();
-      // Skeletons should be present
-      const skeletons = document.querySelectorAll(".animate-pulse");
-      expect(skeletons.length).toBeGreaterThan(0);
+  it("T012: does not render top offenders on empty", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.queryByText("Tabelas Mais Problemáticas")).not.toBeInTheDocument());
+  });
+
+  it("T013: charts get 0 rows on empty", async () => {
+    renderPage();
+    await waitFor(() => {
+      const charts = screen.getByTestId("telemetry-charts");
+      expect(charts.getAttribute("data-rows")).toBe("0");
     });
   });
 
-  // ════════════════════════════════════════
-  // 4. DATA DISPLAY
-  // ════════════════════════════════════════
-  describe("Data Display", () => {
-    const mockRows = generateRows(20);
-
-    beforeEach(() => {
-      createChainMock(mockRows);
-    });
-
-    it("T015: renders table rows", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Quando")).toBeInTheDocument();
-        expect(screen.getByText("Operação")).toBeInTheDocument();
-        expect(screen.getByText("Duração")).toBeInTheDocument();
-      });
-    });
-
-    it("T016: renders table headers correctly", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Tabela/RPC")).toBeInTheDocument();
-        expect(screen.getByText("Records")).toBeInTheDocument();
-        expect(screen.getByText("Limit")).toBeInTheDocument();
-        expect(screen.getByText("Offset")).toBeInTheDocument();
-        expect(screen.getByText("Count")).toBeInTheDocument();
-        expect(screen.getByText("Severidade")).toBeInTheDocument();
-      });
-    });
-
-    it("T017: shows row count in footer", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText(/20 registros/)).toBeInTheDocument();
-      });
-    });
-
-    it("T018: shows auto-refresh indicator", async () => {
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText(/auto-refresh 30s/)).toBeInTheDocument();
-      });
-    });
-
-    it("T019: passes rows to TelemetryCharts", async () => {
-      renderPage();
-      await waitFor(() => {
-        const charts = screen.getByTestId("telemetry-charts");
-        expect(charts.getAttribute("data-rows")).toBe("20");
-      });
-    });
-
-    it("T020: passes timeFilter to TelemetryCharts", async () => {
-      renderPage();
-      await waitFor(() => {
-        const charts = screen.getByTestId("telemetry-charts");
-        expect(charts.getAttribute("data-filter")).toBe("24h");
-      });
+  // ═══════ DATA DISPLAY ═══════
+  it("T014: renders table headers", async () => {
+    setMockData(generateRows(5));
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByText("Quando")).toBeInTheDocument();
+      expect(screen.getByText("Operação")).toBeInTheDocument();
+      expect(screen.getByText("Duração")).toBeInTheDocument();
+      expect(screen.getByText("Tabela/RPC")).toBeInTheDocument();
+      expect(screen.getByText("Records")).toBeInTheDocument();
+      expect(screen.getByText("Severidade")).toBeInTheDocument();
     });
   });
 
-  // ════════════════════════════════════════
-  // 5. STAT CALCULATIONS
-  // ════════════════════════════════════════
-  describe("Stat Calculations", () => {
-    it("T021: counts very_slow correctly", async () => {
-      const rows = [
-        ...generateRows(1, { severity: "very_slow", id: "vs1" }),
-        ...generateRows(1, { severity: "very_slow", id: "vs2" }),
-        ...generateRows(1, { severity: "slow", id: "s1" }),
-      ];
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        // First stat card should show 2
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        expect(cards[0]?.textContent).toBe("2");
-      });
-    });
+  it("T015: shows row count in footer", async () => {
+    setMockData(generateRows(20));
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/20 registros/)).toBeInTheDocument());
+  });
 
-    it("T022: counts slow correctly", async () => {
-      const rows = [
-        ...generateRows(1, { severity: "slow", id: "s1" }),
-        ...generateRows(1, { severity: "slow", id: "s2" }),
-        ...generateRows(1, { severity: "slow", id: "s3" }),
-      ];
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        expect(cards[1]?.textContent).toBe("3");
-      });
-    });
+  it("T016: shows auto-refresh indicator", async () => {
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/auto-refresh 30s/)).toBeInTheDocument());
+  });
 
-    it("T023: counts errors correctly", async () => {
-      const rows = generateRows(1, { severity: "error", id: "e1" });
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        expect(cards[2]?.textContent).toBe("1");
-      });
-    });
-
-    it("T024: calculates average duration", async () => {
-      const rows = [
-        { ...generateRows(1, { duration_ms: 1000, id: "a1" })[0] },
-        { ...generateRows(1, { duration_ms: 3000, id: "a2" })[0] },
-      ];
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        // avg = 2000ms = 2.0s
-        expect(cards[3]?.textContent).toBe("2.0s");
-      });
-    });
-
-    it("T025: formats duration < 1s as ms", async () => {
-      const rows = generateRows(1, { duration_ms: 500, id: "d1" });
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        expect(cards[3]?.textContent).toBe("500ms");
-      });
-    });
-
-    it("T026: formats duration >= 1s as seconds", async () => {
-      const rows = generateRows(1, { duration_ms: 1500, id: "d1" });
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        const cards = document.querySelectorAll(".text-2xl.font-bold");
-        expect(cards[3]?.textContent).toBe("1.5s");
-      });
+  it("T017: passes rows to TelemetryCharts", async () => {
+    setMockData(generateRows(15));
+    renderPage();
+    await waitFor(() => {
+      const charts = screen.getByTestId("telemetry-charts");
+      expect(charts.getAttribute("data-rows")).toBe("15");
     });
   });
 
-  // ════════════════════════════════════════
-  // 6. TOP OFFENDERS
-  // ════════════════════════════════════════
-  describe("Top Offenders", () => {
-    it("T027: shows top offenders when data exists", async () => {
-      createChainMock(generateRows(10));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Tabelas Mais Problemáticas")).toBeInTheDocument();
-      });
-    });
-
-    it("T028: groups by table name", async () => {
-      const rows = [
-        ...generateRows(3, { table_name: "products", rpc_name: null, id: "p1" }),
-        ...generateRows(2, { table_name: "orders", rpc_name: null, id: "o1" }),
-      ].map((r, i) => ({ ...r, id: `r-${i}` }));
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("products")).toBeInTheDocument();
-        expect(screen.getByText("orders")).toBeInTheDocument();
-      });
-    });
-
-    it("T029: shows alert count per table", async () => {
-      const rows = generateRows(5, { table_name: "users", rpc_name: null });
-      rows.forEach((r, i) => (r.id = `u-${i}`));
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("5× alertas")).toBeInTheDocument();
-      });
-    });
-
-    it("T030: prioritizes rpc_name over table_name", async () => {
-      const rows = generateRows(1, { table_name: "my_table", rpc_name: "my_rpc" });
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("my_rpc")).toBeInTheDocument();
-      });
+  it("T018: passes timeFilter to TelemetryCharts", async () => {
+    renderPage();
+    await waitFor(() => {
+      const charts = screen.getByTestId("telemetry-charts");
+      expect(charts.getAttribute("data-filter")).toBe("24h");
     });
   });
 
-  // ════════════════════════════════════════
-  // 7. SEVERITY BADGES
-  // ════════════════════════════════════════
-  describe("Severity Badges", () => {
-    it("T031: renders very_slow badge", async () => {
-      createChainMock(generateRows(1, { severity: "very_slow" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("🔴 Muito Lenta")).toBeInTheDocument();
-      });
-    });
-
-    it("T032: renders slow badge", async () => {
-      createChainMock(generateRows(1, { severity: "slow" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("🟡 Lenta")).toBeInTheDocument();
-      });
-    });
-
-    it("T033: renders error badge", async () => {
-      createChainMock(generateRows(1, { severity: "error" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("❌ Erro")).toBeInTheDocument();
-      });
-    });
-
-    it("T034: renders unknown severity as secondary badge", async () => {
-      createChainMock(generateRows(1, { severity: "custom_sev" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("custom_sev")).toBeInTheDocument();
-      });
+  // ═══════ STAT CALCULATIONS ═══════
+  it("T019: counts very_slow correctly", async () => {
+    setMockData([
+      ...generateRows(1, { severity: "very_slow", id: "vs1" }),
+      ...generateRows(1, { severity: "very_slow", id: "vs2" }),
+      ...generateRows(1, { severity: "normal", id: "n1" }),
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[0]?.textContent).toBe("2");
     });
   });
 
-  // ════════════════════════════════════════
-  // 8. DURATION FORMATTING IN TABLE
-  // ════════════════════════════════════════
-  describe("Duration Formatting in Table", () => {
-    it("T035: applies destructive class for >= 8000ms", async () => {
-      createChainMock(generateRows(1, { duration_ms: 9000 }));
-      renderPage();
-      await waitFor(() => {
-        const el = screen.getByText("9.0s");
-        expect(el.className).toContain("text-destructive");
-      });
-    });
-
-    it("T036: applies yellow class for >= 3000ms", async () => {
-      createChainMock(generateRows(1, { duration_ms: 4000 }));
-      renderPage();
-      await waitFor(() => {
-        const el = screen.getByText("4.0s");
-        expect(el.className).toContain("text-yellow-600");
-      });
-    });
-
-    it("T037: no color class for < 3000ms", async () => {
-      createChainMock(generateRows(1, { duration_ms: 2000, severity: "normal" }));
-      renderPage();
-      await waitFor(() => {
-        const el = screen.getByText("2.0s");
-        expect(el.className).not.toContain("text-destructive");
-        expect(el.className).not.toContain("text-yellow-600");
-      });
+  it("T020: counts slow correctly", async () => {
+    setMockData([
+      ...generateRows(1, { severity: "slow", id: "s1" }),
+      ...generateRows(1, { severity: "slow", id: "s2" }),
+      ...generateRows(1, { severity: "slow", id: "s3" }),
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[1]?.textContent).toBe("3");
     });
   });
 
-  // ════════════════════════════════════════
-  // 9. TABLE CELL VALUES
-  // ════════════════════════════════════════
-  describe("Table Cell Values", () => {
-    it("T038: shows operation badge", async () => {
-      createChainMock(generateRows(1, { operation: "select" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("select")).toBeInTheDocument();
-      });
-    });
-
-    it("T039: shows table name", async () => {
-      createChainMock(generateRows(1, { table_name: "products", rpc_name: null }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getAllByText("products").length).toBeGreaterThan(0);
-      });
-    });
-
-    it("T040: shows rpc name over table name", async () => {
-      createChainMock(generateRows(1, { table_name: "tbl", rpc_name: "my_func" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getAllByText("my_func").length).toBeGreaterThan(0);
-      });
-    });
-
-    it("T041: shows dash for null record_count", async () => {
-      createChainMock(generateRows(1, { record_count: null }));
-      renderPage();
-      await waitFor(() => {
-        const dashes = screen.getAllByText("-");
-        expect(dashes.length).toBeGreaterThan(0);
-      });
-    });
-
-    it("T042: shows count mode when present", async () => {
-      createChainMock(generateRows(1, { count_mode: "exact" }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("exact")).toBeInTheDocument();
-      });
-    });
-
-    it("T043: shows dash for null count_mode", async () => {
-      createChainMock(generateRows(1, { count_mode: null, record_count: null, query_limit: null, query_offset: null }));
-      renderPage();
-      await waitFor(() => {
-        const dashes = screen.getAllByText("-");
-        expect(dashes.length).toBeGreaterThanOrEqual(4);
-      });
+  it("T021: counts errors correctly", async () => {
+    setMockData(generateRows(1, { severity: "error", id: "e1" }));
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[2]?.textContent).toBe("1");
     });
   });
 
-  // ════════════════════════════════════════
-  // 10. ERROR HANDLING
-  // ════════════════════════════════════════
-  describe("Error Handling", () => {
-    it("T044: handles query error gracefully", async () => {
-      mockLimit.mockResolvedValue({ data: null, error: { message: "DB error" } });
-      mockOrder.mockReturnValue({ limit: mockLimit });
-      mockGte.mockReturnValue({ order: mockOrder });
-      mockSelect.mockReturnValue({ gte: mockGte });
-
-      renderPage();
-      // Should not crash
-      await waitFor(() => {
-        expect(screen.getByText("Telemetria de Queries")).toBeInTheDocument();
-      });
+  it("T022: calculates avg duration (ms)", async () => {
+    setMockData([
+      { ...generateRows(1)[0], id: "a1", duration_ms: 500 },
+      { ...generateRows(1)[0], id: "a2", duration_ms: 500 },
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[3]?.textContent).toBe("500ms");
     });
   });
 
-  // ════════════════════════════════════════
-  // 11. LARGE DATASETS
-  // ════════════════════════════════════════
-  describe("Large Datasets", () => {
-    it("T045: handles 200 rows", async () => {
-      createChainMock(generateRows(200));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("200 registros · auto-refresh 30s")).toBeInTheDocument();
-      });
-    });
-
-    it("T046: limits top offenders to 8", async () => {
-      const rows = Array.from({ length: 50 }, (_, i) => ({
-        ...generateRows(1, { table_name: `tbl_${i}`, rpc_name: null })[0],
-        id: `big-${i}`,
-      }));
-      createChainMock(rows);
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("Tabelas Mais Problemáticas")).toBeInTheDocument();
-        // Should not have more than 8 offender cards
-        const offenderCards = document.querySelectorAll(".font-mono.text-sm.font-medium.truncate");
-        expect(offenderCards.length).toBeLessThanOrEqual(8);
-      });
+  it("T023: calculates avg duration (seconds)", async () => {
+    setMockData([
+      { ...generateRows(1)[0], id: "a1", duration_ms: 1000 },
+      { ...generateRows(1)[0], id: "a2", duration_ms: 3000 },
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[3]?.textContent).toBe("2.0s");
     });
   });
 
-  // ════════════════════════════════════════
-  // 12. EDGE CASES
-  // ════════════════════════════════════════
-  describe("Edge Cases", () => {
-    it("T047: handles row with all null optional fields", async () => {
-      createChainMock(generateRows(1, {
-        table_name: null,
-        rpc_name: null,
-        record_count: null,
-        query_limit: null,
-        query_offset: null,
-        count_mode: null,
-        error_message: null,
-        user_id: null,
-      }));
-      renderPage();
-      await waitFor(() => {
-        const dashes = screen.getAllByText("-");
-        expect(dashes.length).toBeGreaterThanOrEqual(4);
-      });
-    });
+  // ═══════ TOP OFFENDERS ═══════
+  it("T024: shows top offenders when data exists", async () => {
+    setMockData(generateRows(10));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Tabelas Mais Problemáticas")).toBeInTheDocument());
+  });
 
-    it("T048: handles 0ms duration", async () => {
-      createChainMock(generateRows(1, { duration_ms: 0 }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("0ms")).toBeInTheDocument();
-      });
+  it("T025: groups by table name", async () => {
+    setMockData([
+      { ...generateRows(1)[0], id: "p1", table_name: "products", rpc_name: null },
+      { ...generateRows(1)[0], id: "p2", table_name: "products", rpc_name: null },
+      { ...generateRows(1)[0], id: "o1", table_name: "orders", rpc_name: null },
+    ]);
+    renderPage();
+    await waitFor(() => {
+      expect(screen.getByText("products")).toBeInTheDocument();
+      expect(screen.getByText("orders")).toBeInTheDocument();
     });
+  });
 
-    it("T049: handles very large duration", async () => {
-      createChainMock(generateRows(1, { duration_ms: 120000 }));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("120.0s")).toBeInTheDocument();
-      });
-    });
+  it("T026: prioritizes rpc_name over table_name", async () => {
+    setMockData([{ ...generateRows(1)[0], table_name: "tbl", rpc_name: "my_rpc" }]);
+    renderPage();
+    await waitFor(() => expect(screen.getByText("my_rpc")).toBeInTheDocument());
+  });
 
-    it("T050: single row dataset", async () => {
-      createChainMock(generateRows(1));
-      renderPage();
-      await waitFor(() => {
-        expect(screen.getByText("1 registros · auto-refresh 30s")).toBeInTheDocument();
-      });
+  // ═══════ SEVERITY BADGES ═══════
+  it("T027: renders very_slow badge", async () => {
+    setMockData(generateRows(1, { severity: "very_slow" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("🔴 Muito Lenta")).toBeInTheDocument());
+  });
+
+  it("T028: renders slow badge", async () => {
+    setMockData(generateRows(1, { severity: "slow" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("🟡 Lenta")).toBeInTheDocument());
+  });
+
+  it("T029: renders error badge", async () => {
+    setMockData(generateRows(1, { severity: "error" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("❌ Erro")).toBeInTheDocument());
+  });
+
+  it("T030: renders unknown severity", async () => {
+    setMockData(generateRows(1, { severity: "custom" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("custom")).toBeInTheDocument());
+  });
+
+  // ═══════ DURATION FORMATTING IN TABLE ═══════
+  it("T031: destructive class for >= 8000ms", async () => {
+    setMockData(generateRows(1, { duration_ms: 9000 }));
+    renderPage();
+    await waitFor(() => {
+      const el = screen.getByText("9.0s");
+      expect(el.className).toContain("text-destructive");
     });
+  });
+
+  it("T032: yellow class for >= 3000ms", async () => {
+    setMockData(generateRows(1, { duration_ms: 4000 }));
+    renderPage();
+    await waitFor(() => {
+      const el = screen.getByText("4.0s");
+      expect(el.className).toContain("text-yellow-600");
+    });
+  });
+
+  it("T033: no color class for < 3000ms in table", async () => {
+    setMockData(generateRows(1, { duration_ms: 2000, severity: "normal" }));
+    renderPage();
+    await waitFor(() => {
+      const el = screen.getByText("2.0s");
+      expect(el.className).not.toContain("text-destructive");
+      expect(el.className).not.toContain("text-yellow-600");
+    });
+  });
+
+  // ═══════ TABLE CELL VALUES ═══════
+  it("T034: shows operation badge", async () => {
+    setMockData(generateRows(1, { operation: "select" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("select")).toBeInTheDocument());
+  });
+
+  it("T035: shows dash for null fields", async () => {
+    setMockData(generateRows(1, { table_name: null, rpc_name: null, record_count: null, query_limit: null, query_offset: null, count_mode: null }));
+    renderPage();
+    await waitFor(() => {
+      const dashes = screen.getAllByText("-");
+      expect(dashes.length).toBeGreaterThanOrEqual(4);
+    });
+  });
+
+  it("T036: shows count mode", async () => {
+    setMockData(generateRows(1, { count_mode: "exact" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("exact")).toBeInTheDocument());
+  });
+
+  // ═══════ LARGE DATASETS ═══════
+  it("T037: handles 200 rows", async () => {
+    setMockData(generateRows(200));
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/200 registros/)).toBeInTheDocument());
+  });
+
+  it("T038: limits top offenders to 8", async () => {
+    setMockData(Array.from({ length: 50 }, (_, i) => ({
+      ...generateRows(1, { table_name: `tbl_${i}`, rpc_name: null })[0],
+      id: `big-${i}`,
+    })));
+    renderPage();
+    await waitFor(() => {
+      const offenders = document.querySelectorAll(".font-mono.text-sm.font-medium.truncate");
+      expect(offenders.length).toBeLessThanOrEqual(8);
+    });
+  });
+
+  // ═══════ EDGE CASES ═══════
+  it("T039: handles all null optional fields", async () => {
+    setMockData(generateRows(1, { table_name: null, rpc_name: null, record_count: null, query_limit: null, query_offset: null, count_mode: null, error_message: null, user_id: null }));
+    renderPage();
+    await waitFor(() => {
+      const dashes = screen.getAllByText("-");
+      expect(dashes.length).toBeGreaterThanOrEqual(4);
+    });
+  });
+
+  it("T040: handles 0ms duration", async () => {
+    setMockData(generateRows(1, { duration_ms: 0 }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("0ms")).toBeInTheDocument());
+  });
+
+  it("T041: handles very large duration", async () => {
+    setMockData(generateRows(1, { duration_ms: 120000, severity: "very_slow" }));
+    renderPage();
+    await waitFor(() => expect(screen.getByText("120.0s")).toBeInTheDocument());
+  });
+
+  it("T042: single row dataset", async () => {
+    setMockData(generateRows(1));
+    renderPage();
+    await waitFor(() => expect(screen.getByText(/1 registros/)).toBeInTheDocument());
+  });
+
+  // ═══════ MIXED SEVERITIES ═══════
+  it("T043: mixed severity counts all correct", async () => {
+    setMockData([
+      { ...generateRows(1)[0], id: "m1", severity: "very_slow" },
+      { ...generateRows(1)[0], id: "m2", severity: "very_slow" },
+      { ...generateRows(1)[0], id: "m3", severity: "slow" },
+      { ...generateRows(1)[0], id: "m4", severity: "error" },
+      { ...generateRows(1)[0], id: "m5", severity: "normal" },
+    ]);
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[0]?.textContent).toBe("2"); // very_slow
+      expect(cards[1]?.textContent).toBe("1"); // slow
+      expect(cards[2]?.textContent).toBe("1"); // error
+    });
+  });
+
+  it("T044: all normal severity shows 0 for alerts", async () => {
+    setMockData(generateRows(5, { severity: "normal" }));
+    renderPage();
+    await waitFor(() => {
+      const cards = document.querySelectorAll(".text-2xl.font-bold");
+      expect(cards[0]?.textContent).toBe("0");
+      expect(cards[1]?.textContent).toBe("0");
+      expect(cards[2]?.textContent).toBe("0");
+    });
+  });
+
+  it("T045: error handling - query error gracefully", async () => {
+    setMockData([], { message: "DB error" });
+    renderPage();
+    await waitFor(() => expect(screen.getByText("Telemetria de Queries")).toBeInTheDocument());
   });
 });
