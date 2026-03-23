@@ -2,8 +2,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
+
+const SLOW_QUERY_THRESHOLD_MS = 3000;
+const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;
 
 interface TelemetryPayload {
   operation: string;
@@ -20,8 +23,8 @@ interface TelemetryPayload {
 
 export function classifySeverity(duration_ms: number, error_message?: string | null): string {
   if (error_message) return 'error';
-  if (duration_ms >= 8000) return 'very_slow';
-  if (duration_ms >= 3000) return 'slow';
+  if (duration_ms >= VERY_SLOW_QUERY_THRESHOLD_MS) return 'very_slow';
+  if (duration_ms >= SLOW_QUERY_THRESHOLD_MS) return 'slow';
   return 'normal';
 }
 
@@ -57,18 +60,46 @@ export function validateTelemetryPayload(payload: unknown): { valid: boolean; er
   };
 }
 
-export async function emitTelemetry(
+/**
+ * Emit structured telemetry log and persist to query_telemetry table.
+ * Uses fire-and-forget pattern: persistence NEVER blocks the response.
+ */
+export function emitTelemetry(
   supabase: ReturnType<typeof createClient>,
   payload: TelemetryPayload
-): Promise<{ success: boolean; id?: string; error?: string }> {
+): { severity: string; persisted: boolean } {
   const severity = classifySeverity(payload.duration_ms, payload.error_message);
 
-  // Only persist slow, very_slow, or error queries
-  if (severity === 'normal') {
-    return { success: true, id: undefined };
+  // Structured console logging
+  const icon = severity === 'very_slow' ? '🔴'
+    : severity === 'slow' ? '🟡'
+    : severity === 'error' ? '❌'
+    : '✅';
+
+  const target = payload.rpc_name || payload.table_name || 'unknown';
+  const line = `${icon} [telemetry] ${payload.operation}:${target} ${payload.duration_ms}ms`
+    + ` | records=${payload.record_count ?? '-'}`
+    + ` limit=${payload.query_limit ?? '-'}`
+    + ` offset=${payload.query_offset ?? '-'}`
+    + ` count=${payload.count_mode ?? '-'}`;
+
+  if (severity === 'very_slow') {
+    console.warn(`⚠️ VERY SLOW QUERY: ${line}`);
+  } else if (severity === 'slow') {
+    console.warn(`⚠️ SLOW QUERY: ${line}`);
+  } else if (severity === 'error') {
+    console.error(line + ` error=${payload.error_message}`);
+  } else {
+    console.info(line);
   }
 
-  const { data, error } = await supabase
+  // Only persist slow, very_slow, or error queries — fire-and-forget
+  if (severity === 'normal') {
+    return { severity, persisted: false };
+  }
+
+  // Fire-and-forget: do NOT await
+  supabase
     .from('query_telemetry')
     .insert({
       operation: payload.operation,
@@ -83,14 +114,11 @@ export async function emitTelemetry(
       error_message: payload.error_message || null,
       user_id: payload.user_id || null,
     })
-    .select('id')
-    .single();
+    .then(({ error: insertErr }) => {
+      if (insertErr) console.warn('[telemetry-persist] Insert failed:', insertErr.message);
+    });
 
-  if (error) {
-    return { success: false, error: error.message };
-  }
-
-  return { success: true, id: data?.id };
+  return { severity, persisted: true };
 }
 
 Deno.serve(async (req) => {
@@ -116,9 +144,8 @@ Deno.serve(async (req) => {
         });
       }
 
-      const result = await emitTelemetry(supabase, validation.data!);
-      return new Response(JSON.stringify(result), {
-        status: result.success ? 200 : 500,
+      const result = emitTelemetry(supabase, validation.data!);
+      return new Response(JSON.stringify({ success: true, ...result }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }

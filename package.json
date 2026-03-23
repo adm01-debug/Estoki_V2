@@ -94,6 +94,7 @@
     "jotai": "^2.6.0",
     "jsbarcode": "^3.11.6",
     "jspdf": "4.2.1",
+    "jspdf-autotable": "^5.0.7",
     "jsqr": "^1.4.0",
     "ky": "^1.2.0",
     "leaflet": "^1.9.4",

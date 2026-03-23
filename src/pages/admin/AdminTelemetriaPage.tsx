@@ -1,14 +1,18 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Activity, AlertTriangle, Clock, Database, RefreshCw, Zap, Trash2 } from "lucide-react";
+import { Activity, AlertTriangle, Clock, Database, RefreshCw, Zap, Trash2, Download, FileText, CalendarIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TelemetryCharts } from "@/components/admin/telemetry/TelemetryCharts";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface TelemetryRow {
   id: string;
@@ -27,31 +31,58 @@ interface TelemetryRow {
 }
 
 type SeverityFilter = "all" | "slow" | "very_slow" | "error";
-type TimeFilter = "1h" | "6h" | "24h" | "7d";
+type TimeFilter = "1h" | "6h" | "24h" | "7d" | "custom";
 
 export default function AdminTelemetriaPage() {
   const [severityFilter, setSeverityFilter] = useState<SeverityFilter>("all");
   const [timeFilter, setTimeFilter] = useState<TimeFilter>("24h");
+  const [customDateFrom, setCustomDateFrom] = useState<Date | undefined>();
+  const [customDateTo, setCustomDateTo] = useState<Date | undefined>();
 
-  const getTimeThreshold = () => {
+  const getTimeThreshold = (): { from: string; to: string } => {
     const now = new Date();
+    const to = now.toISOString();
+    if (timeFilter === "custom" && customDateFrom) {
+      const fromDate = new Date(customDateFrom);
+      fromDate.setHours(0, 0, 0, 0);
+      const toDate = customDateTo ? new Date(customDateTo) : new Date();
+      toDate.setHours(23, 59, 59, 999);
+      return { from: fromDate.toISOString(), to: toDate.toISOString() };
+    }
     switch (timeFilter) {
-      case "1h": return new Date(now.getTime() - 60 * 60 * 1000).toISOString();
-      case "6h": return new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString();
-      case "24h": return new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-      case "7d": return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+      case "1h": return { from: new Date(now.getTime() - 60 * 60 * 1000).toISOString(), to };
+      case "6h": return { from: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(), to };
+      case "24h": return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
+      case "7d": return { from: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), to };
+      default: return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
+    }
+  };
+
+  const getPeriodLabel = (): string => {
+    switch (timeFilter) {
+      case "1h": return "Última hora";
+      case "6h": return "Últimas 6h";
+      case "24h": return "Últimas 24h";
+      case "7d": return "Últimos 7 dias";
+      case "custom":
+        if (customDateFrom && customDateTo) return `${format(customDateFrom, "dd/MM/yyyy")} a ${format(customDateTo, "dd/MM/yyyy")}`;
+        if (customDateFrom) return `Desde ${format(customDateFrom, "dd/MM/yyyy")}`;
+        return "Personalizado";
+      default: return "Últimas 24h";
     }
   };
 
   const { data: rows = [], isLoading, refetch, isRefetching } = useQuery<TelemetryRow[]>({
-    queryKey: ["query-telemetry", severityFilter, timeFilter],
+    queryKey: ["query-telemetry", severityFilter, timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
     queryFn: async () => {
+      const { from, to } = getTimeThreshold();
       let query = supabase
         .from("query_telemetry" as any)
         .select("*")
-        .gte("created_at", getTimeThreshold())
+        .gte("created_at", from)
+        .lte("created_at", to)
         .order("created_at", { ascending: false })
-        .limit(200);
+        .limit(500);
 
       if (severityFilter !== "all") {
         query = query.eq("severity", severityFilter);
@@ -79,11 +110,102 @@ export default function AdminTelemetriaPage() {
     }
   };
 
+  // === CSV Export ===
+  const handleExportCSV = () => {
+    if (rows.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+    const headers = [
+      "Data/Hora", "Operação", "Tabela/RPC", "Duração (ms)", "Severidade",
+      "Registros", "Limit", "Offset", "Count Mode", "Erro"
+    ];
+    const csvRows = rows.map(r => [
+      new Date(r.created_at).toLocaleString("pt-BR"),
+      r.operation,
+      r.rpc_name || r.table_name || "-",
+      r.duration_ms,
+      r.severity,
+      r.record_count ?? "-",
+      r.query_limit ?? "-",
+      r.query_offset ?? "-",
+      r.count_mode ?? "-",
+      (r.error_message || "").replace(/"/g, '""'),
+    ]);
+
+    const csvContent = [headers, ...csvRows]
+      .map(row => row.map(cell => `"${cell}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const date = format(new Date(), "yyyy-MM-dd");
+    a.href = url;
+    a.download = `telemetria_${date}_${severityFilter}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`CSV exportado com ${rows.length} registros`);
+  };
+
+  // === PDF Export ===
+  const handleExportPDF = async () => {
+    if (rows.length === 0) {
+      toast.error("Nenhum dado para exportar");
+      return;
+    }
+    try {
+      const { default: jsPDF } = await import("jspdf");
+      const { default: autoTable } = await import("jspdf-autotable");
+
+      const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+      const now = new Date();
+
+      doc.setFontSize(16);
+      doc.text("Telemetria de Queries", 14, 15);
+      doc.setFontSize(9);
+      doc.text(`Exportado em ${now.toLocaleString("pt-BR")} · Período: ${getPeriodLabel()}`, 14, 22);
+      doc.text(`Total: ${rows.length} registros · Muito Lentas: ${verySlow} · Lentas: ${slow} · Erros: ${errors} · Média: ${formatDuration(avgDuration)}`, 14, 27);
+
+      const headers = ["Data/Hora", "Operação", "Tabela/RPC", "Duração", "Severidade", "Records", "Limit", "Offset", "Count", "Erro"];
+      const body = rows.map(r => [
+        new Date(r.created_at).toLocaleString("pt-BR"),
+        r.operation,
+        r.rpc_name || r.table_name || "-",
+        formatDuration(r.duration_ms),
+        r.severity === "very_slow" ? "Muito Lenta" : r.severity === "slow" ? "Lenta" : r.severity === "error" ? "Erro" : r.severity,
+        r.record_count?.toString() ?? "-",
+        r.query_limit?.toString() ?? "-",
+        r.query_offset?.toString() ?? "-",
+        r.count_mode || "-",
+        (r.error_message || "-").substring(0, 60),
+      ]);
+
+      autoTable(doc, {
+        head: [headers],
+        body,
+        startY: 32,
+        styles: { fontSize: 7, cellPadding: 1.5 },
+        headStyles: { fillColor: [41, 37, 36], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 244] },
+      });
+
+      const date = format(now, "yyyy-MM-dd");
+      doc.save(`telemetria_${date}_${severityFilter}.pdf`);
+      toast.success(`PDF exportado com ${rows.length} registros`);
+    } catch (err) {
+      toast.error("Erro ao gerar PDF");
+      console.error(err);
+    }
+  };
+
+  // Stats
   const verySlow = rows.filter(r => r.severity === "very_slow").length;
   const slow = rows.filter(r => r.severity === "slow").length;
   const errors = rows.filter(r => r.severity === "error").length;
   const avgDuration = rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.duration_ms, 0) / rows.length) : 0;
 
+  // Top offenders
   const tableStats = new Map<string, { count: number; totalMs: number; maxMs: number }>();
   for (const r of rows) {
     const key = r.rpc_name || r.table_name || "unknown";
@@ -129,7 +251,7 @@ export default function AdminTelemetriaPage() {
   return (
     <div className="space-y-6 p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Activity className="h-7 w-7 text-primary" />
           <div>
@@ -137,7 +259,15 @@ export default function AdminTelemetriaPage() {
             <p className="text-sm text-muted-foreground">Monitoramento de performance do banco externo</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={handleExportCSV} disabled={rows.length === 0}>
+            <Download className="h-3.5 w-3.5 mr-1.5" />
+            CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={rows.length === 0}>
+            <FileText className="h-3.5 w-3.5 mr-1.5" />
+            PDF
+          </Button>
           <Button variant="outline" size="sm" onClick={handleCleanup}>
             <Trash2 className="h-3.5 w-3.5 mr-1.5" />
             Limpar +7d
@@ -229,7 +359,7 @@ export default function AdminTelemetriaPage() {
       <TelemetryCharts rows={rows} timeFilter={timeFilter} />
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <Select value={severityFilter} onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Severidade" />
@@ -242,7 +372,7 @@ export default function AdminTelemetriaPage() {
           </SelectContent>
         </Select>
         <Select value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
-          <SelectTrigger className="w-36">
+          <SelectTrigger className="w-44">
             <SelectValue placeholder="Período" />
           </SelectTrigger>
           <SelectContent>
@@ -250,8 +380,38 @@ export default function AdminTelemetriaPage() {
             <SelectItem value="6h">Últimas 6h</SelectItem>
             <SelectItem value="24h">Últimas 24h</SelectItem>
             <SelectItem value="7d">Últimos 7 dias</SelectItem>
+            <SelectItem value="custom">📅 Personalizado</SelectItem>
           </SelectContent>
         </Select>
+
+        {timeFilter === "custom" && (
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("w-[130px] text-left font-normal", !customDateFrom && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {customDateFrom ? format(customDateFrom, "dd/MM/yyyy") : "De"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={customDateFrom} onSelect={setCustomDateFrom} initialFocus />
+              </PopoverContent>
+            </Popover>
+            <span className="text-muted-foreground text-sm">→</span>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className={cn("w-[130px] text-left font-normal", !customDateTo && "text-muted-foreground")}>
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {customDateTo ? format(customDateTo, "dd/MM/yyyy") : "Até"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar mode="single" selected={customDateTo} onSelect={setCustomDateTo} initialFocus />
+              </PopoverContent>
+            </Popover>
+          </div>
+        )}
+
         <span className="text-xs text-muted-foreground ml-auto">
           {rows.length} registros · auto-refresh 30s
         </span>
