@@ -199,7 +199,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
     try {
       setLoading(true);
       
-      const positions = [];
+      const positions: Array<{ codigo: string; tipo: 'porta_palete'; porta_palete: string; secao: string; nivel: string; zona: string | null; capacidade_kg: number; status: 'livre' }> = [];
       const secoes = ["01", "02", "03", "04", "05", "06", "07", "08"];
       const niveis = ["1", "2", "3", "4"];
       
