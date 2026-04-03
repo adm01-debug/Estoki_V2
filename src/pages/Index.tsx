@@ -81,15 +81,15 @@ const itemVariants = {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile, user } = useAuth();
-  const { stats, isLoading: loadingKpis } = useDashboard();
+  const { stats, isLoading: loadingKpis, refetch: refetchDashboard } = useDashboard();
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRefresh = useCallback(async () => {
-    window.location.reload();
-  }, []);
+    await refetchDashboard();
+  }, [refetchDashboard]);
   const { bind, isRefreshing, pullDistance, pullThreshold } = usePullToRefresh(handleRefresh);
 
   const realtimeStatus = useRealtimeKPIs({
