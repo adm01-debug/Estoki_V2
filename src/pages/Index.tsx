@@ -50,12 +50,9 @@ const getActivityIcon = (type: string) => {
 };
 
 const getStatusColor = (status: string) => {
-  switch (status) {
-    case "success": return "bg-success/10 text-success border-success/20";
-    case "danger": return "bg-destructive/10 text-destructive border-destructive/20";
-    case "warning": return "bg-warning/10 text-warning border-warning/20";
-    default: return "bg-muted text-muted-foreground border-border";
-  }
+  // Re-export from centralized util for backward compat within this file
+  const { getStatusClasses } = require("@/lib/statusColors");
+  return getStatusClasses(status);
 };
 
 const getGreeting = () => {
