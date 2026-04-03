@@ -176,7 +176,7 @@ export default function FornecedoresAvancado() {
                 <Progress value={f.score} className="h-1.5" />
                 <div className="flex justify-between text-[10px] text-muted-foreground">
                   <span>{f.total_entregas} entregas</span>
-                  <span className={getScoreColor(f.score)}>{f.score}%</span>
+                  <span className={getScoreColor(f.score ?? 0)}>{f.score ?? 0}%</span>
                 </div>
               </motion.div>
             ))}
