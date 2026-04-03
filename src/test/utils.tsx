@@ -2,26 +2,27 @@ import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from '@/components/ui/toaster';
 
-// Create a custom render function
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: { retry: false },
-    mutations: { retry: false },
-  },
-});
+// Fresh QueryClient per render to avoid test pollution
+function createTestQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: { retry: false, gcTime: 0 },
+      mutations: { retry: false },
+    },
+  });
+}
 
 interface WrapperProps {
   children: React.ReactNode;
 }
 
 function AllProviders({ children }: WrapperProps) {
+  const queryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         {children}
-        <Toaster />
       </BrowserRouter>
     </QueryClientProvider>
   );
@@ -82,9 +83,6 @@ export const createMockStockMovement = (overrides = {}) => ({
   created_at: new Date().toISOString(),
   ...overrides,
 });
-
-// Wait helpers
-export const waitFor = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Re-export everything
 export * from '@testing-library/react';
