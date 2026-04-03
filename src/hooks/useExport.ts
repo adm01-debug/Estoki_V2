@@ -61,8 +61,8 @@ export function useExport<T extends Record<string, any>>(
       let hasMore = true;
 
       while (hasMore) {
-        let query = supabase
-          .from(table)
+        let query = (supabase
+          .from(table as any) as any)
           .select("*")
           .order(orderBy.column, { ascending: orderBy.ascending })
           .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -84,7 +84,7 @@ export function useExport<T extends Record<string, any>>(
         if (data.length === 0) {
           hasMore = false;
         } else {
-          allData = [...allData, ...(data as T[])];
+          allData = [...allData, ...(data as unknown as T[])];
           page++;
           updateProgress(Math.min(50, (allData.length / limit) * 50));
 
@@ -130,7 +130,7 @@ export function useExport<T extends Record<string, any>>(
         case "xlsx":
           downloadExcel(data, filename);
           break;
-        case "json":
+        case "json": {
           const jsonBlob = new Blob([JSON.stringify(data, null, 2)], {
             type: "application/json",
           });
@@ -141,6 +141,7 @@ export function useExport<T extends Record<string, any>>(
           jsonLink.click();
           URL.revokeObjectURL(jsonUrl);
           break;
+        }
         case "pdf":
           toast.info("Exportação PDF em desenvolvimento");
           break;

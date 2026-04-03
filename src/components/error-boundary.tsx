@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { logError } from '@/config/error-handler';
+import { createAppError, logError } from '@/config/error-handler';
 
 interface Props {
   children: ReactNode;
@@ -30,7 +30,8 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ errorInfo });
     
     // Log error
-    logError(error);
+    const appError = createAppError(error);
+    logError(appError);
     
     // Call custom error handler
     this.props.onError?.(error, errorInfo);

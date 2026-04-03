@@ -58,8 +58,8 @@ export function useFulltextSearch<T = any>(
   const { data, isLoading, error, isFetching } = useQuery({
     queryKey,
     queryFn: async () => {
-      let query = supabase
-        .from(table)
+      let query = (supabase
+        .from(table as any) as any)
         .select(selectColumns.join(","), { count: "exact" });
 
       if (debouncedSearchTerm.length >= minChars) {

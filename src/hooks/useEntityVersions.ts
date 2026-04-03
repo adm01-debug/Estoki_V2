@@ -38,12 +38,9 @@ export function useEntityVersions({
   const { data: versions = [], isLoading, error } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("entity_versions")
-        .select(`
-          *,
-          user:changed_by(full_name, email)
-        `)
+      const { data, error } = await (supabase
+        .from("entity_versions" as any) as any)
+        .select(`*`)
         .eq("entity_type", entityType)
         .eq("entity_id", entityId)
         .order("version_number", { ascending: false })
@@ -57,7 +54,7 @@ export function useEntityVersions({
 
   const restoreMutation = useMutation({
     mutationFn: async (versionNumber: number) => {
-      const { data, error } = await supabase.rpc("restore_entity_version", {
+      const { data, error } = await (supabase.rpc as any)("restore_entity_version", {
         p_entity_type: entityType,
         p_entity_id: entityId,
         p_version_number: versionNumber,

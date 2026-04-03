@@ -20,8 +20,8 @@ export function useVersions(entityType: string, entityId: string) {
   const { data: versions = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('entity_versions')
+      const { data, error } = await (supabase
+        .from('entity_versions' as any) as any)
         .select('*')
         .eq('entity_type', entityType)
         .eq('entity_id', entityId)
@@ -36,8 +36,8 @@ export function useVersions(entityType: string, entityId: string) {
     mutationFn: async (versionId: string) => {
       const version = versions.find(v => v.id === versionId);
       if (!version) throw new Error('Versão não encontrada');
-      const { error } = await supabase
-        .from(entityType)
+      const { error } = await (supabase
+        .from(entityType as any) as any)
         .update(version.data)
         .eq('id', entityId);
       if (error) throw error;

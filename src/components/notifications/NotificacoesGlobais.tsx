@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useNotificacoes } from "@/hooks/useNotificacoes";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { toast } from "sonner";
-import { Bell, AlertTriangle, CheckCircle, Info, Package, ClipboardCheck } from "lucide-react";
 
 interface NotificacoesGlobaisProps {
   enabled?: boolean;
@@ -33,7 +32,7 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
         const criada = new Date(n.created_at);
         const agora = new Date();
         const diffMinutos = (agora.getTime() - criada.getTime()) / (1000 * 60);
-        return diffMinutos < 5; // Apenas notificações dos últimos 5 minutos
+        return diffMinutos < 5;
       });
 
     notificacoesRecentes.forEach(notif => {
@@ -42,10 +41,10 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
       // Push notification nativa (se habilitado e permitido)
       if (enablePush && permission === 'granted' && !pushNotificadasRef.current.has(notif.id)) {
         pushNotificadasRef.current.add(notif.id);
-        showNotification(notif.titulo, {
+        showNotification({
+          title: notif.titulo,
           body: notif.mensagem,
           icon: '/icon-192.png',
-          badge: '/icon-72.png',
           tag: notif.id,
           data: { notificationId: notif.id, tipo: notif.tipo }
         });
@@ -90,7 +89,7 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
     });
   }, [notificacoes, enabled, enablePush, permission, marcarComoLida, showNotification]);
 
-  return null; // Componente invisível - apenas gerencia toasts e push
+  return null;
 }
 
 function getTipoToast(severidade?: 'info' | 'warning' | 'critical'): 'info' | 'warning' | 'error' | 'success' {

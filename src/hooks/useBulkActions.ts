@@ -68,7 +68,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
         const { error } = await (supabase
-          .from(table) as any)
+          .from(table as any) as any)
           .delete()
           .in("id", batch);
 
@@ -110,8 +110,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await supabase
-          .from(table)
+        const { error } = await (supabase
+          .from(table as any) as any)
           .update(updates)
           .in("id", batch);
 
@@ -143,13 +143,13 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
       setProgress(0);
 
       const { data: records, error: fetchError } = await (supabase
-        .from(table) as any)
+        .from(table as any) as any)
         .select("*")
         .in("id", ids);
 
       if (fetchError) throw fetchError;
 
-      const duplicates = records.map((record) => {
+      const duplicates = (records as any[]).map((record: any) => {
         const { id, created_at, updated_at, ...rest } = record;
         return {
           ...rest,
@@ -162,7 +162,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = duplicates.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await supabase.from(table).insert(batch);
+        const { error } = await (supabase.from(table as any) as any).insert(batch);
 
         if (error) throw error;
         setProgress(((i + 1) / batches) * 100);
@@ -196,8 +196,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await supabase
-          .from(table)
+        const { error } = await (supabase
+          .from(table as any) as any)
           .update({ deleted_at: null })
           .in("id", batch);
 
