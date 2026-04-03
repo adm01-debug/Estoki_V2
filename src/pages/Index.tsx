@@ -17,7 +17,7 @@ import {
   XCircle,
   ArrowRight,
   BarChart3,
-  Loader2,
+  
   Wifi,
   Zap,
   Target,
