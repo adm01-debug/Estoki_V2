@@ -89,7 +89,7 @@ export default function Automacoes() {
             .from("lotes")
             .select("id, numero_lote, data_validade, produto_id")
             .lt("data_validade", new Date().toISOString())
-            .neq("status", "quarentena");
+            .neq("status", "quarentena" as any);
 
           if (error) throw error;
 
