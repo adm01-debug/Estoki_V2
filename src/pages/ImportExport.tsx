@@ -75,7 +75,7 @@ export default function ImportExport() {
 
     setExporting(true);
     try {
-      const { data, error } = await supabase.from(template.table).select("*").limit(5000);
+      const { data, error } = await (supabase.from(template.table as any) as any).select("*").limit(5000);
       if (error) throw error;
 
       const csv = Papa.unparse(data || []);
