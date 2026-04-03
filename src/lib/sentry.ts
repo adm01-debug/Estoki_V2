@@ -8,7 +8,7 @@ interface SentryUser {
 
 export function initSentry() {
   // Sentry is optional - will work when @sentry/react is installed
-  console.log('[Sentry] Monitoring disabled - @sentry/react not installed');
+  if (import.meta.env.DEV) console.log('[Sentry] Monitoring disabled - @sentry/react not installed');
 }
 
 export function captureException(error: Error, context?: Record<string, unknown>) {
@@ -16,9 +16,9 @@ export function captureException(error: Error, context?: Record<string, unknown>
 }
 
 export function setUser(user: SentryUser) {
-  console.log('[Sentry] User set:', user.id);
+  if (import.meta.env.DEV) console.log('[Sentry] User set:', user.id);
 }
 
 export function clearUser() {
-  console.log('[Sentry] User cleared');
+  if (import.meta.env.DEV) console.log('[Sentry] User cleared');
 }

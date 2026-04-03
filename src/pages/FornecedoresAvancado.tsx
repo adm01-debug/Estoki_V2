@@ -168,7 +168,7 @@ export default function FornecedoresAvancado() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold truncate">{f.fornecedor}</span>
                   <div className="flex">
-                    {Array.from({ length: getStars(f.score) }).map((_, s) => (
+                    {Array.from({ length: getStars(f.score ?? 0) }).map((_, s) => (
                       <Star key={s} className="h-3 w-3 text-warning fill-warning" />
                     ))}
                   </div>
@@ -176,7 +176,7 @@ export default function FornecedoresAvancado() {
                 <Progress value={f.score} className="h-1.5" />
                 <div className="flex justify-between text-[10px] text-muted-foreground">
                   <span>{f.total_entregas} entregas</span>
-                  <span className={getScoreColor(f.score)}>{f.score}%</span>
+                  <span className={getScoreColor(f.score ?? 0)}>{f.score ?? 0}%</span>
                 </div>
               </motion.div>
             ))}
@@ -207,7 +207,7 @@ export default function FornecedoresAvancado() {
                   {fornecedores.map(f => (
                     <tr key={f.id} className="border-b border-border/30 hover:bg-muted/20">
                       <td className="p-2 font-medium">{f.fornecedor}</td>
-                      <td className="p-2 text-center"><Badge className={`${getScoreColor(f.score)} bg-transparent border`}>{f.score}%</Badge></td>
+                      <td className="p-2 text-center"><Badge className={`${getScoreColor(f.score ?? 0)} bg-transparent border`}>{f.score ?? 0}%</Badge></td>
                       <td className="p-2 text-center">{f.total_entregas}</td>
                       <td className="p-2 text-center text-success">{f.entregas_conformes}</td>
                       <td className="p-2 text-center text-destructive">{f.entregas_divergentes}</td>

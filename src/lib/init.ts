@@ -19,40 +19,40 @@ export async function initializeApp(options: InitOptions = {}): Promise<void> {
     enableErrorTracking = true,
   } = options;
 
-  console.log('[App] Initializing ESTOKI WMS...');
+  if (import.meta.env.DEV) console.log('[App] Initializing ESTOKI WMS...');
 
   try {
     // 1. Initialize config and validate
     initConfig();
-    console.log('[App] Configuration validated');
+    if (import.meta.env.DEV) console.log('[App] Configuration validated');
 
     // 2. Setup error tracking
     if (enableErrorTracking) {
       setupGlobalErrorHandler();
-      console.log('[App] Error tracking enabled');
+      if (import.meta.env.DEV) console.log('[App] Error tracking enabled');
     }
 
     // 3. Initialize analytics
     if (enableAnalytics) {
       initPerformanceTracking();
-      console.log('[App] Analytics enabled');
+      if (import.meta.env.DEV) console.log('[App] Analytics enabled');
     }
 
     // 4. Register service worker
     if (enablePWA && import.meta.env.PROD) {
       const registration = await registerServiceWorker();
       if (registration) {
-        console.log('[App] PWA enabled');
+        if (import.meta.env.DEV) console.log('[App] PWA enabled');
 
         // 5. Request notification permission
         if (enableNotifications) {
           const permission = await requestNotificationPermission();
-          console.log('[App] Notification permission:', permission);
+          if (import.meta.env.DEV) console.log('[App] Notification permission:', permission);
         }
       }
     }
 
-    console.log('[App] ESTOKI WMS initialized successfully!');
+    if (import.meta.env.DEV) console.log('[App] ESTOKI WMS initialized successfully!');
   } catch (error) {
     console.error('[App] Initialization failed:', error);
     throw error;

@@ -12,7 +12,7 @@ export interface CRUDConfig<T> {
   messages?: { createSuccess?: string; updateSuccess?: string; deleteSuccess?: string; error?: string };
 }
 
-// @ts-nocheck
+
 export function useCRUD<T extends BaseEntity>(config: CRUDConfig<T>) {
   const { tableName, orderBy, softDeleteColumn = 'deleted_at', defaultFilters = {}, messages = {} } = config;
   const queryClient = useQueryClient();

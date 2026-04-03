@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { supabase } from '@/integrations/supabase/client';
 export interface Location { id: string; code: string; warehouse_id: string; zone: string; aisle: string; rack?: string; level: number; position?: string; type: 'storage' | 'picking' | 'staging' | 'receiving' | 'shipping'; status: 'available' | 'occupied' | 'reserved' | 'blocked'; max_capacity: number; current_occupancy: number; }
 export const locationService = {

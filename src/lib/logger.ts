@@ -1,4 +1,7 @@
-// Logging service
+/**
+ * Structured Logger — silences debug/info in production, keeps warn/error.
+ * Outputs structured JSON-like entries with timestamp and context.
+ */
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 const LOG_LEVELS: Record<LogLevel, number> = {
@@ -10,33 +13,57 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 
 class Logger {
   private minLevel: LogLevel = import.meta.env.PROD ? "warn" : "debug";
+  private context: string;
+
+  constructor(context = "App") {
+    this.context = context;
+  }
 
   private shouldLog(level: LogLevel): boolean {
     return LOG_LEVELS[level] >= LOG_LEVELS[this.minLevel];
   }
 
-  debug(message: string, ...args: unknown[]) {
-    if (this.shouldLog("debug")) console.debug(`[DEBUG] ${message}`, ...args);
+  private format(level: LogLevel, message: string): string {
+    const ts = new Date().toISOString();
+    return `[${ts}] [${level.toUpperCase()}] [${this.context}] ${message}`;
   }
 
-  info(message: string, ...args: unknown[]) {
-    if (this.shouldLog("info")) console.info(`[INFO] ${message}`, ...args);
+  debug(message: string, data?: Record<string, unknown>) {
+    if (this.shouldLog("debug")) console.debug(this.format("debug", message), data ?? "");
   }
 
-  warn(message: string, ...args: unknown[]) {
-    if (this.shouldLog("warn")) console.warn(`[WARN] ${message}`, ...args);
+  info(message: string, data?: Record<string, unknown>) {
+    if (this.shouldLog("info")) console.info(this.format("info", message), data ?? "");
   }
 
-  error(message: string, error?: Error, ...args: unknown[]) {
+  warn(message: string, data?: Record<string, unknown>) {
+    if (this.shouldLog("warn")) console.warn(this.format("warn", message), data ?? "");
+  }
+
+  error(message: string, error?: Error | unknown, data?: Record<string, unknown>) {
     if (this.shouldLog("error")) {
-      console.error(`[ERROR] ${message}`, error, ...args);
-      // Send to Sentry in production
+      console.error(this.format("error", message), error, data ?? "");
     }
   }
 
   setLevel(level: LogLevel) {
     this.minLevel = level;
   }
+
+  child(context: string): Logger {
+    return new Logger(`${this.context}:${context}`);
+  }
+}
+
+/**
+ * Create a scoped logger.
+ * @example
+ * const log = createLogger('AuthService');
+ * log.info('User logged in', { userId: '123' });
+ */
+export function createLogger(context: string): Logger {
+  return new Logger(context);
 }
 
 export const logger = new Logger();
+export type { LogLevel };

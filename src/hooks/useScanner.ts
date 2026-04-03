@@ -167,7 +167,7 @@ export function useScanner(): UseScannerReturn {
             localizacao,
             status: lote.status || 'pendente',
             dataRecebimento: lote.data_recebimento,
-            dataTriagem: lote.data_conferencia,
+            dataTriagem: lote.data_conferencia ?? undefined,
             tipo: 'lote',
           };
         }

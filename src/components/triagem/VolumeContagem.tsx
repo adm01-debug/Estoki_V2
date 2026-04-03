@@ -108,7 +108,7 @@ export function VolumeContagem({
                           diferenca === 0 ? "text-success" : "text-warning"
                         )}>
                           | Contado: {volume.qtdContada} un
-                          {diferenca !== 0 && (
+                          {diferenca !== null && diferenca !== 0 && (
                             <span className="ml-1">
                               ({diferenca > 0 ? "+" : ""}{diferenca})
                             </span>

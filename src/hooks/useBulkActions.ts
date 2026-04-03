@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,8 +67,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await supabase
-          .from(table)
+        const { error } = await (supabase
+          .from(table) as any)
           .delete()
           .in("id", batch);
 
@@ -143,8 +142,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
       setIsProcessing(true);
       setProgress(0);
 
-      const { data: records, error: fetchError } = await supabase
-        .from(table)
+      const { data: records, error: fetchError } = await (supabase
+        .from(table) as any)
         .select("*")
         .in("id", ids);
 

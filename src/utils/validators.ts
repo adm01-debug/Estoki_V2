@@ -221,7 +221,7 @@ export function validarData(data: string | Date | null | undefined): boolean {
  */
 export function validarDataFutura(data: string | Date | null | undefined): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data;
+  const date = typeof data === 'string' ? new Date(data) : data!;
   return date > new Date();
 }
 
@@ -230,7 +230,7 @@ export function validarDataFutura(data: string | Date | null | undefined): boole
  */
 export function validarDataPassada(data: string | Date | null | undefined): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data;
+  const date = typeof data === 'string' ? new Date(data) : data!;
   return date < new Date();
 }
 
@@ -243,7 +243,7 @@ export function validarDataNoPeriodo(
   fim: Date
 ): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data;
+  const date = typeof data === 'string' ? new Date(data) : data!;
   return date >= inicio && date <= fim;
 }
 

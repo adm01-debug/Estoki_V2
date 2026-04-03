@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { supabase } from '@/integrations/supabase/client';
 export const customerService = {
   async getAll() { const { data, error } = await supabase.from('customers').select('*'); if (error) throw error; return data; },

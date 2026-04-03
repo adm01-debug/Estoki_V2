@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useNavigate } from "react-router-dom";
 import { useCallback, useRef, useMemo } from "react";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";

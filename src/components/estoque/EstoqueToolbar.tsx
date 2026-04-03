@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { memo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Plus, Download, Upload, RefreshCw, Package } from 'lucide-react';

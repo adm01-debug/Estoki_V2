@@ -21,5 +21,5 @@ export const trackPerformance = (name: string, fn: () => void): void => {
   const start = performance.now();
   fn();
   const duration = performance.now() - start;
-  console.log(`[Perf] ${name}: ${duration.toFixed(2)}ms`);
+  if (import.meta.env.DEV) console.log(`[Perf] ${name}: ${duration.toFixed(2)}ms`);
 };

@@ -177,7 +177,7 @@ export default function PasskeySettings() {
               >
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-primary/10 rounded-lg">
-                    {getDeviceIcon(passkey.device_name)}
+                    {getDeviceIcon(passkey.device_name ?? '')}
                   </div>
                   <div>
                     <p className="font-medium">{passkey.device_name}</p>

@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useRef } from "react";
 import { useNotificacoes } from "@/hooks/useNotificacoes";
 import { usePushNotifications } from "@/hooks/usePushNotifications";

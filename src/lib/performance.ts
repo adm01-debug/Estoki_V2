@@ -5,10 +5,10 @@ export function measurePerformance() {
   const observer = new PerformanceObserver((list) => {
     for (const entry of list.getEntries()) {
       if (entry.entryType === "largest-contentful-paint") {
-        console.log("LCP:", entry.startTime);
+        if (import.meta.env.DEV) console.log("LCP:", entry.startTime);
       }
       if (entry.entryType === "first-input") {
-        console.log("FID:", (entry as PerformanceEventTiming).processingStart - entry.startTime);
+        if (import.meta.env.DEV) console.log("FID:", (entry as PerformanceEventTiming).processingStart - entry.startTime);
       }
     }
   });
@@ -24,11 +24,11 @@ export function measurePerformance() {
         clsValue += entry.value;
       }
     }
-    console.log("CLS:", clsValue);
+    if (import.meta.env.DEV) console.log("CLS:", clsValue);
   }).observe({ type: "layout-shift", buffered: true });
 }
 
 export function reportWebVitals(metric: { name: string; value: number }) {
-  console.log(metric.name, metric.value);
+  if (import.meta.env.DEV) console.log(metric.name, metric.value);
   // Send to analytics
 }

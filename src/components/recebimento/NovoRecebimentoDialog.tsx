@@ -24,7 +24,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRecebimentos } from "@/hooks/useRecebimentos";
-// @ts-nocheck
 const recebimentoSchema = z.object({
   produto_id: z.string().uuid({ message: "Selecione um produto" }),
   numero_lote: z.string().trim().min(1, { message: "Número do lote é obrigatório" }).max(50, { message: "Máximo 50 caracteres" }),
@@ -85,7 +84,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
         .order("nome");
 
       if (!error && data) {
-        setProdutos(data);
+        setProdutos((data || []).map(p => ({ ...p, fornecedor_principal: p.fornecedor_principal ?? undefined })));
       }
       setLoadingProdutos(false);
     };

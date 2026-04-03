@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useCallback, useRef, useMemo } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";

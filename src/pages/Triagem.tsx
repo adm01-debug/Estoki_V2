@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
 import { useState, useMemo, useRef, useEffect } from "react";

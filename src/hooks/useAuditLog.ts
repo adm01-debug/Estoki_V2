@@ -46,7 +46,7 @@ export function useAuditLog() {
         ip_address: 'local'
       };
       localLogs.push(newEntry);
-      console.log('[Audit]', newEntry.action, newEntry.entity_type, newEntry.entity_id);
+      if (import.meta.env.DEV) console.log('[Audit]', newEntry.action, newEntry.entity_type, newEntry.entity_id);
       return newEntry;
     },
     onSuccess: () => {

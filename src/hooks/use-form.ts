@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from 'react';
-// @ts-nocheck
 type ValidationRule<T> = {
   validate: (value: any, values: T) => boolean;
   message: string;

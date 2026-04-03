@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { describe, it, expect } from "vitest";
 import { validate, validationRules } from "@/lib/validation";
 

@@ -87,7 +87,7 @@ const playNotificationSound = (type: 'info' | 'warning' | 'critical' = 'info') =
     oscillator.start(time);
     oscillator.stop(time + totalDuration + 0.05);
   } catch (e) {
-    console.log('Audio not available');
+    if (import.meta.env.DEV) console.log('Audio not available');
   }
 };
 
