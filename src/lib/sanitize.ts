@@ -10,15 +10,13 @@ export const sanitizeHTML = (html: string): string => {
   return div.innerHTML;
 };
 
+/**
+ * @deprecated sanitizeSQL is an anti-pattern. Use parameterized queries (Supabase SDK) instead.
+ * Kept only as a no-op for backward compatibility during migration.
+ */
 export const sanitizeSQL = (input: string): string => {
   if (!input) return '';
-  return input
-    .replace(/['";]/g, '')
-    .replace(/--/g, '')
-    .replace(/\/\*/g, '')
-    .replace(/\*\//g, '')
-    .replace(/\b(DROP|DELETE|INSERT|UPDATE|ALTER|CREATE|EXEC|UNION|SELECT)\b/gi, '')
-    .trim();
+  return input.trim();
 };
 
 export const sanitizeFilename = (filename: string): string => {
