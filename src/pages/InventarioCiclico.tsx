@@ -373,11 +373,11 @@ export default function InventarioCiclicoPage() {
                                 <div className="mt-2 flex items-center gap-2">
                                   <span className="text-xs text-muted-foreground">Acuracidade:</span>
                                   <Badge variant="outline" className={
-                                    ciclo.acuracidade >= 98 ? "bg-green-500/10 text-green-600" :
-                                    ciclo.acuracidade >= 95 ? "bg-amber-500/10 text-amber-600" :
+                                    (ciclo.acuracidade ?? 0) >= 98 ? "bg-green-500/10 text-green-600" :
+                                    (ciclo.acuracidade ?? 0) >= 95 ? "bg-amber-500/10 text-amber-600" :
                                     "bg-red-500/10 text-red-600"
                                   }>
-                                    {ciclo.acuracidade.toFixed(1)}%
+                                    {(ciclo.acuracidade ?? 0).toFixed(1)}%
                                   </Badge>
                                   {ciclo.divergencias_encontradas > 0 && (
                                     <span className="text-xs text-red-500">

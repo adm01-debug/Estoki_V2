@@ -75,7 +75,7 @@ export default function PrevisaoDemandaIA() {
       diasAteRuptura <= 7 ? 'critica' : diasAteRuptura <= 15 ? 'alta' : diasAteRuptura <= 30 ? 'media' : 'baixa';
 
     // Projeção gráfica
-    const projecao = [];
+    const projecao: Array<{ dia: string; estoque: number; previsao: number }> = [];
     let estoqueProj = estoqueAtual;
     for (let d = 0; d <= 60; d++) {
       const data = new Date();

@@ -207,7 +207,7 @@ export default function FornecedoresAvancado() {
                   {fornecedores.map(f => (
                     <tr key={f.id} className="border-b border-border/30 hover:bg-muted/20">
                       <td className="p-2 font-medium">{f.fornecedor}</td>
-                      <td className="p-2 text-center"><Badge className={`${getScoreColor(f.score)} bg-transparent border`}>{f.score}%</Badge></td>
+                      <td className="p-2 text-center"><Badge className={`${getScoreColor(f.score ?? 0)} bg-transparent border`}>{f.score ?? 0}%</Badge></td>
                       <td className="p-2 text-center">{f.total_entregas}</td>
                       <td className="p-2 text-center text-success">{f.entregas_conformes}</td>
                       <td className="p-2 text-center text-destructive">{f.entregas_divergentes}</td>

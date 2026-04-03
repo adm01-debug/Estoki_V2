@@ -250,7 +250,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
       setLoading(true);
       
       const boxData = boxForm.getValues();
-      const positions = [];
+      const positions: Array<{ codigo: string; tipo: 'box'; box: string; zona: string | null; capacidade_kg: number; status: 'livre' }> = [];
       
       for (let i = 1; i <= 24; i++) {
         const boxNum = i.toString().padStart(2, "0");
