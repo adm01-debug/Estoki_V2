@@ -142,8 +142,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
       setIsProcessing(true);
       setProgress(0);
 
-      const { data: records, error: fetchError } = await supabase
-        .from(table)
+      const { data: records, error: fetchError } = await (supabase
+        .from(table) as any)
         .select("*")
         .in("id", ids);
 
