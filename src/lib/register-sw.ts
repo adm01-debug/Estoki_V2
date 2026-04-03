@@ -3,7 +3,7 @@
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!('serviceWorker' in navigator)) {
-    console.log('[SW] Service Workers not supported');
+    if (import.meta.env.DEV) console.log('[SW] Service Workers not supported');
     return null;
   }
 
@@ -13,7 +13,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       updateViaCache: 'none',
     });
 
-    console.log('[SW] Service Worker registered:', registration.scope);
+    if (import.meta.env.DEV) console.log('[SW] Service Worker registered:', registration.scope);
 
     // Check for updates periodically
     setInterval(() => {
@@ -38,7 +38,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     // Handle controller change
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('[SW] Controller changed');
+      if (import.meta.env.DEV) console.log('[SW] Controller changed');
     });
 
     return registration;
@@ -54,7 +54,7 @@ export async function unregisterServiceWorker(): Promise<boolean> {
   try {
     const registration = await navigator.serviceWorker.ready;
     const success = await registration.unregister();
-    console.log('[SW] Unregistered:', success);
+    if (import.meta.env.DEV) console.log('[SW] Unregistered:', success);
     return success;
   } catch (error) {
     console.error('[SW] Unregister failed:', error);
@@ -80,7 +80,7 @@ export async function subscribeToPush(registration: ServiceWorkerRegistration): 
       applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || ''),
     });
     
-    console.log('[SW] Push subscription:', subscription.endpoint);
+    if (import.meta.env.DEV) console.log('[SW] Push subscription:', subscription.endpoint);
     return subscription;
   } catch (error) {
     console.error('[SW] Push subscription failed:', error);
