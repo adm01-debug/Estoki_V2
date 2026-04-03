@@ -109,8 +109,8 @@ export default function FormularioTriagem() {
     return checklistItems.every(item => checklist[item.id] === true);
   };
 
-  const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']) => {
-    await addFotoFromFile(file, tipo);
+  const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']): Promise<FotoTriagem | null> => {
+    return await addFotoFromFile(file, tipo);
   };
 
   const handleRemoveFoto = async (fotoId: string) => {
