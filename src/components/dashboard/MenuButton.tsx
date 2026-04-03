@@ -21,6 +21,7 @@ export function MenuButton({
   return (
     <button
       onClick={onClick}
+      aria-label={`${label}${description ? ` - ${description}` : ''}${badge ? ` (${badge} pendentes)` : ''}`}
       className={cn(
         "menu-button w-full group relative overflow-hidden",
         variant === "primary" && "border-primary/30 bg-primary/5",

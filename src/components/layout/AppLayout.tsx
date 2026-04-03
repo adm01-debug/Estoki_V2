@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, createContext, useContext, useState, useCallback, memo } from "react";
+import { ReactNode, useEffect, createContext, useContext, useState, useCallback, memo, useMemo } from "react";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
@@ -50,6 +50,7 @@ import {
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
@@ -112,48 +113,84 @@ const sidebarMainItems: NavItem[] = [
   { path: "/kanban", icon: Layers, label: "Kanban Pipeline", tour: "kanban" },
 ];
 
-const sidebarSecondaryItems: NavItem[] = [
-  { path: "/produtos", icon: Package, label: "Produtos" },
-  { path: "/lotes", icon: Layers, label: "Lotes" },
-  { path: "/posicoes", icon: Warehouse, label: "Posições" },
-  { path: "/categorias", icon: FolderTree, label: "Categorias" },
-  { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentação" },
-  { path: "/armazenamento", icon: Building2, label: "Armazenamento" },
-  { path: "/picking", icon: ListTodo, label: "Picking" },
-  { path: "/putaway", icon: Package, label: "Putaway" },
-  { path: "/ondas", icon: Route, label: "Ondas" },
-  { path: "/qualidade", icon: ClipboardList, label: "Qualidade" },
-  { path: "/conferencia", icon: Scan, label: "Conferência" },
-  { path: "/expedicao", icon: Truck, label: "Expedição" },
-  { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
-  { path: "/curva-abc", icon: Layers, label: "Curva ABC" },
-  { path: "/tarefas", icon: ListTodo, label: "Gestão Tarefas" },
-  { path: "/alertas", icon: BellRing, label: "Alertas" },
-  { path: "/kpis-operacionais", icon: Activity, label: "KPIs" },
-  { path: "/produtividade", icon: Users, label: "Produtividade" },
-  { path: "/gamificacao", icon: Activity, label: "Gamificação" },
-  { path: "/rastreabilidade", icon: Route, label: "Rastreabilidade" },
-  { path: "/seriais", icon: QrCode, label: "Seriais" },
-  { path: "/etiquetas", icon: Tag, label: "Etiquetas QR" },
-  { path: "/pedidos", icon: FileText, label: "Pedidos" },
-  { path: "/clientes", icon: Users, label: "Clientes" },
-  { path: "/armazens", icon: Building2, label: "Armazéns" },
-  { path: "/fornecedores", icon: Building2, label: "Qualidade Fornec." },
-  { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
-  { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
-  { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
-  { path: "/import-export", icon: FileText, label: "Import/Export" },
-  { path: "/automacoes", icon: Sparkles, label: "Automações" },
-  { path: "/aprovacoes", icon: ShieldCheck, label: "Aprovações" },
-  { path: "/relatorios-agendados", icon: CalendarClock, label: "Relat. Agendados" },
-  { path: "/fornecedores-avancado", icon: Building2, label: "Fornecedores Score" },
-  { path: "/enderecamento", icon: MapPin, label: "Endereçamento Auto" },
-  { path: "/transportadoras", icon: Truck, label: "Transportadoras" },
-  { path: "/previsao-demanda", icon: Brain, label: "Previsão Demanda" },
-  { path: "/modo-offline", icon: WifiOff, label: "Modo Offline" },
-  { path: "/relatorios", icon: FileText, label: "Relatórios" },
-  { path: "/seguranca", icon: Shield, label: "Segurança" },
-  { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
+interface SidebarGroup {
+  label: string;
+  icon: LucideIcon;
+  items: NavItem[];
+}
+
+const sidebarGroups: SidebarGroup[] = [
+  {
+    label: "Cadastros",
+    icon: FolderTree,
+    items: [
+      { path: "/produtos", icon: Package, label: "Produtos" },
+      { path: "/lotes", icon: Layers, label: "Lotes" },
+      { path: "/posicoes", icon: Warehouse, label: "Posições" },
+      { path: "/categorias", icon: FolderTree, label: "Categorias" },
+      { path: "/armazens", icon: Building2, label: "Armazéns" },
+      { path: "/clientes", icon: Users, label: "Clientes" },
+      { path: "/seriais", icon: QrCode, label: "Seriais" },
+      { path: "/etiquetas", icon: Tag, label: "Etiquetas QR" },
+    ],
+  },
+  {
+    label: "Movimentação",
+    icon: ArrowLeftRight,
+    items: [
+      { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentação" },
+      { path: "/armazenamento", icon: Building2, label: "Armazenamento" },
+      { path: "/picking", icon: ListTodo, label: "Picking" },
+      { path: "/putaway", icon: Package, label: "Putaway" },
+      { path: "/ondas", icon: Route, label: "Ondas" },
+      { path: "/conferencia", icon: Scan, label: "Conferência" },
+      { path: "/expedicao", icon: Truck, label: "Expedição" },
+      { path: "/transportadoras", icon: Truck, label: "Transportadoras" },
+      { path: "/enderecamento", icon: MapPin, label: "Endereçamento Auto" },
+    ],
+  },
+  {
+    label: "Qualidade",
+    icon: ClipboardList,
+    items: [
+      { path: "/qualidade", icon: ClipboardList, label: "Qualidade" },
+      { path: "/divergencias", icon: AlertTriangle, label: "Divergências" },
+      { path: "/fornecedores", icon: Building2, label: "Qualidade Fornec." },
+      { path: "/fornecedores-avancado", icon: Building2, label: "Fornecedores Score" },
+      { path: "/trocas", icon: Undo2, label: "Trocas/Devoluções" },
+      { path: "/trocas-dashboard", icon: BarChart3, label: "Dashboard Trocas" },
+      { path: "/aprovacoes", icon: ShieldCheck, label: "Aprovações" },
+    ],
+  },
+  {
+    label: "Analytics",
+    icon: BarChart3,
+    items: [
+      { path: "/kpis-operacionais", icon: Activity, label: "KPIs" },
+      { path: "/curva-abc", icon: Layers, label: "Curva ABC" },
+      { path: "/produtividade", icon: Users, label: "Produtividade" },
+      { path: "/rastreabilidade", icon: Route, label: "Rastreabilidade" },
+      { path: "/relatorios", icon: FileText, label: "Relatórios" },
+      { path: "/relatorios-agendados", icon: CalendarClock, label: "Relat. Agendados" },
+      { path: "/previsao-demanda", icon: Brain, label: "Previsão Demanda" },
+      { path: "/ocupacao", icon: Warehouse, label: "Ocupação Visual" },
+    ],
+  },
+  {
+    label: "Gestão",
+    icon: Settings,
+    items: [
+      { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
+      { path: "/tarefas", icon: ListTodo, label: "Gestão Tarefas" },
+      { path: "/alertas", icon: BellRing, label: "Alertas" },
+      { path: "/gamificacao", icon: Activity, label: "Gamificação" },
+      { path: "/pedidos", icon: FileText, label: "Pedidos" },
+      { path: "/import-export", icon: FileText, label: "Import/Export" },
+      { path: "/automacoes", icon: Sparkles, label: "Automações" },
+      { path: "/seguranca", icon: Shield, label: "Segurança" },
+      { path: "/modo-offline", icon: WifiOff, label: "Modo Offline" },
+    ],
+  },
 ];
 
 const sidebarAdminItems: NavItem[] = [
@@ -260,6 +297,106 @@ function SidebarSectionLabel({ label, collapsed }: { label: string; collapsed: b
     </p>
   );
 }
+
+const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
+  group,
+  collapsed,
+  pathname,
+  onNavigate,
+  onHover,
+}: {
+  group: SidebarGroup;
+  collapsed: boolean;
+  pathname: string;
+  onNavigate: (path: string) => void;
+  onHover?: (path: string) => void;
+}) {
+  const hasActiveChild = group.items.some((item) => pathname === item.path || pathname.startsWith(item.path + "/"));
+  const activeCount = group.items.filter((item) => pathname === item.path).length;
+  const [open, setOpen] = useState(hasActiveChild);
+
+  // Auto-open when a child becomes active
+  useEffect(() => {
+    if (hasActiveChild) setOpen(true);
+  }, [hasActiveChild]);
+
+  if (collapsed) {
+    // When collapsed, show only the group icon with tooltip showing group name
+    return (
+      <>
+        <Tooltip delayDuration={0}>
+          <TooltipTrigger asChild>
+            <div className="mx-3 my-1 flex items-center justify-center">
+              <group.icon className={cn(
+                "h-4 w-4 transition-colors",
+                hasActiveChild ? "text-primary" : "text-sidebar-foreground/30"
+              )} />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
+            {group.label}
+          </TooltipContent>
+        </Tooltip>
+        {group.items.map((item) => (
+          <SidebarNavButton
+            key={item.path}
+            item={item}
+            isActive={pathname === item.path}
+            onClick={() => onNavigate(item.path)}
+            collapsed={true}
+            onHover={onHover}
+          />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <CollapsibleTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group/trigger mt-1",
+            hasActiveChild
+              ? "text-primary"
+              : "text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+          )}
+        >
+          <group.icon className={cn(
+            "h-4 w-4 shrink-0 transition-colors",
+            hasActiveChild ? "text-primary" : "text-sidebar-foreground/30 group-hover/trigger:text-sidebar-foreground/60"
+          )} />
+          <span className={cn(
+            "text-xs font-bold uppercase tracking-wider flex-1 text-left",
+            hasActiveChild ? "text-primary/80" : ""
+          )}>
+            {group.label}
+          </span>
+          {hasActiveChild && (
+            <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-primary" />
+          )}
+          <ChevronRight className={cn(
+            "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+            open && "rotate-90"
+          )} />
+        </button>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="pl-1 space-y-0.5 overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+        {group.items.map((item) => (
+          <SidebarNavButton
+            key={item.path}
+            item={item}
+            isActive={pathname === item.path}
+            onClick={() => onNavigate(item.path)}
+            collapsed={false}
+            onHover={onHover}
+          />
+        ))}
+      </CollapsibleContent>
+    </Collapsible>
+  );
+});
 
 // Determine parent route for smart back navigation
 function getParentRoute(pathname: string): string {
@@ -450,13 +587,13 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           ))}
           
           <SidebarSectionLabel label="Operações" collapsed={sidebarCollapsed && !isMobile} />
-          {sidebarSecondaryItems.map((item) => (
-            <SidebarNavButton
-              key={item.path}
-              item={item}
-              isActive={location.pathname === item.path}
-              onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+          {sidebarGroups.map((group) => (
+            <SidebarAccordionGroup
+              key={group.label}
+              group={group}
               collapsed={sidebarCollapsed && !isMobile}
+              pathname={location.pathname}
+              onNavigate={(path) => { navigate(path); if (isMobile) setMobileMenuOpen(false); }}
               onHover={preloadRoute}
             />
           ))}

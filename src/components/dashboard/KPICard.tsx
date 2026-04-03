@@ -65,6 +65,7 @@ export const KPICard = memo(function KPICard({
   return (
     <button
       onClick={onClick}
+      aria-label={`${label}${sublabel ? ` - ${sublabel}` : ''}: ${value}`}
       className={cn(
         "kpi-card w-full text-left cursor-pointer group relative overflow-hidden",
         sizeClasses[size]
