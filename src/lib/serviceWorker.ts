@@ -97,14 +97,14 @@ self.addEventListener('push', (event) => {
   if (!event.data) return;
 
   const data = event.data.json();
-  const options: NotificationOptions = {
+  const options = {
     body: data.body,
     icon: '/icon-192.png',
     badge: '/badge-72.png',
-    // vibrate is supported at runtime but not in TS types
+    vibrate: [100, 50, 100],
     data: { url: data.url },
     actions: data.actions || [],
-  };
+  } as any;
 
   event.waitUntil(
     self.registration.showNotification(data.title, options)

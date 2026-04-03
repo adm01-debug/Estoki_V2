@@ -37,8 +37,8 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function DashboardTriadorPage() {
   const { user } = useAuth();
   const gamificacaoData = useGamificacao();
-  const gamificacao = gamificacaoData.dados;
-  const loadingGamificacao = gamificacaoData.loading;
+  const gamificacao = gamificacaoData.perfil;
+  const loadingGamificacao = gamificacaoData.isLoading;
   const conquistasData = useConquistas();
   const conquistasUsuario = conquistasData.desbloqueadas;
   const loadingConquistas = conquistasData.loading;

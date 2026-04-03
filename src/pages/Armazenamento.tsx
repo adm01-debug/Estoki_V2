@@ -187,7 +187,7 @@ const ArmazenamentoPage = () => {
   });
   
   const sugestoes = useMemo(() => 
-    calcularSugestoes(posicoes, item.peso, item.rotatividade),
+    calcularSugestoes(posicoes || [], item.peso, item.rotatividade),
     [posicoes, item.peso, item.rotatividade]
   );
   
