@@ -41,8 +41,8 @@ class FeatureFlagsService {
 
   private async loadFromRemote(): Promise<void> {
     try {
-      const { data, error } = await supabase
-        .from('feature_flags')
+      const { data, error } = await (supabase
+        .from('feature_flags' as any) as any)
         .select('*')
         .eq('active', true);
 

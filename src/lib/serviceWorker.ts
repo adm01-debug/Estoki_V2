@@ -101,7 +101,7 @@ self.addEventListener('push', (event) => {
     body: data.body,
     icon: '/icon-192.png',
     badge: '/badge-72.png',
-    vibrate: [100, 50, 100],
+    // vibrate is supported at runtime but not in TS types
     data: { url: data.url },
     actions: data.actions || [],
   };

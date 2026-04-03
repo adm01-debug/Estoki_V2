@@ -97,7 +97,7 @@ export default function Automacoes() {
           for (const lote of lotesVencidos || []) {
             const { error: updateError } = await supabase
               .from("lotes")
-              .update({ status: "quarentena" })
+              .update({ status: "quarentena" as any })
               .eq("id", lote.id);
             
             if (!updateError) {

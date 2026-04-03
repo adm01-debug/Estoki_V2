@@ -76,7 +76,7 @@ export async function subscribeToPush(registration: ServiceWorkerRegistration): 
   try {
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || ''),
+      applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '') as BufferSource,
     });
     
     if (import.meta.env.DEV) console.log('[SW] Push subscription:', subscription.endpoint);
