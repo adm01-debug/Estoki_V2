@@ -194,7 +194,7 @@ const DashboardPage = () => {
       <AppLayout title="Dashboard" showBack>
         <div className="p-4 text-center">
           <p className="text-destructive mb-4">{error}</p>
-          <Button onClick={refetch}>Tentar novamente</Button>
+          <Button onClick={() => refetch()}>Tentar novamente</Button>
         </div>
       </AppLayout>
     );
