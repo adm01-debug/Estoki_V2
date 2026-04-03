@@ -67,8 +67,8 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await supabase
-          .from(table)
+        const { error } = await (supabase
+          .from(table) as any)
           .delete()
           .in("id", batch);
 
