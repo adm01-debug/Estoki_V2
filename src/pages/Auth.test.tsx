@@ -21,10 +21,14 @@ vi.mock('@/hooks/use-toast', () => ({
 describe('Auth Page', () => {
   const renderAuth = () => render(<BrowserRouter><Auth /></BrowserRouter>);
 
-  it('renders login form with email and password fields', () => {
+  it('renders login form with email field', () => {
     renderAuth();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/senha/i)).toBeInTheDocument();
+    expect(screen.getByLabelText('Email')).toBeInTheDocument();
+  });
+
+  it('renders login form with password field', () => {
+    renderAuth();
+    expect(screen.getByLabelText('Senha')).toBeInTheDocument();
   });
 
   it('renders login button', () => {
@@ -38,15 +42,21 @@ describe('Auth Page', () => {
     expect(screen.getByRole('tablist')).toBeInTheDocument();
   });
 
-  it('renders the ESTOKI brand', () => {
+  it('renders the ESTOKI brand in heading', () => {
     renderAuth();
-    expect(screen.getByText(/ESTOKI/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /ESTOKI/i })).toBeInTheDocument();
   });
 
-  it('does not render any hardcoded HSL values in the DOM', () => {
+  it('does not render any inline HSL styles', () => {
     const { container } = renderAuth();
     const html = container.innerHTML;
-    // Ensure no raw hsl( values leaked into inline styles
     expect(html).not.toMatch(/style="[^"]*hsl\(\d/);
+  });
+
+  it('uses semantic token classes instead of hardcoded colors', () => {
+    const { container } = renderAuth();
+    const html = container.innerHTML;
+    // Should use sidebar-foreground tokens, not raw HSL
+    expect(html).not.toMatch(/bg-\[hsl\(/);
   });
 });
