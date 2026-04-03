@@ -50,11 +50,7 @@ const getActivityIcon = (type: string) => {
   }
 };
 
-const getStatusColor = (status: string) => {
-  // Re-export from centralized util for backward compat within this file
-  const { getStatusClasses } = require("@/lib/statusColors");
-  return getStatusClasses(status);
-};
+const getStatusColor = getStatusClasses;
 
 const getGreeting = () => {
   const hour = new Date().getHours();
