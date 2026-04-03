@@ -50,6 +50,7 @@ import {
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
