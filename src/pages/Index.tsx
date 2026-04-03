@@ -37,6 +37,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { useEstoque } from "@/hooks/useEstoque";
 import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
+import { getStatusClasses } from "@/lib/statusColors";
 
 const getActivityIcon = (type: string) => {
   switch (type) {
