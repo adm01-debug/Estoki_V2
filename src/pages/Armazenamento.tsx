@@ -228,27 +228,19 @@ const ArmazenamentoPage = () => {
     setConfirmando(true);
     
     try {
-      // Se tiver produtoId, alocar no estoque
+      // Se tiver produtoId, registrar movimentação de entrada
       if (item.produtoId) {
-        const success = await alocarProduto(
-          posicaoSelecionada.id,
-          item.produtoId,
-          item.quantidade,
-          item.loteId
-        );
-        
-        if (!success) {
-          throw new Error("Falha ao alocar produto");
-        }
-        
-        // Registrar movimentação
-        await registrarEntrada(
+        const success = await registrarEntrada(
           item.produtoId,
           item.quantidade,
           posicaoSelecionada.codigo,
           item.loteId,
           `Armazenamento via triagem - SKU: ${item.sku}`
         );
+        
+        if (!success) {
+          throw new Error("Falha ao registrar entrada");
+        }
       }
       
       toast({

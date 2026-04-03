@@ -16,12 +16,37 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { useRecebimentos, Recebimento, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { useBalanca } from "@/hooks/useBalanca";
 import { VolumeContagem, VolumeData } from "@/components/triagem/VolumeContagem";
 import { Progress } from "@/components/ui/progress";
+import { supabase } from "@/integrations/supabase/client";
 
+type StatusRecebimento = "aguardando" | "em_transito" | "recebido" | "em_conferencia" | "conferido" | "divergencia" | "cancelado";
 type TipoEmbalagem = "original" | "plastica" | "generica";
+
+interface Recebimento {
+  id: string;
+  numero_lote: string;
+  produto_id: string;
+  quantidade_inicial: number;
+  quantidade_atual: number;
+  quantidade_pedida: number | null;
+  fornecedor: string | null;
+  nf_entrada: string | null;
+  previsao_chegada: string | null;
+  pedido_compra: string | null;
+  data_validade: string | null;
+  data_fabricacao: string | null;
+  status: StatusRecebimento;
+  observacoes_conferencia: string | null;
+  conferido_por: string | null;
+  data_conferencia: string | null;
+  data_recebimento: string;
+  created_at: string;
+  updated_at: string;
+  produto_nome?: string;
+}
 
 const statusConfig: Record<StatusRecebimento, { label: string; color: string }> = {
   aguardando: { label: "Aguardando", color: "bg-muted" },
@@ -38,7 +63,6 @@ export default function ConferenciaRecebimento() {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Hook de integração com balança
   const {
     conectada: balancaConectada,
     leitura: leituraBalanca,
@@ -48,7 +72,7 @@ export default function ConferenciaRecebimento() {
     erro: erroBalanca,
   } = useBalanca();
   
-  const { recebimentos, loading, confirmarConferencia, atualizarStatus } = useRecebimentos();
+  const { recebimentos, isLoading } = useRecebimentos();
   
   const [recebimento, setRecebimento] = useState<Recebimento | null>(null);
   const [quantidadeConferida, setQuantidadeConferida] = useState(0);
@@ -56,17 +80,12 @@ export default function ConferenciaRecebimento() {
   const [tipoEmbalagem, setTipoEmbalagem] = useState<TipoEmbalagem>("original");
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
-  
-  // Estado para volumes (mock para demonstração)
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
 
-  // Get quantidade esperada from the recebimento
   const quantidadeEsperada = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
   
-  // Inicializar volumes quando recebimento carregar
   useEffect(() => {
     if (recebimento && quantidadeEsperada > 0) {
-      // Criar volumes baseado na quantidade (1 volume para cada 100 unidades ou mínimo 1)
       const numVolumes = Math.max(1, Math.ceil(quantidadeEsperada / 100));
       const qtdPorVolume = Math.ceil(quantidadeEsperada / numVolumes);
       
@@ -94,23 +113,21 @@ export default function ConferenciaRecebimento() {
     setVolumes(prev => prev.map(v => 
       v.id === volumeId ? { ...v, conferido: true } : v
     ));
-    // Atualizar quantidade conferida total
     const total = volumes.reduce((acc, v) => acc + (v.id === volumeId ? (v.qtdContada || 0) : (v.conferido ? (v.qtdContada || 0) : 0)), 0);
     setQuantidadeConferida(total);
   };
 
   useEffect(() => {
-    if (id && recebimentos.length > 0) {
+    if (id && recebimentos && recebimentos.length > 0) {
       const rec = recebimentos.find(r => r.id === id);
       if (rec) {
-        setRecebimento(rec);
+        setRecebimento(rec as unknown as Recebimento);
         setQuantidadeConferida(rec.quantidade_atual || 0);
         setObservacoes(rec.observacoes_conferencia || "");
       }
     }
   }, [id, recebimentos]);
 
-  // Atualizar peso automaticamente quando balança ler
   useEffect(() => {
     if (leituraBalanca && leituraBalanca.estavel) {
       setPesoConferido(leituraBalanca.peso);
@@ -128,13 +145,23 @@ export default function ConferenciaRecebimento() {
         title: "Balança conectada",
         description: "Pronta para leitura de peso",
       });
-    } catch (err) {
+    } catch {
       toast({
         title: "Erro ao conectar",
         description: erroBalanca || "Não foi possível conectar à balança",
         variant: "destructive",
       });
     }
+  };
+
+  const confirmarConferencia = async (recId: string, quantidade: number, obs: string) => {
+    const { error } = await supabase.from('lotes').update({
+      quantidade_atual: quantidade,
+      observacoes_conferencia: obs,
+      status: quantidade === quantidadeEsperada ? 'conferido' as const : 'divergencia' as const,
+      data_conferencia: new Date().toISOString(),
+    }).eq('id', recId);
+    if (error) throw error;
   };
 
   const handleSalvar = async () => {
@@ -144,7 +171,7 @@ export default function ConferenciaRecebimento() {
     try {
       await confirmarConferencia(id, quantidadeConferida, observacoes);
       navigate("/recebimento");
-    } catch (err) {
+    } catch {
       toast({
         title: "Erro ao salvar",
         description: "Não foi possível salvar a conferência",
@@ -155,7 +182,7 @@ export default function ConferenciaRecebimento() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout title="Conferência" showBack>
         <div className="flex items-center justify-center h-64">
@@ -187,7 +214,6 @@ export default function ConferenciaRecebimento() {
   return (
     <AppLayout title="Conferência de Recebimento" showBack>
       <div className="p-4 space-y-6">
-        {/* Header do recebimento */}
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
@@ -196,12 +222,11 @@ export default function ConferenciaRecebimento() {
             </h2>
             <p className="text-muted-foreground">{recebimento.fornecedor}</p>
           </div>
-          <Badge className={statusConfig[recebimento.status].color}>
-            {statusConfig[recebimento.status].label}
+          <Badge className={statusConfig[recebimento.status]?.color || 'bg-muted'}>
+            {statusConfig[recebimento.status]?.label || recebimento.status}
           </Badge>
         </div>
 
-        {/* Card de integração com balança */}
         {balancaSuportada && (
           <Card className={balancaConectada ? "border-green-500" : ""}>
             <CardContent className="pt-4">
@@ -241,11 +266,10 @@ export default function ConferenciaRecebimento() {
           </Card>
         )}
 
-        {/* Informações do produto */}
         <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
           <div>
             <p className="text-sm text-muted-foreground">Produto</p>
-            <p className="font-medium">{recebimento.produto_nome}</p>
+            <p className="font-medium">{recebimento.produto_nome || recebimento.produto_id}</p>
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Quantidade Esperada</p>
@@ -263,7 +287,6 @@ export default function ConferenciaRecebimento() {
           </div>
         </div>
 
-        {/* Progresso da conferência */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span>Progresso da conferência</span>
@@ -283,12 +306,9 @@ export default function ConferenciaRecebimento() {
           )}
         </div>
 
-        {/* Formulário de conferência */}
         <div className="space-y-4">
           <div>
             <Label htmlFor="quantidade">Quantidade Conferida</Label>
-
-            {/* Contagem por Volume */}
             {volumes.length > 1 && (
               <VolumeContagem
                 volumes={volumes}
@@ -298,7 +318,6 @@ export default function ConferenciaRecebimento() {
                 className="mb-4"
               />
             )}
-            
             <Input
               id="quantidade"
               type="number"
@@ -357,7 +376,6 @@ export default function ConferenciaRecebimento() {
           </div>
         </div>
 
-        {/* Ações */}
         <div className="flex gap-3 pt-4">
           <Button variant="outline" onClick={() => navigate("/recebimento")} className="flex-1">
             Cancelar

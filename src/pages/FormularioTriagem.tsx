@@ -24,7 +24,6 @@ import {
   ImagePlus
 } from "lucide-react";
 
-// Checklist de inspeção
 const checklistItems = [
   { id: "corConforme", label: "Cor conforme pedido" },
   { id: "tamanhoOk", label: "Tamanho/dimensões OK" },
@@ -39,9 +38,8 @@ export default function FormularioTriagem() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { toast } = useToast();
-  const { getTriagemById, finalizarTriagem, loading: triagensLoading } = useTriagens();
+  const { triagens, isLoading: triagensLoading, updateTriagem } = useTriagens();
   
-  // Hooks de triagem - using correct API
   const {
     elapsedSeconds,
     formattedTime,
@@ -72,30 +70,30 @@ export default function FormularioTriagem() {
   const [tamanhoAmostra, setTamanhoAmostra] = useState(0);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
 
-  // Get quantidade from triagem
-  const quantidadeTotal = triagem?.quantidade_total || 100; // Default to 100 for demo
+  const quantidadeTotal = triagem?.quantidade_total || 100;
 
   useEffect(() => {
     const carregarTriagem = async () => {
       if (!id) return;
       
       setLoadingTriagem(true);
-      const data = await getTriagemById(id);
-      if (data) {
-        setTriagem(data);
-        // Iniciar timer automaticamente ao carregar
-        iniciarTimer();
+      // Find triagem from the already-loaded list
+      if (triagens) {
+        const found = triagens.find(t => t.id === id);
+        if (found) {
+          setTriagem(found);
+          iniciarTimer();
+        }
       }
       setLoadingTriagem(false);
     };
     
     carregarTriagem();
 
-    // Cleanup - pausar timer ao sair
     return () => {
       pararTimer();
     };
-  }, [id, getTriagemById]);
+  }, [id, triagens]);
 
   const handleChecklistChange = (itemId: string, checked: boolean) => {
     setChecklist(prev => ({ ...prev, [itemId]: checked }));
@@ -111,8 +109,8 @@ export default function FormularioTriagem() {
     return checklistItems.every(item => checklist[item.id] === true);
   };
 
-  const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']) => {
-    await addFotoFromFile(file, tipo);
+  const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']): Promise<FotoTriagem | null> => {
+    return await addFotoFromFile(file, tipo);
   };
 
   const handleRemoveFoto = async (fotoId: string) => {
@@ -127,7 +125,6 @@ export default function FormularioTriagem() {
   const handleSubmit = async (resultado: "aprovado" | "reprovado") => {
     if (!id || !triagem) return;
 
-    // Validar fotos obrigatórias
     if (!requisitosAtendidos) {
       toast({
         title: "Fotos obrigatórias",
@@ -141,15 +138,16 @@ export default function FormularioTriagem() {
     const tempoFinal = pararTimer();
 
     try {
-      // Fazer upload das fotos primeiro
       if (fotos.length > 0) {
         await salvarFotosTriagem(id);
       }
 
-      // Finalizar triagem
-      await finalizarTriagem(id, {
+      // Use updateTriagem mutation
+      await updateTriagem.mutateAsync({
+        id,
         resultado,
         observacoes,
+        data_fim: new Date().toISOString(),
       });
 
       toast({
@@ -158,7 +156,7 @@ export default function FormularioTriagem() {
       });
 
       navigate("/triagem");
-    } catch (err) {
+    } catch {
       toast({
         title: "Erro ao finalizar",
         description: "Não foi possível finalizar a triagem",
@@ -198,7 +196,6 @@ export default function FormularioTriagem() {
   return (
     <AppLayout title="Formulário de Triagem" showBack>
       <div className="p-4 space-y-6">
-        {/* Header com informações do lote */}
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-start justify-between">
@@ -238,7 +235,6 @@ export default function FormularioTriagem() {
           </CardContent>
         </Card>
 
-        {/* Amostragem Estatística */}
         {mostrarAmostragem && quantidadeTotal > 0 && !amostragemConfirmada && (
           <AmostragemAutomatica
             tamanhoLote={quantidadeTotal}
@@ -246,7 +242,6 @@ export default function FormularioTriagem() {
           />
         )}
 
-        {/* Checklist de inspeção */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Checklist de Inspeção</CardTitle>
@@ -282,7 +277,6 @@ export default function FormularioTriagem() {
           </CardContent>
         </Card>
 
-        {/* Histórico de Defeitos do Produto */}
         {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
           <DefeitoHistorico
             sku={triagem.produto_sku}
@@ -292,8 +286,6 @@ export default function FormularioTriagem() {
           />
         )}
 
-
-        {/* Fotos obrigatórias */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -315,7 +307,6 @@ export default function FormularioTriagem() {
           </CardContent>
         </Card>
 
-        {/* Quantidades */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Resultado da Inspeção</CardTitle>
@@ -359,7 +350,6 @@ export default function FormularioTriagem() {
           </CardContent>
         </Card>
 
-        {/* Ações */}
         <div className="flex gap-3">
           <Button
             variant="destructive"
