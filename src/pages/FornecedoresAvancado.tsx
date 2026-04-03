@@ -168,7 +168,7 @@ export default function FornecedoresAvancado() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold truncate">{f.fornecedor}</span>
                   <div className="flex">
-                    {Array.from({ length: getStars(f.score) }).map((_, s) => (
+                    {Array.from({ length: getStars(f.score ?? 0) }).map((_, s) => (
                       <Star key={s} className="h-3 w-3 text-warning fill-warning" />
                     ))}
                   </div>

@@ -126,7 +126,7 @@ export function SwipeableListItem({
     <div 
       ref={(el) => {
         // Merge refs
-        if (containerRef) containerRef.current = el;
+        if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
         if (swipeRef && typeof swipeRef === 'function') swipeRef(el);
       }}
       className={cn(

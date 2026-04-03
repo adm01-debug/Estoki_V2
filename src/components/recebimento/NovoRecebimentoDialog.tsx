@@ -85,7 +85,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
         .order("nome");
 
       if (!error && data) {
-        setProdutos(data);
+        setProdutos((data || []).map(p => ({ ...p, fornecedor_principal: p.fornecedor_principal ?? undefined })));
       }
       setLoadingProdutos(false);
     };

@@ -31,7 +31,7 @@ export function CalendarFull({ events = [], onDateClick, onEventClick, className
   const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const days = [];
+  const days: (number | null)[] = [];
   for (let i = 0; i < startPadding; i++) days.push(null);
   for (let i = 1; i <= daysInMonth; i++) days.push(i);
 
