@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 export function useSubscription<T>(table: string, filter?: { column: string; value: any }) {
