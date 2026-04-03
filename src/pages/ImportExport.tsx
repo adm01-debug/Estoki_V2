@@ -149,7 +149,7 @@ export default function ImportExport() {
             if (insertData.ponto_pedido) insertData.ponto_pedido = Number(insertData.ponto_pedido);
             if (insertData.capacidade_kg) insertData.capacidade_kg = Number(insertData.capacidade_kg);
 
-            const { error } = await supabase.from(template.table).insert(insertData);
+            const { error } = await (supabase.from(template.table as any) as any).insert(insertData);
             if (error) throw error;
             importResult.success++;
           } catch (err: any) {

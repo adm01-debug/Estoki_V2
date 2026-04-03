@@ -74,7 +74,7 @@ const itemVariants = {
 export default function Dashboard() {
   const navigate = useNavigate();
   const { profile, user } = useAuth();
-  const { stats, isLoading: loadingKpis, refetch: refetchDashboard } = useDashboard();
+  const { kpis: stats, loading: loadingKpis, refetch: refetchDashboard } = useDashboard();
   const { atividades, loading: loadingAtividades } = useAtividadeRecente(5);
   const { recebimentos } = useRecebimentos();
   const { getEstatisticas, loading: loadingEstoque } = useEstoque();
