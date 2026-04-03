@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Camera, Check, AlertTriangle, Package, Loader2, Clock, Truck, Scale, Wifi, WifiOff } from "lucide-react";

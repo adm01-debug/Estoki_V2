@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState, useEffect } from 'react';
 import { DataGrid } from '@/components/data/DataGrid';
 import { Button } from '@/components/ui/button';
