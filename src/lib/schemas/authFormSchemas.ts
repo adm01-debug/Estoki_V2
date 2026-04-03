@@ -12,7 +12,8 @@ export const registerFormSchema = z.object({
   password: z.string().min(8, 'Senha deve ter pelo menos 8 caracteres')
     .regex(/[A-Z]/, 'Senha deve ter pelo menos uma letra maiúscula')
     .regex(/[a-z]/, 'Senha deve ter pelo menos uma letra minúscula')
-    .regex(/[0-9]/, 'Senha deve ter pelo menos um número'),
+    .regex(/[0-9]/, 'Senha deve ter pelo menos um número')
+    .regex(/[!@#$%^&*(),.?":{}|<>]/, 'Senha deve ter pelo menos um caractere especial'),
   confirmPassword: z.string(),
   acceptTerms: z.boolean().refine(val => val === true, 'Você deve aceitar os termos'),
 }).refine(data => data.password === data.confirmPassword, {
