@@ -167,7 +167,7 @@ const ArmazenamentoPage = () => {
   const [searchParams] = useSearchParams();
   
   // Hooks do Supabase
-  const { posicoes, loading: loadingPosicoes, alocarProduto, refetch } = useEstoque();
+  const { posicoes, loading: loadingPosicoes, refetch } = useEstoque();
   const { registrarEntrada } = useMovimentacoes();
   
   const [posicaoSelecionada, setPosicaoSelecionada] = useState<PosicaoSugerida | null>(null);
