@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { supabase } from '@/integrations/supabase/client';
 export interface Product { id: string; name: string; sku: string; barcode?: string; description?: string; category_id?: string; cost: number; price: number; stock_quantity: number; reserved_quantity: number; reorder_point: number; reorder_quantity: number; unit: string; weight?: number; dimensions?: { width: number; height: number; length: number }; image_url?: string; status: 'active' | 'inactive' | 'discontinued'; created_at: string; updated_at: string; }
 export const productService = {

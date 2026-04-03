@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { supabase } from '@/integrations/supabase/client';
 export interface Order { id: string; order_number: string; type: 'sales' | 'purchase'; customer_id?: string; supplier_id?: string; items: { productId: string; quantity: number; unitPrice: number }[]; subtotal: number; tax?: number; shipping?: number; total: number; status: string; notes?: string; created_at: string; }
 export const orderService = {
