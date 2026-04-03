@@ -587,13 +587,13 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           ))}
           
           <SidebarSectionLabel label="Operações" collapsed={sidebarCollapsed && !isMobile} />
-          {sidebarSecondaryItems.map((item) => (
-            <SidebarNavButton
-              key={item.path}
-              item={item}
-              isActive={location.pathname === item.path}
-              onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+          {sidebarGroups.map((group) => (
+            <SidebarAccordionGroup
+              key={group.label}
+              group={group}
               collapsed={sidebarCollapsed && !isMobile}
+              pathname={location.pathname}
+              onNavigate={(path) => { navigate(path); if (isMobile) setMobileMenuOpen(false); }}
               onHover={preloadRoute}
             />
           ))}
