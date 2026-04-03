@@ -89,7 +89,7 @@ export default function Automacoes() {
             .from("lotes")
             .select("id, numero_lote, data_validade, produto_id")
             .lt("data_validade", new Date().toISOString())
-            .neq("status", "quarentena");
+            .neq("status", "quarentena" as any);
 
           if (error) throw error;
 
@@ -97,7 +97,7 @@ export default function Automacoes() {
           for (const lote of lotesVencidos || []) {
             const { error: updateError } = await supabase
               .from("lotes")
-              .update({ status: "quarentena" })
+              .update({ status: "quarentena" as any })
               .eq("id", lote.id);
             
             if (!updateError) {

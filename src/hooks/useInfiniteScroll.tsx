@@ -58,8 +58,8 @@ export function useInfiniteScroll<T = any>(
   } = useInfiniteQuery({
     queryKey,
     queryFn: async ({ pageParam = 0 }) => {
-      let query = supabase
-        .from(table)
+      let query = (supabase
+        .from(table as any) as any)
         .select(selectColumns.join(","), { count: "exact" })
         .order(orderBy.column, { ascending: orderBy.ascending ?? false })
         .range(pageParam, pageParam + pageSize - 1);

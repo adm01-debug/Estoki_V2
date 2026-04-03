@@ -7,7 +7,7 @@ import { useCallback, useState } from 'react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ExcelJS from 'exceljs';
-import { analytics, EventCategory, EventAction } from '@/config/analytics';
+import { trackEvent, EventCategory, EventAction } from '@/config/analytics';
 
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'json' | 'print';
 
@@ -93,7 +93,7 @@ export function useExport(): UseExportReturn {
         doc.text(`Página ${i} de ${pageCount}`, doc.internal.pageSize.getWidth() / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
       }
       doc.save(`${filename}.pdf`);
-      analytics.trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_pdf', value: data.length });
+      trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_pdf', value: data.length });
     } catch (error) {
       if (import.meta.env.DEV) console.error('[Export] PDF error:', error);
       throw error;
@@ -135,7 +135,7 @@ export function useExport(): UseExportReturn {
       link.href = url; link.download = `${filename}.xlsx`; link.click();
       URL.revokeObjectURL(url);
 
-      analytics.trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_excel', value: data.length });
+      trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_excel', value: data.length });
     } catch (error) {
       if (import.meta.env.DEV) console.error('[Export] Excel error:', error);
       throw error;

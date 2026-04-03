@@ -194,7 +194,7 @@ const DashboardPage = () => {
       <AppLayout title="Dashboard" showBack>
         <div className="p-4 text-center">
           <p className="text-destructive mb-4">{error}</p>
-          <Button onClick={refetch}>Tentar novamente</Button>
+          <Button onClick={() => refetch()}>Tentar novamente</Button>
         </div>
       </AppLayout>
     );
@@ -249,7 +249,7 @@ const DashboardPage = () => {
             )}
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-2" onClick={refetch}>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => refetch()}>
               <RefreshCw className="h-4 w-4" />
               Atualizar
             </Button>
