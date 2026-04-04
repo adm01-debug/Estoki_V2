@@ -54,7 +54,7 @@ export default function LoginPage() {
       await resetLockout(email);
       toast.success('Login realizado!');
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Registrar tentativa falhada
       await recordFailedAttempt(email);
       toast.error(error.message || 'Erro ao fazer login');
