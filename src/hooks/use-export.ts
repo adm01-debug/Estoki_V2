@@ -1,12 +1,10 @@
 /**
  * Hook de Exportação e Impressão
  * Suporta PDF, Excel, CSV, impressão
+ * Bibliotecas pesadas carregadas via dynamic import
  */
 
 import { useCallback, useState } from 'react';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import ExcelJS from 'exceljs';
 import { trackEvent, EventCategory, EventAction } from '@/config/analytics';
 
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'json' | 'print';
@@ -61,6 +59,9 @@ export function useExport(): UseExportReturn {
   const exportToPDF = useCallback(async (data: any[], options: ExportOptions = {}) => {
     setIsExporting(true);
     try {
+      const { jsPDF } = await import('jspdf');
+      const autoTable = (await import('jspdf-autotable')).default;
+
       const {
         filename = 'export', title = 'Relatório', subtitle, columns = getAutoColumns(data),
         orientation = 'portrait', pageSize = 'a4', includeTimestamp = true, customStyles = {},
@@ -103,6 +104,8 @@ export function useExport(): UseExportReturn {
   const exportToExcel = useCallback(async (data: any[], options: ExportOptions = {}) => {
     setIsExporting(true);
     try {
+      const ExcelJS = (await import('exceljs')).default;
+
       const { filename = 'export', title = 'Dados', columns = getAutoColumns(data) } = options;
       const headers = columns.map(col => col.header);
       const rows = data.map(row => columns.reduce((acc, col) => {

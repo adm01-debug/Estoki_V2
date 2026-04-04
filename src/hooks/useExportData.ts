@@ -1,7 +1,4 @@
 import { useState, useCallback } from 'react';
-import ExcelJS from 'exceljs';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import { toast } from 'sonner';
 
 export type ExportFormat = 'csv' | 'xlsx' | 'pdf';
@@ -35,6 +32,7 @@ export function useExportData<T extends Record<string, unknown>>(options: { colu
   }, [columns, formatData, fileName]);
 
   const exportExcel = useCallback(async (data: T[]) => {
+    const ExcelJS = (await import('exceljs')).default;
     const formatted = formatData(data);
     const headers = columns.map(c => c.header);
     const workbook = new ExcelJS.Workbook();
@@ -52,7 +50,9 @@ export function useExportData<T extends Record<string, unknown>>(options: { colu
     URL.revokeObjectURL(url);
   }, [columns, formatData, fileName]);
 
-  const exportPDF = useCallback((data: T[], title?: string) => {
+  const exportPDF = useCallback(async (data: T[], title?: string) => {
+    const { jsPDF } = await import('jspdf');
+    const autoTable = (await import('jspdf-autotable')).default;
     const doc = new jsPDF({ orientation: data.length > 5 ? 'landscape' : 'portrait' });
     doc.setFontSize(16);
     doc.text(title ?? fileName, 14, 15);
@@ -68,7 +68,7 @@ export function useExportData<T extends Record<string, unknown>>(options: { colu
     try {
       if (format === 'csv') exportCSV(data);
       else if (format === 'xlsx') await exportExcel(data);
-      else exportPDF(data, opts?.title);
+      else await exportPDF(data, opts?.title);
       toast.success(`Exportado ${data.length} registros`);
     } catch (e) { toast.error(`Erro: ${e instanceof Error ? e.message : 'desconhecido'}`); }
     finally { setIsExporting(false); }
