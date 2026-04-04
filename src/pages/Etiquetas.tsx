@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode";
-import { jsPDF } from "jspdf";
+// jsPDF loaded dynamically when needed
 import {
   Search, Printer, Download, Eye, Loader2, Tag,
   Package, QrCode, ChevronRight, RefreshCw, Truck
@@ -283,7 +283,7 @@ export default function Etiquetas() {
   };
 
   // ── PDF for Lotes ──
-  const generateLotePDF = async (doc: jsPDF, lotesToPrint: LoteItem[]) => {
+  const generateLotePDF = async (doc: any, lotesToPrint: LoteItem[]) => {
     const { width, height } = tamanhos[tamanho];
     let pageIndex = 0;
     for (const lote of lotesToPrint) {
@@ -359,7 +359,7 @@ export default function Etiquetas() {
   };
 
   // ── PDF for Entregas ──
-  const generateEntregaPDF = async (doc: jsPDF, entregasToPrint: EntregaItem[]) => {
+  const generateEntregaPDF = async (doc: any, entregasToPrint: EntregaItem[]) => {
     const { width, height } = tamanhos[tamanho];
     let pageIndex = 0;
     for (const ent of entregasToPrint) {
@@ -454,6 +454,7 @@ export default function Etiquetas() {
     setIsGenerating(true);
     try {
       const { width, height } = tamanhos[tamanho];
+      const { jsPDF } = await import('jspdf');
       const doc = new jsPDF({
         orientation: width > height ? "landscape" : "portrait",
         unit: "mm",

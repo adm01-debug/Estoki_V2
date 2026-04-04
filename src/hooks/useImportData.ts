@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
 import { z } from 'zod';
-import Papa from 'papaparse';
-import ExcelJS from 'exceljs';
 import { toast } from 'sonner';
 
 export interface ImportResult<T> {
@@ -34,6 +32,7 @@ export function useImportData<T>(options: UseImportDataOptions<T>) {
   const [result, setResult] = useState<ImportResult<T> | null>(null);
 
   const parseCSV = useCallback(async (file: File): Promise<unknown[]> => {
+    const Papa = (await import('papaparse')).default;
     return new Promise((resolve, reject) => {
       Papa.parse(file, {
         header: true, skipEmptyLines: true,
@@ -48,6 +47,7 @@ export function useImportData<T>(options: UseImportDataOptions<T>) {
   }, [skipFirstRow]);
 
   const parseExcel = useCallback(async (file: File): Promise<unknown[]> => {
+    const ExcelJS = (await import('exceljs')).default;
     const arrayBuffer = await file.arrayBuffer();
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(arrayBuffer);

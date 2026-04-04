@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import jsPDF from "jspdf";
+// jsPDF loaded dynamically when needed
 import { 
   Search, 
   Plus, 
@@ -513,7 +513,8 @@ export default function TrocasDevolucoes() {
   };
 
   // Export to PDF
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
+    const { default: jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     
     doc.setFontSize(18);

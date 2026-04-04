@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/ui/page-header";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import Papa from "papaparse";
+// papaparse loaded dynamically
 
 interface ImportResult {
   success: number;
@@ -54,10 +54,10 @@ export default function ImportExport() {
   const [result, setResult] = useState<ImportResult | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
-  const downloadTemplate = (templateId: string) => {
+  const downloadTemplate = async (templateId: string) => {
     const template = templates.find(t => t.id === templateId);
     if (!template) return;
-
+    const Papa = (await import('papaparse')).default;
     const csv = Papa.unparse({ fields: template.headers, data: [] });
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -78,6 +78,7 @@ export default function ImportExport() {
       const { data, error } = await (supabase.from(template.table as any) as any).select("*").limit(5000);
       if (error) throw error;
 
+      const Papa = (await import('papaparse')).default;
       const csv = Papa.unparse(data || []);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
@@ -101,6 +102,7 @@ export default function ImportExport() {
     setImporting(true);
     setResult(null);
 
+    const Papa = (await import('papaparse')).default;
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,

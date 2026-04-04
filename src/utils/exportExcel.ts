@@ -1,37 +1,31 @@
-import ExcelJS from 'exceljs';
-
 interface ExportOptions {
   filename?: string;
   sheetName?: string;
 }
 
-export function exportToExcel<T extends Record<string, unknown>>(
+export async function exportToExcel<T extends Record<string, unknown>>(
   data: T[],
   options: ExportOptions = {}
-): void {
+): Promise<void> {
   const { filename = 'export', sheetName = 'Dados' } = options;
+  const ExcelJS = (await import('exceljs')).default;
 
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
 
   if (!data.length) return;
 
-  // Add headers
   const headers = Object.keys(data[0]);
   worksheet.addRow(headers);
 
-  // Style header row
   const headerRow = worksheet.getRow(1);
-  headerRow.font = { bold: true };
   headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF6366F1' } };
   headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
 
-  // Add data rows
   data.forEach(row => {
     worksheet.addRow(headers.map(h => row[h] ?? ''));
   });
 
-  // Auto-size columns
   headers.forEach((_, i) => {
     const col = worksheet.getColumn(i + 1);
     let maxLen = headers[i].length;
@@ -42,22 +36,21 @@ export function exportToExcel<T extends Record<string, unknown>>(
     col.width = Math.min(maxLen + 2, 50);
   });
 
-  // Download
-  workbook.xlsx.writeBuffer().then(buffer => {
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.xlsx`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-export function exportMultipleSheetsToExcel(
+export async function exportMultipleSheetsToExcel(
   sheets: { data: Record<string, unknown>[]; name: string }[],
   filename: string = 'export'
-): void {
+): Promise<void> {
+  const ExcelJS = (await import('exceljs')).default;
   const workbook = new ExcelJS.Workbook();
 
   sheets.forEach(({ data, name }) => {
@@ -85,13 +78,12 @@ export function exportMultipleSheetsToExcel(
     });
   });
 
-  workbook.xlsx.writeBuffer().then(buffer => {
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.xlsx`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${filename}.xlsx`;
+  a.click();
+  URL.revokeObjectURL(url);
 }

@@ -1,6 +1,5 @@
-import jsPDF from 'jspdf';
-
-export const generatePDF = (title: string, content: string): jsPDF => {
+export const generatePDF = async (title: string, content: string) => {
+  const { jsPDF } = await import('jspdf');
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text(title, 20, 20);
@@ -9,11 +8,12 @@ export const generatePDF = (title: string, content: string): jsPDF => {
   return doc;
 };
 
-export const downloadPDF = (doc: jsPDF, filename: string): void => {
+export const downloadPDF = async (doc: any, filename: string): Promise<void> => {
   doc.save(`${filename}.pdf`);
 };
 
-export const generateTablePDF = (title: string, headers: string[], data: string[][]): jsPDF => {
+export const generateTablePDF = async (title: string, headers: string[], data: string[][]) => {
+  const { jsPDF } = await import('jspdf');
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text(title, 20, 20);
