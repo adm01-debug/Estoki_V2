@@ -99,7 +99,7 @@ export const auditService = {
       return [];
     }
 
-    return data || [];
+    return (data || []) as AuditLogEntry[];
   },
 
   /**
