@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, createContext, useContext, useState, useCallback, memo, useMemo } from "react";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
+
 import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { prefetchCriticalRoutes } from "@/lib/prefetch";
@@ -424,7 +424,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut, loading } = useAuth();
-  const { permission, isSupported, requestPermission } = usePushNotifications();
+  // Push notifications hook kept for potential future use in notification center
   const preloadRoute = useRoutePreload();
   const { favorites, toggleFavorite, isFavorite } = useSidebarFavorites();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -465,11 +465,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     prefetchCriticalRoutes();
   }, []);
 
-  useEffect(() => {
-    if (isSupported && permission === "default") {
-      requestPermission();
-    }
-  }, [isSupported, permission, requestPermission]);
+  // Push notification permission is requested manually by the user via settings — not auto-requested
 
   useEffect(() => {
     setMobileMenuOpen(false);
