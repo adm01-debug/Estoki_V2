@@ -396,7 +396,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           })
           .in('id', alertaIds);
       } catch (err) {
-        console.error('Erro ao marcar alertas como lidos:', err);
+        if (import.meta.env.DEV) console.error('Erro ao marcar alertas como lidos:', err);
       }
     }
 
