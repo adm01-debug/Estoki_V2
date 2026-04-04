@@ -91,7 +91,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       setLoading(false);
+    }).catch((err) => {
+      console.error("Failed to get session:", err);
+      setLoading(false);
     });
+
+    // Safety timeout - never stay loading forever
+    const safetyTimeout = setTimeout(() => {
+      setLoading((prev) => {
+        if (prev) {
+          console.warn("Auth loading safety timeout triggered");
+        }
+        return false;
+      });
+    }, 5000);
 
     return () => subscription.unsubscribe();
   }, []);
