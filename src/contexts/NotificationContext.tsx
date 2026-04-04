@@ -231,7 +231,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       lastNotificationIds.current = new Set(notifs.map(n => n.id));
       isInitialLoad.current = false;
     } catch (err) {
-      console.error('Erro ao buscar notificações:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar notificações:', err);
     }
   }, [user]);
 
