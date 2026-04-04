@@ -88,13 +88,21 @@ interface NavItem {
   badge?: number;
 }
 
-// Bottom nav (mobile) - most used
+// Bottom nav (mobile) - 4 items + FAB center
 const mobileNavItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  // FAB goes here (index 2)
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
-  { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
+];
+
+// Quick actions for FAB
+const fabActions: NavItem[] = [
+  { path: "/scanner", icon: QrCode, label: "Scanner" },
+  { path: "/triagem", icon: Search, label: "Triagem" },
+  { path: "/picking", icon: ListTodo, label: "Picking" },
+  { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentar" },
 ];
 
 // Main sidebar sections
