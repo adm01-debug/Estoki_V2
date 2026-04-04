@@ -1,51 +1,64 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const EmailAlertSchema = z.object({
+  to: z.union([z.string().email(), z.array(z.string().email()).min(1)]),
+  subject: z.string().min(1).max(500).optional(),
+  html: z.string().max(100000).optional(),
+  tipo: z.string().max(100).optional(),
+});
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
 
   try {
-    const { to, subject, html, tipo } = await req.json();
-    const resendKey = Deno.env.get('RESEND_API_KEY');
-    
-    if (!resendKey) {
-      throw new Error('RESEND_API_KEY not configured');
+    const parsed = EmailAlertSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
     }
 
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
+    const { to, subject, html, tipo } = parsed.data;
+
+    const resendKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendKey) {
+      return jsonResponse({ error: "Email service not configured" }, 503);
+    }
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'ESTOKI WMS <onboarding@resend.dev>',
+        from: "ESTOKI WMS <onboarding@resend.dev>",
         to: Array.isArray(to) ? to : [to],
-        subject: subject || `[ESTOKI] Alerta - ${tipo || 'Sistema'}`,
+        subject: subject || `[ESTOKI] Alerta - ${tipo || "Sistema"}`,
         html: html || `<h2>Alerta do ESTOKI WMS</h2><p>Tipo: ${tipo}</p>`,
       }),
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`Resend error: ${response.status} - ${error}`);
+      const errorText = await response.text();
+      console.error(`Resend error: ${response.status} - ${errorText}`);
+      return jsonResponse({ error: "Failed to send email" }, 502);
     }
 
     const data = await response.json();
-    return new Response(JSON.stringify({ success: true, id: data.id }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse({ success: true, id: data.id });
   } catch (error) {
-    console.error('Email error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error("send-email-alert error:", error);
+    return jsonResponse({ error: "Internal server error" }, 500);
   }
 });
