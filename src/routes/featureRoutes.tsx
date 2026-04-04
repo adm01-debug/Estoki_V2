@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { LoadingFallback } from "@/components/common/LoadingFallback";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 
 // Customers & Orders
 const CustomersPage = lazy(() => import("@/pages/customers/CustomersPage"));
@@ -39,34 +40,34 @@ const Etiquetas = lazy(() => import("@/pages/Etiquetas"));
 export const featureRoutes = (
   <>
     {/* Customers & Orders */}
-    <Route path="categorias" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><CategoriesPage /></Suspense>} />
-    <Route path="clientes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><CustomersPage /></Suspense>} />
-    <Route path="clientes/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><CustomerDetailPage /></Suspense>} />
-    <Route path="pedidos" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense>} />
-    <Route path="pedidos/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><OrderDetailPage /></Suspense>} />
-    <Route path="seriais" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><SerialsPage /></Suspense>} />
-    <Route path="armazens" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><WarehousesPage /></Suspense>} />
-    <Route path="armazens/:id" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><WarehouseDetailPage /></Suspense>} />
+    <Route path="categorias" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><CategoriesPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="clientes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><CustomersPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="clientes/:id" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><CustomerDetailPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="pedidos/:id" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><OrderDetailPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="seriais" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><SerialsPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="armazens" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><WarehousesPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="armazens/:id" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><WarehouseDetailPage /></Suspense></RouteErrorBoundary>} />
 
     {/* User */}
-    <Route path="configuracoes" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Configuracoes /></Suspense>} />
-    <Route path="perfil" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ProfilePage /></Suspense>} />
-    <Route path="ajuda" element={<Suspense fallback={<LoadingFallback />}><HelpPage /></Suspense>} />
-    <Route path="notificacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><NotificationsPage /></Suspense>} />
-    <Route path="gamificacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Gamificacao /></Suspense>} />
-    <Route path="assistente-ia" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense>} />
-    <Route path="import-export" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense>} />
-    <Route path="automacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense>} />
-    <Route path="dashboard-realtime" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTempoReal /></Suspense>} />
-    <Route path="relatorios-agendados" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatoriosAgendados /></ProtectedRoute></Suspense>} />
-    <Route path="aprovacoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AprovacaoMovimentacoes /></ProtectedRoute></Suspense>} />
-    <Route path="fornecedores-avancado" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><FornecedoresAvancado /></ProtectedRoute></Suspense>} />
-    <Route path="modo-offline" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ModoOffline /></Suspense>} />
-    <Route path="enderecamento" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><EndereçamentoAutomatico /></Suspense>} />
-    <Route path="transportadoras" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><IntegracaoTransportadoras /></Suspense>} />
-    <Route path="previsao-demanda" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><PrevisaoDemandaIA /></ProtectedRoute></Suspense>} />
-    <Route path="etiquetas" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><Etiquetas /></Suspense>} />
+    <Route path="configuracoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><Configuracoes /></Suspense></RouteErrorBoundary>} />
+    <Route path="perfil" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><ProfilePage /></Suspense></RouteErrorBoundary>} />
+    <Route path="ajuda" element={<RouteErrorBoundary><Suspense fallback={<LoadingFallback />}><HelpPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="notificacoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><NotificationsPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="gamificacao" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Gamificacao /></Suspense></RouteErrorBoundary>} />
+    <Route path="assistente-ia" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><AssistenteIA /></Suspense></RouteErrorBoundary>} />
+    <Route path="import-export" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ImportExport /></Suspense></RouteErrorBoundary>} />
+    <Route path="automacoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Automacoes /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="dashboard-realtime" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTempoReal /></Suspense></RouteErrorBoundary>} />
+    <Route path="relatorios-agendados" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatoriosAgendados /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="aprovacoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AprovacaoMovimentacoes /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="fornecedores-avancado" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><FornecedoresAvancado /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="modo-offline" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ModoOffline /></Suspense></RouteErrorBoundary>} />
+    <Route path="enderecamento" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><EndereçamentoAutomatico /></Suspense></RouteErrorBoundary>} />
+    <Route path="transportadoras" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><IntegracaoTransportadoras /></Suspense></RouteErrorBoundary>} />
+    <Route path="previsao-demanda" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><PrevisaoDemandaIA /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="etiquetas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><Etiquetas /></Suspense></RouteErrorBoundary>} />
 
-    <Route path="*" element={<Suspense fallback={<LoadingFallback />}><NotFound /></Suspense>} />
+    <Route path="*" element={<RouteErrorBoundary><Suspense fallback={<LoadingFallback />}><NotFound /></Suspense></RouteErrorBoundary>} />
   </>
 );

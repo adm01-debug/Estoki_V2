@@ -17,6 +17,7 @@ window.addEventListener("error", (event) => {
   console.error("[Global Error]", event.message, event.filename, event.lineno);
 });
 import { prefetchCriticalRoutes } from "./lib/prefetch";
+import { initWebVitals } from "./lib/web-vitals";
 
 const rootElement = document.getElementById("root");
 
@@ -56,9 +57,10 @@ async function bootstrap() {
 
   createRoot(rootElement).render(<App />);
 
-  // Prefetch critical routes after initial render
+  // Prefetch critical routes and init monitoring after render
   requestAnimationFrame(() => {
     prefetchCriticalRoutes();
+    initWebVitals();
   });
 }
 
