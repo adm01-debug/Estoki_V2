@@ -128,7 +128,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // Background sync
-self.addEventListener('sync', (event) => {
+self.addEventListener('sync', (event: ExtendableEvent & { tag?: string }) => {
   if (event.tag === 'sync-offline-data') {
     event.waitUntil(syncOfflineData());
   }
