@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const recebimentoService = {
   async getAll(status?: string) {
     let query = supabase.from("lotes").select("*").order("created_at", { ascending: false });
-    if (status) query = query.eq("status", status);
+    if (status) query = query.eq("status", status as any);
     const { data, error } = await query;
     if (error) throw error;
     return data;

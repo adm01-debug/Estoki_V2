@@ -256,38 +256,38 @@ export default function KPIsOperacionais() {
             title="Itens Triados"
             value={kpisConsolidados.totalItensTriados}
             meta={getMetaValue("itens_triados")}
-            icon={<Package className="h-5 w-5" />}
-            trend={variacaoTriagem.tipo}
-            trendValue={variacaoTriagem.valor}
-            status={getKPIStatus("itens_triados", kpisConsolidados.totalItensTriados)}
+            icon={Package}
+            iconColor="text-primary"
+            iconBgColor="bg-primary/10"
+            tendencia={variacaoTriagem.valor}
           />
           
           <KPICardWithAlert
             title="Taxa de Aprovação"
             value={kpisConsolidados.taxaAprovacao}
             meta={getMetaValue("taxa_aprovacao")}
-            suffix="%"
-            icon={<CheckCircle2 className="h-5 w-5" />}
-            status={getKPIStatus("taxa_aprovacao", kpisConsolidados.taxaAprovacao)}
+            icon={CheckCircle2}
+            iconColor="text-success"
+            iconBgColor="bg-success/10"
           />
           
           <KPICardWithAlert
             title="Pedidos Separados"
             value={kpisConsolidados.pedidosSeparados}
             meta={getMetaValue("pedidos_separados")}
-            icon={<Warehouse className="h-5 w-5" />}
-            trend={variacaoPicking.tipo}
-            trendValue={variacaoPicking.valor}
-            status={getKPIStatus("pedidos_separados", kpisConsolidados.pedidosSeparados)}
+            icon={Warehouse}
+            iconColor="text-info"
+            iconBgColor="bg-info/10"
+            tendencia={variacaoPicking.valor}
           />
           
           <KPICardWithAlert
             title="Acuracidade Picking"
             value={kpisConsolidados.acuracidadePicking}
             meta={getMetaValue("acuracidade_picking")}
-            suffix="%"
-            icon={<Target className="h-5 w-5" />}
-            status={getKPIStatus("acuracidade_picking", kpisConsolidados.acuracidadePicking)}
+            icon={Target}
+            iconColor="text-warning"
+            iconBgColor="bg-warning/10"
           />
         </div>
 

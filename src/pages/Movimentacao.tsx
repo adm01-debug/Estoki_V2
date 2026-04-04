@@ -81,7 +81,7 @@ export default function MovimentacaoPage() {
     error, 
     registrarMovimentacao 
   } = useMovimentacoes();
-  const { logAction } = useAuditLog();
+  const { log: auditLog } = useAuditLog();
   
   const [activeTab, setActiveTab] = useState("registrar");
   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");
@@ -152,12 +152,7 @@ export default function MovimentacaoPage() {
       
       if (success) {
         // Log de auditoria
-        logAction.mutate({
-          action: "create",
-          entity_type: "movimentacao",
-          entity_label: tipoMovimento,
-          new_values: { tipo: tipoMovimento, quantidade: formData.quantidade, localizacao: formData.localizacao, descricao: formData.descricao }
-        });
+        auditLog.create("movimentacao", "", tipoMovimento, { tipo: tipoMovimento, quantidade: formData.quantidade, localizacao: formData.localizacao, descricao: formData.descricao });
         setFormData({ localizacao: "", quantidade: 1, descricao: "" });
         setActiveTab("historico");
       }

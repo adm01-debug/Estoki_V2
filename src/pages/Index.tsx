@@ -97,7 +97,7 @@ export default function Dashboard() {
       r.status === 'aguardando' || r.status === 'em_transito'
     ).length;
     const div = recebimentosList.filter(r => r.status === 'divergencia').length;
-    const triagem = stats?.totalTriagens || 0;
+    const triagem = (stats as any)?.totalTriagens || 0;
     const itens = estatisticas.posicoesOcupadas;
     const pp = Math.round(estatisticas.taxaOcupacao);
     const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
@@ -329,8 +329,8 @@ export default function Dashboard() {
                 ))
               ) : (
                 [
-                  { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", bgClass: "bg-success/10", textClass: "text-success", borderClass: "border-success/20" },
-                  { icon: Target, value: stats?.totalTriagens || 0, label: "Triagens", bgClass: "bg-primary/10", textClass: "text-primary", borderClass: "border-primary/20" },
+                  { icon: CheckCircle2, value: (stats as any)?.totalRecebimentos || 0, label: "Entradas", bgClass: "bg-success/10", textClass: "text-success", borderClass: "border-success/20" },
+                  { icon: Target, value: (stats as any)?.totalTriagens || 0, label: "Triagens", bgClass: "bg-primary/10", textClass: "text-primary", borderClass: "border-primary/20" },
                   { icon: XCircle, value: divergencias, label: "Divergências", bgClass: "bg-destructive/10", textClass: "text-destructive", borderClass: "border-destructive/20" },
                 ].map((stat, index) => (
                   <motion.div 

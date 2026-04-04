@@ -16,7 +16,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useTriagens, StatusTriagem } from "@/hooks/useTriagens";
+import { useTriagens } from "@/hooks/useTriagens";
+
+type StatusTriagem = 'em_andamento' | 'aprovado' | 'ressalva' | 'reprovado';
 
 const statusConfig: Record<StatusTriagem, { label: string; icon: React.ReactNode; className: string }> = {
   em_andamento: { label: "Em Andamento", icon: <Play className="h-3 w-3" />, className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
@@ -31,7 +33,9 @@ type SortOrder = "data" | "resultado";
 export default function TriagemPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { triagens, loading, error, iniciarTriagem, refetch } = useTriagens();
+  const { triagens, isLoading, error, createTriagem, refetch } = useTriagens();
+  
+  const items = triagens || [];
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
@@ -39,7 +43,6 @@ export default function TriagemPage() {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [showAmostragem, setShowAmostragem] = useState(false);
 
-  // Pull-to-refresh para mobile
   const containerRef = useRef<HTMLDivElement>(null);
   const { bind: bindPullRefresh, isRefreshing, pullDistance, pullThreshold } = usePullToRefresh(async () => {
     await refetch();
@@ -51,7 +54,7 @@ export default function TriagemPage() {
     }
   }, [bindPullRefresh]);
 
-  const getStatus = (triagem: { resultado?: string; data_fim?: string }): StatusTriagem => {
+  const getStatus = (triagem: { resultado?: string | null; data_fim?: string | null }): StatusTriagem => {
     if (!triagem.data_fim) return 'em_andamento';
     if (triagem.resultado === 'aprovado') return 'aprovado';
     if (triagem.resultado === 'reprovado') return 'reprovado';
@@ -60,11 +63,10 @@ export default function TriagemPage() {
   };
 
   const filteredAndSortedItems = useMemo(() => {
-    let items = triagens.filter((item) => {
+    let filtered = items.filter((item) => {
       const matchesSearch =
-        (item.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-        (item.operador_nome?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-        item.id.toLowerCase().includes(searchTerm.toLowerCase());
+        item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (item.lote_id?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
 
       const status = getStatus(item);
       const matchesStatus =
@@ -73,8 +75,7 @@ export default function TriagemPage() {
       return matchesSearch && matchesStatus;
     });
 
-    // Ordenação
-    items.sort((a, b) => {
+    filtered.sort((a, b) => {
       switch (sortOrder) {
         case "data":
           return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -85,18 +86,16 @@ export default function TriagemPage() {
       }
     });
 
-    return items;
-  }, [triagens, searchTerm, statusFilter, sortOrder]);
+    return filtered;
+  }, [items, searchTerm, statusFilter, sortOrder]);
 
-  // Paginação
   const totalPages = Math.ceil(filteredAndSortedItems.length / ITEMS_PER_PAGE);
   const paginatedItems = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredAndSortedItems.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredAndSortedItems, currentPage]);
 
-  // Sync filters to URL
-  useMemo(() => {
+  useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set("q", searchTerm);
     if (statusFilter && statusFilter !== "todos") params.set("status", statusFilter);
@@ -104,27 +103,26 @@ export default function TriagemPage() {
     setSearchParams(params, { replace: true });
   }, [searchTerm, statusFilter, currentPage, setSearchParams]);
 
-  // Estatísticas
   const stats = useMemo(() => {
-    const emAndamento = triagens.filter(i => !i.data_fim).length;
-    const aprovados = triagens.filter(i => i.resultado === "aprovado").length;
-    const reprovados = triagens.filter(i => i.resultado === "reprovado").length;
+    const emAndamento = items.filter(i => !i.data_fim).length;
+    const aprovados = items.filter(i => i.resultado === "aprovado").length;
+    const reprovados = items.filter(i => i.resultado === "reprovado").length;
     
-    return {
-      emAndamento,
-      aprovados,
-      reprovados,
-    };
-  }, [triagens]);
+    return { emAndamento, aprovados, reprovados };
+  }, [items]);
 
   const handleIniciarTriagem = async () => {
-    const novaTriagem = await iniciarTriagem();
-    if (novaTriagem) {
-      navigate(`/triagem/${novaTriagem.id}`);
+    try {
+      const result = await createTriagem.mutateAsync({ data_inicio: new Date().toISOString() });
+      if (result) {
+        navigate(`/triagem/${result.id}`);
+      }
+    } catch {
+      // error handled by hook
     }
   };
 
-  const formatDate = (dateString?: string) => {
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return null;
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -134,23 +132,20 @@ export default function TriagemPage() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout title="Triagem" showBack>
         <div className="p-4 space-y-4">
-          {/* Skeleton Stats */}
           <div className="grid grid-cols-3 gap-3">
             {[1, 2, 3].map(i => (
               <Skeleton key={i} className="h-20 rounded-xl" />
             ))}
           </div>
-          {/* Skeleton Filters */}
           <div className="flex gap-3">
             <Skeleton className="h-10 flex-1" />
             <Skeleton className="h-10 w-[140px]" />
             <Skeleton className="h-10 w-10" />
           </div>
-          {/* Skeleton List */}
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map(i => (
               <Skeleton key={i} className="h-32 rounded-xl" />
@@ -165,7 +160,7 @@ export default function TriagemPage() {
     return (
       <AppLayout title="Triagem" showBack>
         <div className="p-4 text-center text-destructive">
-          <p>Erro ao carregar triagens: {error}</p>
+          <p>Erro ao carregar triagens: {error.message}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Tentar novamente
           </Button>
@@ -196,20 +191,17 @@ export default function TriagemPage() {
       }
     >
       <div ref={containerRef} className="p-4 space-y-4 animate-fade-in">
-        {/* Pull-to-refresh indicator */}
         <PullToRefreshIndicator 
           pullDistance={pullDistance} 
           threshold={pullThreshold} 
           isRefreshing={isRefreshing} 
         />
-        {/* Calculadora de Amostragem */}
         {showAmostragem && (
           <AmostragemAutomatica
             tamanhoLote={100}
             onConfirmarAmostra={(tamanho, metodo, criterios) => console.log("Amostragem:", tamanho, metodo, criterios)}
           />
         )}
-        {/* Cards de estatísticas */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card rounded-xl p-3 border border-border">
             <div className="flex items-center gap-1">
@@ -234,12 +226,11 @@ export default function TriagemPage() {
           </div>
         </div>
 
-        {/* Filtros */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar produto, operador..."
+              placeholder="Buscar por ID, lote..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -273,7 +264,6 @@ export default function TriagemPage() {
           </div>
         </div>
 
-        {/* Lista de Triagens */}
         <div className="space-y-3">
           {filteredAndSortedItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
@@ -300,10 +290,10 @@ export default function TriagemPage() {
                         </Badge>
                       </div>
                       <p className="text-sm font-medium truncate">
-                        {item.produto_nome || "Produto não informado"}
+                        {item.lote_id ? `Lote: ${item.lote_id.slice(0, 8)}` : "Lote não informado"}
                       </p>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        <span>{item.operador_nome || "Operador não informado"}</span>
+                        <span>{item.operador_id ? `Op: ${item.operador_id.slice(0, 8)}` : "Operador não informado"}</span>
                         <span>•</span>
                         <span>{formatDate(item.data_inicio)}</span>
                       </div>
@@ -317,7 +307,6 @@ export default function TriagemPage() {
                     </div>
                   </div>
 
-                  {/* Ações */}
                   <div className="flex gap-2 mt-3 pt-3 border-t border-border">
                     {!item.data_fim ? (
                       <Button
@@ -346,7 +335,6 @@ export default function TriagemPage() {
           )}
         </div>
 
-        {/* Paginação */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between pt-4 border-t">
             <p className="text-sm text-muted-foreground">
@@ -379,4 +367,3 @@ export default function TriagemPage() {
     </AppLayout>
   );
 }
-

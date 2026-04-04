@@ -247,7 +247,7 @@ function RackView({
                             }
                             const cfg = statusConfig[pos.status] || statusConfig.livre;
                             const isSelected = selectedId === pos.id;
-                            const heatStyle = viewMode === "heatmap"
+                            const heatStyle = (viewMode as string) === "heatmap"
                               ? { backgroundColor: getHeatColor(cfg.heatValue) }
                               : {};
 

@@ -1,10 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export const gamificacaoService = {
-  // Adicionar XP ao usuário
   async addXP(userId: string, amount: number, reason: string): Promise<boolean> {
     try {
-      // Atualizar XP total do usuário
       const { data: userData, error: userError } = await supabase
         .from('gamificacao_usuarios')
         .select('xp_total, nivel')
@@ -20,7 +18,6 @@ export const gamificacaoService = {
       const newXP = currentXP + amount;
       const newLevel = Math.floor(newXP / 1000) + 1;
 
-      // Upsert gamificacao_usuarios
       const { error: upsertError } = await supabase
         .from('gamificacao_usuarios')
         .upsert({
@@ -35,8 +32,7 @@ export const gamificacaoService = {
         return false;
       }
 
-      // Registrar histórico de XP
-      await supabase.from('xp_historico').insert({
+      await (supabase.from as any)('xp_historico').insert({
         user_id: userId,
         xp_ganho: amount,
         motivo: reason,
@@ -49,15 +45,12 @@ export const gamificacaoService = {
     }
   },
 
-  // Verificar e conceder conquistas
   async checkConquistas(userId: string): Promise<string[]> {
     try {
-      // Buscar definições de conquistas
       const { data: definicoes } = await supabase
         .from('conquistas_definicoes')
         .select('*');
 
-      // Buscar conquistas já obtidas
       const { data: obtidas } = await supabase
         .from('conquistas_usuarios')
         .select('conquista_id')
@@ -66,7 +59,6 @@ export const gamificacaoService = {
       const conquistasObtidas = new Set(obtidas?.map(c => c.conquista_id) || []);
       const novasConquistas: string[] = [];
 
-      // Buscar dados do usuário para verificação
       const { data: userData } = await supabase
         .from('gamificacao_usuarios')
         .select('*')
@@ -76,11 +68,11 @@ export const gamificacaoService = {
       for (const def of definicoes || []) {
         if (conquistasObtidas.has(def.id)) continue;
 
-        // Verificar critérios (simplificado)
         let conquistou = false;
-        if (def.tipo === 'xp' && userData?.xp_total >= def.valor_necessario) {
+        const criterio = def.criterio as string;
+        if (criterio === 'xp' && (userData?.xp_total ?? 0) >= (def.meta ?? 0)) {
           conquistou = true;
-        } else if (def.tipo === 'nivel' && userData?.nivel >= def.valor_necessario) {
+        } else if (criterio === 'nivel' && (userData?.nivel ?? 0) >= (def.meta ?? 0)) {
           conquistou = true;
         }
 
@@ -100,21 +92,19 @@ export const gamificacaoService = {
     }
   },
 
-  // Buscar desafios diários
   async getDesafiosDiarios(userId: string) {
     const today = new Date().toISOString().split('T')[0];
     
     const { data, error } = await supabase
       .from('desafios_diarios')
       .select('*')
-      .eq('data', today);
+      .eq('data_ativo', today);
 
     if (error) {
       console.error('Erro ao buscar desafios:', error);
       return [];
     }
 
-    // Buscar progresso do usuário
     const { data: progresso } = await supabase
       .from('desafios_usuarios')
       .select('*')
@@ -127,7 +117,6 @@ export const gamificacaoService = {
     }));
   },
 
-  // Atualizar progresso do desafio
   async updateDesafioProgress(userId: string, desafioId: string, progress: number): Promise<boolean> {
     try {
       const { error } = await supabase
@@ -136,9 +125,9 @@ export const gamificacaoService = {
           user_id: userId,
           desafio_id: desafioId,
           progresso: progress,
-          completado: progress >= 100,
+          concluido: progress >= 100,
           updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id,desafio_id' });
+        } as any, { onConflict: 'user_id,desafio_id' } as any);
 
       return !error;
     } catch {
@@ -146,16 +135,10 @@ export const gamificacaoService = {
     }
   },
 
-  // Buscar ranking
   async getRanking(limit = 10) {
     const { data, error } = await supabase
       .from('gamificacao_usuarios')
-      .select(`
-        user_id,
-        xp_total,
-        nivel,
-        profiles (nome, avatar_url)
-      `)
+      .select('user_id, xp_total, nivel')
       .order('xp_total', { ascending: false })
       .limit(limit);
 

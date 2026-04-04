@@ -38,7 +38,7 @@ export const auditService = {
     metadata?: Record<string, any>
   ): Promise<string | null> {
     try {
-      const { data, error } = await supabase.rpc('log_audit_event', {
+      const { data, error } = await (supabase.rpc as any)('log_audit_event', {
         p_action: action,
         p_entity_type: entityType,
         p_entity_id: entityId || null,
@@ -63,8 +63,7 @@ export const auditService = {
    * Get audit logs with filters
    */
   async getLogs(filters: AuditLogFilters = {}): Promise<AuditLogEntry[]> {
-    let query = supabase
-      .from('audit_log')
+    let query = (supabase.from as any)('audit_log')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -100,7 +99,7 @@ export const auditService = {
       return [];
     }
 
-    return data || [];
+    return (data || []) as AuditLogEntry[];
   },
 
   /**
