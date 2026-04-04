@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState, useMemo, useCallback } from "react";
 import { 
   FileText, 

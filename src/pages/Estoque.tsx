@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";

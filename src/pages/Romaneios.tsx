@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "@/components/layout/AppLayout";
