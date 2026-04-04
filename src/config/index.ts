@@ -68,24 +68,26 @@ export const APP_CONFIG = {
   company: 'ESTOKI',
 };
 
-// Inicialização global
+// Inicialização global (ESM — no require())
 export function initializeApp(): void {
-  const { validateConfig: validate } = require('./environment');
-  const { setupGlobalErrorHandler: setupErrors } = require('./error-handler');
-  const { initPerformanceTracking: initPerf } = require('./analytics');
-  const { isProduction: isProd, envConfig: env } = require('./environment');
-  const { debugFeatureFlags: debugFlags } = require('./feature-flags');
+  import('./environment').then(({ validateConfig: validate, isProduction: isProd, envConfig: env }) => {
+    import('./error-handler').then(({ setupGlobalErrorHandler: setupErrors }) => {
+      import('./analytics').then(({ initPerformanceTracking: initPerf }) => {
+        import('./feature-flags').then(({ debugFeatureFlags: debugFlags }) => {
+          const { valid, errors } = validate();
+          if (!valid) {
+            if (import.meta.env.DEV) console.warn('[CONFIG] Validation warnings:', errors);
+          }
 
-  const { valid, errors } = validate();
-  if (!valid) {
-    console.warn('[CONFIG] Validation warnings:', errors);
-  }
+          setupErrors();
+          initPerf();
 
-  setupErrors();
-  initPerf();
-
-  if (!isProd()) {
-    console.log('[APP] Initialized in', env.name, 'mode');
-    debugFlags();
-  }
+          if (!isProd()) {
+            if (import.meta.env.DEV) console.log('[APP] Initialized in', env.name, 'mode');
+            debugFlags();
+          }
+        });
+      });
+    });
+  });
 }
