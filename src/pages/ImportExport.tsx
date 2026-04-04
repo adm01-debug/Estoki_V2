@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/ui/page-header";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import Papa from "papaparse";
+// papaparse loaded dynamically
 
 interface ImportResult {
   success: number;
