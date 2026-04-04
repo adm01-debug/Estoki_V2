@@ -59,7 +59,7 @@ export default function RegisterPage() {
           <p className="text-muted-foreground">ESTOKI</p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleRegister} className="space-y-4">
+          <form onSubmit={handleRegister} className="space-y-4" aria-label="Formulário de cadastro">
             <div className="space-y-2">
               <Label htmlFor="nome">Nome</Label>
               <Input
@@ -68,6 +68,8 @@ export default function RegisterPage() {
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 required
+                aria-required="true"
+                autoComplete="name"
               />
             </div>
             <div className="space-y-2">
@@ -78,6 +80,8 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                aria-required="true"
+                autoComplete="email"
               />
             </div>
             <PasswordInput
@@ -94,10 +98,14 @@ export default function RegisterPage() {
               onChange={setConfirmPassword}
               showStrength={false}
             />
+            {password && confirmPassword && password !== confirmPassword && (
+              <p className="text-sm text-destructive" role="alert">As senhas não conferem</p>
+            )}
             <Button 
               type="submit" 
               className="w-full" 
               disabled={loading || !isPasswordStrong() || password !== confirmPassword}
+              aria-busy={loading}
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </Button>
