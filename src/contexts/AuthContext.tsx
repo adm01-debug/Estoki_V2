@@ -91,10 +91,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then((result: unknown) => {
         const typedResult = result as Awaited<ReturnType<typeof supabase.auth.getSession>>;
         const sess = typedResult?.data?.session ?? null;
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchUserData(session.user.id);
+        setSession(sess);
+        setUser(sess?.user ?? null);
+        if (sess?.user) {
+          fetchUserData(sess.user.id);
         }
         setLoading(false);
       })
