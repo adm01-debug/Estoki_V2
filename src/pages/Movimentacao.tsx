@@ -250,29 +250,37 @@ export default function MovimentacaoPage() {
                     id="localizacao"
                     placeholder="Ex: PP1-S05-N2, BOX-12"
                     value={formData.localizacao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, localizacao: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, localizacao: e.target.value })); setFormErrors(prev => ({ ...prev, localizacao: "" })); }}
+                    className={formErrors.localizacao ? "border-destructive" : ""}
+                    maxLength={50}
                   />
+                  {formErrors.localizacao && <p className="text-xs text-destructive mt-1">{formErrors.localizacao}</p>}
                 </div>
 
                 <div>
-                  <Label htmlFor="quantidade" className="text-xs text-muted-foreground">Quantidade</Label>
+                  <Label htmlFor="quantidade" className="text-xs text-muted-foreground">Quantidade *</Label>
                   <Input 
                     id="quantidade"
                     type="number" 
                     min={1}
                     value={formData.quantidade}
-                    onChange={(e) => setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 })); setFormErrors(prev => ({ ...prev, quantidade: "" })); }}
+                    className={formErrors.quantidade ? "border-destructive" : ""}
                   />
+                  {formErrors.quantidade && <p className="text-xs text-destructive mt-1">{formErrors.quantidade}</p>}
                 </div>
 
                 <div>
                   <Label htmlFor="descricao" className="text-xs text-muted-foreground">Descrição *</Label>
                   <Textarea 
                     id="descricao"
-                    placeholder="Descreva a movimentação..."
+                    placeholder="Descreva a movimentação (mín. 3 caracteres)..."
                     value={formData.descricao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, descricao: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, descricao: e.target.value })); setFormErrors(prev => ({ ...prev, descricao: "" })); }}
+                    className={formErrors.descricao ? "border-destructive" : ""}
+                    maxLength={500}
                   />
+                  {formErrors.descricao && <p className="text-xs text-destructive mt-1">{formErrors.descricao}</p>}
                 </div>
               </div>
             </div>
