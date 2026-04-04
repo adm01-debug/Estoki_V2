@@ -126,6 +126,17 @@ export default function GamificacaoPage() {
             </Card>
           </motion.div>
 
+          {/* Charts */}
+          <GamificacaoCharts
+            xpTotal={perfil?.xp_total || 0}
+            nivel={perfil?.nivel || 1}
+            conquistasDesbloqueadas={conquistasDesbloqueadas}
+            totalConquistas={conquistas?.length || 0}
+            desafiosConcluidos={desafiosConcluidos}
+            totalDesafios={totalDesafios}
+            streakAtual={streakAtual}
+          />
+
           {/* Tabs */}
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
             <TabsList className="grid w-full grid-cols-4">

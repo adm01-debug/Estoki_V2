@@ -207,6 +207,9 @@ export default function RomaneiosPage() {
           </Card>
         </div>
 
+        {/* Charts */}
+        {romaneios.length > 0 && <RomaneiosCharts romaneios={romaneios} />}
+
         {/* Filtros */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">

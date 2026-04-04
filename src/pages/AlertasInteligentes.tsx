@@ -230,6 +230,9 @@ export default function AlertasInteligentesPage() {
           </Card>
         </div>
 
+        {/* Charts */}
+        {historico.length > 0 && <AlertasCharts historico={historico} />}
+
         {/* Tabs */}
         <Tabs defaultValue="historico" className="space-y-4">
           <TabsList>
