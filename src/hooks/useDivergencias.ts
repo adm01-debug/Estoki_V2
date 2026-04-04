@@ -118,7 +118,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
         if (diferenca !== 0) {
           divergenciasProcessadas.push({
             id: lote.id,
-            numero_lote: lote.numero_lote || lote.numero_pedido || 'N/A',
+            numero_lote: lote.numero_lote || lote.pedido_compra || 'N/A',
             fornecedor,
             produto_nome: lote.produtos?.nome || 'Produto desconhecido',
             quantidade_pedida: pedida,
