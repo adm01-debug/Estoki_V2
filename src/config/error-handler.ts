@@ -23,7 +23,7 @@ export interface AppError {
   code: ErrorCode;
   message: string;
   userMessage: string;
-  details?: any;
+  details?: Record<string, unknown>;
   stack?: string;
   timestamp: string;
   context?: Record<string, any>;

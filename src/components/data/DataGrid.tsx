@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, ChevronDown, Search } from 'lucide-react';
-interface Column<T> { key: keyof T; header: string; sortable?: boolean; render?: (value: any, row: T) => React.ReactNode; }
+interface Column<T> { key: keyof T; header: string; sortable?: boolean; render?: (value: unknown, row: T) => React.ReactNode; }
 interface DataGridProps<T> { data: T[]; columns: Column<T>[]; pageSize?: number; searchable?: boolean; }
 export function DataGrid<T extends { id: string | number }>({ data, columns, pageSize = 10, searchable = true }: DataGridProps<T>) {
   const [search, setSearch] = useState(''); const [sortKey, setSortKey] = useState<keyof T | null>(null); const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc'); const [page, setPage] = useState(0);

@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 export interface FeatureFlag {
   key: string;
   enabled: boolean;
-  value?: any;
+  value?: unknown;
   description?: string;
   updatedAt?: string;
 }
@@ -52,7 +52,7 @@ class FeatureFlagsService {
       }
 
       if (data) {
-        data.forEach((flag: any) => {
+        data.forEach((flag: Record<string, unknown>) => {
           this.flags.set(flag.key, {
             key: flag.key,
             enabled: flag.enabled,
@@ -108,7 +108,7 @@ class FeatureFlagsService {
   }
 
   // For testing/override purposes
-  setFlag(key: string, enabled: boolean, value?: any): void {
+  setFlag(key: string, enabled: boolean, value?: unknown): void {
     this.flags.set(key, { key, enabled, value });
     this.notifyListeners();
   }

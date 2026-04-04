@@ -60,7 +60,7 @@ export function isValidPassword(password: string, options: { minLength?: number;
   return { valid: errors.length === 0, errors };
 }
 
-export function isNotEmpty(value: any): boolean {
+export function isNotEmpty(value: unknown): boolean {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string') return value.trim().length > 0;
   if (Array.isArray(value)) return value.length > 0;
@@ -68,7 +68,7 @@ export function isNotEmpty(value: any): boolean {
   return true;
 }
 
-export function isPositiveNumber(value: any): boolean {
+export function isPositiveNumber(value: unknown): boolean {
   const num = parseFloat(value);
   return !isNaN(num) && num > 0;
 }

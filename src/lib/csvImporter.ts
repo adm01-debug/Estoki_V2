@@ -50,7 +50,7 @@ export async function importCSV<T>(
           });
         }
 
-        results.data.forEach((row: any, index: number) => {
+        results.data.forEach((row: Record<string, string>, index: number) => {
           const rowNumber = index + 2;
           if (Object.values(row).every((v) => v === "" || v === null)) return;
 
@@ -79,7 +79,7 @@ export function generateCSVTemplate(headers: string[]): string {
   return headers.join(",") + "\n";
 }
 
-export async function downloadCSV(data: any[], filename: string, headers?: string[]): Promise<void> {
+export async function downloadCSV(data: Record<string, unknown>[], filename: string, headers?: string[]): Promise<void> {
   const Papa = (await import('papaparse')).default;
   const csv = Papa.unparse(data, { columns: headers, header: true });
 
