@@ -69,6 +69,7 @@ export default function RomaneiosPage() {
   const [busca, setBusca] = useState("");
   const [romaneioSelecionado, setRomaneioSelecionado] = useState<Romaneio | null>(null);
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [novoRomaneio, setNovoRomaneio] = useState({
     motorista: "",
     placa_veiculo: "",
