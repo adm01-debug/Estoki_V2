@@ -102,6 +102,7 @@ export default function ImportExport() {
     setImporting(true);
     setResult(null);
 
+    const Papa = (await import('papaparse')).default;
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
