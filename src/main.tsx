@@ -26,7 +26,7 @@ async function bootstrap() {
     throw new Error("Root element not found");
   }
 
-  const isPreviewHost = /lovable(project)?\.com$/.test(window.location.hostname);
+  const isPreviewHost = /lovable(project)?\.(com|app)$/.test(window.location.hostname);
   const shouldResetPwa = (import.meta.env.DEV || isPreviewHost) && "serviceWorker" in navigator;
 
   if (shouldResetPwa) {
