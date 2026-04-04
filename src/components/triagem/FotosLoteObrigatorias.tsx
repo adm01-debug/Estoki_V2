@@ -147,6 +147,8 @@ export function FotosLoteObrigatorias({
                   <img
                     src={foto.url}
                     alt={tipoInfo?.label || "Foto"}
+                    loading="lazy"
+                    decoding="async"
                     className={cn(
                       "w-full aspect-square object-cover rounded-lg border border-border",
                       foto.uploading && "opacity-50"

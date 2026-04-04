@@ -48,8 +48,8 @@ interface PageLoaderProps {
 
 export function PageLoader({ message = "Carregando..." }: PageLoaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
       <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
@@ -63,7 +63,7 @@ interface ErrorStateProps {
 
 export function ErrorState({ message = "Erro ao carregar dados.", onRetry }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-4">
+    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-4" role="alert" aria-live="assertive">
       <div className="p-3 rounded-full bg-destructive/10">
         <AlertCircle className="h-8 w-8 text-destructive" />
       </div>
@@ -96,7 +96,7 @@ export function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
+    <div className="flex flex-col items-center justify-center py-12 gap-4 text-center" role="status" aria-live="polite">
       <div className="p-3 rounded-full bg-muted">
         {icon || <PackageOpen className="h-8 w-8 text-muted-foreground" />}
       </div>

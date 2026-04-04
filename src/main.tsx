@@ -2,6 +2,20 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "./i18n";
+
+// Global unhandled error/rejection handler
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("[Unhandled Promise]", event.reason);
+  event.preventDefault();
+});
+
+window.addEventListener("error", (event) => {
+  if (event.message?.includes("ResizeObserver")) {
+    event.preventDefault();
+    return;
+  }
+  console.error("[Global Error]", event.message, event.filename, event.lineno);
+});
 import { prefetchCriticalRoutes } from "./lib/prefetch";
 
 const rootElement = document.getElementById("root");

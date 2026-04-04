@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge, getStatusVariant } from "@/components/ui/status-badge";
 import { Package } from "lucide-react";
@@ -11,7 +12,7 @@ interface PosicaoCardProps {
   onClick?: () => void;
 }
 
-export function PosicaoCard({ codigo, status, tipo, ocupacao, onClick }: PosicaoCardProps) {
+export const PosicaoCard = memo(function PosicaoCard({ codigo, status, tipo, ocupacao, onClick }: PosicaoCardProps) {
   return (
     <Card className={cn("cursor-pointer hover:shadow-md transition-shadow", onClick && "hover:border-primary")} onClick={onClick}>
       <CardContent className="p-4">
@@ -31,4 +32,4 @@ export function PosicaoCard({ codigo, status, tipo, ocupacao, onClick }: Posicao
       </CardContent>
     </Card>
   );
-}
+});

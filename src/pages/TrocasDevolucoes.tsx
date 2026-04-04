@@ -328,7 +328,7 @@ function DetalheRegistroDialog({ registro, open, onClose, onStatusChange }: {
               <div className="grid grid-cols-3 gap-2">
                 {registro.fotos.map((foto, idx) => (
                   <div key={idx} className="aspect-square bg-muted rounded-lg overflow-hidden">
-                    <img src={foto} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={foto} alt={`Foto ${idx + 1}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                   </div>
                 ))}
               </div>
