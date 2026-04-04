@@ -1,4 +1,5 @@
 import { SEO } from "@/components/common/SEO";
+import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
@@ -73,9 +74,7 @@ export default function RecebimentoPage() {
   if (isLoading) {
     return (
       <AppLayout title="Recebimento" showBack>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+        <PageLoader message="Carregando recebimentos..." />
       </AppLayout>
     );
   }
@@ -83,12 +82,7 @@ export default function RecebimentoPage() {
   if (error) {
     return (
       <AppLayout title="Recebimento" showBack>
-        <div className="p-4 text-center text-destructive">
-          <p>Erro ao carregar recebimentos: {error.message}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Tentar novamente
-          </Button>
-        </div>
+        <ErrorState message={error.message} onRetry={() => window.location.reload()} />
       </AppLayout>
     );
   }
@@ -135,10 +129,11 @@ export default function RecebimentoPage() {
 
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhum recebimento encontrado</p>
-            </div>
+            <EmptyState
+              title="Nenhum recebimento encontrado"
+              description={searchTerm ? "Tente ajustar os filtros de busca." : "Clique em 'Novo' para registrar um recebimento."}
+              icon={<Package className="h-8 w-8 text-muted-foreground" />}
+            />
           ) : (
             filteredItems.map((item) => {
               const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;

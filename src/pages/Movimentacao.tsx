@@ -2,7 +2,8 @@ import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { useNavigate } from "react-router-dom";
-import { 
+import { movimentacaoSchema, validateForm } from "@/lib/validations";
+import {
   QrCode, 
   Search, 
   ArrowRight, 
@@ -89,6 +90,7 @@ export default function MovimentacaoPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
   const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   
   // Form state
   const [formData, setFormData] = useState({
@@ -138,9 +140,18 @@ export default function MovimentacaoPage() {
   }, [movimentacoes, searchTerm, periodoFiltro]);
 
   const handleSubmit = async () => {
-    if (!formData.descricao.trim()) {
+    const validation = validateForm(movimentacaoSchema, {
+      tipo: tipoMovimento,
+      localizacao: formData.localizacao || undefined,
+      quantidade: formData.quantidade,
+      descricao: formData.descricao,
+    });
+
+    if (!validation.success) {
+      setFormErrors(validation.errors);
       return;
     }
+    setFormErrors({});
     
     setSubmitting(true);
     try {
@@ -152,9 +163,9 @@ export default function MovimentacaoPage() {
       });
       
       if (success) {
-        // Log de auditoria
         auditLog.create("movimentacao", "", tipoMovimento, { tipo: tipoMovimento, quantidade: formData.quantidade, localizacao: formData.localizacao, descricao: formData.descricao });
         setFormData({ localizacao: "", quantidade: 1, descricao: "" });
+        setFormErrors({});
         setActiveTab("historico");
       }
     } finally {
@@ -239,29 +250,37 @@ export default function MovimentacaoPage() {
                     id="localizacao"
                     placeholder="Ex: PP1-S05-N2, BOX-12"
                     value={formData.localizacao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, localizacao: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, localizacao: e.target.value })); setFormErrors(prev => ({ ...prev, localizacao: "" })); }}
+                    className={formErrors.localizacao ? "border-destructive" : ""}
+                    maxLength={50}
                   />
+                  {formErrors.localizacao && <p className="text-xs text-destructive mt-1">{formErrors.localizacao}</p>}
                 </div>
 
                 <div>
-                  <Label htmlFor="quantidade" className="text-xs text-muted-foreground">Quantidade</Label>
+                  <Label htmlFor="quantidade" className="text-xs text-muted-foreground">Quantidade *</Label>
                   <Input 
                     id="quantidade"
                     type="number" 
                     min={1}
                     value={formData.quantidade}
-                    onChange={(e) => setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 })); setFormErrors(prev => ({ ...prev, quantidade: "" })); }}
+                    className={formErrors.quantidade ? "border-destructive" : ""}
                   />
+                  {formErrors.quantidade && <p className="text-xs text-destructive mt-1">{formErrors.quantidade}</p>}
                 </div>
 
                 <div>
                   <Label htmlFor="descricao" className="text-xs text-muted-foreground">Descrição *</Label>
                   <Textarea 
                     id="descricao"
-                    placeholder="Descreva a movimentação..."
+                    placeholder="Descreva a movimentação (mín. 3 caracteres)..."
                     value={formData.descricao}
-                    onChange={(e) => setFormData(prev => ({ ...prev, descricao: e.target.value }))}
+                    onChange={(e) => { setFormData(prev => ({ ...prev, descricao: e.target.value })); setFormErrors(prev => ({ ...prev, descricao: "" })); }}
+                    className={formErrors.descricao ? "border-destructive" : ""}
+                    maxLength={500}
                   />
+                  {formErrors.descricao && <p className="text-xs text-destructive mt-1">{formErrors.descricao}</p>}
                 </div>
               </div>
             </div>

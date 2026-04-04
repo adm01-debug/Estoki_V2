@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { produtoSchema, validateForm } from "@/lib/validations";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -62,6 +63,7 @@ export default function ProdutosPage() {
     fornecedor_principal: "",
   });
   const [saving, setSaving] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadProdutos();
@@ -84,10 +86,13 @@ export default function ProdutosPage() {
   };
 
   const handleSave = async () => {
-    if (!formData.sku || !formData.nome) {
-      toast.error("SKU e Nome são obrigatórios");
+    const validation = validateForm(produtoSchema, formData);
+    if (!validation.success) {
+      setFormErrors(validation.errors);
       return;
     }
+    setFormErrors({});
+    
     try {
       setSaving(true);
       const { error } = await supabase.from("produtos").insert({
@@ -105,6 +110,7 @@ export default function ProdutosPage() {
       toast.success("Produto cadastrado com sucesso!");
       setShowAddDialog(false);
       setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
+      setFormErrors({});
       loadProdutos();
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar produto");
@@ -322,7 +328,8 @@ export default function ProdutosPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>SKU *</Label>
-                <Input value={formData.sku} onChange={(e) => setFormData({ ...formData, sku: e.target.value })} />
+                <Input value={formData.sku} onChange={(e) => { setFormData({ ...formData, sku: e.target.value }); setFormErrors(p => ({ ...p, sku: "" })); }} className={formErrors.sku ? "border-destructive" : ""} maxLength={50} />
+                {formErrors.sku && <p className="text-xs text-destructive mt-1">{formErrors.sku}</p>}
               </div>
               <div>
                 <Label>Unidade</Label>
@@ -338,20 +345,24 @@ export default function ProdutosPage() {
             </div>
             <div>
               <Label>Nome *</Label>
-              <Input value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} />
+              <Input value={formData.nome} onChange={(e) => { setFormData({ ...formData, nome: e.target.value }); setFormErrors(p => ({ ...p, nome: "" })); }} className={formErrors.nome ? "border-destructive" : ""} maxLength={200} />
+              {formErrors.nome && <p className="text-xs text-destructive mt-1">{formErrors.nome}</p>}
             </div>
             <div>
               <Label>Descrição</Label>
-              <Input value={formData.descricao} onChange={(e) => setFormData({ ...formData, descricao: e.target.value })} />
+              <Input value={formData.descricao} onChange={(e) => { setFormData({ ...formData, descricao: e.target.value }); setFormErrors(p => ({ ...p, descricao: "" })); }} maxLength={500} />
+              {formErrors.descricao && <p className="text-xs text-destructive mt-1">{formErrors.descricao}</p>}
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div>
                 <Label>Est. Mínimo</Label>
-                <Input type="number" value={formData.estoque_minimo} onChange={(e) => setFormData({ ...formData, estoque_minimo: +e.target.value })} />
+                <Input type="number" value={formData.estoque_minimo} onChange={(e) => { setFormData({ ...formData, estoque_minimo: +e.target.value }); setFormErrors(p => ({ ...p, estoque_minimo: "" })); }} className={formErrors.estoque_minimo ? "border-destructive" : ""} />
+                {formErrors.estoque_minimo && <p className="text-xs text-destructive mt-1">{formErrors.estoque_minimo}</p>}
               </div>
               <div>
                 <Label>Est. Máximo</Label>
-                <Input type="number" value={formData.estoque_maximo} onChange={(e) => setFormData({ ...formData, estoque_maximo: +e.target.value })} />
+                <Input type="number" value={formData.estoque_maximo} onChange={(e) => { setFormData({ ...formData, estoque_maximo: +e.target.value }); setFormErrors(p => ({ ...p, estoque_maximo: "" })); }} className={formErrors.estoque_maximo ? "border-destructive" : ""} />
+                {formErrors.estoque_maximo && <p className="text-xs text-destructive mt-1">{formErrors.estoque_maximo}</p>}
               </div>
               <div>
                 <Label>Ponto Pedido</Label>
@@ -365,7 +376,7 @@ export default function ProdutosPage() {
               </div>
               <div>
                 <Label>Fornecedor</Label>
-                <Input value={formData.fornecedor_principal} onChange={(e) => setFormData({ ...formData, fornecedor_principal: e.target.value })} />
+                <Input value={formData.fornecedor_principal} onChange={(e) => setFormData({ ...formData, fornecedor_principal: e.target.value })} maxLength={200} />
               </div>
             </div>
           </div>

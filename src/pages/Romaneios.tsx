@@ -1,7 +1,9 @@
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
+import { romaneioSchema, validateForm } from "@/lib/validations";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { PageLoader, EmptyState } from "@/components/common/AsyncStates";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,6 +70,7 @@ export default function RomaneiosPage() {
   const [busca, setBusca] = useState("");
   const [romaneioSelecionado, setRomaneioSelecionado] = useState<Romaneio | null>(null);
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [novoRomaneio, setNovoRomaneio] = useState({
     motorista: "",
     placa_veiculo: "",
@@ -95,6 +98,13 @@ export default function RomaneiosPage() {
   };
 
   const handleCriarRomaneio = async () => {
+    const validation = validateForm(romaneioSchema, novoRomaneio);
+    if (!validation.success) {
+      setFormErrors(validation.errors);
+      return;
+    }
+    setFormErrors({});
+    
     try {
       await criarRomaneio(novoRomaneio);
       setNovoRomaneioOpen(false);
@@ -105,6 +115,7 @@ export default function RomaneiosPage() {
         data_prevista_entrega: "",
         rota: "",
       });
+      setFormErrors({});
     } catch (err) {
       // Erro já tratado no hook
     }
@@ -121,9 +132,7 @@ export default function RomaneiosPage() {
   if (loading) {
     return (
       <AppLayout title="Romaneios" showBack>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
+        <PageLoader message="Carregando romaneios..." />
       </AppLayout>
     );
   }
@@ -315,21 +324,27 @@ export default function RomaneiosPage() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Motorista</Label>
+                <Label>Motorista *</Label>
                 <Input
                   value={novoRomaneio.motorista}
-                  onChange={(e) => setNovoRomaneio({ ...novoRomaneio, motorista: e.target.value })}
+                  onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, motorista: e.target.value }); setFormErrors(p => ({ ...p, motorista: "" })); }}
                   placeholder="Nome do motorista"
+                  className={formErrors.motorista ? "border-destructive" : ""}
+                  maxLength={100}
                 />
+                {formErrors.motorista && <p className="text-xs text-destructive mt-1">{formErrors.motorista}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Placa do Veículo</Label>
+                  <Label>Placa do Veículo *</Label>
                   <Input
                     value={novoRomaneio.placa_veiculo}
-                    onChange={(e) => setNovoRomaneio({ ...novoRomaneio, placa_veiculo: e.target.value })}
+                    onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, placa_veiculo: e.target.value.toUpperCase() }); setFormErrors(p => ({ ...p, placa_veiculo: "" })); }}
                     placeholder="ABC-1234"
+                    className={formErrors.placa_veiculo ? "border-destructive" : ""}
+                    maxLength={10}
                   />
+                  {formErrors.placa_veiculo && <p className="text-xs text-destructive mt-1">{formErrors.placa_veiculo}</p>}
                 </div>
                 <div>
                   <Label>Tipo de Veículo</Label>
@@ -350,12 +365,14 @@ export default function RomaneiosPage() {
                 </div>
               </div>
               <div>
-                <Label>Data Prevista</Label>
+                <Label>Data Prevista *</Label>
                 <Input
                   type="date"
                   value={novoRomaneio.data_prevista_entrega}
-                  onChange={(e) => setNovoRomaneio({ ...novoRomaneio, data_prevista_entrega: e.target.value })}
+                  onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, data_prevista_entrega: e.target.value }); setFormErrors(p => ({ ...p, data_prevista_entrega: "" })); }}
+                  className={formErrors.data_prevista_entrega ? "border-destructive" : ""}
                 />
+                {formErrors.data_prevista_entrega && <p className="text-xs text-destructive mt-1">{formErrors.data_prevista_entrega}</p>}
               </div>
               <div>
                 <Label>Rota</Label>
@@ -412,6 +429,7 @@ export default function RomaneiosPage() {
                   {/* Lista de entregas */}
                   <div>
                     <h3 className="font-medium mb-2">Entregas ({romaneioSelecionado.itens.length})</h3>
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -471,6 +489,7 @@ export default function RomaneiosPage() {
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   </div>
                 </div>
               </>
