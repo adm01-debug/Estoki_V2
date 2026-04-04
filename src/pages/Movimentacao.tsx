@@ -81,7 +81,7 @@ export default function MovimentacaoPage() {
     error, 
     registrarMovimentacao 
   } = useMovimentacoes();
-  const { logAction } = useAuditLog();
+  const { log: auditLog } = useAuditLog();
   
   const [activeTab, setActiveTab] = useState("registrar");
   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");

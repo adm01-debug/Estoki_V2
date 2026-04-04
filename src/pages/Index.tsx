@@ -329,8 +329,8 @@ export default function Dashboard() {
                 ))
               ) : (
                 [
-                  { icon: CheckCircle2, value: stats?.totalRecebimentos || 0, label: "Entradas", bgClass: "bg-success/10", textClass: "text-success", borderClass: "border-success/20" },
-                  { icon: Target, value: stats?.totalTriagens || 0, label: "Triagens", bgClass: "bg-primary/10", textClass: "text-primary", borderClass: "border-primary/20" },
+                  { icon: CheckCircle2, value: (stats as any)?.totalRecebimentos || 0, label: "Entradas", bgClass: "bg-success/10", textClass: "text-success", borderClass: "border-success/20" },
+                  { icon: Target, value: (stats as any)?.totalTriagens || 0, label: "Triagens", bgClass: "bg-primary/10", textClass: "text-primary", borderClass: "border-primary/20" },
                   { icon: XCircle, value: divergencias, label: "Divergências", bgClass: "bg-destructive/10", textClass: "text-destructive", borderClass: "border-destructive/20" },
                 ].map((stat, index) => (
                   <motion.div 

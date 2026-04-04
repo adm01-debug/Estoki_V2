@@ -75,7 +75,7 @@ export default function ProdutosPage() {
         .select("*")
         .order("nome");
       if (error) throw error;
-      setProdutos(data || []);
+      setProdutos((data || []) as Produto[]);
     } catch (err) {
       toast.error("Erro ao carregar produtos");
     } finally {
