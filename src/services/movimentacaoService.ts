@@ -14,23 +14,23 @@ export interface Movimentacao {
 }
 
 export const movimentacaoService = {
-  // Registrar movimentação usando rastreamento_historico
   async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
     try {
       const { error } = await supabase
         .from('rastreamento_historico')
         .insert({
-          tipo_evento: mov.tipo,
+          tipo_evento: mov.tipo as any,
           lote_id: mov.lote_id,
-          posicao_origem: mov.posicao_origem,
-          posicao_destino: mov.posicao_destino,
+          descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
           quantidade: mov.quantidade,
-          usuario_id: mov.usuario_id,
-          observacoes: mov.motivo,
-          dados_adicionais: {
+          operador_id: mov.usuario_id,
+          localizacao: mov.posicao_destino || mov.posicao_origem,
+          detalhes: {
             produto_id: mov.produto_id,
-          },
-        });
+            posicao_origem: mov.posicao_origem,
+            posicao_destino: mov.posicao_destino,
+          } as any,
+        } as any);
 
       if (error) {
         console.error('Erro ao registrar movimentação:', error);
@@ -44,7 +44,6 @@ export const movimentacaoService = {
     }
   },
 
-  // Buscar histórico de movimentações
   async getHistorico(filtros?: {
     lote_id?: string;
     produto_id?: string;
@@ -63,7 +62,7 @@ export const movimentacaoService = {
         query = query.eq('lote_id', filtros.lote_id);
       }
       if (filtros?.tipo) {
-        query = query.eq('tipo_evento', filtros.tipo);
+        query = query.eq('tipo_evento', filtros.tipo as any);
       }
       if (filtros?.data_inicio) {
         query = query.gte('created_at', filtros.data_inicio);
@@ -82,16 +81,16 @@ export const movimentacaoService = {
         return [];
       }
 
-      return (data || []).map(item => ({
+      return (data || []).map((item: any) => ({
         id: item.id,
         tipo: item.tipo_evento as Movimentacao['tipo'],
-        lote_id: item.lote_id,
-        posicao_origem: item.posicao_origem,
-        posicao_destino: item.posicao_destino,
-        quantidade: item.quantidade,
-        motivo: item.observacoes,
-        usuario_id: item.usuario_id,
-        produto_id: item.dados_adicionais?.produto_id,
+        lote_id: item.lote_id ?? undefined,
+        posicao_origem: (item.detalhes as any)?.posicao_origem,
+        posicao_destino: (item.detalhes as any)?.posicao_destino,
+        quantidade: item.quantidade ?? 0,
+        motivo: item.descricao,
+        usuario_id: item.operador_id,
+        produto_id: (item.detalhes as any)?.produto_id,
         created_at: item.created_at,
       }));
     } catch (error) {
@@ -100,7 +99,6 @@ export const movimentacaoService = {
     }
   },
 
-  // Buscar última movimentação de um lote
   async getUltimaMovimentacao(loteId: string): Promise<Movimentacao | null> {
     const { data, error } = await supabase
       .from('rastreamento_historico')
@@ -115,12 +113,12 @@ export const movimentacaoService = {
     return {
       id: data.id,
       tipo: data.tipo_evento as Movimentacao['tipo'],
-      lote_id: data.lote_id,
-      posicao_origem: data.posicao_origem,
-      posicao_destino: data.posicao_destino,
-      quantidade: data.quantidade,
-      motivo: data.observacoes,
-      usuario_id: data.usuario_id,
+      lote_id: data.lote_id ?? undefined,
+      posicao_origem: (data.detalhes as any)?.posicao_origem,
+      posicao_destino: (data.detalhes as any)?.posicao_destino,
+      quantidade: data.quantidade ?? 0,
+      motivo: data.descricao,
+      usuario_id: data.operador_id,
       created_at: data.created_at,
     };
   },
