@@ -99,6 +99,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
     
     try {
       const { width, height } = tamanhos[tamanho];
+      const { jsPDF } = await import('jspdf');
       const doc = new jsPDF({
         orientation: width > height ? "landscape" : "portrait",
         unit: "mm",

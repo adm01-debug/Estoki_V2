@@ -513,7 +513,8 @@ export default function TrocasDevolucoes() {
   };
 
   // Export to PDF
-  const handleExportPDF = () => {
+  const handleExportPDF = async () => {
+    const { default: jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     
     doc.setFontSize(18);

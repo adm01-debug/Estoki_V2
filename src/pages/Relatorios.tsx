@@ -237,6 +237,7 @@ export default function RelatoriosPage() {
   const handleExportPDF = useCallback(async () => {
     setExportando(true);
     try {
+      const { jsPDF } = await import('jspdf');
       const doc = new jsPDF();
       
       doc.setFontSize(18);
