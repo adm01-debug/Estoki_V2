@@ -236,19 +236,7 @@ const AuthPage = () => {
             </p>
           </div>
 
-          {/* IP Badge */}
-          {ipInfo && (
-            <div className="flex items-center justify-between px-4 py-2.5 rounded-full border border-sidebar-border/60 bg-sidebar-accent/30 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-xs text-sidebar-foreground/50">
-                <Globe className="h-3.5 w-3.5" />
-                <span className="font-mono text-primary/80">{ipInfo.ip}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/40">
-                <span>{ipInfo.city}, {ipInfo.country}</span>
-                <Wifi className="h-3 w-3 text-primary" />
-              </div>
-            </div>
-          )}
+          {/* IP Badge - compact footer style */}
 
           {/* Form */}
           {mode === "login" ? (
