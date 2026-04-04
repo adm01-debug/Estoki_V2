@@ -158,6 +158,9 @@ export default function LotesPage() {
             </Card>
           </motion.div>
 
+          {/* Charts */}
+          {lotes.length > 0 && <LotesCharts lotes={lotes} />}
+
           {/* Search & Filter */}
           <div className="flex gap-2">
             <div className="relative flex-1">

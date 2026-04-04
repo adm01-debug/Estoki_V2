@@ -1,3 +1,4 @@
+import { RomaneiosCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { romaneioSchema, validateForm } from "@/lib/validations";

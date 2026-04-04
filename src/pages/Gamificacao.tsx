@@ -1,3 +1,4 @@
+import { GamificacaoCharts } from "@/components/charts/WMSModuleCharts";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";

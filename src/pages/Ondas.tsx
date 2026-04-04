@@ -159,6 +159,9 @@ export default function OndasPage() {
             </Card>
           </motion.div>
 
+          {/* Charts */}
+          {ondas.length > 0 && <OndasCharts ondas={ondas} />}
+
           {/* Search & Filter */}
           <div className="flex gap-2">
             <div className="relative flex-1">
