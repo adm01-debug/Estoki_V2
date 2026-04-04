@@ -104,7 +104,7 @@ export function useTriagemFotos(options: UseTriagemFotosOptions = {}) {
         .remove([fotoId]);
 
       if (error) {
-        console.warn('Erro ao deletar do storage:', error);
+        if (import.meta.env.DEV) console.warn('Erro ao deletar do storage:', error);
       }
 
       // Remove from state
