@@ -1,3 +1,4 @@
+import { MovimentacaoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
