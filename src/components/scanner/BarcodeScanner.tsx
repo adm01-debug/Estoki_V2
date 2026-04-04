@@ -107,9 +107,8 @@ export function BarcodeScanner({
 
     const track = streamRef.current.getVideoTracks()[0];
     try {
-      await track.applyConstraints({
-        // @ts-ignore
-        advanced: [{ torch: !flashOn }],
+      await (track as any).applyConstraints({
+        advanced: [{ torch: !flashOn }] as any,
       });
       setFlashOn(!flashOn);
     } catch (err) {
