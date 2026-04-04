@@ -43,7 +43,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      if (rastError) console.error('Erro rastreamento:', rastError);
+      if (rastError && import.meta.env.DEV) console.error('Erro rastreamento:', rastError);
 
       (rastreamento || []).forEach(r => {
         let type: AtividadeRecente['type'] = 'movimentacao';
