@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Box, Loader2, Eye, EyeOff, Zap, Globe, Wifi, BarChart3, Package, Users, Shield, Fingerprint } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { z } from "zod";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Email inválido" }),
