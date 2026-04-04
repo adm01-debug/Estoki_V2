@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    return jsonResponse({ success: true, count: data?.length || 0, data }, req);
+    return jsonResponse({ success: true, count: data?.length || 0, data }, 200, req);
   } catch (error) {
     console.error("export-data error:", error);
     return jsonResponse({ error: "Internal server error" }, 500, req);

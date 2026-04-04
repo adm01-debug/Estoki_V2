@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    return jsonResponse({ success: true, id: data.id }, req);
+    return jsonResponse({ success: true, id: data.id }, 200, req);
   } catch (error) {
     console.error("send-email-alert error:", error);
     return jsonResponse({ error: "Internal server error" }, 500, req);

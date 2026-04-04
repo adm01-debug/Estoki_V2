@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    return jsonResponse({ success: true, ...results }, req);
+    return jsonResponse({ success: true, ...results }, 200, req);
   } catch (error) {
     console.error("import-data error:", error);
     return jsonResponse({ error: "Internal server error" }, 500, req);
