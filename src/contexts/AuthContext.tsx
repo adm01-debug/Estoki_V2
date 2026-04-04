@@ -88,8 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
     
     Promise.race([sessionPromise, timeoutPromise])
-      .then((result: { data?: { session?: { user?: { id: string } } | null } }) => {
-        const session = result?.data?.session ?? null;
+      .then((result: unknown) => {
+        const typedResult = result as { data?: { session?: typeof session } };
+        const session = typedResult?.data?.session ?? null;
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
