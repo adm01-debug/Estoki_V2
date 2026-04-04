@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -31,113 +31,110 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  // Track whether the initial session hydration is complete
+  const hydrated = useRef(false);
 
-  const fetchUserData = async (userId: string) => {
+  const fetchUserData = useCallback(async (userId: string) => {
     try {
-      // Fetch profile
-      const { data: profileData } = await supabase
-        .from("profiles")
-        .select("id, nome, email")
-        .eq("id", userId)
-        .maybeSingle();
-      
-      if (profileData) {
-        setProfile(profileData);
-      }
+      const [profileRes, roleRes] = await Promise.all([
+        supabase.from("profiles").select("id, nome, email").eq("id", userId).maybeSingle(),
+        supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
+      ]);
 
-      // Fetch role
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .maybeSingle();
-      
-      if (roleData) {
-        setRole(roleData.role as AppRole);
-      }
+      if (profileRes.data) setProfile(profileRes.data);
+      if (roleRes.data) setRole(roleRes.data.role as AppRole);
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    let mounted = true;
+
+    // 1) Listen to auth changes — but only finish loading after hydration
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          // Defer Supabase calls with setTimeout to avoid deadlock
+      (event, currentSession) => {
+        if (!mounted) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
           setTimeout(() => {
-            fetchUserData(session.user.id);
+            if (mounted) fetchUserData(currentSession.user.id);
           }, 0);
         } else {
           setProfile(null);
           setRole(null);
         }
-        
-        setLoading(false);
+
+        // Only set loading=false from the listener AFTER initial hydration is done
+        // This prevents INITIAL_SESSION with null from prematurely ending loading
+        if (hydrated.current) {
+          setLoading(false);
+        }
       }
     );
 
-    // THEN check for existing session
-    const sessionPromise = supabase.auth.getSession();
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("getSession timeout")), 3000)
-    );
-    
-    Promise.race([sessionPromise, timeoutPromise])
-      .then((result: unknown) => {
-        const typedResult = result as Awaited<ReturnType<typeof supabase.auth.getSession>>;
-        const sess = typedResult?.data?.session ?? null;
+    // 2) Hydrate: get the persisted session
+    const hydrate = async () => {
+      try {
+        const { data } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error("getSession timeout")), 3000)
+          ),
+        ]);
+
+        if (!mounted) return;
+
+        const sess = data?.session ?? null;
         setSession(sess);
         setUser(sess?.user ?? null);
-        if (sess?.user) {
-          fetchUserData(sess.user.id);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to get session:", err);
-        setLoading(false);
-      });
 
-    // Safety timeout - never stay loading forever
-    const safetyTimeout = setTimeout(() => {
-      setLoading((prev) => {
-        if (prev) {
-          if (import.meta.env.DEV) console.warn("Auth loading safety timeout triggered");
+        if (sess?.user) {
+          await fetchUserData(sess.user.id);
         }
-        return false;
-      });
-    }, 5000);
+      } catch (err) {
+        console.warn("Auth hydration failed or timed out:", err);
+      } finally {
+        if (mounted) {
+          hydrated.current = true;
+          setLoading(false);
+        }
+      }
+    };
+
+    hydrate();
+
+    // 3) Safety net — never stay loading for more than 4 seconds
+    const safety = setTimeout(() => {
+      if (mounted) {
+        hydrated.current = true;
+        setLoading(false);
+      }
+    }, 4000);
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
-      clearTimeout(safetyTimeout);
+      clearTimeout(safety);
     };
-  }, []);
+  }, [fetchUserData]);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error };
   };
 
   const signUp = async (email: string, password: string, nome: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          nome,
-        },
+        emailRedirectTo: `${window.location.origin}/`,
+        data: { nome },
       },
     });
     return { error };
@@ -153,14 +150,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const hasRole = (requiredRole: AppRole): boolean => {
     if (!role) return false;
-    
-    const roleHierarchy: Record<AppRole, number> = {
-      operador: 1,
-      supervisor: 2,
-      admin: 3,
-    };
-    
-    return roleHierarchy[role] >= roleHierarchy[requiredRole];
+    const hierarchy: Record<AppRole, number> = { operador: 1, supervisor: 2, admin: 3 };
+    return hierarchy[role] >= hierarchy[requiredRole];
   };
 
   const canAccess = (allowedRoles: AppRole[]): boolean => {
@@ -170,18 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        session,
-        profile,
-        role,
-        loading,
-        signIn,
-        signUp,
-        signOut,
-        hasRole,
-        canAccess,
-      }}
+      value={{ user, session, profile, role, loading, signIn, signUp, signOut, hasRole, canAccess }}
     >
       {children}
     </AuthContext.Provider>
