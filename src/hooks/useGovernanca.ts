@@ -134,8 +134,8 @@ export function useCheckpointsZona() {
       if (error) throw error;
 
       // Group by lote_id+zona and find entries without a corresponding exit
-      const entradas = new Map<string, any>();
-      (data || []).forEach((cp: any) => {
+      const entradas = new Map<string, typeof data[number]>();
+      (data || []).forEach((cp) => {
         const key = `${cp.lote_id || cp.produto_id}-${cp.zona}`;
         entradas.set(key, cp);
       });
