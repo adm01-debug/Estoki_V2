@@ -201,7 +201,7 @@ export default function TriagemPage() {
         {showAmostragem && (
           <AmostragemAutomatica
             tamanhoLote={100}
-            onConfirmarAmostra={(tamanho, metodo, criterios) => console.log("Amostragem:", tamanho, metodo, criterios)}
+            onConfirmarAmostra={() => { /* Amostragem confirmada */ }}
           />
         )}
         <div className="grid grid-cols-3 gap-3">
