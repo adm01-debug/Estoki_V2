@@ -96,8 +96,8 @@ export function createAppError(
 
   // Erro padrão do JavaScript
   if (error instanceof Error) {
-    const isTimeout = error.name === 'AbortError' || error.message.includes('timeout');
-    const isNetwork = error.message.includes('fetch') || error.message.includes('network');
+    const isTimeout = error.name === 'AbortError' || (error instanceof Error ? error.message : String(error)).includes('timeout');
+    const isNetwork = (error instanceof Error ? error.message : String(error)).includes('fetch') || (error instanceof Error ? error.message : String(error)).includes('network');
 
     const code = isTimeout
       ? ErrorCode.TIMEOUT
@@ -107,7 +107,7 @@ export function createAppError(
 
     return {
       code,
-      message: error.message,
+      message: (error instanceof Error ? error.message : String(error)),
       userMessage: userMessages[code],
       stack: error.stack,
       timestamp,
@@ -144,7 +144,7 @@ export async function logError(error: AppError): Promise<void> {
   if (!isProduction()) {
     console.error('[ERROR]', {
       code: error.code,
-      message: error.message,
+      message: (error instanceof Error ? error.message : String(error)),
       context: error.context,
       stack: error.stack,
     });
@@ -155,7 +155,7 @@ export async function logError(error: AppError): Promise<void> {
   try {
     // Sentry integration
     if (envConfig.sentryDsn && typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.captureException(new Error(error.message), {
+      (window as any).Sentry.captureException(new Error((error instanceof Error ? error.message : String(error))), {
         tags: { errorCode: error.code },
         extra: {
           context: error.context,

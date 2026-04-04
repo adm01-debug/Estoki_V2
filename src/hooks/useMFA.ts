@@ -36,7 +36,7 @@ export function useMFA() {
       return allFactors;
     } catch (err: unknown) {
       console.error('Error listing MFA factors:', err);
-      setError(err.message);
+      setError((err instanceof Error ? err.message : String(err)));
       return [];
     } finally {
       setLoading(false);
@@ -71,7 +71,7 @@ export function useMFA() {
       return enrollment;
     } catch (err: unknown) {
       console.error('Error starting MFA enrollment:', err);
-      setError(err.message);
+      setError((err instanceof Error ? err.message : String(err)));
       return null;
     } finally {
       setLoading(false);
@@ -103,7 +103,7 @@ export function useMFA() {
       return true;
     } catch (err: unknown) {
       console.error('Error verifying MFA enrollment:', err);
-      setError(err.message || 'Código inválido. Verifique e tente novamente.');
+      setError((err instanceof Error ? err.message : String(err)) || 'Código inválido. Verifique e tente novamente.');
       return false;
     } finally {
       setLoading(false);
@@ -133,7 +133,7 @@ export function useMFA() {
       return { success: true, session: data };
     } catch (err: unknown) {
       console.error('Error verifying MFA login:', err);
-      setError(err.message || 'Código inválido');
+      setError((err instanceof Error ? err.message : String(err)) || 'Código inválido');
       return { success: false };
     } finally {
       setLoading(false);
@@ -152,7 +152,7 @@ export function useMFA() {
       return true;
     } catch (err: unknown) {
       console.error('Error unenrolling MFA:', err);
-      setError(err.message);
+      setError((err instanceof Error ? err.message : String(err)));
       return false;
     } finally {
       setLoading(false);

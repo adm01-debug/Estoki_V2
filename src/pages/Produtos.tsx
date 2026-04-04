@@ -113,7 +113,7 @@ export default function ProdutosPage() {
       setFormErrors({});
       loadProdutos();
     } catch (err: unknown) {
-      toast.error(err.message || "Erro ao salvar produto");
+      toast.error((err instanceof Error ? err.message : String(err)) || "Erro ao salvar produto");
     } finally {
       setSaving(false);
     }

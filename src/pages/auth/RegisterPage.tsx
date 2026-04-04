@@ -45,7 +45,7 @@ export default function RegisterPage() {
       toast.success('Conta criada com sucesso!');
       navigate('/login');
     } catch (error: unknown) {
-      toast.error(error.message || 'Erro ao criar conta');
+      toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao criar conta');
     } finally {
       setLoading(false);
     }

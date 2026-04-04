@@ -57,7 +57,7 @@ export default function LoginPage() {
     } catch (error: unknown) {
       // Registrar tentativa falhada
       await recordFailedAttempt(email);
-      toast.error(error.message || 'Erro ao fazer login');
+      toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }

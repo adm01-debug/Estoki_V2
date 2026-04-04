@@ -191,7 +191,7 @@ export default function Etiquetas() {
       setLotes(mapped);
       if (mapped.length > 0 && !previewId) setPreviewId(mapped[0].id);
     } catch (err: unknown) {
-      toast({ title: "Erro ao carregar lotes", description: err.message, variant: "destructive" });
+      toast({ title: "Erro ao carregar lotes", description: (err instanceof Error ? err.message : String(err)), variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -217,7 +217,7 @@ export default function Etiquetas() {
       setEntregas(mapped);
       if (mapped.length > 0 && !previewId) setPreviewId(mapped[0].id);
     } catch (err: unknown) {
-      toast({ title: "Erro ao carregar entregas", description: err.message, variant: "destructive" });
+      toast({ title: "Erro ao carregar entregas", description: (err instanceof Error ? err.message : String(err)), variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -483,7 +483,7 @@ export default function Etiquetas() {
 
       toast({ title: "Etiquetas geradas!", description: `${total} etiqueta(s) em ${tamanhos[tamanho].label}` });
     } catch (err: unknown) {
-      toast({ title: "Erro ao gerar", description: err.message, variant: "destructive" });
+      toast({ title: "Erro ao gerar", description: (err instanceof Error ? err.message : String(err)), variant: "destructive" });
     } finally {
       setIsGenerating(false);
     }

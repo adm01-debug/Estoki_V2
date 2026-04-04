@@ -89,7 +89,7 @@ export default function ImportExport() {
       URL.revokeObjectURL(url);
       toast.success(`${data?.length || 0} registros exportados!`);
     } catch (err: unknown) {
-      toast.error(`Erro na exportação: ${err.message}`);
+      toast.error(`Erro na exportação: ${(err instanceof Error ? err.message : String(err))}`);
     } finally {
       setExporting(false);
     }
@@ -155,7 +155,7 @@ export default function ImportExport() {
             if (error) throw error;
             importResult.success++;
           } catch (err: unknown) {
-            importResult.errors.push({ row: i + 2, message: err.message });
+            importResult.errors.push({ row: i + 2, message: (err instanceof Error ? err.message : String(err)) });
           }
         }
 
@@ -169,7 +169,7 @@ export default function ImportExport() {
         }
       },
       error: (err) => {
-        toast.error(`Erro ao ler arquivo: ${err.message}`);
+        toast.error(`Erro ao ler arquivo: ${(err instanceof Error ? err.message : String(err))}`);
         setImporting(false);
       },
     });
@@ -310,7 +310,7 @@ export default function ImportExport() {
                   <div className="max-h-40 overflow-auto text-xs space-y-1 bg-destructive/5 p-3 rounded-lg">
                     {result.errors.slice(0, 20).map((err, i) => (
                       <p key={i} className="text-destructive">
-                        Linha {err.row}: {err.message}
+                        Linha {err.row}: {(err instanceof Error ? err.message : String(err))}
                       </p>
                     ))}
                     {result.errors.length > 20 && (
