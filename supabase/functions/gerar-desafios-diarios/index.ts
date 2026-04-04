@@ -1,9 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 // Templates de desafios por tipo
 const DESAFIOS_TEMPLATES = [
@@ -70,7 +67,7 @@ function selectDailyDesafios(count: number = 5) {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders })
+    return new Response(null, { headers: getCorsHeaders(req) })
   }
 
   try {
@@ -104,7 +101,7 @@ Deno.serve(async (req) => {
           message: `Já existem ${existentes.length} desafios para hoje`,
           desafios: existentes.length 
         }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       )
     }
     
@@ -152,7 +149,7 @@ Deno.serve(async (req) => {
         message: `${inserted?.length || 0} desafios criados para ${hoje}`,
         desafios: inserted 
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
     
   } catch (error: unknown) {
@@ -160,7 +157,7 @@ Deno.serve(async (req) => {
     console.error('Erro ao gerar desafios:', errorMessage)
     return new Response(
       JSON.stringify({ success: false, error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     )
   }
 })

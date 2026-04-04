@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   
   const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
   
@@ -16,7 +16,7 @@ serve(async (req) => {
         const { name, type = "full", location_ids, category_ids, user_id } = data;
         const { data: count, error } = await supabase.from("inventory_counts").insert({ name, type, status: "draft", location_ids, category_ids, created_by: user_id }).select().single();
         if (error) throw error;
-        return new Response(JSON.stringify({ success: true, count }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, count }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       case "generate_items": {
         const { count_id } = data;
@@ -31,7 +31,7 @@ serve(async (req) => {
         await supabase.from("inventory_count_items").insert(items);
         await supabase.from("inventory_counts").update({ status: "in_progress", total_items: items.length }).eq("id", count_id);
         
-        return new Response(JSON.stringify({ success: true, itemsCreated: items.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, itemsCreated: items.length }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       case "register_count": {
         const { item_id, counted_quantity, user_id } = data;
@@ -41,7 +41,7 @@ serve(async (req) => {
         const variance = counted_quantity - item.system_quantity;
         await supabase.from("inventory_count_items").update({ counted_quantity, variance, status: "counted", counted_by: user_id, counted_at: new Date().toISOString() }).eq("id", item_id);
         
-        return new Response(JSON.stringify({ success: true, variance }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, variance }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       case "apply_adjustments": {
         const { count_id, user_id } = data;
@@ -53,11 +53,11 @@ serve(async (req) => {
         }
         
         await supabase.from("inventory_counts").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", count_id);
-        return new Response(JSON.stringify({ success: true, adjustments: items?.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, adjustments: items?.length }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       default: throw new Error("Acao desconhecida");
     }
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

@@ -1,10 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 interface PrevisaoDemanda {
   produto_id: string;
@@ -17,7 +14,7 @@ interface PrevisaoDemanda {
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -44,7 +41,7 @@ serve(async (req) => {
     if (produtosError) throw produtosError;
     if (!produtos || produtos.length === 0) {
       return new Response(JSON.stringify({ previsoes: [], mensagem: 'Nenhum produto encontrado' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -188,7 +185,7 @@ Forneça previsões e recomendações práticas.`
         fim: new Date().toISOString(),
       }
     }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
 
   } catch (error: unknown) {
@@ -198,7 +195,7 @@ Forneça previsões e recomendações práticas.`
       success: false, 
       error: errorMessage 
     }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       status: 500,
     });
   }

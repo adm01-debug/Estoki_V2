@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { to, message } = await req.json();
     const TWILIO_SID = Deno.env.get("TWILIO_ACCOUNT_SID");
@@ -13,6 +13,6 @@ serve(async (req) => {
       body: new URLSearchParams({ To: to, From: TWILIO_PHONE!, Body: message })
     });
     const data = await response.json();
-    return new Response(JSON.stringify(data), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify(data), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });

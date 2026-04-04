@@ -1,10 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 interface PickConfirmItem {
   pick_item_id: string;
@@ -14,7 +11,7 @@ interface PickConfirmItem {
 }
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -26,7 +23,7 @@ serve(async (req) => {
 
     if (!pick_list_id || !items?.length) {
       return new Response(JSON.stringify({ error: "pick_list_id and items are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     for (const item of items) {
@@ -95,10 +92,10 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, items_confirmed: items.length, completed: allPicked }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });
