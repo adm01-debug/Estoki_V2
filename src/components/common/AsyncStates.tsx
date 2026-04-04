@@ -63,7 +63,7 @@ interface ErrorStateProps {
 
 export function ErrorState({ message = "Erro ao carregar dados.", onRetry }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-4">
+    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-4" role="alert" aria-live="assertive">
       <div className="p-3 rounded-full bg-destructive/10">
         <AlertCircle className="h-8 w-8 text-destructive" />
       </div>
