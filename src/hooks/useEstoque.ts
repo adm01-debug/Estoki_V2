@@ -50,7 +50,7 @@ export const useEstoque = () => {
   });
 
   const updatePosicao = useMutation({
-    mutationFn: async ({ id, ...dados }: any) => {
+    mutationFn: async ({ id, ...dados }: { id: string; [key: string]: unknown }) => {
       const { data, error } = await supabase.from('posicoes_estoque').update(dados).eq('id', id).select().single();
       if (error) throw error;
       return data;
