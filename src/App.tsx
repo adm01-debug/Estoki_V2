@@ -10,6 +10,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
+import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 import { InstallPrompt } from "./components/pwa/InstallPrompt";
 import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
