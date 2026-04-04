@@ -63,6 +63,7 @@ export default function ProdutosPage() {
     fornecedor_principal: "",
   });
   const [saving, setSaving] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     loadProdutos();
