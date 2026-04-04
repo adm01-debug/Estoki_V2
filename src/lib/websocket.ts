@@ -1,4 +1,4 @@
-type WebSocketCallback = (data: any) => void;
+type WebSocketCallback = (data: unknown) => void;
 
 class WebSocketManager {
   private socket: WebSocket | null = null;
@@ -29,7 +29,7 @@ class WebSocketManager {
     this.callbacks.set(type, handlers);
   }
 
-  send(type: string, payload: any): void {
+  send(type: string, payload: unknown): void {
     this.socket?.send(JSON.stringify({ type, payload }));
   }
 

@@ -691,9 +691,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         ) : (
           <button 
             onClick={handleLogout}
+            aria-label="Sair da conta"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all"
           >
-            <LogOut className="h-[18px] w-[18px]" />
+            <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
             <span className="text-sm font-medium">Sair</span>
           </button>
         )}
@@ -964,6 +965,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.aside 
+              role="navigation"
+              aria-label="Menu de navegação"
               className="fixed left-0 top-0 h-full w-[280px] bg-sidebar border-r border-sidebar-border/50 flex flex-col z-50 lg:hidden"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
@@ -984,8 +987,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         {renderSidebarContent(false)}
 
         {/* Collapse toggle */}
-        <motion.button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          <motion.button
+            aria-label={sidebarCollapsed ? "Expandir menu lateral" : "Recolher menu lateral"}
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="absolute -right-3.5 top-20 w-7 h-7 rounded-full bg-card border border-border/50 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all shadow-md z-50"

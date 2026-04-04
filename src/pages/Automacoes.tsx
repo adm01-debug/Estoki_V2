@@ -163,8 +163,8 @@ export default function Automacoes() {
       setWorkflows(prev => prev.map(w => 
         w.id === id ? { ...w, ultimaExecucao: new Date().toISOString() } : w
       ));
-    } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+    } catch (err: unknown) {
+      toast.error(`Erro: ${(err instanceof Error ? err.message : String(err))}`);
     } finally {
       setExecuting(null);
     }

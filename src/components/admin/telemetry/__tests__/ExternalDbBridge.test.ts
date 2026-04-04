@@ -88,7 +88,7 @@ async function emitTelemetry(
     .single();
 
   if (result.error) {
-    return { success: false, error: result.error.message || String(result.error) };
+    return { success: false, error: result.(error instanceof Error ? error.message : String(error)) || String(result.error) };
   }
   return { success: true, id: result.data?.id };
 }

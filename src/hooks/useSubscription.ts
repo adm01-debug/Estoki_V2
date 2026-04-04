@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-export function useSubscription<T>(table: string, filter?: { column: string; value: any }) {
+export function useSubscription<T>(table: string, filter?: { column: string; value: string | number }) {
   const [data, setData] = useState<T[]>([]);
   useEffect(() => {
     let channel = supabase.channel(`${table}-changes`).on('postgres_changes', { event: '*', schema: 'public', table, ...(filter && { filter: `${filter.column}=eq.${filter.value}` }) }, payload => {

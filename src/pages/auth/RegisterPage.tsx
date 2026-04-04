@@ -44,8 +44,8 @@ export default function RegisterPage() {
       await authService.signUp(email, password, { nome });
       toast.success('Conta criada com sucesso!');
       navigate('/login');
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao criar conta');
+    } catch (error: unknown) {
+      toast.error((error instanceof Error ? error.message : String(error)) || 'Erro ao criar conta');
     } finally {
       setLoading(false);
     }

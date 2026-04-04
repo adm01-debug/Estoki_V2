@@ -14,7 +14,7 @@ export const printElement = (elementId: string): void => {
   printWindow.print();
 };
 
-export const printTable = (data: any[], columns: string[]): void => {
+export const printTable = (data: Record<string, unknown>[], columns: string[]): void => {
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
   

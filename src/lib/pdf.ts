@@ -8,7 +8,7 @@ export const generatePDF = async (title: string, content: string) => {
   return doc;
 };
 
-export const downloadPDF = async (doc: any, filename: string): Promise<void> => {
+export const downloadPDF = async (doc: { save: (filename: string) => Promise<void> }, filename: string): Promise<void> => {
   doc.save(`${filename}.pdf`);
 };
 

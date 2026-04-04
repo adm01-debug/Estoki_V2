@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 interface OfflineAction {
   id: string;
   type: string;
-  payload: any;
+  payload: unknown;
   timestamp: number;
 }
 
@@ -24,7 +24,7 @@ export function useOffline() {
     };
   }, []);
 
-  const queueAction = useCallback((type: string, payload: any) => {
+  const queueAction = useCallback((type: string, payload: unknown) => {
     const action: OfflineAction = {
       id: crypto.randomUUID(),
       type,

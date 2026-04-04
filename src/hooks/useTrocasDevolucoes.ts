@@ -66,9 +66,9 @@ export function useTrocasDevolucoes() {
       if (fetchError) throw fetchError;
       
       setRegistros((data || []) as TrocaDevolucao[]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao buscar registros:', err);
-      setError(err.message);
+      setError((err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }
@@ -114,11 +114,11 @@ export function useTrocasDevolucoes() {
       });
 
       return novoRegistro;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao criar registro:', err);
       toast({
         title: 'Erro ao criar registro',
-        description: err.message,
+        description: (err instanceof Error ? err.message : String(err)),
         variant: 'destructive',
       });
       return null;
@@ -155,11 +155,11 @@ export function useTrocasDevolucoes() {
       });
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao atualizar status:', err);
       toast({
         title: 'Erro ao atualizar status',
-        description: err.message,
+        description: (err instanceof Error ? err.message : String(err)),
         variant: 'destructive',
       });
       return false;
@@ -188,11 +188,11 @@ export function useTrocasDevolucoes() {
       });
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao gerar crédito:', err);
       toast({
         title: 'Erro ao gerar crédito',
-        description: err.message,
+        description: (err instanceof Error ? err.message : String(err)),
         variant: 'destructive',
       });
       return false;

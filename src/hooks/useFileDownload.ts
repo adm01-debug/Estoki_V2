@@ -7,7 +7,7 @@ export function useFileDownload() {
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }, []);
-  const downloadJSON = useCallback((data: any, filename: string) => download(JSON.stringify(data, null, 2), filename, 'application/json'), [download]);
+  const downloadJSON = useCallback((data: unknown, filename: string) => download(JSON.stringify(data, null, 2), filename, 'application/json'), [download]);
   const downloadCSV = useCallback((data: string, filename: string) => download(data, filename, 'text/csv'), [download]);
   return { download, downloadJSON, downloadCSV };
 }

@@ -116,7 +116,7 @@ export function useBalanca() {
       toast.success('Balança conectada');
       return true;
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : 'Erro desconhecido';
+      const msg = error instanceof Error ? (error instanceof Error ? error.message : String(error)) : 'Erro desconhecido';
       setErro(msg);
       toast.error(`Erro: ${msg}`);
       return false;
