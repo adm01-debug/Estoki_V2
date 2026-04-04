@@ -108,6 +108,9 @@ export default function RecebimentoPage() {
           </div>
         </div>
 
+        {/* Charts */}
+        {items.length > 0 && <RecebimentoCharts items={items} />}
+
         <Tabs value={statusFilter} onValueChange={setStatusFilter}>
           <TabsList className="w-full overflow-x-auto flex-nowrap justify-start">
             <TabsTrigger value="todos" className="gap-1">

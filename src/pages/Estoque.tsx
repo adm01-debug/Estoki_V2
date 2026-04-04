@@ -344,6 +344,9 @@ export default function EstoquePage() {
             </Card>
           </motion.div>
 
+          {/* Charts */}
+          <EstoqueCharts posicoes={safePositions} />
+
           {/* Search and Filters */}
           <motion.div className="flex gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 }}>
             <div className="relative flex-1">
