@@ -153,8 +153,6 @@ export function useCheckpointsZona() {
         if (entrada && new Date(cp.created_at) > new Date(entrada.created_at)) {
           entradas.delete(key);
         }
-          }
-        }
       });
 
       // Filter items stuck for more than 4 hours
