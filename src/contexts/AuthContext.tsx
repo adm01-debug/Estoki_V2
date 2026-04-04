@@ -82,19 +82,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchUserData(session.user.id);
-      }
-      
-      setLoading(false);
-    }).catch((err) => {
-      console.error("Failed to get session:", err);
-      setLoading(false);
-    });
+    const sessionPromise = supabase.auth.getSession();
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("getSession timeout")), 3000)
+    );
+    
+    Promise.race([sessionPromise, timeoutPromise])
+      .then((result: any) => {
+        const session = result?.data?.session ?? null;
+        setSession(session);
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          fetchUserData(session.user.id);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to get session:", err);
+        setLoading(false);
+      });
 
     // Safety timeout - never stay loading forever
     const safetyTimeout = setTimeout(() => {
