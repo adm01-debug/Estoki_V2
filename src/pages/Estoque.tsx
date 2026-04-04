@@ -247,8 +247,7 @@ export default function EstoquePage() {
   }
 
   return (
-    <AppLayout>
-      <SEO title="Estoque" description="Gestão de posições, ocupação e movimentação de estoque." path="/estoque" />
+    <AppLayout
       title="Estoque"
       showBack
       rightAction={
@@ -266,6 +265,7 @@ export default function EstoquePage() {
         </div>
       }
     >
+      <SEO title="Estoque" description="Gestão de posições, ocupação e movimentação de estoque." path="/estoque" />
       <PageTransition>
         <div className="p-4 space-y-4">
           {/* Bulk selection bar */}

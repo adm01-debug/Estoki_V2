@@ -172,8 +172,7 @@ export default function TriagemPage() {
 
   return (
     <AppLayout
-      title="Triagem">
-      <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
+      title="Triagem"
       showBack
       rightAction={
         <div className="flex gap-2">
@@ -192,6 +191,7 @@ export default function TriagemPage() {
         </div>
       }
     >
+      <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
       <div ref={containerRef} className="p-4 space-y-4 animate-fade-in">
         <PullToRefreshIndicator 
           pullDistance={pullDistance} 
