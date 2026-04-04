@@ -1,4 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+
+declare global {
+  interface Window {
+    BarcodeDetector?: new (options?: { formats: string[] }) => {
+      detect(source: HTMLVideoElement | ImageBitmap | HTMLCanvasElement): Promise<Array<{ rawValue: string; format: string }>>;
+    };
+  }
+}
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Camera, X, Flashlight } from 'lucide-react';
@@ -29,14 +37,14 @@ export function BarcodeScanner({
   const [flashOn, setFlashOn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const detectorRef = useRef<any>(null);
   const animationRef = useRef<number | null>(null);
 
   const initBarcodeDetector = useCallback(async () => {
     if (hasBarcodeDetector) {
       try {
-        // @ts-ignore - BarcodeDetector is not in TypeScript types yet
-        detectorRef.current = new BarcodeDetector({ formats });
+        detectorRef.current = new window.BarcodeDetector!({ formats });
       } catch (err) {
         if (import.meta.env.DEV) console.warn("BarcodeDetector not supported");
         setError('Scanner não suportado neste dispositivo');
@@ -100,9 +108,8 @@ export function BarcodeScanner({
 
     const track = streamRef.current.getVideoTracks()[0];
     try {
-      await track.applyConstraints({
-        // @ts-ignore
-        advanced: [{ torch: !flashOn }],
+      await (track as any).applyConstraints({
+        advanced: [{ torch: !flashOn }] as any,
       });
       setFlashOn(!flashOn);
     } catch (err) {
