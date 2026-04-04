@@ -86,10 +86,13 @@ export default function ProdutosPage() {
   };
 
   const handleSave = async () => {
-    if (!formData.sku || !formData.nome) {
-      toast.error("SKU e Nome são obrigatórios");
+    const validation = validateForm(produtoSchema, formData);
+    if (!validation.success) {
+      setFormErrors(validation.errors);
       return;
     }
+    setFormErrors({});
+    
     try {
       setSaving(true);
       const { error } = await supabase.from("produtos").insert({
@@ -107,6 +110,7 @@ export default function ProdutosPage() {
       toast.success("Produto cadastrado com sucesso!");
       setShowAddDialog(false);
       setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
+      setFormErrors({});
       loadProdutos();
     } catch (err: any) {
       toast.error(err.message || "Erro ao salvar produto");
