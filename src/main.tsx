@@ -17,6 +17,7 @@ window.addEventListener("error", (event) => {
   console.error("[Global Error]", event.message, event.filename, event.lineno);
 });
 import { prefetchCriticalRoutes } from "./lib/prefetch";
+import { initWebVitals } from "./lib/web-vitals";
 
 const rootElement = document.getElementById("root");
 
