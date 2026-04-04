@@ -16,7 +16,7 @@ const WebhookSchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
-  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
+  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
 
   try {
     // Validate webhook secret
@@ -24,12 +24,12 @@ Deno.serve(async (req) => {
     const providedSecret = req.headers.get("x-webhook-secret");
 
     if (webhookSecret && providedSecret !== webhookSecret) {
-      return jsonResponse({ error: "Unauthorized" }, 401);
+      return jsonResponse({ error: "Unauthorized" }, 401, req);
     }
 
     const parsed = WebhookSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
     }
 
     const { event, data } = parsed.data;
@@ -47,9 +47,9 @@ Deno.serve(async (req) => {
       severidade: "info",
     });
 
-    return jsonResponse({ success: true, event, received: new Date().toISOString() });
+    return jsonResponse({ success: true, event, received: new Date().toISOString() }, req);
   } catch (error) {
     console.error("webhook-handler error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return jsonResponse({ error: "Internal server error" }, 500, req);
   }
 });

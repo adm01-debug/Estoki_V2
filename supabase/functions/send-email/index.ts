@@ -22,22 +22,22 @@ Deno.serve(async (req) => {
   }
 
   if (req.method !== "POST") {
-    return jsonResponse({ error: "Method not allowed" }, 405);
+    return jsonResponse({ error: "Method not allowed" }, 405, req);
   }
 
   try {
     const parsed = SendEmailSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
     }
 
     const { to, subject, body, template } = parsed.data;
 
     console.log(`Email queued → to: ${Array.isArray(to) ? to.join(", ") : to}, subject: ${subject}`);
 
-    return jsonResponse({ success: true, message: "Email queued" });
+    return jsonResponse({ success: true, message: "Email queued" }, req);
   } catch (error) {
     console.error("send-email error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return jsonResponse({ error: "Internal server error" }, 500, req);
   }
 });
