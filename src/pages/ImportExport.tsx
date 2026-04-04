@@ -54,10 +54,10 @@ export default function ImportExport() {
   const [result, setResult] = useState<ImportResult | null>(null);
   const [dragOver, setDragOver] = useState(false);
 
-  const downloadTemplate = (templateId: string) => {
+  const downloadTemplate = async (templateId: string) => {
     const template = templates.find(t => t.id === templateId);
     if (!template) return;
-
+    const Papa = (await import('papaparse')).default;
     const csv = Papa.unparse({ fields: template.headers, data: [] });
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
