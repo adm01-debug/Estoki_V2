@@ -1,5 +1,6 @@
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
+import { romaneioSchema, validateForm } from "@/lib/validations";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
