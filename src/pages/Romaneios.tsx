@@ -57,12 +57,9 @@ export default function RomaneiosPage() {
     loading,
     error,
     criarRomaneio,
-    atualizarRomaneio,
-    iniciarRomaneio,
-    finalizarEntrega,
-    cancelarRomaneio,
     adicionarItem,
-    removerItem,
+    atualizarStatus,
+    registrarEntrega,
     refetch,
   } = useRomaneios();
 
