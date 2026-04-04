@@ -1,3 +1,4 @@
+import { RecebimentoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
 import { useState, useEffect } from "react";
