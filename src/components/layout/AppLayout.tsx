@@ -691,9 +691,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         ) : (
           <button 
             onClick={handleLogout}
+            aria-label="Sair da conta"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all"
           >
-            <LogOut className="h-[18px] w-[18px]" />
+            <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
             <span className="text-sm font-medium">Sair</span>
           </button>
         )}
