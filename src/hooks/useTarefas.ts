@@ -16,7 +16,7 @@ export const useTarefas = () => {
   });
 
   const createTarefa = useMutation({
-    mutationFn: async (nova: any) => {
+    mutationFn: async (nova: Record<string, unknown>) => {
       const { data, error } = await supabase.from('tarefas').insert(nova).select().single();
       if (error) throw error;
       return data;

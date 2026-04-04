@@ -155,7 +155,7 @@ export function useScanner(): UseScannerReturn {
         if (lote) {
           const posicoes = lote.estoque_posicao || [];
           const localizacao = posicoes.length > 0 
-            ? posicoes.map((p: any) => p.posicoes_estoque?.codigo).filter(Boolean).join(', ')
+            ? posicoes.map((p: { posicoes_estoque?: { codigo?: string } }) => p.posicoes_estoque?.codigo).filter(Boolean).join(', ')
             : undefined;
 
           result = {
@@ -195,7 +195,7 @@ export function useScanner(): UseScannerReturn {
         if (posicao) {
           const estoque = posicao.estoque_posicao || [];
           const qtdTotal = estoque.reduce((acc: number, e: any) => acc + (e.quantidade || 0), 0);
-          const produtos = estoque.map((e: any) => e.lotes?.produtos?.nome).filter(Boolean);
+          const produtos = estoque.map((e: { lotes?: { produtos?: { nome?: string } } }) => e.lotes?.produtos?.nome).filter(Boolean);
 
           result = {
             id: posicao.id,

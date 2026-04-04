@@ -394,7 +394,7 @@ export default function AlertasInteligentesPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {configAlertas.map((config: any) => (
+                      {configAlertas.map((config: Record<string, unknown>) => (
                         <TableRow key={config.id}>
                           <TableCell className="font-medium">{config.tipo}</TableCell>
                           <TableCell>{config.descricao}</TableCell>

@@ -91,7 +91,7 @@ export function useRomaneios() {
         entregas_realizadas: r.entregas_realizadas || 0,
         total_volumes: r.total_volumes || 0,
         total_peso_kg: r.total_peso_kg || 0,
-        itens: (r.romaneio_itens || []).map((item: any) => ({
+        itens: (r.romaneio_itens || []).map((item: Record<string, unknown>) => ({
           id: item.id,
           romaneio_id: item.romaneio_id,
           cliente: item.cliente,

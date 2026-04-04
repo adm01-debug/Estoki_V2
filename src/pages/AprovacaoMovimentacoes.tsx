@@ -60,7 +60,7 @@ export default function AprovacaoMovimentacoes() {
 
   const isApprover = role === 'admin' || role === 'supervisor';
 
-  const statusConfig: Record<string, { icon: any; color: string; label: string }> = {
+  const statusConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string; label: string }> = {
     pendente: { icon: Clock, color: 'text-warning', label: 'Pendente' },
     aprovado: { icon: CheckCircle2, color: 'text-success', label: 'Aprovado' },
     rejeitado: { icon: XCircle, color: 'text-destructive', label: 'Rejeitado' },

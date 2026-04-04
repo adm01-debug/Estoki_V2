@@ -163,7 +163,7 @@ function addTable(doc: jsPDF, startY: number, columns: TableColumn[], data: Reco
 // ============ Public API ============
 
 export function exportInventarioPDF(
-  contagens: any[],
+  contagens: Record<string, unknown>[],
   ciclo: { nome: string; acuracidade: number; posicoes_contadas: number; total_posicoes: number }
 ) {
   const doc = new jsPDF();
