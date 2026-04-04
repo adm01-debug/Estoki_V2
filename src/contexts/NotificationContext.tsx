@@ -365,7 +365,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
             .eq('id', id);
         }
       } catch (err) {
-        console.error('Erro ao marcar como lida:', err);
+        if (import.meta.env.DEV) console.error('Erro ao marcar como lida:', err);
       }
     }
 
