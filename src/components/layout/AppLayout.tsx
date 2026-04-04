@@ -465,11 +465,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     prefetchCriticalRoutes();
   }, []);
 
-  useEffect(() => {
-    if (isSupported && permission === "default") {
-      requestPermission();
-    }
-  }, [isSupported, permission, requestPermission]);
+  // Push notification permission is requested manually by the user via settings — not auto-requested
 
   useEffect(() => {
     setMobileMenuOpen(false);
