@@ -297,6 +297,7 @@ const AuthPage = () => {
                 </div>
                 {signupErrors.password && <p className="text-xs text-destructive" role="alert">{signupErrors.password}</p>}
                 <PasswordStrengthMeter password={signupPassword} />
+              </div>
               <div className="space-y-1.5">
                 <Label htmlFor="signup-confirm" className="text-sidebar-foreground/70 text-sm font-medium">Confirmar Senha</Label>
                 <Input id="signup-confirm" type={showPassword ? "text" : "password"} placeholder="Repita a senha" value={signupConfirmPassword} onChange={(e) => setSignupConfirmPassword(e.target.value)} disabled={isSubmitting} className={inputClasses} />
