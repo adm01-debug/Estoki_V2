@@ -43,8 +43,7 @@ export function BarcodeScanner({
   const initBarcodeDetector = useCallback(async () => {
     if (hasBarcodeDetector) {
       try {
-        // @ts-ignore - BarcodeDetector is not in TypeScript types yet
-        detectorRef.current = new BarcodeDetector({ formats });
+        detectorRef.current = new window.BarcodeDetector!({ formats });
       } catch (err) {
         if (import.meta.env.DEV) console.warn("BarcodeDetector not supported");
         setError('Scanner não suportado neste dispositivo');
