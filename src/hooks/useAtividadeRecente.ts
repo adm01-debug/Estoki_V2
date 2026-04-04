@@ -90,7 +90,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('updated_at', { ascending: false })
         .limit(5);
 
-      if (divError) console.error('Erro divergências:', divError);
+      if (divError && import.meta.env.DEV) console.error('Erro divergências:', divError);
 
       (divergencias || []).forEach(d => {
         atividades.push({

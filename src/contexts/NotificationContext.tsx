@@ -407,7 +407,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           .update({ lida: true, data_leitura: new Date().toISOString() })
           .in('id', notifIds);
       } catch (err) {
-        console.error('Erro ao marcar notificações como lidas:', err);
+        if (import.meta.env.DEV) console.error('Erro ao marcar notificações como lidas:', err);
       }
     }
 
