@@ -147,7 +147,7 @@ export function useCheckpointsZona() {
         .eq('tipo', 'saida')
         .limit(500);
 
-      (saidas || []).forEach((cp: any) => {
+      (saidas || []).forEach((cp) => {
         const key = `${cp.lote_id || cp.produto_id}-${cp.zona}`;
         if (entradas.has(key)) {
           const entrada = entradas.get(key);
