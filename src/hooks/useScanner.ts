@@ -183,7 +183,7 @@ export function useScanner(): UseScannerReturn {
             estoque_posicao (
               quantidade,
               lotes (
-                numero_pedido,
+                pedido_compra,
                 numero_lote,
                 produtos (nome)
               )

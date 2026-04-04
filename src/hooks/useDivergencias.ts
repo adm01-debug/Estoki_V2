@@ -77,16 +77,15 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
         .select(`
           id,
           numero_lote,
-          numero_pedido,
+          pedido_compra,
           quantidade_pedida,
-          quantidade_total,
+          quantidade_atual,
           data_recebimento,
           fornecedor,
           produtos (nome)
         `)
         .gte('data_recebimento', dataInicio)
-        .not('quantidade_pedida', 'is', null)
-        .not('quantidade_total', 'is', null);
+        .not('quantidade_pedida', 'is', null);
 
       if (queryError) throw queryError;
 
@@ -95,7 +94,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
 
       (lotes || []).forEach((lote: any) => {
         const pedida = lote.quantidade_pedida || 0;
-        const recebida = lote.quantidade_total || 0;
+        const recebida = lote.quantidade_atual || 0;
         const diferenca = recebida - pedida;
         const percentual = pedida > 0 ? (Math.abs(diferenca) / pedida) * 100 : 0;
         const fornecedor = lote.fornecedor || 'Não informado';
@@ -119,7 +118,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
         if (diferenca !== 0) {
           divergenciasProcessadas.push({
             id: lote.id,
-            numero_lote: lote.numero_lote || lote.numero_pedido || 'N/A',
+            numero_lote: lote.numero_lote || lote.pedido_compra || 'N/A',
             fornecedor,
             produto_nome: lote.produtos?.nome || 'Produto desconhecido',
             quantidade_pedida: pedida,

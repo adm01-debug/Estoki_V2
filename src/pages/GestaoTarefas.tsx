@@ -74,9 +74,9 @@ export default function GestaoTarefasPage() {
 
   const stats = useMemo(() => ({
     total: safeTarefas.length,
-    pendentes: safeTarefas.filter((t: any) => t.status === "pendente").length,
-    emAndamento: safeTarefas.filter((t: any) => t.status === "em_andamento").length,
-    concluidas: safeTarefas.filter((t: any) => t.status === "concluida").length,
+    pendentes: safeTarefas.filter((t: { status: string }) => t.status === "pendente").length,
+    emAndamento: safeTarefas.filter((t: { status: string }) => t.status === "em_andamento").length,
+    concluidas: safeTarefas.filter((t: { status: string }) => t.status === "concluida").length,
   }), [safeTarefas]);
 
   const tarefasFiltradas = useMemo(() => {
@@ -91,7 +91,7 @@ export default function GestaoTarefasPage() {
   const dadosStatus = useMemo(() => {
     return Object.entries(statusLabels).map(([status, label], i) => ({
       name: label,
-      value: safeTarefas.filter((t: any) => t.status === status).length,
+      value: safeTarefas.filter((t: { status: string }) => t.status === status).length,
       color: COLORS[i % COLORS.length],
     })).filter(d => d.value > 0);
   }, [safeTarefas]);
