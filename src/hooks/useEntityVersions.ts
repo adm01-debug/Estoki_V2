@@ -83,7 +83,7 @@ export function useEntityVersions({
 
     if (!version1 || !version2) return null;
 
-    const changes: Record<string, { old: any; new: any }> = {};
+    const changes: Record<string, { old: unknown; new: unknown }> = {};
     const allKeys = new Set([
       ...Object.keys(version1.data),
       ...Object.keys(version2.data),

@@ -12,7 +12,7 @@ interface ExportOptions<T> {
   columns?: Array<{
     key: keyof T;
     header: string;
-    transform?: (value: any, row: T) => string;
+    transform?: (value: unknown, row: T) => string;
   }>;
   filters?: Record<string, any>;
   orderBy?: { column: string; ascending?: boolean };
