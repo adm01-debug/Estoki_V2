@@ -63,8 +63,7 @@ export const auditService = {
    * Get audit logs with filters
    */
   async getLogs(filters: AuditLogFilters = {}): Promise<AuditLogEntry[]> {
-    let query = supabase
-      .from('audit_log')
+    let query = (supabase.from as any)('audit_log')
       .select('*')
       .order('created_at', { ascending: false });
 
