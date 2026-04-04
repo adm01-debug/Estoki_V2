@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -129,6 +130,7 @@ export default function RomaneiosPage() {
 
   return (
     <AppLayout title="Romaneios de Entrega" showBack>
+      <SEO title="Romaneios" description="Gestão de romaneios de entrega, motoristas e rotas." path="/romaneios" />
       <div className="p-4 space-y-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">

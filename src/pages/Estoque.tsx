@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
@@ -264,6 +265,7 @@ export default function EstoquePage() {
         </div>
       }
     >
+      <SEO title="Estoque" description="Gestão de posições, ocupação e movimentação de estoque." path="/estoque" />
       <PageTransition>
         <div className="p-4 space-y-4">
           {/* Bulk selection bar */}

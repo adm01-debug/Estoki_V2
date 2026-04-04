@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
@@ -98,6 +99,7 @@ export default function RecebimentoPage() {
       showBack
       rightAction={<NovoRecebimentoDialog />}
     >
+      <SEO title="Recebimento" description="Gestão de recebimento de mercadorias e conferência de notas fiscais." path="/recebimento" />
       <div className="p-4 space-y-4 animate-fade-in">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">

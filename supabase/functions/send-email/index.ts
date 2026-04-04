@@ -1,35 +1,46 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
+
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const jsonResponse = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
+const SendEmailSchema = z.object({
+  to: z.union([z.string().email(), z.array(z.string().email()).min(1)]),
+  subject: z.string().min(1).max(500),
+  body: z.string().max(50000).optional(),
+  template: z.string().max(100).optional(),
+});
+
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  if (req.method !== "POST") {
+    return jsonResponse({ error: "Method not allowed" }, 405);
   }
 
   try {
-    const { to, subject, body, template } = await req.json();
-
-    // Validação básica
-    if (!to || !subject) {
-      return new Response(JSON.stringify({ error: 'to and subject are required' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    const parsed = SendEmailSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
     }
 
-    // Aqui integraria com serviço de email (SendGrid, Resend, etc)
-    console.log(`Email enviado para: ${to}, Assunto: ${subject}`);
+    const { to, subject, body, template } = parsed.data;
 
-    return new Response(JSON.stringify({ success: true, message: 'Email queued' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.log(`Email queued → to: ${Array.isArray(to) ? to.join(", ") : to}, subject: ${subject}`);
+
+    return jsonResponse({ success: true, message: "Email queued" });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    console.error("send-email error:", error);
+    return jsonResponse({ error: "Internal server error" }, 500);
   }
 });

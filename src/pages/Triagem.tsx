@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
 import { useState, useMemo, useRef, useEffect } from "react";
@@ -190,6 +191,7 @@ export default function TriagemPage() {
         </div>
       }
     >
+      <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
       <div ref={containerRef} className="p-4 space-y-4 animate-fade-in">
         <PullToRefreshIndicator 
           pullDistance={pullDistance} 

@@ -1,3 +1,4 @@
+import { SEO } from "@/components/common/SEO";
 import { useNavigate } from "react-router-dom";
 import { useCallback, useRef, useMemo } from "react";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
@@ -149,6 +150,7 @@ export default function Dashboard() {
 
   return (
     <PageTransition>
+      <SEO title="Painel Principal" description="Visão geral do armazém com KPIs em tempo real, alertas e atividades recentes." path="/" />
       <motion.div 
         className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto"
         variants={containerVariants}

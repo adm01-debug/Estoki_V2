@@ -6,9 +6,11 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
+import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 import { InstallPrompt } from "./components/pwa/InstallPrompt";
 import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
@@ -42,6 +44,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
+  <HelmetProvider>
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -58,9 +61,9 @@ const App = () => (
 
                   {/* Protected routes */}
                   <Route path="/" element={<AppLayout />}>
-                    <Route index element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense>} />
-                    <Route path="dashboard" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense>} />
-                    <Route path="monitor" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense>} />
+                    <Route index element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense></RouteErrorBoundary>} />
+                    <Route path="dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense></RouteErrorBoundary>} />
+                    <Route path="monitor" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense></RouteErrorBoundary>} />
 
                     {wmsRoutes}
                     {analyticsRoutes}
@@ -75,6 +78,7 @@ const App = () => (
       </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
+  </HelmetProvider>
 );
 
 export default App;
