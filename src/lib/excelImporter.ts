@@ -1,4 +1,3 @@
-import ExcelJS from "exceljs";
 import { z } from "zod";
 import { ImportResult } from "./csvImporter";
 
@@ -23,6 +22,7 @@ export async function importExcel<T>(
   options?: ExcelImportOptions
 ): Promise<ImportResult<T>> {
   const opts = { ...defaultOptions, ...options };
+  const ExcelJS = (await import('exceljs')).default;
 
   const arrayBuffer = await file.arrayBuffer();
   const workbook = new ExcelJS.Workbook();
@@ -36,7 +36,6 @@ export async function importExcel<T>(
     throw new Error(`Planilha "${opts.sheetName || opts.sheetIndex}" não encontrada`);
   }
 
-  // Extract headers from first row
   const headers: string[] = [];
   const headerRow = worksheet.getRow(1);
   headerRow.eachCell((cell, colNumber) => {
@@ -80,20 +79,16 @@ export async function importExcel<T>(
   return { success, errors, total: worksheet.rowCount - 1, warnings };
 }
 
-export function getExcelSheets(file: File): Promise<string[]> {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(arrayBuffer);
-      resolve(workbook.worksheets.map(ws => ws.name));
-    } catch (error) {
-      reject(error);
-    }
-  });
+export async function getExcelSheets(file: File): Promise<string[]> {
+  const ExcelJS = (await import('exceljs')).default;
+  const arrayBuffer = await file.arrayBuffer();
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(arrayBuffer);
+  return workbook.worksheets.map(ws => ws.name);
 }
 
 export async function downloadExcel(data: Record<string, unknown>[], filename: string, sheetName = "Dados"): Promise<void> {
+  const ExcelJS = (await import('exceljs')).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
 
@@ -123,6 +118,7 @@ export async function generateExcelTemplate(
   filename: string,
   exampleData?: Record<string, unknown>[]
 ): Promise<void> {
+  const ExcelJS = (await import('exceljs')).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Template");
 
