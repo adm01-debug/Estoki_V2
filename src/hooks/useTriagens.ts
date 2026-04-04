@@ -17,7 +17,7 @@ export const useTriagens = () => {
   });
 
   const createTriagem = useMutation({
-    mutationFn: async (novaTriagem: Record<string, unknown>) => {
+    mutationFn: async (novaTriagem: any) => {
       const { data, error } = await supabase.from('eventos_triagem').insert(novaTriagem).select().single();
       if (error) throw error;
       return data;
@@ -32,7 +32,7 @@ export const useTriagens = () => {
   });
 
   const updateTriagem = useMutation({
-    mutationFn: async ({ id, ...dados }: Record<string, unknown>) => {
+    mutationFn: async ({ id, ...dados }: any) => {
       const { data, error } = await supabase.from('eventos_triagem').update(dados).eq('id', id).select().single();
       if (error) throw error;
       return data;

@@ -93,7 +93,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
       const divergenciasProcessadas: DivergenciaRecord[] = [];
       const fornecedoresMap = new Map<string, FornecedorMetrica>();
 
-      (lotes || []).forEach((lote: Record<string, unknown>) => {
+      (lotes || []).forEach((lote: any) => {
         const pedida = lote.quantidade_pedida || 0;
         const recebida = lote.quantidade_total || 0;
         const diferenca = recebida - pedida;

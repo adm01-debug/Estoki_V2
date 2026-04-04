@@ -17,7 +17,7 @@ export const useRecebimentos = () => {
   });
 
   const createRecebimento = useMutation({
-    mutationFn: async (novo: Record<string, unknown>) => {
+    mutationFn: async (novo: any) => {
       const payload = {
         numero_lote: novo.numero_lote,
         produto_id: novo.produto_id,
