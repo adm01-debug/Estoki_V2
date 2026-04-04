@@ -96,7 +96,7 @@ export function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
+    <div className="flex flex-col items-center justify-center py-12 gap-4 text-center" role="status" aria-live="polite">
       <div className="p-3 rounded-full bg-muted">
         {icon || <PackageOpen className="h-8 w-8 text-muted-foreground" />}
       </div>
