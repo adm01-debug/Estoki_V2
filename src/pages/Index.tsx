@@ -97,7 +97,7 @@ export default function Dashboard() {
       r.status === 'aguardando' || r.status === 'em_transito'
     ).length;
     const div = recebimentosList.filter(r => r.status === 'divergencia').length;
-    const triagem = stats?.totalTriagens || 0;
+    const triagem = (stats as any)?.totalTriagens || 0;
     const itens = estatisticas.posicoesOcupadas;
     const pp = Math.round(estatisticas.taxaOcupacao);
     const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
