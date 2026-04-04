@@ -426,6 +426,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
   const preloadRoute = useRoutePreload();
+  const { favorites, toggleFavorite, isFavorite } = useSidebarFavorites();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
