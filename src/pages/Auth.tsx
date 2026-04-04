@@ -347,10 +347,19 @@ const AuthPage = () => {
             )}
           </p>
 
-          {/* Security badge */}
-          <div className="flex items-center justify-center gap-1.5 text-sidebar-foreground/20 text-[11px]">
-            <Shield className="h-3 w-3" />
-            <span>Conexão segura · Dados criptografados</span>
+          {/* Security badge + IP info */}
+          <div className="flex flex-col items-center gap-1 text-[11px] text-sidebar-foreground/20">
+            <div className="flex items-center gap-1.5">
+              <Shield className="h-3 w-3" />
+              <span>Conexão segura · Dados criptografados</span>
+            </div>
+            {ipInfo && (
+              <div className="flex items-center gap-1.5">
+                <Globe className="h-3 w-3" />
+                <span className="font-mono">{ipInfo.ip}</span>
+                <span>· {ipInfo.city}, {ipInfo.country}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
