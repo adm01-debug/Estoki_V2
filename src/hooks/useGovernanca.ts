@@ -159,7 +159,7 @@ export function useCheckpointsZona() {
 
       // Filter items stuck for more than 4 hours
       const agora = Date.now();
-      const presos: any[] = [];
+      const presos: Array<typeof data[number] & { horas_preso: number }> = [];
       entradas.forEach((cp) => {
         const horasDecorridas = (agora - new Date(cp.created_at).getTime()) / (1000 * 60 * 60);
         if (horasDecorridas > 4) {
