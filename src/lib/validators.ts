@@ -69,7 +69,7 @@ export function isNotEmpty(value: unknown): boolean {
 }
 
 export function isPositiveNumber(value: unknown): boolean {
-  const num = parseFloat(value);
+  const num = parseFloat(String(value));
   return !isNaN(num) && num > 0;
 }
 
