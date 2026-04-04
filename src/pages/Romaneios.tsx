@@ -97,6 +97,13 @@ export default function RomaneiosPage() {
   };
 
   const handleCriarRomaneio = async () => {
+    const validation = validateForm(romaneioSchema, novoRomaneio);
+    if (!validation.success) {
+      setFormErrors(validation.errors);
+      return;
+    }
+    setFormErrors({});
+    
     try {
       await criarRomaneio(novoRomaneio);
       setNovoRomaneioOpen(false);
@@ -107,6 +114,7 @@ export default function RomaneiosPage() {
         data_prevista_entrega: "",
         rota: "",
       });
+      setFormErrors({});
     } catch (err) {
       // Erro já tratado no hook
     }
