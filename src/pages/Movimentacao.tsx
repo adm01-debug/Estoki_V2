@@ -140,9 +140,18 @@ export default function MovimentacaoPage() {
   }, [movimentacoes, searchTerm, periodoFiltro]);
 
   const handleSubmit = async () => {
-    if (!formData.descricao.trim()) {
+    const validation = validateForm(movimentacaoSchema, {
+      tipo: tipoMovimento,
+      localizacao: formData.localizacao || undefined,
+      quantidade: formData.quantidade,
+      descricao: formData.descricao,
+    });
+
+    if (!validation.success) {
+      setFormErrors(validation.errors);
       return;
     }
+    setFormErrors({});
     
     setSubmitting(true);
     try {
@@ -154,9 +163,9 @@ export default function MovimentacaoPage() {
       });
       
       if (success) {
-        // Log de auditoria
         auditLog.create("movimentacao", "", tipoMovimento, { tipo: tipoMovimento, quantidade: formData.quantidade, localizacao: formData.localizacao, descricao: formData.descricao });
         setFormData({ localizacao: "", quantidade: 1, descricao: "" });
+        setFormErrors({});
         setActiveTab("historico");
       }
     } finally {
