@@ -283,7 +283,7 @@ export default function Etiquetas() {
   };
 
   // ── PDF for Lotes ──
-  const generateLotePDF = async (doc: jsPDF, lotesToPrint: LoteItem[]) => {
+  const generateLotePDF = async (doc: any, lotesToPrint: LoteItem[]) => {
     const { width, height } = tamanhos[tamanho];
     let pageIndex = 0;
     for (const lote of lotesToPrint) {
