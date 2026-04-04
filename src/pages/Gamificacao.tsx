@@ -1,3 +1,4 @@
+import { GamificacaoCharts } from "@/components/charts/WMSModuleCharts";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -124,6 +125,17 @@ export default function GamificacaoPage() {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* Charts */}
+          <GamificacaoCharts
+            xpTotal={perfil?.xp_total || 0}
+            nivel={perfil?.nivel || 1}
+            conquistasDesbloqueadas={conquistasDesbloqueadas}
+            totalConquistas={conquistas?.length || 0}
+            desafiosConcluidos={desafiosConcluidos}
+            totalDesafios={totalDesafios}
+            streakAtual={streakAtual}
+          />
 
           {/* Tabs */}
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">

@@ -1,3 +1,4 @@
+import { RomaneiosCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { romaneioSchema, validateForm } from "@/lib/validations";
@@ -205,6 +206,9 @@ export default function RomaneiosPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Charts */}
+        {romaneios.length > 0 && <RomaneiosCharts romaneios={romaneios} />}
 
         {/* Filtros */}
         <div className="flex flex-col md:flex-row gap-4">

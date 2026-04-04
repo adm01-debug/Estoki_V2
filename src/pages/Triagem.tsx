@@ -1,3 +1,4 @@
+import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
@@ -204,6 +205,9 @@ export default function TriagemPage() {
             onConfirmarAmostra={() => { /* Amostragem confirmada */ }}
           />
         )}
+        {/* Charts */}
+        {items.length > 0 && <TriagemCharts items={items} />}
+
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card rounded-xl p-3 border border-border">
             <div className="flex items-center gap-1">

@@ -1,3 +1,4 @@
+import { AlertasCharts } from "@/components/charts/WMSModuleCharts";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -228,6 +229,9 @@ export default function AlertasInteligentesPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Charts */}
+        {historico.length > 0 && <AlertasCharts historico={historico} />}
 
         {/* Tabs */}
         <Tabs defaultValue="historico" className="space-y-4">

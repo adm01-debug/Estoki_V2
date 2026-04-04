@@ -1,3 +1,4 @@
+import { LotesCharts } from "@/components/charts/WMSModuleCharts";
 import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -156,6 +157,9 @@ export default function LotesPage() {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* Charts */}
+          {lotes.length > 0 && <LotesCharts lotes={lotes} />}
 
           {/* Search & Filter */}
           <div className="flex gap-2">
