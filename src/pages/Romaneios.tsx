@@ -325,21 +325,27 @@ export default function RomaneiosPage() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Motorista</Label>
+                <Label>Motorista *</Label>
                 <Input
                   value={novoRomaneio.motorista}
-                  onChange={(e) => setNovoRomaneio({ ...novoRomaneio, motorista: e.target.value })}
+                  onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, motorista: e.target.value }); setFormErrors(p => ({ ...p, motorista: "" })); }}
                   placeholder="Nome do motorista"
+                  className={formErrors.motorista ? "border-destructive" : ""}
+                  maxLength={100}
                 />
+                {formErrors.motorista && <p className="text-xs text-destructive mt-1">{formErrors.motorista}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Placa do Veículo</Label>
+                  <Label>Placa do Veículo *</Label>
                   <Input
                     value={novoRomaneio.placa_veiculo}
-                    onChange={(e) => setNovoRomaneio({ ...novoRomaneio, placa_veiculo: e.target.value })}
+                    onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, placa_veiculo: e.target.value.toUpperCase() }); setFormErrors(p => ({ ...p, placa_veiculo: "" })); }}
                     placeholder="ABC-1234"
+                    className={formErrors.placa_veiculo ? "border-destructive" : ""}
+                    maxLength={10}
                   />
+                  {formErrors.placa_veiculo && <p className="text-xs text-destructive mt-1">{formErrors.placa_veiculo}</p>}
                 </div>
                 <div>
                   <Label>Tipo de Veículo</Label>
@@ -360,12 +366,14 @@ export default function RomaneiosPage() {
                 </div>
               </div>
               <div>
-                <Label>Data Prevista</Label>
+                <Label>Data Prevista *</Label>
                 <Input
                   type="date"
                   value={novoRomaneio.data_prevista_entrega}
-                  onChange={(e) => setNovoRomaneio({ ...novoRomaneio, data_prevista_entrega: e.target.value })}
+                  onChange={(e) => { setNovoRomaneio({ ...novoRomaneio, data_prevista_entrega: e.target.value }); setFormErrors(p => ({ ...p, data_prevista_entrega: "" })); }}
+                  className={formErrors.data_prevista_entrega ? "border-destructive" : ""}
                 />
+                {formErrors.data_prevista_entrega && <p className="text-xs text-destructive mt-1">{formErrors.data_prevista_entrega}</p>}
               </div>
               <div>
                 <Label>Rota</Label>
