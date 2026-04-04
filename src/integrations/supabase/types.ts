@@ -606,6 +606,7 @@ export type Database = {
           produto_id: string
           quantidade: number
           updated_at: string
+          version: number
         }
         Insert: {
           created_at?: string
@@ -616,6 +617,7 @@ export type Database = {
           produto_id: string
           quantidade?: number
           updated_at?: string
+          version?: number
         }
         Update: {
           created_at?: string
@@ -626,6 +628,7 @@ export type Database = {
           produto_id?: string
           quantidade?: number
           updated_at?: string
+          version?: number
         }
         Relationships: [
           {
@@ -1023,6 +1026,7 @@ export type Database = {
           recontagem_necessaria: boolean | null
           status: Database["public"]["Enums"]["status_contagem"]
           updated_at: string
+          version: number
         }
         Insert: {
           ajustado_por?: string | null
@@ -1046,6 +1050,7 @@ export type Database = {
           recontagem_necessaria?: boolean | null
           status?: Database["public"]["Enums"]["status_contagem"]
           updated_at?: string
+          version?: number
         }
         Update: {
           ajustado_por?: string | null
@@ -1069,6 +1074,7 @@ export type Database = {
           recontagem_necessaria?: boolean | null
           status?: Database["public"]["Enums"]["status_contagem"]
           updated_at?: string
+          version?: number
         }
         Relationships: [
           {
@@ -1256,6 +1262,7 @@ export type Database = {
           quantidade_pedida: number | null
           status: Database["public"]["Enums"]["status_recebimento"]
           updated_at: string
+          version: number
         }
         Insert: {
           conferido_por?: string | null
@@ -1277,6 +1284,7 @@ export type Database = {
           quantidade_pedida?: number | null
           status?: Database["public"]["Enums"]["status_recebimento"]
           updated_at?: string
+          version?: number
         }
         Update: {
           conferido_por?: string | null
@@ -1298,6 +1306,7 @@ export type Database = {
           quantidade_pedida?: number | null
           status?: Database["public"]["Enums"]["status_recebimento"]
           updated_at?: string
+          version?: number
         }
         Relationships: [
           {
@@ -1671,6 +1680,7 @@ export type Database = {
           tarefas_concluidas: number | null
           total_tarefas: number | null
           updated_at: string
+          version: number
           zona_alvo: string | null
         }
         Insert: {
@@ -1688,6 +1698,7 @@ export type Database = {
           tarefas_concluidas?: number | null
           total_tarefas?: number | null
           updated_at?: string
+          version?: number
           zona_alvo?: string | null
         }
         Update: {
@@ -1705,6 +1716,7 @@ export type Database = {
           tarefas_concluidas?: number | null
           total_tarefas?: number | null
           updated_at?: string
+          version?: number
           zona_alvo?: string | null
         }
         Relationships: [
@@ -2353,6 +2365,7 @@ export type Database = {
           total_peso_kg: number | null
           total_volumes: number | null
           updated_at: string
+          version: number
         }
         Insert: {
           codigo: string
@@ -2374,6 +2387,7 @@ export type Database = {
           total_peso_kg?: number | null
           total_volumes?: number | null
           updated_at?: string
+          version?: number
         }
         Update: {
           codigo?: string
@@ -2395,6 +2409,7 @@ export type Database = {
           total_peso_kg?: number | null
           total_volumes?: number | null
           updated_at?: string
+          version?: number
         }
         Relationships: [
           {
@@ -2516,6 +2531,7 @@ export type Database = {
           tempo_real_minutos: number | null
           tipo: Database["public"]["Enums"]["tipo_tarefa"]
           updated_at: string
+          version: number
           zona: string | null
         }
         Insert: {
@@ -2540,6 +2556,7 @@ export type Database = {
           tempo_real_minutos?: number | null
           tipo?: Database["public"]["Enums"]["tipo_tarefa"]
           updated_at?: string
+          version?: number
           zona?: string | null
         }
         Update: {
@@ -2564,6 +2581,7 @@ export type Database = {
           tempo_real_minutos?: number | null
           tipo?: Database["public"]["Enums"]["tipo_tarefa"]
           updated_at?: string
+          version?: number
           zona?: string | null
         }
         Relationships: [
