@@ -586,6 +586,33 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Navigation */}
       <ScrollArea className="flex-1">
         <nav className="p-2 space-y-0.5">
+          {/* Favorites Section */}
+          {favorites.length > 0 && (
+            <>
+              <SidebarSectionLabel label="Favoritos" collapsed={sidebarCollapsed && !isMobile} />
+              {favorites.map((path) => {
+                const allItems = [
+                  ...sidebarMainItems,
+                  ...sidebarGroups.flatMap(g => g.items),
+                  ...sidebarAdminItems,
+                  ...sidebarUtilityItems,
+                ];
+                const item = allItems.find(i => i.path === path);
+                if (!item) return null;
+                return (
+                  <SidebarNavButton
+                    key={`fav-${item.path}`}
+                    item={item}
+                    isActive={location.pathname === item.path}
+                    onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+                    collapsed={sidebarCollapsed && !isMobile}
+                    onHover={preloadRoute}
+                  />
+                );
+              })}
+            </>
+          )}
+
           <SidebarSectionLabel label="Principal" collapsed={sidebarCollapsed && !isMobile} />
           {sidebarMainItems.map((item) => (
             <SidebarNavButton
