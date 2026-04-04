@@ -90,6 +90,7 @@ export default function MovimentacaoPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
   const [submitting, setSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   
   // Form state
   const [formData, setFormData] = useState({
