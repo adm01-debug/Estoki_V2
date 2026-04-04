@@ -2,13 +2,23 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 
+const isPreviewOrDev = import.meta.env.DEV || /lovable/.test(window.location.hostname) || window.self !== window.top;
+
 export function UpdatePrompt() {
   const [showUpdate, setShowUpdate] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.ready.then(reg => {
+    // Never attach to service worker in preview/dev/iframe — it can hang
+    if (isPreviewOrDev) return;
+    if (!("serviceWorker" in navigator) || !navigator.serviceWorker.controller) return;
+
+    // Use a timeout to prevent hanging if ready never resolves
+    const timeout = setTimeout(() => {}, 5000);
+
+    navigator.serviceWorker.ready
+      .then((reg) => {
+        clearTimeout(timeout);
         reg.addEventListener("updatefound", () => {
           const newWorker = reg.installing;
           newWorker?.addEventListener("statechange", () => {
@@ -18,8 +28,12 @@ export function UpdatePrompt() {
             }
           });
         });
+      })
+      .catch(() => {
+        clearTimeout(timeout);
       });
-    }
+
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleUpdate = () => {
