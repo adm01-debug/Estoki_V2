@@ -106,7 +106,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     }, 5000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(safetyTimeout);
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
