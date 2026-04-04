@@ -238,7 +238,7 @@ export function withFeatureFlag<P extends object>(
 
 // Para debugging
 export function debugFeatureFlags(): void {
-  console.table(getFeatureFlags());
+  if (import.meta.env.DEV) console.table(getFeatureFlags());
 }
 
 export default { getFeatureFlags, isFeatureEnabled, setUserContext };

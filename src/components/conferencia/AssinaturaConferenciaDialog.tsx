@@ -65,7 +65,7 @@ export function AssinaturaConferenciaDialog({
         .eq('id', recebimentoId);
 
       if (updateError) {
-        console.warn('Aviso ao atualizar lote:', updateError);
+        if (import.meta.env.DEV) console.warn('Aviso ao atualizar lote:', updateError);
       }
 
       toast.success('Assinatura registrada com sucesso!');

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+
 export function useExperiment(experimentId: string, variants: string[]) {
   const [variant] = useState(() => {
     const stored = sessionStorage.getItem(`exp_${experimentId}`);
@@ -7,6 +8,10 @@ export function useExperiment(experimentId: string, variants: string[]) {
     sessionStorage.setItem(`exp_${experimentId}`, selected);
     return selected;
   });
-  const track = useCallback((event: string) => { console.log('[Experiment]', experimentId, variant, event); }, [experimentId, variant]);
+
+  const track = useCallback((event: string) => {
+    if (import.meta.env.DEV) console.log('[Experiment]', experimentId, variant, event);
+  }, [experimentId, variant]);
+
   return { variant, track, isVariant: (v: string) => variant === v };
 }

@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const safetyTimeout = setTimeout(() => {
       setLoading((prev) => {
         if (prev) {
-          console.warn("Auth loading safety timeout triggered");
+          if (import.meta.env.DEV) console.warn("Auth loading safety timeout triggered");
         }
         return false;
       });
