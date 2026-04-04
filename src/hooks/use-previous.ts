@@ -20,7 +20,7 @@ export function useWhyDidYouUpdate<T extends Record<string, any>>(name: string, 
         }
       });
 
-      if (Object.keys(changesObj).length) {
+      if (Object.keys(changesObj).length && import.meta.env.DEV) {
         console.log('[why-did-you-update]', name, changesObj);
       }
     }

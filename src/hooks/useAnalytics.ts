@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
 export function useAnalytics() {
-  const track = useCallback((event: string, data?: Record<string, any>) => {
+  const track = useCallback((event: string, data?: Record<string, unknown>) => {
     if (typeof window !== 'undefined' && (window as any).gtag) {
       (window as any).gtag('event', event, data);
     }
-    console.log('[Analytics]', event, data);
+    if (import.meta.env.DEV) console.log('[Analytics]', event, data);
   }, []);
 
   const page = useCallback((path: string) => {
