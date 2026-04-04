@@ -359,7 +359,7 @@ export default function Etiquetas() {
   };
 
   // ── PDF for Entregas ──
-  const generateEntregaPDF = async (doc: jsPDF, entregasToPrint: EntregaItem[]) => {
+  const generateEntregaPDF = async (doc: any, entregasToPrint: EntregaItem[]) => {
     const { width, height } = tamanhos[tamanho];
     let pageIndex = 0;
     for (const ent of entregasToPrint) {
