@@ -11,7 +11,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   useEffect(() => { loadProducts(); }, []);
   const loadProducts = async () => { try { const data = await productService.getAll({ search }); setProducts(data); } catch (e) { toast.error('Erro ao carregar produtos'); } finally { setLoading(false); } };
-  const columns = [{ key: 'sku', label: 'SKU' }, { key: 'name', label: 'Nome' }, { key: 'stock_quantity', label: 'Estoque' }, { key: 'price', label: 'Preço', render: (v: number) => `R$ ${v.toFixed(2)}` }, { key: 'status', label: 'Status' }];
+  const columns = [{ key: 'sku' as const, header: 'SKU' }, { key: 'name' as const, header: 'Nome' }, { key: 'stock_quantity' as const, header: 'Estoque' }, { key: 'price' as const, header: 'Preço', render: (v: number) => `R$ ${v.toFixed(2)}` }, { key: 'status' as const, header: 'Status' }];
   return (
     <div className="p-6 space-y-4">
       <div className="flex justify-between items-center"><h1 className="text-2xl font-bold">Produtos</h1><Button><Plus className="h-4 w-4 mr-2" />Novo Produto</Button></div>

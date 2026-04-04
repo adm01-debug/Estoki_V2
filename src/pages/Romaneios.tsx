@@ -110,11 +110,11 @@ export default function RomaneiosPage() {
   };
 
   const handleIniciarRomaneio = async (id: string) => {
-    await iniciarRomaneio(id);
+    await atualizarStatus(id, 'em_transito');
   };
 
   const handleFinalizarEntrega = async (romaneioId: string, itemId: string, status: StatusEntrega) => {
-    await finalizarEntrega(romaneioId, itemId, status);
+    await registrarEntrega(romaneioId, itemId, status);
   };
 
   if (loading) {
