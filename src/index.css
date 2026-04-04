@@ -127,6 +127,42 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+
+  /* Typography Scale — Premium SaaS */
+  h1, .h1 {
+    @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+    letter-spacing: -0.025em;
+  }
+
+  h2, .h2 {
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  h3, .h3 {
+    @apply text-xl font-bold;
+    letter-spacing: -0.015em;
+  }
+
+  h4, .h4 {
+    @apply text-lg font-semibold;
+    letter-spacing: -0.01em;
+  }
+
+  .text-display {
+    @apply text-4xl md:text-5xl font-extrabold;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+
+  .text-caption {
+    @apply text-xs text-muted-foreground;
+    letter-spacing: 0.01em;
+  }
+
+  .text-overline {
+    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground;
+  }
 }
 
 @layer components {
