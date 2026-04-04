@@ -50,7 +50,7 @@ export async function importCSV<T>(
           });
         }
 
-        results.data.forEach((row: Record<string, string>, index: number) => {
+        results.data.forEach((row: any, index: number) => {
           const rowNumber = index + 2;
           if (Object.values(row).every((v) => v === "" || v === null)) return;
 

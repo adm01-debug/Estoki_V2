@@ -52,7 +52,7 @@ class FeatureFlagsService {
       }
 
       if (data) {
-        data.forEach((flag: Record<string, unknown>) => {
+        data.forEach((flag: { key: string; enabled: boolean; value?: unknown }) => {
           this.flags.set(flag.key, {
             key: flag.key,
             enabled: flag.enabled,
