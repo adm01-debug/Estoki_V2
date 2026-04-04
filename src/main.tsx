@@ -20,6 +20,75 @@ import { prefetchCriticalRoutes } from "./lib/prefetch";
 import { initWebVitals } from "./lib/web-vitals";
 
 const rootElement = document.getElementById("root");
+const PWA_RESET_TIMEOUT_MS = 1500;
+
+let hasRenderedApp = false;
+
+function renderApp() {
+  if (!rootElement || hasRenderedApp) {
+    return;
+  }
+
+  hasRenderedApp = true;
+  createRoot(rootElement).render(<App />);
+
+  requestAnimationFrame(() => {
+    prefetchCriticalRoutes();
+    initWebVitals();
+  });
+}
+
+async function withTimeout<T>(promise: Promise<T>, fallback: T, timeoutMs = PWA_RESET_TIMEOUT_MS): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((resolve) => {
+      window.setTimeout(() => resolve(fallback), timeoutMs);
+    }),
+  ]);
+}
+
+async function resetPreviewPwa(): Promise<boolean> {
+  const resetKey = "wms-sw-reset-v2";
+  const alreadyReset = sessionStorage.getItem(resetKey) === "done";
+
+  if (alreadyReset) {
+    return false;
+  }
+
+  const hadController = Boolean(navigator.serviceWorker.controller);
+
+  try {
+    const registrations = await withTimeout(navigator.serviceWorker.getRegistrations(), [] as ServiceWorkerRegistration[]);
+    const hadRegistrations = registrations.length > 0;
+
+    if (hadRegistrations) {
+      await withTimeout(
+        Promise.allSettled(registrations.map((registration) => registration.unregister())),
+        [] as PromiseSettledResult<boolean>[],
+      );
+    }
+
+    if ("caches" in window) {
+      const cacheKeys = await withTimeout(caches.keys(), [] as string[]);
+      const staleKeys = cacheKeys.filter((key) => key.startsWith("estoki-") || key.includes("workbox"));
+
+      if (staleKeys.length > 0) {
+        await withTimeout(
+          Promise.allSettled(staleKeys.map((key) => caches.delete(key))),
+          [] as PromiseSettledResult<boolean>[],
+        );
+      }
+    }
+
+    sessionStorage.setItem(resetKey, "done");
+
+    return hadRegistrations || hadController;
+  } catch (error) {
+    console.warn("[Bootstrap] Failed to reset preview PWA safely", error);
+    sessionStorage.setItem(resetKey, "done");
+    return false;
+  }
+}
 
 async function bootstrap() {
   if (!rootElement) {
@@ -30,38 +99,18 @@ async function bootstrap() {
   const shouldResetPwa = (import.meta.env.DEV || isPreviewHost) && "serviceWorker" in navigator;
 
   if (shouldResetPwa) {
-    const resetKey = "wms-sw-reset-v1";
-    const alreadyReset = sessionStorage.getItem(resetKey) === "done";
+    const shouldReload = await resetPreviewPwa();
 
-    if (!alreadyReset) {
-      const registrations = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(registrations.map((registration) => registration.unregister()));
-
-      if ("caches" in window) {
-        const cacheKeys = await caches.keys();
-        await Promise.all(
-          cacheKeys
-            .filter((key) => key.startsWith("estoki-") || key.includes("workbox"))
-            .map((key) => caches.delete(key))
-        );
-      }
-
-      sessionStorage.setItem(resetKey, "done");
-
-      if (registrations.length > 0 || navigator.serviceWorker.controller) {
-        window.location.reload();
-        return;
-      }
+    if (shouldReload) {
+      window.location.reload();
+      return;
     }
   }
 
-  createRoot(rootElement).render(<App />);
-
-  // Prefetch critical routes and init monitoring after render
-  requestAnimationFrame(() => {
-    prefetchCriticalRoutes();
-    initWebVitals();
-  });
+  renderApp();
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error("[Bootstrap] Failed to initialize app", error);
+  renderApp();
+});
