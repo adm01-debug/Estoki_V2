@@ -2,7 +2,8 @@ import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { useNavigate } from "react-router-dom";
-import { 
+import { movimentacaoSchema, validateForm } from "@/lib/validations";
+import {
   QrCode, 
   Search, 
   ArrowRight, 
