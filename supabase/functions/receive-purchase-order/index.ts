@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { purchaseOrderId, receivedItems, userId } = await req.json();
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -16,6 +16,6 @@ serve(async (req) => {
     }
     const allReceived = receivedItems.every((r: any) => po.items.find((i: any) => i.productId === r.productId)?.quantity <= r.quantity);
     await supabase.from("purchase_orders").update({ status: allReceived ? "received" : "partial" }).eq("id", purchaseOrderId);
-    return new Response(JSON.stringify({ receiving }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ receiving }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });

@@ -1,13 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
     const { xml_content, access_key } = await req.json();
-    if (!xml_content && !access_key) return new Response(JSON.stringify({ error: "xml_content or access_key required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!xml_content && !access_key) return new Response(JSON.stringify({ error: "xml_content or access_key required" }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
 
     // Simular parsing de XML da NF-e (em produção usaria biblioteca XML)
     const nfeData = {
@@ -31,8 +31,8 @@ serve(async (req) => {
       await supabase.from("nfe_items").insert({ nfe_id: nfe?.id, product_code: item.code, description: item.description, quantity: item.quantity, unit_price: item.unit_price, total: item.total });
     }
 
-    return new Response(JSON.stringify({ success: true, nfe_id: nfe?.id, access_key: nfeData.access_key, items_imported: nfeData.items.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, nfe_id: nfe?.id, access_key: nfeData.access_key, items_imported: nfeData.items.length }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

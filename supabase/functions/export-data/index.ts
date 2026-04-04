@@ -1,15 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 const jsonResponse = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 
 const ALLOWED_TABLES = [
@@ -27,7 +24,7 @@ const ExportSchema = z.object({
 });
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
 
   try {
@@ -57,7 +54,7 @@ Deno.serve(async (req) => {
 
     if (format === "csv") {
       if (!data || data.length === 0) {
-        return new Response("", { headers: { ...corsHeaders, "Content-Type": "text/csv" } });
+        return new Response("", { headers: { ...getCorsHeaders(req), "Content-Type": "text/csv" } });
       }
       const headerRow = Object.keys(data[0]).join(",");
       const rows = data.map((row) =>
@@ -65,7 +62,7 @@ Deno.serve(async (req) => {
       );
       return new Response([headerRow, ...rows].join("\n"), {
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           "Content-Type": "text/csv",
           "Content-Disposition": `attachment; filename="${table}.csv"`,
         },

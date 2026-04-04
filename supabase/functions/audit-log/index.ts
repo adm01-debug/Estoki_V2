@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   
   const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
   
@@ -16,7 +16,7 @@ serve(async (req) => {
         const { user_id, action: auditAction, entity_type, entity_id, changes, metadata, ip_address } = data;
         const { data: log, error } = await supabase.from("audit_logs").insert({ user_id, action: auditAction, entity_type, entity_id, changes, metadata, ip_address }).select().single();
         if (error) throw error;
-        return new Response(JSON.stringify({ success: true, log }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, log }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       case "query": {
         const { user_id, entity_type, entity_id, action: filterAction, start_date, end_date, limit = 100 } = data;
@@ -29,11 +29,11 @@ serve(async (req) => {
         if (end_date) query = query.lte("created_at", end_date);
         const { data: logs, error } = await query;
         if (error) throw error;
-        return new Response(JSON.stringify({ success: true, logs }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, logs }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       default: throw new Error("Unknown action");
     }
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: false, error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

@@ -1,13 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -19,7 +16,7 @@ serve(async (req) => {
 
     if (!wave_id) {
       return new Response(JSON.stringify({ error: "wave_id is required" }), 
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     // Buscar wave e pedidos
@@ -31,7 +28,7 @@ serve(async (req) => {
 
     if (!wave) {
       return new Response(JSON.stringify({ error: "Wave not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     // Gerar pick lists para cada pedido
@@ -91,10 +88,10 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, pick_lists_created: pickLists.length }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

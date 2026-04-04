@@ -1,13 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -29,7 +26,7 @@ serve(async (req) => {
 
       if (!availablePickers?.length) {
         return new Response(JSON.stringify({ error: "No available pickers" }),
-          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
 
       const assignedPicker = availablePickers[0];
@@ -44,7 +41,7 @@ serve(async (req) => {
 
       if (!pendingLists?.length) {
         return new Response(JSON.stringify({ success: true, message: "No pending pick lists" }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+          { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
 
       // Atribuir ao picker
@@ -55,13 +52,13 @@ serve(async (req) => {
 
       return new Response(
         JSON.stringify({ success: true, assigned_to: assignedPicker.id, lists_assigned: pendingLists.length }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
     if (!pick_list_id || !picker_id) {
       return new Response(JSON.stringify({ error: "pick_list_id and picker_id are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     await supabase
@@ -71,10 +68,10 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, pick_list_id, assigned_to: picker_id }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

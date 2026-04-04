@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -12,8 +12,8 @@ serve(async (req) => {
     const { data, error } = await supabase.storage.from("files").upload(fileName, file, { contentType: file.type });
     if (error) throw error;
     const { data: urlData } = supabase.storage.from("files").getPublicUrl(fileName);
-    return new Response(JSON.stringify({ path: data.path, url: urlData.publicUrl }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ path: data.path, url: urlData.publicUrl }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

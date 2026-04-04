@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { text, categories } = await req.json();
     const prompt = `Classifique o seguinte texto em uma das categorias: ${categories.join(", ")}.\n\nTexto: "${text}"\n\nResponda apenas com o nome da categoria.`;
@@ -12,6 +12,6 @@ serve(async (req) => {
     });
     const data = await response.json();
     const category = data.choices?.[0]?.message?.content?.trim();
-    return new Response(JSON.stringify({ category, confidence: categories.includes(category) ? 1 : 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ category, confidence: categories.includes(category) ? 1 : 0 }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });

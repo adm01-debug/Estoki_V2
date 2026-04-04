@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { productId, periods = 12, method = "moving_average" } = await req.json();
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -18,6 +18,6 @@ serve(async (req) => {
     let forecast: number;
     if (method === "moving_average") { forecast = monthlyData.slice(-3).reduce((a, b) => a + b, 0) / 3; }
     else { const alpha = 0.3; forecast = monthlyData.reduce((prev, curr) => alpha * curr + (1 - alpha) * prev, monthlyData[0]); }
-    return new Response(JSON.stringify({ productId, method, historicalData: monthlyData, forecast: Math.round(forecast), nextPeriods: [1, 2, 3].map(i => Math.round(forecast * (1 + (Math.random() - 0.5) * 0.1))) }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ productId, method, historicalData: monthlyData, forecast: Math.round(forecast), nextPeriods: [1, 2, 3].map(i => Math.round(forecast * (1 + (Math.random() - 0.5) * 0.1))) }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });

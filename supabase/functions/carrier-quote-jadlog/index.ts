@@ -1,11 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { origin_zip, destination_zip, weight, length, width, height, value, services = ["EXPRESSO", "PACKAGE"] } = await req.json();
-    if (!origin_zip || !destination_zip || !weight) return new Response(JSON.stringify({ error: "origin_zip, destination_zip, weight required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!origin_zip || !destination_zip || !weight) return new Response(JSON.stringify({ error: "origin_zip, destination_zip, weight required" }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
 
     const quotes = services.map((service: string) => {
       const basePrice = service === "EXPRESSO" ? 30.00 : 22.00;
@@ -20,8 +20,8 @@ serve(async (req) => {
       };
     });
 
-    return new Response(JSON.stringify({ success: true, origin_zip, destination_zip, weight, quotes }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, origin_zip, destination_zip, weight, quotes }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

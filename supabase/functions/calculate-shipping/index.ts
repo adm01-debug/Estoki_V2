@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { carrier, originZip, destZip, weight, dimensions } = await req.json();
     const carriers: Record<string, any> = {
@@ -14,6 +14,6 @@ serve(async (req) => {
     const chargeableWeight = Math.max(weight, volume);
     const price = config.baseRate + (chargeableWeight * config.weightRate);
     const deliveryDays = carrier === "azul" ? 2 : carrier === "jadlog" ? 4 : 7;
-    return new Response(JSON.stringify({ carrier, price: Math.round(price * 100) / 100, deliveryDays, chargeableWeight }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ carrier, price: Math.round(price * 100) / 100, deliveryDays, chargeableWeight }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });

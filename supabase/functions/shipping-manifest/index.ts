@@ -1,13 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
     const supabase = createClient(
@@ -19,7 +16,7 @@ serve(async (req) => {
 
     if (!shipment_ids?.length) {
       return new Response(JSON.stringify({ error: "shipment_ids are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     // Buscar envios
@@ -30,7 +27,7 @@ serve(async (req) => {
 
     if (!shipments?.length) {
       return new Response(JSON.stringify({ error: "No shipments found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     }
 
     // Gerar número do manifesto
@@ -86,10 +83,10 @@ serve(async (req) => {
 
     return new Response(
       JSON.stringify({ success: true, manifest_number: manifestNumber, manifest: manifestDoc }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });

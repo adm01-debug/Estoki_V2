@@ -1,13 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-const corsHeaders = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type" };
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
     const { access_key, nfe_id } = await req.json();
-    if (!access_key && !nfe_id) return new Response(JSON.stringify({ error: "access_key or nfe_id required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    if (!access_key && !nfe_id) return new Response(JSON.stringify({ error: "access_key or nfe_id required" }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
 
     const validations = [];
     // Validar chave de acesso (44 dígitos)
@@ -38,8 +38,8 @@ serve(async (req) => {
     const isValid = validations.every(v => v.valid);
     if (nfe_id) await supabase.from("nfe_documents").update({ validation_status: isValid ? "valid" : "invalid", validated_at: new Date().toISOString() }).eq("id", nfe_id);
 
-    return new Response(JSON.stringify({ success: true, is_valid: isValid, validations }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ success: true, is_valid: isValid, validations }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   }
 });
