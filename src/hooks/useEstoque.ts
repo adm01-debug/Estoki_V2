@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
+type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
 export type TipoPosicao = 'porta_palete' | 'box';
@@ -35,7 +39,7 @@ export const useEstoque = () => {
   });
 
   const createPosicao = useMutation({
-    mutationFn: async (novaPosicao: any) => {
+    mutationFn: async (novaPosicao: PosicaoInsert) => {
       const { data, error } = await supabase.from('posicoes_estoque').insert(novaPosicao).select().single();
       if (error) throw error;
       return data;
@@ -50,7 +54,7 @@ export const useEstoque = () => {
   });
 
   const updatePosicao = useMutation({
-    mutationFn: async ({ id, ...dados }: any) => {
+    mutationFn: async ({ id, ...dados }: PosicaoUpdate & { id: string }) => {
       const { data, error } = await supabase.from('posicoes_estoque').update(dados).eq('id', id).select().single();
       if (error) throw error;
       return data;
@@ -85,10 +89,10 @@ export const useEstoque = () => {
   const estatisticas = useMemo(() => {
     const lista = posicoes || [];
     const total = lista.length;
-    const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
-    const livres = lista.filter((p: any) => p.status === 'livre').length;
-    const bloqueadas = lista.filter((p: any) => p.status === 'bloqueado').length;
-    const reservadas = lista.filter((p: any) => p.status === 'reservado').length;
+    const ocupadas = lista.filter((p) => p.status === 'ocupado').length;
+    const livres = lista.filter((p) => p.status === 'livre').length;
+    const bloqueadas = lista.filter((p) => p.status === 'bloqueado').length;
+    const reservadas = lista.filter((p) => p.status === 'reservado').length;
     const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
 
     return {

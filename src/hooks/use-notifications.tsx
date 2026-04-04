@@ -47,15 +47,15 @@ interface ToastOptions {
   duration?: number;
 }
 
-function mapDbRow(row: any): Notification {
+function mapDbRow(row: Record<string, unknown>): Notification {
   return {
-    id: row.id,
-    type: row.tipo || 'info',
-    title: row.titulo || '',
-    message: row.mensagem || '',
+    id: String(row.id ?? ''),
+    type: (row.tipo as NotificationType) || 'info',
+    title: String(row.titulo ?? ''),
+    message: String(row.mensagem ?? ''),
     priority: 'normal',
-    read: row.lida ?? false,
-    created_at: row.created_at,
+    read: Boolean(row.lida ?? false),
+    created_at: String(row.created_at ?? ''),
   };
 }
 

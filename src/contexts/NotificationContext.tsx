@@ -236,23 +236,23 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // Handle new notification from realtime
-  const handleNewNotification = useCallback((payload: any) => {
+  const handleNewNotification = useCallback((payload: { new?: Record<string, unknown> }) => {
     const newNotif = payload.new;
-    if (!newNotif || lastNotificationIds.current.has(newNotif.id)) return;
+    if (!newNotif || lastNotificationIds.current.has(String(newNotif.id))) return;
 
     // Add to tracked IDs
-    lastNotificationIds.current.add(newNotif.id);
+    lastNotificationIds.current.add(String(newNotif.id));
 
     const notification: Notification = {
-      id: newNotif.id,
-      type: newNotif.tipo as Notification['type'],
-      title: newNotif.titulo,
-      message: newNotif.mensagem,
-      read: newNotif.lida || false,
-      createdAt: new Date(newNotif.created_at),
-      severity: getTipoSeveridade(newNotif.tipo),
-      referencia_tipo: newNotif.referencia_tipo,
-      referencia_id: newNotif.referencia_id,
+      id: String(newNotif.id),
+      type: String(newNotif.tipo) as Notification['type'],
+      title: String(newNotif.titulo ?? ''),
+      message: String(newNotif.mensagem ?? ''),
+      read: Boolean(newNotif.lida) || false,
+      createdAt: new Date(String(newNotif.created_at)),
+      severity: getTipoSeveridade(String(newNotif.tipo)),
+      referencia_tipo: newNotif.referencia_tipo as string | undefined,
+      referencia_id: newNotif.referencia_id as string | undefined,
     };
 
     // Add to state

@@ -134,8 +134,8 @@ export function useCheckpointsZona() {
       if (error) throw error;
 
       // Group by lote_id+zona and find entries without a corresponding exit
-      const entradas = new Map<string, any>();
-      (data || []).forEach((cp: any) => {
+      const entradas = new Map<string, typeof data[number]>();
+      (data || []).forEach((cp) => {
         const key = `${cp.lote_id || cp.produto_id}-${cp.zona}`;
         entradas.set(key, cp);
       });
@@ -147,19 +147,17 @@ export function useCheckpointsZona() {
         .eq('tipo', 'saida')
         .limit(500);
 
-      (saidas || []).forEach((cp: any) => {
+      (saidas || []).forEach((cp) => {
         const key = `${cp.lote_id || cp.produto_id}-${cp.zona}`;
-        if (entradas.has(key)) {
-          const entrada = entradas.get(key);
-          if (new Date(cp.created_at) > new Date(entrada.created_at)) {
-            entradas.delete(key);
-          }
+        const entrada = entradas.get(key);
+        if (entrada && new Date(cp.created_at) > new Date(entrada.created_at)) {
+          entradas.delete(key);
         }
       });
 
       // Filter items stuck for more than 4 hours
       const agora = Date.now();
-      const presos: any[] = [];
+      const presos: Array<typeof data[number] & { horas_preso: number }> = [];
       entradas.forEach((cp) => {
         const horasDecorridas = (agora - new Date(cp.created_at).getTime()) / (1000 * 60 * 60);
         if (horasDecorridas > 4) {
@@ -253,11 +251,11 @@ export function useOcorrenciasPerda() {
       const items = data || [];
       return {
         total: items.length,
-        abertas: items.filter((o: any) => o.status === 'aberto').length,
-        investigacao: items.filter((o: any) => o.status === 'investigacao').length,
-        encerradas: items.filter((o: any) => o.status === 'encerrado').length,
-        prejuizoTotal: items.reduce((s: number, o: any) => s + (Number(o.valor_prejuizo) || 0), 0),
-        porZona: items.reduce((acc: Record<string, number>, o: any) => {
+        abertas: items.filter((o) => o.status === 'aberto').length,
+        investigacao: items.filter((o) => o.status === 'investigacao').length,
+        encerradas: items.filter((o) => o.status === 'encerrado').length,
+        prejuizoTotal: items.reduce((s, o) => s + (Number(o.valor_prejuizo) || 0), 0),
+        porZona: items.reduce((acc: Record<string, number>, o) => {
           const z = o.zona_detectada || 'Não informada';
           acc[z] = (acc[z] || 0) + 1;
           return acc;

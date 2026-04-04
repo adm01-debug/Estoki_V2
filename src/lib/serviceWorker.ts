@@ -128,11 +128,12 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // Background sync
-self.addEventListener('sync', (event) => {
+interface SyncEvent extends ExtendableEvent { tag: string; }
+self.addEventListener('sync', ((event: SyncEvent) => {
   if (event.tag === 'sync-offline-data') {
     event.waitUntil(syncOfflineData());
   }
-});
+}) as EventListener);
 
 async function syncOfflineData(): Promise<void> {
   // Implement offline data sync logic
