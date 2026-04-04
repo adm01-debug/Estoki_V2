@@ -489,6 +489,7 @@ export default function RomaneiosPage() {
                         ))}
                       </TableBody>
                     </Table>
+                    </div>
                   </div>
                 </div>
               </>
