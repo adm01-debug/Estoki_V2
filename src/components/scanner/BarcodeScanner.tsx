@@ -37,7 +37,7 @@ export function BarcodeScanner({
   const [flashOn, setFlashOn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const detectorRef = useRef<ReturnType<NonNullable<typeof window.BarcodeDetector>> extends infer T ? T : unknown>(null);
+  const detectorRef = useRef<{ detect(source: HTMLVideoElement | ImageBitmap | HTMLCanvasElement): Promise<Array<{ rawValue: string; format: string }>> } | null>(null);
   const animationRef = useRef<number | null>(null);
 
   const initBarcodeDetector = useCallback(async () => {
