@@ -4,7 +4,7 @@ declare const self: DedicatedWorkerGlobalScope;
 
 interface ReportMessage {
   type: 'GENERATE_REPORT' | 'EXPORT_CSV' | 'EXPORT_PDF' | 'CANCEL';
-  payload?: any;
+  payload?: unknown;
 }
 
 interface ReportConfig {

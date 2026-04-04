@@ -5,7 +5,7 @@ export const relatorioService = {
     const { data, error } = await supabase.from("posicoes_estoque").select("status");
     if (error) throw error;
     const total = data?.length || 0;
-    const ocupadas = data?.filter((p: any) => p.status === "ocupada").length || 0;
+    const ocupadas = data?.filter((p: { status: string }) => p.status === "ocupada").length || 0;
     return { total, ocupadas, livres: total - ocupadas, percentual: total > 0 ? (ocupadas / total) * 100 : 0 };
   },
 
@@ -19,7 +19,7 @@ export const relatorioService = {
     const { data, error } = await supabase.from("eventos_triagem").select("operador_id").gte("created_at", inicio).lte("created_at", fim);
     if (error) throw error;
     
-    const grouped = (data || []).reduce((acc: Record<string, number>, t: any) => {
+    const grouped = (data || []).reduce((acc: Record<string, number>, t: { tipo: string }) => {
       if (t.operador_id) {
         acc[t.operador_id] = (acc[t.operador_id] || 0) + 1;
       }
@@ -33,7 +33,7 @@ export const relatorioService = {
     const { data, error } = await supabase.from("rastreamento_historico").select("tipo_evento").gte("created_at", inicio).lte("created_at", fim);
     if (error) throw error;
     
-    const grouped = (data || []).reduce((acc: Record<string, number>, m: any) => {
+    const grouped = (data || []).reduce((acc: Record<string, number>, m: { tipo: string }) => {
       acc[m.tipo_evento] = (acc[m.tipo_evento] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);

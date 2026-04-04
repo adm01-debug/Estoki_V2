@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: any }> = {
+const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ComponentType<{ className?: string }> }> = {
   pendente: { label: "Pendente", variant: "outline", icon: Clock },
   em_andamento: { label: "Em Andamento", variant: "default", icon: Play },
   concluida: { label: "Concluída", variant: "secondary", icon: CheckCircle2 },

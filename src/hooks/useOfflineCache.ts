@@ -42,7 +42,7 @@ export function useOfflineCache() {
     }
   }, []);
 
-  const queueOfflineOp = useCallback(async (operation: { table: string; type: "insert" | "update"; data: any }) => {
+  const queueOfflineOp = useCallback(async (operation: { table: string; type: "insert" | "update"; data: unknown }) => {
     const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
     ops.push({ ...operation, id: Date.now(), createdAt: new Date().toISOString() });
     localStorage.setItem("wms-pending-ops", JSON.stringify(ops));
@@ -53,7 +53,7 @@ export function useOfflineCache() {
     const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
     if (ops.length === 0) return;
 
-    const remaining: any[] = [];
+    const remaining: Array<{ table: string; type: string; data: unknown }> = [];
     for (const op of ops) {
       try {
         if (op.type === "insert") {

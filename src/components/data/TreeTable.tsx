@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { ChevronRight, ChevronDown } from 'lucide-react';
-interface TreeNode { id: string; name: string; children?: TreeNode[]; [key: string]: any; }
+interface TreeNode { id: string; name: string; children?: TreeNode[]; [key: string]: unknown; }
 interface TreeTableProps { data: TreeNode[]; columns: { key: string; header: string }[]; }
 export function TreeTable({ data, columns }: TreeTableProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
