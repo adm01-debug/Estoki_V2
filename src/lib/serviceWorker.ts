@@ -128,6 +128,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 // Background sync
+interface SyncEvent extends ExtendableEvent { tag: string; }
 self.addEventListener('sync', ((event: SyncEvent) => {
   if (event.tag === 'sync-offline-data') {
     event.waitUntil(syncOfflineData());
