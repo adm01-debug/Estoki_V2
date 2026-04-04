@@ -2,11 +2,27 @@
  * Sanitização de inputs - Módulo de segurança
  * Protege contra XSS, SQL Injection, Path Traversal
  */
+import DOMPurify from 'dompurify';
 
+/**
+ * Sanitize HTML using DOMPurify (safe for dangerouslySetInnerHTML)
+ */
 export const sanitizeHTML = (html: string): string => {
   if (!html) return '';
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+    ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id'],
+    ALLOW_DATA_ATTR: false,
+  });
+};
+
+/**
+ * Escape text for safe display (no HTML allowed)
+ */
+export const escapeHTML = (text: string): string => {
+  if (!text) return '';
   const div = document.createElement('div');
-  div.textContent = html;
+  div.textContent = text;
   return div.innerHTML;
 };
 
