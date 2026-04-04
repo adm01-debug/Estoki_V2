@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Sparkline } from "./Sparkline";
 
 interface KPICardProps {
   icon: LucideIcon;
@@ -9,6 +10,7 @@ interface KPICardProps {
   sublabel?: string;
   variant?: "default" | "warning" | "success" | "danger";
   trend?: { value: number; isUp: boolean };
+  sparklineData?: number[];
   onClick?: () => void;
   size?: "sm" | "md" | "lg";
 }
@@ -34,6 +36,13 @@ const gradientStyles = {
   danger: "from-destructive/5 to-destructive/0",
 };
 
+const sparklineColors = {
+  default: "hsl(var(--primary))",
+  warning: "hsl(var(--warning))",
+  success: "hsl(var(--success))",
+  danger: "hsl(var(--destructive))",
+};
+
 export const KPICard = memo(function KPICard({ 
   icon: Icon, 
   value, 
@@ -41,6 +50,7 @@ export const KPICard = memo(function KPICard({
   sublabel,
   variant = "default",
   trend,
+  sparklineData,
   onClick,
   size = "md"
 }: KPICardProps) {
@@ -91,15 +101,25 @@ export const KPICard = memo(function KPICard({
             )} />
           </div>
           
-          {trend && (
-            <div className={cn(
-              "flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full",
-              trend.isUp ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
-            )}>
-              <span>{trend.isUp ? "↑" : "↓"}</span>
-              <span>{trend.value}%</span>
-            </div>
-          )}
+          <div className="flex flex-col items-end gap-1">
+            {trend && (
+              <div className={cn(
+                "flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full",
+                trend.isUp ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+              )}>
+                <span>{trend.isUp ? "↑" : "↓"}</span>
+                <span>{trend.value}%</span>
+              </div>
+            )}
+            {sparklineData && sparklineData.length >= 2 && (
+              <Sparkline
+                data={sparklineData}
+                color={sparklineColors[variant]}
+                width={64}
+                height={24}
+              />
+            )}
+          </div>
         </div>
         
         <div className={cn(

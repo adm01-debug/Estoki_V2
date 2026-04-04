@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Box, Loader2, Eye, EyeOff, Zap, Globe, Wifi, BarChart3, Package, Users, Shield, Fingerprint } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { z } from "zod";
+import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Email inválido" }),
@@ -235,19 +236,7 @@ const AuthPage = () => {
             </p>
           </div>
 
-          {/* IP Badge */}
-          {ipInfo && (
-            <div className="flex items-center justify-between px-4 py-2.5 rounded-full border border-sidebar-border/60 bg-sidebar-accent/30 backdrop-blur-sm">
-              <div className="flex items-center gap-2 text-xs text-sidebar-foreground/50">
-                <Globe className="h-3.5 w-3.5" />
-                <span className="font-mono text-primary/80">{ipInfo.ip}</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/40">
-                <span>{ipInfo.city}, {ipInfo.country}</span>
-                <Wifi className="h-3 w-3 text-primary" />
-              </div>
-            </div>
-          )}
+          {/* IP Badge - compact footer style */}
 
           {/* Form */}
           {mode === "login" ? (
@@ -295,6 +284,7 @@ const AuthPage = () => {
                   </Button>
                 </div>
                 {signupErrors.password && <p className="text-xs text-destructive" role="alert">{signupErrors.password}</p>}
+                <PasswordStrengthMeter password={signupPassword} />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="signup-confirm" className="text-sidebar-foreground/70 text-sm font-medium">Confirmar Senha</Label>
@@ -339,15 +329,13 @@ const AuthPage = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground hover:bg-sidebar-accent/60 hover:border-primary/30 transition-all"
+              className="w-full h-11 border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground/40 cursor-not-allowed opacity-60 relative"
               disabled
             >
               <Fingerprint className="mr-2 h-4 w-4" />
               Entrar com Passkey
+              <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Em breve</span>
             </Button>
-            <p className="text-center text-[11px] text-sidebar-foreground/25">
-              Use Face ID, Touch ID ou Windows Hello
-            </p>
           </div>
 
           {/* Toggle mode */}
@@ -359,10 +347,19 @@ const AuthPage = () => {
             )}
           </p>
 
-          {/* Security badge */}
-          <div className="flex items-center justify-center gap-1.5 text-sidebar-foreground/20 text-[11px]">
-            <Shield className="h-3 w-3" />
-            <span>Conexão segura · Dados criptografados</span>
+          {/* Security badge + IP info */}
+          <div className="flex flex-col items-center gap-1 text-[11px] text-sidebar-foreground/20">
+            <div className="flex items-center gap-1.5">
+              <Shield className="h-3 w-3" />
+              <span>Conexão segura · Dados criptografados</span>
+            </div>
+            {ipInfo && (
+              <div className="flex items-center gap-1.5">
+                <Globe className="h-3 w-3" />
+                <span className="font-mono">{ipInfo.ip}</span>
+                <span>· {ipInfo.city}, {ipInfo.country}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

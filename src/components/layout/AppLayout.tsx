@@ -4,6 +4,7 @@ import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { prefetchCriticalRoutes } from "@/lib/prefetch";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
+import { useSidebarFavorites } from "@/hooks/useSidebarFavorites";
 
 const AppLayoutContext = createContext(false);
 import { 
@@ -47,6 +48,7 @@ import {
   MapPin,
   Brain,
   Tag,
+  Zap,
   type LucideIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -88,13 +90,21 @@ interface NavItem {
   badge?: number;
 }
 
-// Bottom nav (mobile) - most used
+// Bottom nav (mobile) - 4 items + FAB center
 const mobileNavItems: NavItem[] = [
   { path: "/", icon: LayoutDashboard, label: "Início", tour: "inicio" },
   { path: "/dashboard", icon: BarChart3, label: "Dashboard", tour: "dashboard" },
+  // FAB goes here (index 2)
   { path: "/recebimento", icon: Package, label: "Receber", tour: "recebimento" },
-  { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
+];
+
+// Quick actions for FAB
+const fabActions: NavItem[] = [
+  { path: "/scanner", icon: QrCode, label: "Scanner" },
+  { path: "/triagem", icon: Search, label: "Triagem" },
+  { path: "/picking", icon: ListTodo, label: "Picking" },
+  { path: "/movimentacao", icon: ArrowLeftRight, label: "Movimentar" },
 ];
 
 // Main sidebar sections
@@ -416,8 +426,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const { user, profile, role, signOut, loading } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
   const preloadRoute = useRoutePreload();
+  const { favorites, toggleFavorite, isFavorite } = useSidebarFavorites();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
 
   // Smart back: always show on non-home routes
   const isHome = location.pathname === "/";
@@ -574,6 +586,33 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       {/* Navigation */}
       <ScrollArea className="flex-1">
         <nav className="p-2 space-y-0.5">
+          {/* Favorites Section */}
+          {favorites.length > 0 && (
+            <>
+              <SidebarSectionLabel label="Favoritos" collapsed={sidebarCollapsed && !isMobile} />
+              {favorites.map((path) => {
+                const allItems = [
+                  ...sidebarMainItems,
+                  ...sidebarGroups.flatMap(g => g.items),
+                  ...sidebarAdminItems,
+                  ...sidebarUtilityItems,
+                ];
+                const item = allItems.find(i => i.path === path);
+                if (!item) return null;
+                return (
+                  <SidebarNavButton
+                    key={`fav-${item.path}`}
+                    item={item}
+                    isActive={location.pathname === item.path}
+                    onClick={() => { navigate(item.path); if (isMobile) setMobileMenuOpen(false); }}
+                    collapsed={sidebarCollapsed && !isMobile}
+                    onHover={preloadRoute}
+                  />
+                );
+              })}
+            </>
+          )}
+
           <SidebarSectionLabel label="Principal" collapsed={sidebarCollapsed && !isMobile} />
           {sidebarMainItems.map((item) => (
             <SidebarNavButton
@@ -799,11 +838,57 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         </div>
       </main>
 
-      {/* Bottom Navigation (Mobile) */}
+      {/* FAB Overlay */}
+      <AnimatePresence>
+        {fabOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setFabOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* FAB Quick Actions */}
+      <AnimatePresence>
+        {fabOpen && (
+          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 md:hidden">
+            <motion.div
+              className="flex gap-3 p-3 rounded-2xl bg-card/95 backdrop-blur-xl border border-border/50 shadow-2xl"
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            >
+              {fabActions.map((action, i) => (
+                <motion.button
+                  key={action.path}
+                  onClick={() => { setFabOpen(false); navigate(action.path); }}
+                  className="flex flex-col items-center gap-1.5 w-16 py-2 rounded-xl hover:bg-primary/10 transition-colors"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <action.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <span className="text-[10px] font-semibold text-foreground">{action.label}</span>
+                </motion.button>
+              ))}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Bottom Navigation (Mobile) — 4 items + FAB center */}
       <nav className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative" aria-label="Navegação mobile">
         <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl" />
         <div className="relative flex items-center justify-around">
-          {mobileNavItems.map((item) => {
+          {/* Left 2 items */}
+          {mobileNavItems.slice(0, 2).map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <motion.button
@@ -815,17 +900,49 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                  isActive 
-                    ? "text-primary" 
-                    : "text-muted-foreground hover:text-foreground"
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {isActive && (
-                  <motion.div 
-                    layoutId="bottomnav-indicator"
-                    className="absolute -top-1 w-8 h-1 bg-primary rounded-full shadow-glow-sm"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  />
+                  <motion.div layoutId="bottomnav-indicator" className="absolute -top-1 w-8 h-1 bg-primary rounded-full" transition={{ type: "spring", stiffness: 350, damping: 30 }} />
+                )}
+                <item.icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} aria-hidden="true" />
+                <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-bold text-primary")}>{item.label}</span>
+              </motion.button>
+            );
+          })}
+
+          {/* FAB Center Button */}
+          <div className="relative -mt-5">
+            <motion.button
+              onClick={() => setFabOpen(!fabOpen)}
+              whileTap={{ scale: 0.9 }}
+              animate={{ rotate: fabOpen ? 45 : 0 }}
+              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/30"
+              aria-label="Ações rápidas"
+            >
+              <Zap className="h-6 w-6" />
+            </motion.button>
+          </div>
+
+          {/* Right 2 items */}
+          {mobileNavItems.slice(2).map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <motion.button
+                key={item.path}
+                data-tour={item.tour}
+                onClick={() => navigate(item.path)}
+                whileTap={{ scale: 0.9 }}
+                aria-label={`Ir para ${item.label}`}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {isActive && (
+                  <motion.div layoutId="bottomnav-indicator" className="absolute -top-1 w-8 h-1 bg-primary rounded-full" transition={{ type: "spring", stiffness: 350, damping: 30 }} />
                 )}
                 <item.icon className={cn("h-5 w-5 transition-transform", isActive && "scale-110")} aria-hidden="true" />
                 <span className={cn("text-[10px] font-medium leading-tight", isActive && "font-bold text-primary")}>{item.label}</span>
