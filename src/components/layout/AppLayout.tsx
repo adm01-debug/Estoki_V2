@@ -4,6 +4,7 @@ import { useLocation, useNavigate, Outlet, Navigate } from "react-router-dom";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { prefetchCriticalRoutes } from "@/lib/prefetch";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
+import { useSidebarFavorites } from "@/hooks/useSidebarFavorites";
 
 const AppLayoutContext = createContext(false);
 import { 
