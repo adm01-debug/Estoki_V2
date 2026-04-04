@@ -205,16 +205,17 @@ export function DataTableAdvanced<T extends Record<string, any>>({
       }));
 
     const options = { filename: exportFilename, columns: exportColumns };
+    const exportData = sortedData as unknown as Record<string, unknown>[];
     
     switch (format) {
       case 'pdf':
-        await exportToPDF(sortedData, options);
+        await exportToPDF(exportData, options);
         break;
       case 'excel':
-        await exportToExcel(sortedData, options);
+        await exportToExcel(exportData, options);
         break;
       case 'csv':
-        exportToCSV(sortedData, options);
+        exportToCSV(exportData, options);
         break;
     }
   }, [columns, columnVisibility, exportFilename, sortedData, exportToPDF, exportToExcel, exportToCSV]);
