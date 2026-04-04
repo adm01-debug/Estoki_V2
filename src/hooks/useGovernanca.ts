@@ -149,10 +149,10 @@ export function useCheckpointsZona() {
 
       (saidas || []).forEach((cp) => {
         const key = `${cp.lote_id || cp.produto_id}-${cp.zona}`;
-        if (entradas.has(key)) {
-          const entrada = entradas.get(key);
-          if (new Date(cp.created_at) > new Date(entrada.created_at)) {
-            entradas.delete(key);
+        const entrada = entradas.get(key);
+        if (entrada && new Date(cp.created_at) > new Date(entrada.created_at)) {
+          entradas.delete(key);
+        }
           }
         }
       });
