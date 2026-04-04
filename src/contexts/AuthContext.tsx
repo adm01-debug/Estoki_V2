@@ -89,8 +89,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     Promise.race([sessionPromise, timeoutPromise])
       .then((result: unknown) => {
-        const typedResult = result as { data?: { session?: typeof session } };
-        const session = typedResult?.data?.session ?? null;
+        const typedResult = result as Awaited<ReturnType<typeof supabase.auth.getSession>>;
+        const sess = typedResult?.data?.session ?? null;
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
