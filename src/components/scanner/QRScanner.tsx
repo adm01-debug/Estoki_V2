@@ -94,7 +94,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
       );
 
       setIsScanning(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro ao iniciar scanner:", err);
       setError(err?.message || "Erro ao iniciar câmera");
       onError?.(err?.message || "Erro ao iniciar câmera");

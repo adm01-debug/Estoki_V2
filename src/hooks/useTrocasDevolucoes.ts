@@ -66,7 +66,7 @@ export function useTrocasDevolucoes() {
       if (fetchError) throw fetchError;
       
       setRegistros((data || []) as TrocaDevolucao[]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao buscar registros:', err);
       setError(err.message);
     } finally {
@@ -114,7 +114,7 @@ export function useTrocasDevolucoes() {
       });
 
       return novoRegistro;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao criar registro:', err);
       toast({
         title: 'Erro ao criar registro',
@@ -155,7 +155,7 @@ export function useTrocasDevolucoes() {
       });
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao atualizar status:', err);
       toast({
         title: 'Erro ao atualizar status',
@@ -188,7 +188,7 @@ export function useTrocasDevolucoes() {
       });
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erro ao gerar crédito:', err);
       toast({
         title: 'Erro ao gerar crédito',

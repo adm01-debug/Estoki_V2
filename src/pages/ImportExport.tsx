@@ -88,7 +88,7 @@ export default function ImportExport() {
       link.click();
       URL.revokeObjectURL(url);
       toast.success(`${data?.length || 0} registros exportados!`);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(`Erro na exportação: ${err.message}`);
     } finally {
       setExporting(false);
@@ -154,7 +154,7 @@ export default function ImportExport() {
             const { error } = await (supabase.from(template.table as any) as any).insert(insertData);
             if (error) throw error;
             importResult.success++;
-          } catch (err: any) {
+          } catch (err: unknown) {
             importResult.errors.push({ row: i + 2, message: err.message });
           }
         }

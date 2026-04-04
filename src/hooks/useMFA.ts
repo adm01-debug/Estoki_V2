@@ -34,7 +34,7 @@ export function useMFA() {
       const allFactors = [...(data.totp || []), ...(data.phone || [])];
       setFactors(allFactors as MFAFactor[]);
       return allFactors;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error listing MFA factors:', err);
       setError(err.message);
       return [];
@@ -69,7 +69,7 @@ export function useMFA() {
       
       setEnrollmentData(enrollment);
       return enrollment;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error starting MFA enrollment:', err);
       setError(err.message);
       return null;
@@ -101,7 +101,7 @@ export function useMFA() {
       setEnrollmentData(null);
       await listFactors();
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error verifying MFA enrollment:', err);
       setError(err.message || 'Código inválido. Verifique e tente novamente.');
       return false;
@@ -131,7 +131,7 @@ export function useMFA() {
       if (error) throw error;
       
       return { success: true, session: data };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error verifying MFA login:', err);
       setError(err.message || 'Código inválido');
       return { success: false };
@@ -150,7 +150,7 @@ export function useMFA() {
       
       await listFactors();
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error unenrolling MFA:', err);
       setError(err.message);
       return false;
@@ -177,7 +177,7 @@ export function useMFA() {
       const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (error) throw error;
       return data;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error getting assurance level:', err);
       return null;
     }

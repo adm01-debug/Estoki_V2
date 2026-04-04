@@ -108,7 +108,7 @@ export default function AssistenteIA() {
       };
 
       setMessages(prev => [...prev, assistantMsg]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error("Erro ao consultar o assistente IA");
       const errorMsg: Message = {
         id: crypto.randomUUID(),

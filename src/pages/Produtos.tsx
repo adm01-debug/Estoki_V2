@@ -112,7 +112,7 @@ export default function ProdutosPage() {
       setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
       setFormErrors({});
       loadProdutos();
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.message || "Erro ao salvar produto");
     } finally {
       setSaving(false);
