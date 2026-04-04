@@ -2,6 +2,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useCallback, useMemo } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
+type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
 export type TipoPosicao = 'porta_palete' | 'box';
