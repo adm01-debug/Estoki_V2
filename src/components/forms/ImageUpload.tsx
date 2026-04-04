@@ -17,7 +17,7 @@ export function ImageUpload({ onUpload, value = [], multiple, className }: Image
         <input type="file" accept="image/*" multiple={multiple} onChange={handleChange} className="hidden" id="image-upload" />
         <label htmlFor="image-upload" className="cursor-pointer"><ImageIcon className="mx-auto h-8 w-8 text-muted-foreground mb-1" /><p className="text-sm">Upload images</p></label>
       </div>
-      {previews.length > 0 && (<div className="grid grid-cols-4 gap-2">{previews.map((src, i) => (<div key={i} className="relative"><img src={src} className="w-full h-20 object-cover rounded" /><X className="absolute top-1 right-1 h-4 w-4 bg-black/50 text-white rounded cursor-pointer" onClick={() => remove(i)} /></div>))}</div>)}
+      {previews.length > 0 && (<div className="grid grid-cols-4 gap-2">{previews.map((src, i) => (<div key={i} className="relative"><img src={src} alt={`Preview ${i + 1}`} loading="lazy" decoding="async" className="w-full h-20 object-cover rounded" /><X className="absolute top-1 right-1 h-4 w-4 bg-black/50 text-white rounded cursor-pointer" onClick={() => remove(i)} /></div>))}</div>)}
     </div>
   );
 }
