@@ -284,6 +284,7 @@ export default function AlertasInteligentesPage() {
                     <p>Nenhum alerta encontrado</p>
                   </div>
                 ) : (
+                  <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>

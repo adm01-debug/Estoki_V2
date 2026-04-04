@@ -429,6 +429,7 @@ export default function RomaneiosPage() {
                   {/* Lista de entregas */}
                   <div>
                     <h3 className="font-medium mb-2">Entregas ({romaneioSelecionado.itens.length})</h3>
+                    <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow>
