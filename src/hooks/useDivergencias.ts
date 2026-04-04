@@ -77,16 +77,15 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
         .select(`
           id,
           numero_lote,
-          numero_pedido,
+          pedido_compra,
           quantidade_pedida,
-          quantidade_total,
+          quantidade_atual,
           data_recebimento,
           fornecedor,
           produtos (nome)
         `)
         .gte('data_recebimento', dataInicio)
-        .not('quantidade_pedida', 'is', null)
-        .not('quantidade_total', 'is', null);
+        .not('quantidade_pedida', 'is', null);
 
       if (queryError) throw queryError;
 
