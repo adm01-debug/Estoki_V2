@@ -16,7 +16,7 @@ const tooltipStyle = {
 };
 
 interface EstoqueChartsProps {
-  posicoes: { status: string; tipo?: string; porta_palete?: string }[];
+  posicoes: { status: string; tipo?: string | null; porta_palete?: string | null }[];
 }
 
 export function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
