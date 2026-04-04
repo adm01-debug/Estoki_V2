@@ -244,7 +244,7 @@ const AuthPage = () => {
               </div>
               <div className="flex items-center gap-1.5 text-xs text-sidebar-foreground/40">
                 <span>{ipInfo.city}, {ipInfo.country}</span>
-                <Wifi className="h-3 w-3 text-emerald-400" />
+                <Wifi className="h-3 w-3 text-primary" />
               </div>
             </div>
           )}
