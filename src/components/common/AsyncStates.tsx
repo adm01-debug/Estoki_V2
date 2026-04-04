@@ -48,8 +48,8 @@ interface PageLoaderProps {
 
 export function PageLoader({ message = "Carregando..." }: PageLoaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
       <p className="text-sm text-muted-foreground">{message}</p>
     </div>
   );
