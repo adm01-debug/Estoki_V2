@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { LoadingFallback } from "@/components/common/LoadingFallback";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 
 // WMS Operations
 const Estoque = lazy(() => import("@/pages/Estoque"));
@@ -40,36 +41,36 @@ const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
 export const wmsRoutes = (
   <>
     {/* WMS Operations */}
-    <Route path="estoque" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Estoque /></Suspense>} />
-    <Route path="triagem" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Triagem /></Suspense>} />
-    <Route path="recebimento" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Recebimento /></Suspense>} />
-    <Route path="movimentacao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Movimentacao /></Suspense>} />
-    <Route path="armazenamento" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Armazenamento /></Suspense>} />
-    <Route path="conferencia" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><ConferenciaRecebimento /></Suspense>} />
-    <Route path="scanner" element={<Suspense fallback={<LoadingFallback />}><Scanner /></Suspense>} />
+    <Route path="estoque" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Estoque /></Suspense></RouteErrorBoundary>} />
+    <Route path="triagem" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Triagem /></Suspense></RouteErrorBoundary>} />
+    <Route path="recebimento" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Recebimento /></Suspense></RouteErrorBoundary>} />
+    <Route path="movimentacao" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Movimentacao /></Suspense></RouteErrorBoundary>} />
+    <Route path="armazenamento" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Armazenamento /></Suspense></RouteErrorBoundary>} />
+    <Route path="conferencia" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><ConferenciaRecebimento /></Suspense></RouteErrorBoundary>} />
+    <Route path="scanner" element={<RouteErrorBoundary><Suspense fallback={<LoadingFallback />}><Scanner /></Suspense></RouteErrorBoundary>} />
 
     {/* Products & Inventory */}
-    <Route path="produtos" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Produtos /></Suspense>} />
-    <Route path="lotes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Lotes /></Suspense>} />
-    <Route path="posicoes" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Posicoes /></ProtectedRoute></Suspense>} />
-    <Route path="inventario" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><InventarioCiclico /></ProtectedRoute></Suspense>} />
-    <Route path="curva-abc" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><CurvaABC /></ProtectedRoute></Suspense>} />
-    <Route path="ocupacao" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><OcupacaoVisual /></Suspense>} />
+    <Route path="produtos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Produtos /></Suspense></RouteErrorBoundary>} />
+    <Route path="lotes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Lotes /></Suspense></RouteErrorBoundary>} />
+    <Route path="posicoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Posicoes /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="inventario" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><InventarioCiclico /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="curva-abc" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><CurvaABC /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="ocupacao" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><OcupacaoVisual /></Suspense></RouteErrorBoundary>} />
 
     {/* Picking & Waves */}
-    <Route path="picking" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><PickingPage /></Suspense>} />
-    <Route path="putaway" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><PutawayPage /></Suspense>} />
-    <Route path="ondas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute></Suspense>} />
-    <Route path="tarefas" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><GestaoTarefas /></Suspense>} />
+    <Route path="picking" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><PickingPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="putaway" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><PutawayPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="ondas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route path="tarefas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><GestaoTarefas /></Suspense></RouteErrorBoundary>} />
 
     {/* Shipping */}
-    <Route path="romaneios" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense>} />
-    <Route path="expedicao" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><ShippingPage /></Suspense>} />
-    <Route path="kanban" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><KanbanPipeline /></Suspense>} />
+    <Route path="romaneios" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense></RouteErrorBoundary>} />
+    <Route path="expedicao" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ShippingPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="kanban" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><KanbanPipeline /></Suspense></RouteErrorBoundary>} />
 
     {/* Triagem Detail */}
-    <Route path="triador" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense>} />
-    <Route path="formulario-triagem" element={<Suspense fallback={<RouteLoadingFallback type="form" />}><FormularioTriagem /></Suspense>} />
-    <Route path="qualidade" element={<Suspense fallback={<RouteLoadingFallback type="table" />}><QualityPage /></Suspense>} />
+    <Route path="triador" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense></RouteErrorBoundary>} />
+    <Route path="formulario-triagem" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><FormularioTriagem /></Suspense></RouteErrorBoundary>} />
+    <Route path="qualidade" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><QualityPage /></Suspense></RouteErrorBoundary>} />
   </>
 );
