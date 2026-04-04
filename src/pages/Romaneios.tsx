@@ -132,9 +132,7 @@ export default function RomaneiosPage() {
   if (loading) {
     return (
       <AppLayout title="Romaneios" showBack>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
+        <PageLoader message="Carregando romaneios..." />
       </AppLayout>
     );
   }

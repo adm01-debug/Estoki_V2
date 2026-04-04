@@ -129,10 +129,11 @@ export default function RecebimentoPage() {
 
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhum recebimento encontrado</p>
-            </div>
+            <EmptyState
+              title="Nenhum recebimento encontrado"
+              description={searchTerm ? "Tente ajustar os filtros de busca." : "Clique em 'Novo' para registrar um recebimento."}
+              icon={<Package className="h-8 w-8 text-muted-foreground" />}
+            />
           ) : (
             filteredItems.map((item) => {
               const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
