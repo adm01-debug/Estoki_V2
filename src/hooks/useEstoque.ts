@@ -85,10 +85,10 @@ export const useEstoque = () => {
   const estatisticas = useMemo(() => {
     const lista = posicoes || [];
     const total = lista.length;
-    const ocupadas = lista.filter((p: any) => p.status === 'ocupado').length;
-    const livres = lista.filter((p: any) => p.status === 'livre').length;
-    const bloqueadas = lista.filter((p: any) => p.status === 'bloqueado').length;
-    const reservadas = lista.filter((p: any) => p.status === 'reservado').length;
+    const ocupadas = lista.filter((p) => p.status === 'ocupado').length;
+    const livres = lista.filter((p) => p.status === 'livre').length;
+    const bloqueadas = lista.filter((p) => p.status === 'bloqueado').length;
+    const reservadas = lista.filter((p) => p.status === 'reservado').length;
     const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
 
     return {

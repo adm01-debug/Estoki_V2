@@ -7,8 +7,8 @@ export interface EntityVersion {
   entity_type: string;
   entity_id: string;
   version_number: number;
-  data: Record<string, any>;
-  diff?: Record<string, { old: any; new: any }>;
+  data: Record<string, unknown>;
+  diff?: Record<string, { old: unknown; new: unknown }>;
   changed_by: string;
   changed_at: string;
   change_summary?: string;
