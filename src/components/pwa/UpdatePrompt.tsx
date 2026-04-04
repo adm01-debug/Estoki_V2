@@ -7,7 +7,7 @@ export function UpdatePrompt() {
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.ready.then(reg => {
         reg.addEventListener("updatefound", () => {
           const newWorker = reg.installing;
