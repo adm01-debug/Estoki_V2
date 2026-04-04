@@ -424,7 +424,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, role, signOut, loading } = useAuth();
-  const { permission, isSupported, requestPermission } = usePushNotifications();
+  // Push notifications hook kept for potential future use in notification center
   const preloadRoute = useRoutePreload();
   const { favorites, toggleFavorite, isFavorite } = useSidebarFavorites();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
