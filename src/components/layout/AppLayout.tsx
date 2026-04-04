@@ -987,8 +987,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
         {renderSidebarContent(false)}
 
         {/* Collapse toggle */}
-        <motion.button
-          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          <motion.button
+            aria-label={sidebarCollapsed ? "Expandir menu lateral" : "Recolher menu lateral"}
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="absolute -right-3.5 top-20 w-7 h-7 rounded-full bg-card border border-border/50 flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-all shadow-md z-50"
