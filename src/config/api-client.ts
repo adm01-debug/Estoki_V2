@@ -27,11 +27,11 @@ interface ApiError {
   message: string;
   status?: number;
   code?: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 // Cache em memória
-const memoryCache = new Map<string, { data: any; expiresAt: number }>();
+const memoryCache = new Map<string, { data: unknown; expiresAt: number }>();
 
 // Limpar cache expirado
 function cleanExpiredCache() {
@@ -131,20 +131,20 @@ class ApiClient {
     throw lastError || new Error('Request failed after retries');
   }
 
-  private getCacheKey(method: string, url: string, body?: any): string {
+  private getCacheKey(method: string, url: string, body?: unknown): string {
     return `${method}:${url}:${body ? JSON.stringify(body) : ''}`;
   }
 
   private getFromCache<T>(key: string): T | null {
     const cached = memoryCache.get(key);
     if (cached && cached.expiresAt > Date.now()) {
-      return cached.data;
+      return cached.data as T;
     }
     memoryCache.delete(key);
     return null;
   }
 
-  private setCache(key: string, data: any, ttl: number) {
+  private setCache(key: string, data: unknown, ttl: number) {
     memoryCache.set(key, {
       data,
       expiresAt: Date.now() + ttl,
@@ -154,7 +154,7 @@ class ApiClient {
   async request<T>(
     method: string,
     endpoint: string,
-    body?: any,
+    body?: unknown,
     config?: RequestConfig
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
@@ -227,15 +227,15 @@ class ApiClient {
     return this.request<T>('GET', endpoint, undefined, config);
   }
 
-  post<T>(endpoint: string, body?: any, config?: RequestConfig) {
+  post<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
     return this.request<T>('POST', endpoint, body, config);
   }
 
-  put<T>(endpoint: string, body?: any, config?: RequestConfig) {
+  put<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
     return this.request<T>('PUT', endpoint, body, config);
   }
 
-  patch<T>(endpoint: string, body?: any, config?: RequestConfig) {
+  patch<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
     return this.request<T>('PATCH', endpoint, body, config);
   }
 

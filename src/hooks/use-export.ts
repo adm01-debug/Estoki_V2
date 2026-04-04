@@ -9,18 +9,18 @@ import { trackEvent, EventCategory, EventAction } from '@/config/analytics';
 
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'json' | 'print';
 
-export interface ExportColumn {
+export interface ExportColumn<T = Record<string, unknown>> {
   key: string;
   header: string;
   width?: number;
-  format?: (value: any, row: any) => string;
+  format?: (value: unknown, row: T) => string;
 }
 
-export interface ExportOptions {
+export interface ExportOptions<T = Record<string, unknown>> {
   filename?: string;
   title?: string;
   subtitle?: string;
-  columns?: ExportColumn[];
+  columns?: ExportColumn<T>[];
   orientation?: 'portrait' | 'landscape';
   pageSize?: 'a4' | 'letter' | 'legal';
   includeTimestamp?: boolean;
@@ -33,19 +33,19 @@ export interface ExportOptions {
 
 export interface UseExportReturn {
   isExporting: boolean;
-  exportToPDF: (data: any[], options?: ExportOptions) => Promise<void>;
-  exportToExcel: (data: any[], options?: ExportOptions) => Promise<void>;
-  exportToCSV: (data: any[], options?: ExportOptions) => void;
-  exportToJSON: (data: any[], options?: ExportOptions) => void;
+  exportToPDF: (data: Record<string, unknown>[], options?: ExportOptions) => Promise<void>;
+  exportToExcel: (data: Record<string, unknown>[], options?: ExportOptions) => Promise<void>;
+  exportToCSV: (data: Record<string, unknown>[], options?: ExportOptions) => void;
+  exportToJSON: (data: Record<string, unknown>[], options?: ExportOptions) => void;
   print: (elementId: string) => void;
-  export: (format: ExportFormat, data: any[], options?: ExportOptions) => Promise<void>;
+  export: (format: ExportFormat, data: Record<string, unknown>[], options?: ExportOptions) => Promise<void>;
 }
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
 }
 
-function getAutoColumns(data: any[]): ExportColumn[] {
+function getAutoColumns(data: Record<string, unknown>[]): ExportColumn[] {
   if (!data.length) return [];
   return Object.keys(data[0]).map(key => ({
     key,
@@ -56,7 +56,7 @@ function getAutoColumns(data: any[]): ExportColumn[] {
 export function useExport(): UseExportReturn {
   const [isExporting, setIsExporting] = useState(false);
 
-  const exportToPDF = useCallback(async (data: any[], options: ExportOptions = {}) => {
+  const exportToPDF = useCallback(async (data: Record<string, unknown>[], options: ExportOptions = {}) => {
     setIsExporting(true);
     try {
       const { jsPDF } = await import('jspdf');
@@ -101,7 +101,7 @@ export function useExport(): UseExportReturn {
     } finally { setIsExporting(false); }
   }, []);
 
-  const exportToExcel = useCallback(async (data: any[], options: ExportOptions = {}) => {
+  const exportToExcel = useCallback(async (data: Record<string, unknown>[], options: ExportOptions = {}) => {
     setIsExporting(true);
     try {
       const ExcelJS = (await import('exceljs')).default;
@@ -112,7 +112,7 @@ export function useExport(): UseExportReturn {
         const value = row[col.key];
         acc[col.header] = col.format ? col.format(value, row) : value;
         return acc;
-      }, {} as Record<string, any>));
+      }, {} as Record<string, unknown>));
 
       const workbook = new ExcelJS.Workbook();
       const ws = workbook.addWorksheet(title.substring(0, 31));
@@ -145,7 +145,7 @@ export function useExport(): UseExportReturn {
     } finally { setIsExporting(false); }
   }, []);
 
-  const exportToCSV = useCallback((data: any[], options: ExportOptions = {}) => {
+  const exportToCSV = useCallback((data: Record<string, unknown>[], options: ExportOptions = {}) => {
     const { filename = 'export', columns = getAutoColumns(data) } = options;
     const headers = columns.map(col => col.header);
     const rows = data.map(row => columns.map(col => {
@@ -161,7 +161,7 @@ export function useExport(): UseExportReturn {
     URL.revokeObjectURL(url);
   }, []);
 
-  const exportToJSON = useCallback((data: any[], options: ExportOptions = {}) => {
+  const exportToJSON = useCallback((data: Record<string, unknown>[], options: ExportOptions = {}) => {
     const { filename = 'export' } = options;
     const json = JSON.stringify(data, null, 2);
     const blob = new Blob([json], { type: 'application/json' });
@@ -180,7 +180,7 @@ export function useExport(): UseExportReturn {
     printWindow.print();
   }, []);
 
-  const exportData = useCallback(async (format: ExportFormat, data: any[], options?: ExportOptions) => {
+  const exportData = useCallback(async (format: ExportFormat, data: Record<string, unknown>[], options?: ExportOptions) => {
     switch (format) {
       case 'pdf': await exportToPDF(data, options); break;
       case 'excel': await exportToExcel(data, options); break;

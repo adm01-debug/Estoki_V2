@@ -1,11 +1,12 @@
 import { useState, useCallback, useMemo } from 'react';
+
 type ValidationRule<T> = {
-  validate: (value: any, values: T) => boolean;
+  validate: (value: T[keyof T], values: T) => boolean;
   message: string;
 };
 
 type FieldConfig<T> = {
-  initialValue: any;
+  initialValue: T[keyof T];
   rules?: ValidationRule<T>[];
 };
 
@@ -28,10 +29,10 @@ interface UseFormReturn<T> {
   validate: () => boolean;
 }
 
-export function useForm<T extends Record<string, any>>(config: FormConfig<T>): UseFormReturn<T> {
+export function useForm<T extends Record<string, unknown>>(config: FormConfig<T>): UseFormReturn<T> {
   const initialValues = useMemo(() => {
     const values: Partial<T> = {};
-    for (const key in config) values[key] = config[key].initialValue;
+    for (const key in config) values[key] = config[key].initialValue as T[typeof key];
     return values as T;
   }, []);
 
@@ -116,32 +117,32 @@ export function useForm<T extends Record<string, any>>(config: FormConfig<T>): U
 
 // Validation helpers
 export const validators = {
-  required: (message = 'Campo obrigatório'): ValidationRule<any> => ({
+  required: <T extends Record<string, unknown>>(message = 'Campo obrigatório'): ValidationRule<T> => ({
     validate: (value) => value !== null && value !== undefined && value !== '',
     message,
   }),
-  minLength: (min: number, message?: string): ValidationRule<any> => ({
+  minLength: <T extends Record<string, unknown>>(min: number, message?: string): ValidationRule<T> => ({
     validate: (value) => typeof value === 'string' && value.length >= min,
     message: message || `Mínimo ${min} caracteres`,
   }),
-  maxLength: (max: number, message?: string): ValidationRule<any> => ({
+  maxLength: <T extends Record<string, unknown>>(max: number, message?: string): ValidationRule<T> => ({
     validate: (value) => typeof value === 'string' && value.length <= max,
     message: message || `Máximo ${max} caracteres`,
   }),
-  email: (message = 'Email inválido'): ValidationRule<any> => ({
-    validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  email: <T extends Record<string, unknown>>(message = 'Email inválido'): ValidationRule<T> => ({
+    validate: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)),
     message,
   }),
-  min: (min: number, message?: string): ValidationRule<any> => ({
+  min: <T extends Record<string, unknown>>(min: number, message?: string): ValidationRule<T> => ({
     validate: (value) => Number(value) >= min,
     message: message || `Valor mínimo: ${min}`,
   }),
-  max: (max: number, message?: string): ValidationRule<any> => ({
+  max: <T extends Record<string, unknown>>(max: number, message?: string): ValidationRule<T> => ({
     validate: (value) => Number(value) <= max,
     message: message || `Valor máximo: ${max}`,
   }),
-  pattern: (regex: RegExp, message: string): ValidationRule<any> => ({
-    validate: (value) => regex.test(value),
+  pattern: <T extends Record<string, unknown>>(regex: RegExp, message: string): ValidationRule<T> => ({
+    validate: (value) => regex.test(String(value)),
     message,
   }),
 };
