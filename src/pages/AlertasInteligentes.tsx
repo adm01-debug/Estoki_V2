@@ -359,6 +359,7 @@ export default function AlertasInteligentesPage() {
                       })}
                     </TableBody>
                   </Table>
+                  </div>
                 )}
               </CardContent>
             </Card>
