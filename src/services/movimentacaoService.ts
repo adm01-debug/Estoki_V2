@@ -118,7 +118,7 @@ export const movimentacaoService = {
       posicao_destino: (data.detalhes as any)?.posicao_destino,
       quantidade: data.quantidade ?? 0,
       motivo: data.descricao,
-      usuario_id: data.operador_id,
+      usuario_id: data.operador_id ?? '',
       created_at: data.created_at,
     };
   },
