@@ -426,6 +426,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const preloadRoute = useRoutePreload();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [fabOpen, setFabOpen] = useState(false);
 
   // Smart back: always show on non-home routes
   const isHome = location.pathname === "/";
