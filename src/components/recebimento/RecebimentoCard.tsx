@@ -20,4 +20,4 @@ export const RecebimentoCard = memo(function RecebimentoCard({ recebimento, onCl
       </CardContent>
     </Card>
   );
-}
+});

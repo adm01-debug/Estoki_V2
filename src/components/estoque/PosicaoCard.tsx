@@ -32,4 +32,4 @@ export const PosicaoCard = memo(function PosicaoCard({ codigo, status, tipo, ocu
       </CardContent>
     </Card>
   );
-}
+});
