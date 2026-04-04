@@ -329,15 +329,13 @@ const AuthPage = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground hover:bg-sidebar-accent/60 hover:border-primary/30 transition-all"
+              className="w-full h-11 border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground/40 cursor-not-allowed opacity-60 relative"
               disabled
             >
               <Fingerprint className="mr-2 h-4 w-4" />
               Entrar com Passkey
+              <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Em breve</span>
             </Button>
-            <p className="text-center text-[11px] text-sidebar-foreground/25">
-              Use Face ID, Touch ID ou Windows Hello
-            </p>
           </div>
 
           {/* Toggle mode */}
