@@ -551,7 +551,7 @@ export function GamificacaoCharts({ xpTotal, nivel, conquistasDesbloqueadas, tot
   }));
 
   const xpData = useMemo(() => {
-    const levels = [];
+    const levels: { name: string; xp: number }[] = [];
     for (let i = Math.max(1, nivel - 3); i <= nivel + 2; i++) {
       levels.push({ name: `Nv ${i}`, xp: i === nivel ? xpTotal : Math.round(100 * Math.pow(1.5, i - 1)) });
     }
