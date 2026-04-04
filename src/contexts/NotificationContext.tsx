@@ -236,7 +236,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   // Handle new notification from realtime
-  const handleNewNotification = useCallback((payload: any) => {
+  const handleNewNotification = useCallback((payload: { new?: Record<string, unknown> }) => {
     const newNotif = payload.new;
     if (!newNotif || lastNotificationIds.current.has(newNotif.id)) return;
 

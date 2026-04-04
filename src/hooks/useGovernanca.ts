@@ -253,11 +253,11 @@ export function useOcorrenciasPerda() {
       const items = data || [];
       return {
         total: items.length,
-        abertas: items.filter((o: any) => o.status === 'aberto').length,
-        investigacao: items.filter((o: any) => o.status === 'investigacao').length,
-        encerradas: items.filter((o: any) => o.status === 'encerrado').length,
-        prejuizoTotal: items.reduce((s: number, o: any) => s + (Number(o.valor_prejuizo) || 0), 0),
-        porZona: items.reduce((acc: Record<string, number>, o: any) => {
+        abertas: items.filter((o) => o.status === 'aberto').length,
+        investigacao: items.filter((o) => o.status === 'investigacao').length,
+        encerradas: items.filter((o) => o.status === 'encerrado').length,
+        prejuizoTotal: items.reduce((s, o) => s + (Number(o.valor_prejuizo) || 0), 0),
+        porZona: items.reduce((acc: Record<string, number>, o) => {
           const z = o.zona_detectada || 'Não informada';
           acc[z] = (acc[z] || 0) + 1;
           return acc;

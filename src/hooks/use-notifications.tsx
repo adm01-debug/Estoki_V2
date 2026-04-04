@@ -47,7 +47,7 @@ interface ToastOptions {
   duration?: number;
 }
 
-function mapDbRow(row: any): Notification {
+function mapDbRow(row: Record<string, unknown>): Notification {
   return {
     id: row.id,
     type: row.tipo || 'info',
