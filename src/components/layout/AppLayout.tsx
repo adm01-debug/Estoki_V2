@@ -964,6 +964,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.aside 
+              role="navigation"
+              aria-label="Menu de navegação"
               className="fixed left-0 top-0 h-full w-[280px] bg-sidebar border-r border-sidebar-border/50 flex flex-col z-50 lg:hidden"
               initial={{ x: -280 }}
               animate={{ x: 0 }}
