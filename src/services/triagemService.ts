@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const triagemService = {
   async getAll(resultado?: string) {
-    let query = supabase.from("eventos_triagem").select("*").order("created_at", { ascending: false });
+    let query = supabase.from("eventos_triagem").select("*").order("created_at", { ascending: false }).limit(500);
     if (resultado) query = query.eq("resultado", resultado);
     const { data, error } = await query;
     if (error) throw error;

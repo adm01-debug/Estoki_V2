@@ -3,10 +3,10 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
-const jsonResponse = (body: unknown, status = 200) =>
+const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(request), "Content-Type": "application/json" },
   });
 
 const ALLOWED_TABLES = [
@@ -25,18 +25,18 @@ const ExportSchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
-  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
+  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
 
   try {
     const parsed = ExportSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
     }
 
     const { table, columns, filters, format, limit } = parsed.data;
 
     if (!ALLOWED_TABLES.includes(table)) {
-      return jsonResponse({ error: `Table '${table}' is not allowed for export` }, 403);
+      return jsonResponse({ error: `Table '${table}' is not allowed for export` }, 403, req);
     }
 
     const supabase = createClient(
@@ -69,9 +69,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    return jsonResponse({ success: true, count: data?.length || 0, data });
+    return jsonResponse({ success: true, count: data?.length || 0, data }, 200, req);
   } catch (error) {
     console.error("export-data error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return jsonResponse({ error: "Internal server error" }, 500, req);
   }
 });

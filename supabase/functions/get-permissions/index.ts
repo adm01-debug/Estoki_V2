@@ -2,10 +2,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
-const jsonResponse = (body: unknown, status = 200) =>
+const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(request), "Content-Type": "application/json" },
   });
 
 Deno.serve(async (req) => {
@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      return jsonResponse({ error: "Missing authorization header" }, 401);
+      return jsonResponse({ error: "Missing authorization header" }, 401, req);
     }
 
     const supabase = createClient(
@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
 
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) {
-      return jsonResponse({ error: "Não autenticado" }, 401);
+      return jsonResponse({ error: "Não autenticado" }, 401, req);
     }
 
     const { data: roles } = await supabase
@@ -48,6 +48,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("get-permissions error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return jsonResponse({ error: "Internal server error" }, 500, req);
   }
 });

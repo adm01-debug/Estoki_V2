@@ -3,10 +3,10 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
-const jsonResponse = (body: unknown, status = 200) =>
+const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
     status,
-    headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    headers: { ...getCorsHeaders(request), "Content-Type": "application/json" },
   });
 
 const ALLOWED_TABLES = [
@@ -23,18 +23,18 @@ const ImportSchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
-  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405);
+  if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
 
   try {
     const parsed = ImportSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400);
+      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
     }
 
     const { table, data, mode, unique_key } = parsed.data;
 
     if (!ALLOWED_TABLES.includes(table)) {
-      return jsonResponse({ error: `Table '${table}' is not allowed for import` }, 403);
+      return jsonResponse({ error: `Table '${table}' is not allowed for import` }, 403, req);
     }
 
     const supabase = createClient(
@@ -63,9 +63,9 @@ Deno.serve(async (req) => {
       }
     }
 
-    return jsonResponse({ success: true, ...results });
+    return jsonResponse({ success: true, ...results }, 200, req);
   } catch (error) {
     console.error("import-data error:", error);
-    return jsonResponse({ error: "Internal server error" }, 500);
+    return jsonResponse({ error: "Internal server error" }, 500, req);
   }
 });
