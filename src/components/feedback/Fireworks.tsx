@@ -17,8 +17,8 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const fireworks: Array<{ x: number; y: number; targetY: number; speed: number; exploded: boolean; color: string }> = [];
-    const particles: Array<{ x: number; y: number; vx: number; vy: number; color: string; life: number; maxLife: number }> = [];
+    const fireworks: any[] = [];
+    const particles: any[] = [];
     const colors = ['#ff0', '#f0f', '#0ff', '#f00', '#0f0', '#00f'];
 
     const createFirework = () => {

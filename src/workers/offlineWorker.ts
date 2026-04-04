@@ -4,13 +4,13 @@ declare const self: DedicatedWorkerGlobalScope;
 
 interface OfflineMessage {
   type: 'QUEUE_ACTION' | 'PROCESS_QUEUE' | 'GET_QUEUE' | 'CLEAR_QUEUE';
-  payload?: unknown;
+  payload?: any;
 }
 
 interface OfflineAction {
   id: string;
   action: string;
-  data: unknown;
+  data: any;
   timestamp: number;
   synced: boolean;
 }

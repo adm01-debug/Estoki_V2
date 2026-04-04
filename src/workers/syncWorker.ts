@@ -4,14 +4,14 @@ declare const self: DedicatedWorkerGlobalScope;
 
 interface SyncMessage {
   type: 'SYNC_START' | 'SYNC_ITEM' | 'SYNC_COMPLETE' | 'SYNC_ERROR';
-  payload?: unknown;
+  payload?: any;
 }
 
 interface QueueItem {
   id: string;
   type: 'create' | 'update' | 'delete';
   entity: string;
-  data: unknown;
+  data: any;
   timestamp: number;
   retries: number;
 }

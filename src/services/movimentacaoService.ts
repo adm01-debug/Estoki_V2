@@ -81,7 +81,7 @@ export const movimentacaoService = {
         return [];
       }
 
-      return (data || []).map((item: Record<string, unknown>) => ({
+      return (data || []).map((item: any) => ({
         id: item.id,
         tipo: item.tipo_evento as Movimentacao['tipo'],
         lote_id: item.lote_id ?? undefined,
