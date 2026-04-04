@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import QRCode from "qrcode";
-import { jsPDF } from "jspdf";
+// jsPDF loaded dynamically when needed
 import { Download, Printer, Eye, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import jsPDF from "jspdf";
+// jsPDF loaded dynamically when needed
 import { exportToExcel } from "@/utils/exportExcel";
 import {
   AreaChart,

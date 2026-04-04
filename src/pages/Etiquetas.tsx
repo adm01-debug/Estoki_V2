@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode";
-import { jsPDF } from "jspdf";
+// jsPDF loaded dynamically when needed
 import {
   Search, Printer, Download, Eye, Loader2, Tag,
   Package, QrCode, ChevronRight, RefreshCw, Truck
