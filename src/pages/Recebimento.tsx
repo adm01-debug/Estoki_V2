@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRecebimentos, StatusRecebimento } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { NovoRecebimentoDialog } from "@/components/recebimento/NovoRecebimentoDialog";
+
+type StatusRecebimento = 'aguardando' | 'em_transito' | 'recebido' | 'em_conferencia' | 'conferido' | 'divergencia' | 'cancelado';
 
 const statusConfig: Record<StatusRecebimento, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ReactNode }> = {
   aguardando: { label: "Aguardando", variant: "outline", icon: <Clock className="h-3 w-3" /> },
@@ -22,13 +24,13 @@ const statusConfig: Record<StatusRecebimento, { label: string; variant: "default
 export default function RecebimentoPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { recebimentos, loading, error } = useRecebimentos();
+  const { recebimentos, isLoading, error } = useRecebimentos();
   
-  // Initialize from URL params
+  const items = recebimentos || [];
+  
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
 
-  // Sync filters to URL
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set("q", searchTerm);
@@ -36,11 +38,10 @@ export default function RecebimentoPage() {
     setSearchParams(params, { replace: true });
   }, [searchTerm, statusFilter, setSearchParams]);
 
-  const filteredItems = recebimentos.filter((item) => {
+  const filteredItems = items.filter((item) => {
     const matchesSearch =
       item.numero_lote.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.fornecedor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.produto_nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.fornecedor || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.pedido_compra?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
 
     const matchesStatus = statusFilter === "todos" || item.status === statusFilter;
@@ -49,13 +50,13 @@ export default function RecebimentoPage() {
   });
 
   const contagens = {
-    todos: recebimentos.length,
-    aguardando: recebimentos.filter(r => r.status === 'aguardando').length,
-    em_transito: recebimentos.filter(r => r.status === 'em_transito').length,
-    recebido: recebimentos.filter(r => r.status === 'recebido').length,
-    em_conferencia: recebimentos.filter(r => r.status === 'em_conferencia').length,
-    conferido: recebimentos.filter(r => r.status === 'conferido').length,
-    divergencia: recebimentos.filter(r => r.status === 'divergencia').length,
+    todos: items.length,
+    aguardando: items.filter(r => r.status === 'aguardando').length,
+    em_transito: items.filter(r => r.status === 'em_transito').length,
+    recebido: items.filter(r => r.status === 'recebido').length,
+    em_conferencia: items.filter(r => r.status === 'em_conferencia').length,
+    conferido: items.filter(r => r.status === 'conferido').length,
+    divergencia: items.filter(r => r.status === 'divergencia').length,
   };
 
   const formatDate = (dateString?: string) => {
@@ -68,7 +69,7 @@ export default function RecebimentoPage() {
     });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <AppLayout title="Recebimento" showBack>
         <div className="flex items-center justify-center h-64">
@@ -82,7 +83,7 @@ export default function RecebimentoPage() {
     return (
       <AppLayout title="Recebimento" showBack>
         <div className="p-4 text-center text-destructive">
-          <p>Erro ao carregar recebimentos: {error}</p>
+          <p>Erro ao carregar recebimentos: {error.message}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Tentar novamente
           </Button>
@@ -95,12 +96,9 @@ export default function RecebimentoPage() {
     <AppLayout
       title="Recebimento"
       showBack
-      rightAction={
-        <NovoRecebimentoDialog />
-      }
+      rightAction={<NovoRecebimentoDialog />}
     >
       <div className="p-4 space-y-4 animate-fade-in">
-        {/* Filtros */}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -113,7 +111,6 @@ export default function RecebimentoPage() {
           </div>
         </div>
 
-        {/* Tabs de Status */}
         <Tabs value={statusFilter} onValueChange={setStatusFilter}>
           <TabsList className="w-full overflow-x-auto flex-nowrap justify-start">
             <TabsTrigger value="todos" className="gap-1">
@@ -134,7 +131,6 @@ export default function RecebimentoPage() {
           </TabsList>
         </Tabs>
 
-        {/* Lista de Recebimentos */}
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
@@ -143,7 +139,7 @@ export default function RecebimentoPage() {
             </div>
           ) : (
             filteredItems.map((item) => {
-              const status = statusConfig[item.status] || statusConfig.aguardando;
+              const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
               const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
               const temDivergencia = item.status === 'divergencia' || 
                 (item.status === 'conferido' && item.quantidade_atual !== qtdPedida);
@@ -170,9 +166,9 @@ export default function RecebimentoPage() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm font-medium truncate">{item.produto_nome}</p>
+                      <p className="text-sm font-medium truncate">{item.produto_id}</p>
                       <p className="text-xs text-muted-foreground">
-                        {item.fornecedor}
+                        {item.fornecedor || 'Fornecedor não informado'}
                       </p>
                       {item.previsao_chegada && item.status === 'aguardando' && (
                         <p className="text-xs text-muted-foreground mt-1">
