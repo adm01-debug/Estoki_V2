@@ -217,6 +217,7 @@ const DashboardPage = () => {
 
   return (
     <AppLayout title="Dashboard" showBack>
+      <SEO title="Dashboard" description="Dashboard com KPIs de estoque, ocupação e operações do armazém." path="/dashboard" />
       <div className="p-4 space-y-4 pb-24">
         {/* Header com ações */}
         <div className="flex items-center justify-between">

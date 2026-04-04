@@ -164,6 +164,7 @@ export default function MovimentacaoPage() {
 
   return (
     <AppLayout title="Movimentação" showBack>
+      <SEO title="Movimentação" description="Registro e histórico de movimentações de estoque." path="/movimentacao" />
       <div className="p-4 space-y-4 animate-fade-in">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">

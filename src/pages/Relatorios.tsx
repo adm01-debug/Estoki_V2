@@ -321,6 +321,7 @@ export default function RelatoriosPage() {
 
   return (
     <AppLayout title="Relatórios" showBack>
+      <SEO title="Relatórios" description="Relatórios analíticos de movimentações, entradas e saídas." path="/relatorios" />
       <div className="p-4 space-y-6">
         {/* Filtros */}
         <Card>

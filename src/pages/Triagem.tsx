@@ -172,7 +172,8 @@ export default function TriagemPage() {
 
   return (
     <AppLayout
-      title="Triagem"
+      title="Triagem">
+      <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
       showBack
       rightAction={
         <div className="flex gap-2">

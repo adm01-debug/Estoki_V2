@@ -247,7 +247,8 @@ export default function EstoquePage() {
   }
 
   return (
-    <AppLayout
+    <AppLayout>
+      <SEO title="Estoque" description="Gestão de posições, ocupação e movimentação de estoque." path="/estoque" />
       title="Estoque"
       showBack
       rightAction={
