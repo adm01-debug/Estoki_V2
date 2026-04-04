@@ -1,4 +1,12 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+
+declare global {
+  interface Window {
+    BarcodeDetector?: new (options?: { formats: string[] }) => {
+      detect(source: HTMLVideoElement | ImageBitmap | HTMLCanvasElement): Promise<Array<{ rawValue: string; format: string }>>;
+    };
+  }
+}
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Camera, X, Flashlight } from 'lucide-react';
