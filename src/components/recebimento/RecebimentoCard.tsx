@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, getStatusVariant } from "@/components/ui/status-badge";
 import { formatDate } from "@/utils/date";
@@ -5,7 +6,7 @@ import { Truck } from "lucide-react";
 
 interface RecebimentoCardProps { recebimento: any; onClick?: () => void; }
 
-export function RecebimentoCard({ recebimento, onClick }: RecebimentoCardProps) {
+export const RecebimentoCard = memo(function RecebimentoCard({ recebimento, onClick }: RecebimentoCardProps) {
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
       <CardHeader className="pb-2">
