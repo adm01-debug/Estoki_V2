@@ -74,9 +74,7 @@ export default function RecebimentoPage() {
   if (isLoading) {
     return (
       <AppLayout title="Recebimento" showBack>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
+        <PageLoader message="Carregando recebimentos..." />
       </AppLayout>
     );
   }
@@ -84,12 +82,7 @@ export default function RecebimentoPage() {
   if (error) {
     return (
       <AppLayout title="Recebimento" showBack>
-        <div className="p-4 text-center text-destructive">
-          <p>Erro ao carregar recebimentos: {error.message}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Tentar novamente
-          </Button>
-        </div>
+        <ErrorState message={error.message} onRetry={() => window.location.reload()} />
       </AppLayout>
     );
   }
