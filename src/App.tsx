@@ -31,7 +31,11 @@ const queryClient = new QueryClient({
     queries: {
       staleTime: 5 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
-      retry: 1,
+      retry: (failureCount, error) => {
+        // Don't retry on auth errors (401/403)
+        if (error instanceof Error && /40[13]/.test(error.message)) return false;
+        return failureCount < 1;
+      },
       refetchOnWindowFocus: false,
       refetchOnReconnect: 'always',
       networkMode: 'offlineFirst',
