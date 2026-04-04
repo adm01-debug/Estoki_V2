@@ -53,7 +53,7 @@ export function useOfflineCache() {
     const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
     if (ops.length === 0) return;
 
-    const remaining: any[] = [];
+    const remaining: Array<{ table: string; type: string; data: any }> = [];
     for (const op of ops) {
       try {
         if (op.type === "insert") {
