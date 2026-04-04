@@ -107,7 +107,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4" aria-label="Formulário de login">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -116,6 +116,8 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                aria-required="true"
+                autoComplete="email"
                 disabled={isLocked}
               />
             </div>
@@ -132,6 +134,7 @@ export default function LoginPage() {
               type="submit" 
               className={cn("w-full", isLocked && "opacity-50")} 
               disabled={loading || isLocked}
+              aria-busy={loading}
             >
               {loading ? 'Entrando...' : isLocked ? 'Conta Bloqueada' : 'Entrar'}
             </Button>
