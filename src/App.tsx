@@ -61,9 +61,9 @@ const App = () => (
 
                   {/* Protected routes */}
                   <Route path="/" element={<AppLayout />}>
-                    <Route index element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense>} />
-                    <Route path="dashboard" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense>} />
-                    <Route path="monitor" element={<Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense>} />
+                    <Route index element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense></RouteErrorBoundary>} />
+                    <Route path="dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense></RouteErrorBoundary>} />
+                    <Route path="monitor" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense></RouteErrorBoundary>} />
 
                     {wmsRoutes}
                     {analyticsRoutes}
