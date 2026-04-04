@@ -94,7 +94,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
 
       (lotes || []).forEach((lote: any) => {
         const pedida = lote.quantidade_pedida || 0;
-        const recebida = lote.quantidade_total || 0;
+        const recebida = lote.quantidade_atual || 0;
         const diferenca = recebida - pedida;
         const percentual = pedida > 0 ? (Math.abs(diferenca) / pedida) * 100 : 0;
         const fornecedor = lote.fornecedor || 'Não informado';
