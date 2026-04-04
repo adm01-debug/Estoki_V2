@@ -35,7 +35,7 @@ export const useEstoque = () => {
   });
 
   const createPosicao = useMutation({
-    mutationFn: async (novaPosicao: any) => {
+    mutationFn: async (novaPosicao: Record<string, unknown>) => {
       const { data, error } = await supabase.from('posicoes_estoque').insert(novaPosicao).select().single();
       if (error) throw error;
       return data;
