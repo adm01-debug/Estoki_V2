@@ -43,8 +43,8 @@ export interface Column<T> {
   filterable?: boolean;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
-  render?: (value: any, row: T, index: number) => React.ReactNode;
-  exportFormat?: (value: any, row: T) => string;
+  render?: (value: unknown, row: T, index: number) => React.ReactNode;
+  exportFormat?: (value: unknown, row: Record<string, unknown>) => string;
 }
 
 export interface DataTableProps<T> {
