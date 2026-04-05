@@ -44,7 +44,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
         return [];
       }
     } catch (err) {
-      console.error("Erro ao obter câmeras:", err);
+      if (import.meta.env.DEV) console.error("Erro ao obter câmeras:", err);
       setError("Permissão de câmera negada");
       setHasPermission(false);
       onError?.("Permissão de câmera negada");
@@ -95,7 +95,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
 
       setIsScanning(true);
     } catch (err: unknown) {
-      console.error("Erro ao iniciar scanner:", err);
+      if (import.meta.env.DEV) console.error("Erro ao iniciar scanner:", err);
       const msg = err instanceof Error ? err.message : "Erro ao iniciar câmera";
       setError(msg);
       onError?.(msg);
@@ -108,7 +108,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
         await scannerRef.current.stop();
         setIsScanning(false);
       } catch (err) {
-        console.error("Erro ao parar scanner:", err);
+        if (import.meta.env.DEV) console.error("Erro ao parar scanner:", err);
       }
     }
   };

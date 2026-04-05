@@ -73,7 +73,7 @@ export function AssinaturaConferenciaDialog({
       onSuccess?.(assinaturaUrl);
       
     } catch (error) {
-      console.error('Erro ao salvar assinatura:', error);
+      if (import.meta.env.DEV) console.error('Erro ao salvar assinatura:', error);
       toast.error('Erro ao salvar assinatura. Tente novamente.');
     } finally {
       setLoading(false);

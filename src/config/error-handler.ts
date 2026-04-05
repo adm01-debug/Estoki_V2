@@ -174,7 +174,7 @@ export async function logError(error: AppError): Promise<void> {
     }
   } catch {
     // Log silencioso - não queremos erro ao logar erro
-    console.error('[ERROR LOG FAILED]', error);
+    if (!isProduction()) console.error('[ERROR LOG FAILED]', error);
   }
 }
 
@@ -203,11 +203,11 @@ export function setupGlobalErrorHandler(): void {
 
   // Monitorar status online/offline
   window.addEventListener('online', () => {
-    console.log('[NETWORK] Back online');
+    if (!isProduction()) console.log('[NETWORK] Back online');
   });
 
   window.addEventListener('offline', () => {
-    console.log('[NETWORK] Went offline');
+    if (!isProduction()) console.log('[NETWORK] Went offline');
     const appError = createAppError(new Error('Connection lost'), {
       type: 'offline',
     });

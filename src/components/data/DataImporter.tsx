@@ -87,7 +87,7 @@ export function DataImporter<T>({
         setResult(importResult);
         setProgress(100);
       } catch (error) {
-        console.error("Erro ao processar arquivo:", error);
+        if (import.meta.env.DEV) console.error("Erro ao processar arquivo:", error);
         setResult({
           success: [],
           errors: [{ row: 0, field: "file", error: (error as Error).message }],
@@ -120,7 +120,7 @@ export function DataImporter<T>({
       setFile(null);
       setResult(null);
     } catch (error) {
-      console.error("Erro ao importar:", error);
+      if (import.meta.env.DEV) console.error("Erro ao importar:", error);
     } finally {
       setIsImporting(false);
     }
