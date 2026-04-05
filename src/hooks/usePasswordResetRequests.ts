@@ -28,7 +28,7 @@ export function usePasswordResetRequests() {
       .order('solicitado_em', { ascending: false });
     
     if (error) {
-      console.error('Error fetching requests:', error);
+      if (import.meta.env.DEV) console.error('Error fetching requests:', error);
     } else {
       setRequests((data || []) as PasswordResetRequest[]);
     }
@@ -46,7 +46,7 @@ export function usePasswordResetRequests() {
       .order('solicitado_em', { ascending: false });
     
     if (error) {
-      console.error('Error fetching my requests:', error);
+      if (import.meta.env.DEV) console.error('Error fetching my requests:', error);
     } else {
       setMyRequests((data || []) as PasswordResetRequest[]);
     }

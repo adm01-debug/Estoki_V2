@@ -47,7 +47,7 @@ class FeatureFlagsService {
         .eq('active', true);
 
       if (error) {
-        console.error('Failed to load feature flags:', error);
+        if (import.meta.env.DEV) console.error('Failed to load feature flags:', error);
         return;
       }
 
@@ -65,7 +65,7 @@ class FeatureFlagsService {
         this.notifyListeners();
       }
     } catch (err) {
-      console.error('Feature flags load error:', err);
+      if (import.meta.env.DEV) console.error('Feature flags load error:', err);
     }
   }
 

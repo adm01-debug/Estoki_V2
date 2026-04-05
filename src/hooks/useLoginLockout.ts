@@ -40,7 +40,7 @@ export function useLoginLockout() {
       });
 
       if (error) {
-        console.error('Erro ao verificar bloqueio:', error);
+        if (import.meta.env.DEV) console.error('Erro ao verificar bloqueio:', error);
         return false;
       }
 
@@ -57,7 +57,7 @@ export function useLoginLockout() {
 
       return false;
     } catch (err) {
-      console.error('Erro ao verificar bloqueio:', err);
+      if (import.meta.env.DEV) console.error('Erro ao verificar bloqueio:', err);
       return false;
     }
   }, []);
@@ -69,7 +69,7 @@ export function useLoginLockout() {
       });
 
       if (error) {
-        console.error('Erro ao registrar tentativa:', error);
+        if (import.meta.env.DEV) console.error('Erro ao registrar tentativa:', error);
         return;
       }
 
@@ -83,7 +83,7 @@ export function useLoginLockout() {
         });
       }
     } catch (err) {
-      console.error('Erro ao registrar tentativa:', err);
+      if (import.meta.env.DEV) console.error('Erro ao registrar tentativa:', err);
     }
   }, []);
 
@@ -100,7 +100,7 @@ export function useLoginLockout() {
         secondsRemaining: 0,
       });
     } catch (err) {
-      console.error('Erro ao resetar bloqueio:', err);
+      if (import.meta.env.DEV) console.error('Erro ao resetar bloqueio:', err);
     }
   }, []);
 

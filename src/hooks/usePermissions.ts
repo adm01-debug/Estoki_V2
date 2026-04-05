@@ -44,7 +44,7 @@ export function usePermissions() {
       setPermissions(permissionsRes.data || []);
       setRolePermissions(rolePermissionsRes.data || []);
     } catch (error: unknown) {
-      console.error('Error fetching permissions:', error);
+      if (import.meta.env.DEV) console.error('Error fetching permissions:', error);
     } finally {
       setLoading(false);
     }
@@ -138,7 +138,7 @@ export function usePermissions() {
 
       toast.success('Permissão atualizada');
     } catch (error: unknown) {
-      console.error('Error toggling permission:', error);
+      if (import.meta.env.DEV) console.error('Error toggling permission:', error);
       toast.error('Erro ao atualizar permissão');
     } finally {
       setSaving(false);
@@ -171,7 +171,7 @@ export function usePermissions() {
       await fetchPermissions();
       toast.success('Permissões atualizadas');
     } catch (error: unknown) {
-      console.error('Error bulk updating permissions:', error);
+      if (import.meta.env.DEV) console.error('Error bulk updating permissions:', error);
       toast.error('Erro ao atualizar permissões');
     } finally {
       setSaving(false);

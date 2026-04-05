@@ -130,7 +130,7 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
           });
         }
       } catch (err) {
-        console.error('Erro ao buscar detalhes:', err);
+        if (import.meta.env.DEV) console.error('Erro ao buscar detalhes:', err);
         setDetalhes(null);
       } finally {
         setLoading(false);

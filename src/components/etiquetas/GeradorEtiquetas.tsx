@@ -78,7 +78,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
           });
           urls.push(url);
         } catch (err) {
-          console.error("Erro ao gerar QR Code:", err);
+          if (import.meta.env.DEV) console.error("Erro ao gerar QR Code:", err);
         }
       }
       
@@ -187,7 +187,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
         description: `${qtdEtiquetas} etiqueta(s) salva(s) em ${fileName}`,
       });
     } catch (error) {
-      console.error("Erro ao gerar PDF:", error);
+      if (import.meta.env.DEV) console.error("Erro ao gerar PDF:", error);
       toast({
         title: "Erro ao gerar PDF",
         description: "Ocorreu um erro ao gerar o arquivo PDF.",

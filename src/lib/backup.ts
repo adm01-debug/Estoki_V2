@@ -2,7 +2,7 @@ export const backupToLocalStorage = (key: string, data: unknown): void => {
   try {
     localStorage.setItem(`backup_${key}`, JSON.stringify({ data, timestamp: Date.now() }));
   } catch (e) {
-    console.error('Backup failed:', e);
+    if (import.meta.env.DEV) console.error('Backup failed:', e);
   }
 };
 

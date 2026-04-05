@@ -12,7 +12,7 @@ export function initSentry() {
 }
 
 export function captureException(error: Error, context?: Record<string, unknown>) {
-  console.error('[Error]', error, context);
+  if (import.meta.env.DEV) console.error('[Error]', error, context);
 }
 
 export function setUser(user: SentryUser) {

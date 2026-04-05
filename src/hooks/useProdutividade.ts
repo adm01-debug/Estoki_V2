@@ -62,7 +62,7 @@ export function useProdutividade() {
       setOperadores(ops);
       return ops;
     } catch (err) {
-      console.error('Erro ao buscar operadores:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar operadores:', err);
       return [];
     }
   }, []);
@@ -156,7 +156,7 @@ export function useProdutividade() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao calcular métricas';
       setError(message);
-      console.error('Erro ao calcular métricas:', err);
+      if (import.meta.env.DEV) console.error('Erro ao calcular métricas:', err);
     } finally {
       setLoading(false);
     }
@@ -249,7 +249,7 @@ export function useProdutividade() {
         a.data.localeCompare(b.data)
       );
     } catch (err) {
-      console.error('Erro ao buscar métricas diárias:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar métricas diárias:', err);
       return [];
     }
   };

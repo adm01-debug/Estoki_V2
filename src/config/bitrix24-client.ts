@@ -100,7 +100,7 @@ class Bitrix24Client {
 
       return data as BitrixResponse<T>;
     } catch (error) {
-      console.error(`[Bitrix24] Error calling ${method}:`, error);
+      if (import.meta.env.DEV) console.error(`[Bitrix24] Error calling ${method}:`, error);
       throw error;
     }
   }

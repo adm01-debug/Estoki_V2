@@ -125,7 +125,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
       setOpen(false);
       onSuccess?.();
     } catch (err) {
-      console.error("Erro ao criar posição:", err);
+      if (import.meta.env.DEV) console.error("Erro ao criar posição:", err);
       toast({
         title: "Erro",
         description: err instanceof Error ? err.message : "Erro ao criar posição",
@@ -178,7 +178,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
       setOpen(false);
       onSuccess?.();
     } catch (err) {
-      console.error("Erro ao criar box:", err);
+      if (import.meta.env.DEV) console.error("Erro ao criar box:", err);
       toast({
         title: "Erro",
         description: err instanceof Error ? err.message : "Erro ao criar box",
@@ -234,7 +234,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
       setOpen(false);
       onSuccess?.();
     } catch (err) {
-      console.error("Erro ao criar posições:", err);
+      if (import.meta.env.DEV) console.error("Erro ao criar posições:", err);
       toast({
         title: "Erro",
         description: err instanceof Error ? err.message : "Erro ao criar posições",
@@ -280,7 +280,7 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
       setOpen(false);
       onSuccess?.();
     } catch (err) {
-      console.error("Erro ao criar boxes:", err);
+      if (import.meta.env.DEV) console.error("Erro ao criar boxes:", err);
       toast({
         title: "Erro",
         description: err instanceof Error ? err.message : "Erro ao criar boxes",

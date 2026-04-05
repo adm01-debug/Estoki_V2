@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react';
 
 export const logError = (error: Error, context?: Record<string, any>): void => {
-  console.error(error);
+  if (import.meta.env.DEV) console.error(error);
   Sentry.captureException(error, { extra: context });
 };
 

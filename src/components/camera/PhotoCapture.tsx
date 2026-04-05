@@ -20,7 +20,7 @@ export function PhotoCapture({ onCapture, onClose, aspectRatio = "4:3" }: PhotoC
       if (videoRef.current) videoRef.current.srcObject = s;
       setStream(s);
     } catch (err) {
-      console.error("Camera error:", err);
+      if (import.meta.env.DEV) console.error("Camera error:", err);
     }
   }, []);
 

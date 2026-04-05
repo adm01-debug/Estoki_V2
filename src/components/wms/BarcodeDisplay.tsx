@@ -9,7 +9,7 @@ export function BarcodeDisplay({ value, format = 'CODE128', width = 2, height = 
   useEffect(() => {
     if (svgRef.current && value) {
       try { JsBarcode(svgRef.current, value, { format, width, height, displayValue, fontSize, margin: 10 }); }
-      catch (e) { console.error('Barcode generation error:', e); }
+      catch (e) { if (import.meta.env.DEV) console.error('Barcode generation error:', e); }
     }
   }, [value, format, width, height, displayValue, fontSize]);
   return <svg ref={svgRef} className={cn("bg-white", className)} />;

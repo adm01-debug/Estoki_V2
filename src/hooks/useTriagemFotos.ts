@@ -80,7 +80,7 @@ export function useTriagemFotos(options: UseTriagemFotosOptions = {}) {
 
       return foto;
     } catch (err) {
-      console.error('Erro ao fazer upload:', err);
+      if (import.meta.env.DEV) console.error('Erro ao fazer upload:', err);
       
       // Remove temp foto on error
       setFotos(prev => prev.filter(f => f.id !== tempId));
@@ -110,7 +110,7 @@ export function useTriagemFotos(options: UseTriagemFotosOptions = {}) {
       // Remove from state
       setFotos(prev => prev.filter(f => f.id !== fotoId));
     } catch (err) {
-      console.error('Erro ao remover foto:', err);
+      if (import.meta.env.DEV) console.error('Erro ao remover foto:', err);
     }
   }, []);
 
@@ -148,7 +148,7 @@ export function useTriagemFotos(options: UseTriagemFotosOptions = {}) {
       if (error) throw error;
       return true;
     } catch (err) {
-      console.error('Erro ao salvar fotos na triagem:', err);
+      if (import.meta.env.DEV) console.error('Erro ao salvar fotos na triagem:', err);
       toast({
         title: 'Erro',
         description: 'Falha ao salvar fotos na triagem',

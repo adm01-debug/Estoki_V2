@@ -65,7 +65,7 @@ export function useKPIAlerts(options: UseKPIAlertsOptions = {}) {
         oscillator.stop(startTime + config.duration / 1000);
       }
     } catch (error) {
-      console.warn("[KPI Alerts] Could not play sound:", error);
+      if (import.meta.env.DEV) console.warn("[KPI Alerts] Could not play sound:", error);
     }
   }, [soundEnabled, initAudioContext]);
 

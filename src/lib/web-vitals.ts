@@ -168,7 +168,7 @@ export function initWebVitals(): void {
     // Log in development
     if (import.meta.env.DEV) {
       const color = metric.rating === 'good' ? '#0cce6b' : metric.rating === 'needs-improvement' ? '#ffa400' : '#ff4e42';
-      console.log(
+      if (import.meta.env.DEV) console.log(
         `%c[Web Vital] ${metric.name}: ${metric.value.toFixed(metric.name === 'CLS' ? 3 : 0)}${metric.name === 'CLS' ? '' : 'ms'} (${metric.rating})`,
         `color: ${color}; font-weight: bold;`
       );

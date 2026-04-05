@@ -92,7 +92,7 @@ const ConfiguracoesPage = () => {
         if (config.estoque) setEstoque(config.estoque);
         if (config.preferencias) setPreferencias(config.preferencias);
       } catch (e) {
-        console.error("Erro ao carregar configurações:", e);
+        if (import.meta.env.DEV) console.error("Erro ao carregar configurações:", e);
       }
     }
   }, []);

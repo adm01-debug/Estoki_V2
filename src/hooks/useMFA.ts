@@ -35,7 +35,7 @@ export function useMFA() {
       setFactors(allFactors as MFAFactor[]);
       return allFactors;
     } catch (err: unknown) {
-      console.error('Error listing MFA factors:', err);
+      if (import.meta.env.DEV) console.error('Error listing MFA factors:', err);
       setError((err instanceof Error ? err.message : String(err)));
       return [];
     } finally {
@@ -70,7 +70,7 @@ export function useMFA() {
       setEnrollmentData(enrollment);
       return enrollment;
     } catch (err: unknown) {
-      console.error('Error starting MFA enrollment:', err);
+      if (import.meta.env.DEV) console.error('Error starting MFA enrollment:', err);
       setError((err instanceof Error ? err.message : String(err)));
       return null;
     } finally {
@@ -102,7 +102,7 @@ export function useMFA() {
       await listFactors();
       return true;
     } catch (err: unknown) {
-      console.error('Error verifying MFA enrollment:', err);
+      if (import.meta.env.DEV) console.error('Error verifying MFA enrollment:', err);
       setError((err instanceof Error ? err.message : String(err)) || 'Código inválido. Verifique e tente novamente.');
       return false;
     } finally {
@@ -132,7 +132,7 @@ export function useMFA() {
       
       return { success: true, session: data };
     } catch (err: unknown) {
-      console.error('Error verifying MFA login:', err);
+      if (import.meta.env.DEV) console.error('Error verifying MFA login:', err);
       setError((err instanceof Error ? err.message : String(err)) || 'Código inválido');
       return { success: false };
     } finally {
@@ -151,7 +151,7 @@ export function useMFA() {
       await listFactors();
       return true;
     } catch (err: unknown) {
-      console.error('Error unenrolling MFA:', err);
+      if (import.meta.env.DEV) console.error('Error unenrolling MFA:', err);
       setError((err instanceof Error ? err.message : String(err)));
       return false;
     } finally {
@@ -178,7 +178,7 @@ export function useMFA() {
       if (error) throw error;
       return data;
     } catch (err: unknown) {
-      console.error('Error getting assurance level:', err);
+      if (import.meta.env.DEV) console.error('Error getting assurance level:', err);
       return null;
     }
   }, []);

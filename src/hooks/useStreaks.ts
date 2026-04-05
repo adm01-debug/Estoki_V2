@@ -64,7 +64,7 @@ export function useStreaks() {
 
       setHistorico(historicoData || []);
     } catch (error) {
-      console.error('Erro ao carregar streak:', error);
+      if (import.meta.env.DEV) console.error('Erro ao carregar streak:', error);
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export function useStreaks() {
 
       return data;
     } catch (error) {
-      console.error('Erro ao registrar check-in:', error);
+      if (import.meta.env.DEV) console.error('Erro ao registrar check-in:', error);
       return null;
     }
   }, [user?.id, fetchStreak]);

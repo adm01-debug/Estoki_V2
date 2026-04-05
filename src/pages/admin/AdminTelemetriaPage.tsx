@@ -195,7 +195,7 @@ export default function AdminTelemetriaPage() {
       toast.success(`PDF exportado com ${rows.length} registros`);
     } catch (err) {
       toast.error("Erro ao gerar PDF");
-      console.error(err);
+      if (import.meta.env.DEV) console.error(err);
     }
   };
 

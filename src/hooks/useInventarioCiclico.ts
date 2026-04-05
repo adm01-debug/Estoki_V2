@@ -99,7 +99,7 @@ export function useInventarioCiclico() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar ciclos';
       setError(message);
-      console.error('Erro ao buscar ciclos:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar ciclos:', err);
     } finally {
       setLoading(false);
     }
@@ -345,7 +345,7 @@ export function useInventarioCiclico() {
         })
         .eq('id', cicloId);
     } catch (err) {
-      console.error('Erro ao atualizar progresso:', err);
+      if (import.meta.env.DEV) console.error('Erro ao atualizar progresso:', err);
     }
   };
 
@@ -380,7 +380,7 @@ export function useInventarioCiclico() {
         observacoes: c.observacoes || undefined,
       }));
     } catch (err) {
-      console.error('Erro ao buscar contagens:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar contagens:', err);
       return [];
     }
   };
