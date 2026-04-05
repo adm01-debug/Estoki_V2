@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileRes.data) setProfile(profileRes.data);
       if (roleRes.data) setRole(roleRes.data.role as AppRole);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      if (import.meta.env.DEV) console.error("Error fetching user data:", error);
     }
   }, []);
 
