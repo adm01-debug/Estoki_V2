@@ -19,7 +19,7 @@ export function CEPInput({ value = '', onChange, onAddressFound, label }: CEPInp
         const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
         const data = await res.json();
         if (!data.erro) onAddressFound({ logradouro: data.logradouro, bairro: data.bairro, cidade: data.localidade, uf: data.uf });
-      } catch (e) { console.error(e); }
+      } catch (e) { if (import.meta.env.DEV) console.error(e); }
       finally { setLoading(false); }
     }
   };

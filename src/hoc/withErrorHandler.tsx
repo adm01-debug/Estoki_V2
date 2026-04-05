@@ -27,7 +27,7 @@ export function withErrorHandler<P extends object>(
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-      console.error('Error caught by withErrorHandler:', error, errorInfo);
+      if (import.meta.env.DEV) console.error('Error caught by withErrorHandler:', error, errorInfo);
       onError?.(error, errorInfo);
     }
 
