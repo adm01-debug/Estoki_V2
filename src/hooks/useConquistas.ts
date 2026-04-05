@@ -136,7 +136,7 @@ export function useConquistas() {
         setConquistasUsuario(userAchievements || []);
       }
     } catch (error) {
-      console.error('Erro ao carregar conquistas:', error);
+      if (import.meta.env.DEV) console.error('Erro ao carregar conquistas:', error);
     } finally {
       setLoading(false);
     }

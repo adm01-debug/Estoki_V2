@@ -21,7 +21,7 @@ export const posicaoService = {
       .select('*')
       .order('codigo');
     if (error) {
-      console.error('Erro ao buscar posições:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar posições:', error);
       return [];
     }
     return (data || []) as unknown as Posicao[];
@@ -34,7 +34,7 @@ export const posicaoService = {
       .eq('id', id)
       .single();
     if (error) {
-      console.error('Erro ao buscar posição:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar posição:', error);
       return null;
     }
     return data as unknown as Posicao;
@@ -47,7 +47,7 @@ export const posicaoService = {
       .eq('codigo', codigo)
       .single();
     if (error && error.code !== 'PGRST116') {
-      console.error('Erro ao buscar posição:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar posição:', error);
       return null;
     }
     return data as unknown as Posicao | null;
@@ -60,7 +60,7 @@ export const posicaoService = {
       .select()
       .single();
     if (error) {
-      console.error('Erro ao criar posição:', error);
+      if (import.meta.env.DEV) console.error('Erro ao criar posição:', error);
       return null;
     }
     return data as unknown as Posicao;
@@ -72,7 +72,7 @@ export const posicaoService = {
       .update({ ...updates, updated_at: new Date().toISOString() } as any)
       .eq('id', id);
     if (error) {
-      console.error('Erro ao atualizar posição:', error);
+      if (import.meta.env.DEV) console.error('Erro ao atualizar posição:', error);
       return false;
     }
     return true;
@@ -85,7 +85,7 @@ export const posicaoService = {
       .eq('status', 'livre')
       .order('codigo');
     if (error) {
-      console.error('Erro ao buscar posições disponíveis:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar posições disponíveis:', error);
       return [];
     }
     return (data || []) as unknown as Posicao[];

@@ -13,7 +13,7 @@ export default function DashboardPage() {
       const lowStock = products.filter(p => p.stock_quantity <= p.reorder_point);
       const orders = await orderService.getAll('sales', 'pending');
       setStats({ products: products.length, lowStock: lowStock.length, pendingOrders: orders.length, todayMovements: 0 });
-    } catch (e) { console.error(e); }
+    } catch (e) { if (import.meta.env.DEV) console.error(e); }
   };
   return (
     <div className="p-6 space-y-6">

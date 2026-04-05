@@ -70,7 +70,7 @@ export function useWebAuthn() {
       setPasskeys(data || []);
       return data || [];
     } catch (error) {
-      console.error('Error fetching passkeys:', error);
+      if (import.meta.env.DEV) console.error('Error fetching passkeys:', error);
       return [];
     }
   }, []);
@@ -151,7 +151,7 @@ export function useWebAuthn() {
       await fetchPasskeys();
       return true;
     } catch (error) {
-      console.error('Error registering passkey:', error);
+      if (import.meta.env.DEV) console.error('Error registering passkey:', error);
       const message = error instanceof Error ? error.message : 'Erro ao registrar passkey';
       toast.error(message);
       return false;
@@ -234,7 +234,7 @@ export function useWebAuthn() {
       toast.success('Login realizado com sucesso!');
       return verifyResponse.data;
     } catch (error) {
-      console.error('Error authenticating with passkey:', error);
+      if (import.meta.env.DEV) console.error('Error authenticating with passkey:', error);
       const message = error instanceof Error ? error.message : 'Erro ao autenticar';
       toast.error(message);
       return null;
@@ -257,7 +257,7 @@ export function useWebAuthn() {
       await fetchPasskeys();
       return true;
     } catch (error) {
-      console.error('Error deleting passkey:', error);
+      if (import.meta.env.DEV) console.error('Error deleting passkey:', error);
       toast.error('Erro ao remover passkey');
       return false;
     }

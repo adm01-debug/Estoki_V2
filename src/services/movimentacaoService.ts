@@ -33,13 +33,13 @@ export const movimentacaoService = {
         } as any);
 
       if (error) {
-        console.error('Erro ao registrar movimentação:', error);
+        if (import.meta.env.DEV) console.error('Erro ao registrar movimentação:', error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Erro ao registrar movimentação:', error);
+      if (import.meta.env.DEV) console.error('Erro ao registrar movimentação:', error);
       return false;
     }
   },
@@ -77,7 +77,7 @@ export const movimentacaoService = {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Erro ao buscar histórico:', error);
+        if (import.meta.env.DEV) console.error('Erro ao buscar histórico:', error);
         return [];
       }
 
@@ -94,7 +94,7 @@ export const movimentacaoService = {
         created_at: item.created_at,
       }));
     } catch (error) {
-      console.error('Erro ao buscar histórico:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar histórico:', error);
       return [];
     }
   },

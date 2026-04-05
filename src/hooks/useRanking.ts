@@ -80,7 +80,7 @@ export function useRanking() {
 
       setRanking(rankingData);
     } catch (error) {
-      console.error('Erro ao carregar ranking:', error);
+      if (import.meta.env.DEV) console.error('Erro ao carregar ranking:', error);
     } finally {
       setLoading(false);
     }

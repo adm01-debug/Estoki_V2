@@ -97,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetchUserData(sess.user.id);
         }
       } catch (err) {
-        console.warn("Auth hydration failed or timed out:", err);
+        if (import.meta.env.DEV) console.warn("Auth hydration failed or timed out:", err);
       } finally {
         if (mounted) {
           hydrated.current = true;

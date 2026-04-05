@@ -142,7 +142,7 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
       setMetricasFornecedor(Array.from(fornecedoresMap.values()));
 
     } catch (err) {
-      console.error('Erro ao buscar divergências:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar divergências:', err);
       setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
     } finally {
       setLoading(false);

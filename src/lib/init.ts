@@ -54,7 +54,7 @@ export async function initializeApp(options: InitOptions = {}): Promise<void> {
 
     if (import.meta.env.DEV) console.log('[App] ESTOKI WMS initialized successfully!');
   } catch (error) {
-    console.error('[App] Initialization failed:', error);
+    if (import.meta.env.DEV) console.error('[App] Initialization failed:', error);
     throw error;
   }
 }

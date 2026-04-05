@@ -94,7 +94,7 @@ export function useDesafiosDiarios() {
         setDesafiosUsuario(progressData || []);
       }
     } catch (error) {
-      console.error('Erro ao carregar desafios:', error);
+      if (import.meta.env.DEV) console.error('Erro ao carregar desafios:', error);
     } finally {
       setLoading(false);
     }
@@ -146,7 +146,7 @@ export function useDesafiosDiarios() {
 
       return true;
     } catch (error) {
-      console.error('Erro ao coletar recompensa:', error);
+      if (import.meta.env.DEV) console.error('Erro ao coletar recompensa:', error);
       return false;
     }
   }, [user?.id, desafiosCompletos, fetchDesafios]);
@@ -194,7 +194,7 @@ export function useDesafiosDiarios() {
 
       throw new Error(data?.error || 'Erro ao gerar desafios');
     } catch (err) {
-      console.error('Erro ao gerar desafios:', err);
+      if (import.meta.env.DEV) console.error('Erro ao gerar desafios:', err);
       toast.error('Não foi possível gerar novos desafios');
       return [];
     }

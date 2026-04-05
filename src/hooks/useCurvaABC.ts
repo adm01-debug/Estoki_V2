@@ -195,7 +195,7 @@ export function useCurvaABC() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao calcular curva ABC';
       setError(message);
-      console.error('Erro ao calcular curva ABC:', err);
+      if (import.meta.env.DEV) console.error('Erro ao calcular curva ABC:', err);
     } finally {
       setLoading(false);
     }

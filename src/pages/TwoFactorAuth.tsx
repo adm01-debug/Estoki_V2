@@ -26,7 +26,7 @@ export default function TwoFactorAuth() {
         navigate(returnTo, { replace: true });
       }
     } catch (err) {
-      console.error('Error checking MFA status:', err);
+      if (import.meta.env.DEV) console.error('Error checking MFA status:', err);
       navigate('/login', { replace: true });
     } finally {
       setLoading(false);

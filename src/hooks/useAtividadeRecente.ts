@@ -117,7 +117,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('data_fim', { ascending: false })
         .limit(5);
 
-      if (triError) console.error('Erro triagens:', triError);
+      if (triError) if (import.meta.env.DEV) console.error('Erro triagens:', triError);
 
       (triagens || []).forEach(t => {
         const produtoNome = (t.produtos as any)?.nome || 'Produto';
@@ -144,7 +144,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('updated_at', { ascending: false })
         .limit(5);
 
-      if (recError) console.error('Erro recebidos:', recError);
+      if (recError) if (import.meta.env.DEV) console.error('Erro recebidos:', recError);
 
       (recebidos || []).forEach(r => {
         atividades.push({
@@ -166,7 +166,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('data_conclusao', { ascending: false })
         .limit(5);
 
-      if (tarefasError) console.error('Erro tarefas:', tarefasError);
+      if (tarefasError) if (import.meta.env.DEV) console.error('Erro tarefas:', tarefasError);
 
       (tarefas || []).forEach(t => {
         atividades.push({
@@ -188,7 +188,7 @@ export function useAtividadeRecente(limit: number = 10) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar atividades';
       setError(message);
-      console.error('Erro atividades:', err);
+      if (import.meta.env.DEV) console.error('Erro atividades:', err);
     } finally {
       setLoading(false);
     }

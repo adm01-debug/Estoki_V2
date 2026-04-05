@@ -76,7 +76,7 @@ export function useMovimentacoes() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar movimentações';
       setError(message);
-      console.error('Erro ao buscar movimentações:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar movimentações:', err);
     } finally {
       setLoading(false);
     }
@@ -232,7 +232,7 @@ export function useMovimentacoes() {
         created_at: mov.created_at,
       }));
     } catch (err) {
-      console.error('Erro ao buscar movimentações por produto:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar movimentações por produto:', err);
       return [];
     }
   };
@@ -267,7 +267,7 @@ export function useMovimentacoes() {
         created_at: mov.created_at,
       }));
     } catch (err) {
-      console.error('Erro ao buscar movimentações por lote:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar movimentações por lote:', err);
       return [];
     }
   };

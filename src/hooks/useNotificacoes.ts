@@ -62,7 +62,7 @@ export function useNotificacoes() {
         .limit(50);
 
       if (notifsError) {
-        console.error('Erro ao buscar notificações:', notifsError);
+        if (import.meta.env.DEV) console.error('Erro ao buscar notificações:', notifsError);
       }
 
       // Buscar alertas ativos do sistema
@@ -74,7 +74,7 @@ export function useNotificacoes() {
         .limit(20);
 
       if (alertasError) {
-        console.error('Erro ao buscar alertas:', alertasError);
+        if (import.meta.env.DEV) console.error('Erro ao buscar alertas:', alertasError);
       }
 
       const allNotifs: Notificacao[] = [];
@@ -120,7 +120,7 @@ export function useNotificacoes() {
 
       setNotificacoes(allNotifs);
     } catch (err) {
-      console.error('Erro ao buscar notificações:', err);
+      if (import.meta.env.DEV) console.error('Erro ao buscar notificações:', err);
     } finally {
       setLoading(false);
     }
@@ -194,7 +194,7 @@ export function useNotificacoes() {
 
       return true;
     } catch (err) {
-      console.error('Erro ao marcar como lida:', err);
+      if (import.meta.env.DEV) console.error('Erro ao marcar como lida:', err);
       return false;
     }
   };
@@ -235,7 +235,7 @@ export function useNotificacoes() {
 
       return true;
     } catch (err) {
-      console.error('Erro ao marcar todas como lidas:', err);
+      if (import.meta.env.DEV) console.error('Erro ao marcar todas como lidas:', err);
       return false;
     }
   };
@@ -262,7 +262,7 @@ export function useNotificacoes() {
 
       return true;
     } catch (err) {
-      console.error('Erro ao remover notificação:', err);
+      if (import.meta.env.DEV) console.error('Erro ao remover notificação:', err);
       return false;
     }
   };
@@ -272,7 +272,7 @@ export function useNotificacoes() {
       setNotificacoes([]);
       return true;
     } catch (err) {
-      console.error('Erro ao limpar notificações:', err);
+      if (import.meta.env.DEV) console.error('Erro ao limpar notificações:', err);
       return false;
     }
   };

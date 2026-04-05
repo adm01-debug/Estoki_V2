@@ -93,7 +93,7 @@ export function useBalanca() {
       setLeitura(null);
       toast.info('Balança desconectada');
     } catch (error) {
-      console.error('Erro ao desconectar:', error);
+      if (import.meta.env.DEV) console.error('Erro ao desconectar:', error);
     }
   }, []);
   

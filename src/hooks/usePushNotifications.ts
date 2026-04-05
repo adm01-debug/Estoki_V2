@@ -49,7 +49,7 @@ export function usePushNotifications() {
 
       return false;
     } catch (error) {
-      console.error('Error requesting notification permission:', error);
+      if (import.meta.env.DEV) console.error('Error requesting notification permission:', error);
       toast.error('Erro ao solicitar permissão de notificações');
       return false;
     }
@@ -82,7 +82,7 @@ export function usePushNotifications() {
 
       return notification;
     } catch (error) {
-      console.error('Error showing notification:', error);
+      if (import.meta.env.DEV) console.error('Error showing notification:', error);
       return null;
     }
   }, [isSupported, permission]);

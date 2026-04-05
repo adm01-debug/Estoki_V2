@@ -54,7 +54,7 @@ export function useGeoWhitelist() {
     
     if (error) {
       toast.error('Erro ao carregar países permitidos');
-      console.error(error);
+      if (import.meta.env.DEV) console.error(error);
     } else {
       setEntries(data || []);
     }

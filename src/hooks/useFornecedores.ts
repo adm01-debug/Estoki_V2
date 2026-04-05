@@ -63,7 +63,7 @@ export function useFornecedores() {
         .from('eventos_triagem')
         .select('id, resultado, lote_id');
 
-      if (triagError) console.error('Erro ao buscar triagens:', triagError);
+      if (triagError) if (import.meta.env.DEV) console.error('Erro ao buscar triagens:', triagError);
 
       // Agrupar por fornecedor
       const fornecedoresMap: Record<string, Fornecedor> = {};
@@ -147,7 +147,7 @@ export function useFornecedores() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao calcular métricas';
       setError(message);
-      console.error('Erro ao calcular métricas de fornecedores:', err);
+      if (import.meta.env.DEV) console.error('Erro ao calcular métricas de fornecedores:', err);
     } finally {
       setLoading(false);
     }

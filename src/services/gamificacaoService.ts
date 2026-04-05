@@ -10,7 +10,7 @@ export const gamificacaoService = {
         .single();
 
       if (userError && userError.code !== 'PGRST116') {
-        console.error('Erro ao buscar usuário:', userError);
+        if (import.meta.env.DEV) console.error('Erro ao buscar usuário:', userError);
         return false;
       }
 
@@ -28,7 +28,7 @@ export const gamificacaoService = {
         }, { onConflict: 'user_id' });
 
       if (upsertError) {
-        console.error('Erro ao atualizar XP:', upsertError);
+        if (import.meta.env.DEV) console.error('Erro ao atualizar XP:', upsertError);
         return false;
       }
 
@@ -40,7 +40,7 @@ export const gamificacaoService = {
 
       return true;
     } catch (error) {
-      console.error('Erro ao adicionar XP:', error);
+      if (import.meta.env.DEV) console.error('Erro ao adicionar XP:', error);
       return false;
     }
   },
@@ -87,7 +87,7 @@ export const gamificacaoService = {
 
       return novasConquistas;
     } catch (error) {
-      console.error('Erro ao verificar conquistas:', error);
+      if (import.meta.env.DEV) console.error('Erro ao verificar conquistas:', error);
       return [];
     }
   },
@@ -101,7 +101,7 @@ export const gamificacaoService = {
       .eq('data_ativo', today);
 
     if (error) {
-      console.error('Erro ao buscar desafios:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar desafios:', error);
       return [];
     }
 
@@ -143,7 +143,7 @@ export const gamificacaoService = {
       .limit(limit);
 
     if (error) {
-      console.error('Erro ao buscar ranking:', error);
+      if (import.meta.env.DEV) console.error('Erro ao buscar ranking:', error);
       return [];
     }
 

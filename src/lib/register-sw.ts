@@ -42,7 +42,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     return registration;
   } catch (error) {
-    console.error('[SW] Registration failed:', error);
+    if (import.meta.env.DEV) console.error('[SW] Registration failed:', error);
     return null;
   }
 }
@@ -56,7 +56,7 @@ export async function unregisterServiceWorker(): Promise<boolean> {
     if (import.meta.env.DEV) console.log('[SW] Unregistered:', success);
     return success;
   } catch (error) {
-    console.error('[SW] Unregister failed:', error);
+    if (import.meta.env.DEV) console.error('[SW] Unregister failed:', error);
     return false;
   }
 }
@@ -82,7 +82,7 @@ export async function subscribeToPush(registration: ServiceWorkerRegistration): 
     if (import.meta.env.DEV) console.log('[SW] Push subscription:', subscription.endpoint);
     return subscription;
   } catch (error) {
-    console.error('[SW] Push subscription failed:', error);
+    if (import.meta.env.DEV) console.error('[SW] Push subscription failed:', error);
     return null;
   }
 }

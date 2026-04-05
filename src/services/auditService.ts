@@ -48,13 +48,13 @@ export const auditService = {
       });
 
       if (error) {
-        console.error('Failed to log audit event:', error);
+        if (import.meta.env.DEV) console.error('Failed to log audit event:', error);
         return null;
       }
 
       return data;
     } catch (err) {
-      console.error('Audit log error:', err);
+      if (import.meta.env.DEV) console.error('Audit log error:', err);
       return null;
     }
   },
@@ -95,7 +95,7 @@ export const auditService = {
     const { data, error } = await query;
 
     if (error) {
-      console.error('Failed to fetch audit logs:', error);
+      if (import.meta.env.DEV) console.error('Failed to fetch audit logs:', error);
       return [];
     }
 
