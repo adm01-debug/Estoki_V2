@@ -199,8 +199,8 @@ export function getFeatureFlags(): FeatureFlags {
   // Aplicar flags de env vars (override final)
   if (envConfig.features) {
     Object.entries(envConfig.features).forEach(([key, value]) => {
-      if (key in baseFlags) {
-        (baseFlags as any)[key] = value;
+      if (key in baseFlags && typeof value === 'boolean') {
+        (baseFlags as Record<string, boolean>)[key] = value;
       }
     });
   }
