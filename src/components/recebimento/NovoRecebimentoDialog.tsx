@@ -350,7 +350,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
               <Label htmlFor="status">Status Inicial</Label>
               <Select 
                 value={formData.status} 
-                onValueChange={(value) => setFormData({ ...formData, status: value as any })}
+                onValueChange={(value) => setFormData({ ...formData, status: value as typeof formData.status })}
               >
                 <SelectTrigger>
                   <SelectValue />

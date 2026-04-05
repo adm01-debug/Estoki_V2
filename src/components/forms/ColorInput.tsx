@@ -13,7 +13,7 @@ export function ColorInput({ value = '#3b82f6', onChange, label, showAlpha = fal
     <div className="space-y-2">
       {label && <Label>{label}</Label>}
       <div className="flex gap-2"><div className="w-10 h-10 rounded border" style={{ backgroundColor: value }} /><Input value={value} onChange={e => onChange?.(e.target.value)} className="flex-1 font-mono" maxLength={7} /></div>
-      <Tabs value={mode} onValueChange={v => setMode(v as any)}>
+      <Tabs value={mode} onValueChange={v => setMode(v as 'hex' | 'rgb')}>
         <TabsList className="grid grid-cols-2"><TabsTrigger value="hex">HEX</TabsTrigger><TabsTrigger value="rgb">RGB</TabsTrigger></TabsList>
         <TabsContent value="hex"><Input value={value} onChange={e => onChange?.(e.target.value)} placeholder="#000000" /></TabsContent>
         <TabsContent value="rgb" className="space-y-2">

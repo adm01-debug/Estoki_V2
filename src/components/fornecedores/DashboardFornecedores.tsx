@@ -141,8 +141,8 @@ export function DashboardFornecedores() {
                       <TableCell className="font-medium">{f.nome}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold">{(f as any).score?.toFixed(0) || 0}</span>
-                          <Progress value={(f as any).score || 0} className="w-16 h-2" />
+                          <span className="font-bold">{f.pontuacao?.toFixed(0) || 0}</span>
+                          <Progress value={f.pontuacao || 0} className="w-16 h-2" />
                         </div>
                       </TableCell>
                       <TableCell>{getClassificacaoBadge(f.classificacao)}</TableCell>
@@ -185,19 +185,19 @@ export function DashboardFornecedores() {
                         <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-muted-foreground">Pontualidade</p>
-                            <p className="font-medium">{(f as any).pontualidadeEntrega?.toFixed(1) || (f as any).pontualidade_entrega?.toFixed(1) || 0}%</p>
+                            <p className="font-medium">{f.percentual_pontualidade?.toFixed(1) || 0}%</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Qualidade</p>
-                            <p className="font-medium">{(f as any).qualidadeProduto?.toFixed(1) || (f as any).qualidade_produto?.toFixed(1) || 0}%</p>
+                            <p className="font-medium">{f.percentual_qualidade?.toFixed(1) || 0}%</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Taxa Problemas</p>
-                            <p className="font-medium text-destructive">{(f as any).taxa_problemas?.toFixed(1) || 0}%</p>
+                            <p className="font-medium text-destructive">{f.taxa_problemas?.toFixed(1) || 0}%</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Total Lotes</p>
-                            <p className="font-medium">{(f as any).totalLotes || (f as any).total_lotes || 0}</p>
+                            <p className="font-medium">{f.entregas_totais || 0}</p>
                           </div>
                         </div>
                       </CardContent>

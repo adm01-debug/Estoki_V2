@@ -149,7 +149,7 @@ export const PermissionsManager: React.FC = () => {
       </Card>
 
       {/* Role Selection */}
-      <Tabs value={selectedRole} onValueChange={(v) => setSelectedRole(v as any)}>
+      <Tabs value={selectedRole} onValueChange={(v) => setSelectedRole(v as 'operador' | 'supervisor' | 'admin')}>
         <TabsList className="grid w-full grid-cols-3">
           {(['operador', 'supervisor', 'admin'] as const).map(role => {
             const info = ROLE_INFO[role];
