@@ -53,7 +53,7 @@ export function withErrorHandler<P extends object>(
     }
   }
 
-  ErrorBoundaryWrapper.displayName = `withErrorHandler(${(WrappedComponent as React.FC).displayName || WrappedComponent.name || 'Component'})`;
+  Object.defineProperty(ErrorBoundaryWrapper, 'displayName', { value: `withErrorHandler(${(WrappedComponent as React.FC).displayName || WrappedComponent.name || 'Component'})` });
 
   return ErrorBoundaryWrapper;
 }
