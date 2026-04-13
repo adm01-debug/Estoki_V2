@@ -98,18 +98,18 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
               <ScrollArea className="max-h-48">
                 <div className="space-y-2">
                   {estoqueData.map((item: Record<string, unknown>) => (
-                    <div key={item.id as string} className="p-3 rounded-lg border bg-card flex items-center justify-between">
+                    <div key={String(item.id)} className="p-3 rounded-lg border bg-card flex items-center justify-between">
                       <div>
                         <p className="font-medium text-sm">
-                          {(item.produtos as Record<string, unknown> | null)?.nome as string || "Produto"}
+                          {String((item.produtos as Record<string, unknown> | null)?.nome ?? "Produto")}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          SKU: {(item.produtos as Record<string, unknown> | null)?.sku as string || "—"}
-                          {(item.lotes as Record<string, unknown> | null)?.numero_lote && ` • Lote: ${(item.lotes as Record<string, unknown>).numero_lote}`}
+                          SKU: {String((item.produtos as Record<string, unknown> | null)?.sku ?? "—")}
+                          {(item.lotes as Record<string, unknown> | null)?.numero_lote && ` • Lote: ${String((item.lotes as Record<string, unknown>).numero_lote)}`}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-sm">{item.quantidade as number}</p>
+                        <p className="font-bold text-sm">{String(item.quantidade)}</p>
                         <p className="text-[10px] text-muted-foreground">unidades</p>
                       </div>
                     </div>
