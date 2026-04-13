@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { tooltipStyle } from "./chartStyles";
+import { tooltipStyle, chartCardClass } from "./chartStyles";
 
 interface RecebimentoChartsProps {
   items: { status: string; fornecedor?: string | null; quantidade_atual: number; quantidade_inicial: number }[];
@@ -24,30 +24,21 @@ export function RecebimentoCharts({ items }: RecebimentoChartsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+      <Card className={chartCardClass}>
         <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Status dos Recebimentos</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">
-                {statusData.map((e, i) => <Cell key={i} fill={e.color} />)}
-              </Pie>
-              <Tooltip {...tooltipStyle} />
-              <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-            </PieChart>
+            <PieChart><Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">{statusData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} /></PieChart>
           </ResponsiveContainer>
         </CardContent>
       </Card>
       {fornecedorData.length > 1 && (
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+        <Card className={chartCardClass}>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Top Fornecedores</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={fornecedorData} layout="vertical" margin={{ left: 50 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-                <XAxis type="number" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-                <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" width={50} />
-                <Tooltip {...tooltipStyle} />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} /><XAxis type="number" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" /><YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" width={50} /><Tooltip {...tooltipStyle} />
                 <Bar dataKey="value" name="Lotes" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} maxBarSize={18} />
               </BarChart>
             </ResponsiveContainer>

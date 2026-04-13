@@ -1,8 +1,4 @@
-/**
- * WMS Module Charts - Re-exports from individual chart modules
- * This file maintains backward compatibility while charts are split into separate files.
- */
-
+// Re-export all chart components from individual files
 export { EstoqueCharts } from "./EstoqueCharts";
 export { MovimentacaoCharts } from "./MovimentacaoCharts";
 export { RecebimentoCharts } from "./RecebimentoCharts";

@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
-import { tooltipStyle } from "./chartStyles";
+import { tooltipStyle, chartCardClass } from "./chartStyles";
 
-interface OndasChartsProps {
-  ondas: { status: string; prioridade: string; total_tarefas?: number; tarefas_concluidas?: number }[];
-}
+interface OndasChartsProps { ondas: { status: string; prioridade: string; total_tarefas?: number; tarefas_concluidas?: number }[]; }
 
 export function OndasCharts({ ondas }: OndasChartsProps) {
   const statusData = useMemo(() => {
@@ -25,35 +23,8 @@ export function OndasCharts({ ondas }: OndasChartsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Ondas por Status</CardTitle></CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">
-                {statusData.map((e, i) => <Cell key={i} fill={e.color} />)}
-              </Pie>
-              <Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Por Prioridade</CardTitle></CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={prioridadeData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
-              <XAxis dataKey="name" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-              <YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" />
-              <Tooltip {...tooltipStyle} />
-              <Bar dataKey="value" name="Ondas" radius={[4, 4, 0, 0]} maxBarSize={28}>
-                {prioridadeData.map((e, i) => <Cell key={i} fill={e.color} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
+      <Card className={chartCardClass}><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Ondas por Status</CardTitle></CardHeader><CardContent><ResponsiveContainer width="100%" height={200}><PieChart><Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">{statusData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} /></PieChart></ResponsiveContainer></CardContent></Card>
+      <Card className={chartCardClass}><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Distribuição de Prioridade</CardTitle></CardHeader><CardContent><ResponsiveContainer width="100%" height={200}><BarChart data={prioridadeData}><CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} /><XAxis dataKey="name" tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" /><YAxis tick={{ fontSize: 10 }} stroke="hsl(var(--muted-foreground))" /><Tooltip {...tooltipStyle} /><Bar dataKey="value" name="Ondas" radius={[4, 4, 0, 0]} maxBarSize={28}>{prioridadeData.map((e, i) => <Cell key={i} fill={e.color} />)}</Bar></BarChart></ResponsiveContainer></CardContent></Card>
     </div>
   );
 }

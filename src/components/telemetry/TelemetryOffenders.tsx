@@ -1,14 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Database } from "lucide-react";
 
-interface OffenderStats {
-  count: number;
-  totalMs: number;
-  maxMs: number;
-}
-
 interface TelemetryOffendersProps {
-  offenders: [string, OffenderStats][];
+  offenders: [string, { count: number; totalMs: number; maxMs: number }][];
 }
 
 const formatDuration = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms}ms`;
@@ -18,12 +12,7 @@ export function TelemetryOffenders({ offenders }: TelemetryOffendersProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Database className="h-4 w-4" />
-          Tabelas Mais Problemáticas
-        </CardTitle>
-      </CardHeader>
+      <CardHeader className="pb-3"><CardTitle className="text-base flex items-center gap-2"><Database className="h-4 w-4" />Tabelas Mais Problemáticas</CardTitle></CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {offenders.map(([name, stats]) => (
@@ -33,9 +22,7 @@ export function TelemetryOffenders({ offenders }: TelemetryOffendersProps) {
                 <span className="text-xs text-muted-foreground">{stats.count}× alertas</span>
                 <span className="text-xs text-destructive">max {formatDuration(stats.maxMs)}</span>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                média: {formatDuration(Math.round(stats.totalMs / stats.count))}
-              </p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">média: {formatDuration(Math.round(stats.totalMs / stats.count))}</p>
             </div>
           ))}
         </div>

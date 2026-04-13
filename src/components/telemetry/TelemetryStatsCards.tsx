@@ -21,13 +21,8 @@ export function TelemetryStatsCards({ verySlow, slow, errors, avgDuration }: Tel
       {items.map(({ icon: Icon, value, label, bg, text }) => (
         <Card key={label}>
           <CardContent className="p-4 flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${bg}`}>
-              <Icon className={`h-5 w-5 ${text}`} />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{value}</p>
-              <p className="text-[11px] text-muted-foreground">{label}</p>
-            </div>
+            <div className={`p-2 rounded-lg ${bg}`}><Icon className={`h-5 w-5 ${text}`} /></div>
+            <div><p className="text-2xl font-bold">{value}</p><p className="text-[11px] text-muted-foreground">{label}</p></div>
           </CardContent>
         </Card>
       ))}

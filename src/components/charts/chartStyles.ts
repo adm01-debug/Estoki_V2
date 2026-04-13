@@ -8,11 +8,4 @@ export const tooltipStyle = {
   },
 };
 
-export const CHART_COLORS = [
-  "hsl(var(--primary))",
-  "hsl(142, 76%, 36%)",
-  "hsl(38, 92%, 50%)",
-  "hsl(0, 84%, 60%)",
-  "hsl(221, 83%, 53%)",
-  "hsl(262, 83%, 58%)",
-];
+export const chartCardClass = "border-border/50 bg-card/80 backdrop-blur-sm";

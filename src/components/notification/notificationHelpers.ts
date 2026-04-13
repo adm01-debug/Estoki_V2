@@ -1,22 +1,17 @@
 import { toast } from "sonner";
 
+export const mapSeveridade = (severidade: string): "info" | "warning" | "critical" => {
+  switch (severidade) {
+    case 'critico': case 'urgente': return 'critical';
+    case 'aviso': return 'warning';
+    default: return 'info';
+  }
+};
+
 export const getTipoSeveridade = (tipo: string): "info" | "warning" | "critical" => {
   if (tipo.includes('divergencia')) return 'critical';
   if (tipo.includes('chegou')) return 'warning';
   return 'info';
-};
-
-export const mapSeveridade = (severidade: string): "info" | "warning" | "critical" => {
-  switch (severidade) {
-    case 'critico':
-    case 'urgente':
-      return 'critical';
-    case 'aviso':
-      return 'warning';
-    case 'info':
-    default:
-      return 'info';
-  }
 };
 
 export const playNotificationSound = (type: 'info' | 'warning' | 'critical' = 'info') => {
@@ -41,9 +36,7 @@ export const playNotificationSound = (type: 'info' | 'warning' | 'critical' = 'i
     gainNode.gain.exponentialRampToValueAtTime(0.01, time + totalDuration);
     oscillator.start(time);
     oscillator.stop(time + totalDuration + 0.05);
-  } catch {
-    if (import.meta.env.DEV) console.log('Audio not available');
-  }
+  } catch { /* Audio not available */ }
 };
 
 export const showNotificationToast = (notification: { title: string; message: string; type: string }) => {

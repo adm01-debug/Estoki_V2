@@ -22,13 +22,8 @@ export function DivergenciasKPIs({ totalDivergencias, totalFaltas, totalSobras, 
         <Card key={label}>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${bg}`}>
-                <Icon className={`h-5 w-5 ${text}`} />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">{label}</p>
-                <p className="text-2xl font-bold">{value}</p>
-              </div>
+              <div className={`p-2 rounded-lg ${bg}`}><Icon className={`h-5 w-5 ${text}`} /></div>
+              <div><p className="text-xs text-muted-foreground">{label}</p><p className="text-2xl font-bold">{value}</p></div>
             </div>
           </CardContent>
         </Card>

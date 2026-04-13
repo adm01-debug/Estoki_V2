@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
-import { tooltipStyle } from "./chartStyles";
+import { tooltipStyle, chartCardClass } from "./chartStyles";
 
-interface LotesChartsProps {
-  lotes: { status: string; data_validade?: string | null; quantidade_atual: number; quantidade_inicial: number; fornecedor?: string | null }[];
-}
+interface LotesChartsProps { lotes: { status: string; data_validade?: string | null; quantidade_atual: number; quantidade_inicial: number; fornecedor?: string | null }[]; }
 
 export function LotesCharts({ lotes }: LotesChartsProps) {
   const statusData = useMemo(() => {
@@ -18,42 +16,13 @@ export function LotesCharts({ lotes }: LotesChartsProps) {
   const consumoData = useMemo(() => {
     const consumido = lotes.reduce((acc, l) => acc + (l.quantidade_inicial - l.quantidade_atual), 0);
     const restante = lotes.reduce((acc, l) => acc + l.quantidade_atual, 0);
-    return [
-      { name: "Consumido", value: consumido, color: "hsl(var(--primary))" },
-      { name: "Em Estoque", value: restante, color: "hsl(142, 76%, 36%)" },
-    ].filter(d => d.value > 0);
+    return [{ name: "Consumido", value: consumido, color: "hsl(var(--primary))" }, { name: "Em Estoque", value: restante, color: "hsl(142, 76%, 36%)" }].filter(d => d.value > 0);
   }, [lotes]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-        <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Lotes por Status</CardTitle></CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={200}>
-            <PieChart>
-              <Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">
-                {statusData.map((e, i) => <Cell key={i} fill={e.color} />)}
-              </Pie>
-              <Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-      {consumoData.length > 0 && (
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Consumo vs Estoque</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={consumoData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">
-                  {consumoData.map((e, i) => <Cell key={i} fill={e.color} />)}
-                </Pie>
-                <Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
+      <Card className={chartCardClass}><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Lotes por Status</CardTitle></CardHeader><CardContent><ResponsiveContainer width="100%" height={200}><PieChart><Pie data={statusData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">{statusData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} /></PieChart></ResponsiveContainer></CardContent></Card>
+      {consumoData.length > 0 && (<Card className={chartCardClass}><CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Consumo vs Estoque</CardTitle></CardHeader><CardContent><ResponsiveContainer width="100%" height={200}><PieChart><Pie data={consumoData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={3} dataKey="value" stroke="none">{consumoData.map((e, i) => <Cell key={i} fill={e.color} />)}</Pie><Tooltip {...tooltipStyle} /><Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: "11px" }} /></PieChart></ResponsiveContainer></CardContent></Card>)}
     </div>
   );
 }

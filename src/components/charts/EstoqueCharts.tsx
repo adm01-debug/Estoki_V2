@@ -1,10 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-} from "recharts";
-import { tooltipStyle } from "./chartStyles";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
+import { tooltipStyle, chartCardClass } from "./chartStyles";
 
 interface EstoqueChartsProps {
   posicoes: { status: string; tipo?: string | null; porta_palete?: string | null }[];
@@ -35,7 +32,7 @@ export function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+      <Card className={chartCardClass}>
         <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Distribuição por Status</CardTitle></CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={200}>
@@ -49,9 +46,8 @@ export function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
           </ResponsiveContainer>
         </CardContent>
       </Card>
-
       {ruaData.length > 0 && (
-        <Card className="border-border/50 bg-card/80 backdrop-blur-sm">
+        <Card className={chartCardClass}>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-semibold">Ocupação por Rua</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
