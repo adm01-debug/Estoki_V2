@@ -21,23 +21,8 @@ import {
   Star,
   Zap
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Legend,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts";
+import { ProdutividadeCharts } from "@/components/produtividade/ProdutividadeCharts";
+import { ProdutividadeRanking } from "@/components/produtividade/ProdutividadeRanking";
 import { cn } from "@/lib/utils";
 
 const periodos = [

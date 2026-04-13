@@ -8,21 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { 
-  AlertTriangle, 
-  TrendingDown, 
-  TrendingUp, 
-  Package, 
-  Loader2, 
-  Search,
-  Download,
-  Calendar,
-  Building2,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
-  RefreshCw
-} from "lucide-react";
+import { AlertTriangle, Loader2, Search, Download, Calendar, Building2, BarChart3, ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react";
+import { DivergenciasKPIs } from "@/components/divergencias/DivergenciasKPIs";
 import { useDivergencias } from "@/hooks/useDivergencias";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 import { format } from "date-fns";
@@ -184,64 +171,7 @@ export default function RelatorioDivergenciasPage() {
           </CardContent>
         </Card>
 
-        {/* KPIs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-red-500/10">
-                  <AlertTriangle className="h-5 w-5 text-red-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Divergências</p>
-                  <p className="text-2xl font-bold">{kpis.totalDivergencias}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-orange-500/10">
-                  <TrendingDown className="h-5 w-5 text-orange-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Faltas</p>
-                  <p className="text-2xl font-bold">{kpis.totalFaltas}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/10">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Sobras</p>
-                  <p className="text-2xl font-bold">{kpis.totalSobras}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/10">
-                  <Package className="h-5 w-5 text-blue-500" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Unid. Diferença</p>
-                  <p className="text-2xl font-bold">{kpis.valorTotalDiferenca}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <DivergenciasKPIs totalDivergencias={kpis.totalDivergencias} totalFaltas={kpis.totalFaltas} totalSobras={kpis.totalSobras} valorTotalDiferenca={kpis.valorTotalDiferenca} />
 
         {/* Tabs */}
         <Tabs defaultValue="visao-geral" className="space-y-4">
