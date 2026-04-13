@@ -39,7 +39,8 @@ export default function AdminTelemetriaPage() {
       const toDate = customDateTo ? new Date(customDateTo) : new Date(); toDate.setHours(23, 59, 59, 999);
       return { from: fromDate.toISOString(), to: toDate.toISOString() };
     }
-    const hours = { "1h": 1, "6h": 6, "24h": 24, "7d": 168 }[timeFilter] || 24;
+    const hoursMap: Record<string, number> = { "1h": 1, "6h": 6, "24h": 24, "7d": 168 };
+    const hours = hoursMap[timeFilter] || 24;
     return { from: new Date(now.getTime() - hours * 3600000).toISOString(), to };
   };
 
