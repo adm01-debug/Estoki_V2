@@ -105,7 +105,7 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
                         </p>
                         <p className="text-xs text-muted-foreground">
                           SKU: {String((item.produtos as Record<string, unknown> | null)?.sku ?? "—")}
-                          {(item.lotes as Record<string, unknown> | null)?.numero_lote && ` • Lote: ${String((item.lotes as Record<string, unknown>).numero_lote)}`}
+                          {(item.lotes as Record<string, unknown> | null)?.numero_lote ? ` • Lote: ${String((item.lotes as Record<string, unknown>).numero_lote)}` : null}
                         </p>
                       </div>
                       <div className="text-right">
