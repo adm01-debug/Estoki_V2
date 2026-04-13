@@ -33,19 +33,9 @@ interface NotificationContextType {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-// Mapear severidade do banco para o tipo local
-const mapSeveridade = (severidade: string): "info" | "warning" | "critical" => {
-  switch (severidade) {
-    case 'critico':
-    case 'urgente':
-      return 'critical';
-    case 'aviso':
-      return 'warning';
-    case 'info':
-    default:
-      return 'info';
-  }
-};
+import { mapSeveridade, getTipoSeveridade, playNotificationSound, showNotificationToast } from "@/components/notification/notificationHelpers";
+
+// Re-export for backward compat
 
 const getTipoSeveridade = (tipo: string): "info" | "warning" | "critical" => {
   if (tipo.includes('divergencia')) return 'critical';
