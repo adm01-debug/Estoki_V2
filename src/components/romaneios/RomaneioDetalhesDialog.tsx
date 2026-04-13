@@ -67,15 +67,16 @@ export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }
                 </TableHeader>
                 <TableBody>
                   {romaneio.itens.map(item => {
-                    const entregaConfig = statusEntregaConfig[item.status_entrega];
+                    const itemStatus = (item.status || "pendente") as StatusEntrega;
+                    const entregaConfig = statusEntregaConfig[itemStatus];
                     return (
                       <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.destinatario}</TableCell>
+                        <TableCell className="font-medium">{item.cliente}</TableCell>
                         <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{item.endereco_entrega}</TableCell>
-                        <TableCell>{item.volumes}</TableCell>
+                        <TableCell>{item.quantidade}</TableCell>
                         <TableCell><Badge variant={entregaConfig.variant}>{entregaConfig.label}</Badge></TableCell>
                         <TableCell>
-                          {romaneio.status === "em_transito" && item.status_entrega === "pendente" && (
+                          {romaneio.status === "em_transito" && itemStatus === "pendente" && (
                             <div className="flex gap-1">
                               <Button size="sm" variant="default" onClick={() => onFinalizarEntrega(romaneio.id, item.id, "entregue")}>Entregue</Button>
                               <Button size="sm" variant="destructive" onClick={() => onFinalizarEntrega(romaneio.id, item.id, "recusado")}>Recusado</Button>
