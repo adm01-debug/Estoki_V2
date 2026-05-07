@@ -60,4 +60,3 @@ export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
     </motion.section>
   );
 }
-}
