@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp } from "lucide-react";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { cn } from "@/lib/utils";
 
 interface Props {
   loading: boolean;
@@ -89,5 +90,4 @@ export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoes
       </CardContent>
     </Card>
   );
-}
 }
