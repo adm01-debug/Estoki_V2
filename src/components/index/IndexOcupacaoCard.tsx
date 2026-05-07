@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingUp } from "lucide-react";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
-import { cn } from "@/lib/utils";
 
 interface Props {
   loading: boolean;
@@ -15,77 +14,43 @@ interface Props {
 
 export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoesOcupadas, posicoesLivres }: Props) {
   return (
-    <Card className="col-span-1 lg:col-span-2 premium-glass border-border/20 shadow-premium group">
+    <Card className="col-span-1 lg:col-span-2 glass-card border-border/30">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-black flex items-center gap-3 tracking-tight">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500">
-            <TrendingUp className="h-5 w-5" />
+        <CardTitle className="text-base font-bold flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <TrendingUp className="h-4 w-4 text-primary" />
           </div>
-          <div className="flex flex-col">
-            <span>Taxa de Ocupação</span>
-            <span className="text-overline font-medium text-muted-foreground mt-0.5">Métricas de Capacidade</span>
-          </div>
+          Taxa de Ocupação
         </CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
-          <div className="flex items-center justify-around py-8">
-            <Skeleton className="h-32 w-32 rounded-full" />
-            <Skeleton className="h-32 w-32 rounded-full" />
+          <div className="flex items-center justify-around py-4">
+            <Skeleton className="h-24 w-24 rounded-full" />
+            <Skeleton className="h-24 w-24 rounded-full" />
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-around py-8 gap-8">
-              <motion.div 
-                className="text-center" 
-                initial={{ scale: 0.8, opacity: 0 }} 
-                animate={{ scale: 1, opacity: 1 }} 
-                transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <ProgressRing 
-                  value={ocupacaoPP} 
-                  variant={ocupacaoPP > 90 ? "danger" : ocupacaoPP > 70 ? "warning" : "success"} 
-                  label="Porta-Paletes" 
-                  size={140} 
-                  strokeWidth={14} 
-                />
+          <>
+            <div className="flex items-center justify-around py-6">
+              <motion.div className="text-center" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6, delay: 0.3, type: "spring" }}>
+                <ProgressRing value={ocupacaoPP} variant={ocupacaoPP > 90 ? "danger" : ocupacaoPP > 70 ? "warning" : "success"} label="Porta-Paletes" size={130} strokeWidth={12} />
               </motion.div>
-              
-              <div className="hidden sm:block h-28 w-px bg-gradient-to-b from-transparent via-border/50 to-transparent" />
-              
-              <motion.div 
-                className="text-center" 
-                initial={{ scale: 0.8, opacity: 0 }} 
-                animate={{ scale: 1, opacity: 1 }} 
-                transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <ProgressRing 
-                  value={ocupacaoBoxes} 
-                  variant={ocupacaoBoxes > 90 ? "danger" : ocupacaoBoxes > 70 ? "warning" : "success"} 
-                  label="Área de Boxes" 
-                  size={140} 
-                  strokeWidth={14} 
-                />
+              <div className="h-24 w-px bg-border/30" />
+              <motion.div className="text-center" initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.6, delay: 0.4, type: "spring" }}>
+                <ProgressRing value={ocupacaoBoxes} variant={ocupacaoBoxes > 90 ? "danger" : ocupacaoBoxes > 70 ? "warning" : "success"} label="Boxes" size={130} strokeWidth={12} />
               </motion.div>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/20">
-              <div className="premium-glass bg-success/5 p-4 rounded-xl border-success/10 transition-all hover:bg-success/10">
-                <p className="text-overline text-success mb-1">Status Ocupado</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-foreground">{posicoesOcupadas}</span>
-                  <span className="text-xs text-muted-foreground font-medium">posições</span>
-                </div>
+            <div className="flex justify-between text-sm text-muted-foreground pt-3 border-t border-border/30">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-success" />
+                <span>{posicoesOcupadas} ocupadas</span>
               </div>
-              <div className="premium-glass bg-muted/5 p-4 rounded-xl border-border/10 transition-all hover:bg-muted/10">
-                <p className="text-overline text-muted-foreground mb-1">Status Livre</p>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-black text-foreground">{posicoesLivres}</span>
-                  <span className="text-xs text-muted-foreground font-medium">posições</span>
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />
+                <span>{posicoesLivres} livres</span>
               </div>
             </div>
-          </div>
+          </>
         )}
       </CardContent>
     </Card>

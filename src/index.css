@@ -124,27 +124,24 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Typography Scale — Premium SaaS */
   h1, .h1 {
-    @apply text-3xl md:text-5xl font-extrabold tracking-tight;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
+    @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+    letter-spacing: -0.025em;
   }
 
   h2, .h2 {
-    @apply text-2xl md:text-4xl font-bold tracking-tight;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
+    @apply text-2xl md:text-3xl font-bold tracking-tight;
+    letter-spacing: -0.02em;
   }
 
   h3, .h3 {
-    @apply text-xl md:text-2xl font-bold;
-    letter-spacing: -0.02em;
+    @apply text-xl font-bold;
+    letter-spacing: -0.015em;
   }
 
   h4, .h4 {
@@ -153,80 +150,64 @@
   }
 
   .text-display {
-    @apply text-5xl md:text-7xl font-black;
-    letter-spacing: -0.05em;
-    line-height: 0.95;
-    background: linear-gradient(180deg, hsl(var(--foreground)) 0%, hsl(var(--foreground) / 0.7) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    @apply text-4xl md:text-5xl font-extrabold;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
   }
 
   .text-caption {
-    @apply text-xs md:text-sm text-muted-foreground font-medium;
+    @apply text-xs text-muted-foreground;
     letter-spacing: 0.01em;
   }
 
   .text-overline {
-    @apply text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/80;
+    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground;
   }
 }
 
 @layer components {
-  /* Premium Glass Effects */
-  .premium-glass {
-    @apply bg-card/60 backdrop-blur-2xl border border-white/10 shadow-glass relative overflow-hidden;
-  }
-  
-  .premium-glass::before {
-    content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none;
-  }
-
+  /* Glass morphism card */
   .glass-card {
-    @apply bg-card/70 backdrop-blur-xl rounded-2xl border border-border/50 shadow-premium transition-all duration-300;
+    @apply bg-card/80 backdrop-blur-xl rounded-xl border border-border/50 shadow-lg;
   }
 
-  .glass-card:hover {
-    @apply border-primary/20 shadow-premium-lg translate-y-[-2px];
-  }
-
-  /* KPI Cards with premium effects */
+  /* KPI Cards with glow effect */
   .kpi-card {
-    @apply premium-glass p-5 transition-all duration-500 hover:shadow-glow-sm;
+    @apply bg-card/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-border/40 transition-all duration-300 relative overflow-hidden;
   }
   
   .kpi-card::before {
     content: '';
-    @apply absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
-  .kpi-card:hover::before {
-    @apply opacity-100;
+  .kpi-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
   }
   
-  .kpi-card-icon {
-    @apply w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary transition-transform duration-500;
+  .kpi-card:hover {
+    @apply shadow-xl border-primary/40;
+    box-shadow: 0 8px 32px hsl(var(--primary) / 0.1), 0 0 0 1px hsl(var(--primary) / 0.1);
+  }
+  
+  .kpi-card:hover::before {
+    opacity: 1;
   }
 
-  .kpi-card:hover .kpi-card-icon {
-    @apply scale-110 rotate-3;
-  }
-
-  /* Bento Grid Layouts */
-  .bento-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
-  }
-
-  .bento-item {
-    @apply glass-card overflow-hidden;
-  }
-
-  .bento-item-large {
-    @apply lg:col-span-2 lg:row-span-2;
-  }
-
-  .bento-item-wide {
-    @apply lg:col-span-2;
+  .kpi-card:hover::after {
+    opacity: 1;
   }
 
   /* Gradient text */
