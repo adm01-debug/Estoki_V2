@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { EtiquetaData, TamanhoEtiqueta, tamanhos } from "./types";
-import { generateEtiquetasPDF } from "./pdfGenerator";
+import { generateEtiquetasPDF } from "./pdfGenerators";
 import { EtiquetaPreview } from "./EtiquetaPreview";
 
 interface GeradorEtiquetasProps {
