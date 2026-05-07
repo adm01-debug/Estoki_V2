@@ -17,7 +17,7 @@ export function ImportSection() {
   const downloadTemplate = async (templateId: string) => {
     const template = IMPORT_TEMPLATES.find(t => t.id === templateId);
     if (!template) return;
-    const Papa = (await import('papaparse')).default;
+    const Papa = (await import('papaparse')).default || (await import('papaparse'));
     const csv = Papa.unparse({ fields: template.headers, data: [] });
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
