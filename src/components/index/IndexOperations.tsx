@@ -16,25 +16,39 @@ interface Props {
 export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavigate }: Props) {
   const items = [
     { icon: Package, label: "Recebimento", description: "Conferir materiais", badge: aguardandoRecebimento, path: "/recebimento" },
-    { icon: Search, label: "Triagem", description: "Controle qualidade", badge: triagemPendente, path: "/triagem" },
-    { icon: Warehouse, label: "Estoque", description: "Mapa visual", variant: "gradient" as const, path: "/estoque" },
-    { icon: ArrowLeftRight, label: "Movimentação", description: "Transferências", path: "/movimentacao" },
-    { icon: QrCode, label: "Scanner", description: "Ler QR Code", path: "/scanner" },
-    { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/relatorios" },
+    { icon: Search, label: "Triagem", description: "Controle de qualidade", badge: triagemPendente, path: "/triagem" },
+    { icon: Warehouse, label: "Estoque", description: "Gestão e mapa visual", variant: "gradient" as const, path: "/estoque" },
+    { icon: ArrowLeftRight, label: "Movimentação", description: "Fluxo de mercadorias", path: "/movimentacao" },
+    { icon: QrCode, label: "Scanner Pro", description: "Leitura inteligente", path: "/scanner" },
+    { icon: ClipboardList, label: "Análise", description: "Relatórios estratégicos", path: "/relatorios" },
   ];
 
   return (
-    <motion.section variants={itemVariants}>
-      <h2 className="text-xs font-bold text-primary/60 mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
-        <span className="w-4 h-px bg-primary/30" />Operações Rápidas
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {items.map((item) => (
-          <motion.div key={item.label} variants={itemVariants} whileHover={{ y: -2 }}>
-            <MenuButton icon={item.icon} label={item.label} description={item.description} badge={item.badge} variant={item.variant} onClick={() => onNavigate(item.path)} />
+    <motion.section variants={itemVariants} className="space-y-4">
+      <div className="flex items-center gap-4">
+        <h2 className="text-overline whitespace-nowrap">Operações Rápidas</h2>
+        <div className="h-px w-full bg-gradient-to-r from-border/50 to-transparent" />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {items.map((item, index) => (
+          <motion.div 
+            key={item.label} 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <MenuButton 
+              icon={item.icon} 
+              label={item.label} 
+              description={item.description} 
+              badge={item.badge} 
+              variant={item.variant} 
+              onClick={() => onNavigate(item.path)} 
+            />
           </motion.div>
         ))}
       </div>
     </motion.section>
   );
+}
 }
