@@ -31,10 +31,10 @@ export function ProgressRing({
   };
 
   const bgColors = {
-    default: "stroke-primary/10",
-    success: "stroke-success/10",
-    warning: "stroke-warning/10",
-    danger: "stroke-destructive/10",
+    default: "stroke-primary/5",
+    success: "stroke-success/5",
+    warning: "stroke-warning/5",
+    danger: "stroke-destructive/5",
   };
 
   const textColors = {
@@ -44,9 +44,22 @@ export function ProgressRing({
     danger: "text-destructive",
   };
 
+  const shadowColors = {
+    default: "drop-shadow-[0_0_8px_hsl(var(--primary)/0.3)]",
+    success: "drop-shadow-[0_0_8px_hsl(var(--success)/0.3)]",
+    warning: "drop-shadow-[0_0_8px_hsl(var(--warning)/0.3)]",
+    danger: "drop-shadow-[0_0_8px_hsl(var(--destructive)/0.3)]",
+  };
+
   return (
-    <div className={cn("relative inline-flex items-center justify-center", className)}>
+    <div className={cn("relative inline-flex items-center justify-center group", className)}>
       <svg width={size} height={size} className="transform -rotate-90">
+        <defs>
+          <linearGradient id={`grad-${variant}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" className={textColors[variant]} stopOpacity="1" />
+            <stop offset="100%" className={textColors[variant]} stopOpacity="0.7" />
+          </linearGradient>
+        </defs>
         {/* Background circle */}
         <circle
           cx={size / 2}
@@ -54,7 +67,7 @@ export function ProgressRing({
           r={radius}
           fill="none"
           strokeWidth={strokeWidth}
-          className={bgColors[variant]}
+          className={cn(bgColors[variant], "stroke-current")}
         />
         {/* Progress circle */}
         <circle
@@ -66,19 +79,23 @@ export function ProgressRing({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn(variantColors[variant], "transition-all duration-500 ease-out")}
+          stroke={`url(#grad-${variant})`}
+          className={cn(
+            "transition-all duration-1000 ease-[cubic-bezier(0.16, 1, 0.3, 1)]",
+            shadowColors[variant]
+          )}
         />
       </svg>
       
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={cn("text-2xl font-bold", textColors[variant])}>
-          {value}%
+      <div className="absolute inset-0 flex flex-col items-center justify-center transition-transform duration-500 group-hover:scale-110">
+        <span className={cn("text-3xl font-black tracking-tighter leading-none", textColors[variant])}>
+          {value}<span className="text-sm font-bold opacity-70">%</span>
         </span>
         {label && (
-          <span className="text-xs text-muted-foreground font-medium">{label}</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mt-2">{label}</span>
         )}
         {sublabel && (
-          <span className="text-[10px] text-muted-foreground">{sublabel}</span>
+          <span className="text-[9px] text-muted-foreground/40 font-medium">{sublabel}</span>
         )}
       </div>
     </div>

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface KPIItem {
   icon: LucideIcon;
@@ -34,27 +34,45 @@ export function IndexKPIs({ items, loading, onNavigate }: Props) {
     );
   }
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       {items.map((item, index) => (
         <motion.div
           key={item.label}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: index * 0.08 }}
-          whileHover={{ y: -2, scale: 1.02 }}
-          className="cursor-pointer"
+          transition={{ 
+            duration: 0.8, 
+            delay: index * 0.1, 
+            ease: [0.16, 1, 0.3, 1] 
+          }}
+          className="cursor-pointer group"
           onClick={() => onNavigate(item.path)}
         >
-          <Card className="glass-card border-border/30 h-full">
-            <CardContent className="p-4 md:p-5">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${variantStyles[item.variant]} mb-3`}>
-                <item.icon className="h-5 w-5" />
+          <div className="kpi-card group-hover:translate-y-[-4px]">
+            <div className="flex flex-col gap-4 relative z-10">
+              <div className="flex items-center justify-between">
+                <div className="kpi-card-icon">
+                  <item.icon className="h-6 w-6" />
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl md:text-4xl font-black text-foreground tracking-tighter leading-none">{item.value}</p>
+                </div>
               </div>
-              <p className="text-2xl md:text-3xl font-extrabold text-foreground">{item.value}</p>
-              <p className="text-sm font-semibold text-foreground mt-1">{item.label}</p>
-              <p className="text-xs text-muted-foreground">{item.sublabel}</p>
-            </CardContent>
-          </Card>
+              <div>
+                <p className="text-sm font-bold text-foreground tracking-tight">{item.label}</p>
+                <p className="text-overline mt-1">{item.sublabel}</p>
+              </div>
+            </div>
+            
+            {/* Visual indicator for the variant */}
+            <div className={cn(
+              "absolute bottom-0 left-0 h-1 transition-all duration-500",
+              item.variant === 'warning' && "bg-warning w-1/3 group-hover:w-full",
+              item.variant === 'success' && "bg-success w-1/3 group-hover:w-full",
+              item.variant === 'danger' && "bg-destructive w-1/3 group-hover:w-full",
+              item.variant === 'default' && "bg-primary w-1/3 group-hover:w-full"
+            )} />
+          </div>
         </motion.div>
       ))}
     </div>
