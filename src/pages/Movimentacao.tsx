@@ -9,18 +9,13 @@ import {
   Search, 
   ArrowRight, 
   Package, 
-  RotateCcw,
-  Truck,
-  ClipboardEdit,
   Clock,
   Loader2,
-  AlertCircle
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -28,53 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import { useMovimentacoes, type TipoMovimentacao } from "@/hooks/useMovimentacoes";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Skeleton } from "@/components/ui/skeleton";
-
-const tiposMovimento: Array<{ value: TipoMovimentacao; label: string; icon: typeof ArrowRight }> = [
-  { value: "armazenamento", label: "Armazenamento", icon: Package },
-  { value: "separacao", label: "Separação", icon: ArrowRight },
-  { value: "saida_transporte", label: "Saída para Transporte", icon: Truck },
-  { value: "devolucao", label: "Devolução", icon: RotateCcw },
-  { value: "ajuste_estoque", label: "Ajuste de Inventário", icon: ClipboardEdit },
-];
-
-const tipoIcons: Record<string, string> = {
-  recebimento_nf: "📦",
-  conferencia: "✅",
-  triagem_inicio: "🔍",
-  triagem_fim: "✔️",
-  armazenamento: "📥",
-  reserva: "🔒",
-  separacao: "📤",
-  conferencia_expedicao: "📋",
-  carregamento: "🚚",
-  saida_transporte: "🚀",
-  entrega: "🎯",
-  devolucao: "↩️",
-  ajuste_estoque: "📝",
-};
-
-const tipoLabels: Record<string, string> = {
-  recebimento_nf: "RECEBIMENTO NF",
-  conferencia: "CONFERÊNCIA",
-  triagem_inicio: "TRIAGEM INÍCIO",
-  triagem_fim: "TRIAGEM FIM",
-  armazenamento: "ARMAZENAMENTO",
-  reserva: "RESERVA",
-  separacao: "SEPARAÇÃO",
-  conferencia_expedicao: "CONF. EXPEDIÇÃO",
-  carregamento: "CARREGAMENTO",
-  saida_transporte: "SAÍDA TRANSPORTE",
-  entrega: "ENTREGA",
-  devolucao: "DEVOLUÇÃO",
-  ajuste_estoque: "AJUSTE ESTOQUE",
-};
+import { MovimentacaoTipoSelector } from "@/components/movimentacao/MovimentacaoTipoSelector";
+import { MovimentacaoDetalhesForm } from "@/components/movimentacao/MovimentacaoDetalhesForm";
+import { MovimentacaoHistorico } from "@/components/movimentacao/MovimentacaoHistorico";
 
 export default function MovimentacaoPage() {
   const navigate = useNavigate();
@@ -178,7 +131,6 @@ export default function MovimentacaoPage() {
     <AppLayout title="Movimentação" showBack>
       <SEO title="Movimentação" description="Registro e histórico de movimentações de estoque." path="/movimentacao" />
       <div className="p-4 space-y-4 animate-fade-in">
-        {/* Charts */}
         {movimentacoes.length > 0 && <MovimentacaoCharts movimentacoes={movimentacoes} />}
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -198,38 +150,12 @@ export default function MovimentacaoPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Registrar Movimentação */}
           <TabsContent value="registrar" className="space-y-4">
-            {/* Tipo de Movimento */}
-            <div className="bg-card rounded-xl p-4 border border-border">
-              <Label className="text-sm font-medium mb-3 block">Tipo de Movimento:</Label>
-              <RadioGroup
-                value={tipoMovimento}
-                onValueChange={(v) => setTipoMovimento(v as TipoMovimentacao)}
-                className="space-y-2"
-              >
-                {tiposMovimento.map((tipo) => (
-                  <div
-                    key={tipo.value}
-                    className={cn(
-                      "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
-                      tipoMovimento === tipo.value
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50"
-                    )}
-                    onClick={() => setTipoMovimento(tipo.value)}
-                  >
-                    <RadioGroupItem value={tipo.value} id={tipo.value} />
-                    <tipo.icon className="h-4 w-4 text-muted-foreground" />
-                    <Label htmlFor={tipo.value} className="flex-1 cursor-pointer">
-                      {tipo.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+            <MovimentacaoTipoSelector 
+              tipoMovimento={tipoMovimento} 
+              setTipoMovimento={setTipoMovimento} 
+            />
 
-            {/* Item */}
             <div className="bg-card rounded-xl p-4 border border-border">
               <Label className="text-sm font-medium mb-3 block">📦 ITEM</Label>
               <div className="flex gap-2 mb-3">
@@ -244,50 +170,12 @@ export default function MovimentacaoPage() {
               </div>
             </div>
 
-            {/* Detalhes */}
-            <div className="bg-card rounded-xl p-4 border border-border">
-              <Label className="text-sm font-medium mb-3 block">📍 DETALHES</Label>
-              <div className="space-y-3">
-                <div>
-                  <Label htmlFor="localizacao" className="text-xs text-muted-foreground">Localização</Label>
-                  <Input 
-                    id="localizacao"
-                    placeholder="Ex: PP1-S05-N2, BOX-12"
-                    value={formData.localizacao}
-                    onChange={(e) => { setFormData(prev => ({ ...prev, localizacao: e.target.value })); setFormErrors(prev => ({ ...prev, localizacao: "" })); }}
-                    className={formErrors.localizacao ? "border-destructive" : ""}
-                    maxLength={50}
-                  />
-                  {formErrors.localizacao && <p className="text-xs text-destructive mt-1">{formErrors.localizacao}</p>}
-                </div>
-
-                <div>
-                  <Label htmlFor="quantidade" className="text-xs text-muted-foreground">Quantidade *</Label>
-                  <Input 
-                    id="quantidade"
-                    type="number" 
-                    min={1}
-                    value={formData.quantidade}
-                    onChange={(e) => { setFormData(prev => ({ ...prev, quantidade: parseInt(e.target.value) || 1 })); setFormErrors(prev => ({ ...prev, quantidade: "" })); }}
-                    className={formErrors.quantidade ? "border-destructive" : ""}
-                  />
-                  {formErrors.quantidade && <p className="text-xs text-destructive mt-1">{formErrors.quantidade}</p>}
-                </div>
-
-                <div>
-                  <Label htmlFor="descricao" className="text-xs text-muted-foreground">Descrição *</Label>
-                  <Textarea 
-                    id="descricao"
-                    placeholder="Descreva a movimentação (mín. 3 caracteres)..."
-                    value={formData.descricao}
-                    onChange={(e) => { setFormData(prev => ({ ...prev, descricao: e.target.value })); setFormErrors(prev => ({ ...prev, descricao: "" })); }}
-                    className={formErrors.descricao ? "border-destructive" : ""}
-                    maxLength={500}
-                  />
-                  {formErrors.descricao && <p className="text-xs text-destructive mt-1">{formErrors.descricao}</p>}
-                </div>
-              </div>
-            </div>
+            <MovimentacaoDetalhesForm 
+              formData={formData}
+              setFormData={setFormData}
+              formErrors={formErrors}
+              setFormErrors={setFormErrors}
+            />
 
             <Button 
               className="w-full h-12 text-base font-semibold gap-2"
@@ -305,7 +193,6 @@ export default function MovimentacaoPage() {
             </Button>
           </TabsContent>
 
-          {/* Histórico */}
           <TabsContent value="historico" className="space-y-4">
             <div className="flex gap-2">
               <div className="relative flex-1">
@@ -330,63 +217,15 @@ export default function MovimentacaoPage() {
               </Select>
             </div>
 
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-card rounded-xl p-4 border border-border">
-                    <Skeleton className="h-4 w-24 mb-2" />
-                    <Skeleton className="h-5 w-32 mb-1" />
-                    <Skeleton className="h-4 w-48" />
-                  </div>
-                ))}
-              </div>
-            ) : error ? (
-              <div className="bg-destructive/10 rounded-xl p-4 border border-destructive/20 flex items-center gap-3">
-                <AlertCircle className="h-5 w-5 text-destructive" />
-                <span className="text-destructive">{error}</span>
-              </div>
-            ) : filteredMovimentacoes.length === 0 ? (
-              <div className="bg-muted/50 rounded-xl p-8 text-center">
-                <Package className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">
-                  {searchTerm ? "Nenhuma movimentação encontrada" : "Nenhuma movimentação registrada"}
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredMovimentacoes.map((mov) => (
-                  <div key={mov.id} className="bg-card rounded-xl p-4 border border-border hover:border-primary/30 transition-colors">
-                    <div className="text-xs text-muted-foreground mb-2">
-                      {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="text-2xl">{tipoIcons[mov.tipo] || "📦"}</div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm">{tipoLabels[mov.tipo] || mov.tipo.toUpperCase()}</div>
-                        <div className="text-sm truncate">
-                          {mov.produto_nome || mov.descricao}
-                          {mov.quantidade > 0 && ` | ${mov.quantidade} un`}
-                        </div>
-                        {mov.localizacao && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            📍 {mov.localizacao}
-                          </div>
-                        )}
-                        {mov.operador_nome && (
-                          <div className="text-xs text-muted-foreground">
-                            Por: {mov.operador_nome}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <MovimentacaoHistorico 
+              movimentacoes={filteredMovimentacoes}
+              loading={loading}
+              error={error}
+              searchTerm={searchTerm}
+            />
           </TabsContent>
         </Tabs>
       </div>
     </AppLayout>
   );
 }
-
