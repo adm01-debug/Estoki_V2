@@ -12,7 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode";
 import { Search, Printer, Download, Eye, Loader2, Tag, Package, QrCode, ChevronRight, RefreshCw, Truck } from "lucide-react";
-import { EtiquetaPreviewLote, EtiquetaPreviewEntrega, tamanhos, gerarCodigoUnico, type LoteItem, type EntregaItem, type FonteData, type TamanhoEtiqueta } from "@/components/etiquetas/EtiquetaPreview";
+import { EtiquetaPreviewLote, EtiquetaPreviewEntrega } from "@/components/etiquetas/EtiquetaPreview";
+import { type LoteItem, type EntregaItem, type FonteData, type TamanhoEtiqueta, tamanhos } from "@/components/etiquetas/types";
+import { gerarCodigoUnico } from "@/components/etiquetas/etiquetaUtils";
 import { generateLotePDF, generateEntregaPDF } from "@/components/etiquetas/pdfGenerators";
 
 export default function Etiquetas() {
