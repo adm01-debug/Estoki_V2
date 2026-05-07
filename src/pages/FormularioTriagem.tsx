@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
+import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTriagens } from "@/hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
@@ -14,25 +10,13 @@ import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
-import { 
-  Package, 
-  CheckCircle2, 
-  XCircle, 
-  Loader2,
-  AlertTriangle,
-  Timer,
-  ImagePlus
-} from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 
-const checklistItems = [
-  { id: "corConforme", label: "Cor conforme pedido" },
-  { id: "tamanhoOk", label: "Tamanho/dimensões OK" },
-  { id: "produtoLimpo", label: "Produto limpo" },
-  { id: "semAvarias", label: "Sem avarias/defeitos visíveis" },
-  { id: "embalagemIntegra", label: "Embalagem íntegra" },
-  { id: "componentesCompletos", label: "Componentes completos" },
-  { id: "funcionalidadeOk", label: "Funcionalidade OK" },
-];
+// Modularized Components
+import { TriagemHeaderCard } from "@/components/triagem/formulario/TriagemHeaderCard";
+import { ChecklistCard } from "@/components/triagem/formulario/ChecklistCard";
+import { ResultadoInspecaoCard } from "@/components/triagem/formulario/ResultadoInspecaoCard";
+import { checklistItems } from "@/components/triagem/formulario/constants";
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
@@ -41,12 +25,10 @@ export default function FormularioTriagem() {
   const { triagens, isLoading: triagensLoading, updateTriagem } = useTriagens();
   
   const {
-    elapsedSeconds,
     formattedTime,
     isRunning,
     start: iniciarTimer,
     pause: pausarTimer,
-    reset: resetTimer,
     stop: pararTimer,
   } = useTriagemTimer();
 
@@ -67,7 +49,6 @@ export default function FormularioTriagem() {
   const [quantidadeAprovada, setQuantidadeAprovada] = useState(0);
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
-  const [tamanhoAmostra, setTamanhoAmostra] = useState(0);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
 
   const quantidadeTotal = triagem?.quantidade_total || 100;
@@ -77,7 +58,6 @@ export default function FormularioTriagem() {
       if (!id) return;
       
       setLoadingTriagem(true);
-      // Find triagem from the already-loaded list
       if (triagens) {
         const found = triagens.find(t => t.id === id);
         if (found) {
@@ -99,12 +79,6 @@ export default function FormularioTriagem() {
     setChecklist(prev => ({ ...prev, [itemId]: checked }));
   };
 
-  const calcularProgressoChecklist = () => {
-    const totalItems = checklistItems.length;
-    const checkedItems = Object.values(checklist).filter(Boolean).length;
-    return (checkedItems / totalItems) * 100;
-  };
-
   const todosItensVerificados = () => {
     return checklistItems.every(item => checklist[item.id] === true);
   };
@@ -115,11 +89,6 @@ export default function FormularioTriagem() {
 
   const handleRemoveFoto = async (fotoId: string) => {
     await removeFoto(fotoId);
-  };
-
-  const handleAmostraConfirmada = (tamanho: number, metodo: string, criterios: { aceite: number; rejeite: number }) => {
-    setTamanhoAmostra(tamanho);
-    setAmostragemConfirmada(true);
   };
 
   const handleSubmit = async (resultado: "aprovado" | "reprovado") => {
@@ -135,14 +104,13 @@ export default function FormularioTriagem() {
     }
 
     setSubmitting(true);
-    const tempoFinal = pararTimer();
+    pararTimer();
 
     try {
       if (fotos.length > 0) {
         await salvarFotosTriagem(id);
       }
 
-      // Use updateTriagem mutation
       await updateTriagem.mutateAsync({
         id,
         resultado,
@@ -191,91 +159,31 @@ export default function FormularioTriagem() {
     );
   }
 
-  const progressoChecklist = calcularProgressoChecklist();
-
   return (
     <AppLayout title="Formulário de Triagem" showBack>
       <div className="p-4 space-y-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-start justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5" />
-                  Triagem: {triagem.lote_id || triagem.id.slice(0, 8)}
-                </CardTitle>
-                <CardDescription>
-                  {triagem.produto_nome || "Produto não identificado"}
-                </CardDescription>
-              </div>
-              <Badge variant="secondary">
-                {quantidadeTotal} unidades
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Timer className="h-4 w-4" />
-                <span className="text-sm">Tempo de triagem</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-mono font-bold">{formattedTime}</span>
-                {isRunning ? (
-                  <Button size="sm" variant="outline" onClick={pausarTimer}>
-                    Pausar
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="outline" onClick={iniciarTimer}>
-                    Retomar
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <TriagemHeaderCard 
+          id={id}
+          loteId={triagem.lote_id}
+          produtoNome={triagem.produto_nome}
+          quantidadeTotal={quantidadeTotal}
+          formattedTime={formattedTime}
+          isRunning={isRunning}
+          onPausar={pausarTimer}
+          onIniciar={iniciarTimer}
+        />
 
         {mostrarAmostragem && quantidadeTotal > 0 && !amostragemConfirmada && (
           <AmostragemAutomatica
             tamanhoLote={quantidadeTotal}
-            onConfirmarAmostra={handleAmostraConfirmada}
+            onConfirmarAmostra={() => setAmostragemConfirmada(true)}
           />
         )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Checklist de Inspeção</CardTitle>
-            <div className="space-y-1">
-              <div className="flex justify-between text-sm">
-                <span>Progresso</span>
-                <span>{Object.values(checklist).filter(Boolean).length}/{checklistItems.length}</span>
-              </div>
-              <Progress value={progressoChecklist} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {checklistItems.map((item) => (
-                <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded">
-                  <Checkbox
-                    id={item.id}
-                    checked={checklist[item.id] || false}
-                    onCheckedChange={(checked) => handleChecklistChange(item.id, checked as boolean)}
-                  />
-                  <label
-                    htmlFor={item.id}
-                    className="text-sm cursor-pointer flex-1"
-                  >
-                    {item.label}
-                  </label>
-                  {checklist[item.id] && (
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  )}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <ChecklistCard 
+          checklist={checklist}
+          onChecklistChange={handleChecklistChange}
+        />
 
         {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
           <DefeitoHistorico
@@ -307,48 +215,15 @@ export default function FormularioTriagem() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Resultado da Inspeção</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm text-muted-foreground">Quantidade Aprovada</label>
-                <input
-                  type="number"
-                  value={quantidadeAprovada}
-                  onChange={(e) => setQuantidadeAprovada(Number(e.target.value))}
-                  className="w-full mt-1 p-2 border rounded text-lg font-bold text-center"
-                  min={0}
-                  max={quantidadeTotal}
-                />
-              </div>
-              <div>
-                <label className="text-sm text-muted-foreground">Quantidade Reprovada</label>
-                <input
-                  type="number"
-                  value={quantidadeReprovada}
-                  onChange={(e) => setQuantidadeReprovada(Number(e.target.value))}
-                  className="w-full mt-1 p-2 border rounded text-lg font-bold text-center"
-                  min={0}
-                  max={quantidadeTotal}
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="text-sm text-muted-foreground">Observações</label>
-              <Textarea
-                value={observacoes}
-                onChange={(e) => setObservacoes(e.target.value)}
-                placeholder="Descreva qualquer problema ou observação..."
-                className="mt-1"
-                rows={3}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <ResultadoInspecaoCard 
+          quantidadeTotal={quantidadeTotal}
+          quantidadeAprovada={quantidadeAprovada}
+          setQuantidadeAprovada={setQuantidadeAprovada}
+          quantidadeReprovada={quantidadeReprovada}
+          setQuantidadeReprovada={setQuantidadeReprovada}
+          observacoes={observacoes}
+          setObservacoes={setObservacoes}
+        />
 
         <div className="flex gap-3">
           <Button

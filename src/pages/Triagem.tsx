@@ -5,7 +5,7 @@ import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, QrCode, Calculator, ChevronRight, Play, CheckCircle, AlertTriangle, Clock, ArrowUpDown, BarChart3, Loader2, ChevronLeft } from "lucide-react";
+import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,14 +20,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useTriagens } from "@/hooks/useTriagens";
 
-type StatusTriagem = 'em_andamento' | 'aprovado' | 'ressalva' | 'reprovado';
-
-const statusConfig: Record<StatusTriagem, { label: string; icon: React.ReactNode; className: string }> = {
-  em_andamento: { label: "Em Andamento", icon: <Play className="h-3 w-3" />, className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200" },
-  aprovado: { label: "Aprovado", icon: <CheckCircle className="h-3 w-3" />, className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200" },
-  ressalva: { label: "Ressalva", icon: <AlertTriangle className="h-3 w-3" />, className: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200" },
-  reprovado: { label: "Reprovado", icon: <AlertTriangle className="h-3 w-3" />, className: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200" },
-};
+// Modularized Components & Helpers
+import { TriagemStatsCards } from "@/components/triagem/formulario/TriagemStatsCards";
+import { getStatus, statusConfig, formatDate } from "@/components/triagem/formulario/triagemHelpers";
 
 const ITEMS_PER_PAGE = 10;
 type SortOrder = "data" | "resultado";
@@ -55,14 +50,6 @@ export default function TriagemPage() {
       bindPullRefresh(containerRef.current);
     }
   }, [bindPullRefresh]);
-
-  const getStatus = (triagem: { resultado?: string | null; data_fim?: string | null }): StatusTriagem => {
-    if (!triagem.data_fim) return 'em_andamento';
-    if (triagem.resultado === 'aprovado') return 'aprovado';
-    if (triagem.resultado === 'reprovado') return 'reprovado';
-    if (triagem.resultado === 'ressalva') return 'ressalva';
-    return 'aprovado';
-  };
 
   const filteredAndSortedItems = useMemo(() => {
     let filtered = items.filter((item) => {
@@ -122,16 +109,6 @@ export default function TriagemPage() {
     } catch {
       // error handled by hook
     }
-  };
-
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return null;
-    return new Date(dateString).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   if (isLoading) {
@@ -205,32 +182,9 @@ export default function TriagemPage() {
             onConfirmarAmostra={() => { /* Amostragem confirmada */ }}
           />
         )}
-        {/* Charts */}
         {items.length > 0 && <TriagemCharts items={items} />}
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-card rounded-xl p-3 border border-border">
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4 text-blue-500" />
-              <span className="text-2xl font-bold text-primary">{stats.emAndamento}</span>
-            </div>
-            <div className="text-xs text-muted-foreground">Em Andamento</div>
-          </div>
-          <div className="bg-card rounded-xl p-3 border border-border">
-            <div className="flex items-center gap-1">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-2xl font-bold text-green-600">{stats.aprovados}</span>
-            </div>
-            <div className="text-xs text-muted-foreground">Aprovados</div>
-          </div>
-          <div className="bg-card rounded-xl p-3 border border-border">
-            <div className="flex items-center gap-1">
-              <AlertTriangle className="h-4 w-4 text-red-500" />
-              <span className="text-2xl font-bold text-red-600">{stats.reprovados}</span>
-            </div>
-            <div className="text-xs text-muted-foreground">Reprovados</div>
-          </div>
-        </div>
+        <TriagemStatsCards stats={stats} />
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
