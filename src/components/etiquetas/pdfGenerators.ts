@@ -1,5 +1,6 @@
 import QRCode from "qrcode";
-import { gerarCodigoUnico, tamanhos, type LoteItem, type EntregaItem, type TamanhoEtiqueta } from "./EtiquetaPreview";
+import { gerarCodigoUnico } from "./etiquetaUtils";
+import { type LoteItem, type EntregaItem, type TamanhoEtiqueta, tamanhos } from "./types";
 
 export async function generateLotePDF(doc: InstanceType<typeof import('jspdf').jsPDF>, lotesToPrint: LoteItem[], tamanho: TamanhoEtiqueta, volumesPorLote: number) {
   const { width, height } = tamanhos[tamanho];
