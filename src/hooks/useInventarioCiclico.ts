@@ -1,2 +1,2 @@
-export * from './types';
-export * from './index';
+export * from './useInventarioCiclico/types';
+export * from './useInventarioCiclico/index';
