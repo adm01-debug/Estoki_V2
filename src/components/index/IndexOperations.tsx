@@ -51,4 +51,3 @@ export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavi
     </motion.section>
   );
 }
-}
