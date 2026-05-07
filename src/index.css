@@ -190,43 +190,43 @@
     @apply border-primary/20 shadow-premium-lg translate-y-[-2px];
   }
 
-  /* KPI Cards with glow effect */
+  /* KPI Cards with premium effects */
   .kpi-card {
-    @apply bg-card/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-border/40 transition-all duration-300 relative overflow-hidden;
+    @apply premium-glass p-5 transition-all duration-500 hover:shadow-glow-sm;
   }
   
   .kpi-card::before {
     content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
+    @apply absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-500;
   }
 
-  .kpi-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  
-  .kpi-card:hover {
-    @apply shadow-xl border-primary/40;
-    box-shadow: 0 8px 32px hsl(var(--primary) / 0.1), 0 0 0 1px hsl(var(--primary) / 0.1);
-  }
-  
   .kpi-card:hover::before {
-    opacity: 1;
+    @apply opacity-100;
+  }
+  
+  .kpi-card-icon {
+    @apply w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary transition-transform duration-500;
   }
 
-  .kpi-card:hover::after {
-    opacity: 1;
+  .kpi-card:hover .kpi-card-icon {
+    @apply scale-110 rotate-3;
+  }
+
+  /* Bento Grid Layouts */
+  .bento-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6;
+  }
+
+  .bento-item {
+    @apply glass-card overflow-hidden;
+  }
+
+  .bento-item-large {
+    @apply lg:col-span-2 lg:row-span-2;
+  }
+
+  .bento-item-wide {
+    @apply lg:col-span-2;
   }
 
   /* Gradient text */
