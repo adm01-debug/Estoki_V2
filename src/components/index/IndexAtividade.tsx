@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock } from "lucide-react";
 import { getStatusClasses } from "@/lib/statusColors";
+import { cn } from "@/lib/utils";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -113,5 +113,4 @@ export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
       </div>
     </motion.section>
   );
-}
 }
