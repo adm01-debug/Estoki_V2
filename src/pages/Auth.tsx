@@ -2,39 +2,13 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
-import { Box, Loader2, Eye, EyeOff, Zap, Globe, Wifi, BarChart3, Package, Users, Shield, Fingerprint } from "lucide-react";
+import { Box, Loader2, Zap } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
-import { z } from "zod";
-import { PasswordStrengthMeter } from "@/components/auth/PasswordStrengthMeter";
-
-const loginSchema = z.object({
-  email: z.string().trim().email({ message: "Email inválido" }),
-  password: z.string().min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
-});
-
-const signupSchema = z.object({
-  nome: z.string().trim().min(2, { message: "Nome deve ter no mínimo 2 caracteres" }).max(100),
-  email: z.string().trim().email({ message: "Email inválido" }),
-  password: z.string()
-    .min(8, { message: "Senha deve ter no mínimo 8 caracteres" })
-    .regex(/[A-Z]/, { message: "Deve conter ao menos uma letra maiúscula" })
-    .regex(/[a-z]/, { message: "Deve conter ao menos uma letra minúscula" })
-    .regex(/[0-9]/, { message: "Deve conter ao menos um número" })
-    .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: "Deve conter ao menos um caractere especial" }),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Senhas não conferem",
-  path: ["confirmPassword"],
-});
-
-const features = [
-  { icon: Package, title: "Gestão de Estoque em Tempo Real", desc: "Controle total de entradas, saídas e posições" },
-  { icon: BarChart3, title: "Analytics Avançados", desc: "Relatórios e métricas detalhadas de operação" },
-  { icon: Users, title: "Gestão de Equipe", desc: "Gamificação e performance dos operadores" },
-];
+import { loginSchema, signupSchema } from "@/components/auth/authSchema";
+import { BrandingContent } from "@/components/auth/BrandingContent";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { SignupForm } from "@/components/auth/SignupForm";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -42,7 +16,6 @@ const AuthPage = () => {
 
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   // Login fields
@@ -57,19 +30,9 @@ const AuthPage = () => {
   const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
   const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
 
-  // IP info
-  const [ipInfo, setIpInfo] = useState<{ ip: string; city?: string; country?: string } | null>(null);
-
   useEffect(() => {
     if (!loading && user) navigate("/");
   }, [user, loading, navigate]);
-
-  useEffect(() => {
-    fetch("https://ipapi.co/json/")
-      .then(r => r.json())
-      .then(data => setIpInfo({ ip: data.ip, city: data.city, country: data.country_code }))
-      .catch(() => {});
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,7 +117,7 @@ const AuthPage = () => {
 
   return (
     <div className="min-h-screen flex relative overflow-hidden">
-      {/* Background */}
+      {/* Background Layers */}
       <div className="absolute inset-0 bg-sidebar" />
       <div className="absolute top-[-30%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary/[0.05] blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/[0.03] blur-[100px] pointer-events-none" />
@@ -166,54 +129,7 @@ const AuthPage = () => {
         }}
       />
 
-      {/* LEFT SIDE - Branding (hidden on mobile) */}
-      <div className="hidden lg:flex flex-col justify-between relative z-10 w-1/2 p-10 xl:p-16">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
-            <Box className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-sidebar-foreground tracking-tight">ESTOKI</h2>
-            <p className="text-[10px] font-semibold tracking-[0.3em] text-primary uppercase">Warehouse Suite</p>
-          </div>
-        </div>
-
-        {/* Hero */}
-        <div className="space-y-6 max-w-lg">
-          <h1 className="text-4xl xl:text-5xl font-bold text-sidebar-foreground leading-tight">
-            Gerencie seu armazém com{" "}
-            <span className="text-primary">inteligência</span>
-          </h1>
-          <p className="text-sidebar-foreground/50 text-lg leading-relaxed">
-            Monitore operações em tempo real, otimize a performance da equipe e tome decisões baseadas em dados.
-          </p>
-
-          {/* Feature cards */}
-          <div className="space-y-3 pt-4">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="flex items-center gap-4 p-4 rounded-xl border border-sidebar-border/50 bg-sidebar-accent/30 backdrop-blur-sm hover:border-primary/30 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <f.icon className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-sidebar-foreground">{f.title}</p>
-                  <p className="text-xs text-sidebar-foreground/40">{f.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="flex items-center gap-2 text-sidebar-foreground/20 text-xs">
-          <Shield className="h-3.5 w-3.5" />
-          <span>Criptografia end-to-end · SOC 2 Compliant</span>
-        </div>
-      </div>
+      <BrandingContent />
 
       {/* RIGHT SIDE - Auth Form */}
       <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
@@ -236,65 +152,32 @@ const AuthPage = () => {
             </p>
           </div>
 
-          {/* IP Badge - compact footer style */}
-
-          {/* Form */}
           {mode === "login" ? (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="login-email" className="text-sidebar-foreground/70 text-sm font-medium">Email</Label>
-                <Input id="login-email" type="email" placeholder="seu@email.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} disabled={isSubmitting} className={inputClasses} />
-                {loginErrors.email && <p className="text-xs text-destructive" role="alert">{loginErrors.email}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="login-password" className="text-sidebar-foreground/70 text-sm font-medium">Senha</Label>
-                  <button type="button" className="text-xs text-primary hover:text-primary/80 font-medium transition-colors">Esqueceu a senha?</button>
-                </div>
-                <div className="relative">
-                  <Input id="login-password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} disabled={isSubmitting} className={`${inputClasses} pr-10`} />
-                  <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 text-sidebar-foreground/30 hover:text-sidebar-foreground hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-                {loginErrors.password && <p className="text-xs text-destructive" role="alert">{loginErrors.password}</p>}
-              </div>
-              <Button type="submit" className="w-full h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-glow text-primary-foreground font-semibold" disabled={isSubmitting}>
-                {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Entrando...</> : <><Zap className="mr-2 h-4 w-4" />Entrar</>}
-              </Button>
-            </form>
+            <LoginForm 
+              onSubmit={handleLogin}
+              email={loginEmail}
+              setEmail={setLoginEmail}
+              password={loginPassword}
+              setPassword={setLoginPassword}
+              errors={loginErrors}
+              isSubmitting={isSubmitting}
+              inputClasses={inputClasses}
+            />
           ) : (
-            <form onSubmit={handleSignup} className="space-y-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="signup-nome" className="text-sidebar-foreground/70 text-sm font-medium">Nome</Label>
-                <Input id="signup-nome" type="text" placeholder="Seu nome" value={signupNome} onChange={(e) => setSignupNome(e.target.value)} disabled={isSubmitting} maxLength={100} className={inputClasses} />
-                {signupErrors.nome && <p className="text-xs text-destructive" role="alert">{signupErrors.nome}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="signup-email" className="text-sidebar-foreground/70 text-sm font-medium">Email</Label>
-                <Input id="signup-email" type="email" placeholder="seu@email.com" value={signupEmail} onChange={(e) => setSignupEmail(e.target.value)} disabled={isSubmitting} className={inputClasses} />
-                {signupErrors.email && <p className="text-xs text-destructive" role="alert">{signupErrors.email}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="signup-password" className="text-sidebar-foreground/70 text-sm font-medium">Senha</Label>
-                <div className="relative">
-                  <Input id="signup-password" type={showPassword ? "text" : "password"} placeholder="Mínimo 8 caracteres" value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} disabled={isSubmitting} className={`${inputClasses} pr-10`} />
-                  <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-full px-3 text-sidebar-foreground/30 hover:text-sidebar-foreground hover:bg-transparent" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
-                {signupErrors.password && <p className="text-xs text-destructive" role="alert">{signupErrors.password}</p>}
-                <PasswordStrengthMeter password={signupPassword} />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="signup-confirm" className="text-sidebar-foreground/70 text-sm font-medium">Confirmar Senha</Label>
-                <Input id="signup-confirm" type={showPassword ? "text" : "password"} placeholder="Repita a senha" value={signupConfirmPassword} onChange={(e) => setSignupConfirmPassword(e.target.value)} disabled={isSubmitting} className={inputClasses} />
-                {signupErrors.confirmPassword && <p className="text-xs text-destructive" role="alert">{signupErrors.confirmPassword}</p>}
-              </div>
-              <Button type="submit" className="w-full h-11 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-glow text-primary-foreground font-semibold" disabled={isSubmitting}>
-                {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Cadastrando...</> : "Criar Conta"}
-              </Button>
-            </form>
+            <SignupForm 
+              onSubmit={handleSignup}
+              nome={signupNome}
+              setNome={setSignupNome}
+              email={signupEmail}
+              setEmail={setSignupEmail}
+              password={signupPassword}
+              setPassword={setSignupPassword}
+              confirmPassword={signupConfirmPassword}
+              setConfirmPassword={setSignupConfirmPassword}
+              errors={signupErrors}
+              isSubmitting={isSubmitting}
+              inputClasses={inputClasses}
+            />
           )}
 
           {/* Divider */}
@@ -325,41 +208,25 @@ const AuthPage = () => {
               )}
               Entrar com Google
             </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full h-11 border-sidebar-border bg-sidebar-accent/30 text-sidebar-foreground/40 cursor-not-allowed opacity-60 relative"
-              disabled
-            >
-              <Fingerprint className="mr-2 h-4 w-4" />
-              Entrar com Passkey
-              <span className="ml-2 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Em breve</span>
-            </Button>
           </div>
 
-          {/* Toggle mode */}
-          <p className="text-center text-sm text-sidebar-foreground/40">
-            {mode === "login" ? (
-              <>Não tem uma conta?{" "}<button type="button" onClick={() => setMode("signup")} className="text-primary hover:text-primary/80 font-semibold transition-colors">Registre-se</button></>
-            ) : (
-              <>Já tem uma conta?{" "}<button type="button" onClick={() => setMode("login")} className="text-primary hover:text-primary/80 font-semibold transition-colors">Entrar</button></>
-            )}
-          </p>
-
-          {/* Security badge + IP info */}
-          <div className="flex flex-col items-center gap-1 text-[11px] text-sidebar-foreground/20">
-            <div className="flex items-center gap-1.5">
-              <Shield className="h-3 w-3" />
-              <span>Conexão segura · Dados criptografados</span>
-            </div>
-            {ipInfo && (
-              <div className="flex items-center gap-1.5">
-                <Globe className="h-3 w-3" />
-                <span className="font-mono">{ipInfo.ip}</span>
-                <span>· {ipInfo.city}, {ipInfo.country}</span>
-              </div>
-            )}
+          {/* Footer toggle */}
+          <div className="text-center pt-2">
+            <button
+              type="button"
+              className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors"
+              onClick={() => {
+                setMode(mode === "login" ? "signup" : "login");
+                setLoginErrors({});
+                setSignupErrors({});
+              }}
+            >
+              {mode === "login" ? (
+                <>Não tem uma conta? <span className="text-primary font-semibold">Cadastre-se</span></>
+              ) : (
+                <>Já tem uma conta? <span className="text-primary font-semibold">Faça login</span></>
+              )}
+            </button>
           </div>
         </div>
       </div>
