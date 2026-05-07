@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LucideIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface KPIItem {
   icon: LucideIcon;
@@ -77,5 +77,4 @@ export function IndexKPIs({ items, loading, onNavigate }: Props) {
       ))}
     </div>
   );
-}
 }
