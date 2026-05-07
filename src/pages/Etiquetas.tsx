@@ -149,7 +149,7 @@ export default function Etiquetas() {
             <Card>
               <CardHeader className="py-3 px-4"><CardTitle className="text-sm flex items-center gap-2"><QrCode className="h-4 w-4" />Configuração</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div><Label className="text-xs">Tamanho da etiqueta</Label><Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Object.entries(tamanhos).map(([key, val]) => <SelectItem key={key} value={key}>{val.label} {key === "10x15" && "⭐"}</SelectItem>)}</SelectContent></Select></div>
+                <div><Label className="text-xs">Tamanho da etiqueta</Label><Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{Object.entries(tamanhos).map(([key, val]) => <SelectItem key={key} value={key}>{(val as {label: string}).label} {key === "10x15" && "⭐"}</SelectItem>)}</SelectContent></Select></div>
                 {fonte === "lotes" && <div><Label className="text-xs">Volumes por lote</Label><Input type="number" min={1} max={50} value={volumesPorLote} onChange={(e) => setVolumesPorLote(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))} /><p className="text-xs text-muted-foreground mt-1">Total: {(selectedIds.size || 1) * volumesPorLote} etiqueta(s)</p></div>}
               </CardContent>
             </Card>
