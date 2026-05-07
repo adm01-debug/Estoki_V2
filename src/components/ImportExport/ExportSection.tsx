@@ -26,7 +26,7 @@ export function ExportSection() {
         return;
       }
 
-      const Papa = (await import('papaparse')).default;
+      const Papa = (await import('papaparse')).default || (await import('papaparse'));
       const csv = Papa.unparse(data);
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
