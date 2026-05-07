@@ -32,10 +32,11 @@ import { Shield } from "lucide-react";
 
 import {
   SidebarNavButton, SidebarAccordionGroup, SidebarSectionLabel,
+  SidebarHeader, SidebarUserInfo, SidebarFooter,
   mobileNavItems, fabActions, sidebarMainItems, sidebarGroups,
   sidebarAdminItems, sidebarUtilityItems, getAllNavItems,
-  getRoleBadgeColor, getRoleLabel,
 } from "./sidebar";
+import { Header } from "./header/Header";
 
 interface AppLayoutProps {
   children?: ReactNode;
@@ -132,6 +133,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     navigate('/auth');
   };
 
+
   const handleNavigate = (path: string, isMobile = false) => {
     navigate(path);
     if (isMobile) setMobileMenuOpen(false);
@@ -144,53 +146,20 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     const isCollapsed = sidebarCollapsed && !isMobile;
     return (
       <>
-        {/* Logo */}
-        <div className={cn("p-4 border-b border-sidebar-border/50", isCollapsed && "p-3")}>
-          <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3")}>
-            <motion.div
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/50 flex items-center justify-center shadow-glow shrink-0"
-              whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Box className="h-5 w-5 text-primary-foreground" />
-            </motion.div>
-            {!isCollapsed && (
-              <div className="min-w-0">
-                <h1 className="font-extrabold text-sidebar-foreground text-base tracking-tight gradient-text">ESTOKI</h1>
-                <p className="text-[10px] text-sidebar-foreground/30 font-medium tracking-wide">ESTOQUE INTELIGENTE</p>
-              </div>
-            )}
-            {isMobile && (
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground">
-                <X className="h-5 w-5" />
-              </Button>
-            )}
-          </div>
-        </div>
+        <SidebarHeader 
+          isCollapsed={isCollapsed} 
+          isMobile={isMobile} 
+          onCloseMobile={() => setMobileMenuOpen(false)} 
+        />
 
-        {/* User Info */}
         {!isCollapsed && (
-          <div className="px-3 py-3 border-b border-sidebar-border/50">
-            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-sidebar-accent/40 border border-sidebar-border/30">
-              <div className="relative">
-                <Avatar className="h-9 w-9 ring-2 ring-primary/30 ring-offset-1 ring-offset-sidebar">
-                  <AvatarFallback className="bg-gradient-to-br from-primary to-primary/50 text-primary-foreground text-xs font-bold">
-                    {getInitials(userName)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-sidebar" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-sidebar-foreground truncate">{userName}</p>
-                <Badge variant="outline" className={cn("text-[9px] h-4 px-1.5 rounded-md", getRoleBadgeColor(currentRole))}>
-                  {getRoleLabel(currentRole)}
-                </Badge>
-              </div>
-            </div>
-          </div>
+          <SidebarUserInfo 
+            userName={userName} 
+            userRole={currentRole} 
+            initials={getInitials(userName)} 
+          />
         )}
 
-        {/* Navigation */}
         <ScrollArea className="flex-1">
           <nav className="p-2 space-y-0.5">
             {favorites.length > 0 && (
@@ -237,30 +206,12 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </nav>
         </ScrollArea>
 
-        {/* Footer */}
-        <div className="p-2 border-t border-sidebar-border/50 space-y-0.5">
-          <SidebarNavButton
-            item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
-            isActive={location.pathname === "/configuracoes"}
-            onClick={() => handleNavigate("/configuracoes", isMobile)}
-            collapsed={isCollapsed} onHover={preloadRoute}
-          />
-          {isCollapsed ? (
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <button onClick={handleLogout} className="w-full flex items-center justify-center px-3 py-3 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all">
-                  <LogOut className="h-[18px] w-[18px]" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent side="right">Sair</TooltipContent>
-            </Tooltip>
-          ) : (
-            <button onClick={handleLogout} aria-label="Sair da conta" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all">
-              <LogOut className="h-[18px] w-[18px]" aria-hidden="true" />
-              <span className="text-sm font-medium">Sair</span>
-            </button>
-          )}
-        </div>
+        <SidebarFooter 
+          pathname={location.pathname} 
+          onNavigate={(path) => handleNavigate(path, isMobile)} 
+          onLogout={handleLogout} 
+          isCollapsed={isCollapsed} 
+        />
       </>
     );
   };
@@ -272,85 +223,24 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
         Pular para conteúdo principal
       </a>
-      {/* Ambient Background */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute -top-[40%] -right-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
         <div className="absolute -bottom-[30%] -left-[10%] w-[40%] h-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border/40">
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
-        <div className={cn("relative flex items-center justify-between h-14 px-4 max-w-[1600px] mx-auto transition-all duration-300", mainPadding)}>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(true)} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
-              <Menu className="h-5 w-5" />
-            </Button>
-            {shouldShowBack && (
-              <Tooltip delayDuration={300}>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={handleBack} className="touch-friendly hover:bg-primary/10" aria-label="Voltar (Alt+←)">
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-xs">
-                  Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
-                </TooltipContent>
-              </Tooltip>
-            )}
-            <div className="flex items-center gap-2 lg:hidden">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
-                <Box className="h-4 w-4 text-primary-foreground" />
-              </div>
-              <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
-            </div>
-            {title && <h1 className="text-lg font-semibold text-foreground hidden sm:block">{title}</h1>}
-            <div className="hidden lg:block"><Breadcrumbs /></div>
-          </div>
-          <div className="flex items-center gap-0.5">
-            <GlobalSearch />
-            <LanguageSwitcher />
-            <NotificationCenter />
-            <ThemeToggle />
-            {rightAction}
-            <div className="ml-1 pl-2 border-l border-border/40">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10 rounded-xl" aria-label="Menu do usuário">
-                    <div className="relative">
-                      <Avatar className="h-8 w-8 ring-2 ring-primary/20 ring-offset-1 ring-offset-background">
-                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-xs font-bold">
-                          {getInitials(userName)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border-2 border-background" />
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl border-border/50">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col gap-1">
-                      <span className="font-semibold">{userName}</span>
-                      <span className="text-xs text-muted-foreground font-normal">{userEmail}</span>
-                      <Badge variant="outline" className={cn("w-fit mt-1", getRoleBadgeColor(currentRole))}>
-                        <Shield className="h-3 w-3 mr-1" />{getRoleLabel(currentRole)}
-                      </Badge>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
-                    <Settings className="h-4 w-4 mr-2" />Configurações
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive cursor-pointer" onClick={handleLogout}>
-                    <LogOut className="h-4 w-4 mr-2" />Sair
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header 
+        mainPadding={mainPadding}
+        onOpenMobileMenu={() => setMobileMenuOpen(true)}
+        shouldShowBack={shouldShowBack}
+        onBack={handleBack}
+        title={title}
+        rightAction={rightAction}
+        userName={userName}
+        userEmail={userEmail}
+        currentRole={currentRole}
+        onLogout={handleLogout}
+      />
+
 
       {/* Main Content */}
       <main id="main-content" className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)} aria-label="Conteúdo principal">

@@ -7,3 +7,6 @@ export {
   getRoleBadgeColor, getRoleLabel,
   type NavItem, type SidebarGroup,
 } from "./sidebarNavData";
+export { SidebarHeader } from "./SidebarHeader";
+export { SidebarUserInfo } from "./SidebarUserInfo";
+export { SidebarFooter } from "./SidebarFooter";
