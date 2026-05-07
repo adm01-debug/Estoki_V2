@@ -36,7 +36,7 @@ export function ImportSection() {
     setImporting(true);
     setResult(null);
 
-    const Papa = (await import('papaparse')).default;
+    const Papa = (await import('papaparse')).default || (await import('papaparse'));
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
