@@ -1,13 +1,1 @@
-project_id = "oztttjpqtbubfyhiypld"
-
-[functions.gerar-desafios-diarios]
-verify_jwt = false
-
-[functions.alerta-divergencia-fornecedor]
-verify_jwt = false
-
-[functions.previsao-demanda]
-verify_jwt = false
-
-[functions.scanner-ocr]
-verify_jwt = false
+project_id = "wrhidiguevvnqywlueps"
