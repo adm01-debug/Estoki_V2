@@ -27,11 +27,12 @@ export async function exportDashboardToPDF(
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  const kpiData = [
-    [`Taxa de Ocupação: ${kpis.taxaOcupacao}%`, `Posições Ocupadas: ${kpis.posicoesOcupadas}/${kpis.totalPosicoes}`],
-    [`Giro Médio: ${kpis.giroMedio} dias`, `Itens Parados (+30d): ${kpis.itensParados30dias}`],
-    [`Entradas Hoje: ${kpis.entradasHoje}`, `Saídas Hoje: ${kpis.saidasHoje}`],
-  ];
+   const kpiData = [
+     [`Taxa de Ocupação: ${kpis.taxaOcupacao}%`, `Posições Ocupadas: ${kpis.posicoesOcupadas}/${kpis.totalPosicoes}`],
+     [`Giro Médio: ${kpis.giroMedio} dias`, `Itens Parados (+30d): ${kpis.itensParados30dias}`],
+     [`Entradas Hoje: ${kpis.entradasHoje}`, `Saídas Hoje: ${kpis.saidasHoje}`],
+     [`Triagens Hoje: ${kpis.triagensHoje}`, `Triagens Pendentes: ${kpis.triagensPendentes}`],
+   ];
 
   let yPos = 50;
   kpiData.forEach(row => {
