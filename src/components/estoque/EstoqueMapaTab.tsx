@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { PosicaoEstoque, StatusPosicao } from "@/hooks/useEstoque";
 import { differenceInDays } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Package, Calendar, AlertTriangle, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 const statusConfig: Record<StatusPosicao, { bg: string; border: string; label: string }> = {
   livre: { bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre" },
@@ -34,6 +37,16 @@ interface EstoqueMapaTabProps {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10"
+            onClick={() => toast.success("IA: As melhores posições para recebimento hoje são na Rua A, Nível 1.", { icon: <Sparkles className="h-4 w-4 text-primary" /> })}
+          >
+            <Sparkles className="h-4 w-4" /> Sugestão IA
+          </Button>
+        </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}><ZoomOut className="h-4 w-4" /></Button>
           <span className="text-sm text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
@@ -53,6 +66,7 @@ interface EstoqueMapaTabProps {
       </div>
 
       <div className="overflow-auto pb-4">
+        <TooltipProvider>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-[600px] transition-transform" style={{ transform: `scale(${zoom})`, transformOrigin: "top left" }}>
           {ruas.map((rua, ruaIndex) => {
             const ruaPositions = filteredPositions.filter(p => p.porta_palete === rua);
@@ -89,8 +103,9 @@ interface EstoqueMapaTabProps {
                                  else heatmapStyle = { backgroundColor: '#22c55e', color: 'white', borderColor: '#15803d' }; // Green
                                }
                               return (
+                                <Tooltip key={position.id}>
+                                  <TooltipTrigger asChild>
                                 <motion.button
-                                  key={position.id}
                                   onClick={() => onSelectPosition(position)}
                                    className={cn(
                                      "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group", 
@@ -108,6 +123,39 @@ interface EstoqueMapaTabProps {
                                   )}
                                   <span className="opacity-0 group-hover:opacity-100 transition-opacity">{secao}</span>
                                 </motion.button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="w-64 p-3">
+                                    <div className="space-y-2">
+                                      <div className="flex justify-between items-center border-bottom pb-1 mb-1">
+                                        <span className="font-bold text-sm">{position.codigo}</span>
+                                        <Badge variant={position.status === 'livre' ? 'secondary' : 'default'} className="text-[10px]">
+                                          {statusConfig[position.status].label}
+                                        </Badge>
+                                      </div>
+                                      
+                                      {position.saldos && position.saldos.length > 0 ? (
+                                        <div className="space-y-1.5">
+                                          {position.saldos.map((s, i) => (
+                                            <div key={i} className="text-xs bg-muted/50 p-1.5 rounded">
+                                              <div className="flex items-center gap-1 font-medium truncate">
+                                                <Package className="h-3 w-3" /> {s.produto?.nome}
+                                              </div>
+                                              <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+                                                <span>SKU: {s.produto?.sku}</span>
+                                                <span>Qtd: {s.quantidade}</span>
+                                              </div>
+                                            </div>
+                                          ))}
+                                          <div className="flex items-center gap-1 text-[10px] text-muted-foreground mt-2">
+                                            <Calendar className="h-3 w-3" /> Armazenado há {diasArmazenado} dias
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <p className="text-xs text-muted-foreground">Posição vazia</p>
+                                      )}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
                               );
                             })}
                           </div>
@@ -128,6 +176,7 @@ interface EstoqueMapaTabProps {
             );
           })}
         </div>
+        </TooltipProvider>
       </div>
 
       <div className="flex flex-wrap gap-4 justify-center py-2 border-t">
