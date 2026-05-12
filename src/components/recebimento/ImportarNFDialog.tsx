@@ -63,19 +63,19 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
  
      setLoading(true);
      try {
-       // 1. Salvar documento NF-e
+       // 1. Salvar documento NF-e (usando nomes de colunas em inglês conforme o schema existente)
        const { data: doc, error: docError } = await supabase
          .from('nfe_documents')
          .insert([{
-           chave_acesso: nfeData.chaveAcesso,
-           numero: nfeData.numero,
-           serie: nfeData.serie,
-           data_emissao: nfeData.dataEmissao.toISOString(),
-           emitente_cnpj: nfeData.emitente.cnpj,
-           emitente_nome: nfeData.emitente.razaoSocial,
-           valor_total: nfeData.totais.valorTotal,
-           xml_content: '', // Opcional salvar o XML completo
-           status: 'importado'
+           access_key: nfeData.chaveAcesso,
+           number: parseInt(nfeData.numero),
+           series: parseInt(nfeData.serie),
+           issue_date: nfeData.dataEmissao.toISOString(),
+           emitter_cnpj: nfeData.emitente.cnpj,
+           emitter_name: nfeData.emitente.razaoSocial,
+           total_nfe: nfeData.totais.valorTotal,
+           xml_content: '', 
+           status: 'imported'
          }])
          .select()
          .single();
@@ -84,23 +84,19 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
  
        // 2. Criar recebimentos e itens da NF
        for (const produto of nfeData.produtos) {
-         // Tentar encontrar o produto pelo SKU/EAN
          const { data: prodData } = await supabase
            .from('produtos')
            .select('id')
            .or(`sku.eq.${produto.codigo},sku.eq.${produto.ean}`)
            .maybeSingle();
  
-         // Criar item da NF
          await supabase.from('nfe_items').insert([{
            nfe_id: doc.id,
-           codigo_produto: produto.codigo,
-           descricao: produto.descricao,
-           unidade: produto.unidade,
-           quantidade: produto.quantidade,
-           valor_unitario: produto.valorUnitario,
-           valor_total: produto.valorTotal,
-           produto_id: prodData?.id || null
+           product_code: produto.codigo,
+           description: produto.descricao,
+           quantity: produto.quantidade,
+           unit_price: produto.valorUnitario,
+           total: produto.valorTotal
          }]);
  
          // Criar lote de recebimento
