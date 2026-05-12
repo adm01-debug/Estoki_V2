@@ -53,17 +53,28 @@ export const useEstoque = () => {
     }
   });
 
-  const updatePosicao = useMutation({
-    mutationFn: async ({ id, ...dados }: PosicaoUpdate & { id: string }) => {
-      const { data, error } = await supabase.from('posicoes_estoque').update(dados).eq('id', id).select().single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
-      toast({ title: 'Sucesso', description: 'Posição atualizada!' });
-    }
-  });
+   const updatePosicao = useMutation({
+     mutationFn: async ({ id, ids, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[] })) => {
+       if (ids && ids.length > 0) {
+         const { data, error } = await supabase.from('posicoes_estoque').update(dados).in('id', ids).select();
+         if (error) throw error;
+         return data;
+       } else if (id) {
+         const { data, error } = await supabase.from('posicoes_estoque').update(dados).eq('id', id).select().single();
+         if (error) throw error;
+         return data;
+       }
+       throw new Error('ID ou lista de IDs não fornecida para atualização');
+     },
+     onSuccess: (data, variables) => {
+       queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
+       const count = Array.isArray(data) ? data.length : 1;
+       toast({ 
+         title: 'Sucesso', 
+         description: count > 1 ? `${count} posições atualizadas!` : 'Posição atualizada!' 
+       });
+     }
+   });
 
   const deletePosicao = useMutation({
     mutationFn: async (id: string) => {
