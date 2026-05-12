@@ -13,6 +13,7 @@ import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/use
 import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { toast } from "sonner";
 import {
   MapPin,
    Search,
