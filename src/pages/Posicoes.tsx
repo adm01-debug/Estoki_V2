@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+ import { useState, useMemo } from "react";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -15,13 +15,17 @@ import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialo
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import {
   MapPin,
-  Search,
-  Plus,
-  Filter,
-  Warehouse,
-  Package,
-  Box,
-  X,
+   Search,
+   Plus,
+   Filter,
+   Warehouse,
+   Package,
+   Box,
+   X,
+   Download,
+   CheckSquare,
+   Lock,
+   Unlock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -32,8 +36,33 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
   bloqueado: { label: "Bloqueado", variant: "destructive" },
 };
 
-export default function PosicoesPage() {
-  const { posicoes: rawPosicoes, loading, error, getEstatisticas, refetch } = useEstoque();
+ export default function PosicoesPage() {
+   const { posicoes: rawPosicoes, loading, updatePosicao, getEstatisticas, refetch } = useEstoque();
+   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+   const toggleSelection = (id: string) => {
+     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+   };
+ 
+   const clearSelection = () => setSelectedIds([]);
+ 
+   const handleBulkUpdate = async (status: StatusPosicao) => {
+     await updatePosicao.mutateAsync({ ids: selectedIds, status });
+     clearSelection();
+   };
+ 
+   const handleExport = () => {
+     const headers = ["Codigo", "Tipo", "Status", "Zona", "Secao", "Nivel"];
+     const rows = filtered.map(p => [p.codigo, p.tipo, p.status, p.zona || "", p.secao || "", p.nivel || ""]);
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `posicoes_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
+ 
   const posicoes = rawPosicoes || [];
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
@@ -71,14 +100,34 @@ export default function PosicoesPage() {
     <AppLayout
       title="Posições de Estoque"
       showBack
-      rightAction={
-        <NovaPosicaoDialog onSuccess={refetch}>
-          <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /><span className="hidden sm:inline">Nova Posição</span></Button>
-        </NovaPosicaoDialog>
-      }
+       rightAction={
+         <div className="flex gap-2">
+           <Button size="sm" variant="outline" className="gap-2" onClick={handleExport} title="Exportar CSV">
+             <Download className="h-4 w-4" />
+             <span className="hidden sm:inline">Exportar</span>
+           </Button>
+           <NovaPosicaoDialog onSuccess={refetch}>
+             <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /><span className="hidden sm:inline">Nova Posição</span></Button>
+           </NovaPosicaoDialog>
+         </div>
+       }
     >
       <PageTransition>
-        <div className="p-4 space-y-4">
+         <div className="p-4 space-y-4">
+           {selectedIds.length > 0 && (
+             <motion.div 
+               initial={{ opacity: 0, y: -10 }} 
+               animate={{ opacity: 1, y: 0 }}
+               className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20 sticky top-0 z-10"
+             >
+               <CheckSquare className="h-4 w-4 text-primary" />
+               <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
+               <div className="flex-1" />
+               <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
+               <Button size="sm" variant="outline" className="gap-1" onClick={() => handleBulkUpdate("bloqueado")}><Lock className="h-3 w-3" />Bloquear</Button>
+               <Button size="sm" variant="outline" className="gap-1" onClick={() => handleBulkUpdate("livre")}><Unlock className="h-3 w-3" />Liberar</Button>
+             </motion.div>
+           )}
           {/* Stats */}
           <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card>
@@ -169,8 +218,12 @@ export default function PosicoesPage() {
                   const cfg = statusLabels[pos.status];
                   return (
                     <motion.div key={pos.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.02 }}>
-                      <Card className="cursor-pointer hover:border-primary/50 transition-colors" onClick={() => setSelectedPosicao(pos)}>
-                        <CardContent className="p-3 flex items-center justify-between">
+                       <Card className={cn("cursor-pointer hover:border-primary/50 transition-colors relative overflow-hidden", selectedIds.includes(pos.id) && "border-primary bg-primary/5")} onClick={() => setSelectedPosicao(pos)}>
+                         {selectedIds.includes(pos.id) && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
+                         <CardContent className="p-3 flex items-center justify-between">
+                           <div className="flex items-center gap-2 mr-2" onClick={(e) => { e.stopPropagation(); toggleSelection(pos.id); }}>
+                             <input type="checkbox" checked={selectedIds.includes(pos.id)} onChange={() => {}} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                           </div>
                           <div className="flex items-center gap-3">
                             <div className={cn("w-3 h-3 rounded-full", pos.status === "livre" ? "bg-muted-foreground/30" : pos.status === "ocupado" ? "bg-success" : pos.status === "reservado" ? "bg-warning" : "bg-destructive")} />
                             <div>
