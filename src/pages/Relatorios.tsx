@@ -3,7 +3,8 @@ import { useState, useMemo, useCallback } from "react";
 import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { exportToExcel } from "@/utils/exportExcel";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend } from "recharts";
+ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, Line } from "recharts";
+ import { useAuditLog } from "@/hooks/useAuditLog";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,8 +20,9 @@ const CHART_COLORS: Record<string, string> = {
   separacao: "#f59e0b", saida_transporte: "#ef4444", entrega: "#22c55e", ajuste_estoque: "#6b7280",
 };
 
-export default function RelatoriosPage() {
+ export default function RelatoriosPage() {
    const { movimentacoes, loading } = useMovimentacoes();
+   const { log } = useAuditLog();
    const [operadorFiltro, setOperadorFiltro] = useState<string>("todos");
    const [metaDiaria, setMetaDiaria] = useState<number>(100);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,7 +37,8 @@ export default function RelatoriosPage() {
     const dentroDoPeriodo = isWithinInterval(movDate, { start: startOfDay(dataInicio), end: endOfDay(dataFim) });
      const matchSearch = searchTerm === "" || 
        mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-       mov.produto_sku?.toLowerCase().includes(searchTerm.toLowerCase());
+       mov.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+       mov.lote_numero?.toLowerCase().includes(searchTerm.toLowerCase());
      const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
      const matchOperador = operadorFiltro === "todos" || mov.operador_id === operadorFiltro;
      return dentroDoPeriodo && matchSearch && matchTipo && matchOperador;
@@ -91,9 +94,6 @@ export default function RelatoriosPage() {
     return Object.entries(agrupado).map(([tipo, quantidade]) => ({ tipo: tipoLabels[tipo as TipoMovimentacao] || tipo, quantidade, cor: CHART_COLORS[tipo] || "#6b7280" }));
   }, [dadosFiltrados]);
 
-   const { log } = import.meta.env.VITE_DEV ? { log: { custom: () => {} } } : require("@/hooks/useAuditLog").useAuditLog();
-   
-   const handleExportPDF = useCallback(async () => {
      setExportando(true);
      try {
        const { jsPDF } = await import('jspdf');
@@ -198,8 +198,9 @@ export default function RelatoriosPage() {
                     <XAxis dataKey="data" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
                     <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
                     <Tooltip /><Legend />
-                    <Area type="monotone" dataKey="entradas" name="Entradas" stackId="1" stroke={CHART_COLORS.entradas} fill={CHART_COLORS.entradas} fillOpacity={0.6} />
-                    <Area type="monotone" dataKey="saidas" name="Saídas" stackId="2" stroke={CHART_COLORS.saidas} fill={CHART_COLORS.saidas} fillOpacity={0.6} />
+                     <Area type="monotone" dataKey="entradas" name="Entradas" stackId="1" stroke={CHART_COLORS.entradas} fill={CHART_COLORS.entradas} fillOpacity={0.6} />
+                     <Area type="monotone" dataKey="saidas" name="Saídas" stackId="2" stroke={CHART_COLORS.saidas} fill={CHART_COLORS.saidas} fillOpacity={0.6} />
+                     <Line type="monotone" dataKey="meta" name="Meta Diária" stroke="#94a3b8" strokeDasharray="5 5" dot={false} />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
