@@ -180,22 +180,6 @@ export default function MovimentacaoPage() {
               setFormErrors={setFormErrors}
             />
 
-            {tipoMovimento === "transferencia" && (
-              <div className="flex justify-end">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-xs text-primary gap-1"
-                  onClick={() => {
-                    setShowLocationSuggestion(true);
-                    setFormData(prev => ({ ...prev, localizacao: "PP2-S05-N2" }));
-                    toast.success("IA: Sugestão de destino baseada em giro e curva ABC", { icon: <Sparkles className="h-3 w-3" /> });
-                  }}
-                >
-                  <Sparkles className="h-3 w-3" /> Sugerir Local
-                </Button>
-              </div>
-            )}
 
             {tipoMovimento === "armazenamento" && (
               <div className="flex justify-end">
