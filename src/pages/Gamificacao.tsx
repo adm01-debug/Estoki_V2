@@ -13,6 +13,7 @@ import { XPBar } from "@/components/gamificacao/XPBar";
 import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
 import { ConquistasSystem } from "@/components/gamificacao/ConquistasSystem";
 import { StreakResumo } from "@/components/gamificacao/StreakSystem";
+import { GamificacaoLoja } from "@/components/gamificacao/GamificacaoLoja";
 import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -139,11 +140,14 @@ export default function GamificacaoPage() {
 
           {/* Tabs */}
           <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="visao-geral">Geral</TabsTrigger>
               <TabsTrigger value="desafios">Desafios</TabsTrigger>
               <TabsTrigger value="conquistas">Conquistas</TabsTrigger>
               <TabsTrigger value="ranking">Ranking</TabsTrigger>
+              <TabsTrigger value="loja" className="flex items-center gap-1">
+                <Star className="h-3 w-3 text-primary animate-pulse" /> Loja
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="visao-geral" className="space-y-4">
@@ -161,6 +165,10 @@ export default function GamificacaoPage() {
 
             <TabsContent value="ranking">
               <PlacarLideres />
+            </TabsContent>
+
+            <TabsContent value="loja">
+              <GamificacaoLoja />
             </TabsContent>
           </Tabs>
         </div>

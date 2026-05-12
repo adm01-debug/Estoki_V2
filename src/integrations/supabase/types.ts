@@ -225,6 +225,57 @@ export type Database = {
           },
         ]
       }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string | null
+          entity_label: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+          user_nome: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_label?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          user_nome?: string | null
+        }
+        Relationships: []
+      }
       checkpoints_zona: {
         Row: {
           created_at: string
@@ -828,11 +879,80 @@ export type Database = {
         }
         Relationships: []
       }
+      gamificacao_loja: {
+        Row: {
+          ativo: boolean | null
+          categoria: string | null
+          created_at: string | null
+          descricao: string | null
+          estoque: number | null
+          id: string
+          imagem_url: string | null
+          nome: string
+          preco: number
+        }
+        Insert: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          estoque?: number | null
+          id?: string
+          imagem_url?: string | null
+          nome: string
+          preco: number
+        }
+        Update: {
+          ativo?: boolean | null
+          categoria?: string | null
+          created_at?: string | null
+          descricao?: string | null
+          estoque?: number | null
+          id?: string
+          imagem_url?: string | null
+          nome?: string
+          preco?: number
+        }
+        Relationships: []
+      }
+      gamificacao_transacoes: {
+        Row: {
+          data_compra: string | null
+          id: string
+          item_id: string | null
+          user_id: string | null
+          valor: number
+        }
+        Insert: {
+          data_compra?: string | null
+          id?: string
+          item_id?: string | null
+          user_id?: string | null
+          valor: number
+        }
+        Update: {
+          data_compra?: string | null
+          id?: string
+          item_id?: string | null
+          user_id?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gamificacao_transacoes_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "gamificacao_loja"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gamificacao_usuarios: {
         Row: {
           created_at: string
           id: string
           nivel: number
+          pontos: number | null
           updated_at: string
           user_id: string
           xp_proximo_nivel: number
@@ -842,6 +962,7 @@ export type Database = {
           created_at?: string
           id?: string
           nivel?: number
+          pontos?: number | null
           updated_at?: string
           user_id: string
           xp_proximo_nivel?: number
@@ -851,6 +972,7 @@ export type Database = {
           created_at?: string
           id?: string
           nivel?: number
+          pontos?: number | null
           updated_at?: string
           user_id?: string
           xp_proximo_nivel?: number
@@ -2867,6 +2989,7 @@ export type Database = {
           created_at: string
           id: string
           nivel: number
+          pontos: number | null
           updated_at: string
           user_id: string
           xp_proximo_nivel: number
@@ -2895,6 +3018,10 @@ export type Database = {
       collect_challenge_reward: {
         Args: { p_desafio_id: string }
         Returns: Json
+      }
+      descontar_pontos: {
+        Args: { p_user_id: string; p_valor: number }
+        Returns: undefined
       }
       get_user_role: {
         Args: { _user_id: string }

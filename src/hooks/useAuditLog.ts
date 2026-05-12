@@ -1,10 +1,11 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/contexts/AuthContext';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export type AuditAction = 
-  | 'create' | 'update' | 'delete' | 'view' 
-  | 'login' | 'logout' | 'export' | 'import'
-  | 'approve' | 'reject' | 'transfer' | 'adjust' | 'bulk_create';
+  | "create" | "update" | "delete" | "view" 
+  | "login" | "logout" | "export" | "import"
+  | "approve" | "reject" | "transfer" | "adjust" | "bulk_create";
 
 export interface AuditLogEntry {
   id: string;
@@ -23,63 +24,61 @@ export interface AuditLogEntry {
   created_at: string;
 }
 
-const localLogs: AuditLogEntry[] = [];
-
 export function useAuditLog() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
   const { data: logs = [], isLoading } = useQuery({
-    queryKey: ['audit-logs'],
-    queryFn: async () => [...localLogs].reverse()
+    queryKey: ["audit-logs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("audit_logs")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1000);
+        
+      if (error) throw error;
+      return data as AuditLogEntry[];
+    }
   });
   
   const logAction = useMutation({
-    mutationFn: async (entry: Omit<AuditLogEntry, 'id' | 'created_at' | 'user_id'>) => {
-      const newEntry: AuditLogEntry = {
+    mutationFn: async (entry: Omit<AuditLogEntry, "id" | "created_at" | "user_id">) => {
+      if (!user) return;
+      
+      const newEntry = {
         ...entry,
-        id: crypto.randomUUID(),
-        user_id: user?.id || 'anonymous',
-        user_email: user?.email,
-        created_at: new Date().toISOString(),
+        user_id: user.id,
+        user_email: user.email,
         user_agent: navigator.userAgent,
-        ip_address: 'local'
+        ip_address: "client-side"
       };
-      localLogs.push(newEntry);
-      if (import.meta.env.DEV) console.log('[Audit]', newEntry.action, newEntry.entity_type, newEntry.entity_id);
-      return newEntry;
+
+      const { data, error } = await supabase.from("audit_logs").insert([newEntry as any]).select().single();
+
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['audit-logs'] });
+      queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
     }
   });
   
   const log = {
     create: (entityType: string, entityId: string, entityLabel?: string, newValues?: Record<string, unknown>) => 
-      logAction.mutateAsync({ action: 'create', entity_type: entityType, entity_id: entityId, entity_label: entityLabel, new_values: newValues }),
+      logAction.mutate({ action: "create", entity_type: entityType, entity_id: entityId, entity_label: entityLabel, new_values: newValues }),
     update: (entityType: string, entityId: string, oldValues?: Record<string, unknown>, newValues?: Record<string, unknown>) => 
-      logAction.mutateAsync({ action: 'update', entity_type: entityType, entity_id: entityId, old_values: oldValues, new_values: newValues }),
+      logAction.mutate({ action: "update", entity_type: entityType, entity_id: entityId, old_values: oldValues, new_values: newValues }),
     delete: (entityType: string, entityId: string, entityLabel?: string) => 
-      logAction.mutateAsync({ action: 'delete', entity_type: entityType, entity_id: entityId, entity_label: entityLabel }),
+      logAction.mutate({ action: "delete", entity_type: entityType, entity_id: entityId, entity_label: entityLabel }),
     view: (entityType: string, entityId?: string) => 
-      logAction.mutateAsync({ action: 'view', entity_type: entityType, entity_id: entityId }),
+      logAction.mutate({ action: "view", entity_type: entityType, entity_id: entityId }),
     export: (entityType: string, metadata?: Record<string, unknown>) => 
-      logAction.mutateAsync({ action: 'export', entity_type: entityType, metadata }),
-    login: () => logAction.mutateAsync({ action: 'login', entity_type: 'session' }),
-    logout: () => logAction.mutateAsync({ action: 'logout', entity_type: 'session' }),
+      logAction.mutate({ action: "export", entity_type: entityType, metadata }),
+    login: () => logAction.mutate({ action: "login", entity_type: "session" }),
+    logout: () => logAction.mutate({ action: "logout", entity_type: "session" }),
     custom: (action: AuditAction, entityType: string, metadata?: Record<string, unknown>) => 
-      logAction.mutateAsync({ action, entity_type: entityType, metadata })
-  };
-  
-  const filterLogs = (filters: { action?: AuditAction; entityType?: string; userId?: string; startDate?: Date; endDate?: Date }) => {
-    return logs.filter(entry => {
-      if (filters.action && entry.action !== filters.action) return false;
-      if (filters.entityType && entry.entity_type !== filters.entityType) return false;
-      if (filters.userId && entry.user_id !== filters.userId) return false;
-      if (filters.startDate && new Date(entry.created_at) < filters.startDate) return false;
-      if (filters.endDate && new Date(entry.created_at) > filters.endDate) return false;
-      return true;
-    });
+      logAction.mutate({ action, entity_type: entityType, metadata })
   };
   
   const getStats = () => {
@@ -95,5 +94,5 @@ export function useAuditLog() {
     return { total: logs.length, hoje: logsHoje.length, porAcao: actionCounts, porEntidade: entityCounts };
   };
   
-  return { logs, isLoading, log, filterLogs, getStats };
+  return { logs, isLoading, log, getStats };
 }
