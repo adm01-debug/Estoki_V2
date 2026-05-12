@@ -101,7 +101,11 @@ export default function EstoquePage() {
          const matchRua = p.porta_palete?.toLowerCase().includes(searchTerm);
          const matchNivel = p.nivel?.toLowerCase().includes(searchTerm);
          const matchZona = p.zona?.toLowerCase().includes(searchTerm);
-         return matchCodigo || matchRua || matchNivel || matchZona;
+          const matchProduto = p.saldos?.some(s => 
+            s.produto?.nome.toLowerCase().includes(searchTerm) || 
+            s.produto?.sku.toLowerCase().includes(searchTerm)
+          );
+          return matchCodigo || matchRua || matchNivel || matchZona || matchProduto;
        }
        return true;
      });
