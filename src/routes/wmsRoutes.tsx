@@ -39,7 +39,6 @@ const DashboardTriador = lazy(() => import("@/pages/DashboardTriador"));
 const FormularioTriagem = lazy(() => import("@/pages/FormularioTriagem"));
 const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
 const OrdersPage = lazy(() => import("@/pages/orders/OrdersPage"));
-    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
 
 export const wmsRoutes = (
   <>
@@ -76,5 +75,6 @@ export const wmsRoutes = (
     <Route path="triador" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense></RouteErrorBoundary>} />
     <Route path="formulario-triagem" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><FormularioTriagem /></Suspense></RouteErrorBoundary>} />
     <Route path="qualidade" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><QualityPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
   </>
 );
