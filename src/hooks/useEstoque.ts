@@ -111,15 +111,32 @@ export const useEstoque = () => {
           (payload as any).reservado_em = null;
         }
 
+        let updatedData;
         if (ids && ids.length > 0) {
           const { data, error } = await supabase.from('posicoes_estoque').update(payload).in('id', ids).select();
           if (error) throw error;
-          return data;
+          updatedData = data;
         } else if (id) {
           const { data, error } = await supabase.from('posicoes_estoque').update(payload).eq('id', id).select().single();
           if (error) throw error;
-          return data;
+          updatedData = data;
+        } else {
+          throw new Error('ID ou lista de IDs não fornecida para atualização');
         }
+
+        // Log status change if status was updated
+        if (dados.status && user) {
+          const posIds = ids || (id ? [id] : []);
+          const logs = posIds.map(posId => ({
+            posicao_id: posId,
+            status_novo: dados.status,
+            operador_id: user.id,
+            motivo: (dados as any).motivo || 'Alteração manual via painel'
+          }));
+          await supabase.from('posicao_status_log').insert(logs);
+        }
+
+        return updatedData;
         throw new Error('ID ou lista de IDs não fornecida para atualização');
       },
      onSuccess: (data, variables) => {
