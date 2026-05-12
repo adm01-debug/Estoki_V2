@@ -1357,6 +1357,33 @@ export type Database = {
         }
         Relationships: []
       }
+      metricas_dashboard: {
+        Row: {
+          created_at: string | null
+          data: string
+          id: string
+          tipo: string
+          updated_at: string | null
+          valor: number
+        }
+        Insert: {
+          created_at?: string | null
+          data?: string
+          id?: string
+          tipo: string
+          updated_at?: string | null
+          valor?: number
+        }
+        Update: {
+          created_at?: string | null
+          data?: string
+          id?: string
+          tipo?: string
+          updated_at?: string | null
+          valor?: number
+        }
+        Relationships: []
+      }
       metricas_operacionais: {
         Row: {
           acuracidade_picking: number | null
@@ -2879,6 +2906,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      incrementar_metrica_dashboard: {
+        Args: { p_tipo: string; p_valor?: number }
+        Returns: undefined
       }
       record_failed_login: {
         Args: { p_email: string; p_ip_address?: unknown }
