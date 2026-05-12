@@ -109,8 +109,8 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) 
                   {historico.map((event) => (
                     <div key={event.id} className="relative pl-6 border-l pb-4 last:pb-0">
                       <div className="absolute left-[-9px] top-0 h-4 w-4 rounded-full bg-background border-2 border-primary flex items-center justify-center">
-                        {event.tipo_evento === 'entrada' ? <ArrowDownLeft className="h-2 w-2 text-success" /> : 
-                         event.tipo_evento === 'saida' ? <ArrowUpRight className="h-2 w-2 text-destructive" /> : 
+                        {['recebimento_nf', 'devolucao', 'armazenamento'].includes(event.tipo_evento) ? <ArrowDownLeft className="h-2 w-2 text-success" /> : 
+                         ['saida_transporte', 'entrega', 'separacao', 'carregamento'].includes(event.tipo_evento) ? <ArrowUpRight className="h-2 w-2 text-destructive" /> : 
                          <RefreshCcw className="h-2 w-2 text-primary" />}
                       </div>
                       <div className="flex flex-col gap-1">
