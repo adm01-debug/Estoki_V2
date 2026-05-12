@@ -20,36 +20,21 @@ export function useQualityControl() {
     queryKey: ["quality-inspections"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("audit_logs")
-        .select("*")
-        .eq("entity_type", "quality_control")
+        .from("inspecoes_qualidade")
+        .select(`
+          *,
+          lote:lotes(numero_lote, produto:produtos(nome))
+        `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      // Simulando inspeções a partir dos logs de auditoria por enquanto
-      return data.map(log => {
-        const values = (log.new_values as any) || {};
-        return {
-          id: log.id,
-          lote_id: log.entity_id || "",
-          inspecionado_por: log.user_id,
-          resultado: values.resultado || "aprovado",
-          pontuacao: values.pontuacao || 100,
-          created_at: log.created_at
-        };
-      }) as QualityInspection[];
+      return data as any[];
     },
   });
 
   const submitInspection = useMutation({
     mutationFn: async (inspection: Omit<QualityInspection, "id" | "created_at">) => {
-      const { error } = await supabase.from("audit_logs").insert([{
-        action: "create",
-        entity_type: "quality_control",
-        entity_id: inspection.lote_id,
-        new_values: inspection,
-        user_id: inspection.inspecionado_por
-      }]);
+      const { error } = await supabase.from("inspecoes_qualidade").insert([inspection]);
 
       if (error) throw error;
       
