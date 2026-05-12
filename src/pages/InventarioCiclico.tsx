@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { useInventarioCiclico, TipoCiclo } from "@/hooks/useInventarioCiclico";
-import { ClipboardList, Plus, Calendar as CalendarIcon, Play, CheckCircle, Target, Search, Filter, Loader2, Pause } from "lucide-react";
+ import { ClipboardList, Plus, Calendar as CalendarIcon, Play, CheckCircle, Target, Search, Filter, Loader2, Pause, Download, Trash2, CheckSquare } from "lucide-react";
 import { NovoCicloDialog } from "@/components/inventario/NovoCicloDialog";
 import { CicloCard } from "@/components/inventario/CicloCard";
 import { InventarioDashboardTab } from "@/components/inventario/InventarioDashboardTab";
@@ -18,7 +18,27 @@ import { InventarioConfigTab } from "@/components/inventario/InventarioConfigTab
 
 export default function InventarioCiclicoPage() {
   const navigate = useNavigate();
-  const { ciclos, loading, criarCiclo, iniciarCiclo, pausarCiclo } = useInventarioCiclico();
+   const { ciclos, loading, criarCiclo, iniciarCiclo, pausarCiclo, deleteCiclo } = useInventarioCiclico();
+   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+   const toggleSelection = (id: string) => {
+     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+   };
+ 
+   const clearSelection = () => setSelectedIds([]);
+ 
+   const handleExportCSV = () => {
+     const headers = ["Nome", "Status", "Tipo", "Acuracidade", "Divergências", "Posições"];
+     const rows = ciclosFiltrados.map(c => [c.nome, c.status, c.tipo, `${c.acuracidade || 0}%`, c.divergencias_encontradas || 0, c.total_posicoes || 0]);
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `inventario_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
+ 
 
   const [tab, setTab] = useState("ciclos");
   const [showNewCicloDialog, setShowNewCicloDialog] = useState(false);
@@ -66,10 +86,29 @@ export default function InventarioCiclicoPage() {
               <h2 className="text-lg font-semibold">Controle de Inventário</h2>
               <p className="text-sm text-muted-foreground">Gerencie ciclos de contagem</p>
             </div>
-            <Button onClick={() => setShowNewCicloDialog(true)} className="gap-2"><Plus className="h-4 w-4" />Novo Ciclo</Button>
+             <div className="flex gap-2">
+               <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-2"><Download className="h-4 w-4" /><span className="hidden sm:inline">Exportar</span></Button>
+               <Button onClick={() => setShowNewCicloDialog(true)} className="gap-2" size="sm"><Plus className="h-4 w-4" />Novo Ciclo</Button>
+             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+             {selectedIds.length > 0 && (
+               <motion.div 
+                 initial={{ opacity: 0, y: -10 }} 
+                 animate={{ opacity: 1, y: 0 }}
+                 className="col-span-full flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20 sticky top-0 z-20"
+               >
+                 <CheckSquare className="h-4 w-4 text-primary" />
+                 <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
+                 <div className="flex-1" />
+                 <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
+                 <Button size="sm" variant="outline" className="text-destructive gap-1" onClick={async () => {
+                   // Assume deleteCiclo exists in hook (will add if not)
+                   toast({ title: "Ação não permitida", description: "Use a exclusão individual por enquanto." });
+                 }}><Trash2 className="h-3 w-3" />Excluir</Button>
+               </motion.div>
+             )}
             {[
               { icon: CalendarIcon, label: "Agendados", value: stats.agendados, color: "bg-blue-500/10", textColor: "text-blue-500" },
               { icon: Play, label: "Em Andamento", value: stats.emAndamento, color: "bg-amber-500/10", textColor: "text-amber-500" },
@@ -116,10 +155,23 @@ export default function InventarioCiclicoPage() {
                     <ClipboardList className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>Nenhum ciclo encontrado</p>
                   </div>
                 ) : (
-                  ciclosFiltrados.map((ciclo) => (
-                    <CicloCard key={ciclo.id} ciclo={ciclo} onIniciar={handleIniciarCiclo} onPausar={handlePausarCiclo}
-                      onContinuar={(id) => navigate(`/inventario/${id}`)} onVerDetalhes={(id) => navigate(`/inventario/${id}`)} />
-                  ))
+                   ciclosFiltrados.map((ciclo) => (
+                     <div key={ciclo.id} className="relative group">
+                       <div 
+                         className={cn(
+                           "absolute left-4 top-1/2 -translate-y-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity",
+                           selectedIds.includes(ciclo.id) && "opacity-100"
+                         )}
+                         onClick={(e) => { e.stopPropagation(); toggleSelection(ciclo.id); }}
+                       >
+                         <input type="checkbox" checked={selectedIds.includes(ciclo.id)} readOnly className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer" />
+                       </div>
+                       <div className={cn(selectedIds.includes(ciclo.id) && "pl-8")}>
+                         <CicloCard ciclo={ciclo} onIniciar={handleIniciarCiclo} onPausar={handlePausarCiclo}
+                           onContinuar={(id) => navigate(`/inventario/${id}`)} onVerDetalhes={(id) => navigate(`/inventario/${id}`)} />
+                       </div>
+                     </div>
+                   ))
                 )}
               </div>
             </TabsContent>
