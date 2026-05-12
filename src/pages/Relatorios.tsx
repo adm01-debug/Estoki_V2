@@ -94,6 +94,7 @@ const CHART_COLORS: Record<string, string> = {
     return Object.entries(agrupado).map(([tipo, quantidade]) => ({ tipo: tipoLabels[tipo as TipoMovimentacao] || tipo, quantidade, cor: CHART_COLORS[tipo] || "#6b7280" }));
   }, [dadosFiltrados]);
 
+   const handleExportPDF = useCallback(async () => {
      setExportando(true);
      try {
        const { jsPDF } = await import('jspdf');
