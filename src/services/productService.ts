@@ -1,5 +1,17 @@
 import { supabase } from "@/lib/supabase";
 
+export interface Product {
+  id: string;
+  nome: string;
+  sku: string;
+  categoria?: string;
+  estoque_minimo: number;
+  estoque_maximo?: number;
+  giro_mensal?: number;
+  curva_abc?: string;
+  imagem_url?: string;
+}
+
 export const productService = {
   async getAll() {
     const { data, error } = await supabase
@@ -7,7 +19,7 @@ export const productService = {
       .select("*")
       .order("nome");
     if (error) throw error;
-    return data;
+    return data as Product[];
   },
 
   async getById(id: string) {
@@ -26,7 +38,7 @@ export const productService = {
     return data;
   },
 
-  async update(id: string, updates: any) {
+  async update(id: string, updates: Partial<Product>) {
     const { data, error } = await supabase
       .from("produtos")
       .update(updates)
