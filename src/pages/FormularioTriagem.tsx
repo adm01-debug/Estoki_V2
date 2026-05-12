@@ -96,10 +96,8 @@ export default function FormularioTriagem() {
     if (!id || !triagem) return;
 
     if (!requisitosAtendidos) {
-      toast({
-        title: "Fotos obrigatórias",
-        description: "É necessário adicionar foto geral e de etiqueta",
-        variant: "destructive",
+      toast.error("Fotos obrigatórias", {
+        description: "É necessário adicionar foto geral e de etiqueta"
       });
       return;
     }
@@ -134,10 +132,8 @@ export default function FormularioTriagem() {
         navigate("/triagem");
       }
     } catch {
-      toast({
-        title: "Erro ao finalizar",
-        description: "Não foi possível finalizar a triagem",
-        variant: "destructive",
+      toast.error("Erro ao finalizar", {
+        description: "Não foi possível finalizar a triagem"
       });
     } finally {
       setSubmitting(false);
