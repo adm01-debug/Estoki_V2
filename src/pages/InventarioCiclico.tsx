@@ -1,4 +1,6 @@
-import { useState, useMemo } from "react";
+ import { useState, useMemo } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
