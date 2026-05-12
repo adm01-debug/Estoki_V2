@@ -78,7 +78,7 @@ export const useDashboard = () => {
         getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
-        supabase.from('posicoes_estoque').select('porta_palete, status').limit(1000),
+       supabase.from('posicoes_estoque').select('porta_palete, status, corredor, nivel').limit(5000),
         supabase.from('estoque_posicao')
           .select('id, quantidade, posicao_id, produto_id, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
           .order('data_entrada', { ascending: true })
@@ -125,17 +125,31 @@ export const useDashboard = () => {
         color: statusColors[name] || '#6b7280',
       }));
 
-      // Movimentações 7 dias (placeholder - sem tabela dedicada)
-      const movimentacoes7dias: Movimentacao7Dias[] = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date();
-        d.setDate(d.getDate() - i);
-        movimentacoes7dias.push({
-          dia: d.toLocaleDateString('pt-BR', { weekday: 'short' }),
-          entradas: 0,
-          saidas: 0,
-        });
-      }
+       // Buscar métricas reais para o gráfico de 7 dias
+       const seteDiasAtras = new Date();
+       seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
+       const { data: metricasData } = await supabase
+         .from('metricas_dashboard')
+         .select('data, tipo, valor')
+         .gte('data', seteDiasAtras.toISOString().split('T')[0])
+         .order('data', { ascending: true });
+
+       const movimentacoes7dias: Movimentacao7Dias[] = [];
+       for (let i = 6; i >= 0; i--) {
+         const d = new Date();
+         d.setDate(d.getDate() - i);
+         const dataStr = d.toISOString().split('T')[0];
+         const diaLabel = d.toLocaleDateString('pt-BR', { weekday: 'short' });
+         
+         const entradas = metricasData?.filter(m => m.data === dataStr && m.tipo === 'entrada').reduce((acc, m) => acc + m.valor, 0) || 0;
+         const saidas = metricasData?.filter(m => m.data === dataStr && m.tipo === 'saida').reduce((acc, m) => acc + m.valor, 0) || 0;
+         
+         movimentacoes7dias.push({
+           dia: diaLabel,
+           entradas,
+           saidas,
+         });
+       }
 
       // Itens parados > 30 dias
       const itensParados: ItemParado[] = [];
