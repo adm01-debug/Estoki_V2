@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+ import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -47,24 +47,31 @@ export default function DashboardTriadorPage() {
   const streaksData = useStreaks();
   const streakAtual = streaksData.streakAtual;
   const loadingStreaks = streaksData.loading;
-  const { metricas, loading: loadingMetricas } = useProdutividade();
+   const { metricas, loading: loadingMetricas, getMetricasDiarias } = useProdutividade();
 
-  const [tab, setTab] = useState("hoje");
+   const [tab, setTab] = useState("hoje");
+   const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
+   const [loadingHist, setLoadingHist] = useState(false);
+
+   useEffect(() => {
+     const loadHistorico = async () => {
+       if (!user?.id) return;
+       setLoadingHist(true);
+       const data = await getMetricasDiarias(user.id, 7);
+       setSemanalData(data.map((d: any) => ({
+         dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
+         itensTriados: d.triagens
+       })));
+       setLoadingHist(false);
+     };
+     loadHistorico();
+   }, [user?.id, getMetricasDiarias]);
 
   const minhasMetricas = useMemo(() => {
     if (!user) return null;
     return metricas.find(m => m.operadorId === user.id);
   }, [metricas, user]);
 
-  const historicoSemanal = [
-    { dia: "Seg", itensTriados: 98 },
-    { dia: "Ter", itensTriados: 112 },
-    { dia: "Qua", itensTriados: 105 },
-    { dia: "Qui", itensTriados: 121 },
-    { dia: "Sex", itensTriados: 115 },
-    { dia: "Sáb", itensTriados: 87 },
-    { dia: "Hoje", itensTriados: minhasMetricas?.triagensRealizadas || 0 },
-  ];
 
   const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks || loadingMetricas;
 
@@ -201,17 +208,21 @@ export default function DashboardTriadorPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={historicoSemanal}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="dia" />
-                      <YAxis />
-                      <Tooltip />
-                      <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+                 <div className="h-[250px]">
+                   {loadingHist ? (
+                     <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                   ) : (
+                     <ResponsiveContainer width="100%" height="100%">
+                       <AreaChart data={semanalData}>
+                         <CartesianGrid strokeDasharray="3 3" />
+                         <XAxis dataKey="dia" />
+                         <YAxis />
+                         <Tooltip />
+                         <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+                       </AreaChart>
+                     </ResponsiveContainer>
+                   )}
+                 </div>
               </CardContent>
             </Card>
 
@@ -289,18 +300,34 @@ export default function DashboardTriadorPage() {
                       const ok = d.progresso >= d.meta;
                       return (
                         <div key={d.id} className={`p-4 rounded-lg border ${ok ? 'bg-green-500/10 border-green-500/30' : ''}`}>
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h4 className="font-semibold flex items-center gap-2">
-                                {ok && <CheckCircle className="h-4 w-4 text-green-500" />}
-                                {d.titulo}
-                              </h4>
-                              <p className="text-sm text-muted-foreground">{d.descricao}</p>
-                            </div>
-                            <Badge variant="outline" className="gap-1">
-                              <Zap className="h-3 w-3" />+{d.xp_recompensa} XP
-                            </Badge>
-                          </div>
+                           <div className="flex items-start justify-between mb-2">
+                             <div className="flex-1">
+                               <h4 className="font-semibold flex items-center gap-2">
+                                 {ok && <CheckCircle className="h-4 w-4 text-green-500" />}
+                                 {d.titulo}
+                               </h4>
+                               <p className="text-sm text-muted-foreground">{d.descricao}</p>
+                             </div>
+                             <div className="flex flex-col items-end gap-2 ml-2">
+                               <Badge variant="outline" className="gap-1">
+                                 <Zap className="h-3 w-3" />+{d.xp_recompensa} XP
+                               </Badge>
+                               {ok && !d.xpColetado && (
+                                 <button
+                                   onClick={() => {
+                                     // @ts-ignore
+                                     coletarRecompensa(d.id);
+                                   }}
+                                   className="text-[10px] font-bold uppercase py-1 px-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                 >
+                                   Coletar
+                                 </button>
+                               )}
+                               {d.xpColetado && (
+                                 <Badge variant="secondary" className="text-[10px]">Coletado</Badge>
+                               )}
+                             </div>
+                           </div>
                           <div className="space-y-1">
                             <div className="flex justify-between text-sm">
                               <span>{d.progresso} / {d.meta}</span>
