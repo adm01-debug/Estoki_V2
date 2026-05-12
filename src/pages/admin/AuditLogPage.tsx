@@ -20,7 +20,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useAuditLog, AuditAction } from "@/hooks/useAuditLog";
+import { useAuditLog, AuditAction, AuditLogEntry } from "@/hooks/useAuditLog";
+import { useExport } from "@/hooks/useExport";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { 
@@ -47,6 +48,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AuditLogPage() {
   const { logs, isLoading, getStats } = useAuditLog();
+  
+  const { exportData, isExporting } = useExport<AuditLogEntry>({
+    table: "audit_logs",
+    filename: `audit_logs_${format(new Date(), "yyyy-MM-dd")}`,
+    columns: [
+      { key: "created_at", header: "Data/Hora", transform: (v) => format(new Date(v as string), "dd/MM/yyyy HH:mm:ss") },
+      { key: "user_email", header: "Usuário" },
+      { key: "action", header: "Ação" },
+      { key: "entity_type", header: "Entidade" },
+      { key: "entity_label", header: "Detalhes" },
+      { key: "ip_address", header: "IP" }
+    ]
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [actionFilter, setActionFilter] = useState<string>("all");
   const [entityFilter, setEntityFilter] = useState<string>("all");
@@ -163,10 +177,19 @@ export default function AuditLogPage() {
                 <Button variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <Download className="h-4 w-4" />
-                  Exportar
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2" disabled={isExporting}>
+                      <Download className="h-4 w-4" />
+                      {isExporting ? "Exportando..." : "Exportar"}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => exportData("csv")}>Exportar CSV</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportData("xlsx")}>Exportar Excel</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportData("pdf")}>Exportar PDF</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </CardContent>
           </Card>
