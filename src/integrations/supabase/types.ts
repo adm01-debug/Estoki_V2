@@ -3019,6 +3019,10 @@ export type Database = {
         Args: { p_desafio_id: string }
         Returns: Json
       }
+      descontar_pontos: {
+        Args: { p_user_id: string; p_valor: number }
+        Returns: undefined
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
