@@ -52,6 +52,104 @@ export interface UseScannerReturn {
   setScanning: (value: boolean) => void;
 }
 
+async function buscarPorLote(parsed: any): Promise<ScanResult | null> {
+  const { data: lote } = await supabase
+    .from('lotes')
+    .select(`
+      *,
+      produtos (nome, sku),
+      estoque_posicao (
+        posicao_id,
+        quantidade,
+        posicoes_estoque (codigo)
+      )
+    `)
+    .eq('id', (parsed.lote_id || parsed.loteId) as string)
+    .maybeSingle();
+
+  if (!lote) return null;
+
+  const posicoes = lote.estoque_posicao || [];
+  const localizacao = posicoes.length > 0 
+    ? posicoes.map((p: any) => p.posicoes_estoque?.codigo).filter(Boolean).join(', ')
+    : undefined;
+
+  return {
+    id: lote.id,
+    pedido: lote.pedido_compra || 'N/A',
+    produto: lote.produtos?.nome || 'Produto desconhecido',
+    lote: lote.numero_lote,
+    quantidade: lote.quantidade_atual || 0,
+    localizacao,
+    status: lote.status || 'pendente',
+    dataRecebimento: lote.data_recebimento,
+    dataTriagem: lote.data_conferencia ?? undefined,
+    tipo: 'lote',
+  };
+}
+
+async function buscarPorPosicao(parsed: any): Promise<ScanResult | null> {
+  const codigoPosicao = (parsed.posicao || parsed.codigo_posicao) as string;
+  const { data: posicao } = await supabase
+    .from('posicoes_estoque')
+    .select(`
+      *,
+      estoque_posicao (
+        quantidade,
+        lotes (
+          pedido_compra,
+          numero_lote,
+          produtos (nome)
+        )
+      )
+    `)
+    .eq('codigo', codigoPosicao)
+    .maybeSingle();
+
+  if (!posicao) return null;
+
+  const estoque = posicao.estoque_posicao || [];
+  const qtdTotal = estoque.reduce((acc: number, e: any) => acc + (e.quantidade || 0), 0);
+  const produtos = estoque.map((e: any) => e.lotes?.produtos?.nome).filter(Boolean);
+
+  return {
+    id: posicao.id,
+    pedido: 'Posição',
+    produto: produtos.length > 0 ? produtos.join(', ') : 'Vazia',
+    localizacao: posicao.codigo,
+    quantidade: qtdTotal,
+    status: posicao.status || 'livre',
+    tipo: 'posicao',
+  };
+}
+
+async function buscarPorPedido(parsed: any): Promise<ScanResult | null> {
+  const { data: recebimentos } = await supabase
+    .from('lotes')
+    .select(`
+      *,
+      produtos (nome, sku)
+    `)
+    .eq('pedido_compra', parsed.pedido as string)
+    .limit(5);
+
+  if (!recebimentos || recebimentos.length === 0) return null;
+
+  const primeiro = recebimentos[0];
+  return {
+    id: primeiro.id,
+    pedido: primeiro.pedido_compra || 'N/A',
+    produto: primeiro.produtos?.nome || 'Produto desconhecido',
+    lote: primeiro.numero_lote,
+    volume: 1,
+    totalVolumes: recebimentos.length,
+    quantidade: recebimentos.reduce((acc, r) => acc + (r.quantidade_atual || 0), 0),
+    status: primeiro.status || 'pendente',
+    dataRecebimento: primeiro.data_recebimento,
+    tipo: 'recebimento',
+  };
+}
+
 export function useScanner(): UseScannerReturn {
   const [isScanning, setIsScanning] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -136,105 +234,16 @@ export function useScanner(): UseScannerReturn {
 
       let result: ScanResult | null = null;
 
-      // Se tem ID de lote, buscar lote
       if (parsed.lote_id || parsed.loteId) {
-        const { data: lote } = await supabase
-          .from('lotes')
-          .select(`
-            *,
-            produtos (nome, sku),
-            estoque_posicao (
-              posicao_id,
-              quantidade,
-              posicoes_estoque (codigo)
-            )
-          `)
-          .eq('id', (parsed.lote_id || parsed.loteId) as string)
-          .maybeSingle();
-
-        if (lote) {
-          const posicoes = lote.estoque_posicao || [];
-          const localizacao = posicoes.length > 0 
-            ? posicoes.map((p: any) => p.posicoes_estoque?.codigo).filter(Boolean).join(', ')
-            : undefined;
-
-          result = {
-            id: lote.id,
-            pedido: lote.pedido_compra || 'N/A',
-            produto: lote.produtos?.nome || 'Produto desconhecido',
-            lote: lote.numero_lote,
-            quantidade: lote.quantidade_atual || 0,
-            localizacao,
-            status: lote.status || 'pendente',
-            dataRecebimento: lote.data_recebimento,
-            dataTriagem: lote.data_conferencia ?? undefined,
-            tipo: 'lote',
-          };
-        }
+        result = await buscarPorLote(parsed);
       }
 
-      // Se tem código de posição, buscar posição
       if (!result && (parsed.posicao || parsed.codigo_posicao)) {
-        const codigoPosicao = (parsed.posicao || parsed.codigo_posicao) as string;
-        const { data: posicao } = await supabase
-          .from('posicoes_estoque')
-          .select(`
-            *,
-            estoque_posicao (
-              quantidade,
-              lotes (
-                pedido_compra,
-                numero_lote,
-                produtos (nome)
-              )
-            )
-          `)
-          .eq('codigo', codigoPosicao)
-          .maybeSingle();
-
-        if (posicao) {
-          const estoque = posicao.estoque_posicao || [];
-          const qtdTotal = estoque.reduce((acc: number, e: any) => acc + (e.quantidade || 0), 0);
-          const produtos = estoque.map((e: any) => e.lotes?.produtos?.nome).filter(Boolean);
-
-          result = {
-            id: posicao.id,
-            pedido: 'Posição',
-            produto: produtos.length > 0 ? produtos.join(', ') : 'Vazia',
-            localizacao: posicao.codigo,
-            quantidade: qtdTotal,
-            status: posicao.status || 'livre',
-            tipo: 'posicao',
-          };
-        }
+        result = await buscarPorPosicao(parsed);
       }
 
-      // Se tem pedido, buscar recebimento
       if (!result && parsed.pedido) {
-        const { data: recebimentos } = await supabase
-          .from('lotes')
-          .select(`
-            *,
-            produtos (nome, sku)
-          `)
-          .eq('pedido_compra', parsed.pedido as string)
-          .limit(5);
-
-        if (recebimentos && recebimentos.length > 0) {
-          const primeiro = recebimentos[0];
-          result = {
-            id: primeiro.id,
-            pedido: primeiro.pedido_compra || 'N/A',
-            produto: primeiro.produtos?.nome || 'Produto desconhecido',
-            lote: primeiro.numero_lote,
-            volume: 1,
-            totalVolumes: recebimentos.length,
-            quantidade: recebimentos.reduce((acc, r) => acc + (r.quantidade_atual || 0), 0),
-            status: primeiro.status || 'pendente',
-            dataRecebimento: primeiro.data_recebimento,
-            tipo: 'recebimento',
-          };
-        }
+        result = await buscarPorPedido(parsed);
       }
 
       if (!result) {
