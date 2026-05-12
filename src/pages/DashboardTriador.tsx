@@ -1,4 +1,5 @@
  import { useState, useMemo, useEffect } from "react";
+ import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -116,10 +117,10 @@ export default function DashboardTriadorPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center relative">
-                    <Trophy className="h-10 w-10 text-primary" />
-                    <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-background">
-                      #{minhaposicao || '?'}
-                    </div>
+                   <Trophy className="h-10 w-10 text-primary" />
+                   <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-background">
+                     #{minhaposicao?.posicao || '?'}
+                   </div>
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold">{user?.user_metadata?.nome || "Operador"}</h2>
@@ -256,31 +257,69 @@ export default function DashboardTriadorPage() {
           </TabsList>
 
           <TabsContent value="hoje" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Evolução Semanal
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                 <div className="h-[250px]">
-                   {loadingHist ? (
-                     <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
-                   ) : (
-                     <ResponsiveContainer width="100%" height="100%">
-                       <AreaChart data={semanalData}>
-                         <CartesianGrid strokeDasharray="3 3" />
-                         <XAxis dataKey="dia" />
-                         <YAxis />
-                         <Tooltip />
-                         <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
-                       </AreaChart>
-                     </ResponsiveContainer>
-                   )}
-                 </div>
-              </CardContent>
-            </Card>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="md:col-span-2">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Evolução Semanal
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                   <div className="h-[250px]">
+                     {loadingHist ? (
+                       <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                     ) : (
+                       <ResponsiveContainer width="100%" height="100%">
+                         <AreaChart data={semanalData}>
+                           <CartesianGrid strokeDasharray="3 3" />
+                           <XAxis dataKey="dia" />
+                           <YAxis />
+                           <Tooltip />
+                           <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+                         </AreaChart>
+                       </ResponsiveContainer>
+                     )}
+                   </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <History className="h-4 w-4" />
+                    Atividade Recente
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {recentHistory.length === 0 ? (
+                      <p className="text-center text-sm text-muted-foreground py-4">Nenhuma atividade recente</p>
+                    ) : (
+                      recentHistory.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-1.5 rounded-full ${
+                              item.resultado === 'aprovado' ? 'bg-green-500/10 text-green-600' : 
+                              item.resultado === 'rejeitado' ? 'bg-red-500/10 text-red-600' : 
+                              'bg-blue-500/10 text-blue-600'
+                            }`}>
+                              <CheckCircle className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium capitalize">{item.resultado || 'Triado'}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • {item.items_count || 0} itens
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             {streakAtual > 0 && (
               <Card className="border-orange-500/30 bg-orange-500/5">
