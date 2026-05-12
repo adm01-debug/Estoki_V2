@@ -47,7 +47,7 @@ export default function DashboardTriadorPage() {
   const streaksData = useStreaks();
   const streakAtual = streaksData.streakAtual;
   const loadingStreaks = streaksData.loading;
-  const { metricas, loading: loadingMetricas } = useProdutividade();
+   const { metricas, loading: loadingMetricas, getMetricasDiarias } = useProdutividade();
 
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
@@ -58,7 +58,7 @@ export default function DashboardTriadorPage() {
        if (!user?.id) return;
        setLoadingHist(true);
        const data = await getMetricasDiarias(user.id, 7);
-       setSemanalData(data.map(d => ({
+       setSemanalData(data.map((d: any) => ({
          dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
          itensTriados: d.triagens
        })));
