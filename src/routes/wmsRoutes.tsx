@@ -27,6 +27,7 @@ const PickingPage = lazy(() => import("@/pages/picking/PickingPage"));
 const PutawayPage = lazy(() => import("@/pages/putaway/PutawayPage"));
 const Ondas = lazy(() => import("@/pages/Ondas"));
 const GestaoTarefas = lazy(() => import("@/pages/GestaoTarefas"));
+const AjustesEstoque = lazy(() => import("@/pages/AjustesEstoque"));
 
 // Shipping
 const Romaneios = lazy(() => import("@/pages/Romaneios"));
@@ -64,6 +65,7 @@ export const wmsRoutes = (
     <Route path="putaway" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><PutawayPage /></Suspense></RouteErrorBoundary>} />
     <Route path="ondas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
     <Route path="tarefas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><GestaoTarefas /></Suspense></RouteErrorBoundary>} />
+    <Route path="ajustes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><AjustesEstoque /></Suspense></RouteErrorBoundary>} />
 
     {/* Shipping */}
     <Route path="romaneios" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense></RouteErrorBoundary>} />
