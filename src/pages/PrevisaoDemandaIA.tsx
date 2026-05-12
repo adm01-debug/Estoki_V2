@@ -36,12 +36,11 @@ interface Previsao {
 }
 
 export default function PrevisaoDemandaIA() {
+  const { gerarPrevisaoIA, loading: loadingIA, previsoesIA } = useDemandForecast();
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduto, setSelectedProduto] = useState('');
   const [previsao, setPrevisao] = useState<Previsao | null>(null);
-  const [previsoes, setPrevisoes] = useState<Previsao[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadingAll, setLoadingAll] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
