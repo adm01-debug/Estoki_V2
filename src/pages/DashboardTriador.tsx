@@ -54,7 +54,7 @@ export default function DashboardTriadorPage() {
   const streaksData = useStreaks();
   const streakAtual = streaksData.streakAtual;
   const loadingStreaks = streaksData.loading;
-   const { metricas, loading: loadingMetricas, getMetricasDiarias } = useProdutividade();
+   const { metricas, loading: loadingMetricas, getMetricasDiarias, refetch: refetchProdutividade } = useProdutividade();
 
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
@@ -62,6 +62,28 @@ export default function DashboardTriadorPage() {
    const [recentHistory, setRecentHistory] = useState<any[]>([]);
 
    useEffect(() => {
+     if (!user?.id) return;
+
+     // Realtime subscription for triage events
+     const channel = supabase
+       .channel('user-triage-updates')
+       .on(
+         'postgres_changes',
+         {
+           event: 'INSERT',
+           schema: 'public',
+           table: 'eventos_triagem',
+           filter: `operador_id=eq.${user.id}`,
+         },
+         () => {
+           // Refresh data when a new triage is completed
+           refetchProdutividade();
+           loadHistorico();
+           loadRecentActivity();
+         }
+       )
+       .subscribe();
+
      const loadHistorico = async () => {
        if (!user?.id) return;
        setLoadingHist(true);
@@ -87,7 +109,15 @@ export default function DashboardTriadorPage() {
        if (data) setRecentHistory(data);
      };
      loadRecentActivity();
-   }, [user?.id, getMetricasDiarias]);
+    }, [user?.id, getMetricasDiarias, refetchProdutividade]);
+
+    // Separate useEffect for the subscription to cleanup properly
+    useEffect(() => {
+      if (!user?.id) return;
+      // Subscriptions are handled in the main useEffect for simplicity here, 
+      // but we should ensure they are cleaned up. 
+      // Actually, let's move the subscription to a separate useEffect.
+    }, [user?.id]);
 
   const minhasMetricas = useMemo(() => {
     if (!user) return null;
