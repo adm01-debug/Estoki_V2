@@ -97,7 +97,7 @@ export async function exportDashboardToPDF(
   doc.setFont("helvetica", "bold");
   doc.text(`Valor Total de Itens Parados: R$ ${(kpis.valorParado || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 20, yPos);
 
-  const pageCount = doc.internal.getNumberOfPages();
+  const pageCount = (doc as any).internal.getNumberOfPages() || 1;
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(8);
