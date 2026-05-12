@@ -21,16 +21,29 @@ export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
     triagensPendentes: 0 
   };
 
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <Card>
+   const getOcupacaoColor = (percent: number) => {
+     if (percent >= 90) return "text-red-600";
+     if (percent >= 70) return "text-yellow-600";
+     return "text-green-600";
+   };
+
+   return (
+     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+       <Card className="hover:shadow-md transition-shadow cursor-default">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <BarChart3 className="h-4 w-4" />
             <span className="text-xs">Taxa Ocupação</span>
           </div>
-          <p className="text-2xl font-bold">{safeKpis.taxaOcupacao}%</p>
-          <Progress value={safeKpis.taxaOcupacao} className="mt-2 h-1.5" />
+           <p className={cn("text-2xl font-bold", getOcupacaoColor(safeKpis.taxaOcupacao))}>{safeKpis.taxaOcupacao}%</p>
+           <Progress 
+             value={safeKpis.taxaOcupacao} 
+             className="mt-2 h-1.5" 
+             indicatorClassName={cn(
+               safeKpis.taxaOcupacao >= 90 ? "bg-red-600" : 
+               safeKpis.taxaOcupacao >= 70 ? "bg-yellow-600" : "bg-green-600"
+             )} 
+           />
         </CardContent>
       </Card>
 
