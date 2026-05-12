@@ -42,7 +42,7 @@ export default function MovimentacaoPage() {
   const { log: auditLog } = useAuditLog();
   
   const [activeTab, setActiveTab] = useState("registrar");
-   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("transferencia");
+   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
   const [submitting, setSubmitting] = useState(false);
@@ -185,7 +185,7 @@ export default function MovimentacaoPage() {
             />
 
 
-             {(tipoMovimento === "armazenamento" || tipoMovimento === "transferencia") && (
+             {(tipoMovimento as string === "armazenamento" || tipoMovimento as string === "transferencia") && (
               <div className="flex justify-end">
                 <Button 
                   variant="ghost" 
@@ -225,19 +225,19 @@ export default function MovimentacaoPage() {
                <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                  <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Entradas</div>
                  <div className="text-2xl font-bold text-green-600">
-                   {movimentacoes.filter(m => ["recebimento_nf", "entrada_devolucao"].includes(m.tipo)).length}
+                   {movimentacoes.filter(m => ["recebimento_nf", "entrada_devolucao"].includes(m.tipo as any)).length}
                  </div>
                </div>
                <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                  <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Saídas</div>
                  <div className="text-2xl font-bold text-red-600">
-                   {movimentacoes.filter(m => ["saida_transporte", "separacao"].includes(m.tipo)).length}
+                   {movimentacoes.filter(m => ["saida_transporte", "separacao"].includes(m.tipo as any)).length}
                  </div>
                </div>
                <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
                  <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Remanejamentos</div>
                  <div className="text-2xl font-bold text-blue-600">
-                   {movimentacoes.filter(m => m.tipo === "armazenamento" || m.tipo === "transferencia").length}
+                   {movimentacoes.filter(m => (m.tipo as string) === "armazenamento" || (m.tipo as string) === "transferencia").length}
                  </div>
                </div>
              </div>
