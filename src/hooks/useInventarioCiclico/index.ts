@@ -245,16 +245,33 @@ export function useInventarioCiclico() {
     }
   };
 
-  return {
-    ciclos,
-    loading,
-    error,
-    refetch: fetchCiclos,
-    criarCiclo,
-    iniciarCiclo,
-    pausarCiclo,
-    finalizarCiclo,
-    registrarContagem,
-    getContagensCiclo,
-  };
+   const deleteCiclo = async (id: string): Promise<boolean> => {
+     try {
+       const { error: deleteError } = await supabase
+         .from('inventario_ciclos')
+         .delete()
+         .eq('id', id);
+       if (deleteError) throw deleteError;
+       toast({ title: 'Ciclo excluído' });
+       return true;
+     } catch (err) {
+       const message = err instanceof Error ? err.message : 'Erro ao excluir ciclo';
+       toast({ title: 'Erro', description: message, variant: 'destructive' });
+       return false;
+     }
+   };
+ 
+   return {
+     ciclos,
+     loading,
+     error,
+     refetch: fetchCiclos,
+     criarCiclo,
+     iniciarCiclo,
+     pausarCiclo,
+     finalizarCiclo,
+     deleteCiclo,
+     registrarContagem,
+     getContagensCiclo,
+   };
 }

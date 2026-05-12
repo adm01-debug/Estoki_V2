@@ -2,7 +2,9 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Trophy, Star, Target } from 'lucide-react';
+ import { Trophy, Star, Target, Download, TrendingUp } from 'lucide-react';
+ import { Button } from '@/components/ui/button';
+ import { motion } from 'framer-motion';
 import { useRanking, PeriodoRanking } from '@/hooks/useRanking';
 import { Podium } from './placar/Podium';
 import { RankingItem } from './placar/RankingItem';
@@ -10,14 +12,31 @@ import { getPosicaoIcon, getPodiumColor, getInitials } from './placar/placarHelp
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export const PlacarLideres: React.FC = () => {
-  const {
-    ranking,
-    top3,
-    restante,
-    loading,
-    periodo,
-    setPeriodo
-  } = useRanking();
+   const {
+     ranking,
+     top3,
+     restante,
+     loading,
+     periodo,
+     setPeriodo,
+     minhaposicao
+   } = useRanking();
+ 
+   const handleExport = () => {
+     const headers = ["Posição", "Nome", "XP Total", "Nível", "Conquistas"];
+     const rows = ranking.map(r => [r.posicao, r.nome, r.xp_total, r.nivel, r.conquistas]);
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `ranking_estoki_${periodo}_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
+ 
+   const userNaFrente = minhaposicao ? ranking[ranking.indexOf(minhaposicao) - 1] : null;
+   const xpParaProximaPosicao = userNaFrente && minhaposicao ? userNaFrente.xp_total - minhaposicao.xp_total : 0;
 
   if (loading) {
     return (
@@ -66,14 +85,30 @@ export const PlacarLideres: React.FC = () => {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-yellow-500" />
-            Placar de Líderes
-          </CardTitle>
-        </div>
-      </CardHeader>
+       <CardHeader className="pb-2">
+         <div className="flex items-center justify-between">
+           <CardTitle className="flex items-center gap-2">
+             <Trophy className="h-5 w-5 text-yellow-500" />
+             Placar de Líderes
+           </CardTitle>
+           <Button variant="ghost" size="icon" onClick={handleExport} title="Exportar Ranking">
+             <Download className="h-4 w-4" />
+           </Button>
+         </div>
+       </CardHeader>
+             {xpParaProximaPosicao > 0 && (
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95 }} 
+                 animate={{ opacity: 1, scale: 1 }}
+                 className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10 flex items-center justify-between"
+               >
+                 <div className="flex items-center gap-2">
+                   <TrendingUp className="h-4 w-4 text-primary" />
+                   <span className="text-xs font-medium">Você está a {xpParaProximaPosicao} XP do próximo nível!</span>
+                 </div>
+                 <Badge variant="outline" className="text-[10px] animate-pulse">Acelere!</Badge>
+               </motion.div>
+             )}
       <CardContent>
         <Tabs value={periodo} onValueChange={(v) => setPeriodo(v as PeriodoRanking)}>
           <TabsList className="grid w-full grid-cols-3 mb-4">

@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+ import { useState } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ZoomIn, ZoomOut, Maximize2, MapPin } from "lucide-react";
+ import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PosicaoEstoque, StatusPosicao } from "@/hooks/useEstoque";
 import { differenceInDays } from "date-fns";
@@ -22,7 +23,9 @@ interface EstoqueMapaTabProps {
   onSelectPosition: (pos: PosicaoEstoque) => void;
 }
 
-export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, onSelectPosition }: EstoqueMapaTabProps) {
+ export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, onSelectPosition }: EstoqueMapaTabProps) {
+   const [heatmapEnabled, setHeatmapEnabled] = useState(false);
+ 
   const getDiasArmazenado = (pos: PosicaoEstoque): number => {
     if (!pos.created_at) return 0;
     return differenceInDays(new Date(), new Date(pos.created_at));
@@ -35,7 +38,16 @@ export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, on
           <Button variant="outline" size="icon" onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}><ZoomOut className="h-4 w-4" /></Button>
           <span className="text-sm text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
           <Button variant="outline" size="icon" onClick={() => onZoomChange(Math.min(1.5, zoom + 0.1))}><ZoomIn className="h-4 w-4" /></Button>
-          <Button variant="outline" size="icon" onClick={() => onZoomChange(1)}><Maximize2 className="h-4 w-4" /></Button>
+           <Button variant="outline" size="icon" onClick={() => onZoomChange(1)} title="Reset Zoom"><Maximize2 className="h-4 w-4" /></Button>
+           <Button 
+             variant={heatmapEnabled ? "default" : "outline"} 
+             size="sm" 
+             className="gap-2 ml-2"
+             onClick={() => setHeatmapEnabled(!heatmapEnabled)}
+           >
+             <Flame className={cn("h-4 w-4", heatmapEnabled && "animate-pulse")} />
+             <span className="hidden sm:inline">Heatmap</span>
+           </Button>
         </div>
         <Badge variant="outline" className="text-xs">{filteredPositions.length} posições</Badge>
       </div>
@@ -66,13 +78,27 @@ export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, on
                             {ruaSecoes.slice(0, 10).map(secao => {
                               const position = ruaPositions.find(p => p.nivel === nivel && p.secao === secao);
                               if (!position) return <div key={secao} className="h-8 rounded bg-muted/30" />;
-                              const config = statusConfig[position.status];
-                              const diasArmazenado = getDiasArmazenado(position);
+                               const config = statusConfig[position.status];
+                               const diasArmazenado = getDiasArmazenado(position);
+                               
+                               let heatmapStyle = {};
+                               if (heatmapEnabled && position.status === 'ocupado') {
+                                 if (diasArmazenado > 60) heatmapStyle = { backgroundColor: '#ef4444', color: 'white', borderColor: '#b91c1c' }; // Red
+                                 else if (diasArmazenado > 30) heatmapStyle = { backgroundColor: '#f97316', color: 'white', borderColor: '#c2410c' }; // Orange
+                                 else if (diasArmazenado > 15) heatmapStyle = { backgroundColor: '#eab308', color: 'white', borderColor: '#a16207' }; // Yellow
+                                 else heatmapStyle = { backgroundColor: '#22c55e', color: 'white', borderColor: '#15803d' }; // Green
+                               }
                               return (
                                 <motion.button
                                   key={position.id}
                                   onClick={() => onSelectPosition(position)}
-                                  className={cn("h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group", config.bg, config.border, "hover:ring-2 hover:ring-primary hover:ring-offset-1")}
+                                   className={cn(
+                                     "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group", 
+                                     !heatmapEnabled && config.bg, 
+                                     !heatmapEnabled && config.border,
+                                     "hover:ring-2 hover:ring-primary hover:ring-offset-1"
+                                   )}
+                                   style={heatmapStyle}
                                   whileHover={{ scale: 1.1, zIndex: 10 }}
                                   whileTap={{ scale: 0.95 }}
                                   title={`${position.codigo} - ${config.label}`}
@@ -111,10 +137,28 @@ export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, on
             <span className="text-sm text-muted-foreground">{config.label}</span>
           </div>
         ))}
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-warning animate-pulse" />
-          <span className="text-sm text-muted-foreground">+30 dias</span>
-        </div>
+       <AnimatePresence>
+         {heatmapEnabled ? (
+           <motion.div 
+             initial={{ opacity: 0, y: 10 }} 
+             animate={{ opacity: 1, y: 0 }} 
+             exit={{ opacity: 0, y: 10 }}
+             className="flex items-center gap-4 bg-muted/30 p-2 rounded-lg"
+           >
+             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[#22c55e]" /><span className="text-[10px]">Recente</span></div>
+             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[#eab308]" /><span className="text-[10px]">+15d</span></div>
+             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[#f97316]" /><span className="text-[10px]">+30d</span></div>
+             <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-[#ef4444]" /><span className="text-[10px]">+60d</span></div>
+             <Info className="h-3 w-3 text-muted-foreground ml-2" />
+             <span className="text-[10px] text-muted-foreground">Idade do Estoque</span>
+           </motion.div>
+         ) : (
+           <div className="flex items-center gap-2">
+             <span className="w-2 h-2 rounded-full bg-warning animate-pulse" />
+             <span className="text-sm text-muted-foreground">+30 dias</span>
+           </div>
+         )}
+       </AnimatePresence>
       </div>
     </div>
   );

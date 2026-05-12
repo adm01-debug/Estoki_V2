@@ -1,4 +1,6 @@
-import { OndasCharts } from "@/components/charts/WMSModuleCharts";
+ import { OndasCharts } from "@/components/charts/WMSModuleCharts";
+ import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
+ import { Download } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -39,7 +41,23 @@ export default function OndasPage() {
   const [ondas, setOndas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("todos");
+   const [statusFilter, setStatusFilter] = useState("todos");
+ 
+   const handleExportCSV = () => {
+     const headers = ["Codigo", "Status", "Prioridade", "Descricao", "Zona", "Data Criacao", "Progresso"];
+     const rows = filtered.map(o => {
+       const progresso = o.total_tarefas ? Math.round(((o.tarefas_concluidas || 0) / o.total_tarefas) * 100) : 0;
+       return [o.codigo, o.status, o.prioridade, o.descricao || "", o.zona_alvo || "", format(new Date(o.data_criacao), "yyyy-MM-dd HH:mm"), `${progresso}%`];
+     });
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `ondas_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
 
   useEffect(() => {
     loadOndas();
@@ -92,8 +110,20 @@ export default function OndasPage() {
   };
 
   if (loading) {
-    return (
-      <AppLayout title="Ondas de Separação" showBack>
+   return (
+     <AppLayout 
+       title="Ondas de Separação" 
+       showBack
+       rightAction={
+         <div className="flex gap-2">
+           <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-2">
+             <Download className="h-4 w-4" />
+             <span className="hidden sm:inline">Exportar</span>
+           </Button>
+           <NovoOndaDialog onSuccess={loadOndas} />
+         </div>
+       }
+     >
         <PageTransition>
           <div className="p-4 space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

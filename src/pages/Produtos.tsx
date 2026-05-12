@@ -1,25 +1,23 @@
-import { useState, useMemo, useEffect } from "react";
-import { produtoSchema, validateForm } from "@/lib/validations";
-import { AppLayout } from "@/components/layout/AppLayout";
-import { PageTransition } from "@/components/layout/PageTransition";
+  import { useState, useMemo } from "react";
+  import { AppLayout } from "@/components/layout/AppLayout";
+  import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Search, Plus, Filter, X } from "lucide-react";
+ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { Search, Plus, Filter, X, Download } from "lucide-react";
+ import { useProdutos } from "@/hooks/useProdutos";
+ import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
 import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
 import { ProdutoDetailDialog, Produto } from "@/components/produtos/ProdutoDetailDialog";
 import { ProdutosList } from "@/components/produtos/ProdutosList";
 
-export default function ProdutosPage() {
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+ export default function ProdutosPage() {
+    const { produtos, loading, createProduto, stats } = useProdutos();
+    const [search, setSearch] = useState("");
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
@@ -31,49 +29,28 @@ export default function ProdutosPage() {
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => { loadProdutos(); }, []);
-
-  const loadProdutos = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase.from("produtos").select("*").order("nome");
-      if (error) throw error;
-      setProdutos((data || []) as Produto[]);
-    } catch (err) {
-      toast.error("Erro ao carregar produtos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    const validation = validateForm(produtoSchema, formData);
-    if (!validation.success) { setFormErrors(validation.errors); return; }
-    setFormErrors({});
-    try {
-      setSaving(true);
-      const { error } = await supabase.from("produtos").insert({
-        sku: formData.sku, nome: formData.nome,
-        descricao: formData.descricao || null,
-        unidade: formData.unidade,
-        estoque_minimo: formData.estoque_minimo,
-        estoque_maximo: formData.estoque_maximo,
-        ponto_pedido: formData.ponto_pedido,
-        peso_unitario: formData.peso_unitario || null,
-        fornecedor_principal: formData.fornecedor_principal || null,
-      });
-      if (error) throw error;
-      toast.success("Produto cadastrado com sucesso!");
-      setShowAddDialog(false);
-      setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
-      setFormErrors({});
-      loadProdutos();
-    } catch (err: unknown) {
-      toast.error((err instanceof Error ? err.message : String(err)) || "Erro ao salvar produto");
-    } finally {
-      setSaving(false);
-    }
-  };
+   const handleSave = async () => {
+     const validation = validateForm(produtoSchema, formData);
+     if (!validation.success) { setFormErrors(validation.errors); return; }
+     setFormErrors({});
+     await createProduto.mutateAsync({
+       sku: formData.sku, 
+       nome: formData.nome,
+       descricao: formData.descricao || null,
+       unidade: formData.unidade,
+       estoque_minimo: formData.estoque_minimo,
+       estoque_maximo: formData.estoque_maximo,
+       ponto_pedido: formData.ponto_pedido,
+       peso_unitario: formData.peso_unitario || null,
+       fornecedor_principal: formData.fornecedor_principal || null,
+     }, {
+       onSuccess: () => {
+         setShowAddDialog(false);
+         setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
+         setFormErrors({});
+       }
+     });
+   };
 
   const filtered = useMemo(() => {
     return produtos.filter((p) => {
@@ -83,13 +60,18 @@ export default function ProdutosPage() {
     });
   }, [produtos, search, curvaFilter]);
 
-  const stats = useMemo(() => {
-    const total = produtos.length;
-    const curvaA = produtos.filter((p) => p.curva_abc === "A").length;
-    const curvaB = produtos.filter((p) => p.curva_abc === "B").length;
-    const curvaC = produtos.filter((p) => p.curva_abc === "C").length;
-    return { total, curvaA, curvaB, curvaC };
-  }, [produtos]);
+   const handleExport = () => {
+     const headers = ["SKU", "Nome", "Unidade", "Curva ABC", "Estoque Min", "Estoque Max", "Fornecedor"];
+     const rows = filtered.map(p => [p.sku, p.nome, p.unidade, p.curva_abc || "", p.estoque_minimo, p.estoque_maximo, p.fornecedor_principal || ""]);
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `produtos_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
 
   const getCurvaBadge = (curva?: string) => {
     switch (curva) {
@@ -123,12 +105,18 @@ export default function ProdutosPage() {
     <AppLayout
       title="Produtos"
       showBack
-      rightAction={
-        <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
-          <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Novo Produto</span>
-        </Button>
-      }
+       rightAction={
+         <div className="flex gap-2">
+           <Button size="sm" variant="outline" className="gap-2" onClick={handleExport} title="Exportar CSV">
+             <Download className="h-4 w-4" />
+             <span className="hidden sm:inline">Exportar</span>
+           </Button>
+           <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
+             <Plus className="h-4 w-4" />
+             <span className="hidden sm:inline">Novo Produto</span>
+           </Button>
+         </div>
+       }
     >
       <PageTransition>
         <div className="p-4 space-y-4">
@@ -159,16 +147,16 @@ export default function ProdutosPage() {
         </div>
       </PageTransition>
 
-      <ProdutoFormDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        formData={formData}
-        setFormData={setFormData}
-        formErrors={formErrors}
-        setFormErrors={setFormErrors}
-        saving={saving}
-        onSave={handleSave}
-      />
+       <ProdutoFormDialog
+         open={showAddDialog}
+         onOpenChange={setShowAddDialog}
+         formData={formData}
+         setFormData={setFormData}
+         formErrors={formErrors}
+         setFormErrors={setFormErrors}
+         saving={createProduto.isPending}
+         onSave={handleSave}
+       />
 
       <ProdutoDetailDialog produto={selectedProduto} onClose={() => setSelectedProduto(null)} getCurvaBadge={getCurvaBadge} />
     </AppLayout>

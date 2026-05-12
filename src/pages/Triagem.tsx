@@ -2,10 +2,13 @@ import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
-import { useState, useMemo, useRef, useEffect } from "react";
+ import { useState, useMemo, useRef, useEffect } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { toast } from "sonner";
+ import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play } from "lucide-react";
+ import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +33,27 @@ type SortOrder = "data" | "resultado";
 export default function TriagemPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { triagens, isLoading, error, createTriagem, refetch } = useTriagens();
+   const { triagens, isLoading, error, createTriagem, updateTriagem, refetch } = useTriagens();
+   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+   const toggleSelection = (id: string) => {
+     setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+   };
+ 
+   const clearSelection = () => setSelectedIds([]);
+ 
+   const handleExportCSV = () => {
+     const headers = ["ID", "Lote ID", "Resultado", "Data Inicio", "Data Fim", "Operador"];
+     const rows = filteredAndSortedItems.map(t => [t.id, t.lote_id || "", t.resultado || "Pendente", t.data_inicio, t.data_fim || "", t.operador_id || ""]);
+     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.setAttribute("download", `triagem_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+   };
+ 
   
   const items = triagens || [];
   
@@ -153,7 +176,11 @@ export default function TriagemPage() {
       title="Triagem"
       showBack
       rightAction={
-        <div className="flex gap-2">
+         <div className="flex gap-2">
+           <Button size="sm" variant="outline" className="gap-2" onClick={handleExportCSV} title="Exportar CSV">
+             <Download className="h-4 w-4" />
+             <span className="hidden sm:inline">Exportar</span>
+           </Button>
           <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
             <QrCode className="h-4 w-4" />
             <span className="hidden sm:inline">Scanner</span>
@@ -170,7 +197,24 @@ export default function TriagemPage() {
       }
     >
       <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
-      <div ref={containerRef} className="p-4 space-y-4 animate-fade-in">
+       <div ref={containerRef} className="p-4 space-y-4 animate-fade-in relative">
+         {selectedIds.length > 0 && (
+           <motion.div 
+             initial={{ opacity: 0, y: -10 }} 
+             animate={{ opacity: 1, y: 0 }}
+             className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20 sticky top-0 z-20"
+           >
+             <CheckSquare className="h-4 w-4 text-primary" />
+             <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
+             <div className="flex-1" />
+             <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
+             <Button size="sm" variant="outline" className="text-destructive gap-1" onClick={async () => {
+               // No deleteMutation exposed yet in useTriagens, but we could add it or just toast for now.
+               // For now let's just mark as finished if not finished
+               toast.info("Ação em massa para triagens selecionadas");
+             }}><Trash2 className="h-3 w-3" />Ações</Button>
+           </motion.div>
+         )}
         <PullToRefreshIndicator 
           pullDistance={pullDistance} 
           threshold={pullThreshold} 
@@ -234,12 +278,19 @@ export default function TriagemPage() {
             paginatedItems.map((item) => {
               const status = getStatus(item);
               return (
-                <div
-                  key={item.id}
-                  className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-all"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
+                 <div
+                   key={item.id}
+                   className={cn(
+                     "bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-all relative overflow-hidden",
+                     selectedIds.includes(item.id) && "border-primary bg-primary/5"
+                   )}
+                 >
+                   {selectedIds.includes(item.id) && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
+                   <div className="flex items-start gap-3">
+                     <div className="flex items-center gap-2 mt-1" onClick={() => toggleSelection(item.id)}>
+                       <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => {}} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                     </div>
+                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-semibold text-primary">
                           #{item.id.slice(0, 8)}

@@ -1,6 +1,6 @@
 import { EstoqueCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
-import { useState, useMemo } from "react";
+ import { useState, useMemo, useEffect } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
@@ -37,16 +37,18 @@ export default function EstoquePage() {
   const toggleSelection = (id: string) => setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   const clearSelection = () => setSelectedIds([]);
 
-  const handleBulkBloquear = async () => {
-    for (const id of selectedIds) await updatePosicao.mutateAsync({ id, status: "bloqueado" });
-    toast.success(`${selectedIds.length} posições bloqueadas`);
-    clearSelection();
-  };
-  const handleBulkLiberar = async () => {
-    for (const id of selectedIds) await updatePosicao.mutateAsync({ id, status: "livre" });
-    toast.success(`${selectedIds.length} posições liberadas`);
-    clearSelection();
-  };
+   const handleBulkUpdate = async (status: StatusPosicao) => {
+     try {
+       await updatePosicao.mutateAsync({ ids: selectedIds, status });
+       log.custom("update", "estoque", {
+         detalhes: `Atualização em massa para ${status} de ${selectedIds.length} posições`,
+         ids: selectedIds
+       });
+       clearSelection();
+     } catch (error) {
+       toast.error("Erro ao realizar atualização em massa");
+     }
+   };
 
   const [activeTab, setActiveTab] = useState("mapa");
   const [selectedPosition, setSelectedPosition] = useState<PosicaoEstoque | null>(null);
@@ -65,10 +67,15 @@ export default function EstoquePage() {
 
   const [filters, setFilters] = useState<Filters>({ status: ["livre", "ocupado", "reservado", "bloqueado"], ruas: [], niveis: [], search: "" });
 
-  useMemo(() => {
-    if (ruas.length > 0 && filters.ruas.length === 0) setFilters(prev => ({ ...prev, ruas }));
-    if (niveis.length > 0 && filters.niveis.length === 0) setFilters(prev => ({ ...prev, niveis }));
-  }, [ruas, niveis]);
+   // Substituindo useMemo por useEffect para evitar atualização de estado durante a renderização
+   useEffect(() => {
+     if (ruas.length > 0 && filters.ruas.length === 0) {
+       setFilters(prev => ({ ...prev, ruas }));
+     }
+     if (niveis.length > 0 && filters.niveis.length === 0) {
+       setFilters(prev => ({ ...prev, niveis }));
+     }
+   }, [ruas, niveis, filters.ruas.length, filters.niveis.length]);
 
   const ppPositions = useMemo(() => safePositions.filter(p => p.tipo === 'porta_palete'), [safePositions]);
   const boxPositions = useMemo(() => safePositions.filter(p => p.tipo === 'box'), [safePositions]);
@@ -82,13 +89,23 @@ export default function EstoquePage() {
     };
   }, [getEstatisticas, ppPositions, boxPositions]);
 
-  const filteredPositions = useMemo(() => ppPositions.filter(p => {
-    if (!filters.status.includes(p.status)) return false;
-    if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
-    if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
-    if (filters.search && !p.codigo.toLowerCase().includes(filters.search.toLowerCase())) return false;
-    return true;
-  }), [ppPositions, filters]);
+   const filteredPositions = useMemo(() => {
+     const searchTerm = filters.search.toLowerCase();
+     return ppPositions.filter(p => {
+       if (!filters.status.includes(p.status)) return false;
+       if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
+       if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
+       
+       if (searchTerm) {
+         const matchCodigo = p.codigo.toLowerCase().includes(searchTerm);
+         const matchRua = p.porta_palete?.toLowerCase().includes(searchTerm);
+         const matchNivel = p.nivel?.toLowerCase().includes(searchTerm);
+         const matchZona = p.zona?.toLowerCase().includes(searchTerm);
+         return matchCodigo || matchRua || matchNivel || matchZona;
+       }
+       return true;
+     });
+   }, [ppPositions, filters]);
 
   const activeFiltersCount = (4 - filters.status.length) + (ruas.length - filters.ruas.length) + (niveis.length - filters.niveis.length);
 
@@ -134,8 +151,8 @@ export default function EstoquePage() {
             <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
               <CheckSquare className="h-4 w-4 text-primary" /><span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
               <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
-              <Button size="sm" variant="outline" onClick={handleBulkBloquear}><Lock className="h-3 w-3 mr-1" />Bloquear</Button>
-              <Button size="sm" variant="outline" onClick={handleBulkLiberar}><Unlock className="h-3 w-3 mr-1" />Liberar</Button>
+               <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("bloqueado")}><Lock className="h-3 w-3 mr-1" />Bloquear</Button>
+               <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("livre")}><Unlock className="h-3 w-3 mr-1" />Liberar</Button>
             </div>
           )}
 
