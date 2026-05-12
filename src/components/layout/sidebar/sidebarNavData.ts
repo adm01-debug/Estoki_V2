@@ -112,7 +112,8 @@ export const sidebarGroups: SidebarGroup[] = [
     label: "Gestão",
     icon: Settings,
     items: [
-      { path: "/inventario", icon: ClipboardList, label: "Inventário Cíclico" },
+      { path: "/inventory", icon: ClipboardList, label: "Inventário Geral" },
+      { path: "/inventario", icon: Zap, label: "Inventário Cíclico" },
       { path: "/tarefas", icon: ListTodo, label: "Gestão Tarefas" },
       { path: "/alertas", icon: BellRing, label: "Alertas" },
       { path: "/gamificacao", icon: Activity, label: "Gamificação" },
