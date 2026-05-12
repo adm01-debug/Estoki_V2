@@ -14,7 +14,7 @@
    const [formData, setFormData] = useState({
      codigo: `ON-${Math.floor(1000 + Math.random() * 9000)}`,
      descricao: "",
-     prioridade: "normal",
+     prioridade: "media",
      zona_alvo: "",
      rota: ""
    });
@@ -65,7 +65,8 @@
                <Select value={formData.prioridade} onValueChange={v => setFormData({...formData, prioridade: v})}>
                  <SelectTrigger><SelectValue /></SelectTrigger>
                  <SelectContent>
-                   <SelectItem value="normal">Normal</SelectItem>
+                   <SelectItem value="baixa">Baixa</SelectItem>
+                   <SelectItem value="media">Média</SelectItem>
                    <SelectItem value="alta">Alta</SelectItem>
                    <SelectItem value="urgente">Urgente</SelectItem>
                  </SelectContent>
