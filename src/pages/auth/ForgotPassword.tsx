@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Box, Mail, ArrowLeft, Loader2 } from "lucide-react";
 import { BrandingContent } from "@/components/auth/BrandingContent";
-import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const ForgotPasswordPage = () => {
       return;
     }
     setIsSubmitting(true);
-    const { error } = await lovable.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/reset-password`,
     });
     if (error) {

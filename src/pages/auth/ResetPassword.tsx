@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { Box, Lock, Loader2 } from "lucide-react";
 import { BrandingContent } from "@/components/auth/BrandingContent";
-import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const ResetPasswordPage = () => {
       return;
     }
     setIsSubmitting(true);
-    const { error } = await lovable.auth.updateUser({ password });
+    const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       toast({ title: "Erro", description: "Falha ao redefinir senha", variant: "destructive" });
     } else {
