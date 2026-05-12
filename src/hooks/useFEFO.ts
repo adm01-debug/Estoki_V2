@@ -43,11 +43,6 @@ import { supabase } from "@/integrations/supabase/client";
           )
         };
       });
-        ...item,
-        dias_para_vencer: Math.ceil(
-          (new Date(item.data_validade).getTime() - new Date().getTime()) / (1000 * 3600 * 24)
-        )
-      }));
     },
   });
 }
