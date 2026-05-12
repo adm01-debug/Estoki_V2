@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Box, Loader2, Zap } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { Link } from "react-router-dom";
 import { loginSchema, signupSchema } from "@/components/auth/authSchema";
 import { BrandingContent } from "@/components/auth/BrandingContent";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -211,7 +212,7 @@ const AuthPage = () => {
           </div>
 
           {/* Footer toggle */}
-          <div className="text-center pt-2">
+          <div className="flex flex-col gap-2 text-center pt-2">
             <button
               type="button"
               className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors"
@@ -227,6 +228,9 @@ const AuthPage = () => {
                 <>Já tem uma conta? <span className="text-primary font-semibold">Faça login</span></>
               )}
             </button>
+            <Link to="/auth/login" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+              Tentar nova interface modular (Beta)
+            </Link>
           </div>
         </div>
       </div>
