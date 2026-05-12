@@ -49,7 +49,7 @@ export default function DashboardTriadorPage() {
   const conquistasData = useConquistas();
   const conquistasUsuario = conquistasData.desbloqueadas;
   const loadingConquistas = conquistasData.loading;
-  const { desafios, loading: loadingDesafios } = useDesafiosDiarios();
+   const { desafios, loading: loadingDesafios, coletarRecompensa } = useDesafiosDiarios();
   const { ranking, minhaposicao, loading: loadingRanking, periodo: periodoRanking } = useRanking();
   const streaksData = useStreaks();
   const streakAtual = streaksData.streakAtual;
@@ -250,10 +250,11 @@ export default function DashboardTriadorPage() {
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
+           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="hoje">Hoje</TabsTrigger>
             <TabsTrigger value="conquistas">Conquistas</TabsTrigger>
             <TabsTrigger value="desafios">Desafios</TabsTrigger>
+            <TabsTrigger value="ranking">Ranking</TabsTrigger>
           </TabsList>
 
           <TabsContent value="hoje" className="space-y-4">
@@ -374,6 +375,52 @@ export default function DashboardTriadorPage() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="ranking" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Trophy className="h-4 w-4" />
+                  Classificação Geral
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {ranking.map((entry, index) => (
+                    <div 
+                      key={entry.id} 
+                      className={`flex items-center justify-between p-3 rounded-lg border ${
+                        entry.user_id === user?.id ? 'bg-primary/5 border-primary/30 ring-1 ring-primary/20' : 'bg-card'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                          index === 0 ? 'bg-yellow-500 text-white' : 
+                          index === 1 ? 'bg-slate-300 text-slate-700' : 
+                          index === 2 ? 'bg-amber-600 text-white' : 
+                          'bg-secondary text-secondary-foreground'
+                        }`}>
+                          {index + 1}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-sm">
+                            {entry.nome} {entry.user_id === user?.id && "(Você)"}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-[10px] h-4 py-0">Nível {entry.nivel}</Badge>
+                            <span className="text-xs text-muted-foreground">{entry.conquistas} conquistas</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-primary">{entry.xp_total} XP</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="desafios" className="space-y-4">
             <Card>
               <CardHeader>
@@ -410,7 +457,6 @@ export default function DashboardTriadorPage() {
                                {ok && !d.xpColetado && (
                                  <button
                                    onClick={() => {
-                                     // @ts-ignore
                                      coletarRecompensa(d.id);
                                    }}
                                    className="text-[10px] font-bold uppercase py-1 px-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
