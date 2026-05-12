@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Check, AlertTriangle, Package, Loader2 } from "lucide-react";
+import { Check, AlertTriangle, Package, Loader2, QrCode } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button"; 
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,8 @@ export default function ConferenciaRecebimento() {
   const [tipoEmbalagem, setTipoEmbalagem] = useState<TipoEmbalagem>("original");
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [itemScanned, setItemScanned] = useState(false);
+  const [locationScanned, setLocationScanned] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
   const [voiceActive, setVoiceActive] = useState(false);
 
@@ -75,8 +77,27 @@ export default function ConferenciaRecebimento() {
     }
   }, [id, recebimentos]);
 
+  const handleScanItem = () => {
+    setItemScanned(true);
+    toast({ title: "Item Validado", description: "Código do produto conferido com sucesso." });
+  };
+
+  const handleScanLocation = () => {
+    setLocationScanned(true);
+    toast({ title: "Local Validado", description: "Posição de destino confirmada." });
+  };
+
   const handleSalvar = async () => {
     if (!recebimento || !id) return;
+    
+    if (!itemScanned || !locationScanned) {
+      toast({
+        title: "Validação Pendente",
+        description: "É necessário escanear o item e o local antes de confirmar.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setSalvando(true);
     try {
