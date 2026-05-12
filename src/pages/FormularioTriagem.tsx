@@ -11,6 +11,7 @@ import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica"
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Sparkles, Trophy, Star } from "lucide-react";
 
 // Modularized Components
 import { TriagemHeaderCard } from "@/components/triagem/formulario/TriagemHeaderCard";
@@ -50,6 +51,7 @@ export default function FormularioTriagem() {
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const quantidadeTotal = triagem?.quantidade_total || 100;
 
@@ -118,12 +120,20 @@ export default function FormularioTriagem() {
         data_fim: new Date().toISOString(),
       });
 
-      toast({
-        title: resultado === "aprovado" ? "Triagem aprovada!" : "Triagem reprovada",
-        description: `Tempo de triagem: ${formattedTime}`,
-      });
-
-      navigate("/triagem");
+      if (resultado === "aprovado") {
+        setShowCelebration(true);
+        toast.success("Excelente! Triagem aprovada.", {
+          description: `Você ganhou +50 XP! Tempo: ${formattedTime}`,
+          icon: <Trophy className="h-4 w-4 text-yellow-500" />
+        });
+        setTimeout(() => navigate("/triagem"), 3000);
+      } else {
+        toast.error("Triagem reprovada", {
+          description: `Tempo: ${formattedTime}`,
+          icon: <XCircle className="h-4 w-4" />
+        });
+        navigate("/triagem");
+      }
     } catch {
       toast({
         title: "Erro ao finalizar",
