@@ -58,66 +58,79 @@ export default function DashboardTriadorPage() {
 
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
-   const [loadingHist, setLoadingHist] = useState(false);
-   const [recentHistory, setRecentHistory] = useState<any[]>([]);
+    const [loadingHist, setLoadingHist] = useState(false);
+    const [recentHistory, setRecentHistory] = useState<any[]>([]);
+    const [xpHoje, setXPHoje] = useState(0);
 
-   useEffect(() => {
-     if (!user?.id) return;
+    const loadHistorico = async () => {
+      if (!user?.id) return;
+      setLoadingHist(true);
+      const data = await getMetricasDiarias(user.id, 7);
+      setSemanalData(data.map((d: any) => ({
+        dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
+        itensTriados: d.triagens
+      })));
+      setLoadingHist(false);
+    };
 
-     // Realtime subscription for triage events
-     const channel = supabase
-       .channel('user-triage-updates')
-       .on(
-         'postgres_changes',
-         {
-           event: 'INSERT',
-           schema: 'public',
-           table: 'eventos_triagem',
-           filter: `operador_id=eq.${user.id}`,
-         },
-         () => {
-           // Refresh data when a new triage is completed
-           refetchProdutividade();
-           loadHistorico();
-           loadRecentActivity();
-         }
-       )
-       .subscribe();
+    const loadRecentActivity = async () => {
+      if (!user?.id) return;
+      const { data } = await supabase
+        .from('eventos_triagem')
+        .select('id, data_fim, resultado, items_count')
+        .eq('operador_id', user.id)
+        .not('data_fim', 'is', null)
+        .order('data_fim', { ascending: false })
+        .limit(5);
+      
+      if (data) setRecentHistory(data);
+    };
 
-     const loadHistorico = async () => {
-       if (!user?.id) return;
-       setLoadingHist(true);
-       const data = await getMetricasDiarias(user.id, 7);
-       setSemanalData(data.map((d: any) => ({
-         dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
-         itensTriados: d.triagens
-       })));
-       setLoadingHist(false);
-     };
-     loadHistorico();
+    const loadXPHoje = async () => {
+      if (!user?.id) return;
+      const hojeStr = new Date().toISOString().split('T')[0];
+      const { data } = await supabase
+        .from('eventos_gamificacao')
+        .select('xp_ganho')
+        .eq('user_id', user.id)
+        .gte('created_at', hojeStr);
+      
+      if (data) {
+        const total = data.reduce((acc, curr) => acc + curr.xp_ganho, 0);
+        setXPHoje(total);
+      }
+    };
 
-     const loadRecentActivity = async () => {
-       if (!user?.id) return;
-       const { data } = await supabase
-         .from('eventos_triagem')
-         .select('id, data_fim, resultado, items_count')
-         .eq('operador_id', user.id)
-         .not('data_fim', 'is', null)
-         .order('data_fim', { ascending: false })
-         .limit(5);
-       
-       if (data) setRecentHistory(data);
-     };
-     loadRecentActivity();
-    }, [user?.id, getMetricasDiarias, refetchProdutividade]);
-
-    // Separate useEffect for the subscription to cleanup properly
     useEffect(() => {
       if (!user?.id) return;
-      // Subscriptions are handled in the main useEffect for simplicity here, 
-      // but we should ensure they are cleaned up. 
-      // Actually, let's move the subscription to a separate useEffect.
-    }, [user?.id]);
+
+      const channel = supabase
+        .channel(`user-triage-updates-${user.id}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'eventos_triagem',
+            filter: `operador_id=eq.${user.id}`,
+          },
+          () => {
+            refetchProdutividade();
+            loadHistorico();
+            loadRecentActivity();
+            loadXPHoje();
+          }
+        )
+        .subscribe();
+
+      loadHistorico();
+      loadRecentActivity();
+      loadXPHoje();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }, [user?.id, getMetricasDiarias, refetchProdutividade]);
 
   const minhasMetricas = useMemo(() => {
     if (!user) return null;
@@ -161,7 +174,11 @@ export default function DashboardTriadorPage() {
                       </Badge>
                       <Badge variant="outline" className="gap-1">
                         <Zap className="h-3 w-3 text-primary" />
-                        {gamificacao?.xp_total || 0} XP
+                        {gamificacao?.xp_total || 0} XP Total
+                      </Badge>
+                      <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
+                        <TrendingUp className="h-3 w-3" />
+                        +{xpHoje} XP Hoje
                       </Badge>
                       {streakAtual > 0 && (
                         <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
