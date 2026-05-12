@@ -26,13 +26,23 @@ import { supabase } from "@/integrations/supabase/client";
         .order("data_validade", { ascending: true });
 
        if (produtoId) query = query.eq("produto_id", produtoId);
-       if (sku) query = query.eq("produtos.sku", sku);
+        // Fix SKU filtering for joined tables in Supabase
+        if (sku) query = query.eq("produto.sku", sku);
 
       const { data, error } = await query;
 
       if (error) throw error;
 
-      return (data as any[]).map(item => ({
+      const now = new Date();
+      return (data as any[]).map(item => {
+        const validade = new Date(item.data_validade);
+        return {
+          ...item,
+          dias_para_vencer: Math.ceil(
+            (validade.getTime() - now.getTime()) / (1000 * 3600 * 24)
+          )
+        };
+      });
         ...item,
         dias_para_vencer: Math.ceil(
           (new Date(item.data_validade).getTime() - new Date().getTime()) / (1000 * 3600 * 24)
