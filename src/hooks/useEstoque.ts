@@ -19,7 +19,7 @@ export type TipoPosicao = 'porta_palete' | 'box';
    produto?: {
      nome: string;
      sku: string;
-     categoria?: string;
+    curva_abc?: string | null;
    };
    lote?: {
      numero_lote: string;
@@ -55,15 +55,19 @@ export const useEstoque = () => {
          .select(`
            *,
            saldos:estoque_posicao(
-             *,
-             produto:produtos(nome, sku, categoria),
-             lote:lotes(numero_lote, data_validade)
+            id,
+            produto_id,
+            lote_id,
+            quantidade,
+            data_entrada,
+            produto:produtos(nome, sku, curva_abc),
+            lote:lotes(numero_lote, data_validade)
            )
          `)
          .order('codigo');
  
       if (error) throw error;
-       return data as PosicaoEstoque[];
+      return data as unknown as PosicaoEstoque[];
     }
   });
 
