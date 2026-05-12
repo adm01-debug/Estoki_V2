@@ -1,41 +1,71 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import type { SerialPort as SerialPortType } from '@/types/web-serial';
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
-export function useWeightScale(portConfig?: { filters?: Array<{ usbVendorId?: number; usbProductId?: number }> }) {
+export function useWeightScale() {
   const [weight, setWeight] = useState<number>(0);
-  const [unit, setUnit] = useState<'kg' | 'g' | 'lb'>('kg');
-  const [isStable, setIsStable] = useState(false);
-  const [isConnected, setIsConnected] = useState(false);
-  const portRef = useRef<SerialPortType | null>(null);
+  const [isStabilized, setIsStabilized] = useState(false);
+  const [isReading, setIsReading] = useState(false);
 
-  const connect = useCallback(async () => {
-    try {
-      portRef.current = await navigator.serial.requestPort(portConfig);
-      await portRef.current.open({ baudRate: 9600 });
-      setIsConnected(true);
-      const reader = portRef.current.readable?.getReader();
-      if (reader) {
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) break;
-          const text = new TextDecoder().decode(value);
-          const match = text.match(/(\d+\.?\d*)\s*(kg|g|lb)/i);
-          if (match) {
-            setWeight(parseFloat(match[1]));
-            setUnit(match[2].toLowerCase() as 'kg' | 'g' | 'lb');
-            setIsStable(text.includes('ST'));
-          }
-        }
-      }
-    } catch {
-      setIsConnected(false);
-    }
-  }, [portConfig]);
-
-  const disconnect = useCallback(async () => {
-    await portRef.current?.close();
-    setIsConnected(false);
+  const readWeight = useCallback(async () => {
+    setIsReading(true);
+    setIsStabilized(false);
+    
+    // Simula a leitura de uma balança via Serial/USB/Network
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    const simulatedWeight = Math.floor(Math.random() * 25000) / 1000; // 0 a 25kg
+    setWeight(simulatedWeight);
+    setIsStabilized(true);
+    setIsReading(false);
+    
+    return simulatedWeight;
   }, []);
 
-  return { weight, unit, isStable, isConnected, connect, disconnect };
+  const tare = useCallback(() => {
+    setWeight(0);
+    toast.info("Balança zerada (Tara)");
+  }, []);
+
+  return { weight, isStabilized, isReading, readWeight, tare };
+}
+
+*** Add File: src/hooks/useRFID.ts
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
+
+export interface RFIDTag {
+  id: string;
+  rssi: number;
+  timestamp: number;
+}
+
+export function useRFID() {
+  const [tags, setTags] = useState<RFIDTag[]>([]);
+  const [isScanning, setIsScanning] = useState(false);
+
+  const scanTags = useCallback(async (durationMs = 3000) => {
+    setIsScanning(true);
+    setTags([]);
+    
+    // Simula scan de múltiplos portais RFID
+    const interval = setInterval(() => {
+      const newTag = {
+        id: `E200${Math.random().toString(16).slice(2, 10).toUpperCase()}`,
+        rssi: -Math.floor(Math.random() * 40 + 40),
+        timestamp: Date.now()
+      };
+      setTags(prev => {
+        if (prev.find(t => t.id === newTag.id)) return prev;
+        return [...prev, newTag];
+      });
+    }, 300);
+
+    await new Promise(resolve => setTimeout(resolve, durationMs));
+    clearInterval(interval);
+    setIsScanning(false);
+    
+    toast.success("Scan RFID concluído!");
+  }, []);
+
+  return { tags, isScanning, scanTags };
 }
