@@ -37,7 +37,11 @@ export interface PosicaoEstoque {
   nivel?: string | null;
   porta_palete?: string | null;
   box?: string | null;
-  capacidade_kg?: number | null;
+   capacidade_kg?: number | null;
+   bloqueado_por?: string | null;
+   bloqueado_em?: string | null;
+   reservado_por?: string | null;
+   reservado_em?: string | null;
   created_at: string;
   updated_at: string;
    saldos?: SaldoPosicao[];

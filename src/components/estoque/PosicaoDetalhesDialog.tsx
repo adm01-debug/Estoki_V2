@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Package, AlertTriangle, Clock, Loader2 } from "lucide-react";
+ import { X, MapPin, Package, AlertTriangle, Clock, Loader2, History, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,9 @@ interface PosicaoDetalhesDialogProps {
 
 export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDialogProps) {
   const [detalhes, setDetalhes] = useState<EstoquePosicaoDetalhes | null>(null);
-  const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(false);
+   const [history, setHistory] = useState<any[]>([]);
+   const [loadingHistory, setLoadingHistory] = useState(false);
 
   useEffect(() => {
     async function fetchDetalhes() {
@@ -54,6 +56,28 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
     }
     fetchDetalhes();
   }, [position]);
+
+   useEffect(() => {
+     async function fetchHistory() {
+       if (!position) return;
+       setLoadingHistory(true);
+       try {
+         const { data, error } = await supabase
+           .from('posicao_status_log')
+           .select(`*, profiles:operador_id(nome)`)
+           .eq('posicao_id', position.id)
+           .order('created_at', { ascending: false })
+           .limit(5);
+         if (error) throw error;
+         setHistory(data || []);
+       } catch (err) {
+         console.error('Erro ao buscar histórico:', err);
+       } finally {
+         setLoadingHistory(false);
+       }
+     }
+     fetchHistory();
+   }, [position]);
 
   if (!position) return null;
 
@@ -118,6 +142,36 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
                 <p>Posição bloqueada para uso</p>
               </div>
             )}
+
+             <div className="bg-muted/30 rounded-xl p-4 border border-dashed border-border">
+               <div className="flex items-center gap-2 mb-3">
+                 <History className="h-4 w-4 text-muted-foreground" />
+                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Últimas Alterações</span>
+               </div>
+               <div className="space-y-3">
+                 {loadingHistory ? (
+                   <div className="flex justify-center py-2"><Loader2 className="h-4 w-4 animate-spin opacity-20" /></div>
+                 ) : history.length === 0 ? (
+                   <p className="text-xs text-muted-foreground italic">Sem registros recentes</p>
+                 ) : (
+                   history.map((log) => (
+                     <div key={log.id} className="flex justify-between items-start gap-2 text-xs">
+                       <div className="flex flex-col">
+                         <span className="font-medium text-foreground">
+                           {statusConfig[log.status_novo as keyof typeof statusConfig]?.label || log.status_novo}
+                         </span>
+                         <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                           <User className="h-2 w-2" /> {log.profiles?.nome || "Sistema"}
+                         </span>
+                       </div>
+                       <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                         {new Date(log.created_at).toLocaleString("pt-BR", { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                       </span>
+                     </div>
+                   ))
+                 )}
+               </div>
+             </div>
 
             <PosicaoActions position={position} />
           </div>
