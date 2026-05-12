@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { useNotifications, Notification } from "@/contexts/NotificationContext";
+import { useNotifications } from "@/contexts/NotificationContext";
+import { Notification } from "@/types/notifications";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
