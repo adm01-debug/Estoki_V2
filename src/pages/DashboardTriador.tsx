@@ -60,7 +60,7 @@ export default function DashboardTriadorPage() {
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
     const [loadingHist, setLoadingHist] = useState(false);
     const [recentHistory, setRecentHistory] = useState<any[]>([]);
-    const [xpHoje, setXPHoje] = useState(0);
+    const [triagensHoje, setTriagensHoje] = useState(0);
 
     const loadHistorico = async () => {
       if (!user?.id) return;
@@ -86,19 +86,16 @@ export default function DashboardTriadorPage() {
       if (data) setRecentHistory(data);
     };
 
-    const loadXPHoje = async () => {
+    const loadTriagensHoje = async () => {
       if (!user?.id) return;
       const hojeStr = new Date().toISOString().split('T')[0];
-      const { data } = await supabase
-        .from('eventos_gamificacao')
-        .select('xp_ganho')
-        .eq('user_id', user.id)
-        .gte('created_at', hojeStr);
+      const { count } = await supabase
+        .from('eventos_triagem')
+        .select('*', { count: 'exact', head: true })
+        .eq('operador_id', user.id)
+        .gte('data_fim', hojeStr);
       
-      if (data) {
-        const total = data.reduce((acc, curr) => acc + curr.xp_ganho, 0);
-        setXPHoje(total);
-      }
+      setTriagensHoje(count || 0);
     };
 
     useEffect(() => {
@@ -118,14 +115,14 @@ export default function DashboardTriadorPage() {
             refetchProdutividade();
             loadHistorico();
             loadRecentActivity();
-            loadXPHoje();
+            loadTriagensHoje();
           }
         )
         .subscribe();
 
       loadHistorico();
       loadRecentActivity();
-      loadXPHoje();
+      loadTriagensHoje();
 
       return () => {
         supabase.removeChannel(channel);
@@ -178,7 +175,7 @@ export default function DashboardTriadorPage() {
                       </Badge>
                       <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
                         <TrendingUp className="h-3 w-3" />
-                        +{xpHoje} XP Hoje
+                        {triagensHoje} Triagens Hoje
                       </Badge>
                       {streakAtual > 0 && (
                         <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
