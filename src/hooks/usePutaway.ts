@@ -34,7 +34,7 @@ export function usePutaway() {
           posicao_origem:posicoes_estoque!posicao_origem_id(codigo),
           posicao_destino:posicoes_estoque!posicao_destino_id(codigo)
         `)
-        .eq("tipo", "armazenamento")
+        .eq("tipo", "armazenagem")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -72,14 +72,14 @@ export function usePutaway() {
          // mas vamos registrar uma movimentação no log pelo menos
          const task = tasks.find(t => t.id === taskId);
          if (task) {
-            await supabase.from("rastreamento_historico").insert({
-              produto_id: task.produto_id,
-              posicao_id: task.posicao_destino_id,
-              tipo_evento: "entrada_estoque",
-              quantidade: qty,
-              descricao: `Armazenamento via tarefa ${task.id}`,
-              operador_id: user?.id
-            });
+            await supabase.from("rastreamento_historico").insert([{
+              produto_id: task.produto_id as any,
+              posicao_id: task.posicao_destino_id as any,
+              tipo_evento: "entrada_estoque" as any,
+              quantidade: qty as any,
+              descricao: `Armazenamento via tarefa ${task.id}` as any,
+              operador_id: user?.id as any
+            }]);
          }
       }
     },
