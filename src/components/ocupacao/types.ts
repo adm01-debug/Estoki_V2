@@ -7,6 +7,7 @@ export interface PosicaoVisual {
   porta_palete: string | null;
   secao: string | null;
   nivel: string | null;
+  box: string | null;
   status: string;
   tipo: string;
   capacidade_kg: number | null;

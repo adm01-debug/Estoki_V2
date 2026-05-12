@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { PosicaoVisual, ViewMode, statusConfig, getHeatColor } from "./types";
 
 interface RackViewProps {
@@ -41,19 +41,31 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
   const occupied = positions.filter((p) => p.status === "ocupada").length;
   const occupancyPercent = positions.length > 0 ? Math.round((occupied / positions.length) * 100) : 0;
 
-  return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-      <Card className="overflow-hidden border-border/50 hover:border-primary/30 transition-colors">
-        <CardHeader className="py-3 px-4 bg-muted/30">
+    const isBoxes = ppName === "Boxes" || ppName === "Expedição" || ppName === "Sem PP";
+
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 12 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.3 }}
+        layout
+      >
+        <Card className={cn(
+          "overflow-hidden border-border/50 hover:border-primary/30 transition-colors",
+          isBoxes && "bg-muted/5 border-dashed"
+        )}>
+          <CardHeader className="py-3 px-4 bg-muted/30">
           <div className="flex items-center justify-between">
             <CardTitle className="text-sm flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Layers className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <span className="font-semibold">{ppName}</span>
+                <span className="font-semibold">{ppName === "Sem PP" ? "Boxes de Expedição" : ppName}</span>
                 <p className="text-[10px] text-muted-foreground font-normal">
-                  {rackData.sortedSections.length} seções • {rackData.sortedLevels.length} níveis
+                  {isBoxes 
+                    ? `${positions.length} boxes ativos` 
+                    : `${rackData.sortedSections.length} seções • ${rackData.sortedLevels.length} níveis`}
                 </p>
               </div>
             </CardTitle>
@@ -68,7 +80,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
           </div>
         </CardHeader>
         <CardContent className="p-4">
-          {viewMode === "rack" ? (
+          {viewMode === "rack" && !isBoxes ? (
             <div className="overflow-x-auto">
               <div className="min-w-fit">
                 <div className="flex gap-0">
@@ -135,35 +147,54 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-1.5">
-              {positions.map((pos) => {
-                const cfg = statusConfig[pos.status] || statusConfig.livre;
-                const isSelected = selectedId === pos.id;
-                const heatStyle = viewMode === "heatmap" ? { backgroundColor: getHeatColor(cfg.heatValue) } : {};
-                return (
-                  <Tooltip key={pos.id}>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => onSelect(pos)}
-                        aria-label={`Posição ${pos.codigo}, status ${cfg.label}`}
-                        className={cn(
-                          "aspect-square rounded-md border text-[9px] font-medium flex items-center justify-center transition-all duration-150 hover:scale-110 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          isSelected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
-                          cfg.bgClass
-                        )}
-                        style={heatStyle}
-                      >
-                        {pos.nivel || pos.codigo.slice(-2)}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-xs">
-                      <p className="font-semibold">{pos.codigo}</p>
-                      <p>Status: {cfg.label}</p>
-                      {pos.zona && <p>Zona: {pos.zona}</p>}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
+            <div className={cn(
+              "grid gap-1.5",
+              isBoxes 
+                ? "grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16" 
+                : "grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12"
+            )}>
+              <AnimatePresence mode="popLayout">
+                {positions.map((pos) => {
+                  const cfg = statusConfig[pos.status] || statusConfig.livre;
+                  const isSelected = selectedId === pos.id;
+                  const heatStyle = viewMode === "heatmap" ? { backgroundColor: getHeatColor(cfg.heatValue) } : {};
+                  return (
+                    <Tooltip key={pos.id}>
+                      <TooltipTrigger asChild>
+                        <motion.button
+                          layout
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          onClick={() => onSelect(pos)}
+                          aria-label={`Posição ${pos.codigo}, status ${cfg.label}`}
+                          className={cn(
+                            "aspect-square rounded-md border text-[9px] font-medium flex flex-col items-center justify-center transition-all duration-150 hover:scale-110 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            isSelected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
+                            cfg.bgClass,
+                            isBoxes && "aspect-video h-auto py-2"
+                          )}
+                          style={heatStyle}
+                        >
+                          {isBoxes ? (
+                            <>
+                              <span className="text-[10px] font-bold">{pos.box || pos.codigo.split('-').pop()}</span>
+                              <span className="text-[7px] opacity-70 uppercase">BOX</span>
+                            </>
+                          ) : (
+                            pos.nivel || pos.codigo.slice(-2)
+                          )}
+                        </motion.button>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="text-xs">
+                        <p className="font-semibold">{pos.codigo}</p>
+                        <p>Status: {cfg.label}</p>
+                        {pos.zona && <p>Zona: {pos.zona}</p>}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </AnimatePresence>
             </div>
           )}
         </CardContent>

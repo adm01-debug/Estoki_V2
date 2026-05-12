@@ -29,7 +29,7 @@ export default function OcupacaoVisualPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("posicoes_estoque")
-        .select("id, codigo, zona, porta_palete, secao, nivel, status, tipo, capacidade_kg")
+        .select("id, codigo, zona, porta_palete, secao, nivel, box, status, tipo, capacidade_kg")
         .order("porta_palete").order("secao").order("nivel");
       if (error) throw error;
       return data as PosicaoVisual[];
