@@ -283,12 +283,11 @@ export default function TriagemPage() {
                    )}
                  >
                    {selectedIds.includes(item.id) && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />}
-                   <div className="flex items-start justify-between gap-3">
-                     <div className="flex items-center gap-2 mb-1" onClick={() => toggleSelection(item.id)}>
+                   <div className="flex items-start gap-3">
+                     <div className="flex items-center gap-2 mt-1" onClick={() => toggleSelection(item.id)}>
                        <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => {}} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
                      </div>
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
+                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span className="font-semibold text-primary">
                           #{item.id.slice(0, 8)}
