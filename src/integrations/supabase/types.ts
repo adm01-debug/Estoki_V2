@@ -1083,6 +1083,47 @@ export type Database = {
         }
         Relationships: []
       }
+      inspecoes_qualidade: {
+        Row: {
+          created_at: string | null
+          fotos: string[] | null
+          id: string
+          inspecionado_por: string | null
+          lote_id: string | null
+          observacoes: string | null
+          pontuacao: number | null
+          resultado: string
+        }
+        Insert: {
+          created_at?: string | null
+          fotos?: string[] | null
+          id?: string
+          inspecionado_por?: string | null
+          lote_id?: string | null
+          observacoes?: string | null
+          pontuacao?: number | null
+          resultado: string
+        }
+        Update: {
+          created_at?: string | null
+          fotos?: string[] | null
+          id?: string
+          inspecionado_por?: string | null
+          lote_id?: string | null
+          observacoes?: string | null
+          pontuacao?: number | null
+          resultado?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inspecoes_qualidade_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       inventario_ciclos: {
         Row: {
           acuracidade: number | null
