@@ -1,8 +1,41 @@
-import { useMemo, useCallback } from 'react';
-interface FEFOItem { id: string; sku: string; quantity: number; expiresAt: Date; }
-export function useFEFO(inventory: FEFOItem[]) {
-  const sorted = useMemo(() => [...inventory].sort((a, b) => new Date(a.expiresAt).getTime() - new Date(b.expiresAt).getTime()), [inventory]);
-  const pick = useCallback((sku: string, qty: number) => { const result: { id: string; quantity: number }[] = []; let remaining = qty; for (const item of sorted.filter(i => i.sku === sku && new Date(i.expiresAt) > new Date())) { if (remaining <= 0) break; const take = Math.min(item.quantity, remaining); result.push({ id: item.id, quantity: take }); remaining -= take; } return { picks: result, unfulfilled: remaining }; }, [sorted]);
-  const getExpiringSoon = useCallback((days = 30) => sorted.filter(i => { const diff = (new Date(i.expiresAt).getTime() - Date.now()) / 86400000; return diff > 0 && diff <= days; }), [sorted]);
-  return { sorted, pick, getExpiringSoon };
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+/**
+ * Hook para rotação de estoque FEFO (First Expired, First Out).
+ * Prioriza a saída de itens com data de validade mais próxima.
+ */
+export function useFEFO(produtoId?: string) {
+  return useQuery({
+    queryKey: ["fefo", produtoId],
+    queryFn: async () => {
+      let query = supabase
+        .from("lotes")
+        .select(`
+          id,
+          numero_lote,
+          data_validade,
+          quantidade_atual,
+          produto:produtos(nome, sku)
+        `)
+        .gt("quantidade_atual", 0)
+        .not("data_validade", "is", null)
+        .order("data_validade", { ascending: true });
+
+      if (produtoId) {
+        query = query.eq("produto_id", produtoId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      return (data as any[]).map(item => ({
+        ...item,
+        dias_para_vencer: Math.ceil(
+          (new Date(item.data_validade).getTime() - new Date().getTime()) / (1000 * 3600 * 24)
+        )
+      }));
+    },
+  });
 }
