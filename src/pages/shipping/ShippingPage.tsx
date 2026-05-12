@@ -13,8 +13,9 @@ import {
   Search, 
   Plus, 
   Clock, 
-  CheckCircle2, 
+  CheckCircle2,
   AlertCircle,
+  Eye,
   Printer,
   MapPin,
   QrCode,
@@ -44,8 +45,8 @@ export default function ShippingPage() {
       case "rascunho": return <Badge variant="secondary">Rascunho</Badge>;
       case "confirmado": return <Badge className="bg-blue-500">Confirmado</Badge>;
       case "em_transito": return <Badge className="bg-orange-500 flex items-center gap-1"><Clock className="h-3 w-3 animate-pulse" /> Em Trânsito</Badge>;
-      case "entregue": return <Badge className="bg-success">Entregue</Badge>;
-      case "parcial": return <Badge variant="warning">Entrega Parcial</Badge>;
+      case "entregue": return <Badge className="bg-success text-success-foreground">Entregue</Badge>;
+      case "parcial": return <Badge className="bg-orange-200 text-orange-800">Entrega Parcial</Badge>;
       case "cancelado": return <Badge variant="destructive">Cancelado</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
