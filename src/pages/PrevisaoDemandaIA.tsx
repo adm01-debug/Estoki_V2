@@ -107,15 +107,7 @@ export default function PrevisaoDemandaIA() {
   };
 
   const handlePreverTodos = async () => {
-    setLoadingAll(true);
-    const results: Previsao[] = [];
-    for (const p of produtos.slice(0, 20)) {
-      results.push(await calcularPrevisao(p));
-    }
-    results.sort((a, b) => a.diasAteRuptura - b.diasAteRuptura);
-    setPrevisoes(results);
-    setLoadingAll(false);
-    toast.success(`Previsão calculada para ${results.length} produtos`);
+    await gerarPrevisaoIA();
   };
 
   const urgenciaConfig: Record<string, { color: string; label: string }> = {
@@ -130,11 +122,11 @@ export default function PrevisaoDemandaIA() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">📊 Previsão de Demanda IA</h1>
-          <p className="text-sm text-muted-foreground">Análise preditiva baseada em histórico e sazonalidade</p>
+          <p className="text-sm text-muted-foreground">Análise preditiva avançada com Lovable AI</p>
         </div>
-        <Button onClick={handlePreverTodos} disabled={loadingAll} variant="outline">
-          <Brain className={`h-4 w-4 mr-2 ${loadingAll ? 'animate-pulse' : ''}`} />
-          {loadingAll ? 'Calculando...' : 'Prever Todos'}
+        <Button onClick={handlePreverTodos} disabled={loadingIA} variant="outline">
+          <Brain className={`h-4 w-4 mr-2 ${loadingIA ? 'animate-pulse' : ''}`} />
+          {loadingIA ? 'Analisando...' : 'Análise Global IA'}
         </Button>
       </div>
 
@@ -223,31 +215,33 @@ export default function PrevisaoDemandaIA() {
       )}
 
       {/* All products predictions */}
-      {previsoes.length > 0 && (
+      {previsoesIA.length > 0 && (
         <Card className="glass-card">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Ranking de Urgência de Compra</CardTitle>
+            <CardTitle className="text-sm font-semibold">Recomendações da IA (Próximos 30 dias)</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-border">
                   <th className="p-2 text-left">Produto</th>
-                  <th className="p-2 text-center">Estoque</th>
-                  <th className="p-2 text-center">Consumo/dia</th>
-                  <th className="p-2 text-center">Dias até Ruptura</th>
-                  <th className="p-2 text-center">Urgência</th>
-                  <th className="p-2 text-center">Sugestão Compra</th>
+                  <th className="p-2 text-center">Demanda Prevista</th>
+                  <th className="p-2 text-center">Tendência</th>
+                  <th className="p-2 text-center">Confiança</th>
+                  <th className="p-2 text-left">Recomendação IA</th>
                 </tr></thead>
                 <tbody>
-                  {previsoes.map(p => (
-                    <tr key={p.produto.id} className="border-b border-border/30 hover:bg-muted/20">
-                      <td className="p-2"><span className="font-medium">{p.produto.sku}</span> <span className="text-muted-foreground">- {p.produto.nome}</span></td>
-                      <td className="p-2 text-center">{p.estoqueAtual}</td>
-                      <td className="p-2 text-center">{p.consumoMedio}</td>
-                      <td className="p-2 text-center font-semibold">{p.diasAteRuptura > 200 ? '200+' : p.diasAteRuptura}</td>
-                      <td className="p-2 text-center"><Badge variant="outline" className={urgenciaConfig[p.urgencia].color}>{urgenciaConfig[p.urgencia].label}</Badge></td>
-                      <td className="p-2 text-center font-semibold text-success">{p.sugestaoCompra > 0 ? p.sugestaoCompra : '-'}</td>
+                  {previsoesIA.map((p: any) => (
+                    <tr key={p.produto_id} className="border-b border-border/30 hover:bg-muted/20">
+                      <td className="p-2"><span className="font-medium">{p.produto_nome}</span></td>
+                      <td className="p-2 text-center font-bold text-primary">{p.demanda_prevista} un</td>
+                      <td className="p-2 text-center">
+                        <Badge variant="outline" className={p.tendencia === 'alta' ? 'text-success' : p.tendencia === 'baixa' ? 'text-destructive' : ''}>
+                          {p.tendencia.toUpperCase()}
+                        </Badge>
+                      </td>
+                      <td className="p-2 text-center">{p.confianca}%</td>
+                      <td className="p-2 text-left text-muted-foreground italic">"{p.recomendacao}"</td>
                     </tr>
                   ))}
                 </tbody>
