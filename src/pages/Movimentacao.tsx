@@ -42,7 +42,7 @@ export default function MovimentacaoPage() {
   const { log: auditLog } = useAuditLog();
   
   const [activeTab, setActiveTab] = useState("registrar");
-  const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");
+   const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("transferencia");
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
   const [submitting, setSubmitting] = useState(false);
@@ -137,7 +137,11 @@ export default function MovimentacaoPage() {
         {movimentacoes.length > 0 && <MovimentacaoCharts movimentacoes={movimentacoes} />}
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
+           <TabsList className="grid w-full grid-cols-3">
+             <TabsTrigger value="status" className="gap-2">
+               <Package className="h-4 w-4" />
+               Status
+             </TabsTrigger>
             <TabsTrigger value="registrar" className="gap-2">
               <ArrowRight className="h-4 w-4" />
               Registrar
@@ -153,7 +157,7 @@ export default function MovimentacaoPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="registrar" className="space-y-4">
+           <TabsContent value="registrar" className="space-y-4 pt-4">
             <MovimentacaoTipoSelector 
               tipoMovimento={tipoMovimento} 
               setTipoMovimento={setTipoMovimento} 
@@ -181,7 +185,7 @@ export default function MovimentacaoPage() {
             />
 
 
-            {tipoMovimento === "armazenamento" && (
+             {(tipoMovimento === "armazenamento" || tipoMovimento === "transferencia") && (
               <div className="flex justify-end">
                 <Button 
                   variant="ghost" 
@@ -215,7 +219,38 @@ export default function MovimentacaoPage() {
             </Button>
           </TabsContent>
 
-          <TabsContent value="historico" className="space-y-4">
+           <TabsContent value="historico" className="space-y-4 pt-4">
+           <TabsContent value="status" className="space-y-4 pt-4">
+             <div className="grid gap-4 md:grid-cols-3">
+               <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+                 <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Entradas</div>
+                 <div className="text-2xl font-bold text-green-600">
+                   {movimentacoes.filter(m => ["recebimento_nf", "entrada_devolucao"].includes(m.tipo)).length}
+                 </div>
+               </div>
+               <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+                 <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Saídas</div>
+                 <div className="text-2xl font-bold text-red-600">
+                   {movimentacoes.filter(m => ["saida_transporte", "separacao"].includes(m.tipo)).length}
+                 </div>
+               </div>
+               <div className="bg-card p-4 rounded-xl border border-border shadow-sm">
+                 <div className="text-xs text-muted-foreground uppercase font-semibold mb-1">Remanejamentos</div>
+                 <div className="text-2xl font-bold text-blue-600">
+                   {movimentacoes.filter(m => m.tipo === "armazenamento" || m.tipo === "transferencia").length}
+                 </div>
+               </div>
+             </div>
+             <MovimentacaoHistorico 
+               movimentacoes={filteredMovimentacoes.slice(0, 5)}
+               loading={loading}
+               error={error}
+               searchTerm=""
+             />
+             <Button variant="outline" className="w-full" onClick={() => setActiveTab("historico")}>
+               Ver Histórico Completo
+             </Button>
+           </TabsContent>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
