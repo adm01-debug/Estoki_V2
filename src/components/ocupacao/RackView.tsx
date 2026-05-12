@@ -196,35 +196,6 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                 })}
               </AnimatePresence>
             </div>
-              {positions.map((pos) => {
-                const cfg = statusConfig[pos.status] || statusConfig.livre;
-                const isSelected = selectedId === pos.id;
-                const heatStyle = viewMode === "heatmap" ? { backgroundColor: getHeatColor(cfg.heatValue) } : {};
-                return (
-                  <Tooltip key={pos.id}>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => onSelect(pos)}
-                        aria-label={`Posição ${pos.codigo}, status ${cfg.label}`}
-                        className={cn(
-                          "aspect-square rounded-md border text-[9px] font-medium flex items-center justify-center transition-all duration-150 hover:scale-110 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                          isSelected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
-                          cfg.bgClass
-                        )}
-                        style={heatStyle}
-                      >
-                        {pos.nivel || pos.codigo.slice(-2)}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="top" className="text-xs">
-                      <p className="font-semibold">{pos.codigo}</p>
-                      <p>Status: {cfg.label}</p>
-                      {pos.zona && <p>Zona: {pos.zona}</p>}
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
-            </div>
           )}
         </CardContent>
       </Card>
