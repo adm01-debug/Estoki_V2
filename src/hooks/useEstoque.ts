@@ -10,6 +10,23 @@ type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
 export type TipoPosicao = 'porta_palete' | 'box';
 
+ export interface SaldoPosicao {
+   id: string;
+   produto_id: string;
+   lote_id: string | null;
+   quantidade: number;
+   data_entrada: string;
+   produto?: {
+     nome: string;
+     sku: string;
+     categoria?: string;
+   };
+   lote?: {
+     numero_lote: string;
+     data_validade?: string;
+   };
+ }
+ 
 export interface PosicaoEstoque {
   id: string;
   codigo: string;
@@ -23,6 +40,7 @@ export interface PosicaoEstoque {
   capacidade_kg?: number | null;
   created_at: string;
   updated_at: string;
+   saldos?: SaldoPosicao[];
 }
 
 export const useEstoque = () => {
@@ -32,9 +50,20 @@ export const useEstoque = () => {
   const { data: posicoes, isLoading, error, refetch } = useQuery({
     queryKey: ['estoque-posicoes'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('posicoes_estoque').select('*').order('codigo');
+       const { data, error } = await supabase
+         .from('posicoes_estoque')
+         .select(`
+           *,
+           saldos:estoque_posicao(
+             *,
+             produto:produtos(nome, sku, categoria),
+             lote:lotes(numero_lote, data_validade)
+           )
+         `)
+         .order('codigo');
+ 
       if (error) throw error;
-      return data;
+       return data as PosicaoEstoque[];
     }
   });
 
