@@ -49,22 +49,29 @@ export default function DashboardTriadorPage() {
   const loadingStreaks = streaksData.loading;
   const { metricas, loading: loadingMetricas } = useProdutividade();
 
-  const [tab, setTab] = useState("hoje");
+   const [tab, setTab] = useState("hoje");
+   const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
+   const [loadingHist, setLoadingHist] = useState(false);
+
+   useEffect(() => {
+     const loadHistorico = async () => {
+       if (!user?.id) return;
+       setLoadingHist(true);
+       const data = await getMetricasDiarias(user.id, 7);
+       setSemanalData(data.map(d => ({
+         dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
+         itensTriados: d.triagens
+       })));
+       setLoadingHist(false);
+     };
+     loadHistorico();
+   }, [user?.id, getMetricasDiarias]);
 
   const minhasMetricas = useMemo(() => {
     if (!user) return null;
     return metricas.find(m => m.operadorId === user.id);
   }, [metricas, user]);
 
-  const historicoSemanal = [
-    { dia: "Seg", itensTriados: 98 },
-    { dia: "Ter", itensTriados: 112 },
-    { dia: "Qua", itensTriados: 105 },
-    { dia: "Qui", itensTriados: 121 },
-    { dia: "Sex", itensTriados: 115 },
-    { dia: "Sáb", itensTriados: 87 },
-    { dia: "Hoje", itensTriados: minhasMetricas?.triagensRealizadas || 0 },
-  ];
 
   const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks || loadingMetricas;
 
@@ -201,17 +208,21 @@ export default function DashboardTriadorPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={historicoSemanal}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="dia" />
-                      <YAxis />
-                      <Tooltip />
-                      <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+                 <div className="h-[250px]">
+                   {loadingHist ? (
+                     <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+                   ) : (
+                     <ResponsiveContainer width="100%" height="100%">
+                       <AreaChart data={semanalData}>
+                         <CartesianGrid strokeDasharray="3 3" />
+                         <XAxis dataKey="dia" />
+                         <YAxis />
+                         <Tooltip />
+                         <Area type="monotone" dataKey="itensTriados" name="Triagens" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+                       </AreaChart>
+                     </ResponsiveContainer>
+                   )}
+                 </div>
               </CardContent>
             </Card>
 
