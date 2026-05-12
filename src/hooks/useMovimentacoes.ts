@@ -4,9 +4,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import type { Database } from '@/integrations/supabase/types';
 
-type TipoEventoRastreamento = Database['public']['Enums']['tipo_evento_rastreamento'];
-
-export type TipoMovimentacao = TipoEventoRastreamento;
+ export type TipoMovimentacao = Database['public']['Enums']['tipo_evento_rastreamento'] | 'transferencia';
 
 export interface Movimentacao {
   id: string;
@@ -113,7 +111,7 @@ export function useMovimentacoes() {
       const { error: insertError } = await supabase
         .from('rastreamento_historico')
         .insert({
-          tipo_evento: input.tipo,
+           tipo_evento: input.tipo === 'transferencia' ? 'armazenamento' : input.tipo,
           produto_id: input.produto_id,
           lote_id: input.lote_id,
           quantidade: input.quantidade,

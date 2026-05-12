@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 interface MovimentacaoDetalhesFormProps {
-  formData: {
-    localizacao: string;
+   formData: {
+     localizacao: string;
+     localizacao_origem?: string;
     quantidade: number;
     descricao: string;
   };
@@ -13,13 +14,32 @@ interface MovimentacaoDetalhesFormProps {
   setFormErrors: (fn: (prev: any) => any) => void;
 }
 
-export function MovimentacaoDetalhesForm({ formData, setFormData, formErrors, setFormErrors }: MovimentacaoDetalhesFormProps) {
+ export function MovimentacaoDetalhesForm({ formData, setFormData, formErrors, setFormErrors, tipoMovimento }: MovimentacaoDetalhesFormProps & { tipoMovimento?: string }) {
+   const isTransfer = tipoMovimento === "transferencia" || tipoMovimento === "armazenamento";
+
   return (
     <div className="bg-card rounded-xl p-4 border border-border">
       <Label className="text-sm font-medium mb-3 block">📍 DETALHES</Label>
       <div className="space-y-3">
+         {isTransfer && (
+           <div>
+             <Label htmlFor="localizacao_origem" className="text-xs text-muted-foreground">Localização Origem</Label>
+             <Input 
+               id="localizacao_origem"
+               placeholder="De onde está saindo?"
+               value={formData.localizacao_origem || ""}
+               onChange={(e) => { 
+                 setFormData(prev => ({ ...prev, localizacao_origem: e.target.value })); 
+               }}
+               className={formErrors.localizacao_origem ? "border-destructive" : ""}
+             />
+           </div>
+         )}
+
         <div>
-          <Label htmlFor="localizacao" className="text-xs text-muted-foreground">Localização</Label>
+           <Label htmlFor="localizacao" className="text-xs text-muted-foreground">
+             {isTransfer ? "Localização Destino" : "Localização"}
+           </Label>
           <Input 
             id="localizacao"
             placeholder="Ex: PP1-S05-N2, BOX-12"
