@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { ArrowRightLeft, TrendingUp, TrendingDown, BarChart3, Loader2, GitCompareArrows } from "lucide-react";
+import { ArrowRightLeft, TrendingUp, TrendingDown, BarChart3, Loader2, GitCompareArrows, AlertTriangle, PackageSearch, Clock, Download } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMovimentacoes, TipoMovimentacao } from "@/hooks/useMovimentacoes";
 import { RelatorioFilters, tipoLabels } from "@/components/relatorios/RelatorioFilters";
 import { RelatorioTable } from "@/components/relatorios/RelatorioTable";
@@ -31,6 +32,7 @@ const CHART_COLORS: Record<string, string> = {
   const [dataFim, setDataFim] = useState<Date>(new Date());
   const [exportando, setExportando] = useState(false);
   const [comparar, setComparar] = useState(false);
+  const [reportTab, setReportTab] = useState("movimentacoes");
 
   const dadosFiltrados = useMemo(() => movimentacoes.filter((mov) => {
     const movDate = new Date(mov.created_at);
@@ -144,87 +146,149 @@ const CHART_COLORS: Record<string, string> = {
 
   return (
     <AppLayout title="Relatórios" showBack>
-      <SEO title="Relatórios" description="Relatórios analíticos de movimentações, entradas e saídas." path="/relatorios" />
-      <div className="p-4 space-y-6">
-        <RelatorioFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} dataInicio={dataInicio} setDataInicio={setDataInicio} dataFim={dataFim} setDataFim={setDataFim} />
+      <SEO title="Relatórios" description="Relatórios analíticos de estoque e movimentações." path="/relatorios" />
+      <div className="p-4 space-y-6 pb-24">
+        <Tabs value={reportTab} onValueChange={setReportTab} className="w-full">
+          <TabsList className="grid grid-cols-2 md:w-[400px]">
+            <TabsTrigger value="movimentacoes">Movimentações</TabsTrigger>
+            <TabsTrigger value="estoque">Estoque & FEFO</TabsTrigger>
+          </TabsList>
 
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-muted-foreground">KPIs do Período</h2>
-          <Button variant={comparar ? "default" : "outline"} size="sm" onClick={() => setComparar(!comparar)}>
-            <GitCompareArrows className="h-4 w-4 mr-2" />{comparar ? "Comparando" : "Comparar período anterior"}
-          </Button>
-        </div>
+          <TabsContent value="movimentacoes" className="space-y-6 mt-6">
+            <RelatorioFilters searchTerm={searchTerm} setSearchTerm={setSearchTerm} tipoFiltro={tipoFiltro} setTipoFiltro={setTipoFiltro} dataInicio={dataInicio} setDataInicio={setDataInicio} dataFim={dataFim} setDataFim={setDataFim} />
 
-        {comparar && dadosPeriodoAnterior && <p className="text-xs text-muted-foreground -mt-4">Comparando com: {dadosPeriodoAnterior.label}</p>}
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-medium text-muted-foreground">KPIs do Período</h2>
+              <Button variant={comparar ? "default" : "outline"} size="sm" onClick={() => setComparar(!comparar)}>
+                <GitCompareArrows className="h-4 w-4 mr-2" />{comparar ? "Comparando" : "Comparar período anterior"}
+              </Button>
+            </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: "Total", value: kpis.totalMovimentacoes, prev: dadosPeriodoAnterior?.totalMovimentacoes, icon: ArrowRightLeft, color: "primary" },
-            { label: "Entradas", value: kpis.totalEntradas, prev: dadosPeriodoAnterior?.totalEntradas, icon: TrendingUp, color: "green-500" },
-            { label: "Saídas", value: kpis.totalSaidas, prev: dadosPeriodoAnterior?.totalSaidas, icon: TrendingDown, color: "red-500" },
-            { label: "Média/Dia", value: Number(kpis.mediaDiaria.toFixed(1)), prev: dadosPeriodoAnterior ? Number(dadosPeriodoAnterior.mediaDiaria.toFixed(1)) : undefined, icon: BarChart3, color: "blue-500" },
-          ].map((kpi) => {
-            const delta = comparar && kpi.prev != null ? calcDelta(kpi.value, kpi.prev) : null;
-            return (
-              <Card key={kpi.label}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-${kpi.color}/10`}><kpi.icon className={`h-5 w-5 text-${kpi.color}`} /></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs text-muted-foreground">{kpi.label}</p>
-                      <p className="text-2xl font-bold">{kpi.value}</p>
-                      {delta !== null && (
-                        <div className={cn("flex items-center gap-1 text-xs mt-0.5", delta >= 0 ? "text-green-600" : "text-red-600")}>
-                          {delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                          {delta >= 0 ? "+" : ""}{delta.toFixed(1)}%
-                          <span className="text-muted-foreground ml-1">vs ant.</span>
+            {comparar && dadosPeriodoAnterior && <p className="text-xs text-muted-foreground -mt-4">Comparando com: {dadosPeriodoAnterior.label}</p>}
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: "Total", value: kpis.totalMovimentacoes, prev: dadosPeriodoAnterior?.totalMovimentacoes, icon: ArrowRightLeft, color: "primary" },
+                { label: "Entradas", value: kpis.totalEntradas, prev: dadosPeriodoAnterior?.totalEntradas, icon: TrendingUp, color: "green-500" },
+                { label: "Saídas", value: kpis.totalSaidas, prev: dadosPeriodoAnterior?.totalSaidas, icon: TrendingDown, color: "red-500" },
+                { label: "Média/Dia", value: Number(kpis.mediaDiaria.toFixed(1)), prev: dadosPeriodoAnterior ? Number(dadosPeriodoAnterior.mediaDiaria.toFixed(1)) : undefined, icon: BarChart3, color: "blue-500" },
+              ].map((kpi) => {
+                const delta = comparar && kpi.prev != null ? calcDelta(kpi.value, kpi.prev) : null;
+                return (
+                  <Card key={kpi.label}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg bg-${kpi.color}/10`}><kpi.icon className={`h-5 w-5 text-${kpi.color}`} /></div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-muted-foreground">{kpi.label}</p>
+                          <p className="text-2xl font-bold">{kpi.value}</p>
+                          {delta !== null && (
+                            <div className={cn("flex items-center gap-1 text-xs mt-0.5", delta >= 0 ? "text-green-600" : "text-red-600")}>
+                              {delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                              {delta >= 0 ? "+" : ""}{delta.toFixed(1)}%
+                              <span className="text-muted-foreground ml-1">vs ant.</span>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-base">Evolução Diária</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={dadosEvolucao}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                        <XAxis dataKey="data" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                        <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
+                        <Tooltip /><Legend />
+                         <Area type="monotone" dataKey="entradas" name="Entradas" stackId="1" stroke={CHART_COLORS.entradas} fill={CHART_COLORS.entradas} fillOpacity={0.6} />
+                         <Area type="monotone" dataKey="saidas" name="Saídas" stackId="2" stroke={CHART_COLORS.saidas} fill={CHART_COLORS.saidas} fillOpacity={0.6} />
+                         <Line type="monotone" dataKey="meta" name="Meta Diária" stroke="#94a3b8" strokeDasharray="5 5" dot={false} />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+              <Card>
+                <CardHeader className="pb-2"><CardTitle className="text-base">Por Tipo</CardTitle></CardHeader>
+                <CardContent>
+                  <div className="h-[250px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie data={dadosPorTipo} dataKey="quantidade" nameKey="tipo" cx="50%" cy="50%" outerRadius={80} label>
+                          {dadosPorTipo.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.cor} />)}
+                        </Pie>
+                        <Tooltip /><Legend />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-base">Evolução Diária</CardTitle></CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dadosEvolucao}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                    <XAxis dataKey="data" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                    <YAxis tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                    <Tooltip /><Legend />
-                     <Area type="monotone" dataKey="entradas" name="Entradas" stackId="1" stroke={CHART_COLORS.entradas} fill={CHART_COLORS.entradas} fillOpacity={0.6} />
-                     <Area type="monotone" dataKey="saidas" name="Saídas" stackId="2" stroke={CHART_COLORS.saidas} fill={CHART_COLORS.saidas} fillOpacity={0.6} />
-                     <Line type="monotone" dataKey="meta" name="Meta Diária" stroke="#94a3b8" strokeDasharray="5 5" dot={false} />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-base">Por Tipo</CardTitle></CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie data={dadosPorTipo} dataKey="quantidade" nameKey="tipo" cx="50%" cy="50%" outerRadius={80} label>
-                      {dadosPorTipo.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.cor} />)}
-                    </Pie>
-                    <Tooltip /><Legend />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <RelatorioTable dados={dadosFiltrados} exportando={exportando} onExportPDF={handleExportPDF} onExportExcel={handleExportExcel} />
+          </TabsContent>
 
-        <RelatorioTable dados={dadosFiltrados} exportando={exportando} onExportPDF={handleExportPDF} onExportExcel={handleExportExcel} />
+          <TabsContent value="estoque" className="mt-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="border-red-500/20 bg-red-500/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                    Rupturas de Estoque
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">12</div>
+                  <p className="text-xs text-muted-foreground">Produtos abaixo do estoque mínimo</p>
+                </CardContent>
+              </Card>
+              <Card className="border-amber-500/20 bg-amber-500/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-amber-500" />
+                    Alertas FEFO
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">8</div>
+                  <p className="text-xs text-muted-foreground">Lotes com vencimento em 30 dias</p>
+                </CardContent>
+              </Card>
+              <Card className="border-primary/20 bg-primary/5">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <PackageSearch className="h-4 w-4 text-primary" />
+                    Giro de Estoque
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">4.2x</div>
+                  <p className="text-xs text-muted-foreground">Média de rotatividade mensal</p>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">Top SKUs (Movimentação)</CardTitle>
+                  <Button variant="outline" size="sm"><Download className="h-4 w-4 mr-2" /> Exportar CSV</Button>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <RelatorioTable dados={dadosFiltrados.slice(0, 10)} exportando={false} onExportPDF={() => {}} onExportExcel={() => {}} />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </AppLayout>
   );

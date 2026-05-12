@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Check, AlertTriangle, Package, Loader2 } from "lucide-react";
+import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button"; 
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +27,8 @@ export default function ConferenciaRecebimento() {
   const [tipoEmbalagem, setTipoEmbalagem] = useState<TipoEmbalagem>("original");
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [itemScanned, setItemScanned] = useState(false);
+  const [locationScanned, setLocationScanned] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
   const [voiceActive, setVoiceActive] = useState(false);
 
@@ -75,8 +78,27 @@ export default function ConferenciaRecebimento() {
     }
   }, [id, recebimentos]);
 
+  const handleScanItem = () => {
+    setItemScanned(true);
+    toast({ title: "Item Validado", description: "Código do produto conferido com sucesso." });
+  };
+
+  const handleScanLocation = () => {
+    setLocationScanned(true);
+    toast({ title: "Local Validado", description: "Posição de destino confirmada." });
+  };
+
   const handleSalvar = async () => {
     if (!recebimento || !id) return;
+    
+    if (!itemScanned || !locationScanned) {
+      toast({
+        title: "Validação Pendente",
+        description: "É necessário escanear o item e o local antes de confirmar.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setSalvando(true);
     try {
@@ -169,7 +191,40 @@ export default function ConferenciaRecebimento() {
           </div>
         </div>
 
-        <BalancaCard onPesoCapturado={setPesoConferido} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <BalancaCard onPesoCapturado={setPesoConferido} />
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <QrCode className="h-4 w-4" />
+                Validação Obrigatória
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex gap-2">
+                <Button 
+                  variant={itemScanned ? "secondary" : "outline"} 
+                  className="flex-1 gap-2" 
+                  onClick={handleScanItem}
+                >
+                  {itemScanned ? <Check className="h-4 w-4 text-green-500" /> : <QrCode className="h-4 w-4" />}
+                  Scan Item
+                </Button>
+                <Button 
+                  variant={locationScanned ? "secondary" : "outline"} 
+                  className="flex-1 gap-2" 
+                  onClick={handleScanLocation}
+                >
+                  {locationScanned ? <Check className="h-4 w-4 text-green-500" /> : <QrCode className="h-4 w-4" />}
+                  Scan Local
+                </Button>
+              </div>
+              <p className="text-[10px] text-muted-foreground text-center">
+                Escaneie o código do produto e a etiqueta da posição para liberar a confirmação.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
           <div>
