@@ -16,17 +16,19 @@ export function useLeadTime(fornecedorId?: string, produtoId?: string) {
     queryFn: async () => {
       // Simulando cálculo baseado no histórico de recebimentos
       // Em uma aplicação real, isso poderia ser uma view no Supabase ou calculada via Edge Function
-      const { data, error } = await supabase
+      let query = supabase
         .from("lotes")
-        .select("created_at, data_recebimento, fornecedor_id, produto_id")
+        .select("created_at, data_recebimento, fornecedor, produto_id")
         .not("data_recebimento", "is", null);
+
+      if (produtoId) query = query.eq("produto_id", produtoId);
+      if (fornecedorId) query = query.eq("fornecedor", fornecedorId);
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
-      const filteredData = data.filter(l => 
-        (!fornecedorId || l.fornecedor_id === fornecedorId) &&
-        (!produtoId || l.produto_id === produtoId)
-      );
+      const filteredData = data as any[];
 
       if (filteredData.length === 0) return { lead_time_medio: 0, variancia: 0, total_pedidos: 0 };
 
