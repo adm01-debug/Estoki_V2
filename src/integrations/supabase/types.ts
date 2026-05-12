@@ -14,6 +14,82 @@ export type Database = {
   }
   public: {
     Tables: {
+      ajustes_estoque: {
+        Row: {
+          aprovado_por: string | null
+          created_at: string
+          data_aprovacao: string | null
+          diferenca: number | null
+          id: string
+          lote_id: string | null
+          motivo: string
+          observacoes: string | null
+          operador_id: string
+          posicao_id: string | null
+          produto_id: string
+          quantidade_anterior: number
+          quantidade_nova: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          aprovado_por?: string | null
+          created_at?: string
+          data_aprovacao?: string | null
+          diferenca?: number | null
+          id?: string
+          lote_id?: string | null
+          motivo: string
+          observacoes?: string | null
+          operador_id: string
+          posicao_id?: string | null
+          produto_id: string
+          quantidade_anterior: number
+          quantidade_nova: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          aprovado_por?: string | null
+          created_at?: string
+          data_aprovacao?: string | null
+          diferenca?: number | null
+          id?: string
+          lote_id?: string | null
+          motivo?: string
+          observacoes?: string | null
+          operador_id?: string
+          posicao_id?: string | null
+          produto_id?: string
+          quantidade_anterior?: number
+          quantidade_nova?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ajustes_estoque_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ajustes_estoque_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ajustes_estoque_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       alertas_config: {
         Row: {
           ativo: boolean
