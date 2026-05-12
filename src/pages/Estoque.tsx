@@ -1,6 +1,6 @@
 import { EstoqueCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
-import { useState, useMemo } from "react";
+ import { useState, useMemo, useEffect } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
@@ -40,11 +40,9 @@ export default function EstoquePage() {
    const handleBulkUpdate = async (status: StatusPosicao) => {
      try {
        await updatePosicao.mutateAsync({ ids: selectedIds, status });
-       toast.success(`${selectedIds.length} posições ${status === 'bloqueado' ? 'bloqueadas' : 'liberadas'}`);
-       log({
-         action: "bulk_update_posicoes",
-         details: `Atualização em massa para ${status} de ${selectedIds.length} posições`,
-         module: "estoque"
+       log.custom("update", "estoque", {
+         detalhes: `Atualização em massa para ${status} de ${selectedIds.length} posições`,
+         ids: selectedIds
        });
        clearSelection();
      } catch (error) {
