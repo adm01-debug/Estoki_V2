@@ -34,8 +34,15 @@ import {
   Activity, 
   User,
   FileJson,
-  Eye
+  Eye,
+  MoreVertical
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
