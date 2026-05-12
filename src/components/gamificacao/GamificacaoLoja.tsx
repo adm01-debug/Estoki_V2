@@ -32,7 +32,17 @@ export function GamificacaoLoja() {
 
   async function fetchLoja() {
     const { data } = await supabase.from("gamificacao_loja").select("*").eq("ativo", true);
-    if (data) setItens(data);
+    if (data) {
+      setItens(data.map(item => ({
+        id: item.id,
+        nome: item.nome,
+        descricao: item.descricao || "",
+        preco: item.preco,
+        imagem_url: item.imagem_url || "",
+        categoria: item.categoria || "cosmetico",
+        estoque: item.estoque || -1
+      })));
+    }
     setLoading(false);
   }
 
@@ -60,8 +70,8 @@ export function GamificacaoLoja() {
 
       if (transacaoError) throw transacaoError;
 
-      // 2. Descontar pontos
-      const { error: pontosError } = await supabase.rpc('descontar_pontos', {
+      // 2. Descontar pontos via RPC (usando as any para evitar erros de tipos desatualizados)
+      const { error: pontosError } = await (supabase.rpc as any)('descontar_pontos', {
         p_user_id: user.id,
         p_valor: item.preco
       });
