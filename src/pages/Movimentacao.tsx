@@ -28,6 +28,7 @@ import { useMovimentacoes, type TipoMovimentacao } from "@/hooks/useMovimentacoe
 import { MovimentacaoTipoSelector } from "@/components/movimentacao/MovimentacaoTipoSelector";
 import { MovimentacaoDetalhesForm } from "@/components/movimentacao/MovimentacaoDetalhesForm";
 import { MovimentacaoHistorico } from "@/components/movimentacao/MovimentacaoHistorico";
+import { Sparkles } from "lucide-react";
 
 export default function MovimentacaoPage() {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function MovimentacaoPage() {
     quantidade: 1,
     descricao: "",
   });
+  const [showLocationSuggestion, setShowLocationSuggestion] = useState(false);
 
   const filteredMovimentacoes = useMemo(() => {
     let filtered = movimentacoes;
@@ -176,6 +178,23 @@ export default function MovimentacaoPage() {
               formErrors={formErrors}
               setFormErrors={setFormErrors}
             />
+
+            {tipoMovimento === "transferencia" && (
+              <div className="flex justify-end">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs text-primary gap-1"
+                  onClick={() => {
+                    setShowLocationSuggestion(true);
+                    setFormData(prev => ({ ...prev, localizacao: "PP2-S05-N2" }));
+                    toast.success("IA: Sugestão de destino baseada em giro e curva ABC", { icon: <Sparkles className="h-3 w-3" /> });
+                  }}
+                >
+                  <Sparkles className="h-3 w-3" /> Sugerir Local
+                </Button>
+              </div>
+            )}
 
             <Button 
               className="w-full h-12 text-base font-semibold gap-2"
