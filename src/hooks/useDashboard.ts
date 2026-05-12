@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 
-interface DashboardKPIs {
+export interface DashboardKPIs {
   totalPosicoes: number;
   posicoesOcupadas: number;
   taxaOcupacao: number;
@@ -15,26 +15,26 @@ interface DashboardKPIs {
   triagensPendentes: number;
 }
 
-interface OcupacaoPP {
+export interface OcupacaoPP {
   nome: string;
   ocupado: number;
   total: number;
   percentual: number;
 }
 
-interface DistribuicaoStatus {
+export interface DistribuicaoStatus {
   name: string;
   value: number;
   color: string;
 }
 
-interface Movimentacao7Dias {
+export interface Movimentacao7Dias {
   dia: string;
   entradas: number;
   saidas: number;
 }
 
-interface ItemParado {
+export interface ItemParado {
   id: string;
   sku: string;
   descricao: string;
