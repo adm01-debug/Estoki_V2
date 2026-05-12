@@ -1,4 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { BarChart3, Package, TrendingUp, AlertTriangle } from "lucide-react";
 import { DashboardKPIs as DashboardKPIsInterface } from "@/hooks/useDashboard";
