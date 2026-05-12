@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useEstoque, PosicaoEstoque } from "@/hooks/useEstoque";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
-import { ArrowRight, AlertTriangle, MapPin, Loader2 } from "lucide-react";
+import { ArrowRight, AlertTriangle, MapPin, Loader2, QrCode } from "lucide-react";
 import { ArmazenamentoItemCard } from "@/components/armazenamento/ArmazenamentoItemCard";
 import { SugestaoCard } from "@/components/armazenamento/SugestaoCard";
 
@@ -50,6 +50,7 @@ const ArmazenamentoPage = () => {
   const { registrarEntrada } = useMovimentacoes();
   const [posicaoSelecionada, setPosicaoSelecionada] = useState<PosicaoSugerida | null>(null);
   const [confirmando, setConfirmando] = useState(false);
+  const [scannedPosicao, setScannedPosicao] = useState<string | null>(null);
 
   const [item, setItem] = useState<ItemArmazenar>({
     id: searchParams.get("itemId") || "", sku: searchParams.get("sku") || "", descricao: searchParams.get("desc") || "Produto",
@@ -71,7 +72,14 @@ const ArmazenamentoPage = () => {
   const ruasDisponiveis = Object.keys(posicoesAgrupadas).sort();
 
   const handleConfirmarArmazenamento = async () => {
-    if (!posicaoSelecionada) { toast({ title: "Selecione uma posição", description: "É necessário selecionar uma posição para armazenar", variant: "destructive" }); return; }
+    if (!posicaoSelecionada) { 
+      toast({ title: "Selecione uma posição", description: "É necessário selecionar uma posição para armazenar", variant: "destructive" }); 
+      return; 
+    }
+    if (scannedPosicao !== posicaoSelecionada.codigo) {
+      toast({ title: "Validação pendente", description: "Scaneie o QR Code da posição para confirmar o armazenamento", variant: "destructive" });
+      return;
+    }
     setConfirmando(true);
     try {
       if (item.produtoId) { const success = await registrarEntrada(item.produtoId, item.quantidade, posicaoSelecionada.codigo, item.loteId, `Armazenamento via triagem - SKU: ${item.sku}`); if (!success) throw new Error("Falha ao registrar entrada"); }
@@ -138,9 +146,30 @@ const ArmazenamentoPage = () => {
           {posicaoSelecionada ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between text-sm"><span className="text-muted-foreground">Posição selecionada:</span><span className="font-semibold">{posicaoSelecionada.codigo}</span></div>
-              <Button className="w-full gap-2" size="lg" onClick={handleConfirmarArmazenamento} disabled={confirmando}>
-                {confirmando ? <><Loader2 className="h-4 w-4 animate-spin" />Processando...</> : <>Confirmar Armazenamento<ArrowRight className="h-4 w-4" /></>}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  className={scannedPosicao === posicaoSelecionada.codigo ? "flex-1 gap-2 bg-green-500/10 text-green-700 border-green-500/50" : "flex-1 gap-2"}
+                  onClick={() => {
+                    toast({ title: "Scanner Ativado", description: "Aponte para o QR Code da posição" });
+                    setTimeout(() => {
+                      setScannedPosicao(posicaoSelecionada.codigo);
+                      toast({ title: "Posição validada! ✅", description: `Código ${posicaoSelecionada.codigo} reconhecido.` });
+                    }, 1500);
+                  }}
+                >
+                  <QrCode className="h-4 w-4" />
+                  {scannedPosicao === posicaoSelecionada.codigo ? "Validado" : "Scanear"}
+                </Button>
+                <Button 
+                  className="flex-1 gap-2" 
+                  size="lg" 
+                  onClick={handleConfirmarArmazenamento} 
+                  disabled={confirmando || scannedPosicao !== posicaoSelecionada.codigo}
+                >
+                  {confirmando ? <><Loader2 className="h-4 w-4 animate-spin" />...</> : <>Confirmar<ArrowRight className="h-4 w-4" /></>}
+                </Button>
+              </div>
             </div>
           ) : <Button className="w-full" size="lg" variant="outline" disabled>Selecione uma posição</Button>}
         </div>

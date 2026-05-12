@@ -13,6 +13,7 @@ import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/use
 import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { toast } from "sonner";
 import {
   MapPin,
    Search,
@@ -26,8 +27,11 @@ import {
    CheckSquare,
    Lock,
    Unlock,
+   Printer,
+   PieChart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
   livre: { label: "Livre", variant: "outline" },
@@ -51,6 +55,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
    };
  
    const handleExport = () => {
+     toast.info("Exportando dados...");
      const headers = ["Codigo", "Tipo", "Status", "Zona", "Secao", "Nivel"];
      const rows = filtered.map(p => [p.codigo, p.tipo, p.status, p.zona || "", p.secao || "", p.nivel || ""]);
      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
@@ -124,6 +129,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
                <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
                <div className="flex-1" />
                <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
+               <Button size="sm" variant="outline" className="gap-1" onClick={() => toast.info(`Imprimindo ${selectedIds.length} etiquetas...`)}><Printer className="h-3 w-3" />Etiquetas</Button>
                <Button size="sm" variant="outline" className="gap-1" onClick={() => handleBulkUpdate("bloqueado")}><Lock className="h-3 w-3" />Bloquear</Button>
                <Button size="sm" variant="outline" className="gap-1" onClick={() => handleBulkUpdate("livre")}><Unlock className="h-3 w-3" />Liberar</Button>
              </motion.div>

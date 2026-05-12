@@ -42,6 +42,7 @@ export default function LotesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [sortBy, setSortBy] = useState<"recent" | "expiry" | "qty">("recent");
 
   useEffect(() => {
     loadLotes();
@@ -64,7 +65,7 @@ export default function LotesPage() {
   };
 
   const filtered = useMemo(() => {
-    return lotes.filter((l) => {
+    const result = lotes.filter((l) => {
       const matchSearch =
         !search ||
         l.numero_lote.toLowerCase().includes(search.toLowerCase()) ||
@@ -73,7 +74,19 @@ export default function LotesPage() {
       const matchStatus = statusFilter === "todos" || l.status === statusFilter;
       return matchSearch && matchStatus;
     });
-  }, [lotes, search, statusFilter]);
+
+    return result.sort((a, b) => {
+      if (sortBy === "expiry") {
+        if (!a.data_validade) return 1;
+        if (!b.data_validade) return -1;
+        return new Date(a.data_validade).getTime() - new Date(b.data_validade).getTime();
+      }
+      if (sortBy === "qty") {
+        return b.quantidade_atual - a.quantidade_atual;
+      }
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [lotes, search, statusFilter, sortBy]);
 
   const stats = useMemo(() => {
     const total = lotes.length;
@@ -168,6 +181,14 @@ export default function LotesPage() {
               <Input placeholder="Buscar lote, produto, fornecedor..." className="pl-10" value={search} onChange={(e) => setSearch(e.target.value)} />
               {search && <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={() => setSearch("")}><X className="h-4 w-4 text-muted-foreground" /></button>}
             </div>
+            <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+              <SelectTrigger className="w-[140px]"><SelectValue placeholder="Ordenar por" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Recentes</SelectItem>
+                <SelectItem value="expiry">Validade (FEFO)</SelectItem>
+                <SelectItem value="qty">Quantidade</SelectItem>
+              </SelectContent>
+            </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[150px]"><Filter className="h-4 w-4 mr-2" /><SelectValue /></SelectTrigger>
               <SelectContent>

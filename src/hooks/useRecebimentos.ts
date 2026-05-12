@@ -10,7 +10,10 @@ export const useRecebimentos = () => {
   const { data: recebimentos, isLoading, error, refetch } = useQuery({
     queryKey: ['recebimentos'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('lotes').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('lotes')
+        .select('*, produto:produtos(nome, sku)')
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     }

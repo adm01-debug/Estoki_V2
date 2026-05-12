@@ -64,6 +64,24 @@
      }
    });
  
+    const bulkCreateProdutos = useMutation({
+      mutationFn: async (novosProdutos: any[]) => {
+        const { data, error } = await supabase.from('produtos').insert(novosProdutos).select();
+        if (error) throw error;
+        return data;
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ['produtos'] });
+        toast.success(`${data.length} produtos importados com sucesso!`);
+        log.custom('bulk_create', 'produtos', { 
+          detalhes: `${data.length} produtos importados via CSV`,
+        });
+      },
+      onError: (err: any) => {
+        toast.error(err.message || 'Erro ao importar produtos');
+      }
+    });
+ 
    const stats = {
      total: produtos.length,
      curvaA: produtos.filter((p) => p.curva_abc === 'A').length,
@@ -79,6 +97,7 @@
      createProduto,
      updateProduto,
      deleteProduto,
+      bulkCreateProdutos,
      stats
    };
  };

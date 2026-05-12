@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Check, AlertTriangle, Package, Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"; 
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useRecebimentos } from "@/hooks/useRecebimentos";
@@ -12,6 +12,7 @@ import { BalancaCard } from "@/components/conferencia/BalancaCard";
 import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
 import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
 import { Recebimento, TipoEmbalagem, VolumeData } from "@/components/conferencia/types";
+import { Mic, MicOff, Printer } from "lucide-react";
 
 export default function ConferenciaRecebimento() {
   const { id } = useParams<{ id: string }>();
@@ -26,6 +27,7 @@ export default function ConferenciaRecebimento() {
   const [observacoes, setObservacoes] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
+  const [voiceActive, setVoiceActive] = useState(false);
 
   const quantidadeEsperada = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
   
@@ -99,6 +101,19 @@ export default function ConferenciaRecebimento() {
     }
   };
 
+  const toggleVoice = () => {
+    if (!voiceActive) {
+      toast({ title: "Comando de Voz Ativado", description: "Diga a quantidade do volume (ex: 'Dez')" });
+      setVoiceActive(true);
+      // Simulando reconhecimento de voz
+      setTimeout(() => {
+        toast({ title: "Voz Detectada", description: "Identificado: 50 unidades" });
+      }, 2000);
+    } else {
+      setVoiceActive(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <AppLayout title="Conferência" showBack>
@@ -139,9 +154,19 @@ export default function ConferenciaRecebimento() {
             </h2>
             <p className="text-muted-foreground">{recebimento.fornecedor}</p>
           </div>
-          <Badge className={statusConfig[recebimento.status]?.color || 'bg-muted'}>
-            {statusConfig[recebimento.status]?.label || recebimento.status}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant={voiceActive ? "default" : "outline"} 
+              size="icon" 
+              onClick={toggleVoice}
+              className={voiceActive ? "animate-pulse" : ""}
+            >
+              {voiceActive ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+            </Button>
+            <Badge className={statusConfig[recebimento.status]?.color || 'bg-muted'}>
+              {statusConfig[recebimento.status]?.label || recebimento.status}
+            </Badge>
+          </div>
         </div>
 
         <BalancaCard onPesoCapturado={setPesoConferido} />

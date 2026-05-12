@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export type AuditAction = 
   | 'create' | 'update' | 'delete' | 'view' 
   | 'login' | 'logout' | 'export' | 'import'
-  | 'approve' | 'reject' | 'transfer' | 'adjust';
+  | 'approve' | 'reject' | 'transfer' | 'adjust' | 'bulk_create';
 
 export interface AuditLogEntry {
   id: string;

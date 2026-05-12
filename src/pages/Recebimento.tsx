@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { NovoRecebimentoDialog } from "@/components/recebimento/NovoRecebimentoDialog";
+import { Progress } from "@/components/ui/progress";
 
 type StatusRecebimento = 'aguardando' | 'em_transito' | 'recebido' | 'em_conferencia' | 'conferido' | 'divergencia' | 'cancelado';
 
@@ -142,6 +143,7 @@ export default function RecebimentoPage() {
             filteredItems.map((item) => {
               const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
               const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
+              const progresso = qtdPedida > 0 ? Math.min(100, (item.quantidade_atual / qtdPedida) * 100) : 0;
               const temDivergencia = item.status === 'divergencia' || 
                 (item.status === 'conferido' && item.quantidade_atual !== qtdPedida);
 
@@ -167,15 +169,25 @@ export default function RecebimentoPage() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm font-medium truncate">{item.produto_id}</p>
+                      <p className="text-sm font-medium truncate">{item.produto?.nome || item.produto_id}</p>
                       <p className="text-xs text-muted-foreground">
-                        {item.fornecedor || 'Fornecedor não informado'}
+                        {item.produto?.sku && `SKU: ${item.produto.sku} • `}
+                        {item.fornecedor || 'Fornecedor s/ info'}
                       </p>
                       {item.previsao_chegada && item.status === 'aguardando' && (
                         <p className="text-xs text-muted-foreground mt-1">
                           <Clock className="h-3 w-3 inline mr-1" />
                           Prev: {new Date(item.previsao_chegada).toLocaleDateString("pt-BR")}
                         </p>
+                      )}
+                      {item.status === 'em_conferencia' && (
+                        <div className="mt-2 space-y-1">
+                          <div className="flex justify-between text-[10px] text-muted-foreground">
+                            <span>Conferência em progresso</span>
+                            <span>{Math.round(progresso)}%</span>
+                          </div>
+                          <Progress value={progresso} className="h-1" />
+                        </div>
                       )}
                     </div>
                     <div className="text-right shrink-0">
