@@ -1,4 +1,6 @@
- import { useState, useMemo } from "react";
+  import { useState, useMemo } from "react";
+  import { AppLayout } from "@/components/layout/AppLayout";
+  import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,8 @@ import { ProdutoDetailDialog, Produto } from "@/components/produtos/ProdutoDetai
 import { ProdutosList } from "@/components/produtos/ProdutosList";
 
  export default function ProdutosPage() {
-   const { produtos, loading, createProduto, stats } = useProdutos();
+    const { produtos, loading, createProduto, stats } = useProdutos();
+    const [search, setSearch] = useState("");
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
