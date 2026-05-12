@@ -12,10 +12,10 @@ export function usePermission() {
 
   const hasPermission = useCallback((permission: Permission) => {
     if (!user) return false;
-    if (profile?.role === "admin") return true;
-    const role = profile?.role;
-
-    switch (permission) {
+    
+    const { role } = useAuth(); // Hook calls must be at the top level
+    // Wait, usePermission is already a hook, but I need to access 'role' from useAuth() which is already called?
+    // No, I need to get 'role' from the 'useAuth()' call already present or add it.
       case "read:products":
       case "read:inventory":
         return ["admin", "supervisor", "operator"].includes(role || "");
