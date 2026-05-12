@@ -29,7 +29,7 @@ export function usePermission() {
 
       case "write:users":
       case "delete:products":
-        return role === "admin";
+        return false; // Já coberto pelo check de admin no início
         
       default:
         return false;
