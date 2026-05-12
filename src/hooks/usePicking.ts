@@ -13,7 +13,7 @@ export interface PickingTask {
   produto_id: string;
   produto_nome?: string;
   posicao_origem_id: string;
-  posicao_origem_nome?: string;
+  posicao_origem_codigo?: string;
   quantidade: number;
   quantidade_executada: number;
   zona: string;
@@ -32,7 +32,7 @@ export function usePicking() {
         .select(`
           *,
           produto:produtos(nome),
-          posicao_origem:posicoes_estoque!posicao_origem_id(nome)
+          posicao_origem:posicoes_estoque!posicao_origem_id(codigo)
         `)
         .eq("tipo", "separacao")
         .order("prioridade", { ascending: false });
@@ -41,7 +41,7 @@ export function usePicking() {
       return (data || []).map(t => ({
         ...t,
         produto_nome: t.produto?.nome,
-        posicao_origem_nome: t.posicao_origem?.nome
+        posicao_origem_codigo: t.posicao_origem?.codigo
       })) as PickingTask[];
     }
   });
