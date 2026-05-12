@@ -129,7 +129,7 @@ export const useEstoque = () => {
           const posIds = ids || (id ? [id] : []);
           const logs = posIds.map(posId => ({
             posicao_id: posId,
-            status_novo: dados.status,
+            status_novo: dados.status as string,
             operador_id: user.id,
             motivo: (dados as any).motivo || 'Alteração manual via painel'
           }));
