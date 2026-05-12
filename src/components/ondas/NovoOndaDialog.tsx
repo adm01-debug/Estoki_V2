@@ -68,7 +68,7 @@
              </div>
              <div className="space-y-2">
                <Label>Prioridade</Label>
-               <Select value={formData.prioridade} onValueChange={v => setFormData({...formData, prioridade: v})}>
+             <Select value={formData.prioridade} onValueChange={v => setFormData({...formData, prioridade: v as any})}>
                  <SelectTrigger><SelectValue /></SelectTrigger>
                  <SelectContent>
                    <SelectItem value="baixa">Baixa</SelectItem>
