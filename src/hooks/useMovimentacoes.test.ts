@@ -1,29 +1,63 @@
-// @ts-nocheck - Test file uses outdated API, needs update
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useMovimentacoes } from '../useMovimentacoes';
-import React from 'react';
+import { useMovimentacoes } from './useMovimentacoes';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { supabase } from '@/integrations/supabase/client';
 
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return ({ children }: { children: React.ReactNode }) => (
-    React.createElement(QueryClientProvider, { client: queryClient }, children)
-  );
-};
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      insert: vi.fn().mockResolvedValue({ error: null }),
+      eq: vi.fn().mockReturnThis(),
+    })),
+    channel: vi.fn(() => ({
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn().mockReturnThis(),
+    })),
+    removeChannel: vi.fn(),
+  },
+}));
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: vi.fn(),
+  }),
+}));
+
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: 'test-user-id' },
+  }),
+}));
 
 describe('useMovimentacoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
-
-  it('deve retornar array de movimentações', () => {
-    const { result } = renderHook(() => useMovimentacoes(), { wrapper: createWrapper() });
-    expect(Array.isArray(result.current.movimentacoes)).toBe(true);
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('deve ter função registrarMovimentacao', () => {
-    const { result } = renderHook(() => useMovimentacoes(), { wrapper: createWrapper() });
-    expect(typeof result.current.registrarMovimentacao).toBe('function');
+  it('should initialize with loading state', async () => {
+    const { result } = renderHook(() => useMovimentacoes());
+    expect(result.current.loading).toBe(true);
+  });
+
+  it('should call supabase to fetch data on mount', async () => {
+    renderHook(() => useMovimentacoes());
+    expect(supabase.from).toHaveBeenCalledWith('rastreamento_historico');
+  });
+
+  it('should register a new movement successfully', async () => {
+    const { result } = renderHook(() => useMovimentacoes());
+    
+    const success = await result.current.registrarMovimentacao({
+      tipo: 'recebimento_nf',
+      produto_id: 'prod-1',
+      quantidade: 10,
+      descricao: 'Teste',
+    });
+
+    expect(success).toBe(true);
+    expect(supabase.from).toHaveBeenCalledWith('rastreamento_historico');
   });
 });
