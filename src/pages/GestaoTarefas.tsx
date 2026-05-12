@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Filter, Package, Loader2, Target
+  Plus, Search, Filter, Package, Loader2, Target, LayoutGrid, List, BarChart2 
 } from "lucide-react";
 
 import { statusLabels, tipoLabels } from "@/types/tarefas";
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
+import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
 import { TarefaStats } from "@/components/tarefas/TarefaStats";
 import { TarefaCharts } from "@/components/tarefas/TarefaCharts";
 import { NovaTarefaDialog } from "@/components/tarefas/NovaTarefaDialog";
@@ -38,7 +39,7 @@ export default function GestaoTarefasPage() {
     handleConcluir
   } = useGestaoTarefasPage();
 
-  const [tab, setTab] = useState("tarefas");
+  const [tab, setTab] = useState("kanban");
 
   if (isLoading) {
     return (
@@ -66,10 +67,39 @@ export default function GestaoTarefasPage() {
         <TarefaStats stats={stats} />
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="tarefas">Tarefas</TabsTrigger>
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="kanban" className="gap-2"><LayoutGrid className="h-4 w-4" /> Kanban</TabsTrigger>
+            <TabsTrigger value="tarefas" className="gap-2"><List className="h-4 w-4" /> Lista</TabsTrigger>
+            <TabsTrigger value="dashboard" className="gap-2"><BarChart2 className="h-4 w-4" /> Dashboard</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="kanban" className="space-y-4">
+            <KanbanBoard 
+              columns={[
+                { id: "pendente", title: "Pendentes", color: "bg-slate-500" },
+                { id: "em_andamento", title: "Em Andamento", color: "bg-blue-500" },
+                { id: "concluida", title: "Concluídas", color: "bg-success" }
+              ]}
+              items={tarefasFiltradas.map((t: any) => ({
+                id: t.id,
+                columnId: t.status,
+                title: t.descricao || "Sem descrição",
+                description: `Qtd: ${t.quantidade}`,
+                priority: t.prioridade,
+                tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
+              }))}
+              renderItem={(item) => {
+                const t = tarefasFiltradas.find((x: any) => x.id === item.id);
+                return (
+                  <TarefaCard 
+                    tarefa={t} 
+                    onIniciar={handleIniciar} 
+                    onConcluir={handleConcluir} 
+                  />
+                );
+              }}
+            />
+          </TabsContent>
 
           <TabsContent value="tarefas" className="space-y-4">
             <div className="flex flex-wrap gap-3">

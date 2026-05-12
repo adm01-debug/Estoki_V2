@@ -1,8 +1,40 @@
-import { useState, useCallback } from 'react';
-export function usePermission(permission: string) {
-  const [hasPermission, setHasPermission] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const check = useCallback(async () => { setIsLoading(true); try { const perms = JSON.parse(localStorage.getItem('user_permissions') || '[]'); setHasPermission(perms.includes(permission) || perms.includes('*')); } finally { setIsLoading(false); } }, [permission]);
-  const require = useCallback(() => { if (!hasPermission) throw new Error(`Permission denied: ${permission}`); }, [hasPermission, permission]);
-  return { hasPermission, isLoading, check, require };
+import { useAuth } from "@/contexts/AuthContext";
+import { useCallback } from "react";
+
+export type Permission = 
+  | "read:products" | "write:products" | "delete:products"
+  | "read:inventory" | "write:inventory"
+  | "read:users" | "write:users"
+  | "approve:movements" | "admin:all";
+
+export function usePermission() {
+  const { user, role } = useAuth();
+
+  const hasPermission = useCallback((permission: Permission) => {
+    if (!user || !role) return false;
+    
+    if (role === "admin") return true;
+
+    switch (permission) {
+      case "read:products":
+      case "read:inventory":
+        return ["admin", "supervisor", "operador"].includes(role);
+      
+      case "write:products":
+      case "write:inventory":
+        return ["admin", "supervisor"].includes(role);
+
+      case "approve:movements":
+        return ["admin", "supervisor"].includes(role);
+
+      case "write:users":
+      case "delete:products":
+        return false; // Já coberto pelo check de admin no início
+        
+      default:
+        return false;
+    }
+  }, [role, user]);
+
+  return { hasPermission };
 }

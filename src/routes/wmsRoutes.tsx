@@ -37,6 +37,8 @@ const KanbanPipeline = lazy(() => import("@/pages/KanbanPipeline"));
 const DashboardTriador = lazy(() => import("@/pages/DashboardTriador"));
 const FormularioTriagem = lazy(() => import("@/pages/FormularioTriagem"));
 const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
+const OrdersPage = lazy(() => import("@/pages/orders/OrdersPage"));
+    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
 
 export const wmsRoutes = (
   <>

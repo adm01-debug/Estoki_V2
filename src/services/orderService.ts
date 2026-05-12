@@ -1,10 +1,61 @@
-import { supabase } from '@/integrations/supabase/client';
-const from = (table: string) => (supabase.from as any)(table);
-export interface Order { id: string; order_number: string; type: 'sales' | 'purchase'; customer_id?: string; supplier_id?: string; items: { productId: string; quantity: number; unitPrice: number }[]; subtotal: number; tax?: number; shipping?: number; total: number; status: string; notes?: string; created_at: string; }
+import { supabase } from "@/lib/supabase";
+
 export const orderService = {
-  async getAll(type?: 'sales' | 'purchase', status?: string) { let query = from('orders').select('*'); if (type) query = query.eq('type', type); if (status) query = query.eq('status', status); const { data, error } = await query.order('created_at', { ascending: false }); if (error) throw error; return (data || []) as Order[]; },
-  async getById(id: string) { const { data, error } = await from('orders').select('*').eq('id', id).single(); if (error) throw error; return data as Order; },
-  async create(order: Omit<Order, 'id' | 'order_number' | 'created_at'>) { const orderNumber = `${order.type === 'sales' ? 'SO' : 'PO'}-${Date.now()}`; const { data, error } = await from('orders').insert({ ...order, order_number: orderNumber }).select().single(); if (error) throw error; return data as Order; },
-  async updateStatus(id: string, status: string) { const { data, error } = await from('orders').update({ status }).eq('id', id).select().single(); if (error) throw error; return data as Order; },
-  async cancel(id: string, reason: string) { const { data, error } = await from('orders').update({ status: 'cancelled', cancel_reason: reason, cancelled_at: new Date().toISOString() }).eq('id', id).select().single(); if (error) throw error; return data as Order; }
+  async getAll(filters?: any) {
+    let query = supabase
+      .from("orders")
+      .select(`
+        *,
+        itens:order_items(
+          *,
+          produto:produtos(nome, sku)
+        )
+      `)
+      .order("created_at", { ascending: false });
+
+    if (filters?.status) query = query.eq("status", filters.status);
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return data;
+  },
+
+  async getById(id: string) {
+    const { data, error } = await supabase
+      .from("orders")
+      .select(`
+        *,
+        itens:order_items(
+          *,
+          produto:produtos(*)
+        )
+      `)
+      .eq("id", id)
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async create(order: any, items: any[]) {
+    const { data: newOrder, error: orderError } = await supabase
+      .from("orders")
+      .insert(order)
+      .select()
+      .single();
+
+    if (orderError) throw orderError;
+
+    const itemsToInsert = items.map(item => ({
+      ...item,
+      order_id: newOrder.id
+    }));
+
+    const { error: itemsError } = await supabase
+      .from("order_items")
+      .insert(itemsToInsert);
+
+    if (itemsError) throw itemsError;
+
+    return newOrder;
+  }
 };

@@ -10,8 +10,9 @@ export default function DashboardPage() {
   const loadStats = async () => {
     try {
       const products = await productService.getAll();
-      const lowStock = products.filter(p => p.stock_quantity <= p.reorder_point);
-      const orders = await orderService.getAll('sales', 'pending');
+      // Simulando estoque baixo baseado em estoque_minimo (em um cenário real seria via join com estoque_posicao)
+      const lowStock = (products as any[]).filter(p => (p.estoque_atual || 0) <= (p.estoque_minimo || 0));
+      const orders = await orderService.getAll({ status: 'pendente' });
       setStats({ products: products.length, lowStock: lowStock.length, pendingOrders: orders.length, todayMovements: 0 });
     } catch (e) { if (import.meta.env.DEV) console.error(e); }
   };

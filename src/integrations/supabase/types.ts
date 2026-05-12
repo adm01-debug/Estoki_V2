@@ -1878,6 +1878,87 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string | null
+          produto_id: string | null
+          quantidade: number
+          quantidade_atendida: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          produto_id?: string | null
+          quantidade: number
+          quantidade_atendida?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          quantidade_atendida?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          cliente_id: string | null
+          cliente_nome: string
+          codigo: string
+          created_at: string | null
+          data_prometida: string | null
+          id: string
+          observacoes: string | null
+          prioridade: number | null
+          status: Database["public"]["Enums"]["order_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          cliente_nome: string
+          codigo: string
+          created_at?: string | null
+          data_prometida?: string | null
+          id?: string
+          observacoes?: string | null
+          prioridade?: number | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          cliente_nome?: string
+          codigo?: string
+          created_at?: string | null
+          data_prometida?: string | null
+          id?: string
+          observacoes?: string | null
+          prioridade?: number | null
+          status?: Database["public"]["Enums"]["order_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       passkey_credentials: {
         Row: {
           counter: number
@@ -3079,6 +3160,13 @@ export type Database = {
         | "avaria_transporte"
         | "desistencia"
         | "outro"
+      order_status:
+        | "pendente"
+        | "em_separacao"
+        | "embalagem"
+        | "aguardando_transporte"
+        | "enviado"
+        | "cancelado"
       prioridade_tarefa: "baixa" | "media" | "alta" | "urgente"
       severidade_alerta: "info" | "aviso" | "critico" | "urgente"
       status_alerta: "ativo" | "reconhecido" | "resolvido" | "ignorado"
@@ -3294,6 +3382,14 @@ export const Constants = {
         "avaria_transporte",
         "desistencia",
         "outro",
+      ],
+      order_status: [
+        "pendente",
+        "em_separacao",
+        "embalagem",
+        "aguardando_transporte",
+        "enviado",
+        "cancelado",
       ],
       prioridade_tarefa: ["baixa", "media", "alta", "urgente"],
       severidade_alerta: ["info", "aviso", "critico", "urgente"],
