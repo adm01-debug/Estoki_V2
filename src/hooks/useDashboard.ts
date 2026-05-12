@@ -78,7 +78,7 @@ export const useDashboard = () => {
         getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
-       supabase.from('posicoes_estoque').select('porta_palete, status, corredor, nivel').limit(5000),
+       supabase.from('posicoes_estoque').select('porta_palete, status, secao, nivel').limit(5000),
         supabase.from('estoque_posicao')
           .select('id, quantidade, posicao_id, produto_id, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
           .order('data_entrada', { ascending: true })
