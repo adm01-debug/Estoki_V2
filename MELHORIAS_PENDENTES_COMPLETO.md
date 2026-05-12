@@ -89,10 +89,10 @@
 
 ### WMS Específicos (23)
 - useBarcodePrint, useLabelPrint, useWeightScale, useRFID, usePrinter
-- useInventoryCount, useStockLevel, useReorderPoint, useSafetyStock, useLeadTime
+ - ✅ useInventoryCount, ✅ useStockLevel, ✅ useReorderPoint, ✅ useSafetyStock, ✅ useLeadTime
  - useDemandForecast, useABCAnalysis, ✅ useFIFO, ✅ useLIFO, ✅ useFEFO
-- useLotTracking, useSerialTracking, useExpiration, useQualityControl
-- usePickingOptimization, useWaveManagement, useShippingLabel, useCarrierIntegration
+ - ✅ useLotTracking, ✅ useSerialTracking, ✅ useExpiration, ✅ useQualityControl
+ - ✅ usePickingOptimization, ✅ useWaveManagement, ✅ useShippingLabel, ✅ useCarrierIntegration
 
 ### Notificações (3)
 - usePushSubscription, useNotificationPermission, useNotificationChannel
