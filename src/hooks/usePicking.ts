@@ -6,8 +6,10 @@ import { toast } from "sonner";
 export interface PickingTask {
   id: string;
   tipo: string;
-  status: "pendente" | "em_andamento" | "concluido" | "cancelado";
-  prioridade: "baixa" | "media" | "alta" | "critica";
+  status: string;
+  prioridade: string;
+  data_inicio?: string;
+  data_conclusao?: string;
   produto_id: string;
   produto_nome?: string;
   posicao_origem_id: string;
@@ -30,7 +32,7 @@ export function usePicking() {
         .select(`
           *,
           produto:produtos(nome),
-          posicao_origem:posicoes_estoque(nome)
+          posicao_origem:posicoes_estoque!posicao_origem_id(nome)
         `)
         .eq("tipo", "separacao")
         .order("prioridade", { ascending: false });
