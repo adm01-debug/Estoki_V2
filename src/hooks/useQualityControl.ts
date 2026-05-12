@@ -27,14 +27,17 @@ export function useQualityControl() {
 
       if (error) throw error;
       // Simulando inspeções a partir dos logs de auditoria por enquanto
-      return data.map(log => ({
-        id: log.id,
-        lote_id: log.entity_id,
-        inspecionado_por: log.user_id,
-        resultado: log.new_values?.resultado || "aprovado",
-        pontuacao: log.new_values?.pontuacao || 100,
-        created_at: log.created_at
-      })) as QualityInspection[];
+      return data.map(log => {
+        const values = (log.new_values as any) || {};
+        return {
+          id: log.id,
+          lote_id: log.entity_id || "",
+          inspecionado_por: log.user_id,
+          resultado: values.resultado || "aprovado",
+          pontuacao: values.pontuacao || 100,
+          created_at: log.created_at
+        };
+      }) as QualityInspection[];
     },
   });
 
@@ -52,7 +55,7 @@ export function useQualityControl() {
       
       // Se rejeitado, atualiza o status do lote
       if (inspection.resultado === "rejeitado") {
-        await supabase.from("lotes").update({ status: "quarentena" }).eq("id", inspection.lote_id);
+        await supabase.from("lotes").update({ status: "divergencia" }).eq("id", inspection.lote_id);
       }
     },
     onSuccess: () => {
