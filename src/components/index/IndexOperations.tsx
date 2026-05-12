@@ -1,5 +1,14 @@
 import { motion } from "framer-motion";
-import { Package, Search, Warehouse, ArrowLeftRight, QrCode, ClipboardList } from "lucide-react";
+import { 
+  Package, 
+  Search, 
+  Warehouse, 
+  ArrowLeftRight, 
+  QrCode, 
+  ClipboardList,
+  ListChecks,
+  ArrowDownToLine
+} from "lucide-react";
 import { MenuButton } from "@/components/dashboard/MenuButton";
 
 const itemVariants = {
@@ -19,6 +28,8 @@ export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavi
     { icon: Search, label: "Triagem", description: "Controle qualidade", badge: triagemPendente, path: "/triagem" },
     { icon: Warehouse, label: "Estoque", description: "Mapa visual", variant: "gradient" as const, path: "/estoque" },
     { icon: ArrowLeftRight, label: "Movimentação", description: "Transferências", path: "/movimentacao" },
+    { icon: ListChecks, label: "Picking", description: "Separação", path: "/picking" },
+    { icon: ArrowDownToLine, label: "Putaway", description: "Armazenamento", path: "/putaway" },
     { icon: QrCode, label: "Scanner", description: "Ler QR Code", path: "/scanner" },
     { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/relatorios" },
   ];
