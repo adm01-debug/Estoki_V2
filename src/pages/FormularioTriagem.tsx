@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+ import { toast } from "sonner";
 import { useTriagens } from "@/hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
@@ -22,7 +22,6 @@ import { checklistItems } from "@/components/triagem/formulario/constants";
 export default function FormularioTriagem() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { toast } = useToast();
   const { triagens, isLoading: triagensLoading, updateTriagem } = useTriagens();
   
   const {
