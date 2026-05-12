@@ -20,7 +20,9 @@ const CHART_COLORS: Record<string, string> = {
 };
 
 export default function RelatoriosPage() {
-  const { movimentacoes, loading } = useMovimentacoes();
+   const { movimentacoes, loading } = useMovimentacoes();
+   const [operadorFiltro, setOperadorFiltro] = useState<string>("todos");
+   const [metaDiaria, setMetaDiaria] = useState<number>(100);
   const [searchTerm, setSearchTerm] = useState("");
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
   const [dataInicio, setDataInicio] = useState<Date>(subDays(new Date(), 30));
@@ -31,9 +33,12 @@ export default function RelatoriosPage() {
   const dadosFiltrados = useMemo(() => movimentacoes.filter((mov) => {
     const movDate = new Date(mov.created_at);
     const dentroDoPeriodo = isWithinInterval(movDate, { start: startOfDay(dataInicio), end: endOfDay(dataFim) });
-    const matchSearch = searchTerm === "" || mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
-    return dentroDoPeriodo && matchSearch && matchTipo;
+     const matchSearch = searchTerm === "" || 
+       mov.descricao?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+       mov.produto_sku?.toLowerCase().includes(searchTerm.toLowerCase());
+     const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
+     const matchOperador = operadorFiltro === "todos" || mov.operador_id === operadorFiltro;
+     return dentroDoPeriodo && matchSearch && matchTipo && matchOperador;
   }), [movimentacoes, searchTerm, tipoFiltro, dataInicio, dataFim]);
 
   const kpis = useMemo(() => {
@@ -66,18 +71,19 @@ export default function RelatoriosPage() {
 
   const calcDelta = (current: number, previous: number) => { if (previous === 0) return current > 0 ? 100 : 0; return ((current - previous) / previous) * 100; };
 
-  const dadosEvolucao = useMemo(() => {
-    const dias = eachDayOfInterval({ start: dataInicio, end: dataFim });
-    return dias.map(dia => {
-      const movsDia = dadosFiltrados.filter(m => startOfDay(new Date(m.created_at)).getTime() === startOfDay(dia).getTime());
-      return {
-        data: format(dia, "dd/MM", { locale: ptBR }),
-        entradas: movsDia.filter(m => m.tipo === "recebimento_nf" || m.tipo === "devolucao").reduce((acc, m) => acc + (m.quantidade || 0), 0),
-        saidas: movsDia.filter(m => m.tipo === "saida_transporte" || m.tipo === "entrega").reduce((acc, m) => acc + (m.quantidade || 0), 0),
-        total: movsDia.length,
-      };
-    });
-  }, [dadosFiltrados, dataInicio, dataFim]);
+   const dadosEvolucao = useMemo(() => {
+     const dias = eachDayOfInterval({ start: dataInicio, end: dataFim });
+     return dias.map(dia => {
+       const movsDia = dadosFiltrados.filter(m => startOfDay(new Date(m.created_at)).getTime() === startOfDay(dia).getTime());
+       return {
+         data: format(dia, "dd/MM", { locale: ptBR }),
+         entradas: movsDia.filter(m => m.tipo === "recebimento_nf" || m.tipo === "devolucao").reduce((acc, m) => acc + (m.quantidade || 0), 0),
+         saidas: movsDia.filter(m => m.tipo === "saida_transporte" || m.tipo === "entrega").reduce((acc, m) => acc + (m.quantidade || 0), 0),
+         total: movsDia.length,
+         meta: metaDiaria
+       };
+     });
+   }, [dadosFiltrados, dataInicio, dataFim, metaDiaria]);
 
   const dadosPorTipo = useMemo(() => {
     const agrupado: Record<string, number> = {};
@@ -85,27 +91,42 @@ export default function RelatoriosPage() {
     return Object.entries(agrupado).map(([tipo, quantidade]) => ({ tipo: tipoLabels[tipo as TipoMovimentacao] || tipo, quantidade, cor: CHART_COLORS[tipo] || "#6b7280" }));
   }, [dadosFiltrados]);
 
-  const handleExportPDF = useCallback(async () => {
-    setExportando(true);
-    try {
-      const { jsPDF } = await import('jspdf');
-      const doc = new jsPDF();
-      doc.setFontSize(18); doc.text("Relatório de Movimentações", 14, 20);
-      doc.setFontSize(10);
-      doc.text(`Período: ${format(dataInicio, "dd/MM/yyyy")} a ${format(dataFim, "dd/MM/yyyy")}`, 14, 30);
-      doc.text(`Total de movimentações: ${dadosFiltrados.length}`, 14, 36);
-      doc.setFontSize(12); doc.text("Movimentações:", 14, 48);
-      let y = 56;
-      dadosFiltrados.slice(0, 20).forEach((mov, i) => {
-        if (y > 280) { doc.addPage(); y = 20; }
-        doc.setFontSize(9);
-        doc.text(`${i + 1}. [${tipoLabels[mov.tipo]}] ${mov.descricao || 'Item'} - ${mov.quantidade || 0} un - ${format(new Date(mov.created_at), "dd/MM HH:mm")}`, 14, y);
-        y += 6;
-      });
-      doc.save(`relatorio-movimentacoes-${format(new Date(), "yyyy-MM-dd")}.pdf`);
-      toast.success("PDF exportado com sucesso!");
-    } catch { toast.error("Erro ao exportar PDF"); } finally { setExportando(false); }
-  }, [dadosFiltrados, dataInicio, dataFim]);
+   const { log } = import.meta.env.VITE_DEV ? { log: { custom: () => {} } } : require("@/hooks/useAuditLog").useAuditLog();
+   
+   const handleExportPDF = useCallback(async () => {
+     setExportando(true);
+     try {
+       const { jsPDF } = await import('jspdf');
+       const { default: autoTable } = await import('jspdf-autotable');
+       const doc = new jsPDF();
+       doc.setFontSize(20); doc.setTextColor(40, 40, 40);
+       doc.text("ESTOKI WMS - Relatório Analítico", 14, 22);
+       doc.setFontSize(10); doc.setTextColor(100);
+       doc.text(`Período: ${format(dataInicio, "dd/MM/yyyy")} a ${format(dataFim, "dd/MM/yyyy")}`, 14, 30);
+       doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm")}`, 14, 35);
+       
+       const tableData = dadosFiltrados.map((m, i) => [
+         i + 1,
+         format(new Date(m.created_at), "dd/MM HH:mm"),
+         tipoLabels[m.tipo] || m.tipo,
+         m.descricao || "-",
+         m.quantidade || 0,
+         m.operador_nome || "-"
+       ]);
+       
+       (doc as any).autoTable({
+         startY: 45,
+         head: [['#', 'Data', 'Tipo', 'Descrição', 'Qtd', 'Operador']],
+         body: tableData,
+         theme: 'striped',
+         headStyles: { fillStyle: '#3b82f6' }
+       });
+       
+       doc.save(`relatorio-estoki-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+       toast.success("PDF exportado com sucesso!");
+       log?.custom("export", "movimentacoes", { tipo: "pdf", periodo: `${format(dataInicio, "yyyy-MM-dd")} a ${format(dataFim, "yyyy-MM-dd")}` });
+     } catch (e) { console.error(e); toast.error("Erro ao exportar PDF"); } finally { setExportando(false); }
+   }, [dadosFiltrados, dataInicio, dataFim, log]);
 
   const handleExportExcel = useCallback(async () => {
     setExportando(true);
