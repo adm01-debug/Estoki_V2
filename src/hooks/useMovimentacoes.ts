@@ -111,6 +111,11 @@ export function useMovimentacoes() {
       }
 
       // Use RPC for atomic stock movement to ensure lot quantities and positions are updated
+      // If we don't have a lote_id, we can't use move_stock (logical requirement)
+      if (!input.lote_id) {
+        throw new Error('ID do lote é obrigatório para esta operação');
+      }
+
       const { error: rpcError } = await supabase.rpc('move_stock', {
         p_lote_id: input.lote_id,
         p_from_posicao_id: input.from_posicao_id || null,
@@ -119,7 +124,7 @@ export function useMovimentacoes() {
         p_operador_id: user.id,
         p_tipo_evento: input.tipo === 'transferencia' ? 'armazenamento' : input.tipo,
         p_descricao: input.descricao
-      });
+      } as any); // Cast to any because the generated types might not be updated yet
 
       if (rpcError) throw rpcError;
 
