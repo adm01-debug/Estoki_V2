@@ -1,8 +1,59 @@
-import { useMemo } from 'react';
-interface ABCItem { sku: string; value: number; }
-export function useABCAnalysis(items: ABCItem[]) {
-  const analysis = useMemo(() => { const sorted = [...items].sort((a, b) => b.value - a.value); const total = sorted.reduce((acc, i) => acc + i.value, 0); let cumulative = 0; return sorted.map(item => { cumulative += item.value; const percentage = (cumulative / total) * 100; let category: 'A' | 'B' | 'C'; if (percentage <= 80) category = 'A'; else if (percentage <= 95) category = 'B'; else category = 'C'; return { ...item, percentage, category }; }); }, [items]);
-  const getByCategory = (cat: 'A' | 'B' | 'C') => analysis.filter(i => i.category === cat);
-  const stats = useMemo(() => ({ A: getByCategory('A').length, B: getByCategory('B').length, C: getByCategory('C').length }), [analysis]);
-  return { analysis, getByCategory, stats };
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+/**
+ * Realiza a análise Curva ABC dos produtos baseada no valor total em estoque.
+ * Classe A: 80% do valor total (mais importantes)
+ * Classe B: 15% seguintes
+ * Classe C: 5% finais
+ */
+export function useABCAnalysis() {
+  return useQuery({
+    queryKey: ["abc-analysis"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("lotes")
+        .select(`
+          quantidade_atual,
+          produto:produtos(id, nome, sku, preco_venda)
+        `)
+        .gt("quantidade_atual", 0);
+
+      if (error) throw error;
+
+      // Agrupar por produto e calcular valor total
+      const productMap = new Map<string, { id: string; nome: string; sku: string; valorTotal: number }>();
+      
+      data.forEach((item: any) => {
+        const prod = item.produto;
+        const valor = (prod.preco_venda || 0) * item.quantidade_atual;
+        if (productMap.has(prod.id)) {
+          const existing = productMap.get(prod.id)!;
+          existing.valorTotal += valor;
+        } else {
+          productMap.set(prod.id, {
+            id: prod.id,
+            nome: prod.nome,
+            sku: prod.sku,
+            valorTotal: valor
+          });
+        }
+      });
+
+      const sortedProducts = Array.from(productMap.values()).sort((a, b) => b.valorTotal - a.valorTotal);
+      const totalValue = sortedProducts.reduce((acc, p) => acc + p.valorTotal, 0);
+      
+      let cumulativeValue = 0;
+      return sortedProducts.map(p => {
+        cumulativeValue += p.valorTotal;
+        const percent = totalValue > 0 ? (cumulativeValue / totalValue) * 100 : 0;
+        let classe: "A" | "B" | "C" = "C";
+        
+        if (percent <= 80) classe = "A";
+        else if (percent <= 95) classe = "B";
+        
+        return { ...p, percent, classe };
+      });
+    },
+  });
 }

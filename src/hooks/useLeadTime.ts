@@ -1,7 +1,53 @@
-import { useMemo, useCallback } from 'react';
-interface LeadTimeData { supplier: string; orders: { orderDate: Date; receiveDate: Date }[]; }
-export function useLeadTime(data: LeadTimeData[]) {
-  const calculateAverage = useCallback((supplier: string) => { const s = data.find(d => d.supplier === supplier); if (!s || s.orders.length === 0) return 0; const total = s.orders.reduce((acc, o) => acc + (new Date(o.receiveDate).getTime() - new Date(o.orderDate).getTime()) / 86400000, 0); return total / s.orders.length; }, [data]);
-  const calculateStdDev = useCallback((supplier: string) => { const avg = calculateAverage(supplier); const s = data.find(d => d.supplier === supplier); if (!s || s.orders.length < 2) return 0; const variance = s.orders.reduce((acc, o) => { const lt = (new Date(o.receiveDate).getTime() - new Date(o.orderDate).getTime()) / 86400000; return acc + Math.pow(lt - avg, 2); }, 0) / s.orders.length; return Math.sqrt(variance); }, [data, calculateAverage]);
-  return { calculateAverage, calculateStdDev };
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { differenceInDays } from "date-fns";
+
+export interface LeadTimeData {
+  fornecedor_id: string;
+  produto_id: string;
+  lead_time_medio: number;
+  variancia: number;
+  total_pedidos: number;
+}
+
+export function useLeadTime(fornecedorId?: string, produtoId?: string) {
+  return useQuery({
+    queryKey: ["lead-time", fornecedorId, produtoId],
+    queryFn: async () => {
+      // Simulando cálculo baseado no histórico de recebimentos
+      // Em uma aplicação real, isso poderia ser uma view no Supabase ou calculada via Edge Function
+      let query = supabase
+        .from("lotes")
+        .select("created_at, data_recebimento, fornecedor, produto_id")
+        .not("data_recebimento", "is", null);
+
+      if (produtoId) query = query.eq("produto_id", produtoId);
+      if (fornecedorId) query = query.eq("fornecedor", fornecedorId);
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+
+      const filteredData = data as any[];
+
+      if (filteredData.length === 0) return { lead_time_medio: 0, variancia: 0, total_pedidos: 0 };
+
+      const leadTimes = filteredData.map(l => 
+        differenceInDays(new Date(l.data_recebimento!), new Date(l.created_at))
+      );
+
+      const sum = leadTimes.reduce((acc, curr) => acc + curr, 0);
+      const avg = sum / leadTimes.length;
+      
+      const sqDiff = leadTimes.map(lt => Math.pow(lt - avg, 2));
+      const variance = sqDiff.reduce((acc, curr) => acc + curr, 0) / sqDiff.length;
+
+      return {
+        lead_time_medio: Math.round(avg * 10) / 10,
+        variancia: Math.round(variance * 10) / 10,
+        total_pedidos: leadTimes.length
+      };
+    },
+    enabled: true
+  });
 }

@@ -27,6 +27,7 @@ const PickingPage = lazy(() => import("@/pages/picking/PickingPage"));
 const PutawayPage = lazy(() => import("@/pages/putaway/PutawayPage"));
 const Ondas = lazy(() => import("@/pages/Ondas"));
 const GestaoTarefas = lazy(() => import("@/pages/GestaoTarefas"));
+const AjustesEstoque = lazy(() => import("@/pages/AjustesEstoque"));
 
 // Shipping
 const Romaneios = lazy(() => import("@/pages/Romaneios"));
@@ -38,7 +39,6 @@ const DashboardTriador = lazy(() => import("@/pages/DashboardTriador"));
 const FormularioTriagem = lazy(() => import("@/pages/FormularioTriagem"));
 const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
 const OrdersPage = lazy(() => import("@/pages/orders/OrdersPage"));
-    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
 
 export const wmsRoutes = (
   <>
@@ -64,6 +64,7 @@ export const wmsRoutes = (
     <Route path="putaway" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><PutawayPage /></Suspense></RouteErrorBoundary>} />
     <Route path="ondas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Ondas /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
     <Route path="tarefas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><GestaoTarefas /></Suspense></RouteErrorBoundary>} />
+    <Route path="ajustes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><AjustesEstoque /></Suspense></RouteErrorBoundary>} />
 
     {/* Shipping */}
     <Route path="romaneios" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><Romaneios /></Suspense></RouteErrorBoundary>} />
@@ -74,5 +75,6 @@ export const wmsRoutes = (
     <Route path="triador" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardTriador /></Suspense></RouteErrorBoundary>} />
     <Route path="formulario-triagem" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><FormularioTriagem /></Suspense></RouteErrorBoundary>} />
     <Route path="qualidade" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><QualityPage /></Suspense></RouteErrorBoundary>} />
+    <Route path="pedidos" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><OrdersPage /></Suspense></RouteErrorBoundary>} />
   </>
 );

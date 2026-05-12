@@ -1,9 +1,68 @@
-import { useState, useCallback, useMemo } from 'react';
-interface QCResult { id: string; sku: string; status: 'pending' | 'passed' | 'failed' | 'on-hold'; defects?: string[]; inspector?: string; inspectedAt?: Date; }
-export function useQualityControl(results: QCResult[]) {
-  const [filter, setFilter] = useState<QCResult['status'] | 'all'>('all');
-  const filtered = useMemo(() => filter === 'all' ? results : results.filter(r => r.status === filter), [results, filter]);
-  const stats = useMemo(() => ({ total: results.length, passed: results.filter(r => r.status === 'passed').length, failed: results.filter(r => r.status === 'failed').length, pending: results.filter(r => r.status === 'pending').length, passRate: results.length > 0 ? (results.filter(r => r.status === 'passed').length / results.length) * 100 : 0 }), [results]);
-  const getDefectFrequency = useMemo(() => { const freq: Record<string, number> = {}; results.forEach(r => r.defects?.forEach(d => { freq[d] = (freq[d] || 0) + 1; })); return Object.entries(freq).sort((a, b) => b[1] - a[1]); }, [results]);
-  return { filtered, filter, setFilter, stats, getDefectFrequency };
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+
+export interface QualityInspection {
+  id: string;
+  lote_id: string;
+  inspecionado_por: string;
+  resultado: "aprovado" | "rejeitado" | "condicional";
+  pontuacao: number;
+  observacoes?: string;
+  fotos?: string[];
+  created_at: string;
+}
+
+export function useQualityControl() {
+  const queryClient = useQueryClient();
+
+  const { data: inspections = [], isLoading } = useQuery({
+    queryKey: ["quality-inspections"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("audit_logs")
+        .select("*")
+        .eq("entity_type", "quality_control")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      // Simulando inspeções a partir dos logs de auditoria por enquanto
+      return data.map(log => {
+        const values = (log.new_values as any) || {};
+        return {
+          id: log.id,
+          lote_id: log.entity_id || "",
+          inspecionado_por: log.user_id,
+          resultado: values.resultado || "aprovado",
+          pontuacao: values.pontuacao || 100,
+          created_at: log.created_at
+        };
+      }) as QualityInspection[];
+    },
+  });
+
+  const submitInspection = useMutation({
+    mutationFn: async (inspection: Omit<QualityInspection, "id" | "created_at">) => {
+      const { error } = await supabase.from("audit_logs").insert([{
+        action: "create",
+        entity_type: "quality_control",
+        entity_id: inspection.lote_id,
+        new_values: inspection,
+        user_id: inspection.inspecionado_por
+      }]);
+
+      if (error) throw error;
+      
+      // Se rejeitado, atualiza o status do lote
+      if (inspection.resultado === "rejeitado") {
+        await supabase.from("lotes").update({ status: "divergencia" }).eq("id", inspection.lote_id);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["quality-inspections"] });
+      toast({ title: "Inspeção registrada", description: "Os dados de qualidade foram salvos com sucesso." });
+    },
+  });
+
+  return { inspections, isLoading, submitInspection };
 }
