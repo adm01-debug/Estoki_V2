@@ -57,36 +57,73 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
     }
   };
 
-  const handleImport = async () => {
-    if (!nfeData) return;
-
-    setLoading(true);
-    try {
-      // Criar recebimentos para cada produto da NF
-      // Nota: produto_id seria necessário - aqui usamos um placeholder
-      // Em produção, seria necessário mapear o código do produto para o ID no banco
-      for (const produto of nfeData.produtos) {
-        await createRecebimento.mutateAsync({
-          numero_lote: `${nfeData.numero}-${produto.codigo}`,
-          fornecedor: nfeData.emitente.razaoSocial,
-          quantidade: Math.round(produto.quantidade),
-          quantidade_pedida: Math.round(produto.quantidade),
-          nf_entrada: nfeData.numero,
-          produto_id: '', // Seria necessário buscar/criar o produto
-          status: 'recebido',
-        });
-      }
-
-      toast.success(`${nfeData.produtos.length} itens importados com sucesso!`);
-      setOpen(false);
-      setNfeData(null);
-      onSuccess?.();
-    } catch (err) {
-      toast.error('Erro ao importar itens: ' + (err instanceof Error ? err.message : 'Erro desconhecido'));
-    } finally {
-      setLoading(false);
-    }
-  };
+   const handleImport = async () => {
+     if (!nfeData) return;
+ 
+     setLoading(true);
+     try {
+       // 1. Salvar documento NF-e
+       const { data: doc, error: docError } = await supabase
+         .from('nfe_documents')
+         .insert([{
+           chave_acesso: nfeData.chaveAcesso,
+           numero: nfeData.numero,
+           serie: nfeData.serie,
+           data_emissao: nfeData.dataEmissao.toISOString(),
+           emitente_cnpj: nfeData.emitente.cnpj,
+           emitente_nome: nfeData.emitente.razaoSocial,
+           valor_total: nfeData.totais.valorTotal,
+           xml_content: '', // Opcional salvar o XML completo
+           status: 'importado'
+         }])
+         .select()
+         .single();
+ 
+       if (docError) throw docError;
+ 
+       // 2. Criar recebimentos e itens da NF
+       for (const produto of nfeData.produtos) {
+         // Tentar encontrar o produto pelo SKU/EAN
+         const { data: prodData } = await supabase
+           .from('produtos')
+           .select('id')
+           .or(`sku.eq.${produto.codigo},sku.eq.${produto.ean}`)
+           .maybeSingle();
+ 
+         // Criar item da NF
+         await supabase.from('nfe_items').insert([{
+           nfe_id: doc.id,
+           codigo_produto: produto.codigo,
+           descricao: produto.descricao,
+           unidade: produto.unidade,
+           quantidade: produto.quantidade,
+           valor_unitario: produto.valorUnitario,
+           valor_total: produto.valorTotal,
+           produto_id: prodData?.id || null
+         }]);
+ 
+         // Criar lote de recebimento
+         await createRecebimento.mutateAsync({
+           numero_lote: `${nfeData.numero}-${produto.codigo}`,
+           fornecedor: nfeData.emitente.razaoSocial,
+           quantidade: Math.round(produto.quantidade),
+           quantidade_pedida: Math.round(produto.quantidade),
+           nf_entrada: nfeData.numero,
+           produto_id: prodData?.id || null,
+           status: 'recebido',
+         });
+       }
+ 
+       toast.success(`${nfeData.produtos.length} itens da NF-e nº ${nfeData.numero} importados!`);
+       setOpen(false);
+       setNfeData(null);
+       onSuccess?.();
+     } catch (err) {
+       toast.error('Erro ao importar NF-e: ' + (err instanceof Error ? err.message : 'Erro desconhecido'));
+     } finally {
+       setLoading(false);
+     }
+   };
 
   const handleReset = () => {
     setNfeData(null);
