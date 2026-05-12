@@ -300,18 +300,34 @@ export default function DashboardTriadorPage() {
                       const ok = d.progresso >= d.meta;
                       return (
                         <div key={d.id} className={`p-4 rounded-lg border ${ok ? 'bg-green-500/10 border-green-500/30' : ''}`}>
-                          <div className="flex items-start justify-between mb-2">
-                            <div>
-                              <h4 className="font-semibold flex items-center gap-2">
-                                {ok && <CheckCircle className="h-4 w-4 text-green-500" />}
-                                {d.titulo}
-                              </h4>
-                              <p className="text-sm text-muted-foreground">{d.descricao}</p>
-                            </div>
-                            <Badge variant="outline" className="gap-1">
-                              <Zap className="h-3 w-3" />+{d.xp_recompensa} XP
-                            </Badge>
-                          </div>
+                           <div className="flex items-start justify-between mb-2">
+                             <div className="flex-1">
+                               <h4 className="font-semibold flex items-center gap-2">
+                                 {ok && <CheckCircle className="h-4 w-4 text-green-500" />}
+                                 {d.titulo}
+                               </h4>
+                               <p className="text-sm text-muted-foreground">{d.descricao}</p>
+                             </div>
+                             <div className="flex flex-col items-end gap-2 ml-2">
+                               <Badge variant="outline" className="gap-1">
+                                 <Zap className="h-3 w-3" />+{d.xp_recompensa} XP
+                               </Badge>
+                               {ok && !d.xpColetado && (
+                                 <button
+                                   onClick={() => {
+                                     // @ts-ignore
+                                     coletarRecompensa(d.id);
+                                   }}
+                                   className="text-[10px] font-bold uppercase py-1 px-2 rounded bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                                 >
+                                   Coletar
+                                 </button>
+                               )}
+                               {d.xpColetado && (
+                                 <Badge variant="secondary" className="text-[10px]">Coletado</Badge>
+                               )}
+                             </div>
+                           </div>
                           <div className="space-y-1">
                             <div className="flex justify-between text-sm">
                               <span>{d.progresso} / {d.meta}</span>
