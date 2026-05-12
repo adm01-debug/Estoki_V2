@@ -5,12 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Filter, Package, Loader2, Target
+  Plus, Search, Filter, Package, Loader2, Target, LayoutGrid, List, BarChart2 
 } from "lucide-react";
 
 import { statusLabels, tipoLabels } from "@/types/tarefas";
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
+import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
 import { TarefaStats } from "@/components/tarefas/TarefaStats";
 import { TarefaCharts } from "@/components/tarefas/TarefaCharts";
 import { NovaTarefaDialog } from "@/components/tarefas/NovaTarefaDialog";
