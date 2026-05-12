@@ -54,11 +54,7 @@ export function useAuditLog() {
         ip_address: "client-side"
       };
 
-      const { data, error } = await supabase
-        .from("audit_logs")
-        .insert(newEntry)
-        .select()
-        .single();
+      const { data, error } = await supabase.from("audit_logs").insert([newEntry]).select().single();
 
       if (error) throw error;
       return data;
