@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, FileSearch, Truck, ArrowLeftRight, FileText, Settings, Trophy, BarChart3, Layers, MapPin, Waves, ListChecks, AlertTriangle, ClipboardList, TrendingUp } from "lucide-react";
+ import { LayoutDashboard, Package, FileSearch, Truck, ArrowLeftRight, FileText, Settings, Trophy, BarChart3, Layers, MapPin, Waves, ListChecks, AlertTriangle, ClipboardList, TrendingUp, RefreshCw } from "lucide-react";
 
 export const menuItems = [
   { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -15,6 +15,7 @@ export const menuItems = [
   { name: "Relatórios", path: "/relatorios", icon: FileText },
   { name: "KPIs", path: "/kpis-operacionais", icon: BarChart3 },
   { name: "Gamificação", path: "/gamificacao", icon: Trophy },
+   { name: "Hub Central", path: "/hub", icon: RefreshCw },
   { name: "Configurações", path: "/configuracoes", icon: Settings },
 ];
 

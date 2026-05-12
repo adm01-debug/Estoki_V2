@@ -2184,6 +2184,44 @@ export type Database = {
         }
         Relationships: []
       }
+      posicao_status_log: {
+        Row: {
+          created_at: string
+          id: string
+          motivo: string | null
+          operador_id: string | null
+          posicao_id: string
+          status_anterior: string | null
+          status_novo: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          motivo?: string | null
+          operador_id?: string | null
+          posicao_id: string
+          status_anterior?: string | null
+          status_novo: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          motivo?: string | null
+          operador_id?: string | null
+          posicao_id?: string
+          status_anterior?: string | null
+          status_novo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posicao_status_log_posicao_id_fkey"
+            columns: ["posicao_id"]
+            isOneToOne: false
+            referencedRelation: "posicoes_estoque"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       posicoes_estoque: {
         Row: {
           box: string | null

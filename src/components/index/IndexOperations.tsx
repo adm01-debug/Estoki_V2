@@ -7,7 +7,8 @@ import {
   QrCode, 
   ClipboardList,
   ListChecks,
-  ArrowDownToLine
+   ArrowDownToLine,
+   RefreshCw
 } from "lucide-react";
 import { MenuButton } from "@/components/dashboard/MenuButton";
 
@@ -31,7 +32,8 @@ export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavi
     { icon: ListChecks, label: "Picking", description: "Separação", path: "/picking" },
     { icon: ArrowDownToLine, label: "Putaway", description: "Armazenamento", path: "/putaway" },
     { icon: QrCode, label: "Scanner", description: "Ler QR Code", path: "/scanner" },
-    { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/relatorios" },
+     { icon: RefreshCw, label: "Hub Central", description: "Sincronização global", path: "/hub" },
+     { icon: ClipboardList, label: "Relatórios", description: "Exportar dados", path: "/relatorios" },
   ];
 
   return (

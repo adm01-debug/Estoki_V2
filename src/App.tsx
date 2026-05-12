@@ -1,4 +1,5 @@
-import { Suspense, lazy } from "react";
+ import { Suspense, lazy, useEffect } from "react";
+ const Hub = lazy(() => import("./pages/Hub"));
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -67,7 +68,8 @@ const App = () => (
 
                     {wmsRoutes}
                     {analyticsRoutes}
-                    {adminRoutes}
+                     <Route path="hub" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Hub /></Suspense></RouteErrorBoundary>} />
+                     {adminRoutes}
                     {featureRoutes}
                   </Route>
                 </Routes>
