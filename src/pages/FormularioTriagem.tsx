@@ -11,6 +11,7 @@ import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica"
 import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Trophy, Star } from "lucide-react";
 
 // Modularized Components
