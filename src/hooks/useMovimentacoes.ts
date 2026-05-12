@@ -97,7 +97,9 @@ export function useMovimentacoes() {
     };
   }, [fetchMovimentacoes]);
 
-  const registrarMovimentacao = async (input: MovimentacaoInput): Promise<boolean> => {
+  const registrarMovimentacao = async (
+    input: MovimentacaoInput & { from_posicao_id?: string; to_posicao_id?: string }
+  ): Promise<boolean> => {
     try {
       if (!user?.id) {
         toast({
@@ -108,19 +110,18 @@ export function useMovimentacoes() {
         return false;
       }
 
-      const { error: insertError } = await supabase
-        .from('rastreamento_historico')
-        .insert({
-           tipo_evento: input.tipo === 'transferencia' ? 'armazenamento' : input.tipo,
-          produto_id: input.produto_id,
-          lote_id: input.lote_id,
-          quantidade: input.quantidade,
-          localizacao: input.localizacao,
-          descricao: input.descricao,
-          operador_id: user.id,
-        });
+      // Use RPC for atomic stock movement to ensure lot quantities and positions are updated
+      const { error: rpcError } = await supabase.rpc('move_stock', {
+        p_lote_id: input.lote_id,
+        p_from_posicao_id: input.from_posicao_id || null,
+        p_to_posicao_id: input.to_posicao_id || null,
+        p_quantidade: input.quantidade,
+        p_operador_id: user.id,
+        p_tipo_evento: input.tipo === 'transferencia' ? 'armazenamento' : input.tipo,
+        p_descricao: input.descricao
+      });
 
-      if (insertError) throw insertError;
+      if (rpcError) throw rpcError;
 
       toast({
         title: 'Movimentação registrada',
@@ -137,16 +138,18 @@ export function useMovimentacoes() {
 
   const transferir = async (
     loteId: string,
-    localizacao: string,
+    fromPosicaoId: string,
+    toPosicaoId: string,
     quantidade: number,
     descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'armazenamento',
+      tipo: 'transferencia',
       lote_id: loteId,
+      from_posicao_id: fromPosicaoId,
+      to_posicao_id: toPosicaoId,
       quantidade,
-      localizacao,
-      descricao: descricao || 'Transferência de estoque',
+      descricao: descricao || 'Transferência interna de estoque',
     });
   };
 
