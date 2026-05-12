@@ -11,12 +11,17 @@ import {
   Target,
   Award,
   Zap,
-  Package,
-  Trophy,
-  Flame,
-  Star,
-  Loader2,
+   Package,
+   Trophy,
+   Flame,
+   Star,
+   Loader2,
+   ArrowRight,
+   ClipboardCheck,
+   History,
 } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { useNavigate } from "react-router-dom";
 import {
   AreaChart,
   Area,
@@ -36,6 +41,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function DashboardTriadorPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const gamificacaoData = useGamificacao();
   const gamificacao = gamificacaoData.perfil;
   const loadingGamificacao = gamificacaoData.isLoading;
@@ -52,6 +58,7 @@ export default function DashboardTriadorPage() {
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
    const [loadingHist, setLoadingHist] = useState(false);
+   const [recentHistory, setRecentHistory] = useState<any[]>([]);
 
    useEffect(() => {
      const loadHistorico = async () => {
@@ -65,6 +72,20 @@ export default function DashboardTriadorPage() {
        setLoadingHist(false);
      };
      loadHistorico();
+
+     const loadRecentActivity = async () => {
+       if (!user?.id) return;
+       const { data } = await supabase
+         .from('eventos_triagem')
+         .select('id, data_fim, resultado, items_count')
+         .eq('operador_id', user.id)
+         .not('data_fim', 'is', null)
+         .order('data_fim', { ascending: false })
+         .limit(5);
+       
+       if (data) setRecentHistory(data);
+     };
+     loadRecentActivity();
    }, [user?.id, getMetricasDiarias]);
 
   const minhasMetricas = useMemo(() => {
@@ -88,50 +109,85 @@ export default function DashboardTriadorPage() {
   return (
     <AppLayout title="Meu Dashboard" showBack>
       <div className="p-4 space-y-6">
-        {/* Header com XP e Nível */}
-        <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Trophy className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold">{user?.user_metadata?.nome || "Operador"}</h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="gap-1">
-                      <Star className="h-3 w-3 text-yellow-500" />
-                      Nível {gamificacao?.nivel || 1}
-                    </Badge>
-                    <Badge variant="outline" className="gap-1">
-                      <Zap className="h-3 w-3 text-primary" />
-                      {gamificacao?.xp_total || 0} XP
-                    </Badge>
-                    {streakAtual > 0 && (
-                      <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
-                        <Flame className="h-3 w-3" />
-                        {streakAtual} dias
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Header com XP e Nível */}
+          <Card className="lg:col-span-2 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center relative">
+                    <Trophy className="h-10 w-10 text-primary" />
+                    <div className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-background">
+                      #{minhaposicao || '?'}
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">{user?.user_metadata?.nome || "Operador"}</h2>
+                    <div className="flex flex-wrap items-center gap-2 mt-2">
+                      <Badge variant="outline" className="gap-1">
+                        <Star className="h-3 w-3 text-yellow-500" />
+                        Nível {gamificacao?.nivel || 1}
                       </Badge>
-                    )}
+                      <Badge variant="outline" className="gap-1">
+                        <Zap className="h-3 w-3 text-primary" />
+                        {gamificacao?.xp_total || 0} XP
+                      </Badge>
+                      {streakAtual > 0 && (
+                        <Badge variant="outline" className="gap-1 bg-orange-500/10 text-orange-600 border-orange-500/30">
+                          <Flame className="h-3 w-3" />
+                          {streakAtual} dias
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
+                <div className="text-right hidden md:block">
+                  <p className="text-sm text-muted-foreground">Faltam para o Nível {(gamificacao?.nivel || 1) + 1}</p>
+                  <p className="text-xl font-bold text-primary">
+                    {(gamificacao?.xp_proximo_nivel || 1000) - (gamificacao?.xp_total || 0)} XP
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Próximo nível</p>
-                <p className="text-lg font-bold text-primary">
-                  {(gamificacao?.xp_proximo_nivel || 1000) - (gamificacao?.xp_total || 0)} XP
-                </p>
+              <div className="mt-6">
+                <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                  <span>Progresso do Nível</span>
+                  <span>{Math.round(((gamificacao?.xp_total || 0) / (gamificacao?.xp_proximo_nivel || 1000)) * 100)}%</span>
+                </div>
+                <Progress value={((gamificacao?.xp_total || 0) / (gamificacao?.xp_proximo_nivel || 1000)) * 100} className="h-3" />
               </div>
-            </div>
-            <div className="mt-4">
-              <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                <span>Nível {gamificacao?.nivel || 1}</span>
-                <span>Nível {(gamificacao?.nivel || 1) + 1}</span>
-              </div>
-              <Progress value={((gamificacao?.xp_total || 0) / (gamificacao?.xp_proximo_nivel || 1000)) * 100} className="h-3" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          {/* Ações Rápidas */}
+          <Card className="border-primary/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">Acesso Rápido</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                className="w-full justify-between gap-2 h-12" 
+                onClick={() => navigate('/triagem')}
+              >
+                <div className="flex items-center gap-2">
+                  <ClipboardCheck className="h-5 w-5" />
+                  <span>Iniciar Nova Triagem</span>
+                </div>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                className="w-full justify-between gap-2 h-12"
+                onClick={() => navigate('/estoque')}
+              >
+                <div className="flex items-center gap-2">
+                  <Package className="h-5 w-5" />
+                  <span>Consultar Estoque</span>
+                </div>
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
