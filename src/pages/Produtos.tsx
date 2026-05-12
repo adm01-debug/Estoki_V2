@@ -14,6 +14,7 @@ import { ProdutosStats } from "@/components/produtos/ProdutosStats";
 import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
 import { ProdutoDetailDialog, Produto } from "@/components/produtos/ProdutoDetailDialog";
 import { ProdutosList } from "@/components/produtos/ProdutosList";
+import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
 
  export default function ProdutosPage() {
     const { produtos, loading, createProduto, stats } = useProdutos();
@@ -107,6 +108,7 @@ import { ProdutosList } from "@/components/produtos/ProdutosList";
       showBack
        rightAction={
          <div className="flex gap-2">
+            <BulkImportDialog />
            <Button size="sm" variant="outline" className="gap-2" onClick={handleExport} title="Exportar CSV">
              <Download className="h-4 w-4" />
              <span className="hidden sm:inline">Exportar</span>
