@@ -11,7 +11,13 @@
  export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
    const [open, setOpen] = useState(false);
    const [saving, setSaving] = useState(false);
-   const [formData, setFormData] = useState({
+   const [formData, setFormData] = useState<{
+     codigo: string;
+     descricao: string;
+     prioridade: "alta" | "baixa" | "media" | "urgente";
+     zona_alvo: string;
+     rota: string;
+   }>({
      codigo: `ON-${Math.floor(1000 + Math.random() * 9000)}`,
      descricao: "",
      prioridade: "media",
