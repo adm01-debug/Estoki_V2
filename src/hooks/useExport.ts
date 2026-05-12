@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadCSV } from "@/lib/csvImporter";
 import { downloadExcel } from "@/lib/excelImporter";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
 type ExportFormat = "csv" | "xlsx" | "json" | "pdf";
@@ -142,9 +144,22 @@ export function useExport<T extends Record<string, any>>(
           URL.revokeObjectURL(jsonUrl);
           break;
         }
-        case "pdf":
-          toast.info("Exportação PDF em desenvolvimento");
+        case "pdf": {
+          const doc = new jsPDF();
+          doc.text(filename, 14, 15);
+          const body = data.map(row => 
+            (headers || Object.keys(row)).map(h => String(row[h] || ''))
+          );
+          autoTable(doc, {
+            head: [headers || Object.keys(data[0] || {})],
+            body: body,
+            startY: 20,
+            styles: { fontSize: 8 },
+            headStyles: { fillColor: [66, 66, 66] }
+          });
+          doc.save(`${filename}.pdf`);
           break;
+        }
       }
 
       updateProgress(100);
