@@ -2224,6 +2224,8 @@ export type Database = {
       }
       posicoes_estoque: {
         Row: {
+          bloqueado_em: string | null
+          bloqueado_por: string | null
           box: string | null
           capacidade_kg: number | null
           codigo: string
@@ -2231,6 +2233,8 @@ export type Database = {
           id: string
           nivel: string | null
           porta_palete: string | null
+          reservado_em: string | null
+          reservado_por: string | null
           secao: string | null
           status: Database["public"]["Enums"]["status_posicao"]
           tipo: Database["public"]["Enums"]["tipo_posicao"]
@@ -2238,6 +2242,8 @@ export type Database = {
           zona: string | null
         }
         Insert: {
+          bloqueado_em?: string | null
+          bloqueado_por?: string | null
           box?: string | null
           capacidade_kg?: number | null
           codigo: string
@@ -2245,6 +2251,8 @@ export type Database = {
           id?: string
           nivel?: string | null
           porta_palete?: string | null
+          reservado_em?: string | null
+          reservado_por?: string | null
           secao?: string | null
           status?: Database["public"]["Enums"]["status_posicao"]
           tipo: Database["public"]["Enums"]["tipo_posicao"]
@@ -2252,6 +2260,8 @@ export type Database = {
           zona?: string | null
         }
         Update: {
+          bloqueado_em?: string | null
+          bloqueado_por?: string | null
           box?: string | null
           capacidade_kg?: number | null
           codigo?: string
@@ -2259,6 +2269,8 @@ export type Database = {
           id?: string
           nivel?: string | null
           porta_palete?: string | null
+          reservado_em?: string | null
+          reservado_por?: string | null
           secao?: string | null
           status?: Database["public"]["Enums"]["status_posicao"]
           tipo?: Database["public"]["Enums"]["tipo_posicao"]
@@ -3272,6 +3284,18 @@ export type Database = {
       }
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number }
+        Returns: undefined
+      }
+      move_stock: {
+        Args: {
+          p_descricao: string
+          p_from_posicao_id: string
+          p_lote_id: string
+          p_operador_id: string
+          p_quantidade: number
+          p_tipo_evento: string
+          p_to_posicao_id: string
+        }
         Returns: undefined
       }
       record_failed_login: {

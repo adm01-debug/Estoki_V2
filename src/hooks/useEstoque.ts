@@ -90,19 +90,55 @@ export const useEstoque = () => {
     }
   });
 
-   const updatePosicao = useMutation({
-     mutationFn: async ({ id, ids, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[] })) => {
-       if (ids && ids.length > 0) {
-         const { data, error } = await supabase.from('posicoes_estoque').update(dados).in('id', ids).select();
-         if (error) throw error;
-         return data;
-       } else if (id) {
-         const { data, error } = await supabase.from('posicoes_estoque').update(dados).eq('id', id).select().single();
-         if (error) throw error;
-         return data;
-       }
-       throw new Error('ID ou lista de IDs não fornecida para atualização');
-     },
+    const updatePosicao = useMutation({
+      mutationFn: async ({ id, ids, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[] })) => {
+        const payload = { ...dados };
+        
+        // Se estiver bloqueando ou reservando, registra quem e quando
+        // Note: auth should be handled here to get current user ID
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (dados.status === 'bloqueado' && user) {
+          (payload as any).bloqueado_por = user.id;
+          (payload as any).bloqueado_em = new Date().toISOString();
+        } else if (dados.status === 'reservado' && user) {
+          (payload as any).reservado_por = user.id;
+          (payload as any).reservado_em = new Date().toISOString();
+        } else if (dados.status === 'livre') {
+          (payload as any).bloqueado_por = null;
+          (payload as any).bloqueado_em = null;
+          (payload as any).reservado_por = null;
+          (payload as any).reservado_em = null;
+        }
+
+        let updatedData;
+        if (ids && ids.length > 0) {
+          const { data, error } = await supabase.from('posicoes_estoque').update(payload).in('id', ids).select();
+          if (error) throw error;
+          updatedData = data;
+        } else if (id) {
+          const { data, error } = await supabase.from('posicoes_estoque').update(payload).eq('id', id).select().single();
+          if (error) throw error;
+          updatedData = data;
+        } else {
+          throw new Error('ID ou lista de IDs não fornecida para atualização');
+        }
+
+        // Log status change if status was updated
+        if (dados.status && user) {
+          const posIds = ids || (id ? [id] : []);
+          const logs = posIds.map(posId => ({
+            posicao_id: posId,
+            status_novo: dados.status as string,
+            operador_id: user.id,
+            motivo: (dados as any).motivo || 'Alteração manual via painel'
+          }));
+          await supabase.from('posicao_status_log').insert(logs);
+        }
+
+        return updatedData;
+        throw new Error('ID ou lista de IDs não fornecida para atualização');
+      },
      onSuccess: (data, variables) => {
        queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
        const count = Array.isArray(data) ? data.length : 1;
