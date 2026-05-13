@@ -90,8 +90,8 @@ export const useEstoque = () => {
     }
   });
 
-    const updatePosicao = useMutation({
-      mutationFn: async ({ id, ids, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[] })) => {
+     const updatePosicao = useMutation({
+       mutationFn: async ({ id, ids, motivo, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[]; motivo?: string })) => {
         const payload = { ...dados };
         
         // Se estiver bloqueando ou reservando, registra quem e quando
