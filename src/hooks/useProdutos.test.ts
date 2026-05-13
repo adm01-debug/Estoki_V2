@@ -4,6 +4,21 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useProdutos } from './useProdutos';
 import React from 'react';
 
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockResolvedValue({ data: [], error: null }),
+    })),
+  },
+}));
+
+vi.mock('./useAuditLog', () => ({
+  useAuditLog: () => ({
+    log: { custom: vi.fn() },
+  }),
+}));
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
