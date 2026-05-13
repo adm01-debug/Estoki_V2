@@ -5,9 +5,9 @@
 // Status de posição
 export const POSICAO_STATUS = {
   LIVRE: "livre",
-  OCUPADA: "ocupada",
-  RESERVADA: "reservada",
-  BLOQUEADA: "bloqueada",
+   OCUPADA: "ocupado",
+   RESERVADA: "reservado",
+   BLOQUEADA: "bloqueado",
 } as const;
 
 // Tipos de posição
