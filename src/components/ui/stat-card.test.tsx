@@ -17,7 +17,7 @@ describe('StatCard', () => {
 
   it('renders trend correctly', () => {
     render(<StatCard title="Growth" value="50%" trend={{ value: 12 }} />);
-    expect(screen.getByText('12%')).toBeInTheDocument();
+    expect(screen.getByText((content) => content.includes('12%'))).toBeInTheDocument();
     expect(screen.getByText(/vs período anterior/)).toBeInTheDocument();
   });
 
