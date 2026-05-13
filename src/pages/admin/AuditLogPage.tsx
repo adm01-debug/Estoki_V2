@@ -56,9 +56,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function AuditLogPage() {
   const { logs, isLoading, getStats } = useAuditLog();
   
-  const { exportData, isExporting } = useExport<AuditLogEntry>({
-    table: "audit_logs",
-    filename: `audit_logs_${format(new Date(), "yyyy-MM-dd")}`,
+   const { exportData, isExporting } = useExport<AuditLogEntry>({
+     table: "audit_log",
+     filename: `audit_log_${format(new Date(), "yyyy-MM-dd")}`,
     columns: [
       { key: "created_at", header: "Data/Hora", transform: (v) => format(new Date(v as string), "dd/MM/yyyy HH:mm:ss") },
       { key: "user_email", header: "Usuário" },
