@@ -15,7 +15,7 @@ describe('JsonEditor', () => {
     fireEvent.change(textarea, { target: { value: '{ invalid: json }' } });
     
     expect(screen.queryByText('JSON válido')).not.toBeInTheDocument();
-    expect(screen.getByText(/Unexpected token/)).toBeInTheDocument();
+    expect(screen.getByText(/Expected property name|Unexpected token/)).toBeInTheDocument();
   });
 
   it('calls onChange when valid JSON is entered', () => {
