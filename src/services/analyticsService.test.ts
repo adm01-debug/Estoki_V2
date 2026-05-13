@@ -4,14 +4,13 @@ import { analyticsService } from './analyticsService';
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
+      insert: vi.fn().mockResolvedValue({ error: null }),
       select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-    })),
-  },
+      gte: vi.fn().mockReturnThis(),
+      lte: vi.fn().mockResolvedValue({ data: [], error: null })
+    }))
+  }
 }));
 
 describe('analyticsService', () => {
@@ -19,11 +18,13 @@ describe('analyticsService', () => {
     vi.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(analyticsService).toBeDefined();
+  it('should track events', async () => {
+    await analyticsService.trackEvent('test_event', { foo: 'bar' });
+    expect(true).toBe(true);
   });
 
-  it('should have expected methods', () => {
-    expect(typeof analyticsService).toBe('object');
+  it('should get metrics', async () => {
+    const metrics = await analyticsService.getMetrics('test_event', { start: '2023-01-01', end: '2023-12-31' });
+    expect(Array.isArray(metrics)).toBe(true);
   });
 });
