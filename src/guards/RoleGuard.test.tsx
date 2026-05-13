@@ -16,53 +16,54 @@ describe('RoleGuard', () => {
   it('shows loading spinner when loading is true', () => {
     (useAuth as any).mockReturnValue({
       loading: true,
-      hasRole: vi.fn(),
+      canAccess: vi.fn(),
     });
 
-    render(
+    const { container } = render(
       <MemoryRouter>
-        <RoleGuard requiredRole="admin">
+        <RoleGuard allowedRoles={['admin']}>
           <div>Admin Content</div>
         </RoleGuard>
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('img', { hidden: true })).toHaveClass('animate-spin');
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveClass('animate-spin');
   });
 
   it('renders children when user has required role', () => {
-    const hasRole = vi.fn().mockReturnValue(true);
+    const canAccess = vi.fn().mockReturnValue(true);
     (useAuth as any).mockReturnValue({
+      user: { id: '123' },
       loading: false,
-      hasRole,
+      canAccess,
     });
 
     render(
       <MemoryRouter>
-        <RoleGuard requiredRole="admin">
+        <RoleGuard allowedRoles={['admin']}>
           <div>Admin Content</div>
         </RoleGuard>
       </MemoryRouter>
     );
 
     expect(screen.getByText('Admin Content')).toBeInTheDocument();
-    expect(hasRole).toHaveBeenCalledWith('admin');
+    expect(canAccess).toHaveBeenCalledWith(['admin']);
   });
 
-  it('redirects to unauthorized when user does not have required role', () => {
-    const hasRole = vi.fn().mockReturnValue(false);
+  it('redirects when user does not have required role', () => {
+    const canAccess = vi.fn().mockReturnValue(false);
     (useAuth as any).mockReturnValue({
+      user: { id: '123' },
       loading: false,
-      hasRole,
+      canAccess,
     });
 
     render(
-      <MemoryRouter initialEntries={['/admin']}>
-        <div>
-          <RoleGuard requiredRole="admin">
-            <div>Admin Content</div>
-          </RoleGuard>
-        </div>
+      <MemoryRouter>
+        <RoleGuard allowedRoles={['admin']}>
+          <div>Admin Content</div>
+        </RoleGuard>
       </MemoryRouter>
     );
 

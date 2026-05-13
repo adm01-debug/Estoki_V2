@@ -16,49 +16,48 @@ describe('PermissionGuard', () => {
   it('shows loading spinner when loading is true', () => {
     (useAuth as any).mockReturnValue({
       loading: true,
-      canAccess: vi.fn(),
     });
 
-    render(
+    const { container } = render(
       <MemoryRouter>
-        <PermissionGuard allowedRoles={['admin', 'supervisor']}>
+        <PermissionGuard permissions="products.read">
           <div>Restricted Content</div>
         </PermissionGuard>
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('img', { hidden: true })).toHaveClass('animate-spin');
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveClass('animate-spin');
   });
 
-  it('renders children when user has allowed role', () => {
-    const canAccess = vi.fn().mockReturnValue(true);
+  it('renders children when user has allowed permission', () => {
     (useAuth as any).mockReturnValue({
+      user: { id: '123' },
+      role: 'admin',
       loading: false,
-      canAccess,
     });
 
     render(
       <MemoryRouter>
-        <PermissionGuard allowedRoles={['admin']}>
+        <PermissionGuard permissions="products.read">
           <div>Restricted Content</div>
         </PermissionGuard>
       </MemoryRouter>
     );
 
     expect(screen.getByText('Restricted Content')).toBeInTheDocument();
-    expect(canAccess).toHaveBeenCalledWith(['admin']);
   });
 
-  it('redirects when user does not have allowed role', () => {
-    const canAccess = vi.fn().mockReturnValue(false);
+  it('redirects when user does not have permission', () => {
     (useAuth as any).mockReturnValue({
+      user: { id: '123' },
+      role: 'operador', // Doesn't have 'users.delete'
       loading: false,
-      canAccess,
     });
 
     render(
       <MemoryRouter>
-        <PermissionGuard allowedRoles={['admin']}>
+        <PermissionGuard permissions="users.delete">
           <div>Restricted Content</div>
         </PermissionGuard>
       </MemoryRouter>
