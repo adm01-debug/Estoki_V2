@@ -1,36 +1,22 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useMemo, useCallback } from 'react';
 
-export function useFilter<T>(data: T[], searchFields: (keyof T)[]) {
-  const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<Partial<Record<keyof T, unknown>>>({});
+export function useFilter<T>(items: T[], filterFn?: (item: T, query: string) => boolean) {
+  const [query, setQuery] = useState('');
 
-  const filteredData = useMemo(() => {
-    let result = data;
-    if (search) {
-      const lowerSearch = search.toLowerCase();
-      result = result.filter(item =>
-        searchFields.some(field => {
-          const value = item[field];
-          return String(value).toLowerCase().includes(lowerSearch);
-        })
-      );
+  const filteredItems = useMemo(() => {
+    if (!query) return items;
+
+    if (filterFn) {
+      return items.filter(item => filterFn(item, query));
     }
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== "") {
-        result = result.filter(item => item[key as keyof T] === value);
-      }
+
+    const lowerQuery = query.toLowerCase();
+    return items.filter(item => {
+      return Object.values(item as any).some(val => 
+        String(val).toLowerCase().includes(lowerQuery)
+      );
     });
-    return result;
-  }, [data, search, filters, searchFields]);
+  }, [items, query, filterFn]);
 
-  const setFilter = useCallback((field: keyof T, value: unknown) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
-  }, []);
-
-  const clearFilters = useCallback(() => {
-    setSearch("");
-    setFilters({});
-  }, []);
-
-  return { search, setSearch, filters, setFilter, clearFilters, filteredData };
+  return { items: filteredItems, query, setQuery };
 }
