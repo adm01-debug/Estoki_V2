@@ -12,12 +12,41 @@ type Story = StoryObj<typeof meta>;
 
 const triagem = {
   id: '1',
-  lote: 'LOT-001',
-  quantidade: 100,
+  lote_id: 'LOT-001-ABC-DEF',
+  quantidade_total: 100,
+  quantidade_aprovada: 85,
   status: 'em_andamento',
-  inicio: new Date(),
+  created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
 };
 
-export const Default: Story = { args: { triagem } };
-export const Concluida: Story = { args: { triagem: { ...triagem, status: 'concluida' } } };
-export const Pendente: Story = { args: { triagem: { ...triagem, status: 'pendente' } } };
+export const EmAndamento: Story = { args: { triagem } };
+
+export const Aprovado: Story = { 
+  args: { 
+    triagem: { 
+      ...triagem, 
+      status: 'aprovado',
+      quantidade_aprovada: 100 
+    } 
+  } 
+};
+
+export const Rejeitado: Story = { 
+  args: { 
+    triagem: { 
+      ...triagem, 
+      status: 'rejeitado',
+      quantidade_aprovada: 10 
+    } 
+  } 
+};
+
+export const Pendente: Story = { 
+  args: { 
+    triagem: { 
+      ...triagem, 
+      status: 'pendente',
+      quantidade_aprovada: 0 
+    } 
+  } 
+};
