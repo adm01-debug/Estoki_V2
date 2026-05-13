@@ -70,7 +70,7 @@ export const calcularKPIsConsolidados = (metricas: MetricaOperacional[]): KPICon
     acuracidadePicking: soma.countMetricas > 0 ? soma.acuracidadePicking / soma.countMetricas : 0,
     taxaOcupacao: ultimaMetrica?.taxa_ocupacao || 0,
     posicoesTotais: ultimaMetrica?.posicoes_totais || 0,
-    posicoesOcupadas: ultimaMetrica?.posicoes_ocupados || 0,
+    posicoesOcupadas: ultimaMetrica?.posicoes_ocupadas || 0,
     volumesRecebidos: soma.volumesRecebidos,
     nfsProcessadas: soma.nfsProcessadas,
     tempoMedioRecebimento: soma.countMetricas > 0 ? soma.tempoRecebimento / soma.countMetricas : 0,

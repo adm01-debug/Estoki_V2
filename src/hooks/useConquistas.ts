@@ -60,7 +60,7 @@ interface ConquistaUsuario {
 
 export interface ConquistaCompleta extends ConquistaDefinicao {
   progresso: number;
-  desbloqueado: boolean;
+  desbloqueada: boolean;
   dataDesbloqueio: Date | null;
   IconComponent: LucideIcon;
 }
@@ -153,7 +153,7 @@ export function useConquistas() {
       return {
         ...def,
         progresso: userAchievement?.progresso || 0,
-        desbloqueado: userAchievement?.desbloqueado || false,
+        desbloqueado: userAchievement?.desbloqueada || false,
         dataDesbloqueio: userAchievement?.data_desbloqueio 
           ? new Date(userAchievement.data_desbloqueio) 
           : null,
