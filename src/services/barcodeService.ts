@@ -18,7 +18,7 @@ export const barcodeService = {
   async associateBarcode(productId: string, barcode: string): Promise<void> {
     const { error } = await supabase
       .from("produtos")
-       .update({ barcode })
+        .update({ barcode } as any)
       .eq("id", productId);
 
     if (error) throw error;
