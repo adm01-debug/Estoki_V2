@@ -171,33 +171,33 @@ export default function TriagemPage() {
     );
   }
 
-  return (
-    <AppLayout
-      title="Triagem"
-      showBack
-      rightAction={
-         <div className="flex gap-2">
-           <Button size="sm" variant="outline" className="gap-2" onClick={handleExportCSV} title="Exportar CSV">
-             <Download className="h-4 w-4" />
-             <span className="hidden sm:inline">Exportar</span>
+   return (
+     <AppLayout
+       title="Controle de Qualidade"
+       showBack
+       rightAction={
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={handleExportCSV} title="Exportar CSV">
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Exportar</span>
+            </Button>
+           <Button size="sm" variant="outline" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => navigate("/scanner")}>
+             <QrCode className="h-4 w-4" />
+             <span className="hidden sm:inline">Scanner</span>
            </Button>
-          <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}>
-            <QrCode className="h-4 w-4" />
-            <span className="hidden sm:inline">Scanner</span>
-          </Button>
-          <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="gap-2" onClick={() => setShowAmostragem(!showAmostragem)}>
-            <Calculator className="h-4 w-4" />
-            <span className="hidden sm:inline">Amostragem</span>
-          </Button>
-          <Button size="sm" className="gap-2" onClick={handleIniciarTriagem}>
-            <Play className="h-4 w-4" />
-            <span className="hidden sm:inline">Nova</span>
-          </Button>
-        </div>
-      }
-    >
-      <SEO title="Triagem" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
-       <div ref={containerRef} className="p-4 space-y-4 animate-fade-in relative">
+           <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => setShowAmostragem(!showAmostragem)}>
+             <Calculator className="h-4 w-4" />
+             <span className="hidden sm:inline">Amostragem</span>
+           </Button>
+           <Button size="sm" className="h-9 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={handleIniciarTriagem}>
+             <Play className="h-4 w-4" />
+             <span className="hidden sm:inline">Nova Triagem</span>
+           </Button>
+         </div>
+       }
+     >
+       <SEO title="Triagem Operacional" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
+        <div ref={containerRef} className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto relative">
          {selectedIds.length > 0 && (
            <motion.div 
              initial={{ opacity: 0, y: -10 }} 
