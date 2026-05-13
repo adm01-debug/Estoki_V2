@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Decimal } from 'decimal.js';
 import { supabase } from '@/integrations/supabase/client';
 
 export type ClassificacaoABC = 'A' | 'B' | 'C';
@@ -129,17 +130,17 @@ export function useCurvaABC() {
       // Ordenar por valor total (decrescente)
       produtosProcessados.sort((a, b) => b.valor_total - a.valor_total);
 
-      // Calcular valor total geral
-      const valorTotalGeral = produtosProcessados.reduce((acc, p) => acc + p.valor_total, 0);
+      // Calcular valor total geral usando Decimal para precisão
+      const valorTotalGeral = produtosProcessados.reduce((acc, p) => acc.plus(new Decimal(p.valor_total)), new Decimal(0));
 
       // Calcular percentuais e classificação
-      let acumulado = 0;
+      let acumuladoDecimal = new Decimal(0);
       produtosProcessados.forEach((p) => {
-        p.percentual_valor = valorTotalGeral > 0 
-          ? (p.valor_total / valorTotalGeral) * 100 
+        p.percentual_valor = valorTotalGeral.gt(0) 
+          ? new Decimal(p.valor_total).div(valorTotalGeral).mul(100).toNumber() 
           : 0;
-        acumulado += p.percentual_valor;
-        p.percentual_acumulado = acumulado;
+        acumuladoDecimal = acumuladoDecimal.plus(new Decimal(p.percentual_valor));
+        p.percentual_acumulado = acumuladoDecimal.toNumber();
 
         // Classificação por valor (80-15-5)
         if (p.percentual_acumulado <= 80) {
