@@ -22,21 +22,32 @@ export interface Movimentacao {
 export const movimentacaoService = {
    async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
      try {
+       // Mapeamento de tipos simplificados para tipos do banco de dados
+       const mapTipo = (tipo: Movimentacao['tipo']): TipoEvento => {
+         switch (tipo) {
+           case 'ajuste': return 'ajuste_estoque';
+           case 'entrada': return 'recebimento_nf';
+           case 'saida': return 'saida_transporte';
+           case 'transferencia': return 'armazenamento';
+           default: return 'ajuste_estoque';
+         }
+       };
+
        const { error } = await supabase
          .from('rastreamento_historico')
          .insert({
-           tipo_evento: mov.tipo,
+           tipo_evento: mapTipo(mov.tipo),
            lote_id: mov.lote_id,
            descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
            quantidade: mov.quantidade,
            operador_id: mov.usuario_id,
            localizacao: mov.posicao_destino || mov.posicao_origem,
-            detalhes: {
-              produto_id: mov.produto_id,
-              posicao_origem: mov.posicao_origem,
-              posicao_destino: mov.posicao_destino,
-            } as any,
-          } as RastreamentoInsert);
+           detalhes: {
+             produto_id: mov.produto_id,
+             posicao_origem: mov.posicao_origem,
+             posicao_destino: mov.posicao_destino,
+           } as any,
+         } as RastreamentoInsert);
 
        if (error) {
          logger.error('Erro ao registrar movimentação', error);
