@@ -44,19 +44,26 @@ export const prioridadeColors: Record<string, string> = {
   urgente: "bg-red-500/10 text-red-600",
 };
 
+ import { Database } from "@/integrations/supabase/types";
+ 
+ export type StatusTarefa = Database['public']['Enums']['status_tarefa'];
+ export type PrioridadeTarefa = Database['public']['Enums']['prioridade_tarefa'];
+ export type TipoTarefa = Database['public']['Enums']['tipo_tarefa'];
+ 
  export interface Tarefa {
    id: string;
-   descricao: string | null;
-   tipo: string;
-   status: string;
-   prioridade: string;
-   responsavel_id?: string | null;
+   instrucoes: string | null;
+   tipo: TipoTarefa;
+   status: StatusTarefa;
+   prioridade: PrioridadeTarefa;
+   operador_id?: string | null;
    created_at: string;
    data_inicio?: string | null;
    data_conclusao?: string | null;
    lote_id?: string | null;
-   posicao_id?: string | null;
-   quantidade?: number;
+   posicao_origem_id?: string | null;
+   posicao_destino_id?: string | null;
+   quantidade: number;
    zona?: string | null;
  }
 
