@@ -70,5 +70,3 @@ describe('validations', () => {
     });
   });
 });
-
-rm src/tests/validators.test.ts
