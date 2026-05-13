@@ -4,7 +4,7 @@
  import { logger } from '@/utils/logger';
 import { toast } from 'sonner';
 
- type TableName = keyof Database['public']['Tables'];
+ type TableName = keyof Database['public']['Tables'] | (string & {});
 
 export interface BaseEntity { id: string; created_at?: string; updated_at?: string; deleted_at?: string | null; }
 export interface PaginatedResult<T> { data: T[]; total: number; page: number; pageSize: number; totalPages: number; }
