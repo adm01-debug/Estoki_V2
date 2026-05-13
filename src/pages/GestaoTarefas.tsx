@@ -1,3 +1,11 @@
+ import { tipoLabels } from "@/types/tarefas";
+ 
+ const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
+   baixa: "low",
+   media: "medium",
+   alta: "high",
+   urgente: "critical",
+ };
  import { Tarefa } from "@/types/tarefas";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -82,13 +90,13 @@ export default function GestaoTarefasPage() {
                 { id: "concluida", title: "Concluídas", color: "bg-success" }
               ]}
                items={tarefasFiltradas.map((t: Tarefa) => ({
-                id: t.id,
-                columnId: t.status,
-                title: t.descricao || "Sem descrição",
-                description: `Qtd: ${t.quantidade}`,
-                priority: t.prioridade,
-                tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
-              }))}
+                 id: t.id,
+                 columnId: t.status,
+                 title: t.instrucoes || "Sem descrição",
+                 description: `Qtd: ${t.quantidade}`,
+                 priority: priorityMap[t.prioridade] || "medium",
+                 tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
+               }))}
                renderItem={(item) => {
                  const t = tarefasFiltradas.find((x: Tarefa) => x.id === item.id);
                  if (!t) return null;
