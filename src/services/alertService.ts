@@ -18,7 +18,7 @@ export const alertService = {
       .limit(limit);
 
     if (error) throw error;
-    return data || [];
+    return (data || []) as unknown as Alert[];
   },
 
   async markAsRead(id: string): Promise<void> {
@@ -38,6 +38,6 @@ export const alertService = {
       .single();
 
     if (error) throw error;
-    return data;
+    return data as unknown as Alert;
   }
 };

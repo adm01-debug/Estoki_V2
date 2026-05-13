@@ -20,19 +20,46 @@ export const batchService = {
       .order("data_validade", { ascending: true });
 
     if (error) throw error;
-    return data || [];
+    return (data || []).map((item: any) => ({
+      id: item.id,
+      codigo: item.numero_lote || item.codigo || '',
+      produto_id: item.produto_id,
+      data_fabricacao: item.data_fabricacao,
+      data_validade: item.data_validade,
+      quantidade_inicial: item.quantidade_inicial || 0,
+      quantidade_atual: item.quantidade_atual || 0,
+      status: item.status || 'ativo'
+    })) as Batch[];
   },
 
   async createBatch(batch: Omit<Batch, 'id' | 'status'>): Promise<Batch> {
     const status = batch.data_validade && new Date(batch.data_validade) < new Date() ? 'vencido' : 'ativo';
     const { data, error } = await supabase
       .from("lotes")
-      .insert({ ...batch, status } as any)
+      .insert({ 
+        numero_lote: batch.codigo,
+        produto_id: batch.produto_id,
+        data_fabricacao: batch.data_fabricacao,
+        data_validade: batch.data_validade,
+        quantidade_inicial: batch.quantidade_inicial,
+        quantidade_atual: batch.quantidade_atual,
+        status 
+      } as any)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    const item = data as any;
+    return {
+      id: item.id,
+      codigo: item.numero_lote || item.codigo || '',
+      produto_id: item.produto_id,
+      data_fabricacao: item.data_fabricacao,
+      data_validade: item.data_validade,
+      quantidade_inicial: item.quantidade_inicial || 0,
+      quantidade_atual: item.quantidade_atual || 0,
+      status: item.status || 'ativo'
+    } as Batch;
   },
 
   async updateQuantity(id: string, delta: number): Promise<void> {
@@ -44,7 +71,7 @@ export const batchService = {
 
     if (!batch) throw new Error("Batch not found");
 
-    const newQty = batch.quantidade_atual + delta;
+    const newQty = (batch as any).quantidade_atual + delta;
     const status = newQty <= 0 ? 'esgotado' : 'ativo';
 
     const { error } = await supabase
