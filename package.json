@@ -31,7 +31,17 @@
     "db:seed": "supabase db seed",
     "db:reset": "supabase db reset",
     "deploy:preview": "netlify deploy",
-    "release": "semantic-release"
+     "release": "semantic-release",
+     "bundlesize": [
+       {
+         "path": "./dist/assets/*.js",
+         "maxSize": "500 kB"
+       },
+       {
+         "path": "./dist/assets/*.css",
+         "maxSize": "100 kB"
+       }
+     ]
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
