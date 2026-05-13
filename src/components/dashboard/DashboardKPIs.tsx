@@ -1,7 +1,7 @@
- import { Card, CardContent } from "@/components/ui/card";
- import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
- import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList } from "lucide-react";
+  import { Card, CardContent } from "@/components/ui/card";
+  import { cn } from "@/lib/utils";
+ import { Progress } from "@/components/ui/progress";
+  import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { DashboardKPIs as DashboardKPIsInterface } from "@/hooks/useDashboard";
 
 interface DashboardKPIsProps {
@@ -29,25 +29,33 @@ export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
    };
 
    return (
-     <div className="space-y-4">
-       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-         <Card className="hover:shadow-md transition-shadow cursor-default">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <BarChart3 className="h-4 w-4" />
-            <span className="text-xs">Taxa Ocupação</span>
-          </div>
-           <p className={cn("text-2xl font-bold", getOcupacaoColor(safeKpis.taxaOcupacao))}>{safeKpis.taxaOcupacao}%</p>
-           <Progress 
-             value={safeKpis.taxaOcupacao} 
-             className="mt-2 h-1.5" 
-             indicatorClassName={cn(
-               safeKpis.taxaOcupacao >= 90 ? "bg-red-600" : 
-               safeKpis.taxaOcupacao >= 70 ? "bg-yellow-600" : "bg-green-600"
-             )} 
-           />
-        </CardContent>
-      </Card>
+     <div className="space-y-6">
+       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+           <CardContent className="p-5">
+             <div className="flex items-center justify-between mb-3">
+               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
+                 <BarChart3 className="h-5 w-5 text-primary" />
+               </div>
+               <div className="flex items-center gap-1 text-[10px] font-bold text-success bg-success/10 px-1.5 py-0.5 rounded-full">
+                 <ArrowUpRight className="h-3 w-3" />2.4%
+               </div>
+             </div>
+             <div className="space-y-1">
+               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Taxa de Ocupação</p>
+               <p className={cn("text-3xl font-black tracking-tight", getOcupacaoColor(safeKpis.taxaOcupacao))}>{safeKpis.taxaOcupacao}%</p>
+             </div>
+             <Progress 
+               value={safeKpis.taxaOcupacao} 
+               className="mt-4 h-1.5 bg-muted/30" 
+               indicatorClassName={cn(
+                 "transition-all duration-500",
+                 safeKpis.taxaOcupacao >= 90 ? "bg-destructive" : 
+                 safeKpis.taxaOcupacao >= 70 ? "bg-warning" : "bg-success"
+               )} 
+             />
+           </CardContent>
+         </Card>
 
       <Card>
         <CardContent className="p-4">
