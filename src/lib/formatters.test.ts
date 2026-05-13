@@ -76,8 +76,6 @@ describe('formatters', () => {
 
   describe('formatWeight', () => {
     it('formats grams as kg if >= 1000', () => {
-      expect(formatWeight(1500)).toBe('1.50 s kg'); // wait, formatter code says: grams >= 1000 ? fixed(2) kg : grams g
-      // checking src: return `${(grams / 1000).toFixed(2)} kg`;
       expect(formatWeight(1500)).toBe('1.50 kg');
     });
     it('formats as g if < 1000', () => {
