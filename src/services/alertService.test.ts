@@ -34,12 +34,15 @@ describe('alertService', () => {
     expect(true).toBe(true);
   });
 
-  it('should create alert', async () => {
-    const alert = await alertService.createAlert({
-      tipo: 'estoque_baixo',
-      mensagem: 'Teste',
-      prioridade: 'alta'
-    });
-    expect(alert.id).toBe('1');
-  });
+   it('should create alert', async () => {
+     const alert = await alertService.createAlert({
+       tipo: 'estoque_baixo',
+       titulo: 'Alerta de Estoque',
+       mensagem: 'Teste',
+       referencia_id: null,
+       referencia_tipo: null,
+       user_id: null
+     });
+     expect(alert.id).toBe('1');
+   });
 });

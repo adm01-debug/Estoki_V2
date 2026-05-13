@@ -1,8 +1,10 @@
- import { supabase } from '@/integrations/supabase/client';
+  import { supabase } from '@/lib/supabase';
  import { logger } from '@/utils/logger';
  import { Database } from '@/integrations/supabase/types';
  
  type RastreamentoHistorico = Database['public']['Tables']['rastreamento_historico']['Row'];
+  type RastreamentoInsert = Database['public']['Tables']['rastreamento_historico']['Insert'];
+  type TipoEvento = Database['public']['Tables']['rastreamento_historico']['Row']['tipo_evento'];
  
 export interface Movimentacao {
   id?: string;
@@ -20,10 +22,21 @@ export interface Movimentacao {
 export const movimentacaoService = {
    async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
      try {
+       // Mapeamento de tipos simplificados para tipos do banco de dados
+       const mapTipo = (tipo: Movimentacao['tipo']): TipoEvento => {
+         switch (tipo) {
+           case 'ajuste': return 'ajuste_estoque';
+           case 'entrada': return 'recebimento_nf';
+           case 'saida': return 'saida_transporte';
+           case 'transferencia': return 'armazenamento';
+           default: return 'ajuste_estoque';
+         }
+       };
+
        const { error } = await supabase
          .from('rastreamento_historico')
          .insert({
-           tipo_evento: mov.tipo,
+           tipo_evento: mapTipo(mov.tipo),
            lote_id: mov.lote_id,
            descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
            quantidade: mov.quantidade,
@@ -33,9 +46,9 @@ export const movimentacaoService = {
              produto_id: mov.produto_id,
              posicao_origem: mov.posicao_origem,
              posicao_destino: mov.posicao_destino,
-           },
-         } as never);
- 
+           } as any,
+         } as RastreamentoInsert);
+
        if (error) {
          logger.error('Erro ao registrar movimentação', error);
          return false;
@@ -66,7 +79,7 @@ export const movimentacaoService = {
         query = query.eq('lote_id', filtros.lote_id);
       }
       if (filtros?.tipo) {
-        query = query.eq('tipo_evento', filtros.tipo as any);
+        query = query.eq('tipo_evento', filtros.tipo as TipoEvento);
       }
       if (filtros?.data_inicio) {
         query = query.gte('created_at', filtros.data_inicio);
