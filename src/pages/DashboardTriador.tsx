@@ -43,7 +43,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
  interface HistoricoTriagem {
    id: string;
-   data_fim: string;
+   data_fim: string | null;
    resultado: string | null;
  }
  
@@ -361,7 +361,7 @@ export default function DashboardTriadorPage() {
                             <div>
                               <p className="text-sm font-medium capitalize">{item.resultado || 'Triado'}</p>
                               <p className="text-[10px] text-muted-foreground">
-                                 {new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                 {item.data_fim ? new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '---'}
                               </p>
                             </div>
                           </div>
