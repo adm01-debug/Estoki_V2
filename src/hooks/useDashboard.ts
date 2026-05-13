@@ -1,7 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
-
+ import { useQuery, useQueryClient } from '@tanstack/react-query';
+ import { supabase } from '@/integrations/supabase/client';
+ import { useEffect } from 'react';
+ import { logger } from '@/utils/logger';
+ 
 export interface DashboardKPIs {
   totalPosicoes: number;
   posicoesOcupadas: number;
@@ -44,14 +45,19 @@ export interface ItemParado {
   valor: number;
 }
 
-async function getCount(query: any): Promise<number> {
-  try {
-    const { count } = await query;
-    return count ?? 0;
-  } catch {
-    return 0;
-  }
-}
+ async function getCount(query: any): Promise<number> {
+   try {
+     const { count, error } = await query;
+     if (error) {
+       logger.error('Error in getCount', error);
+       return 0;
+     }
+     return count ?? 0;
+   } catch (error) {
+     logger.error('Unexpected error in getCount', error);
+     return 0;
+   }
+ }
 
 export const useDashboard = () => {
   const queryClient = useQueryClient();
@@ -160,16 +166,16 @@ export const useDashboard = () => {
           const dataEntrada = new Date(item.data_entrada);
           if (dataEntrada < trintaDiasAtras) {
             const diasParado = Math.floor((Date.now() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24));
-            const prod = item.produtos as any;
-            const pos = item.posicoes_estoque as any;
+             const prod = item.produtos as Record<string, unknown> | null;
+             const pos = item.posicoes_estoque as Record<string, unknown> | null;
             itensParados.push({
               id: item.id,
-              sku: prod?.sku || 'N/A',
-              descricao: prod?.nome || 'Sem descrição',
-              posicao: pos?.codigo || 'N/A',
+               sku: (prod?.sku as string) || 'N/A',
+               descricao: (prod?.nome as string) || 'Sem descrição',
+               posicao: (pos?.codigo as string) || 'N/A',
               diasParado,
               quantidade: item.quantidade,
-              valor: (item.quantidade || 0) * (prod?.peso_unitario || 0),
+               valor: (item.quantidade || 0) * ((prod?.peso_unitario as number) || 0),
             });
           }
         }

@@ -1,5 +1,9 @@
-import { supabase } from '@/integrations/supabase/client';
-
+ import { supabase } from '@/integrations/supabase/client';
+ import { logger } from '@/utils/logger';
+ import { Database } from '@/integrations/supabase/types';
+ 
+ type RastreamentoHistorico = Database['public']['Tables']['rastreamento_historico']['Row'];
+ 
 export interface Movimentacao {
   id?: string;
   tipo: 'entrada' | 'saida' | 'transferencia' | 'ajuste';
@@ -14,35 +18,35 @@ export interface Movimentacao {
 }
 
 export const movimentacaoService = {
-  async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
-    try {
-      const { error } = await supabase
-        .from('rastreamento_historico')
-        .insert({
-          tipo_evento: mov.tipo as any,
-          lote_id: mov.lote_id,
-          descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
-          quantidade: mov.quantidade,
-          operador_id: mov.usuario_id,
-          localizacao: mov.posicao_destino || mov.posicao_origem,
-          detalhes: {
-            produto_id: mov.produto_id,
-            posicao_origem: mov.posicao_origem,
-            posicao_destino: mov.posicao_destino,
-          } as any,
-        } as any);
-
-      if (error) {
-        if (import.meta.env.DEV) console.error('Erro ao registrar movimentação:', error);
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Erro ao registrar movimentação:', error);
-      return false;
-    }
-  },
+   async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
+     try {
+       const { error } = await supabase
+         .from('rastreamento_historico')
+         .insert({
+           tipo_evento: mov.tipo,
+           lote_id: mov.lote_id,
+           descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
+           quantidade: mov.quantidade,
+           operador_id: mov.usuario_id,
+           localizacao: mov.posicao_destino || mov.posicao_origem,
+           detalhes: {
+             produto_id: mov.produto_id,
+             posicao_origem: mov.posicao_origem,
+             posicao_destino: mov.posicao_destino,
+           },
+         } as never);
+ 
+       if (error) {
+         logger.error('Erro ao registrar movimentação', error);
+         return false;
+       }
+ 
+       return true;
+     } catch (error) {
+       logger.error('Erro inesperado ao registrar movimentação', error);
+       return false;
+     }
+   },
 
   async getHistorico(filtros?: {
     lote_id?: string;
@@ -76,27 +80,30 @@ export const movimentacaoService = {
 
       const { data, error } = await query;
 
-      if (error) {
-        if (import.meta.env.DEV) console.error('Erro ao buscar histórico:', error);
-        return [];
-      }
-
-      return (data || []).map((item: any) => ({
-        id: item.id,
-        tipo: item.tipo_evento as Movimentacao['tipo'],
-        lote_id: item.lote_id ?? undefined,
-        posicao_origem: (item.detalhes as any)?.posicao_origem,
-        posicao_destino: (item.detalhes as any)?.posicao_destino,
-        quantidade: item.quantidade ?? 0,
-        motivo: item.descricao,
-        usuario_id: item.operador_id,
-        produto_id: (item.detalhes as any)?.produto_id,
-        created_at: item.created_at,
-      }));
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Erro ao buscar histórico:', error);
-      return [];
-    }
+       if (error) {
+         logger.error('Erro ao buscar histórico', error);
+         return [];
+       }
+ 
+       return (data || []).map((item: RastreamentoHistorico) => {
+         const detalhes = item.detalhes as Record<string, unknown> | null;
+         return {
+           id: item.id,
+           tipo: item.tipo_evento as Movimentacao['tipo'],
+           lote_id: item.lote_id ?? undefined,
+           posicao_origem: detalhes?.posicao_origem as string | undefined,
+           posicao_destino: detalhes?.posicao_destino as string | undefined,
+           quantidade: item.quantidade ?? 0,
+           motivo: item.descricao ?? undefined,
+           usuario_id: item.operador_id ?? '',
+           produto_id: detalhes?.produto_id as string | undefined,
+           created_at: item.created_at,
+         };
+       });
+     } catch (error) {
+       logger.error('Erro inesperado ao buscar histórico', error);
+       return [];
+     }
   },
 
   async getUltimaMovimentacao(loteId: string): Promise<Movimentacao | null> {
@@ -110,16 +117,17 @@ export const movimentacaoService = {
 
     if (error || !data) return null;
 
-    return {
-      id: data.id,
-      tipo: data.tipo_evento as Movimentacao['tipo'],
-      lote_id: data.lote_id ?? undefined,
-      posicao_origem: (data.detalhes as any)?.posicao_origem,
-      posicao_destino: (data.detalhes as any)?.posicao_destino,
-      quantidade: data.quantidade ?? 0,
-      motivo: data.descricao,
-      usuario_id: data.operador_id ?? '',
-      created_at: data.created_at,
-    };
+     const detalhes = data.detalhes as Record<string, unknown> | null;
+     return {
+       id: data.id,
+       tipo: data.tipo_evento as Movimentacao['tipo'],
+       lote_id: data.lote_id ?? undefined,
+       posicao_origem: detalhes?.posicao_origem as string | undefined,
+       posicao_destino: detalhes?.posicao_destino as string | undefined,
+       quantidade: data.quantidade ?? 0,
+       motivo: data.descricao ?? undefined,
+       usuario_id: data.operador_id ?? '',
+       created_at: data.created_at,
+     };
   },
 };

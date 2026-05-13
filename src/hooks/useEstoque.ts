@@ -1,9 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useEffect, useCallback, useMemo } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import type { Database } from '@/integrations/supabase/types';
-
+ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+ import { supabase } from '@/integrations/supabase/client';
+ import { useEffect, useCallback, useMemo } from 'react';
+ import { useToast } from '@/hooks/use-toast';
+ import type { Database } from '@/integrations/supabase/types';
+ import { logger } from '@/utils/logger';
+ 
 type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
 type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
@@ -85,9 +86,10 @@ export const useEstoque = () => {
       queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
       toast({ title: 'Sucesso', description: 'Posição criada com sucesso!' });
     },
-    onError: () => {
-      toast({ title: 'Erro', description: 'Falha ao criar posição', variant: 'destructive' });
-    }
+     onError: (error: Error) => {
+       logger.error('Falha ao criar posição', error);
+       toast({ title: 'Erro', description: 'Falha ao criar posição', variant: 'destructive' });
+     }
   });
 
   const updatePosicao = useMutation({
@@ -98,18 +100,19 @@ export const useEstoque = () => {
         // Note: auth should be handled here to get current user ID
         const { data: { user } } = await supabase.auth.getUser();
         
-        if (dados.status === 'bloqueado' && user) {
-          (payload as any).bloqueado_por = user.id;
-          (payload as any).bloqueado_em = new Date().toISOString();
-        } else if (dados.status === 'reservado' && user) {
-          (payload as any).reservado_por = user.id;
-          (payload as any).reservado_em = new Date().toISOString();
-        } else if (dados.status === 'livre') {
-          (payload as any).bloqueado_por = null;
-          (payload as any).bloqueado_em = null;
-          (payload as any).reservado_por = null;
-          (payload as any).reservado_em = null;
-        }
+         const typedPayload = payload as Record<string, unknown>;
+         if (dados.status === 'bloqueado' && user) {
+           typedPayload.bloqueado_por = user.id;
+           typedPayload.bloqueado_em = new Date().toISOString();
+         } else if (dados.status === 'reservado' && user) {
+           typedPayload.reservado_por = user.id;
+           typedPayload.reservado_em = new Date().toISOString();
+         } else if (dados.status === 'livre') {
+           typedPayload.bloqueado_por = null;
+           typedPayload.bloqueado_em = null;
+           typedPayload.reservado_por = null;
+           typedPayload.reservado_em = null;
+         }
 
         let updatedData;
         if (ids && ids.length > 0) {
@@ -136,18 +139,21 @@ export const useEstoque = () => {
           await supabase.from('posicao_status_log').insert(logs);
         }
 
-        return updatedData;
-        throw new Error('ID ou lista de IDs não fornecida para atualização');
+         return updatedData;
+       },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
+        const count = Array.isArray(data) ? data.length : 1;
+        toast({ 
+          title: 'Sucesso', 
+          description: count > 1 ? `${count} posições atualizadas!` : 'Posição atualizada!' 
+        });
       },
-     onSuccess: (data, variables) => {
-       queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
-       const count = Array.isArray(data) ? data.length : 1;
-       toast({ 
-         title: 'Sucesso', 
-         description: count > 1 ? `${count} posições atualizadas!` : 'Posição atualizada!' 
-       });
-     }
-   });
+      onError: (error: Error) => {
+        logger.error('Falha ao atualizar posição', error);
+        toast({ title: 'Erro', description: 'Falha ao atualizar posição', variant: 'destructive' });
+      }
+    });
 
   const deletePosicao = useMutation({
     mutationFn: async (id: string) => {

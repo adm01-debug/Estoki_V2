@@ -25,10 +25,10 @@ interface BitrixError {
   error_description: string;
 }
 
-interface CRMItem {
-  ID: string;
-  [key: string]: any;
-}
+ interface CRMItem {
+   ID: string;
+   [key: string]: string | number | boolean | null | undefined | unknown;
+ }
 
 // SPAs conhecidas
 export const SPA_CONFIG = {
@@ -67,7 +67,7 @@ export const SPA_CONFIG = {
 // Classe principal
 class Bitrix24Client {
   private baseUrl: string;
-  private requestQueue: Promise<any>[];
+   private requestQueue: Promise<unknown>[];
   private maxConcurrent: number;
 
   constructor(webhookUrl?: string) {
@@ -77,7 +77,7 @@ class Bitrix24Client {
   }
 
   // Chamada genérica à API
-  async call<T>(method: string, params?: Record<string, any>): Promise<BitrixResponse<T>> {
+   async call<T>(method: string, params?: Record<string, unknown>): Promise<BitrixResponse<T>> {
     const url = `${this.baseUrl}/${method}`;
     
     try {
@@ -106,24 +106,24 @@ class Bitrix24Client {
   }
 
   // Listar itens de SPA
-  async listItems(
-    entityTypeId: number,
-    options?: {
-      select?: string[];
-      filter?: Record<string, any>;
-      order?: Record<string, 'ASC' | 'DESC'>;
-      start?: number;
-      limit?: number;
-    }
-  ): Promise<{ items: CRMItem[]; total: number; next?: number }> {
-    const params: Record<string, any> = { entityTypeId };
+   async listItems<T extends CRMItem = CRMItem>(
+     entityTypeId: number,
+     options?: {
+       select?: string[];
+       filter?: Record<string, unknown>;
+       order?: Record<string, 'ASC' | 'DESC'>;
+       start?: number;
+       limit?: number;
+     }
+   ): Promise<{ items: T[]; total: number; next?: number }> {
+     const params: Record<string, unknown> = { entityTypeId };
 
     if (options?.select) params.select = options.select;
     if (options?.filter) params.filter = options.filter;
     if (options?.order) params.order = options.order;
     if (options?.start) params.start = options.start;
 
-    const response = await this.call<{ items: CRMItem[] }>('crm.item.list', params);
+     const response = await this.call<{ items: T[] }>('crm.item.list', params);
 
     return {
       items: response.result.items || [],
@@ -133,21 +133,21 @@ class Bitrix24Client {
   }
 
   // Buscar todos os itens (com paginação automática)
-  async listAllItems(
-    entityTypeId: number,
-    options?: {
-      select?: string[];
-      filter?: Record<string, any>;
-      order?: Record<string, 'ASC' | 'DESC'>;
-      maxItems?: number;
-    }
-  ): Promise<CRMItem[]> {
-    const allItems: CRMItem[] = [];
+   async listAllItems<T extends CRMItem = CRMItem>(
+     entityTypeId: number,
+     options?: {
+       select?: string[];
+       filter?: Record<string, unknown>;
+       order?: Record<string, 'ASC' | 'DESC'>;
+       maxItems?: number;
+     }
+   ): Promise<T[]> {
+     const allItems: T[] = [];
     let start = 0;
     const maxItems = options?.maxItems || 10000;
 
     while (allItems.length < maxItems) {
-      const { items, next } = await this.listItems(entityTypeId, {
+       const { items, next } = await this.listItems<T>(entityTypeId, {
         ...options,
         start,
       });
@@ -162,9 +162,9 @@ class Bitrix24Client {
   }
 
   // Buscar item específico
-  async getItem(entityTypeId: number, id: number | string): Promise<CRMItem | null> {
-    try {
-      const response = await this.call<{ item: CRMItem }>('crm.item.get', {
+   async getItem<T extends CRMItem = CRMItem>(entityTypeId: number, id: number | string): Promise<T | null> {
+     try {
+       const response = await this.call<{ item: T }>('crm.item.get', {
         entityTypeId,
         id,
       });
@@ -175,11 +175,11 @@ class Bitrix24Client {
   }
 
   // Criar item
-  async createItem(
-    entityTypeId: number,
-    fields: Record<string, any>
-  ): Promise<{ id: number; item: CRMItem }> {
-    const response = await this.call<{ item: CRMItem }>('crm.item.add', {
+   async createItem<T extends CRMItem = CRMItem>(
+     entityTypeId: number,
+     fields: Record<string, unknown>
+   ): Promise<{ id: number; item: T }> {
+     const response = await this.call<{ item: T }>('crm.item.add', {
       entityTypeId,
       fields,
     });
@@ -191,12 +191,12 @@ class Bitrix24Client {
   }
 
   // Atualizar item
-  async updateItem(
-    entityTypeId: number,
-    id: number | string,
-    fields: Record<string, any>
-  ): Promise<CRMItem> {
-    const response = await this.call<{ item: CRMItem }>('crm.item.update', {
+   async updateItem<T extends CRMItem = CRMItem>(
+     entityTypeId: number,
+     id: number | string,
+     fields: Record<string, unknown>
+   ): Promise<T> {
+     const response = await this.call<{ item: T }>('crm.item.update', {
       entityTypeId,
       id,
       fields,
@@ -225,17 +225,28 @@ class Bitrix24Client {
   }
 
   // Batch call (até 50 comandos)
-  async batch(commands: Array<{ method: string; params?: Record<string, any> }>): Promise<any[]> {
-    const cmd: Record<string, string> = {};
-    
-    commands.forEach((c, i) => {
-      const params = c.params ? `?${new URLSearchParams(c.params as any).toString()}` : '';
-      cmd[`cmd${i}`] = `${c.method}${params}`;
-    });
-
-    const response = await this.call<{ result: any[] }>('batch', { cmd });
-    return Object.values(response.result);
-  }
+   async batch<T = unknown>(commands: Array<{ method: string; params?: Record<string, unknown> }>): Promise<T[]> {
+     const cmd: Record<string, string> = {};
+     
+     commands.forEach((c, i) => {
+       const searchParams = new URLSearchParams();
+       if (c.params) {
+         Object.entries(c.params).forEach(([key, value]) => {
+           searchParams.append(key, String(value));
+         });
+       }
+       const params = c.params ? `?${searchParams.toString()}` : '';
+       cmd[`cmd${i}`] = `${c.method}${params}`;
+     });
+ 
+     interface BatchResult {
+       result: Record<string, T>;
+       result_error: Record<string, unknown>;
+     }
+ 
+     const response = await this.call<BatchResult>('batch', { cmd });
+     return Object.values(response.result.result);
+   }
 }
 
 // Instância padrão
@@ -243,7 +254,7 @@ export const bitrix24 = new Bitrix24Client();
 
 // Helpers específicos para SPAs
 export const lalamove = {
-  async listMotoristas(filter?: Record<string, any>) {
+   async listMotoristas(filter?: Record<string, unknown>) {
     const { items } = await bitrix24.listItems(SPA_CONFIG.LALAMOVE.entityTypeId, {
       select: ['ID', ...Object.values(SPA_CONFIG.LALAMOVE.fields)],
       filter: { stageId: SPA_CONFIG.LALAMOVE.stages.AUTOMATICO, ...filter },
@@ -266,7 +277,7 @@ export const lalamove = {
 };
 
 export const expedicao = {
-  async listRecebimentos(filter?: Record<string, any>) {
+   async listRecebimentos(filter?: Record<string, unknown>) {
     const { items } = await bitrix24.listItems(SPA_CONFIG.EXPEDICAO.entityTypeId, {
       filter: { stageId: SPA_CONFIG.EXPEDICAO.stages.RECEBIMENTO, ...filter },
     });
