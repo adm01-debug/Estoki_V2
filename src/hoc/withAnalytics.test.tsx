@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { withAnalytics } from './withAnalytics';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('@/hooks/useAnalytics', () => ({
@@ -22,13 +22,15 @@ describe('withAnalytics', () => {
   it('tracks page view on mount', () => {
     const Wrapped = withAnalytics(TestComponent, { componentName: 'Test' });
     render(
-      <MemoryRouter initialEntries={['/test']}>
-        <Wrapped />
+      <MemoryRouter initialEntries={['/test-path']}>
+        <Routes>
+          <Route path="/test-path" element={<Wrapped />} />
+        </Routes>
       </MemoryRouter>
     );
 
     expect(trackPage).toHaveBeenCalledWith(expect.objectContaining({
-      path: '/test',
+      path: '/test-path',
       component: 'Test'
     }));
   });
