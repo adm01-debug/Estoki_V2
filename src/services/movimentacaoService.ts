@@ -1,8 +1,10 @@
- import { supabase } from '@/integrations/supabase/client';
+  import { supabase } from '@/lib/supabase';
  import { logger } from '@/utils/logger';
  import { Database } from '@/integrations/supabase/types';
  
  type RastreamentoHistorico = Database['public']['Tables']['rastreamento_historico']['Row'];
+  type RastreamentoInsert = Database['public']['Tables']['rastreamento_historico']['Insert'];
+  type TipoEvento = Database['public']['Tables']['rastreamento_historico']['Row']['tipo_evento'];
  
 export interface Movimentacao {
   id?: string;
@@ -29,13 +31,13 @@ export const movimentacaoService = {
            quantidade: mov.quantidade,
            operador_id: mov.usuario_id,
            localizacao: mov.posicao_destino || mov.posicao_origem,
-           detalhes: {
-             produto_id: mov.produto_id,
-             posicao_origem: mov.posicao_origem,
-             posicao_destino: mov.posicao_destino,
-           },
-         } as never);
- 
+            detalhes: {
+              produto_id: mov.produto_id,
+              posicao_origem: mov.posicao_origem,
+              posicao_destino: mov.posicao_destino,
+            } as any,
+          } as RastreamentoInsert);
+
        if (error) {
          logger.error('Erro ao registrar movimentação', error);
          return false;
@@ -66,7 +68,7 @@ export const movimentacaoService = {
         query = query.eq('lote_id', filtros.lote_id);
       }
       if (filtros?.tipo) {
-        query = query.eq('tipo_evento', filtros.tipo as any);
+        query = query.eq('tipo_evento', filtros.tipo as TipoEvento);
       }
       if (filtros?.data_inicio) {
         query = query.gte('created_at', filtros.data_inicio);
