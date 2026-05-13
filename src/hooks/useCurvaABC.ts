@@ -211,22 +211,22 @@ export function useCurvaABC() {
     const produtosB = produtos.filter(p => p.classificacao_final === 'B');
     const produtosC = produtos.filter(p => p.classificacao_final === 'C');
 
-    const valorA = produtosA.reduce((acc, p) => acc + p.valor_total, 0);
-    const valorB = produtosB.reduce((acc, p) => acc + p.valor_total, 0);
-    const valorC = produtosC.reduce((acc, p) => acc + p.valor_total, 0);
-    const valorTotal = valorA + valorB + valorC;
+    const valorADecimal = produtosA.reduce((acc, p) => acc.plus(new Decimal(p.valor_total)), new Decimal(0));
+    const valorBDecimal = produtosB.reduce((acc, p) => acc.plus(new Decimal(p.valor_total)), new Decimal(0));
+    const valorCDecimal = produtosC.reduce((acc, p) => acc.plus(new Decimal(p.valor_total)), new Decimal(0));
+    const valorTotalDecimal = valorADecimal.plus(valorBDecimal).plus(valorCDecimal);
 
     return {
       totalProdutos: produtos.length,
       produtosA: produtosA.length,
       produtosB: produtosB.length,
       produtosC: produtosC.length,
-      valorA,
-      valorB,
-      valorC,
-      percentualValorA: valorTotal > 0 ? (valorA / valorTotal) * 100 : 0,
-      percentualValorB: valorTotal > 0 ? (valorB / valorTotal) * 100 : 0,
-      percentualValorC: valorTotal > 0 ? (valorC / valorTotal) * 100 : 0,
+      valorA: valorADecimal.toNumber(),
+      valorB: valorBDecimal.toNumber(),
+      valorC: valorCDecimal.toNumber(),
+      percentualValorA: valorTotalDecimal.gt(0) ? valorADecimal.div(valorTotalDecimal).mul(100).toNumber() : 0,
+      percentualValorB: valorTotalDecimal.gt(0) ? valorBDecimal.div(valorTotalDecimal).mul(100).toNumber() : 0,
+      percentualValorC: valorTotalDecimal.gt(0) ? valorCDecimal.div(valorTotalDecimal).mul(100).toNumber() : 0,
     };
   }, [produtos]);
 
