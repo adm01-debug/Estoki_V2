@@ -44,22 +44,21 @@ export const prioridadeColors: Record<string, string> = {
   urgente: "bg-red-500/10 text-red-600",
 };
 
-export interface Tarefa {
-  id: string;
-  titulo: string;
-  descricao?: string;
-  tipo: TipoTarefa;
-  status: StatusTarefa;
-  prioridade: PrioridadeTarefa;
-  responsavel_id?: string;
-  responsavel_nome?: string;
-  data_criacao: string;
-  data_limite?: string;
-  data_conclusao?: string;
-  lote_id?: string;
-  posicao_id?: string;
-  observacoes?: string;
-}
+ export interface Tarefa {
+   id: string;
+   descricao: string | null;
+   tipo: string;
+   status: string;
+   prioridade: string;
+   responsavel_id?: string | null;
+   created_at: string;
+   data_inicio?: string | null;
+   data_conclusao?: string | null;
+   lote_id?: string | null;
+   posicao_id?: string | null;
+   quantidade?: number;
+   zona?: string | null;
+ }
 
 export interface TarefaInput {
   titulo: string;
