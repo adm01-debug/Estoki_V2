@@ -23,7 +23,6 @@ export { ImageCropper } from "./ImageCropper";
 export { ImageUpload } from "./ImageUpload";
 export { JsonEditor } from "./JsonEditor";
 export { MarkdownEditor } from "./MarkdownEditor";
-export { MoneyInput } from "./MoneyInput";
 export { MonthPicker } from "./MonthPicker";
 export { MultiSelect } from "./MultiSelect";
 export { NumberInput } from "./NumberInput";
