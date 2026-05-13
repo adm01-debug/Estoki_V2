@@ -42,7 +42,22 @@ const iconeMap: Record<string, LucideIcon> = {
   CalendarCheck: Calendar, Timer: Clock,
 };
 
-export function useConquistas() {
+ export const raridadeConfig: Record<BadgeRarity, { label: string; cor: string; bg: string; border: string }> = {
+   comum: { label: 'Comum', cor: 'text-muted-foreground', bg: 'bg-muted', border: 'border-muted-foreground/30' },
+   raro: { label: 'Raro', cor: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+   epico: { label: 'Épico', cor: 'text-purple-500', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
+   lendario: { label: 'Lendário', cor: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
+ };
+ 
+ export const categoriaConfig: Record<BadgeCategory, { label: string; icone: LucideIcon }> = {
+   produtividade: { label: 'Produtividade', icone: Zap },
+   qualidade: { label: 'Qualidade', icone: Target },
+   consistencia: { label: 'Consistência', icone: Flame },
+   especial: { label: 'Especial', icone: Star },
+   sazonal: { label: 'Sazonais', icone: Calendar },
+ };
+ 
+ export function useConquistas() {
   const { user } = useAuth();
   const [definicoes, setDefinicoes] = useState<ConquistaDefinicao[]>([]);
   const [conquistasUsuario, setConquistasUsuario] = useState<ConquistaUsuario[]>([]);
