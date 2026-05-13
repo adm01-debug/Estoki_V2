@@ -17,7 +17,8 @@ import {
    ArrowRight,
    Clock
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+ import { Badge } from "@/components/ui/badge";
+ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
