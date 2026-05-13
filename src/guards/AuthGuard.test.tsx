@@ -8,15 +8,6 @@ vi.mock('@/contexts/AuthContext', () => ({
   useAuth: vi.fn(),
 }));
 
-const mockLocation = { pathname: '/dashboard' };
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useLocation: () => mockLocation,
-  };
-});
-
 describe('AuthGuard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -47,10 +38,10 @@ describe('AuthGuard', () => {
     });
 
     render(
-      <MemoryRouter initialEntries={['/dashboard']}>
+      <MemoryRouter initialEntries={['/']}>
         <Routes>
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <AuthGuard>
                 <div>Protected Content</div>
