@@ -301,7 +301,7 @@ export type Database = {
           },
         ]
       }
-      audit_logs: {
+      audit_log: {
         Row: {
           action: string
           created_at: string | null
@@ -535,7 +535,7 @@ export type Database = {
           conquista_id: string
           created_at: string
           data_desbloqueio: string | null
-          desbloqueado: boolean
+          desbloqueada: boolean
           id: string
           progresso: number
           updated_at: string
@@ -545,7 +545,7 @@ export type Database = {
           conquista_id: string
           created_at?: string
           data_desbloqueio?: string | null
-          desbloqueado?: boolean
+          desbloqueada?: boolean
           id?: string
           progresso?: number
           updated_at?: string
@@ -555,7 +555,7 @@ export type Database = {
           conquista_id?: string
           created_at?: string
           data_desbloqueio?: string | null
-          desbloqueado?: boolean
+          desbloqueada?: boolean
           id?: string
           progresso?: number
           updated_at?: string
@@ -1637,7 +1637,7 @@ export type Database = {
           movimentacoes_realizadas: number | null
           nfs_processadas: number | null
           pedidos_separados: number | null
-          posicoes_ocupados: number | null
+          posicoes_ocupadas: number | null
           posicoes_totais: number | null
           taxa_aprovacao: number | null
           taxa_ocupacao: number | null
@@ -1661,7 +1661,7 @@ export type Database = {
           movimentacoes_realizadas?: number | null
           nfs_processadas?: number | null
           pedidos_separados?: number | null
-          posicoes_ocupados?: number | null
+          posicoes_ocupadas?: number | null
           posicoes_totais?: number | null
           taxa_aprovacao?: number | null
           taxa_ocupacao?: number | null
@@ -1685,7 +1685,7 @@ export type Database = {
           movimentacoes_realizadas?: number | null
           nfs_processadas?: number | null
           pedidos_separados?: number | null
-          posicoes_ocupados?: number | null
+          posicoes_ocupadas?: number | null
           posicoes_totais?: number | null
           taxa_aprovacao?: number | null
           taxa_ocupacao?: number | null
@@ -3286,6 +3286,18 @@ export type Database = {
         Args: { p_tipo: string; p_valor?: number }
         Returns: undefined
       }
+      log_audit_event: {
+        Args: {
+          p_action: string
+          p_entity_id?: string
+          p_entity_label?: string
+          p_entity_type: string
+          p_metadata?: Json
+          p_new_values?: Json
+          p_old_values?: Json
+        }
+        Returns: string
+      }
       move_stock: {
         Args: {
           p_descricao: string
@@ -3392,7 +3404,7 @@ export type Database = {
         | "atribuida"
         | "em_andamento"
         | "concluida"
-        | "bloqueado"
+        | "bloqueada"
       tipo_alerta:
         | "estoque_minimo"
         | "estoque_maximo"
@@ -3621,7 +3633,7 @@ export const Constants = {
         "atribuida",
         "em_andamento",
         "concluida",
-        "bloqueado",
+        "bloqueada",
       ],
       tipo_alerta: [
         "estoque_minimo",
