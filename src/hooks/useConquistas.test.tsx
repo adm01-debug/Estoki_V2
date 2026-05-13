@@ -103,7 +103,7 @@ describe('useConquistas', () => {
     
     if (result.current.estatisticas) {
       expect(typeof result.current.estatisticas.total).toBe('number');
-      expect(typeof result.current.estatisticas.desbloqueadas).toBe('number');
+      expect(typeof result.current.estatisticas.desbloqueados).toBe('number');
     }
   });
 

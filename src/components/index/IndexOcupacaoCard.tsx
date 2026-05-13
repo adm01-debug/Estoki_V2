@@ -43,7 +43,7 @@ export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoes
             <div className="flex justify-between text-sm text-muted-foreground pt-3 border-t border-border/30">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-success" />
-                <span>{posicoesOcupadas} ocupadas</span>
+                <span>{posicoesOcupadas} ocupados</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-muted-foreground/30" />

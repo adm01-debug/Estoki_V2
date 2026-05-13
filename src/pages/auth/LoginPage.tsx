@@ -43,7 +43,7 @@ export default function LoginPage() {
     // Verificar bloqueio antes de tentar login
     const locked = await checkLockout(email);
     if (locked) {
-      toast.error('Conta temporariamente bloqueada. Aguarde o tempo indicado.');
+      toast.error('Conta temporariamente bloqueado. Aguarde o tempo indicado.');
       return;
     }
 
@@ -80,7 +80,7 @@ export default function LoginPage() {
               <div className="flex items-start gap-3">
                 <Lock className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                  <p className="font-medium text-destructive">Conta temporariamente bloqueada</p>
+                  <p className="font-medium text-destructive">Conta temporariamente bloqueado</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Muitas tentativas de login falhadas. Tente novamente em:
                   </p>

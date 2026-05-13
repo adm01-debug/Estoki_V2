@@ -195,7 +195,7 @@ describe('Enums Integridade', () => {
   const statusOnda = ['pendente', 'em_separacao', 'concluida', 'cancelada'];
   const prioridades = ['baixa', 'media', 'alta', 'urgente'];
   const tiposTarefa = ['separacao', 'reposicao', 'transferencia', 'inventario', 'recebimento'];
-  const statusPosicao = ['livre', 'ocupada', 'bloqueada', 'reservada', 'manutencao'];
+  const statusPosicao = ['livre', 'ocupado', 'bloqueado', 'reservado', 'manutencao'];
   const statusRomaneio = ['planejado', 'em_carregamento', 'em_transito', 'entregue', 'retornado', 'cancelado'];
   const roles = ['admin', 'supervisor', 'operador', 'viewer'];
 
@@ -209,7 +209,7 @@ describe('Enums Integridade', () => {
   it('roles sem duplicatas', () => expect(new Set(roles).size).toBe(roles.length));
   it('prioridades tem urgente', () => expect(prioridades).toContain('urgente'));
   it('statusRecebimento tem pendente', () => expect(statusRecebimento).toContain('pendente'));
-  it('statusPosicao tem bloqueada', () => expect(statusPosicao).toContain('bloqueada'));
+  it('statusPosicao tem bloqueado', () => expect(statusPosicao).toContain('bloqueado'));
 });
 
 // ========== SKU Validation ==========

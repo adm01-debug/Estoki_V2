@@ -1,45 +1,26 @@
-# Disaster Recovery ESTOKI WMS
+# Plano de Recuperação de Desastres (DRP) — ESTOKI WMS
 
-## 🎯 Objetivos
+## Objetivos (RTO/RPO)
+- **RTO (Recovery Time Objective):** 4 horas
+- **RPO (Recovery Point Objective):** 24 horas (backups diários)
 
-- **RTO** (Recovery Time Objective): 4 horas
-- **RPO** (Recovery Point Objective): 1 hora
+## Estratégias de Backup
+1. **Banco de Dados (Supabase):**
+   - Backup automático diário gerenciado pelo Supabase.
+   - Snapshots manuais via Edge Function `backup-database` semanalmente.
+2. **Storage:**
+   - Versionamento habilitado nos buckets críticos.
+3. **Código e Configuração:**
+   - IaC (Terraform) para recriação rápida da infraestrutura.
+   - Repositório GitHub com proteção de branch.
 
-## 📦 Backups
+## Procedimento de Recuperação
+1. Identificação do incidente.
+2. Acionamento da equipe de DevOps.
+3. Restauração do último backup íntegro.
+4. Redecploy das Edge Functions via CLI.
+5. Validação de integridade de dados.
 
-### Banco de Dados
-- Backup automático diário (Supabase)
-- Retenção: 30 dias
-- Point-in-time recovery: 7 dias
-
-### Arquivos/Storage
-- Replicação em múltiplas regiões
-- Versionamento habilitado
-
-## 🔄 Procedimentos de Recovery
-
-### 1. Falha Total do Banco
-```bash
-# 1. Acessar Supabase Dashboard
-# 2. Ir em Database > Backups
-# 3. Selecionar backup mais recente
-# 4. Clicar em "Restore"
-```
-
-### 2. Falha de Região
-1. Ativar região secundária
-2. Atualizar DNS
-3. Verificar replicação de dados
-
-### 3. Corrupção de Dados
-1. Identificar timestamp da corrupção
-2. Restaurar point-in-time
-3. Verificar integridade
-
-## 📋 Checklist Pós-Recovery
-
-- [ ] Verificar integridade dos dados
-- [ ] Testar funcionalidades críticas
-- [ ] Verificar integrações
-- [ ] Notificar stakeholders
-- [ ] Documentar incidente
+## Contatos de Emergência
+- Administrador Supabase: admin@estoki.com.br
+- Lead Developer: dev@estoki.com.br

@@ -29,7 +29,7 @@ import { cn } from "@/lib/utils";
 
 export default function GamificacaoPage() {
   const { perfil, isLoading: loadingGamificacao } = useGamificacao();
-  const { conquistas, loading: loadingConquistas, desbloqueadas } = useConquistas();
+  const { conquistas, loading: loadingConquistas, desbloqueados } = useConquistas();
   const { desafios, loading: loadingDesafios, desafiosConcluidos: numConcluidos, totalDesafios: numTotal } = useDesafiosDiarios();
   const { streak, loading: loadingStreaks, streakAtual } = useStreaks();
   const [tab, setTab] = useState("visao-geral");
@@ -53,7 +53,7 @@ export default function GamificacaoPage() {
     );
   }
 
-  const conquistasDesbloqueadas = desbloqueadas?.length || 0;
+  const conquistasDesbloqueados = desbloqueados?.length || 0;
   const desafiosConcluidos = numConcluidos || 0;
   const totalDesafios = numTotal || 0;
 
@@ -108,7 +108,7 @@ export default function GamificacaoPage() {
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-success/10"><Medal className="h-5 w-5 text-success" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-success">{conquistasDesbloqueadas}</p>
+                    <p className="text-2xl font-bold text-success">{conquistasDesbloqueados}</p>
                     <p className="text-xs text-muted-foreground">Conquistas</p>
                   </div>
                 </div>
@@ -131,7 +131,7 @@ export default function GamificacaoPage() {
           <GamificacaoCharts
             xpTotal={perfil?.xp_total || 0}
             nivel={perfil?.nivel || 1}
-            conquistasDesbloqueadas={conquistasDesbloqueadas}
+            conquistasDesbloqueados={conquistasDesbloqueados}
             totalConquistas={conquistas?.length || 0}
             desafiosConcluidos={desafiosConcluidos}
             totalDesafios={totalDesafios}

@@ -4,7 +4,7 @@ import { Package, Box, Clock } from "lucide-react";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 
 interface EstoqueStats {
-  ppStats: { ocupadas: number; livres: number; reservadas: number; bloqueadas: number; total: number };
+  ppStats: { ocupados: number; livres: number; reservados: number; bloqueados: number; total: number };
   boxStats: { ocupados: number; livres: number; total: number };
   ocupacaoTotal: number;
 }
@@ -40,7 +40,7 @@ export function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
               <Package className="h-5 w-5 text-success" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-success">{stats.ppStats.ocupadas + stats.boxStats.ocupados}</p>
+              <p className="text-2xl font-bold text-success">{stats.ppStats.ocupados + stats.boxStats.ocupados}</p>
               <p className="text-xs text-muted-foreground">Ocupadas</p>
             </div>
           </div>
@@ -66,7 +66,7 @@ export function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
               <Clock className="h-5 w-5 text-warning" />
             </div>
             <div>
-              <p className="text-2xl font-bold text-warning">{stats.ppStats.reservadas}</p>
+              <p className="text-2xl font-bold text-warning">{stats.ppStats.reservados}</p>
               <p className="text-xs text-muted-foreground">Reservadas</p>
             </div>
           </div>

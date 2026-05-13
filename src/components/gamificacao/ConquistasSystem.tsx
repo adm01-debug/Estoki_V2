@@ -68,17 +68,17 @@ function BadgeIcon({ conquista, size = "md", showTooltip = true }: BadgeIconProp
       className={cn(
         "relative rounded-full flex items-center justify-center border-2 transition-all",
         sizeClasses[size],
-        conquista.desbloqueada
+        conquista.desbloqueado
           ? `${raridadeConf.bg} ${raridadeConf.border} ${raridadeConf.cor}`
           : "bg-muted border-muted-foreground/20 text-muted-foreground"
       )}
     >
-      {conquista.desbloqueada ? (
+      {conquista.desbloqueado ? (
         <Icon className={iconSizes[size]} />
       ) : (
         <Lock className={iconSizes[size]} />
       )}
-      {conquista.desbloqueada && conquista.raridade === "lendario" && (
+      {conquista.desbloqueado && conquista.raridade === "lendario" && (
         <div className="absolute -top-1 -right-1">
           <Sparkles className="h-3 w-3 text-amber-400 animate-pulse" />
         </div>
@@ -117,13 +117,13 @@ export function ConquistasSystem() {
   const estatisticas = useMemo(() => ({
     xpTotal: pontosTotal,
     nivel: Math.floor(pontosTotal / 500) + 1,
-    desbloqueadas: conquistas.filter(c => c.desbloqueada).length,
+    desbloqueados: conquistas.filter(c => c.desbloqueado).length,
     total: totalConquistas,
   }), [pontosTotal, conquistas, totalConquistas]);
 
   const recentes = useMemo(() => 
     conquistas
-      .filter((c) => c.desbloqueada && c.dataDesbloqueio)
+      .filter((c) => c.desbloqueado && c.dataDesbloqueio)
       .sort((a, b) => {
         const dateA = a.dataDesbloqueio?.getTime() || 0;
         const dateB = b.dataDesbloqueio?.getTime() || 0;
@@ -176,11 +176,11 @@ export function ConquistasSystem() {
         {/* Estatísticas rápidas */}
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="p-2 rounded-lg bg-muted/50">
-            <div className="text-lg font-bold">{estatisticas.desbloqueadas}</div>
-            <div className="text-xs text-muted-foreground">Desbloqueadas</div>
+            <div className="text-lg font-bold">{estatisticas.desbloqueados}</div>
+            <div className="text-xs text-muted-foreground">Desbloqueados</div>
           </div>
           <div className="p-2 rounded-lg bg-muted/50">
-            <div className="text-lg font-bold">{estatisticas.total - estatisticas.desbloqueadas}</div>
+            <div className="text-lg font-bold">{estatisticas.total - estatisticas.desbloqueados}</div>
             <div className="text-xs text-muted-foreground">Restantes</div>
           </div>
           <div className="p-2 rounded-lg bg-muted/50">
@@ -253,9 +253,9 @@ function ConquistasCompletas({ conquistas }: ConquistasCompletasProps) {
                     key={conquista.id}
                     className={cn(
                       "flex items-center gap-3 p-3 rounded-lg border",
-                      conquista.desbloqueada ? raridadeConf.bg : "bg-muted/30",
-                      conquista.desbloqueada ? raridadeConf.border : "border-border",
-                      !conquista.desbloqueada && "opacity-60"
+                      conquista.desbloqueado ? raridadeConf.bg : "bg-muted/30",
+                      conquista.desbloqueado ? raridadeConf.border : "border-border",
+                      !conquista.desbloqueado && "opacity-60"
                     )}
                   >
                     <BadgeIcon conquista={conquista} size="md" showTooltip={false} />
@@ -267,7 +267,7 @@ function ConquistasCompletas({ conquistas }: ConquistasCompletasProps) {
                         </Badge>
                       </div>
                       <p className="text-xs text-muted-foreground truncate">{conquista.descricao}</p>
-                      {!conquista.desbloqueada && conquista.progresso !== undefined && conquista.meta && (
+                      {!conquista.desbloqueado && conquista.progresso !== undefined && conquista.meta && (
                         <div className="mt-1">
                           <Progress 
                             value={(conquista.progresso / conquista.meta) * 100} 
@@ -278,14 +278,14 @@ function ConquistasCompletas({ conquistas }: ConquistasCompletasProps) {
                           </p>
                         </div>
                       )}
-                      {conquista.desbloqueada && conquista.dataDesbloqueio && (
+                      {conquista.desbloqueado && conquista.dataDesbloqueio && (
                         <p className="text-xs text-muted-foreground mt-1">
                           Desbloqueado em {conquista.dataDesbloqueio.toLocaleDateString("pt-BR")}
                         </p>
                       )}
                     </div>
                     <div className="text-right">
-                      <span className={`text-sm font-bold ${conquista.desbloqueada ? "text-warning" : "text-muted-foreground"}`}>
+                      <span className={`text-sm font-bold ${conquista.desbloqueado ? "text-warning" : "text-muted-foreground"}`}>
                         +{conquista.pontos}
                       </span>
                       <p className="text-xs text-muted-foreground">XP</p>

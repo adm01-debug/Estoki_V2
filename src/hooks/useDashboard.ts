@@ -114,9 +114,9 @@ export const useDashboard = () => {
       }
       const statusColors: Record<string, string> = {
         livre: '#22c55e',
-        ocupada: '#3b82f6',
-        bloqueada: '#ef4444',
-        reservada: '#f59e0b',
+        ocupado: '#3b82f6',
+        bloqueado: '#ef4444',
+        reservado: '#f59e0b',
         manutencao: '#8b5cf6',
       };
       const distribuicaoStatus: DistribuicaoStatus[] = Object.entries(statusCount).map(([name, value]) => ({

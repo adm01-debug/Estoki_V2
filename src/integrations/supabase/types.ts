@@ -301,7 +301,7 @@ export type Database = {
           },
         ]
       }
-      audit_logs: {
+      audit_log: {
         Row: {
           action: string
           created_at: string | null
@@ -3285,6 +3285,18 @@ export type Database = {
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number }
         Returns: undefined
+      }
+      log_audit_event: {
+        Args: {
+          p_action: string
+          p_entity_id?: string
+          p_entity_label?: string
+          p_entity_type: string
+          p_metadata?: Json
+          p_new_values?: Json
+          p_old_values?: Json
+        }
+        Returns: string
       }
       move_stock: {
         Args: {

@@ -169,7 +169,7 @@ export const SecurityAlerts: React.FC = () => {
             {permission === 'denied' && (
               <div className="mt-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
                 <p className="text-sm text-destructive">
-                  Notificações push estão bloqueadas. Para ativar, acesse as configurações do seu navegador e permita notificações para este site.
+                  Notificações push estão bloqueados. Para ativar, acesse as configurações do seu navegador e permita notificações para este site.
                 </p>
               </div>
             )}

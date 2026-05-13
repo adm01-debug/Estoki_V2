@@ -5,8 +5,8 @@ export const relatorioService = {
     const { data, error } = await supabase.from("posicoes_estoque").select("status");
     if (error) throw error;
     const total = data?.length || 0;
-    const ocupadas = data?.filter((p: any) => p.status === "ocupada").length || 0;
-    return { total, ocupadas, livres: total - ocupadas, percentual: total > 0 ? (ocupadas / total) * 100 : 0 };
+    const ocupados = data?.filter((p: any) => p.status === "ocupado").length || 0;
+    return { total, ocupados, livres: total - ocupados, percentual: total > 0 ? (ocupados / total) * 100 : 0 };
   },
 
   async getTriagensNoPeriodo(inicio: string, fim: string) {

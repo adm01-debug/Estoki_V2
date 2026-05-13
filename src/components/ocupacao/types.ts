@@ -43,7 +43,7 @@ export const statusConfig: Record<string, {
     icon: CheckCircle,
     heatValue: 0,
   },
-  ocupada: {
+  ocupado: {
     label: "Ocupada",
     color: "hsl(var(--info))",
     bgClass: "bg-blue-500/15 border-blue-500/30 text-blue-700 dark:text-blue-400",
@@ -51,7 +51,7 @@ export const statusConfig: Record<string, {
     icon: Package,
     heatValue: 80,
   },
-  reservada: {
+  reservado: {
     label: "Reservada",
     color: "hsl(var(--warning))",
     bgClass: "bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-400",
@@ -59,7 +59,7 @@ export const statusConfig: Record<string, {
     icon: Clock,
     heatValue: 50,
   },
-  bloqueada: {
+  bloqueado: {
     label: "Bloqueada",
     color: "hsl(var(--destructive))",
     bgClass: "bg-red-500/15 border-red-500/30 text-red-700 dark:text-red-400",

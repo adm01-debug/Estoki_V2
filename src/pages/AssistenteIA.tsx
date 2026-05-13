@@ -51,7 +51,7 @@ export default function AssistenteIA() {
     ]);
 
     const totalPosicoes = posicoesRes.data?.length || 0;
-    const ocupadas = posicoesRes.data?.filter(p => p.status === "ocupado").length || 0;
+    const ocupados = posicoesRes.data?.filter(p => p.status === "ocupado").length || 0;
     const livres = posicoesRes.data?.filter(p => p.status === "livre").length || 0;
 
     return {
@@ -70,9 +70,9 @@ export default function AssistenteIA() {
       },
       posicoes: {
         total: totalPosicoes,
-        ocupadas,
+        ocupados,
         livres,
-        taxa_ocupacao: totalPosicoes > 0 ? Math.round((ocupadas / totalPosicoes) * 100) : 0,
+        taxa_ocupacao: totalPosicoes > 0 ? Math.round((ocupados / totalPosicoes) * 100) : 0,
       },
     };
   };

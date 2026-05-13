@@ -374,7 +374,7 @@ describe('Delivery: Manifest Validation', () => {
 // ENUM CONSISTENCY CHECKS
 // =============================================
 describe('Enum Consistency', () => {
-  const statusTarefa = ['pendente', 'atribuida', 'em_andamento', 'concluida', 'bloqueada'];
+  const statusTarefa = ['pendente', 'atribuida', 'em_andamento', 'concluida', 'bloqueado'];
   const prioridadeTarefa = ['baixa', 'media', 'alta', 'urgente'];
   const statusRecebimento = ['aguardando', 'em_transito', 'recebido', 'em_conferencia', 'conferido', 'divergencia', 'cancelado'];
   const tipoTarefa = ['separacao', 'armazenagem', 'transferencia', 'inventario', 'expedicao'];
@@ -397,7 +397,7 @@ describe('Enum Consistency', () => {
   });
   it('task has terminal states', () => {
     expect(statusTarefa).toContain('concluida');
-    expect(statusTarefa).toContain('bloqueada');
+    expect(statusTarefa).toContain('bloqueado');
   });
   it('receiving has terminal states', () => {
     expect(statusRecebimento).toContain('conferido');

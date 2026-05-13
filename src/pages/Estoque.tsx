@@ -83,7 +83,7 @@ export default function EstoquePage() {
   const stats = useMemo(() => {
     const estatisticas = getEstatisticas();
     return {
-      ppStats: { ocupadas: ppPositions.filter(p => p.status === 'ocupado').length, livres: ppPositions.filter(p => p.status === 'livre').length, reservadas: ppPositions.filter(p => p.status === 'reservado').length, bloqueadas: ppPositions.filter(p => p.status === 'bloqueado').length, total: ppPositions.length },
+      ppStats: { ocupados: ppPositions.filter(p => p.status === 'ocupado').length, livres: ppPositions.filter(p => p.status === 'livre').length, reservados: ppPositions.filter(p => p.status === 'reservado').length, bloqueados: ppPositions.filter(p => p.status === 'bloqueado').length, total: ppPositions.length },
       boxStats: { ocupados: boxPositions.filter(p => p.status === 'ocupado').length, livres: boxPositions.filter(p => p.status === 'livre').length, total: boxPositions.length },
       ocupacaoTotal: Math.round(estatisticas.taxaOcupacao),
     };
@@ -219,7 +219,7 @@ export default function EstoquePage() {
                 );
               })}
               {filteredPositions.filter(p => p.status === "ocupado").length === 0 && (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground"><Package className="h-12 w-12 mb-4" /><p>Nenhuma posição ocupada encontrada</p></div>
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground"><Package className="h-12 w-12 mb-4" /><p>Nenhuma posição ocupado encontrada</p></div>
               )}
             </TabsContent>
           </Tabs>

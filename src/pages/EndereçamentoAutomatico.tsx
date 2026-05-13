@@ -155,7 +155,7 @@ export default function EndereçamentoAutomatico() {
     });
     if (error) { toast.error('Erro ao armazenar'); return; }
 
-    await supabase.from('posicoes_estoque').update({ status: 'ocupada' } as any).eq('id', sugestao.posicao.id);
+    await supabase.from('posicoes_estoque').update({ status: 'ocupado' } as any).eq('id', sugestao.posicao.id);
     toast.success(`Produto armazenado em ${sugestao.posicao.codigo}!`);
     setSugestoes([]);
   };
