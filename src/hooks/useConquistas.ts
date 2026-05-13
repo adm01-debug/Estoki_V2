@@ -53,9 +53,9 @@ interface ConquistaDefinicao {
 interface ConquistaUsuario {
   id: string;
   conquista_id: string;
-  progresso: number;
-  desbloqueado: boolean;
-  data_desbloqueio: string | null;
+   progresso: number;
+   desbloqueada: boolean;
+   data_desbloqueio: string | null;
 }
 
 export interface ConquistaCompleta extends ConquistaDefinicao {
