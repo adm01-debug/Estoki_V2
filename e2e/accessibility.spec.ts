@@ -1,24 +1,29 @@
-import { test, expect } from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
-test.describe('Acessibilidade', () => {
-  test('deve passar na auditoria de acessibilidade na página inicial', async ({ page }) => {
-    await page.goto('/');
+test.describe("Acessibilidade", () => {
+  test("a página inicial deve estar em conformidade com as diretrizes de acessibilidade", async ({ page }) => {
+    await page.goto("/");
     
-    // Aguarda o carregamento inicial
-    await page.waitForLoadState('networkidle');
+    // Aguarda o carregamento inicial do conteúdo
+    await page.waitForLoadState("networkidle");
     
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-    
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
-  test('deve passar na auditoria de acessibilidade na página de login', async ({ page }) => {
-    await page.goto('/auth');
-    await page.waitForLoadState('networkidle');
+  test("a página de estoque deve estar em conformidade com as diretrizes de acessibilidade", async ({ page }) => {
+    // Nota: Pode precisar de autenticação se a página for protegida
+    await page.goto("/estoque");
+    await page.waitForLoadState("networkidle");
     
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-    
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 });

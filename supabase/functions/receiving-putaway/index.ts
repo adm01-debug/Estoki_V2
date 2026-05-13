@@ -115,7 +115,7 @@ serve(async (req) => {
       .eq("id", receiving_id);
 
     // Log de auditoria
-    await supabase.from("audit_logs").insert({
+    await supabase.from("audit_log").insert({
       action: "receiving_putaway",
       entity_type: "receiving",
       entity_id: receiving_id,

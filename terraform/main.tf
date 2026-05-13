@@ -1,26 +1,14 @@
-# Terraform configuration for ESTOKI WMS
-# Provider: Supabase (managed via Terraform)
-
-terraform {
-  required_providers {
-    supabase = {
-      source  = "supabase/supabase"
-      version = "~> 1.0"
-    }
-  }
-}
-
 provider "supabase" {
-  # Configuration via environment variables:
-  # SUPABASE_ACCESS_TOKEN
+  # API Key and URL should be set via environment variables
 }
 
-resource "supabase_project" "wms_production" {
-  name             = "ESTOKI WMS Prod"
-  organization_id  = var.organization_id
-  region           = "sa-east-1" # São Paulo
-  db_password      = var.db_password
+resource "supabase_project" "estoki_wms" {
+  name     = "ESTOKI WMS"
+  region   = "us-east-1"
+  plan     = "pro"
 }
 
-# Database structures (managed via migrations in this repo)
-# Auth, Storage, Edge Functions config...
+resource "supabase_table" "posicoes_estoque" {
+  project_id = "wrhidiguevvnqywlueps"
+  name       = "posicoes_estoque"
+}

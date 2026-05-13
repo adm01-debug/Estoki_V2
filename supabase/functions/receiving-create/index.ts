@@ -81,7 +81,7 @@ serve(async (req) => {
     if (itemsError) throw itemsError;
 
     // Log de auditoria
-    await supabase.from("audit_logs").insert({
+    await supabase.from("audit_log").insert({
       action: "receiving_created",
       entity_type: "receiving",
       entity_id: receiving.id,

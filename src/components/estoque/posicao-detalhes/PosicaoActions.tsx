@@ -9,10 +9,9 @@ export function PosicaoActions({ position }: { position: PosicaoEstoque }) {
 
   const handleToggleStatus = async (newStatus: "livre" | "bloqueado" | "reservado") => {
     try {
-      await updatePosicao.mutateAsync({ 
-        id: position.id, 
+      await updatePosicao.mutateAsync({
+        id: position.id,
         status: newStatus,
-        // @ts-ignore - custom field for audit log
         motivo: newStatus === "bloqueado" ? "Bloqueio manual via detalhes" : "Liberação manual via detalhes"
       });
     } catch (error) {
