@@ -45,7 +45,10 @@ describe('OnboardingTour', () => {
     renderWithRouter(<OnboardingTour />);
     fireEvent.click(screen.getByText('Fazer Tour'));
     
-    const closeButton = screen.getByRole('button', { name: '' }).parentElement?.querySelector('button'); // X button
+    // Selecionar o botão que contém o ícone X (lucide-x)
+    const buttons = screen.getAllByRole('button');
+    const closeButton = buttons.find(b => b.querySelector('.lucide-x'));
+    
     if (closeButton) fireEvent.click(closeButton);
     
     expect(screen.queryByText(/🚀 Bem-vindo/)).not.toBeInTheDocument();
