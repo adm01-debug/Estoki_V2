@@ -3387,6 +3387,7 @@ export type Database = {
         | "conferido"
         | "divergencia"
         | "cancelado"
+        | "quarentena"
       status_registro_td:
         | "aberto"
         | "em_analise"
@@ -3408,6 +3409,8 @@ export type Database = {
         | "em_andamento"
         | "concluida"
         | "bloqueada"
+        | "cancelada"
+        | "atrasada"
       tipo_alerta:
         | "estoque_minimo"
         | "estoque_maximo"
@@ -3613,6 +3616,7 @@ export const Constants = {
         "conferido",
         "divergencia",
         "cancelado",
+        "quarentena",
       ],
       status_registro_td: [
         "aberto",
@@ -3637,6 +3641,8 @@ export const Constants = {
         "em_andamento",
         "concluida",
         "bloqueada",
+        "cancelada",
+        "atrasada",
       ],
       tipo_alerta: [
         "estoque_minimo",
