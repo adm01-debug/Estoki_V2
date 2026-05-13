@@ -2328,6 +2328,7 @@ export type Database = {
       }
       produtos: {
         Row: {
+          barcode: string | null
           created_at: string
           curva_abc: string | null
           descricao: string | null
@@ -2345,6 +2346,7 @@ export type Database = {
           volume_unitario: number | null
         }
         Insert: {
+          barcode?: string | null
           created_at?: string
           curva_abc?: string | null
           descricao?: string | null
@@ -2362,6 +2364,7 @@ export type Database = {
           volume_unitario?: number | null
         }
         Update: {
+          barcode?: string | null
           created_at?: string
           curva_abc?: string | null
           descricao?: string | null

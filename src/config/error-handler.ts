@@ -5,6 +5,8 @@
 
 import { envConfig, isProduction } from './environment';
 
+ import { logger } from '../utils/logger';
+ 
 // Tipos de erro
 export enum ErrorCode {
   NETWORK_ERROR = 'NETWORK_ERROR',
@@ -26,7 +28,7 @@ export interface AppError {
   details?: unknown;
   stack?: string;
   timestamp: string;
-  context?: Record<string, any>;
+   context?: Record<string, unknown>;
 }
 
 // Mensagens amigáveis para o usuário
@@ -58,10 +60,7 @@ function httpStatusToErrorCode(status: number): ErrorCode {
 }
 
 // Criar AppError a partir de qualquer erro
-export function createAppError(
-  error: unknown,
-  context?: Record<string, any>
-): AppError {
+ export function createAppError(error: unknown, context?: Record<string, unknown>): AppError {
   const timestamp = new Date().toISOString();
 
   // Já é um AppError
@@ -151,31 +150,7 @@ export async function logError(error: AppError): Promise<void> {
     return;
   }
 
-  // Em produção, enviar para serviço de monitoramento
-  try {
-    // Sentry integration
-    if (envConfig.sentryDsn && typeof window !== 'undefined' && (window as any).Sentry) {
-      (window as any).Sentry.captureException(new Error((error instanceof Error ? error.message : String(error))), {
-        tags: { errorCode: error.code },
-        extra: {
-          context: error.context,
-          details: error.details,
-        },
-      });
-    }
-
-    // Também pode enviar para endpoint próprio
-    if (envConfig.apiUrl) {
-      await fetch(`${envConfig.apiUrl}/api/logs/error`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(error),
-      }).catch(() => {}); // Silencioso se falhar
-    }
-  } catch {
-    // Log silencioso - não queremos erro ao logar erro
-    if (!isProduction()) console.error('[ERROR LOG FAILED]', error);
-  }
+   logger.error(`[${error.code}] ${error.message}`, error, error.context as Record<string, unknown>);
 }
 
 // Handler global para erros não capturados
@@ -215,13 +190,12 @@ export function setupGlobalErrorHandler(): void {
   });
 }
 
-// Hook para usar em componentes React
-export function useErrorHandler() {
-  const handleError = (error: unknown, context?: Record<string, any>) => {
-    const appError = createAppError(error, context);
-    logError(appError);
-    return appError;
-  };
-
-  return { handleError, createAppError };
-}
+ export function useErrorHandler() {
+   const handleError = (error: unknown, context?: Record<string, unknown>) => {
+     const appError = createAppError(error, context);
+     logError(appError);
+     return appError;
+   };
+ 
+   return { handleError, createAppError };
+ }

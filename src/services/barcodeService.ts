@@ -1,7 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
+  import { supabase } from "@/integrations/supabase/client";
+  import { Database } from "@/integrations/supabase/types";
+  
+  type Produto = Database['public']['Tables']['produtos']['Row'];
 
 export const barcodeService = {
-  async findByBarcode(barcode: string): Promise<any | null> {
+   async findByBarcode(barcode: string): Promise<Produto | null> {
     const { data, error } = await supabase
       .from("produtos")
       .select("*")
@@ -15,7 +18,7 @@ export const barcodeService = {
   async associateBarcode(productId: string, barcode: string): Promise<void> {
     const { error } = await supabase
       .from("produtos")
-      .update({ barcode } as any)
+        .update({ barcode } as any)
       .eq("id", productId);
 
     if (error) throw error;

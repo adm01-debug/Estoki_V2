@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+ import { logger } from '@/utils/logger';
 
 export interface AtividadeRecente {
   id: string;
@@ -43,7 +44,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('created_at', { ascending: false })
         .limit(limit);
 
-      if (rastError && import.meta.env.DEV) console.error('Erro rastreamento:', rastError);
+       if (rastError) logger.error('Erro ao buscar rastreamento recente', rastError);
 
       (rastreamento || []).forEach(r => {
         let type: AtividadeRecente['type'] = 'movimentacao';
@@ -90,7 +91,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('updated_at', { ascending: false })
         .limit(5);
 
-      if (divError && import.meta.env.DEV) console.error('Erro divergências:', divError);
+       if (divError) logger.error('Erro ao buscar divergências recentes', divError);
 
       (divergencias || []).forEach(d => {
         atividades.push({
@@ -117,7 +118,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('data_fim', { ascending: false })
         .limit(5);
 
-      if (triError) if (import.meta.env.DEV) console.error('Erro triagens:', triError);
+       if (triError) logger.error('Erro ao buscar triagens recentes', triError);
 
       (triagens || []).forEach(t => {
         const produtoNome = (t.produtos as any)?.nome || 'Produto';
@@ -144,7 +145,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('updated_at', { ascending: false })
         .limit(5);
 
-      if (recError) if (import.meta.env.DEV) console.error('Erro recebidos:', recError);
+       if (recError) logger.error('Erro ao buscar recebimentos recentes', recError);
 
       (recebidos || []).forEach(r => {
         atividades.push({
@@ -166,7 +167,7 @@ export function useAtividadeRecente(limit: number = 10) {
         .order('data_conclusao', { ascending: false })
         .limit(5);
 
-      if (tarefasError) if (import.meta.env.DEV) console.error('Erro tarefas:', tarefasError);
+       if (tarefasError) logger.error('Erro ao buscar tarefas recentes', tarefasError);
 
       (tarefas || []).forEach(t => {
         atividades.push({
@@ -188,7 +189,7 @@ export function useAtividadeRecente(limit: number = 10) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erro ao buscar atividades';
       setError(message);
-      if (import.meta.env.DEV) console.error('Erro atividades:', err);
+       logger.error('Erro inesperado ao buscar atividades recentes', err);
     } finally {
       setLoading(false);
     }

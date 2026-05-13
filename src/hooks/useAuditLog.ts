@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+ import { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 
@@ -16,11 +17,11 @@ export interface AuditLogEntry {
   entity_type: string;
   entity_id?: string;
   entity_label?: string;
-  old_values?: Record<string, unknown>;
-  new_values?: Record<string, unknown>;
+   old_values?: Json;
+   new_values?: Json;
   ip_address?: string;
   user_agent?: string;
-  metadata?: Record<string, unknown>;
+   metadata?: Json;
   created_at: string;
 }
 
@@ -54,7 +55,7 @@ export function useAuditLog() {
         ip_address: "client-side"
       };
 
-      const { data, error } = await supabase.from("audit_log").insert([newEntry as any]).select().single();
+       const { data, error } = await supabase.from("audit_log").insert([newEntry]).select().single();
 
       if (error) throw error;
       return data;
@@ -65,19 +66,19 @@ export function useAuditLog() {
   });
   
   const log = {
-    create: (entityType: string, entityId: string, entityLabel?: string, newValues?: Record<string, unknown>) => 
+     create: (entityType: string, entityId: string, entityLabel?: string, newValues?: Json) => 
       logAction.mutate({ action: "create", entity_type: entityType, entity_id: entityId, entity_label: entityLabel, new_values: newValues }),
-    update: (entityType: string, entityId: string, oldValues?: Record<string, unknown>, newValues?: Record<string, unknown>) => 
+     update: (entityType: string, entityId: string, oldValues?: Json, newValues?: Json) => 
       logAction.mutate({ action: "update", entity_type: entityType, entity_id: entityId, old_values: oldValues, new_values: newValues }),
     delete: (entityType: string, entityId: string, entityLabel?: string) => 
       logAction.mutate({ action: "delete", entity_type: entityType, entity_id: entityId, entity_label: entityLabel }),
     view: (entityType: string, entityId?: string) => 
       logAction.mutate({ action: "view", entity_type: entityType, entity_id: entityId }),
-    export: (entityType: string, metadata?: Record<string, unknown>) => 
+     export: (entityType: string, metadata?: Json) => 
       logAction.mutate({ action: "export", entity_type: entityType, metadata }),
     login: () => logAction.mutate({ action: "login", entity_type: "session" }),
     logout: () => logAction.mutate({ action: "logout", entity_type: "session" }),
-    custom: (action: AuditAction, entityType: string, metadata?: Record<string, unknown>) => 
+     custom: (action: AuditAction, entityType: string, metadata?: Json) => 
       logAction.mutate({ action, entity_type: entityType, metadata })
   };
   

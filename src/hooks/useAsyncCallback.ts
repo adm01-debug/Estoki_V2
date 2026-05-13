@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-export function useAsyncCallback<T, P extends any[]>(callback: (...args: P) => Promise<T>) {
+export function useAsyncCallback<T, P extends unknown[]>(callback: (...args: P) => Promise<T>) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<T | null>(null);

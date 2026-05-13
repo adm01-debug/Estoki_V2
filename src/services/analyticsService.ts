@@ -1,21 +1,23 @@
-import { supabase } from "@/integrations/supabase/client";
+ import { supabase } from "@/integrations/supabase/client";
+ import { logger } from "@/utils/logger";
+ import { Json } from "@/integrations/supabase/types";
 
 export const analyticsService = {
-  async trackEvent(event: string, metadata: Record<string, any> = {}): Promise<void> {
+   async trackEvent(event: string, metadata: Record<string, unknown> = {}): Promise<void> {
     const { error } = await supabase
-      .from("analytics_events" as any)
+       .from("analytics_events" as "audit_log") // Fallback for typing or use actual table if exists
       .insert({
-        event_name: event,
-        metadata,
-        created_at: new Date().toISOString()
-      } as any);
+         action: event,
+         metadata: metadata as Json,
+         entity_type: 'analytics'
+       } as any); // Cast to any because the table might not exist in the types yet
 
     if (error) {
-      console.error('Failed to track event:', error);
+       logger.error('Falha ao registrar evento de analytics', error, { event, metadata });
     }
   },
 
-  async getMetrics(type: string, dateRange: { start: string; end: string }): Promise<any[]> {
+   async getMetrics(type: string, dateRange: { start: string; end: string }): Promise<unknown[]> {
     const { data, error } = await supabase
       .from("analytics_events" as any)
       .select("*")
