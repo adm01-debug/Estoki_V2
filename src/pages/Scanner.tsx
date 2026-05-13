@@ -241,22 +241,27 @@ export default function ScannerPage() {
                     </div>
                   )}
 
-                  {/* Ações */}
-                  <div className="flex gap-2 pt-4">
-                    <Button variant="outline" onClick={handleNewScan} className="flex-1">
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Novo Scan
-                    </Button>
-                    {lastResult.tipo !== 'desconhecido' && (
-                      <Button onClick={() => handleNavigate(lastResult)} className="flex-1">
-                        Ver Detalhes
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+                   {/* Ações */}
+                   <div className="flex gap-3 pt-6 border-t border-border/20">
+                     <Button 
+                       variant="outline" 
+                       onClick={handleNewScan} 
+                       className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-wider gap-2 hover:bg-primary/5 transition-all"
+                     >
+                       <RotateCcw className="h-4 w-4" /> Novo Scan
+                     </Button>
+                     {lastResult.tipo !== 'desconhecido' && (
+                       <Button 
+                         onClick={() => handleNavigate(lastResult)} 
+                         className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-wider gap-2 glow-button"
+                       >
+                         Ver Detalhes <ArrowRight className="h-4 w-4" />
+                       </Button>
+                     )}
+                   </div>
+                 </CardContent>
+               </Card>
+             )}
 
             {/* Erro */}
             {error && !lastResult && !isLoading && (
