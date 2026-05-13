@@ -73,12 +73,44 @@ export default function Dashboard() {
     );
   }
 
-  const kpiItems = [
-    { icon: Package, value: aguardandoRecebimento, label: "Aguardando", sublabel: "Recebimento", variant: "warning" as const, path: "/recebimento" },
-    { icon: Search, value: triagemPendente, label: "Triagem", sublabel: "Pendente", variant: "default" as const, path: "/triagem" },
-    { icon: Warehouse, value: itensEstoque.toLocaleString(), label: "Posições", sublabel: "Ocupadas", variant: "success" as const, path: "/estoque" },
-    { icon: AlertTriangle, value: divergencias, label: "Divergências", sublabel: "Pendentes", variant: "danger" as const, path: "/divergencias" },
-  ];
+   const kpiItems = [
+     { 
+       icon: Package, 
+       value: aguardandoRecebimento, 
+       label: "Aguardando", 
+       sublabel: "Recebimento", 
+       variant: "warning" as const, 
+       path: "/recebimento",
+       trend: { value: 12, isUp: true, label: "vs ontem" }
+     },
+     { 
+       icon: Search, 
+       value: triagemPendente, 
+       label: "Triagem", 
+       sublabel: "Pendente", 
+       variant: "default" as const, 
+       path: "/triagem",
+       trend: { value: 5, isUp: false, label: "vs ontem" }
+     },
+     { 
+       icon: Warehouse, 
+       value: itensEstoque.toLocaleString(), 
+       label: "Posições", 
+       sublabel: "Ocupadas", 
+       variant: "success" as const, 
+       path: "/estoque",
+       trend: { value: 2, isUp: true, label: "vs ontem" }
+     },
+     { 
+       icon: AlertTriangle, 
+       value: divergencias, 
+       label: "Divergências", 
+       sublabel: "Pendentes", 
+       variant: "danger" as const, 
+       path: "/divergencias",
+       trend: { value: 0, isUp: true, label: "vs ontem" }
+     },
+   ];
 
   const totalRecebimentos = (stats as { totalRecebimentos?: number })?.totalRecebimentos || 0;
   const totalTriagens = (stats as { totalTriagens?: number })?.totalTriagens || 0;
