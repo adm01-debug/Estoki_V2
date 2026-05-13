@@ -12,11 +12,28 @@ type Story = StoryObj<typeof meta>;
 
 const recebimento = {
   id: '1',
-  nf: 'NF-12345',
-  fornecedor: 'Fornecedor XYZ',
-  itens: 50,
-  status: 'em_conferencia',
+  nf_numero: '123456',
+  fornecedor: 'Distribuidora Alpha Ltda',
+  status: 'pendente',
+  data_prevista: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(), // 2 dias no futuro
 };
 
-export const Default: Story = { args: { recebimento } };
-export const Concluido: Story = { args: { recebimento: { ...recebimento, status: 'concluido' } } };
+export const Pendente: Story = { args: { recebimento } };
+
+export const EmConferencia: Story = { 
+  args: { 
+    recebimento: { 
+      ...recebimento, 
+      status: 'em_conferencia' 
+    } 
+  } 
+};
+
+export const Concluido: Story = { 
+  args: { 
+    recebimento: { 
+      ...recebimento, 
+      status: 'concluido' 
+    } 
+  } 
+};
