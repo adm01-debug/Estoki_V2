@@ -12,8 +12,8 @@ export interface MetricaOperacional {
   erros_picking: number | null;
   acuracidade_picking: number | null;
   tempo_total_picking_minutos: number | null;
-  posicoes_totais: number | null;
-  posicoes_ocupados: number | null;
+   posicoes_totais: number | null;
+   posicoes_ocupadas: number | null;
   taxa_ocupacao: number | null;
   volumes_recebidos: number | null;
   nfs_processadas: number | null;
