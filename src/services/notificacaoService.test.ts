@@ -4,17 +4,22 @@ import { notificacaoService } from './notificacaoService';
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
-      insert: vi.fn().mockResolvedValue({ data: { id: '1' }, error: null }),
+      insert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn().mockResolvedValue({ data: { id: '1' }, error: null }),
+        })),
+      })),
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           order: vi.fn().mockResolvedValue({ data: [], error: null }),
         })),
       })),
       update: vi.fn(() => ({
-        eq: vi.fn().mockResolvedValue({ error: null }),
-      })),
-      delete: vi.fn(() => ({
-        eq: vi.fn().mockResolvedValue({ error: null }),
+        eq: vi.fn(() => ({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+          mockResolvedValue: vi.fn().mockResolvedValue({ error: null }),
+        })),
+        mockReturnThis: vi.fn().mockReturnThis(),
       })),
     })),
   },

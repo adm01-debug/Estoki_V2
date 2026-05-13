@@ -26,9 +26,6 @@ export interface AuditLogFilters {
 }
 
 export const auditService = {
-  /**
-   * Log an audit event
-   */
   async log(
     action: string,
     entityType: string,
@@ -59,61 +56,30 @@ export const auditService = {
     }
   },
 
-  /**
-   * Get audit logs with filters
-   */
   async getLogs(filters: AuditLogFilters = {}): Promise<AuditLogEntry[]> {
     let query = (supabase.from as any)('audit_log')
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (filters.userId) {
-      query = query.eq('user_id', filters.userId);
-    }
-    if (filters.action) {
-      query = query.eq('action', filters.action);
-    }
-    if (filters.entityType) {
-      query = query.eq('entity_type', filters.entityType);
-    }
-    if (filters.entityId) {
-      query = query.eq('entity_id', filters.entityId);
-    }
-    if (filters.startDate) {
-      query = query.gte('created_at', filters.startDate.toISOString());
-    }
-    if (filters.endDate) {
-      query = query.lte('created_at', filters.endDate.toISOString());
-    }
-    if (filters.limit) {
-      query = query.limit(filters.limit);
-    }
-    if (filters.offset) {
-      query = query.range(filters.offset, filters.offset + (filters.limit || 50) - 1);
-    }
+    if (filters.userId) query = query.eq('user_id', filters.userId);
+    if (filters.action) query = query.eq('action', filters.action);
+    if (filters.entityType) query = query.eq('entity_type', filters.entityType);
+    if (filters.entityId) query = query.eq('entity_id', filters.entityId);
+    if (filters.startDate) query = query.gte('created_at', filters.startDate.toISOString());
+    if (filters.endDate) query = query.lte('created_at', filters.endDate.toISOString());
+    if (filters.limit) query = query.limit(filters.limit);
 
     const { data, error } = await query;
-
-    if (error) {
-      if (import.meta.env.DEV) console.error('Failed to fetch audit logs:', error);
-      return [];
-    }
-
+    if (error) return [];
     return (data || []) as AuditLogEntry[];
   },
 
-  /**
-   * Get logs for a specific entity
-   */
-  async getEntityHistory(entityType: string, entityId: string): Promise<AuditLogEntry[]> {
+  async getByEntity(entityType: string, entityId: string): Promise<AuditLogEntry[]> {
     return this.getLogs({ entityType, entityId });
   },
 
-  /**
-   * Get user activity
-   */
-  async getUserActivity(userId: string, limit = 50): Promise<AuditLogEntry[]> {
-    return this.getLogs({ userId, limit });
+  async getByUser(userId: string): Promise<AuditLogEntry[]> {
+    return this.getLogs({ userId });
   },
 };
 

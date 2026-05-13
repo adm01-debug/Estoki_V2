@@ -9,7 +9,9 @@ vi.mock('@/lib/supabase', () => ({
       update: vi.fn().mockReturnThis(),
       delete: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: {}, error: null }),
+      then: vi.fn((cb) => Promise.resolve(cb({ data: [], error: null }))),
     })),
   },
 }));
@@ -29,6 +31,6 @@ describe('orderService', () => {
 
   it('should handle errors gracefully', async () => {
     const result = await orderService.getAll?.() || [];
-    expect(Array.isArray(result) || result !== undefined).toBe(true);
+    expect(Array.isArray(result)).toBe(true);
   });
 });

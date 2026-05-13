@@ -9,10 +9,26 @@ export const relatorioService = {
     return { total, ocupados, livres: total - ocupados, percentual: total > 0 ? (ocupados / total) * 100 : 0 };
   },
 
-  async getTriagensNoPeriodo(inicio: string, fim: string) {
+  async getRelatorioTriagem(inicio: string, fim: string) {
     const { data, error } = await supabase.from("eventos_triagem").select("*").gte("created_at", inicio).lte("created_at", fim);
     if (error) throw error;
     return data;
+  },
+
+  async getRelatorioEstoque() {
+    return this.getOcupacaoEstoque();
+  },
+
+  async getRelatorioMovimentacao(inicio: string, fim: string) {
+    const { data, error } = await supabase.from("rastreamento_historico").select("tipo_evento").gte("created_at", inicio).lte("created_at", fim);
+    if (error) throw error;
+    
+    const grouped = (data || []).reduce((acc: Record<string, number>, m: any) => {
+      acc[m.tipo_evento] = (acc[m.tipo_evento] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    return Object.entries(grouped).map(([tipo, count]) => ({ tipo, count }));
   },
 
   async getProdutividadePorOperador(inicio: string, fim: string) {
@@ -27,17 +43,5 @@ export const relatorioService = {
     }, {} as Record<string, number>);
     
     return Object.entries(grouped).map(([id, total]) => ({ operador_id: id, total }));
-  },
-
-  async getMovimentacoesPorTipo(inicio: string, fim: string) {
-    const { data, error } = await supabase.from("rastreamento_historico").select("tipo_evento").gte("created_at", inicio).lte("created_at", fim);
-    if (error) throw error;
-    
-    const grouped = (data || []).reduce((acc: Record<string, number>, m: any) => {
-      acc[m.tipo_evento] = (acc[m.tipo_evento] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-    
-    return Object.entries(grouped).map(([tipo, count]) => ({ tipo, count }));
   },
 };

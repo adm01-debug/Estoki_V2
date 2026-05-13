@@ -1,4 +1,17 @@
-// Re-export all services
+import { abcService } from './abcService';
+import { alertService } from './alertService';
+import { analyticsService } from './analyticsService';
+import { auditService } from './auditService';
+import { authService } from './authService';
+import { backupService } from './backupService';
+import { barcodeService } from './barcodeService';
+import { batchService } from './batchService';
+import { estoqueService } from './estoqueService';
+import { inventoryService } from './inventoryService';
+import { orderService } from './orderService';
+import { productService } from './productService';
+import { stockService } from './stockService';
+
 export * from "./abcService";
 export * from "./alertService";
 export * from "./analyticsService";
@@ -26,21 +39,20 @@ export * from "./supplierService";
 export * from "./triagemService";
 export * from "./warehouseService";
 
-// Service factory for dependency injection
 export function createServices() {
   return {
-    abc: require('./abcService').abcService,
-    alert: require('./alertService').alertService,
-    analytics: require('./analyticsService').analyticsService,
-    audit: require('./auditService').auditService,
-    auth: require('./authService').authService,
-    backup: require('./backupService').backupService,
-    barcode: require('./barcodeService').barcodeService,
-    batch: require('./batchService').batchService,
-    estoque: require('./estoqueService').estoqueService,
-    inventory: require('./inventoryService').inventoryService,
-    order: require('./orderService').orderService,
-    product: require('./productService').productService,
-    stock: require('./stockService').stockService,
+    abc: abcService,
+    alert: alertService,
+    analytics: analyticsService,
+    audit: auditService,
+    auth: authService,
+    backup: backupService,
+    barcode: barcodeService,
+    batch: batchService,
+    estoque: estoqueService,
+    inventory: inventoryService,
+    order: orderService,
+    product: productService,
+    stock: stockService,
   };
 }
