@@ -1,3 +1,5 @@
+ import { logger } from '../utils/logger';
+ 
 /**
  * Cliente Bitrix24 para Produção
  * Integração real com CRM Bitrix24 via REST API
@@ -100,7 +102,7 @@ class Bitrix24Client {
 
       return data as BitrixResponse<T>;
     } catch (error) {
-      if (import.meta.env.DEV) console.error(`[Bitrix24] Error calling ${method}:`, error);
+       logger.error(`[Bitrix24] Erro ao chamar método ${method}`, error, { method, params });
       throw error;
     }
   }
