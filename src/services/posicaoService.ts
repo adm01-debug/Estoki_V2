@@ -92,7 +92,7 @@ export const posicaoService = {
   },
 
   async ocupar(id: string, loteId: string, _produtoId?: string): Promise<boolean> {
-    return this.update(id, { status: 'ocupada' });
+   return this.update(id, { status: 'ocupado' });
   },
 
   async liberar(id: string): Promise<boolean> {
