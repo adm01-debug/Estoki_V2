@@ -19,7 +19,7 @@ serve(async (req) => {
     }).select().single();
 
     await supabase.from("orders").update({ status: "packing", packing_id: packing?.id }).eq("id", order_id);
-    await supabase.from("audit_logs").insert({ action: "packing_started", entity_type: "packing", entity_id: packing?.id, user_id: packer_id });
+    await supabase.from("audit_log").insert({ action: "packing_started", entity_type: "packing", entity_id: packing?.id, user_id: packer_id });
 
     return new Response(JSON.stringify({ success: true, packing_number: packingNumber, packing }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) {
