@@ -3,7 +3,7 @@
  import { toast } from "sonner";
  import { Database } from "@/integrations/supabase/types";
  
- type TableName = keyof Database['public']['Tables'];
+ export type TableName = keyof Database['public']['Tables'];
  
  interface DuplicateOptions<T extends Record<string, unknown>> {
    table: TableName;
