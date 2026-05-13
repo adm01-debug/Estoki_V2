@@ -1,3 +1,4 @@
+ import { Database } from "@/integrations/supabase/types";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +12,7 @@ interface FulltextSearchOptions<T> {
   debounceMs?: number;
   limit?: number;
   orderBy?: { column: string; ascending?: boolean };
-  additionalFilters?: Record<string, any>;
+  additionalFilters?: Record<string, string | number | boolean | null>;
   enabled?: boolean;
 }
 
@@ -27,7 +28,7 @@ interface SearchResult<T> {
   totalResults: number;
 }
 
-export function useFulltextSearch<T = any>(
+ export function useFulltextSearch<T = unknown>(
   options: FulltextSearchOptions<T>
 ): SearchResult<T> {
   const {
@@ -58,9 +59,9 @@ export function useFulltextSearch<T = any>(
   const { data, isLoading, error, isFetching } = useQuery({
     queryKey,
     queryFn: async () => {
-      let query = (supabase
-        .from(table as any) as any)
-        .select(selectColumns.join(","), { count: "exact" });
+      let query = supabase
+        .from(table as keyof Database['public']['Tables'])
+        .select(selectColumns.join(","), { count: "exact" }) as any;
 
       if (debouncedSearchTerm.length >= minChars) {
         const searchConditions = searchColumns
