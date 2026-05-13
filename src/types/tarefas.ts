@@ -1,7 +1,4 @@
-// Types para Gestão de Tarefas
-export type StatusTarefa = 'pendente' | 'atribuida' | 'em_andamento' | 'concluida' | 'cancelada' | 'atrasada' | 'bloqueado';
-export type PrioridadeTarefa = 'baixa' | 'media' | 'alta' | 'urgente';
-export type TipoTarefa = 'recebimento' | 'triagem' | 'armazenamento' | 'separacao' | 'expedicao' | 'inventario' | 'manutencao' | 'transferencia';
+ // Types para Gestão de Tarefas
 export const tipoLabels: Record<string, string> = {
   separacao: "Separação", 
   armazenagem: "Armazenagem", 
