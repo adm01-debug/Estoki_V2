@@ -1,17 +1,30 @@
 import { useCallback } from 'react';
 
-export function useAnalytics() {
+ import { logger } from '@/utils/logger';
+ 
+ interface GTag {
+   (command: 'event', eventName: string, eventParams?: Record<string, unknown>): void;
+   (command: 'config', targetId: string, config?: Record<string, unknown>): void;
+ }
+ 
+ declare global {
+   interface Window {
+     gtag?: GTag;
+   }
+ }
+ 
+ export function useAnalytics() {
   const track = useCallback((event: string, data?: Record<string, unknown>) => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', event, data);
-    }
-    if (import.meta.env.DEV) console.log('[Analytics]', event, data);
+     if (typeof window !== 'undefined' && window.gtag) {
+       window.gtag('event', event, data);
+     }
+     logger.debug('[Analytics] Event tracked', { event, ...data });
   }, []);
 
   const page = useCallback((path: string) => {
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('config', 'GA_MEASUREMENT_ID', { page_path: path });
-    }
+     if (typeof window !== 'undefined' && window.gtag) {
+       window.gtag('config', 'GA_MEASUREMENT_ID', { page_path: path });
+     }
   }, []);
 
   const trackPage = useCallback((data: { path: string; title?: string; component?: string }) => {
