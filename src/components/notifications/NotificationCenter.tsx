@@ -108,7 +108,7 @@ export function NotificationCenter() {
           <span className="sr-only">Notificações</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+       <PopoverContent className="w-96 p-0 bg-popover/95 backdrop-blur-2xl border-border/40 shadow-2xl rounded-2xl overflow-hidden animate-in fade-in-0 zoom-in-95" align="end">
         <div className="flex items-center justify-between p-3 border-b">
           <h4 className="font-semibold text-sm">Notificações</h4>
           <div className="flex items-center gap-1">
