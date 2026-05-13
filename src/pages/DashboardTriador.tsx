@@ -1,5 +1,6 @@
  import { useState, useMemo, useEffect } from "react";
  import { supabase } from "@/integrations/supabase/client";
+ import { logger } from "@/utils/logger";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -59,14 +60,14 @@ export default function DashboardTriadorPage() {
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
     const [loadingHist, setLoadingHist] = useState(false);
-    const [recentHistory, setRecentHistory] = useState<any[]>([]);
+     const [recentHistory, setRecentHistory] = useState<unknown[]>([]);
     const [triagensHoje, setTriagensHoje] = useState(0);
 
     const loadHistorico = async () => {
       if (!user?.id) return;
       setLoadingHist(true);
       const data = await getMetricasDiarias(user.id, 7);
-      setSemanalData(data.map((d: any) => ({
+       setSemanalData(data.map((d: { data: string; triagens: number }) => ({
         dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
         itensTriados: d.triagens
       })));
