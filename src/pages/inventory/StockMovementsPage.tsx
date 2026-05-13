@@ -1,15 +1,21 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import { 
-  History, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  RefreshCw, 
-  Search,
-  Calendar,
-  User
+   History, 
+   ArrowUpRight, 
+   ArrowDownLeft, 
+   RefreshCw, 
+   Search,
+   Calendar,
+   User,
+   Filter,
+   Download,
+   LayoutGrid,
+   List,
+   ArrowRight,
+   Clock
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -36,21 +42,37 @@ export default function StockMovementsPage() {
     return <RefreshCw className="h-4 w-4 text-primary" />;
   };
 
-  return (
-    <AppLayout title="Histórico de Movimentações" showBack>
-      <PageTransition>
-        <div className="p-4 md:p-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar por produto, lote ou descrição..." 
-                className="pl-9"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
+   return (
+     <AppLayout title="Histórico Operacional" showBack>
+       <PageTransition>
+         <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+             <div className="space-y-1">
+               <h1 className="text-2xl font-black tracking-tight text-foreground">Fluxo de Movimentações</h1>
+               <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">
+                 <Clock className="h-3.5 w-3.5" />
+                 Log de auditoria completo e imutável
+               </div>
+             </div>
+             
+             <div className="flex flex-wrap items-center gap-2">
+               <div className="relative w-full md:w-80">
+                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                 <Input 
+                   placeholder="SKU, Lote ou Descrição..." 
+                   className="pl-10 h-10 rounded-xl bg-muted/30 border-border/40 focus:bg-background transition-all"
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                 />
+               </div>
+               <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-border/40">
+                 <Filter className="h-4 w-4" />
+               </Button>
+               <Button variant="outline" size="icon" className="h-10 w-10 rounded-xl border-border/40">
+                 <Download className="h-4 w-4" />
+               </Button>
+             </div>
+           </div>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
