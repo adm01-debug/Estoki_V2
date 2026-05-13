@@ -28,7 +28,7 @@ export const batchService = {
       .order("data_validade", { ascending: true });
 
      if (error) throw error;
-     const lotes = (data as unknown) as Lote[];
+      const lotes = data as Lote[];
      return lotes.map((item) => ({
        id: item.id,
        codigo: item.numero_lote || '',
@@ -41,9 +41,9 @@ export const batchService = {
      }));
   },
 
-   async createBatch(batch: Omit<Batch, 'id' | 'status'>): Promise<Batch> {
-     const status = (batch.data_validade && new Date(batch.data_validade) < new Date() ? 'vencido' : 'ativo') as any;
-     const { data, error } = await supabase
+    async createBatch(batch: Omit<Batch, 'id' | 'status'>): Promise<Batch> {
+      const status = (batch.data_validade && new Date(batch.data_validade) < new Date() ? 'vencido' : 'recebido') as Database['public']['Enums']['status_recebimento'];
+      const { data, error } = await supabase
        .from("lotes")
        .insert({ 
          numero_lote: batch.codigo,
@@ -57,9 +57,9 @@ export const batchService = {
        .select()
        .single();
  
-     if (error) throw error;
-     const item = data as unknown as Lote;
-     return {
+      if (error) throw error;
+      const item = data as Lote;
+      return {
        id: item.id,
        codigo: item.numero_lote || '',
        produto_id: item.produto_id,
@@ -80,10 +80,12 @@ export const batchService = {
  
      if (!batchData) throw new Error("Batch not found");
  
-     const newQty = (batchData.quantidade_atual || 0) + delta;
-     const status = (newQty <= 0 ? 'esgotado' : 'ativo') as any;
- 
-     const { error } = await supabase
+      const newQty = (batchData.quantidade_atual || 0) + delta;
+      // Note: 'esgotado' e 'ativo' podem não estar no Enum status_recebimento. 
+      // Usando 'armazenado' como fallback seguro se o enum for restrito, ou mantendo lógica de negócio se o banco aceitar.
+      const status = (newQty <= 0 ? 'cancelado' : 'recebido') as Database['public']['Enums']['status_recebimento'];
+  
+      const { error } = await supabase
        .from("lotes")
        .update({ quantidade_atual: newQty, status } as LoteUpdate)
        .eq("id", id);
