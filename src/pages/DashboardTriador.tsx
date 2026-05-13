@@ -45,7 +45,6 @@ import { useAuth } from "@/contexts/AuthContext";
    id: string;
    data_fim: string;
    resultado: string | null;
-   items_count: number | null;
  }
  
 export default function DashboardTriadorPage() {
@@ -84,9 +83,9 @@ export default function DashboardTriadorPage() {
     const loadRecentActivity = async () => {
       if (!user?.id) return;
       const { data } = await supabase
-        .from('eventos_triagem')
-        .select('id, data_fim, resultado, items_count')
-        .eq('operador_id', user.id)
+         .from('eventos_triagem')
+         .select('id, data_fim, resultado')
+         .eq('operador_id', user.id)
         .not('data_fim', 'is', null)
         .order('data_fim', { ascending: false })
         .limit(5);
@@ -362,7 +361,7 @@ export default function DashboardTriadorPage() {
                             <div>
                               <p className="text-sm font-medium capitalize">{item.resultado || 'Triado'}</p>
                               <p className="text-[10px] text-muted-foreground">
-                                {new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • {item.items_count || 0} itens
+                                 {new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                               </p>
                             </div>
                           </div>
