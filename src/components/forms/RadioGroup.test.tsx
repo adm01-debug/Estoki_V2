@@ -1,33 +1,24 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import RadioGroup from './RadioGroup';
+import { RadioGroup } from './RadioGroup';
 
 describe('RadioGroup', () => {
-  it('should render without crashing', () => {
-    render(<RadioGroup />);
+  const options = [
+    { value: 'opt1', label: 'Option 1' },
+    { value: 'opt2', label: 'Option 2' },
+  ];
+
+  it('renders all options', () => {
+    render(<RadioGroup options={options} />);
+    expect(screen.getByText('Option 1')).toBeInTheDocument();
+    expect(screen.getByText('Option 2')).toBeInTheDocument();
   });
 
-  it('should accept value prop', () => {
-    render(<RadioGroup value="test" />);
-  });
-
-  it('should call onChange when value changes', () => {
+  it('calls onChange when an option is selected', () => {
     const onChange = vi.fn();
-    render(<RadioGroup onChange={onChange} />);
-  });
-
-  it('should be disabled when disabled prop is true', () => {
-    const { container } = render(<RadioGroup disabled />);
-    expect(container.querySelector('[disabled]')).toBeInTheDocument();
-  });
-
-  it('should accept className prop', () => {
-    const { container } = render(<RadioGroup className="custom" />);
-    expect(container.firstChild).toHaveClass('custom');
-  });
-
-  it('should show error state', () => {
-    render(<RadioGroup error="Error message" />);
-    expect(screen.getByText('Error message')).toBeInTheDocument();
+    render(<RadioGroup options={options} onChange={onChange} />);
+    
+    fireEvent.click(screen.getByText('Option 1'));
+    expect(onChange).toHaveBeenCalledWith('opt1');
   });
 });

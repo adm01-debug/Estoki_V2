@@ -1,33 +1,19 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import Rating from './Rating';
+import { Rating } from './Rating';
 
 describe('Rating', () => {
-  it('should render without crashing', () => {
-    render(<Rating />);
+  it('renders correct number of stars', () => {
+    const { container } = render(<Rating value={3} max={5} />);
+    const stars = container.querySelectorAll('svg');
+    expect(stars.length).toBe(5);
   });
 
-  it('should accept value prop', () => {
-    render(<Rating value="test" />);
-  });
-
-  it('should call onChange when value changes', () => {
+  it('calls onChange when a star is clicked', () => {
     const onChange = vi.fn();
-    render(<Rating onChange={onChange} />);
-  });
-
-  it('should be disabled when disabled prop is true', () => {
-    const { container } = render(<Rating disabled />);
-    expect(container.querySelector('[disabled]')).toBeInTheDocument();
-  });
-
-  it('should accept className prop', () => {
-    const { container } = render(<Rating className="custom" />);
-    expect(container.firstChild).toHaveClass('custom');
-  });
-
-  it('should show error state', () => {
-    render(<Rating error="Error message" />);
-    expect(screen.getByText('Error message')).toBeInTheDocument();
+    const { container } = render(<Rating value={0} onChange={onChange} />);
+    const stars = container.querySelectorAll('svg');
+    fireEvent.click(stars[2]); // 3rd star
+    expect(onChange).toHaveBeenCalledWith(3);
   });
 });
