@@ -39,16 +39,16 @@ export default function Dashboard() {
 
   const estatisticas = useMemo(() => getEstatisticas(), [getEstatisticas]);
 
-  const { aguardandoRecebimento, divergencias, triagemPendente, itensEstoque, ocupacaoPP, ocupacaoBoxes } = useMemo(() => {
-    const recebimentosList = recebimentos || [];
-    const aguardando = recebimentosList.filter(r => r.status === 'aguardando' || r.status === 'em_transito').length;
-    const div = recebimentosList.filter(r => r.status === 'divergencia').length;
-    const triagem = (stats as { totalTriagens?: number })?.totalTriagens || 0;
-    const itens = estatisticas.posicoesOcupadas;
-    const pp = Math.round(estatisticas.taxaOcupacao);
-    const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
-    return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
-  }, [recebimentos, stats, estatisticas]);
+   const { aguardandoRecebimento, divergencias, triagemPendente, itensEstoque, ocupacaoPP, ocupacaoBoxes } = useMemo(() => {
+     const recebimentosList = recebimentos || [];
+     const aguardando = recebimentosList.filter(r => r.status === 'aguardando' || r.status === 'em_transito').length;
+     const div = recebimentosList.filter(r => r.status === 'divergencia').length;
+     const triagem = stats?.triagensPendentes || 0;
+     const itens = estatisticas.posicoesOcupadas;
+     const pp = Math.round(estatisticas.taxaOcupacao);
+     const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
+     return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
+   }, [recebimentos, stats, estatisticas]);
 
   const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
 
@@ -112,8 +112,8 @@ export default function Dashboard() {
      },
    ];
 
-  const totalRecebimentos = (stats as { totalRecebimentos?: number })?.totalRecebimentos || 0;
-  const totalTriagens = (stats as { totalTriagens?: number })?.totalTriagens || 0;
+   const totalRecebimentos = stats?.entradasHoje || 0;
+   const totalTriagens = stats?.triagensHoje || 0;
 
   return (
     <PageTransition>
