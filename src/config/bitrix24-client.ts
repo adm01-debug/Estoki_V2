@@ -239,8 +239,13 @@ class Bitrix24Client {
        cmd[`cmd${i}`] = `${c.method}${params}`;
      });
  
-     const response = await this.call<{ result: Record<string, T> }>('batch', { cmd });
-     return Object.values(response.result);
+     interface BatchResult {
+       result: Record<string, T>;
+       result_error: Record<string, unknown>;
+     }
+ 
+     const response = await this.call<BatchResult>('batch', { cmd });
+     return Object.values(response.result.result);
    }
 }
 
