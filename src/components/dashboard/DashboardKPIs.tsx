@@ -112,44 +112,49 @@ export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
          </Card>
        </div>
 
-     <div className="grid grid-cols-2 gap-3">
-       <Card className="bg-blue-500/5 border-blue-500/20">
-         <CardContent className="p-4 flex items-center justify-between">
-           <div>
-             <div className="flex items-center gap-2 text-blue-600 mb-1">
-               <ClipboardList className="h-4 w-4" />
-               <span className="text-xs font-medium">Triagens Hoje</span>
-             </div>
-             <p className="text-2xl font-bold text-blue-700">{safeKpis.triagensHoje}</p>
-           </div>
-           <div className="text-right">
-             <span className="text-xs text-muted-foreground block">Pendentes</span>
-             <span className="text-sm font-semibold text-orange-600">{safeKpis.triagensPendentes}</span>
-           </div>
-         </CardContent>
-       </Card>
-       
-       <Card className="bg-green-500/5 border-green-500/20">
-         <CardContent className="p-4 flex items-center justify-between">
-           <div>
-             <div className="flex items-center gap-2 text-green-600 mb-1">
-               <TrendingUp className="h-4 w-4" />
-               <span className="text-xs font-medium">Fluxo Hoje</span>
-             </div>
-             <div className="flex gap-4">
-               <div>
-                 <span className="text-[10px] uppercase text-muted-foreground block">Entradas</span>
-                 <p className="text-xl font-bold text-green-700">{safeKpis.entradasHoje}</p>
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+         <Card className="glass-card border-blue-500/20 bg-blue-500/5 group hover:border-blue-500/40 transition-all duration-300">
+           <CardContent className="p-5 flex items-center justify-between">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 group-hover:rotate-12 transition-transform">
+                 <ClipboardList className="h-6 w-6 text-blue-600" />
                </div>
                <div>
-                 <span className="text-[10px] uppercase text-muted-foreground block">Saídas</span>
-                 <p className="text-xl font-bold text-red-600">{safeKpis.saidasHoje}</p>
+                 <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Triagens Concluídas</p>
+                 <p className="text-3xl font-black text-blue-700 leading-none mt-1">{safeKpis.triagensHoje}</p>
                </div>
              </div>
-           </div>
-         </CardContent>
-       </Card>
-     </div>
+             <div className="text-right px-4 py-2 bg-white/40 dark:bg-black/20 rounded-xl border border-blue-500/10">
+               <span className="text-[10px] font-bold text-muted-foreground uppercase block tracking-wider">Pendentes</span>
+               <span className="text-lg font-black text-orange-600">{safeKpis.triagensPendentes}</span>
+             </div>
+           </CardContent>
+         </Card>
+         
+         <Card className="glass-card border-success/20 bg-success/5 group hover:border-success/40 transition-all duration-300">
+           <CardContent className="p-5 flex items-center justify-between">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-2xl bg-success/10 flex items-center justify-center border border-success/20 group-hover:rotate-12 transition-transform">
+                 <TrendingUp className="h-6 w-6 text-success" />
+               </div>
+               <div>
+                 <p className="text-[10px] font-bold text-success uppercase tracking-widest">Fluxo Operacional</p>
+                 <div className="flex gap-6 mt-1">
+                   <div>
+                     <span className="text-[9px] font-bold text-muted-foreground uppercase block">Entradas</span>
+                     <p className="text-2xl font-black text-success leading-none">{safeKpis.entradasHoje}</p>
+                   </div>
+                   <div className="w-px h-8 bg-border/40 my-auto" />
+                   <div>
+                     <span className="text-[9px] font-bold text-muted-foreground uppercase block">Saídas</span>
+                     <p className="text-2xl font-black text-destructive leading-none">{safeKpis.saidasHoje}</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </CardContent>
+         </Card>
+       </div>
    </div>
    );
  }
