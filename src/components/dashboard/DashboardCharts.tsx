@@ -24,17 +24,21 @@ export function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoSt
 
   return (
     <>
-      <Tabs defaultValue="ocupacao" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="ocupacao">Ocupação</TabsTrigger>
-          <TabsTrigger value="movimentacoes">Movimentações</TabsTrigger>
-          <TabsTrigger value="distribuicao">Distribuição</TabsTrigger>
-        </TabsList>
+       <Tabs defaultValue="ocupacao" className="w-full space-y-6">
+         <div className="flex items-center justify-between bg-muted/30 p-1.5 rounded-2xl border border-border/20 max-w-2xl mx-auto">
+           <TabsList className="grid grid-cols-3 bg-transparent p-0 w-full h-10">
+             <TabsTrigger value="ocupacao" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary font-bold text-xs transition-all">Ocupação</TabsTrigger>
+             <TabsTrigger value="movimentacoes" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary font-bold text-xs transition-all">Movimentações</TabsTrigger>
+             <TabsTrigger value="distribuicao" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:text-primary font-bold text-xs transition-all">Distribuição</TabsTrigger>
+           </TabsList>
+         </div>
 
-        <TabsContent value="ocupacao">
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-base">Ocupação por Porta-Palete</CardTitle></CardHeader>
-            <CardContent>
+         <TabsContent value="ocupacao" className="focus-visible:outline-none">
+           <Card className="glass-card border-border/30 overflow-hidden">
+             <CardHeader className="pb-4 border-b border-border/20">
+               <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">Ocupação por Porta-Palete</CardTitle>
+             </CardHeader>
+             <CardContent className="pt-6">
               {ocupacaoPP.length === 0 ? (
                 <div className="h-64 flex items-center justify-center text-muted-foreground"><p>Nenhum porta-palete cadastrado</p></div>
               ) : (
