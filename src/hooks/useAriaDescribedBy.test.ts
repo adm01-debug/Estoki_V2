@@ -3,20 +3,24 @@ import { useAriaDescribedBy } from './useAriaDescribedBy';
 import { describe, it, expect } from 'vitest';
 
 describe('useAriaDescribedBy', () => {
-  it('should return combined IDs', () => {
-    const { result } = renderHook(() => useAriaDescribedBy(['id1', 'id2', 'id3']));
-    expect(result.current).toBe('id1 id2 id3');
+  it('should return props with generated ID', () => {
+    const { result } = renderHook(() => useAriaDescribedBy('Helpful description'));
+    
+    expect(result.current.id).toMatch(/^desc-:/);
+    expect(result.current.props['aria-describedby']).toBe(result.current.id);
+    expect(result.current.descriptionProps.id).toBe(result.current.id);
+    expect(result.current.descriptionProps.children).toBe('Helpful description');
   });
 
-  it('should return empty string if no IDs provided', () => {
-    const { result } = renderHook(() => useAriaDescribedBy([]));
-    expect(result.current).toBe('');
-  });
+  it('should update description when input changes', () => {
+    let description = 'Old description';
+    const { result, rerender } = renderHook(({ desc }) => useAriaDescribedBy(desc), {
+      initialProps: { desc: description }
+    });
 
-  it('should handle undefined or null IDs gracefully if it were to receive them', () => {
-    // Note: TypeScript might complain if types are strict, but testing runtime behavior
-    const { result } = renderHook(() => useAriaDescribedBy(['id1', undefined as any, 'id2']));
-    expect(result.current).toContain('id1');
-    expect(result.current).toContain('id2');
+    expect(result.current.descriptionProps.children).toBe('Old description');
+
+    rerender({ desc: 'New description' });
+    expect(result.current.descriptionProps.children).toBe('New description');
   });
 });
