@@ -10,7 +10,14 @@ export function useAppLayoutState() {
   const { signOut } = useAuth();
   const { permission, isSupported, requestPermission } = usePushNotifications();
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+     const saved = localStorage.getItem("sidebar_collapsed");
+     return saved === "true";
+   });
+   useEffect(() => {
+     localStorage.setItem("sidebar_collapsed", String(sidebarCollapsed));
+   }, [sidebarCollapsed]);
+ 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [fabOpen, setFabOpen] = useState(false);
 
