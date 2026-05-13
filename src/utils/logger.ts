@@ -1,3 +1,5 @@
+ import { envConfig, isProduction } from '../config/environment';
+ 
  type LogLevel = 'info' | 'warn' | 'error' | 'debug';
  
  interface LogMetadata {
@@ -5,7 +7,7 @@
  }
  
  class Logger {
-   private isDev = import.meta.env.DEV;
+   private isDev = !isProduction();
  
    private formatMessage(level: LogLevel, message: string, metadata?: LogMetadata): string {
      const timestamp = new Date().toISOString();
@@ -17,7 +19,9 @@
      if (this.isDev) {
        console.info(this.formatMessage('info', message, metadata));
      }
-     // In production, we could send this to Sentry or a logging service
+     if (isProduction()) {
+       // Placeholder para analytics de info em produção se necessário
+     }
    }
  
    warn(message: string, metadata?: LogMetadata) {
@@ -31,8 +35,15 @@
      
      console.error(this.formatMessage('error', message, errorMeta));
      
-     // Here we would integrate with Sentry
-     // Sentry.captureException(error, { extra: metadata });
+     if (isProduction() && envConfig.sentryDsn) {
+       const Sentry = (window as any).Sentry;
+       if (Sentry) {
+         Sentry.captureException(error || new Error(message), {
+           extra: metadata,
+           tags: { level: 'error' }
+         });
+       }
+     }
    }
  
    debug(message: string, metadata?: LogMetadata) {
