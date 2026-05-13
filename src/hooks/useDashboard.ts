@@ -45,7 +45,12 @@ export interface ItemParado {
   valor: number;
 }
 
- async function getCount(query: any): Promise<number> {
+  interface PostgrestCountResponse {
+    count: number | null;
+    error: any;
+  }
+  
+  async function getCount(query: PromiseLike<PostgrestCountResponse>): Promise<number> {
    try {
      const { count, error } = await query;
      if (error) {
