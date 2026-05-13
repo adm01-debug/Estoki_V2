@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 const posicao = {
   id: '1',
   codigo: 'A01-01-1',
-  status: 'ocupada',
+  status: 'ocupado',
   tipo: 'picking',
   produto: 'SKU-001',
   quantidade: 50,

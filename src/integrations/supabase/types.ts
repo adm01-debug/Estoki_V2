@@ -535,7 +535,7 @@ export type Database = {
           conquista_id: string
           created_at: string
           data_desbloqueio: string | null
-          desbloqueada: boolean
+          desbloqueado: boolean
           id: string
           progresso: number
           updated_at: string
@@ -545,7 +545,7 @@ export type Database = {
           conquista_id: string
           created_at?: string
           data_desbloqueio?: string | null
-          desbloqueada?: boolean
+          desbloqueado?: boolean
           id?: string
           progresso?: number
           updated_at?: string
@@ -555,7 +555,7 @@ export type Database = {
           conquista_id?: string
           created_at?: string
           data_desbloqueio?: string | null
-          desbloqueada?: boolean
+          desbloqueado?: boolean
           id?: string
           progresso?: number
           updated_at?: string
@@ -1637,7 +1637,7 @@ export type Database = {
           movimentacoes_realizadas: number | null
           nfs_processadas: number | null
           pedidos_separados: number | null
-          posicoes_ocupadas: number | null
+          posicoes_ocupados: number | null
           posicoes_totais: number | null
           taxa_aprovacao: number | null
           taxa_ocupacao: number | null
@@ -1661,7 +1661,7 @@ export type Database = {
           movimentacoes_realizadas?: number | null
           nfs_processadas?: number | null
           pedidos_separados?: number | null
-          posicoes_ocupadas?: number | null
+          posicoes_ocupados?: number | null
           posicoes_totais?: number | null
           taxa_aprovacao?: number | null
           taxa_ocupacao?: number | null
@@ -1685,7 +1685,7 @@ export type Database = {
           movimentacoes_realizadas?: number | null
           nfs_processadas?: number | null
           pedidos_separados?: number | null
-          posicoes_ocupadas?: number | null
+          posicoes_ocupados?: number | null
           posicoes_totais?: number | null
           taxa_aprovacao?: number | null
           taxa_ocupacao?: number | null
@@ -3392,7 +3392,7 @@ export type Database = {
         | "atribuida"
         | "em_andamento"
         | "concluida"
-        | "bloqueada"
+        | "bloqueado"
       tipo_alerta:
         | "estoque_minimo"
         | "estoque_maximo"
@@ -3621,7 +3621,7 @@ export const Constants = {
         "atribuida",
         "em_andamento",
         "concluida",
-        "bloqueada",
+        "bloqueado",
       ],
       tipo_alerta: [
         "estoque_minimo",

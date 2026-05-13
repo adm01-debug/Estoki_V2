@@ -133,13 +133,13 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
             {position.status === 'reservado' && (
               <div className="text-center py-8 text-warning">
                 <Clock className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Posição reservada para recebimento</p>
+                <p>Posição reservado para recebimento</p>
               </div>
             )}
             {position.status === 'bloqueado' && (
               <div className="text-center py-8 text-destructive">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                <p>Posição bloqueada para uso</p>
+                <p>Posição bloqueado para uso</p>
               </div>
             )}
 

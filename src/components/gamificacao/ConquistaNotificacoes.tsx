@@ -116,7 +116,7 @@ export function useConquistaNotificacoes(
     // Toast notification
     if (showToast) {
       toast({
-        title: `${config.emoji} Nova Conquista Desbloqueada!`,
+        title: `${config.emoji} Nova Conquista Desbloqueado!`,
         description: (
           <div className="flex flex-col gap-1">
             <span className="font-semibold">{conquista.nome}</span>
@@ -150,10 +150,10 @@ export function useConquistaNotificacoes(
     if (!enabled) return;
 
     const notifiedIds = getNotifiedAchievements();
-    const desbloqueadas = conquistas.filter(c => c.desbloqueada);
+    const desbloqueados = conquistas.filter(c => c.desbloqueado);
     
-    // Encontrar conquistas desbloqueadas mas não notificadas
-    const novasConquistas = desbloqueadas.filter(
+    // Encontrar conquistas desbloqueados mas não notificadas
+    const novasConquistas = desbloqueados.filter(
       c => !notifiedIds.includes(c.id) && !lastNotified.includes(c.id)
     );
 
@@ -245,7 +245,7 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
           {/* Texto */}
           <div>
             <p className="text-sm text-muted-foreground uppercase tracking-wider">
-              Conquista Desbloqueada!
+              Conquista Desbloqueado!
             </p>
             <h2 className="text-2xl font-bold mt-1">{conquista.nome}</h2>
             <p className="text-muted-foreground mt-2">{conquista.descricao}</p>

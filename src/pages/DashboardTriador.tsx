@@ -47,7 +47,7 @@ export default function DashboardTriadorPage() {
   const gamificacao = gamificacaoData.perfil;
   const loadingGamificacao = gamificacaoData.isLoading;
   const conquistasData = useConquistas();
-  const conquistasUsuario = conquistasData.desbloqueadas;
+  const conquistasUsuario = conquistasData.desbloqueados;
   const loadingConquistas = conquistasData.loading;
    const { desafios, loading: loadingDesafios, coletarRecompensa } = useDesafiosDiarios();
   const { ranking, minhaposicao, loading: loadingRanking, periodo: periodoRanking } = useRanking();

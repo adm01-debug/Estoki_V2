@@ -48,7 +48,7 @@ export interface MetricaOperacional {
   
   // Armazenamento
   posicoes_totais: number | null;
-  posicoes_ocupadas: number | null;
+  posicoes_ocupados: number | null;
   taxa_ocupacao: number | null;
   
   // Recebimento

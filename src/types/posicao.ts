@@ -26,9 +26,9 @@ export interface PosicaoFilter {
 
 export interface PosicaoStats {
   total: number;
-  ocupadas: number;
+  ocupados: number;
   livres: number;
-  reservadas: number;
-  bloqueadas: number;
+  reservados: number;
+  bloqueados: number;
   ocupacaoPercentual: number;
 }

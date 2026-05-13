@@ -36,11 +36,11 @@ const loteTransitions: Record<StatusRecebimento, readonly StatusRecebimento[]> =
 };
 
 const tarefaTransitions: Record<StatusTarefa, readonly StatusTarefa[]> = {
-  pendente: ['atribuida', 'bloqueada'],
-  atribuida: ['em_andamento', 'pendente', 'bloqueada'],
-  em_andamento: ['concluida', 'bloqueada', 'pendente'],
+  pendente: ['atribuida', 'bloqueado'],
+  atribuida: ['em_andamento', 'pendente', 'bloqueado'],
+  em_andamento: ['concluida', 'bloqueado', 'pendente'],
   concluida: [],                 // terminal
-  bloqueada: ['pendente', 'atribuida'],
+  bloqueado: ['pendente', 'atribuida'],
 };
 
 const ondaTransitions: Record<StatusOnda, readonly StatusOnda[]> = {

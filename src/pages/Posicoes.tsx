@@ -166,7 +166,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-success/10"><Package className="h-5 w-5 text-success" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-success">{stats.ocupadas}</p>
+                    <p className="text-2xl font-bold text-success">{stats.ocupados}</p>
                     <p className="text-xs text-muted-foreground">Ocupadas</p>
                   </div>
                 </div>

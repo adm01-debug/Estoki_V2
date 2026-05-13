@@ -1,5 +1,5 @@
 // Types para Gestão de Tarefas
-export type StatusTarefa = 'pendente' | 'atribuida' | 'em_andamento' | 'concluida' | 'cancelada' | 'atrasada' | 'bloqueada';
+export type StatusTarefa = 'pendente' | 'atribuida' | 'em_andamento' | 'concluida' | 'cancelada' | 'atrasada' | 'bloqueado';
 export type PrioridadeTarefa = 'baixa' | 'media' | 'alta' | 'urgente';
 export type TipoTarefa = 'recebimento' | 'triagem' | 'armazenamento' | 'separacao' | 'expedicao' | 'inventario' | 'manutencao' | 'transferencia';
 export const tipoLabels: Record<string, string> = {
@@ -18,7 +18,7 @@ export const statusLabels: Record<string, string> = {
   atribuida: "Atribuída", 
   em_andamento: "Em Andamento",
   concluida: "Concluída", 
-  bloqueada: "Bloqueada",
+  bloqueado: "Bloqueada",
   cancelada: "Cancelada",
   atrasada: "Atrasada"
 };
@@ -28,7 +28,7 @@ export const statusColors: Record<string, string> = {
   atribuida: "bg-blue-500/10 text-blue-600 border-blue-500/30",
   em_andamento: "bg-amber-500/10 text-amber-600 border-amber-500/30",
   concluida: "bg-green-500/10 text-green-600 border-green-500/30",
-  bloqueada: "bg-red-500/10 text-red-600 border-red-500/30",
+  bloqueado: "bg-red-500/10 text-red-600 border-red-500/30",
   cancelada: "bg-red-500/10 text-red-600 border-red-500/30",
   atrasada: "bg-amber-500/10 text-amber-600 border-amber-500/30",
 };

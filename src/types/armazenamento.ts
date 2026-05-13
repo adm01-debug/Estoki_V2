@@ -48,9 +48,9 @@ export interface NivelInfo {
 
 export interface EstatisticasZona {
   totalPosicoes: number;
-  ocupadas: number;
+  ocupados: number;
   disponiveis: number;
-  bloqueadas: number;
+  bloqueados: number;
   percentualOcupacao: number;
 }
 

@@ -55,12 +55,12 @@ export default function OcupacaoVisualPage() {
 
   const stats = useMemo(() => {
     const total = posicoesFiltradas.length;
-    const ocupadas = posicoesFiltradas.filter((p) => p.status === "ocupada").length;
+    const ocupados = posicoesFiltradas.filter((p) => p.status === "ocupado").length;
     const livres = posicoesFiltradas.filter((p) => p.status === "livre").length;
-    const bloqueadas = posicoesFiltradas.filter((p) => p.status === "bloqueada" || p.status === "manutencao").length;
-    const reservadas = posicoesFiltradas.filter((p) => p.status === "reservada").length;
-    const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
-    return { total, ocupadas, livres, bloqueadas, reservadas, taxaOcupacao };
+    const bloqueados = posicoesFiltradas.filter((p) => p.status === "bloqueado" || p.status === "manutencao").length;
+    const reservados = posicoesFiltradas.filter((p) => p.status === "reservado").length;
+    const taxaOcupacao = total > 0 ? (ocupados / total) * 100 : 0;
+    return { total, ocupados, livres, bloqueados, reservados, taxaOcupacao };
   }, [posicoesFiltradas]);
 
   const portaPaletes = useMemo(() => {
@@ -110,10 +110,10 @@ export default function OcupacaoVisualPage() {
       <div ref={containerRef} className={cn("p-4 space-y-5", isFullscreen && "bg-background")}>
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
           <KPICard label="Total Posições" value={stats.total} icon={Warehouse} color="bg-primary/10 text-primary" />
-          <KPICard label="Taxa Ocupação" value={`${stats.taxaOcupacao.toFixed(1)}%`} icon={BarChart3} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" subtitle={`${stats.ocupadas} ocupadas`} />
+          <KPICard label="Taxa Ocupação" value={`${stats.taxaOcupacao.toFixed(1)}%`} icon={BarChart3} color="bg-blue-500/10 text-blue-600 dark:text-blue-400" subtitle={`${stats.ocupados} ocupados`} />
           <KPICard label="Livres" value={stats.livres} icon={CheckCircle} color="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" subtitle={`${stats.total > 0 ? ((stats.livres / stats.total) * 100).toFixed(0) : 0}% do total`} />
-          <KPICard label="Reservadas" value={stats.reservadas} icon={Clock} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
-          <KPICard label="Bloqueadas" value={stats.bloqueadas} icon={XCircle} color="bg-red-500/10 text-red-600 dark:text-red-400" />
+          <KPICard label="Reservadas" value={stats.reservados} icon={Clock} color="bg-amber-500/10 text-amber-600 dark:text-amber-400" />
+          <KPICard label="Bloqueadas" value={stats.bloqueados} icon={XCircle} color="bg-red-500/10 text-red-600 dark:text-red-400" />
         </div>
 
         <OcupacaoToolbar

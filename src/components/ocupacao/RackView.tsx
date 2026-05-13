@@ -38,7 +38,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
     };
   }, [positions]);
 
-  const occupied = positions.filter((p) => p.status === "ocupada").length;
+  const occupied = positions.filter((p) => p.status === "ocupado").length;
   const occupancyPercent = positions.length > 0 ? Math.round((occupied / positions.length) * 100) : 0;
 
     const isBoxes = ppName === "Boxes" || ppName === "Expedição" || ppName === "Sem PP";

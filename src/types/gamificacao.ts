@@ -20,7 +20,7 @@ export type TipoEventoXP =
   | 'triagem_rapida'
   | 'triagem_perfeita'
   | 'desafio_concluido'
-  | 'conquista_desbloqueada'
+  | 'conquista_desbloqueado'
   | 'streak_mantido'
   | 'bonus_diario';
 
@@ -50,7 +50,7 @@ export interface ConquistaUsuario {
   user_id: string;
   conquista_id: string;
   progresso: number;
-  desbloqueada: boolean;
+  desbloqueado: boolean;
   data_desbloqueio: string | null;
   created_at: string;
 }
@@ -60,7 +60,7 @@ export interface ConquistaUsuario {
  */
 export interface ConquistaCompleta extends ConquistaDefinicao {
   progresso: number;
-  desbloqueada: boolean;
+  desbloqueado: boolean;
   dataDesbloqueio: Date | null;
 }
 
@@ -198,7 +198,7 @@ export interface CategoriaConfig {
 export interface EstatisticasGamificacao {
   xpTotal: number;
   nivel: number;
-  conquistasDesbloqueadas: number;
+  conquistasDesbloqueados: number;
   conquistasTotal: number;
   desafiosConcluidos: number;
   desafiosAtivos: number;

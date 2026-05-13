@@ -173,23 +173,23 @@ export const useEstoque = () => {
   const estatisticas = useMemo(() => {
     const lista = posicoes || [];
     const total = lista.length;
-    const ocupadas = lista.filter((p) => p.status === 'ocupado').length;
+    const ocupados = lista.filter((p) => p.status === 'ocupado').length;
     const livres = lista.filter((p) => p.status === 'livre').length;
-    const bloqueadas = lista.filter((p) => p.status === 'bloqueado').length;
-    const reservadas = lista.filter((p) => p.status === 'reservado').length;
-    const taxaOcupacao = total > 0 ? (ocupadas / total) * 100 : 0;
+    const bloqueados = lista.filter((p) => p.status === 'bloqueado').length;
+    const reservados = lista.filter((p) => p.status === 'reservado').length;
+    const taxaOcupacao = total > 0 ? (ocupados / total) * 100 : 0;
 
     return {
       total,
-      ocupadas,
+      ocupados,
       livres,
-      bloqueadas,
-      reservadas,
+      bloqueados,
+      reservados,
       taxaOcupacao,
       totalPosicoes: total,
-      posicoesOcupadas: ocupadas,
+      posicoesOcupadas: ocupados,
       posicoesLivres: livres,
-      posicoesBloqueadas: bloqueadas,
+      posicoesBloqueadas: bloqueados,
     };
   }, [posicoes]);
 

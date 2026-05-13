@@ -54,13 +54,13 @@ interface ConquistaUsuario {
   id: string;
   conquista_id: string;
   progresso: number;
-  desbloqueada: boolean;
+  desbloqueado: boolean;
   data_desbloqueio: string | null;
 }
 
 export interface ConquistaCompleta extends ConquistaDefinicao {
   progresso: number;
-  desbloqueada: boolean;
+  desbloqueado: boolean;
   dataDesbloqueio: Date | null;
   IconComponent: LucideIcon;
 }
@@ -153,7 +153,7 @@ export function useConquistas() {
       return {
         ...def,
         progresso: userAchievement?.progresso || 0,
-        desbloqueada: userAchievement?.desbloqueada || false,
+        desbloqueado: userAchievement?.desbloqueado || false,
         dataDesbloqueio: userAchievement?.data_desbloqueio 
           ? new Date(userAchievement.data_desbloqueio) 
           : null,
@@ -173,8 +173,8 @@ export function useConquistas() {
   }, [fetchConquistas]);
 
   // Calculated values
-  const desbloqueadas = conquistas.filter(c => c.desbloqueada);
-  const pontosTotal = desbloqueadas.reduce((acc, c) => acc + c.pontos, 0);
+  const desbloqueados = conquistas.filter(c => c.desbloqueado);
+  const pontosTotal = desbloqueados.reduce((acc, c) => acc + c.pontos, 0);
   
   const conquistasPorCategoria = useMemo(() => {
     const grouped: Record<BadgeCategory, ConquistaCompleta[]> = {
@@ -201,11 +201,11 @@ export function useConquistas() {
     refetch: fetchConquistas,
     atualizarProgresso,
     desbloquearConquista,
-    desbloqueadas,
+    desbloqueados,
     pontosTotal,
     totalConquistas: conquistas.length,
     percentualDesbloqueado: conquistas.length > 0 
-      ? (desbloqueadas.length / conquistas.length) * 100 
+      ? (desbloqueados.length / conquistas.length) * 100 
       : 0,
   };
 }

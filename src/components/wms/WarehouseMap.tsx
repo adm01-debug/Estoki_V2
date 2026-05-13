@@ -11,7 +11,7 @@ interface Position {
   corredor: string;
   coluna: number;
   nivel: number;
-  status: "vazia" | "ocupada" | "reservada" | "bloqueada";
+  status: "vazia" | "ocupado" | "reservado" | "bloqueado";
   ocupacao: number; // 0-100
 }
 
@@ -29,8 +29,8 @@ export function WarehouseMap({ positions, onPositionClick }: WarehouseMapProps) 
   const maxLevel = Math.max(...filteredPositions.map(p => p.nivel), 1);
 
   const getStatusColor = (status: string, ocupacao: number) => {
-    if (status === "bloqueada") return "bg-destructive/50 border-destructive";
-    if (status === "reservada") return "bg-amber-500/50 border-amber-500";
+    if (status === "bloqueado") return "bg-destructive/50 border-destructive";
+    if (status === "reservado") return "bg-amber-500/50 border-amber-500";
     if (ocupacao === 0) return "bg-slate-100 border-slate-200 dark:bg-slate-800 dark:border-slate-700";
     if (ocupacao < 50) return "bg-success/30 border-success/50";
     if (ocupacao < 90) return "bg-success/60 border-success";

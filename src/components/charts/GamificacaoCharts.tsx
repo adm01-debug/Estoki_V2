@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, AreaChart, Area } from "recharts";
 import { tooltipStyle, chartCardClass } from "./chartStyles";
 
-interface GamificacaoChartsProps { xpTotal: number; nivel: number; conquistasDesbloqueadas: number; totalConquistas: number; desafiosConcluidos: number; totalDesafios: number; streakAtual: number; }
+interface GamificacaoChartsProps { xpTotal: number; nivel: number; conquistasDesbloqueados: number; totalConquistas: number; desafiosConcluidos: number; totalDesafios: number; streakAtual: number; }
 
-export function GamificacaoCharts({ xpTotal, nivel, conquistasDesbloqueadas, totalConquistas, desafiosConcluidos, totalDesafios }: GamificacaoChartsProps) {
+export function GamificacaoCharts({ xpTotal, nivel, conquistasDesbloqueados, totalConquistas, desafiosConcluidos, totalDesafios }: GamificacaoChartsProps) {
   const barData = [
-    { name: "Conquistas", concluido: conquistasDesbloqueadas, restante: (totalConquistas || 1) - conquistasDesbloqueadas },
+    { name: "Conquistas", concluido: conquistasDesbloqueados, restante: (totalConquistas || 1) - conquistasDesbloqueados },
     { name: "Desafios", concluido: desafiosConcluidos, restante: (totalDesafios || 1) - desafiosConcluidos },
   ];
 
