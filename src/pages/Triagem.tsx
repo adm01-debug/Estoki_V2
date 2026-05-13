@@ -8,7 +8,7 @@ import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
  import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
- import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare } from "lucide-react";
+  import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare, User, Clock } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
