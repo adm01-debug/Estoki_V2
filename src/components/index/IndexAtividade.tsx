@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock } from "lucide-react";
+ import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock, MoreVertical } from "lucide-react";
 import { getStatusClasses } from "@/lib/statusColors";
 
 const itemVariants = {
@@ -72,25 +72,33 @@ export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
               atividades.map((activity, index) => {
                 const Icon = getActivityIcon(activity.type);
                 return (
-                  <motion.div
-                    key={activity.id}
-                    className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.6 + index * 0.08 }}
-                    whileHover={{ x: 4 }}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${getStatusClasses(activity.status)}`}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{activity.desc}</p>
-                      <p className="text-xs text-muted-foreground">{activity.time}</p>
-                    </div>
-                    <Badge variant="outline" className={`text-[10px] font-semibold ${getStatusClasses(activity.status)}`}>
-                      {activity.type}
-                    </Badge>
-                  </motion.div>
+                   <motion.div
+                     key={activity.id}
+                     className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item"
+                     initial={{ opacity: 0, x: -20 }}
+                     animate={{ opacity: 1, x: 0 }}
+                     transition={{ duration: 0.3, delay: 0.6 + index * 0.08 }}
+                     whileHover={{ x: 4 }}
+                   >
+                     <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shadow-sm ${getStatusClasses(activity.status)} transition-transform group-hover/item:scale-110`}>
+                       <Icon className="h-5 w-5" />
+                     </div>
+                     <div className="flex-1 min-w-0">
+                       <p className="text-sm font-bold text-foreground truncate tracking-tight">{activity.desc}</p>
+                       <div className="flex items-center gap-2 mt-0.5">
+                         <Clock className="h-3 w-3 text-muted-foreground/60" />
+                         <p className="text-[11px] font-medium text-muted-foreground">{activity.time}</p>
+                       </div>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-wider px-2 rounded-full ${getStatusClasses(activity.status)}`}>
+                         {activity.type}
+                       </Badge>
+                       <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                         <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                       </Button>
+                     </div>
+                   </motion.div>
                 );
               })
             )}
