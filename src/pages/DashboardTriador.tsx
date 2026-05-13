@@ -41,6 +41,13 @@ import { useProdutividade } from "@/hooks/useProdutividade";
 import { useRanking } from "@/hooks/useRanking";
 import { useAuth } from "@/contexts/AuthContext";
 
+ interface HistoricoTriagem {
+   id: string;
+   data_fim: string;
+   resultado: string | null;
+   items_count: number | null;
+ }
+ 
 export default function DashboardTriadorPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -60,7 +67,7 @@ export default function DashboardTriadorPage() {
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
     const [loadingHist, setLoadingHist] = useState(false);
-     const [recentHistory, setRecentHistory] = useState<unknown[]>([]);
+     const [recentHistory, setRecentHistory] = useState<HistoricoTriagem[]>([]);
     const [triagensHoje, setTriagensHoje] = useState(0);
 
     const loadHistorico = async () => {
