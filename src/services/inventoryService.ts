@@ -5,9 +5,9 @@
  type RastreamentoInsert = Database['public']['Tables']['rastreamento_historico']['Insert'];
  type EstoquePosicaoInsert = Database['public']['Tables']['estoque_posicao']['Insert'];
 
- interface InventoryFilters {
+ interface InventoryFilters extends Record<string, unknown> {
    produtoId?: string;
-   tipo?: string;
+   tipo?: Database['public']['Tables']['rastreamento_historico']['Row']['tipo_evento'];
  }
 
 export const inventoryService = {
