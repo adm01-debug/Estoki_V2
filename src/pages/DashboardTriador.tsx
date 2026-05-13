@@ -1,5 +1,6 @@
  import { useState, useMemo, useEffect } from "react";
  import { supabase } from "@/integrations/supabase/client";
+ import { logger } from "@/utils/logger";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +41,12 @@ import { useProdutividade } from "@/hooks/useProdutividade";
 import { useRanking } from "@/hooks/useRanking";
 import { useAuth } from "@/contexts/AuthContext";
 
+ interface HistoricoTriagem {
+   id: string;
+   data_fim: string | null;
+   resultado: string | null;
+ }
+ 
 export default function DashboardTriadorPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -59,14 +66,14 @@ export default function DashboardTriadorPage() {
    const [tab, setTab] = useState("hoje");
    const [semanalData, setSemanalData] = useState<{ dia: string; itensTriados: number }[]>([]);
     const [loadingHist, setLoadingHist] = useState(false);
-    const [recentHistory, setRecentHistory] = useState<any[]>([]);
+     const [recentHistory, setRecentHistory] = useState<HistoricoTriagem[]>([]);
     const [triagensHoje, setTriagensHoje] = useState(0);
 
     const loadHistorico = async () => {
       if (!user?.id) return;
       setLoadingHist(true);
       const data = await getMetricasDiarias(user.id, 7);
-      setSemanalData(data.map((d: any) => ({
+       setSemanalData(data.map((d: { data: string; triagens: number }) => ({
         dia: new Date(d.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short' }),
         itensTriados: d.triagens
       })));
@@ -76,9 +83,9 @@ export default function DashboardTriadorPage() {
     const loadRecentActivity = async () => {
       if (!user?.id) return;
       const { data } = await supabase
-        .from('eventos_triagem')
-        .select('id, data_fim, resultado, items_count')
-        .eq('operador_id', user.id)
+         .from('eventos_triagem')
+         .select('id, data_fim, resultado')
+         .eq('operador_id', user.id)
         .not('data_fim', 'is', null)
         .order('data_fim', { ascending: false })
         .limit(5);
@@ -354,7 +361,7 @@ export default function DashboardTriadorPage() {
                             <div>
                               <p className="text-sm font-medium capitalize">{item.resultado || 'Triado'}</p>
                               <p className="text-[10px] text-muted-foreground">
-                                {new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • {item.items_count || 0} itens
+                                 {item.data_fim ? new Date(item.data_fim).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '---'}
                               </p>
                             </div>
                           </div>

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+ import { User, Session } from "@supabase/supabase-js";
+ import { supabase } from "@/integrations/supabase/client";
+ import { logger } from "@/utils/logger";
 
 type AppRole = "operador" | "supervisor" | "admin";
 
@@ -44,9 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (profileRes.data) setProfile(profileRes.data);
       if (roleRes.data) setRole(roleRes.data.role as AppRole);
-    } catch (error) {
-      if (import.meta.env.DEV) console.error("Error fetching user data:", error);
-    }
+     } catch (error) {
+       logger.error("Error fetching user data:", error);
+     }
   }, []);
 
   useEffect(() => {
@@ -96,9 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (sess?.user) {
           await fetchUserData(sess.user.id);
         }
-      } catch (err) {
-        if (import.meta.env.DEV) console.warn("Auth hydration failed or timed out:", err);
-      } finally {
+       } catch (err) {
+         logger.warn("Auth hydration failed or timed out:", { error: err });
+       } finally {
         if (mounted) {
           hydrated.current = true;
           setLoading(false);

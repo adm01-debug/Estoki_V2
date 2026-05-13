@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { toast } from 'sonner';
-import type { SerialPort } from '@/types/web-serial';
+ import { toast } from 'sonner';
+ import type { SerialPort } from '@/types/web-serial';
+ import { logger } from '@/utils/logger';
 
 export interface BalancaConfig {
   baudRate: number;
@@ -92,9 +93,9 @@ export function useBalanca() {
       setConectada(false);
       setLeitura(null);
       toast.info('Balança desconectada');
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Erro ao desconectar:', error);
-    }
+     } catch (error) {
+       logger.error('Erro ao desconectar:', error);
+     }
   }, []);
   
   const conectar = useCallback(async (configCustom?: Partial<BalancaConfig>) => {
