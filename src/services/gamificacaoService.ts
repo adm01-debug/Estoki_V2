@@ -1,4 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
+ import { supabase } from '@/integrations/supabase/client';
+ import { logger } from '@/utils/logger';
 
 export const gamificacaoService = {
   async addXP(userId: string, amount: number, reason: string): Promise<boolean> {
@@ -9,10 +10,10 @@ export const gamificacaoService = {
         .eq('user_id', userId)
         .single();
 
-      if (userError && userError.code !== 'PGRST116') {
-        if (import.meta.env.DEV) console.error('Erro ao buscar usuário:', userError);
-        return false;
-      }
+       if (userError && userError.code !== 'PGRST116') {
+         logger.error('Erro ao buscar usuário para XP', userError, { userId });
+         return false;
+       }
 
       const currentXP = userData?.xp_total || 0;
       const newXP = currentXP + amount;
@@ -27,10 +28,10 @@ export const gamificacaoService = {
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
 
-      if (upsertError) {
-        if (import.meta.env.DEV) console.error('Erro ao atualizar XP:', upsertError);
-        return false;
-      }
+       if (upsertError) {
+         logger.error('Erro ao atualizar XP do usuário', upsertError, { userId, amount });
+         return false;
+       }
 
       await (supabase.from as any)('xp_historico').insert({
         user_id: userId,
@@ -39,10 +40,10 @@ export const gamificacaoService = {
       });
 
       return true;
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Erro ao adicionar XP:', error);
-      return false;
-    }
+     } catch (error) {
+       logger.error('Erro inesperado ao adicionar XP', error, { userId, amount });
+       return false;
+     }
   },
 
   async checkConquistas(userId: string): Promise<string[]> {
@@ -86,10 +87,10 @@ export const gamificacaoService = {
       }
 
       return novasConquistas;
-    } catch (error) {
-      if (import.meta.env.DEV) console.error('Erro ao verificar conquistas:', error);
-      return [];
-    }
+     } catch (error) {
+       logger.error('Erro ao verificar conquistas', error, { userId });
+       return [];
+     }
   },
 
   async getDesafiosDiarios(userId: string) {
@@ -100,10 +101,10 @@ export const gamificacaoService = {
       .select('*')
       .eq('data_ativo', today);
 
-    if (error) {
-      if (import.meta.env.DEV) console.error('Erro ao buscar desafios:', error);
-      return [];
-    }
+     if (error) {
+       logger.error('Erro ao buscar desafios diários', error, { userId });
+       return [];
+     }
 
     const { data: progresso } = await supabase
       .from('desafios_usuarios')
@@ -142,10 +143,10 @@ export const gamificacaoService = {
       .order('xp_total', { ascending: false })
       .limit(limit);
 
-    if (error) {
-      if (import.meta.env.DEV) console.error('Erro ao buscar ranking:', error);
-      return [];
-    }
+     if (error) {
+       logger.error('Erro ao buscar ranking de gamificação', error);
+       return [];
+     }
 
     return data || [];
   },
