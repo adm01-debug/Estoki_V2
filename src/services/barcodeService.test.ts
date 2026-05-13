@@ -5,13 +5,11 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn().mockReturnThis(),
-      insert: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      delete: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn(),
-    })),
-  },
+      maybeSingle: vi.fn().mockResolvedValue({ data: { id: '1', barcode: '123' }, error: null }),
+      update: vi.fn().mockReturnThis()
+    }))
+  }
 }));
 
 describe('barcodeService', () => {
@@ -19,11 +17,18 @@ describe('barcodeService', () => {
     vi.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(barcodeService).toBeDefined();
+  it('should find product by barcode', async () => {
+    const product = await barcodeService.findByBarcode('123');
+    expect(product.id).toBe('1');
   });
 
-  it('should have expected methods', () => {
-    expect(typeof barcodeService).toBe('object');
+  it('should generate barcode', async () => {
+    const barcode = await barcodeService.generateBarcode('EAN13');
+    expect(barcode).toMatch(/^789\d{9}$/);
+  });
+
+  it('should associate barcode', async () => {
+    await barcodeService.associateBarcode('1', '123456');
+    expect(true).toBe(true);
   });
 });

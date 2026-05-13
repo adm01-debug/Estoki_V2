@@ -1,19 +1,20 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
 
 export function useToggle(initialValue = false): [boolean, () => void, (value: boolean) => void] {
   const [value, setValue] = useState(initialValue);
 
-  const toggle = useCallback(() => setValue(v => !v), []);
-  const set = useCallback((v: boolean) => setValue(v), []);
+  const toggle = useCallback(() => {
+    setValue(v => !v);
+  }, []);
 
-  return [value, toggle, set];
+  return [value, toggle, setValue];
 }
 
-export function useDisclosure(initialOpen = false) {
-  const [isOpen, toggle, setIsOpen] = useToggle(initialOpen);
+export function useDisclosure(initialValue = false) {
+  const [isOpen, toggle, setIsOpen] = useToggle(initialValue);
 
-  const open = useCallback(() => setIsOpen(true), [setIsOpen]);
-  const close = useCallback(() => setIsOpen(false), [setIsOpen]);
+  const onOpen = useCallback(() => setIsOpen(true), [setIsOpen]);
+  const onClose = useCallback(() => setIsOpen(false), [setIsOpen]);
 
-  return { isOpen, toggle, open, close, setIsOpen };
+  return { isOpen, onOpen, onClose, onToggle: toggle };
 }

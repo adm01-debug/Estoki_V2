@@ -3,16 +3,17 @@ import { renderHook } from '@testing-library/react';
 import { usePrevious } from './usePrevious';
 
 describe('usePrevious', () => {
-  it('should return undefined on first render', () => {
-    const { result } = renderHook(() => usePrevious('initial'));
-    expect(result.current).toBeUndefined();
-  });
-
-  it('should return previous value after update', () => {
+  it('should return previous value', () => {
     const { result, rerender } = renderHook(({ value }) => usePrevious(value), {
-      initialProps: { value: 'first' }
+      initialProps: { value: 1 }
     });
-    rerender({ value: 'second' });
-    expect(result.current).toBe('first');
+
+    expect(result.current).toBe(undefined);
+
+    rerender({ value: 2 });
+    expect(result.current).toBe(1);
+
+    rerender({ value: 3 });
+    expect(result.current).toBe(2);
   });
 });

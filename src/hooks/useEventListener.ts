@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export function useEventListener<K extends keyof WindowEventMap>(
   eventName: K,
   handler: (event: WindowEventMap[K]) => void,
-  element: Window | HTMLElement | null = typeof window !== "undefined" ? window : null
+  element: Window | HTMLElement = window
 ) {
   const savedHandler = useRef(handler);
 
@@ -12,11 +12,10 @@ export function useEventListener<K extends keyof WindowEventMap>(
   }, [handler]);
 
   useEffect(() => {
-    if (!element) return;
-
-    const eventListener = (event: Event) => savedHandler.current(event as WindowEventMap[K]);
+    const eventListener = (event: any) => savedHandler.current(event);
     element.addEventListener(eventName, eventListener);
-
-    return () => element.removeEventListener(eventName, eventListener);
+    return () => {
+      element.removeEventListener(eventName, eventListener);
+    };
   }, [eventName, element]);
 }

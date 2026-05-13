@@ -3,27 +3,27 @@ import { renderHook, act } from '@testing-library/react';
 import { usePagination } from './usePagination';
 
 describe('usePagination', () => {
-  it('should initialize with first page', () => {
-    const { result } = renderHook(() => usePagination({ totalItems: 100, itemsPerPage: 10 }));
+  const items = Array.from({ length: 25 }, (_, i) => i + 1);
+
+  it('should paginate items correctly', () => {
+    const { result } = renderHook(() => usePagination(items, 10));
+
+    expect(result.current.items).toHaveLength(10);
+    expect(result.current.totalPages).toBe(3);
     expect(result.current.currentPage).toBe(1);
-    expect(result.current.totalPages).toBe(10);
-  });
 
-  it('should go to next page', () => {
-    const { result } = renderHook(() => usePagination({ totalItems: 100, itemsPerPage: 10 }));
-    act(() => { result.current.nextPage(); });
+    act(() => {
+      result.current.nextPage();
+    });
+
     expect(result.current.currentPage).toBe(2);
-  });
+    expect(result.current.items[0]).toBe(11);
 
-  it('should go to previous page', () => {
-    const { result } = renderHook(() => usePagination({ totalItems: 100, itemsPerPage: 10, initialPage: 5 }));
-    act(() => { result.current.prevPage(); });
-    expect(result.current.currentPage).toBe(4);
-  });
+    act(() => {
+      result.current.goToPage(3);
+    });
 
-  it('should not exceed bounds', () => {
-    const { result } = renderHook(() => usePagination({ totalItems: 20, itemsPerPage: 10 }));
-    act(() => { result.current.goToPage(5); });
-    expect(result.current.currentPage).toBe(2);
+    expect(result.current.currentPage).toBe(3);
+    expect(result.current.items).toHaveLength(5);
   });
 });

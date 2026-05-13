@@ -1,52 +1,28 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-/**
- * Hook para debounce de valores
- * Útil para campos de busca e inputs que disparam ações
- * 
- * @example
- * const [search, setSearch] = useState("");
- * const debouncedSearch = useDebounce(search, 300);
- * 
- * useEffect(() => {
- *   // Executado apenas após 300ms sem mudanças
- *   fetchResults(debouncedSearch);
- * }, [debouncedSearch]);
- */
-export function useDebounce<T>(value: T, delay: number = 300): T {
+export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(handler);
     };
   }, [value, delay]);
 
   return debouncedValue;
 }
 
-/**
- * Hook para debounce de funções
- * 
- * @example
- * const debouncedSave = useDebouncedCallback(
- *   (data) => saveToServer(data),
- *   500
- * );
- */
-import { useCallback, useRef } from "react";
-
 export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,
-  delay: number = 300
-): T {
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  delay: number
+): (...args: Parameters<T>) => void {
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const debouncedCallback = useCallback(
+  return useCallback(
     (...args: Parameters<T>) => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -57,7 +33,5 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
       }, delay);
     },
     [callback, delay]
-  ) as T;
-
-  return debouncedCallback;
+  );
 }
