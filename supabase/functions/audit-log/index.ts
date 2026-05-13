@@ -1,3 +1,4 @@
+  const startTime = performance.now();
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -16,6 +17,10 @@ serve(async (req) => {
         const { user_id, action: auditAction, entity_type, entity_id, changes, metadata, ip_address } = data;
         const { data: log, error } = await supabase.from("audit_log").insert({ user_id, action: auditAction, entity_type, entity_id, changes, metadata, ip_address }).select().single();
         if (error) throw error;
+        
+        const duration = performance.now() - startTime;
+        console.info(`[Tracing] Audit log created in ${duration.toFixed(2)}ms`);
+
         return new Response(JSON.stringify({ success: true, log }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
       }
       case "query": {
