@@ -39,7 +39,10 @@ export function useAdjustments() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as (Adjustment & { produto: any; lote: any })[];
+      return data as (Adjustment & { 
+        produto: { nome: string; sku: string } | null; 
+        lote: { numero_lote: string } | null 
+      })[];
     },
   });
 

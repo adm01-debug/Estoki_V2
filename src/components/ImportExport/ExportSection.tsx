@@ -1,3 +1,5 @@
+ import { Database } from "@/integrations/supabase/types";
+ import { logger } from "@/utils/logger";
 import { useState } from "react";
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +17,8 @@ export function ExportSection() {
 
     setExporting(templateId);
     try {
-      const { data, error } = await (supabase.from(template.table as any) as any)
+      const { data, error } = await supabase
+        .from(template.table as keyof Database['public']['Tables'])
         .select("*")
         .limit(5000);
         
@@ -36,8 +39,10 @@ export function ExportSection() {
       link.click();
       URL.revokeObjectURL(url);
       toast.success(`${data.length} registros exportados!`);
-    } catch (err: any) {
-      toast.error(`Erro na exportação: ${err.message || String(err)}`);
+    } catch (err) {
+      const error = err as Error;
+      logger.error('Erro na exportação', error);
+      toast.error(`Erro na exportação: ${error.message || String(err)}`);
     } finally {
       setExporting(null);
     }

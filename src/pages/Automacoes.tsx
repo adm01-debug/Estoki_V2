@@ -1,3 +1,4 @@
+ import { logger } from "@/utils/logger";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -20,7 +21,7 @@ interface Workflow {
   tipo: "auto_block_vencido" | "alerta_estoque_baixo" | "aprovacao_movimentacao" | "resumo_diario";
   ativo: boolean;
   ultimaExecucao: string | null;
-  config: Record<string, any>;
+   config: Record<string, string | number | boolean | null>;
 }
 
 const defaultWorkflows: Workflow[] = [
@@ -89,7 +90,7 @@ export default function Automacoes() {
             .from("lotes")
             .select("id, numero_lote, data_validade, produto_id")
             .lt("data_validade", new Date().toISOString())
-            .neq("status", "quarentena" as any);
+            .neq("status", "quarentena");
 
           if (error) throw error;
 
@@ -97,7 +98,7 @@ export default function Automacoes() {
           for (const lote of lotesVencidos || []) {
             const { error: updateError } = await supabase
               .from("lotes")
-              .update({ status: "quarentena" as any })
+                .update({ status: "quarentena" as "quarentena" })
               .eq("id", lote.id);
             
             if (!updateError) {

@@ -1,3 +1,4 @@
+ import { Tarefa } from "@/types/tarefas";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,14 @@ import {
   Plus, Search, Filter, Package, Loader2, Target, LayoutGrid, List, BarChart2 
 } from "lucide-react";
 
-import { statusLabels, tipoLabels } from "@/types/tarefas";
+ import { statusLabels, tipoLabels } from "@/types/tarefas";
+ 
+ const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
+   baixa: "low",
+   media: "medium",
+   alta: "high",
+   urgente: "critical",
+ };
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
@@ -80,24 +88,25 @@ export default function GestaoTarefasPage() {
                 { id: "em_andamento", title: "Em Andamento", color: "bg-blue-500" },
                 { id: "concluida", title: "Concluídas", color: "bg-success" }
               ]}
-              items={tarefasFiltradas.map((t: any) => ({
-                id: t.id,
-                columnId: t.status,
-                title: t.descricao || "Sem descrição",
-                description: `Qtd: ${t.quantidade}`,
-                priority: t.prioridade,
-                tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
-              }))}
-              renderItem={(item) => {
-                const t = tarefasFiltradas.find((x: any) => x.id === item.id);
-                return (
-                  <TarefaCard 
-                    tarefa={t} 
-                    onIniciar={handleIniciar} 
-                    onConcluir={handleConcluir} 
-                  />
-                );
-              }}
+               items={tarefasFiltradas.map((t: Tarefa) => ({
+                 id: t.id,
+                 columnId: t.status,
+                 title: t.instrucoes || "Sem descrição",
+                 description: `Qtd: ${t.quantidade}`,
+                 priority: priorityMap[t.prioridade] || "medium",
+                 tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
+               }))}
+               renderItem={(item) => {
+                 const t = tarefasFiltradas.find((x: Tarefa) => x.id === item.id);
+                 if (!t) return null;
+                 return (
+                   <TarefaCard 
+                     tarefa={t} 
+                     onIniciar={handleIniciar} 
+                     onConcluir={handleConcluir} 
+                   />
+                 );
+               }}
             />
           </TabsContent>
 
@@ -129,7 +138,7 @@ export default function GestaoTarefasPage() {
                   <Target className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>Nenhuma tarefa encontrada</p>
                 </div>
               ) : (
-                tarefasFiltradas.map((tarefa: any) => (
+               tarefasFiltradas.map((tarefa: Tarefa) => (
                   <TarefaCard 
                     key={tarefa.id} 
                     tarefa={tarefa} 

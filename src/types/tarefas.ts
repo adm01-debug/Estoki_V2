@@ -1,7 +1,4 @@
-// Types para Gestão de Tarefas
-export type StatusTarefa = 'pendente' | 'atribuida' | 'em_andamento' | 'concluida' | 'cancelada' | 'atrasada' | 'bloqueado';
-export type PrioridadeTarefa = 'baixa' | 'media' | 'alta' | 'urgente';
-export type TipoTarefa = 'recebimento' | 'triagem' | 'armazenamento' | 'separacao' | 'expedicao' | 'inventario' | 'manutencao' | 'transferencia';
+ // Types para Gestão de Tarefas
 export const tipoLabels: Record<string, string> = {
   separacao: "Separação", 
   armazenagem: "Armazenagem", 
@@ -44,22 +41,28 @@ export const prioridadeColors: Record<string, string> = {
   urgente: "bg-red-500/10 text-red-600",
 };
 
-export interface Tarefa {
-  id: string;
-  titulo: string;
-  descricao?: string;
-  tipo: TipoTarefa;
-  status: StatusTarefa;
-  prioridade: PrioridadeTarefa;
-  responsavel_id?: string;
-  responsavel_nome?: string;
-  data_criacao: string;
-  data_limite?: string;
-  data_conclusao?: string;
-  lote_id?: string;
-  posicao_id?: string;
-  observacoes?: string;
-}
+ import { Database } from "@/integrations/supabase/types";
+ 
+ export type StatusTarefa = Database['public']['Enums']['status_tarefa'];
+ export type PrioridadeTarefa = Database['public']['Enums']['prioridade_tarefa'];
+ export type TipoTarefa = Database['public']['Enums']['tipo_tarefa'];
+ 
+ export interface Tarefa {
+   id: string;
+   instrucoes: string | null;
+   tipo: TipoTarefa;
+   status: StatusTarefa;
+   prioridade: PrioridadeTarefa;
+   operador_id?: string | null;
+   created_at: string;
+   data_inicio?: string | null;
+   data_conclusao?: string | null;
+   lote_id?: string | null;
+   posicao_origem_id?: string | null;
+   posicao_destino_id?: string | null;
+   quantidade: number;
+   zona?: string | null;
+ }
 
 export interface TarefaInput {
   titulo: string;

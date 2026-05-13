@@ -1,3 +1,4 @@
+ import { logger } from '@/utils/logger';
 import { useState, useEffect } from 'react';
 
 interface BatteryState {
@@ -10,10 +11,10 @@ interface BatteryState {
    readonly chargingTime: number;
    readonly dischargingTime: number;
    readonly level: number;
-   onchargingchange: ((this: BatteryManager, ev: Event) => any) | null;
-   onchargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
-   ondischargingtimechange: ((this: BatteryManager, ev: Event) => any) | null;
-   onlevelchange: ((this: BatteryManager, ev: Event) => any) | null;
+    onchargingchange: ((this: BatteryManager, ev: Event) => void) | null;
+    onchargingtimechange: ((this: BatteryManager, ev: Event) => void) | null;
+    ondischargingtimechange: ((this: BatteryManager, ev: Event) => void) | null;
+    onlevelchange: ((this: BatteryManager, ev: Event) => void) | null;
  }
  
  interface NavigatorWithBattery extends Navigator {
@@ -44,9 +45,9 @@ interface BatteryState {
            updateBattery();
            batteryManager.addEventListener('levelchange', updateBattery);
            batteryManager.addEventListener('chargingchange', updateBattery);
-         } catch (error) {
-           console.error('Erro ao acessar API de bateria:', error);
-         }
+          } catch (error) {
+            logger.error('Erro ao acessar API de bateria', error);
+          }
        }
      };
      

@@ -3387,6 +3387,7 @@ export type Database = {
         | "conferido"
         | "divergencia"
         | "cancelado"
+        | "quarentena"
       status_registro_td:
         | "aberto"
         | "em_analise"
@@ -3408,6 +3409,8 @@ export type Database = {
         | "em_andamento"
         | "concluida"
         | "bloqueada"
+        | "cancelada"
+        | "atrasada"
       tipo_alerta:
         | "estoque_minimo"
         | "estoque_maximo"
@@ -3439,6 +3442,9 @@ export type Database = {
         | "transferencia"
         | "inventario"
         | "expedicao"
+        | "recebimento"
+        | "triagem"
+        | "manutencao"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3613,6 +3619,7 @@ export const Constants = {
         "conferido",
         "divergencia",
         "cancelado",
+        "quarentena",
       ],
       status_registro_td: [
         "aberto",
@@ -3637,6 +3644,8 @@ export const Constants = {
         "em_andamento",
         "concluida",
         "bloqueada",
+        "cancelada",
+        "atrasada",
       ],
       tipo_alerta: [
         "estoque_minimo",
@@ -3671,6 +3680,9 @@ export const Constants = {
         "transferencia",
         "inventario",
         "expedicao",
+        "recebimento",
+        "triagem",
+        "manutencao",
       ],
     },
   },
