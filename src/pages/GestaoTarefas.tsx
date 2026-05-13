@@ -1,6 +1,3 @@
- import { tipoLabels } from "@/types/tarefas";
- 
- const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
    baixa: "low",
    media: "medium",
    alta: "high",
