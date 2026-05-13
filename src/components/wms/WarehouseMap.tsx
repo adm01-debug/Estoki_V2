@@ -11,7 +11,7 @@ interface Position {
   corredor: string;
   coluna: number;
   nivel: number;
-  status: "vazia" | "ocupado" | "reservado" | "bloqueado";
+   status: "livre" | "ocupado" | "reservado" | "bloqueado";
   ocupacao: number; // 0-100
 }
 
