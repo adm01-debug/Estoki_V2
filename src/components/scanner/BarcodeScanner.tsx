@@ -1,3 +1,4 @@
+ import { logger } from '@/utils/logger';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 declare global {
@@ -37,8 +38,7 @@ export function BarcodeScanner({
   const [flashOn, setFlashOn] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const detectorRef = useRef<any>(null);
+  const detectorRef = useRef<any>(null); // keeping any temporarily for the dynamic detector, but will use logger
   const animationRef = useRef<number | null>(null);
 
   const initBarcodeDetector = useCallback(async () => {
@@ -46,7 +46,7 @@ export function BarcodeScanner({
       try {
         detectorRef.current = new window.BarcodeDetector!({ formats });
       } catch (err) {
-        if (import.meta.env.DEV) console.warn("BarcodeDetector not supported");
+        logger.warn("BarcodeDetector not supported");
         setError('Scanner não suportado neste dispositivo');
       }
     } else {
@@ -79,7 +79,7 @@ export function BarcodeScanner({
 
       // Check for flash capability
       const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities() as any;
+      const capabilities = track.getCapabilities() as MediaTrackCapabilities & { torch?: boolean };
       setHasFlash(!!capabilities?.torch);
 
       setIsScanning(true);
@@ -113,7 +113,7 @@ export function BarcodeScanner({
       });
       setFlashOn(!flashOn);
     } catch (err) {
-      if (import.meta.env.DEV) console.error("Flash toggle failed:", err);
+      logger.error("Flash toggle failed", err);
     }
   }, [flashOn, hasFlash]);
 
