@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useMovimentacoes } from './useMovimentacoes';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,12 +11,14 @@ vi.mock('@/integrations/supabase/client', () => ({
       limit: vi.fn().mockReturnThis(),
       insert: vi.fn().mockResolvedValue({ error: null }),
       eq: vi.fn().mockReturnThis(),
+      then: vi.fn((cb) => Promise.resolve(cb({ data: [], error: null }))),
     })),
     channel: vi.fn(() => ({
       on: vi.fn().mockReturnThis(),
       subscribe: vi.fn().mockReturnThis(),
     })),
     removeChannel: vi.fn(),
+    rpc: vi.fn().mockResolvedValue({ error: null }),
   },
 }));
 
@@ -37,9 +39,10 @@ describe('useMovimentacoes', () => {
     vi.clearAllMocks();
   });
 
-  it('should initialize with loading state', async () => {
+  it('should initialize correctly', async () => {
     const { result } = renderHook(() => useMovimentacoes());
     expect(result.current.loading).toBe(true);
+    await waitFor(() => expect(result.current.loading).toBe(false));
   });
 
   it('should call supabase to fetch data on mount', async () => {
@@ -52,12 +55,12 @@ describe('useMovimentacoes', () => {
     
     const success = await result.current.registrarMovimentacao({
       tipo: 'recebimento_nf',
-      produto_id: 'prod-1',
+      lote_id: 'lote-1',
       quantidade: 10,
       descricao: 'Teste',
     });
 
     expect(success).toBe(true);
-    expect(supabase.from).toHaveBeenCalledWith('rastreamento_historico');
+    expect(supabase.rpc).toHaveBeenCalledWith('move_stock', expect.any(Object));
   });
 });

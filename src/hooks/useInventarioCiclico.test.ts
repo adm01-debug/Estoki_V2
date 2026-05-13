@@ -1,21 +1,37 @@
-// @ts-nocheck - Test file uses outdated API, needs update
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useInventarioCiclico } from './useInventarioCiclico';
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
-      select: vi.fn(() => ({
-        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
-      })),
+      select: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
-          single: vi.fn(() => Promise.resolve({ data: { id: 'test-ciclo' }, error: null })),
+          single: vi.fn().mockResolvedValue({ data: { id: 'test-ciclo' }, error: null }),
         })),
       })),
+      then: vi.fn((cb) => Promise.resolve(cb({ data: [], error: null }))),
     })),
+    channel: vi.fn(() => ({
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn().mockReturnThis(),
+    })),
+    removeChannel: vi.fn(),
   },
+}));
+
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: vi.fn(),
+  }),
+}));
+
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: 'test-user-id' },
+  }),
 }));
 
 describe('useInventarioCiclico', () => {
@@ -23,18 +39,16 @@ describe('useInventarioCiclico', () => {
     vi.clearAllMocks();
   });
 
-  it('deve inicializar com array vazio de ciclos', () => {
+  it('deve inicializar corretamente', async () => {
     const { result } = renderHook(() => useInventarioCiclico());
+    expect(result.current.loading).toBe(true);
+    await waitFor(() => expect(result.current.loading).toBe(false));
     expect(result.current.ciclos).toEqual([]);
   });
 
-  it('deve ter função iniciarCiclo', () => {
+  it('deve ter funções de ação definidas', () => {
     const { result } = renderHook(() => useInventarioCiclico());
     expect(typeof result.current.iniciarCiclo).toBe('function');
-  });
-
-  it('deve ter função registrarContagem', () => {
-    const { result } = renderHook(() => useInventarioCiclico());
     expect(typeof result.current.registrarContagem).toBe('function');
   });
 });
