@@ -57,43 +57,60 @@ export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
            </CardContent>
          </Card>
 
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Package className="h-4 w-4" />
-            <span className="text-xs">Posições</span>
-          </div>
-          <p className="text-2xl font-bold">
-            {safeKpis.posicoesOcupadas}
-            <span className="text-sm font-normal text-muted-foreground">/{safeKpis.totalPosicoes}</span>
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <TrendingUp className="h-4 w-4" />
-            <span className="text-xs">Giro Médio</span>
-          </div>
-          <p className="text-2xl font-bold">
-            {safeKpis.giroMedio}
-            <span className="text-sm font-normal text-muted-foreground"> dias</span>
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card className="border-yellow-500/50 bg-yellow-500/5">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 text-yellow-600 mb-1">
-            <AlertTriangle className="h-4 w-4" />
-            <span className="text-xs">Parados +30d</span>
-          </div>
-          <p className="text-2xl font-bold text-yellow-600">{safeKpis.itensParados30dias}</p>
-          <p className="text-xs text-muted-foreground">R$ {(safeKpis.valorParado || 0).toLocaleString()}</p>
-        </CardContent>
-       </Card>
-     </div>
+         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+           <CardContent className="p-5">
+             <div className="flex items-center justify-between mb-3">
+               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
+                 <Package className="h-5 w-5 text-primary" />
+               </div>
+             </div>
+             <div className="space-y-1">
+               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Posições Ativas</p>
+               <div className="flex items-baseline gap-1">
+                 <p className="text-3xl font-black tracking-tight text-foreground">{safeKpis.posicoesOcupadas}</p>
+                 <span className="text-sm font-bold text-muted-foreground">/ {safeKpis.totalPosicoes}</span>
+               </div>
+             </div>
+             <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Capacidade Instalada</p>
+           </CardContent>
+         </Card>
+ 
+         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+           <CardContent className="p-5">
+             <div className="flex items-center justify-between mb-3">
+               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
+                 <TrendingUp className="h-5 w-5 text-primary" />
+               </div>
+               <div className="flex items-center gap-1 text-[10px] font-bold text-destructive bg-destructive/10 px-1.5 py-0.5 rounded-full">
+                 <ArrowDownRight className="h-3 w-3" />1.2%
+               </div>
+             </div>
+             <div className="space-y-1">
+               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Giro Médio</p>
+               <div className="flex items-baseline gap-1">
+                 <p className="text-3xl font-black tracking-tight text-foreground">{safeKpis.giroMedio}</p>
+                 <span className="text-sm font-bold text-muted-foreground">dias</span>
+               </div>
+             </div>
+             <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Meta: 15 dias</p>
+           </CardContent>
+         </Card>
+ 
+         <Card className="glass-card border-warning/20 bg-warning/5 group hover:border-warning/40 transition-all duration-300">
+           <CardContent className="p-5">
+             <div className="flex items-center justify-between mb-3">
+               <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center border border-warning/20 group-hover:scale-110 transition-transform">
+                 <AlertTriangle className="h-5 w-5 text-warning" />
+               </div>
+             </div>
+             <div className="space-y-1">
+               <p className="text-[10px] font-bold text-warning/80 uppercase tracking-widest">Parados +30d</p>
+               <p className="text-3xl font-black tracking-tight text-warning">{safeKpis.itensParados30dias}</p>
+             </div>
+             <p className="text-[10px] font-bold text-muted-foreground/80 mt-4">R$ {(safeKpis.valorParado || 0).toLocaleString()}</p>
+           </CardContent>
+         </Card>
+       </div>
 
      <div className="grid grid-cols-2 gap-3">
        <Card className="bg-blue-500/5 border-blue-500/20">
