@@ -80,7 +80,8 @@ export function IndexKPIs({ items, loading, onNavigate }: Props) {
              </TooltipContent>
            </Tooltip>
         </motion.div>
-      ))}
-    </div>
-  );
-}
+         ))}
+       </div>
+     </TooltipProvider>
+   );
+ }
