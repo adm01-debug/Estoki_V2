@@ -2,17 +2,6 @@ import { useCallback } from 'react';
 
  import { logger } from '@/utils/logger';
  
- interface GTag {
-   (command: 'event', eventName: string, eventParams?: Record<string, unknown>): void;
-   (command: 'config', targetId: string, config?: Record<string, unknown>): void;
- }
- 
- declare global {
-   interface Window {
-     gtag?: GTag;
-   }
- }
- 
  export function useAnalytics() {
   const track = useCallback((event: string, data?: Record<string, unknown>) => {
      if (typeof window !== 'undefined' && window.gtag) {
