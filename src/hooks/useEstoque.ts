@@ -90,9 +90,9 @@ export const useEstoque = () => {
     }
   });
 
-     const updatePosicao = useMutation({
-       mutationFn: async ({ id, ids, motivo, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[]; motivo?: string })) => {
-        const payload = { ...dados };
+  const updatePosicao = useMutation({
+    mutationFn: async ({ id, ids, motivo, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[]; motivo?: string })) => {
+      const payload = { ...dados };
         
         // Se estiver bloqueando ou reservando, registra quem e quando
         // Note: auth should be handled here to get current user ID
@@ -131,7 +131,7 @@ export const useEstoque = () => {
             posicao_id: posId,
             status_novo: dados.status as string,
             operador_id: user.id,
-            motivo: (dados as any).motivo || 'Alteração manual via painel'
+            motivo: motivo || 'Alteração manual via painel'
           }));
           await supabase.from('posicao_status_log').insert(logs);
         }
