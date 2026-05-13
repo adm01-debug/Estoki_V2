@@ -230,43 +230,44 @@ export default function TriagemPage() {
 
         <TriagemStatsCards stats={stats} />
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por ID, lote..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos</SelectItem>
-                <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                <SelectItem value="aprovado">Aprovado</SelectItem>
-                <SelectItem value="ressalva">Ressalva</SelectItem>
-                <SelectItem value="reprovado">Reprovado</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => {
-                const orders: SortOrder[] = ["data", "resultado"];
-                const currentIndex = orders.indexOf(sortOrder);
-                setSortOrder(orders[(currentIndex + 1) % orders.length]);
-              }}
-              title={`Ordenar por: ${sortOrder}`}
-            >
-              <ArrowUpDown className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
+         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-muted/20 p-6 rounded-2xl border border-border/30">
+           <div className="relative flex-1 max-w-xl">
+             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+             <Input
+               placeholder="Buscar por ID ou Lote..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="pl-10 h-11 rounded-xl bg-background border-border/40 focus:ring-2 focus:ring-primary/20 transition-all"
+             />
+           </div>
+           <div className="flex flex-wrap items-center gap-2">
+             <Select value={statusFilter} onValueChange={setStatusFilter}>
+               <SelectTrigger className="w-[160px] h-11 rounded-xl bg-background border-border/40">
+                 <SelectValue placeholder="Status" />
+               </SelectTrigger>
+               <SelectContent className="rounded-xl border-border/40">
+                 <SelectItem value="todos">Todos os Status</SelectItem>
+                 <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                 <SelectItem value="aprovado">Aprovados</SelectItem>
+                 <SelectItem value="ressalva">Ressalvas</SelectItem>
+                 <SelectItem value="reprovado">Reprovados</SelectItem>
+               </SelectContent>
+             </Select>
+             <Button
+               variant="outline"
+               size="icon"
+               className="h-11 w-11 rounded-xl border-border/40 bg-background"
+               onClick={() => {
+                 const orders: SortOrder[] = ["data", "resultado"];
+                 const currentIndex = orders.indexOf(sortOrder);
+                 setSortOrder(orders[(currentIndex + 1) % orders.length]);
+               }}
+               title={`Ordenar por: ${sortOrder}`}
+             >
+               <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+             </Button>
+           </div>
+         </div>
 
         <div className="space-y-3">
           {filteredAndSortedItems.length === 0 ? (
