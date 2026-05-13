@@ -53,8 +53,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const userEmail = profile?.email || user?.email || '';
   const currentRole = role || 'operador';
 
-  const sidebarWidth = sidebarCollapsed ? "w-[72px]" : "w-[260px]";
-  const mainPadding = sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[260px]";
+   const sidebarWidth = sidebarCollapsed ? "w-[70px]" : "w-[280px]";
+   const mainPadding = sidebarCollapsed ? "lg:pl-[70px]" : "lg:pl-[280px]";
 
   return (
     <AppLayoutContext.Provider value={true}>
@@ -82,11 +82,16 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             onLogout={handleLogout}
           />
 
-          <main id="main-content" className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)} aria-label="Conteúdo principal">
-            <div className="max-w-[1600px] mx-auto">
-              <div className="lg:hidden">
-                <Breadcrumbs />
-              </div>
+           <main 
+             id="main-content" 
+             className={cn(
+               "flex-1 overflow-x-hidden transition-all duration-300 ease-in-out relative z-10",
+               mainPadding
+             )} 
+             aria-label="Conteúdo principal"
+           >
+             <div className="max-w-[1600px] mx-auto min-h-full flex flex-col">
+               <Breadcrumbs className="lg:px-8 py-4" />
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={location.pathname} 
@@ -108,7 +113,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             onNavigate={handleNavigate}
           />
 
-          <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/50 transition-all duration-300", sidebarWidth)}>
+           <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
             <SidebarContent 
               sidebarCollapsed={sidebarCollapsed}
               userName={userName}
