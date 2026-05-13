@@ -36,9 +36,9 @@ export const Header = memo(function Header({
   onLogout
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 border-b border-border/40">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-2xl" />
-      <div className={cn("relative flex items-center justify-between h-14 px-4 max-w-[1600px] mx-auto transition-all duration-300", mainPadding)}>
+     <header className="sticky top-0 z-50 border-b border-border/30">
+       <div className="absolute inset-0 bg-background/70 backdrop-blur-xl" />
+       <div className={cn("relative flex items-center justify-between h-16 px-6 max-w-[1600px] mx-auto transition-all duration-300", mainPadding)}>
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
             <Menu className="h-5 w-5" />
@@ -61,8 +61,7 @@ export const Header = memo(function Header({
             </div>
             <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
           </div>
-          {title && <h1 className="text-lg font-semibold text-foreground hidden sm:block">{title}</h1>}
-          <div className="hidden lg:block"><Breadcrumbs /></div>
+           {title && <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">{title}</h1>}
         </div>
         <div className="flex items-center gap-0.5">
           <GlobalSearch />

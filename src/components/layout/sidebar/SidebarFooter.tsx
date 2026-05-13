@@ -20,7 +20,7 @@ export const SidebarFooter = memo(function SidebarFooter({
   const preloadRoute = useRoutePreload();
   
   return (
-    <div className="p-2 border-t border-sidebar-border/50 space-y-0.5">
+     <div className="p-4 border-t border-sidebar-border/20 space-y-2">
       <SidebarNavButton
         item={{ path: "/configuracoes", icon: Settings, label: "Configurações" }}
         isActive={pathname === "/configuracoes"}

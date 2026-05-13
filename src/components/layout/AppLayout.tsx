@@ -53,8 +53,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   const userEmail = profile?.email || user?.email || '';
   const currentRole = role || 'operador';
 
-  const sidebarWidth = sidebarCollapsed ? "w-[72px]" : "w-[260px]";
-  const mainPadding = sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[260px]";
+   const sidebarWidth = sidebarCollapsed ? "w-[70px]" : "w-[280px]";
+   const mainPadding = sidebarCollapsed ? "lg:pl-[70px]" : "lg:pl-[280px]";
 
   return (
     <AppLayoutContext.Provider value={true}>
@@ -82,22 +82,30 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             onLogout={handleLogout}
           />
 
-          <main id="main-content" className={cn("flex-1 overflow-auto transition-all duration-300 relative z-10", mainPadding)} aria-label="Conteúdo principal">
-            <div className="max-w-[1600px] mx-auto">
-              <div className="lg:hidden">
-                <Breadcrumbs />
-              </div>
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={location.pathname} 
-                  initial={{ opacity: 0, y: 8 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  exit={{ opacity: 0, y: -4 }} 
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                >
-                  {children || <Outlet />}
-                </motion.div>
-              </AnimatePresence>
+           <main 
+             id="main-content" 
+             className={cn(
+               "flex-1 overflow-x-hidden transition-all duration-300 ease-in-out relative z-10",
+               mainPadding
+             )} 
+             aria-label="Conteúdo principal"
+           >
+             <div className="max-w-[1600px] mx-auto min-h-full flex flex-col">
+               <Breadcrumbs className="lg:px-8 pt-4 pb-2" />
+               <div className="px-6 lg:px-8 pb-10 flex-1 flex flex-col">
+                 <AnimatePresence mode="wait">
+                   <motion.div 
+                     key={location.pathname} 
+                     initial={{ opacity: 0, scale: 0.99, y: 10 }} 
+                     animate={{ opacity: 1, scale: 1, y: 0 }} 
+                     exit={{ opacity: 0, scale: 1.01, y: -10 }} 
+                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                     className="flex-1 flex flex-col"
+                   >
+                     {children || <Outlet />}
+                   </motion.div>
+                 </AnimatePresence>
+               </div>
             </div>
           </main>
 
@@ -108,7 +116,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             onNavigate={handleNavigate}
           />
 
-          <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/50 transition-all duration-300", sidebarWidth)}>
+           <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
             <SidebarContent 
               sidebarCollapsed={sidebarCollapsed}
               userName={userName}

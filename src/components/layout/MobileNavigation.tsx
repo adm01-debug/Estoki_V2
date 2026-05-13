@@ -64,12 +64,12 @@ export function MobileNavigation({
       </AnimatePresence>
 
       {/* Bottom Navigation (Mobile) */}
-      <nav 
-        className="sticky bottom-0 border-t border-border/40 px-1 py-1 md:hidden safe-area-bottom relative" 
-        aria-label="Navegação mobile"
-      >
-        <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl" />
-        <div className="relative flex items-center justify-around">
+       <nav 
+         className="fixed bottom-0 left-0 right-0 border-t border-border/20 px-2 py-2 md:hidden safe-area-bottom z-40" 
+         aria-label="Navegação mobile"
+       >
+         <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" />
+         <div className="relative flex items-center justify-around h-14">
           {mobileNavItems.slice(0, 2).map((item) => {
             const isActive = pathname === item.path;
             return (

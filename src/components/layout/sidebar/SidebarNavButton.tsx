@@ -14,8 +14,8 @@ interface SidebarNavButtonProps {
 
 export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: SidebarNavButtonProps) {
   const className = cn(
-    "w-full flex items-center gap-3 rounded-xl transition-all duration-200 group relative",
-    collapsed ? "px-3 py-3 justify-center" : "px-3 py-2.5",
+     "w-full flex items-center gap-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+     collapsed ? "px-0 h-11 w-11 mx-auto justify-center" : "px-3 py-2.5",
     isActive
       ? "bg-primary/15 text-primary"
       : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/80"

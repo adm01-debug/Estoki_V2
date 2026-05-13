@@ -135,12 +135,16 @@ export function GlobalSearch() {
       <Button
         variant="ghost"
         size="icon"
-        className="h-9 w-9"
-        onClick={() => setOpen(true)}
-        title="Buscar (Ctrl+K)"
-      >
-        <Search className="h-4 w-4" />
-      </Button>
+         className="h-9 w-9 lg:w-64 lg:justify-start lg:px-3 lg:bg-muted/50 lg:border lg:border-border/30 lg:hover:bg-muted transition-all"
+         onClick={() => setOpen(true)}
+         title="Buscar (Ctrl+K)"
+       >
+         <Search className="h-4 w-4 shrink-0" />
+         <span className="hidden lg:inline-flex ml-2 text-xs text-muted-foreground font-medium flex-1">Buscar no sistema...</span>
+         <kbd className="hidden lg:inline-flex ml-auto pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+           <span className="text-xs">⌘</span>K
+         </kbd>
+       </Button>
 
       {open && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] bg-background/60 backdrop-blur-sm">

@@ -53,8 +53,8 @@ export function SidebarContent({
         />
       )}
 
-      <ScrollArea className="flex-1">
-        <nav className="p-2 space-y-0.5">
+       <ScrollArea className="flex-1 px-3">
+         <nav className="py-4 space-y-1">
           {favorites.length > 0 && (
             <>
               <SidebarSectionLabel label="Favoritos" collapsed={isCollapsed} />

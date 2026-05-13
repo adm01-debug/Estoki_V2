@@ -46,9 +46,9 @@ export const sidebarMainItems: NavItem[] = [
   { path: "/triagem", icon: Search, label: "Triagem", tour: "triagem" },
   { path: "/estoque", icon: Warehouse, label: "Estoque", tour: "estoque" },
   { path: "/governanca", icon: Shield, label: "Governança", tour: "governanca" },
-  { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner" },
-  { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios" },
-  { path: "/kanban", icon: Layers, label: "Kanban Pipeline", tour: "kanban" },
+   { path: "/scanner", icon: QrCode, label: "Scanner", tour: "scanner", badge: 0 },
+   { path: "/romaneios", icon: Truck, label: "Romaneios", tour: "romaneios", badge: 3 },
+   { path: "/kanban", icon: Layers, label: "Kanban Pipeline", tour: "kanban", badge: 1 },
 ];
 
 export const sidebarGroups: SidebarGroup[] = [

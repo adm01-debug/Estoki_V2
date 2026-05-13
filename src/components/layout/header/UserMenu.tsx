@@ -35,7 +35,7 @@ export const UserMenu = memo(function UserMenu({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10 rounded-xl" aria-label="Menu do usuário">
           <div className="relative">
-            <Avatar className="h-8 w-8 ring-2 ring-primary/20 ring-offset-1 ring-offset-background">
+             <Avatar className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-background transition-all hover:ring-primary/40">
               <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-xs font-bold">
                 {getInitials(userName)}
               </AvatarFallback>
@@ -44,7 +44,7 @@ export const UserMenu = memo(function UserMenu({
           </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-popover/95 backdrop-blur-xl border-border/50">
+       <DropdownMenuContent align="end" className="w-64 p-2 bg-popover/95 backdrop-blur-2xl border-border/40 shadow-2xl rounded-2xl animate-in fade-in-0 zoom-in-95">
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
             <span className="font-semibold">{userName}</span>
