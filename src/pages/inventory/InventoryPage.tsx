@@ -1,17 +1,22 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useInventoryCount } from "@/hooks/useInventoryCount";
 import { 
   ClipboardList, 
   Plus, 
-  History, 
-  TrendingUp, 
-  Package, 
-  AlertTriangle,
-  ArrowRight
+   History, 
+   TrendingUp, 
+   Package, 
+   AlertTriangle,
+   ArrowRight,
+   Search,
+   Filter,
+   Download,
+   Zap,
+   Clock
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
@@ -22,44 +27,83 @@ export default function InventoryPage() {
   const accuracy = getAccuracy();
   const variance = getTotalVariance();
 
-  return (
-    <AppLayout title="Inventário Geral" showBack>
-      <PageTransition>
-        <div className="p-4 md:p-6 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-primary/5 border-primary/20">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Acuracidade</CardTitle>
-                <TrendingUp className="h-4 w-4 text-primary" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{accuracy.toFixed(1)}%</div>
-                <Progress value={accuracy} className="h-2 mt-2" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Itens em Contagem</CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{items.length}</div>
-                <p className="text-xs text-muted-foreground">Sessão atual</p>
-              </CardContent>
-            </Card>
-            <Card className={variance !== 0 ? "border-destructive/20 bg-destructive/5" : ""}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Divergência Total</CardTitle>
-                <AlertTriangle className={variance !== 0 ? "h-4 w-4 text-destructive" : "h-4 w-4 text-muted-foreground"} />
-              </CardHeader>
-              <CardContent>
-                <div className={variance !== 0 ? "text-2xl font-bold text-destructive" : "text-2xl font-bold"}>
-                  {variance > 0 ? `+${variance}` : variance}
-                </div>
-                <p className="text-xs text-muted-foreground">Unidades físicas vs sistêmicas</p>
-              </CardContent>
-            </Card>
-          </div>
+   return (
+     <AppLayout title="Centro de Inventário" showBack>
+       <PageTransition>
+         <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+             <div className="space-y-1">
+               <h1 className="text-2xl font-black tracking-tight text-foreground">Controle de Inventário</h1>
+               <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">
+                 <Clock className="h-3.5 w-3.5" />
+                 Última atualização: {new Date().toLocaleTimeString()}
+               </div>
+             </div>
+             <div className="flex items-center gap-2">
+               <Button variant="outline" size="sm" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-xs uppercase tracking-wider">
+                 <Download className="h-4 w-4" /> Exportar
+               </Button>
+               <Button size="sm" className="h-9 rounded-xl glow-button gap-2 font-bold text-xs uppercase tracking-wider">
+                 <Plus className="h-4 w-4" /> Nova Contagem
+               </Button>
+             </div>
+           </div>
+ 
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <Card className="glass-card border-primary/20 bg-primary/5 group hover:border-primary/40 transition-all duration-300">
+               <CardContent className="p-6">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
+                     <TrendingUp className="h-5 w-5 text-primary" />
+                   </div>
+                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold">Meta 99%</Badge>
+                 </div>
+                 <div className="space-y-1">
+                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Acuracidade do Estoque</p>
+                   <p className="text-3xl font-black tracking-tight text-primary">{accuracy.toFixed(1)}%</p>
+                 </div>
+                 <Progress value={accuracy} className="h-1.5 mt-4 bg-primary/10" indicatorClassName="bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+               </CardContent>
+             </Card>
+ 
+             <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+               <CardContent className="p-6">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center border border-border/50 group-hover:scale-110 transition-transform">
+                     <Package className="h-5 w-5 text-muted-foreground" />
+                   </div>
+                 </div>
+                 <div className="space-y-1">
+                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Itens em Processo</p>
+                   <p className="text-3xl font-black tracking-tight text-foreground">{items.length}</p>
+                 </div>
+                 <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Sessão de contagem ativa</p>
+               </CardContent>
+             </Card>
+ 
+             <Card className={cn(
+               "glass-card group transition-all duration-300",
+               variance !== 0 ? "border-destructive/30 bg-destructive/5 hover:border-destructive/50" : "border-border/30 hover:border-primary/30"
+             )}>
+               <CardContent className="p-6">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className={cn(
+                     "w-10 h-10 rounded-xl flex items-center justify-center border transition-transform group-hover:scale-110",
+                     variance !== 0 ? "bg-destructive/10 border-destructive/20" : "bg-muted border-border/50"
+                   )}>
+                     <AlertTriangle className={cn("h-5 w-5", variance !== 0 ? "text-destructive" : "text-muted-foreground")} />
+                   </div>
+                 </div>
+                 <div className="space-y-1">
+                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Divergência Acumulada</p>
+                   <p className={cn("text-3xl font-black tracking-tight", variance !== 0 ? "text-destructive" : "text-foreground")}>
+                     {variance > 0 ? `+${variance}` : variance}
+                   </p>
+                 </div>
+                 <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Físico vs Sistêmico</p>
+               </CardContent>
+             </Card>
+           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="cursor-pointer hover:border-primary/50 transition-all" onClick={() => navigate("/inventario-ciclico")}>
