@@ -10,8 +10,8 @@ describe('MapMarker', () => {
 
   it('calls onClick when clicked', () => {
     const handleClick = vi.fn();
-    render(<MapMarker position={[0, 0]} onClick={handleClick} />);
-    const marker = screen.getByRole('img', { hidden: true }).parentElement;
+    const { container } = render(<MapMarker position={[0, 0]} onClick={handleClick} />);
+    const marker = container.firstChild;
     if (marker) fireEvent.click(marker);
     expect(handleClick).toHaveBeenCalled();
   });
