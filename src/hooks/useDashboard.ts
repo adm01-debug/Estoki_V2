@@ -45,7 +45,7 @@ export interface ItemParado {
   valor: number;
 }
 
- async function getCount(query: Promise<{ count: number | null; error: any }>): Promise<number> {
+ async function getCount(query: any): Promise<number> {
    try {
      const { count, error } = await query;
      if (error) {
