@@ -71,10 +71,12 @@ export function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoSt
           </Card>
         </TabsContent>
 
-        <TabsContent value="movimentacoes">
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-base">Movimentações - Últimos 7 dias</CardTitle></CardHeader>
-            <CardContent>
+         <TabsContent value="movimentacoes" className="focus-visible:outline-none">
+           <Card className="glass-card border-border/30 overflow-hidden">
+             <CardHeader className="pb-4 border-b border-border/20">
+               <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">Fluxo Operacional - Últimos 7 dias</CardTitle>
+             </CardHeader>
+             <CardContent className="pt-6">
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={movimentacoes7dias}>
@@ -102,10 +104,12 @@ export function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoSt
           </Card>
         </TabsContent>
 
-        <TabsContent value="distribuicao">
-          <Card>
-            <CardHeader className="pb-2"><CardTitle className="text-base">Distribuição por Status</CardTitle></CardHeader>
-            <CardContent>
+         <TabsContent value="distribuicao" className="focus-visible:outline-none">
+           <Card className="glass-card border-border/30 overflow-hidden">
+             <CardHeader className="pb-4 border-b border-border/20">
+               <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">Distribuição Global de Status</CardTitle>
+             </CardHeader>
+             <CardContent className="pt-6">
               {distribuicaoStatus.every(s => s.value === 0) ? (
                 <div className="h-64 flex items-center justify-center text-muted-foreground"><p>Nenhuma posição cadastrada</p></div>
               ) : (
