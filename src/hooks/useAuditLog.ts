@@ -32,7 +32,7 @@ export function useAuditLog() {
     queryKey: ["audit-logs"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("audit_logs")
+         .from("audit_log")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(1000);
