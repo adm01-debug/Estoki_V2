@@ -15,7 +15,7 @@ export interface Posicao {
 }
 
 export type PosicaoTipo = "picking" | "pulmao" | "blocado" | "chao";
-export type PosicaoStatus = "livre" | "ocupada" | "reservada" | "bloqueada";
+ export type PosicaoStatus = "livre" | "ocupado" | "reservado" | "bloqueado";
 
 export interface PosicaoFilter {
   corredor?: string;
