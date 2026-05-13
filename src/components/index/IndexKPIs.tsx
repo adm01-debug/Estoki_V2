@@ -1,16 +1,23 @@
 import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { LucideIcon } from "lucide-react";
+ import { Card, CardContent } from "@/components/ui/card";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+ import type { LucideIcon } from "lucide-react";
+ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-interface KPIItem {
-  icon: LucideIcon;
-  value: string | number;
-  label: string;
-  sublabel: string;
-  variant: "default" | "warning" | "success" | "danger";
-  path: string;
-}
+ interface KPIItem {
+   icon: LucideIcon;
+   value: string | number;
+   label: string;
+   sublabel: string;
+   variant: "default" | "warning" | "success" | "danger";
+   path: string;
+   trend?: {
+     value: number;
+     isUp: boolean;
+     label: string;
+   };
+ }
 
 const variantStyles = {
   default: "bg-primary/10 text-primary border-primary/20",
@@ -33,9 +40,10 @@ export function IndexKPIs({ items, loading, onNavigate }: Props) {
       </div>
     );
   }
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-      {items.map((item, index) => (
+   return (
+     <TooltipProvider>
+       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+         {items.map((item, index) => (
         <motion.div
           key={item.label}
           initial={{ opacity: 0, y: 20 }}
@@ -45,16 +53,32 @@ export function IndexKPIs({ items, loading, onNavigate }: Props) {
           className="cursor-pointer"
           onClick={() => onNavigate(item.path)}
         >
-          <Card className="glass-card border-border/30 h-full">
-            <CardContent className="p-4 md:p-5">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${variantStyles[item.variant]} mb-3`}>
-                <item.icon className="h-5 w-5" />
-              </div>
-              <p className="text-2xl md:text-3xl font-extrabold text-foreground">{item.value}</p>
-              <p className="text-sm font-semibold text-foreground mt-1">{item.label}</p>
-              <p className="text-xs text-muted-foreground">{item.sublabel}</p>
-            </CardContent>
-          </Card>
+           <Tooltip delayDuration={300}>
+             <TooltipTrigger asChild>
+               <Card className="glass-card border-border/30 h-full overflow-hidden group">
+                 <CardContent className="p-4 md:p-5 relative">
+                   <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-8 -mt-8 transition-transform group-hover:scale-110" />
+                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center border shadow-sm ${variantStyles[item.variant]} mb-4 transition-transform group-hover:rotate-6`}>
+                     <item.icon className="h-5 w-5" />
+                   </div>
+                   <div className="flex items-baseline justify-between gap-2">
+                     <p className="text-3xl font-black text-foreground tracking-tight">{item.value}</p>
+                     {item.trend && (
+                       <div className={`flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full ${item.trend.isUp ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                         {item.trend.isUp ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                         {item.trend.value}%
+                       </div>
+                     )}
+                   </div>
+                   <p className="text-sm font-bold text-foreground mt-1 tracking-tight">{item.label}</p>
+                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{item.sublabel}</p>
+                 </CardContent>
+               </Card>
+             </TooltipTrigger>
+             <TooltipContent side="bottom" className="text-xs font-medium">
+               Clique para ver detalhes de {item.label}
+             </TooltipContent>
+           </Tooltip>
         </motion.div>
       ))}
     </div>
