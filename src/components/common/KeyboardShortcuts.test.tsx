@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { KeyboardShortcutsHelp, useKeyboardShortcuts } from './KeyboardShortcuts';
@@ -23,7 +23,7 @@ describe('KeyboardShortcuts', () => {
 
     render(<TestComponent />);
 
-    fireEvent.keydown(window, { key: 's', ctrlKey: true });
+    fireEvent.keyDown(window, { key: 's', ctrlKey: true });
 
     expect(actionMock).toHaveBeenCalled();
   });
@@ -41,7 +41,7 @@ describe('KeyboardShortcuts', () => {
     const input = screen.getByTestId('test-input');
     input.focus();
 
-    fireEvent.keydown(input, { key: 's' });
+    fireEvent.keyDown(input, { key: 's' });
 
     expect(actionMock).not.toHaveBeenCalled();
   });
