@@ -3,7 +3,8 @@
  * Controle granular de funcionalidades por ambiente/usuário
  */
 
-import { envConfig, isProduction, isDevelopment } from './environment';
+ import { envConfig, isProduction } from './environment';
+ import { logger } from '../utils/logger';
 
 // Definição das flags
 export interface FeatureFlags {
@@ -236,9 +237,11 @@ export function withFeatureFlag<P extends object>(
   };
 }
 
-// Para debugging
-export function debugFeatureFlags(): void {
-  if (import.meta.env.DEV) console.table(getFeatureFlags());
-}
+ export function debugFeatureFlags(): void {
+   if (!isProduction()) {
+     const flags = getFeatureFlags();
+     logger.info('Feature Flags atuais', flags as unknown as Record<string, unknown>);
+   }
+ }
 
 export default { getFeatureFlags, isFeatureEnabled, setUserContext };
