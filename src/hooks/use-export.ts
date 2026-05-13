@@ -1,3 +1,5 @@
+ import { logger } from '@/utils/logger';
+ 
 /**
  * Hook de Exportação e Impressão
  * Suporta PDF, Excel, CSV, impressão
@@ -96,7 +98,7 @@ export function useExport(): UseExportReturn {
       doc.save(`${filename}.pdf`);
       trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_pdf', value: data.length });
     } catch (error) {
-      if (import.meta.env.DEV) console.error('[Export] PDF error:', error);
+       logger.error('[Export] Erro ao exportar para PDF', error, { options });
       throw error;
     } finally { setIsExporting(false); }
   }, []);
@@ -140,7 +142,7 @@ export function useExport(): UseExportReturn {
 
       trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_excel', value: data.length });
     } catch (error) {
-      if (import.meta.env.DEV) console.error('[Export] Excel error:', error);
+       logger.error('[Export] Erro ao exportar para Excel', error, { options });
       throw error;
     } finally { setIsExporting(false); }
   }, []);
