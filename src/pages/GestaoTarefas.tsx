@@ -1,8 +1,3 @@
-   baixa: "low",
-   media: "medium",
-   alta: "high",
-   urgente: "critical",
- };
  import { Tarefa } from "@/types/tarefas";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -14,7 +9,14 @@ import {
   Plus, Search, Filter, Package, Loader2, Target, LayoutGrid, List, BarChart2 
 } from "lucide-react";
 
-import { statusLabels, tipoLabels } from "@/types/tarefas";
+ import { statusLabels, tipoLabels } from "@/types/tarefas";
+ 
+ const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
+   baixa: "low",
+   media: "medium",
+   alta: "high",
+   urgente: "critical",
+ };
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
