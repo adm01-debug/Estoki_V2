@@ -1,28 +1,45 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
-import Wizard from './Wizard';
+import { Wizard } from './Wizard';
 
 describe('Wizard', () => {
-  it('should render without crashing', () => {
-    render(<BrowserRouter><Wizard /></BrowserRouter>);
+  const mockSteps = [
+    { title: 'Step 1', content: <div data-testid="content-1">Content 1</div> },
+    { title: 'Step 2', content: <div data-testid="content-2">Content 2</div> },
+  ];
+
+  it('renders current step content', () => {
+    render(<Wizard steps={mockSteps} onComplete={() => {}} />);
+    expect(screen.getByTestId('content-1')).toBeInTheDocument();
   });
 
-  it('should accept className prop', () => {
-    const { container } = render(<BrowserRouter><Wizard className="custom" /></BrowserRouter>);
-    expect(container.firstChild).toHaveClass('custom');
+  it('navigates to next step', () => {
+    render(<Wizard steps={mockSteps} onComplete={() => {}} />);
+    fireEvent.click(screen.getByText('Próximo'));
+    expect(screen.getByTestId('content-2')).toBeInTheDocument();
   });
 
-  it('should handle props correctly', () => {
-    render(<BrowserRouter><Wizard data-testid="nav-Wizard" /></BrowserRouter>);
+  it('navigates to previous step', () => {
+    render(<Wizard steps={mockSteps} onComplete={() => {}} />);
+    fireEvent.click(screen.getByText('Próximo'));
+    fireEvent.click(screen.getByText('Anterior'));
+    expect(screen.getByTestId('content-1')).toBeInTheDocument();
   });
 
-  it('should be accessible', () => {
-    render(<BrowserRouter><Wizard aria-label="Wizard" /></BrowserRouter>);
+  it('calls onComplete on the last step', () => {
+    const handleComplete = vi.fn();
+    render(<Wizard steps={mockSteps} onComplete={handleComplete} />);
+    fireEvent.click(screen.getByText('Próximo'));
+    fireEvent.click(screen.getByText('Concluir'));
+    expect(handleComplete).toHaveBeenCalled();
   });
 
-  it('should clean up on unmount', () => {
-    const { unmount } = render(<BrowserRouter><Wizard /></BrowserRouter>);
-    unmount();
+  it('disables next button if validation fails', () => {
+    const stepsWithValidation = [
+      { title: 'S1', content: 'C1', validate: () => false },
+      { title: 'S2', content: 'C2' },
+    ];
+    render(<Wizard steps={stepsWithValidation} onComplete={() => {}} />);
+    expect(screen.getByText('Próximo')).toBeDisabled();
   });
 });
