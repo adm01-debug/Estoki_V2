@@ -1,3 +1,4 @@
+ import { Tarefa } from "@/types/tarefas";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -80,7 +81,7 @@ export default function GestaoTarefasPage() {
                 { id: "em_andamento", title: "Em Andamento", color: "bg-blue-500" },
                 { id: "concluida", title: "Concluídas", color: "bg-success" }
               ]}
-              items={tarefasFiltradas.map((t: any) => ({
+               items={tarefasFiltradas.map((t: Tarefa) => ({
                 id: t.id,
                 columnId: t.status,
                 title: t.descricao || "Sem descrição",
@@ -88,16 +89,17 @@ export default function GestaoTarefasPage() {
                 priority: t.prioridade,
                 tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
               }))}
-              renderItem={(item) => {
-                const t = tarefasFiltradas.find((x: any) => x.id === item.id);
-                return (
-                  <TarefaCard 
-                    tarefa={t} 
-                    onIniciar={handleIniciar} 
-                    onConcluir={handleConcluir} 
-                  />
-                );
-              }}
+               renderItem={(item) => {
+                 const t = tarefasFiltradas.find((x: Tarefa) => x.id === item.id);
+                 if (!t) return null;
+                 return (
+                   <TarefaCard 
+                     tarefa={t} 
+                     onIniciar={handleIniciar} 
+                     onConcluir={handleConcluir} 
+                   />
+                 );
+               }}
             />
           </TabsContent>
 
@@ -129,7 +131,7 @@ export default function GestaoTarefasPage() {
                   <Target className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>Nenhuma tarefa encontrada</p>
                 </div>
               ) : (
-                tarefasFiltradas.map((tarefa: any) => (
+               tarefasFiltradas.map((tarefa: Tarefa) => (
                   <TarefaCard 
                     key={tarefa.id} 
                     tarefa={tarefa} 
