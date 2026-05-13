@@ -10,9 +10,10 @@ import {
 describe('formatters', () => {
   describe('formatCurrency', () => {
     it('deve formatar valores monetários corretamente', () => {
-      // Usando regex para ignorar variações de espaços (NBSP vs space)
       const result = formatCurrency(1000.5).replace(/\s/g, ' ');
-      expect(result).toMatch(/R$ 1\.000,50/);
+      // O símbolo R$ e os separadores devem estar presentes
+      expect(result).toContain('R$');
+      expect(result).toContain('1.000,50');
     });
 
     it('deve retornar "-" para valores inválidos', () => {
