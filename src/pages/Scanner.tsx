@@ -166,57 +166,62 @@ export default function ScannerPage() {
               </Card>
             )}
 
-            {/* Resultado do scan */}
-            {lastResult && !isLoading && (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className={cn("h-5 w-5", tipoConfig[lastResult.tipo].color)} />
-                      {tipoConfig[lastResult.tipo].label}
-                    </CardTitle>
-                    <Badge variant={statusConfig[lastResult.status]?.variant || "secondary"}>
-                      {statusConfig[lastResult.status]?.label || lastResult.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Informações principais */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Pedido</p>
-                      <p className="font-medium">{lastResult.pedido}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Produto</p>
-                      <p className="font-medium">{lastResult.produto}</p>
-                    </div>
-                    {lastResult.lote && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Lote</p>
-                        <p className="font-medium">{lastResult.lote}</p>
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm text-muted-foreground">Quantidade</p>
-                      <p className="font-medium">{lastResult.quantidade}</p>
-                    </div>
-                    {lastResult.localizacao && (
-                      <div className="col-span-2">
-                        <p className="text-sm text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          Localização
-                        </p>
-                        <p className="font-medium">{lastResult.localizacao}</p>
-                      </div>
-                    )}
-                    {lastResult.volume && lastResult.totalVolumes && (
-                      <div>
-                        <p className="text-sm text-muted-foreground">Volumes</p>
-                        <p className="font-medium">{lastResult.volume}/{lastResult.totalVolumes}</p>
-                      </div>
-                    )}
-                  </div>
+             {/* Resultado do scan */}
+             {lastResult && !isLoading && (
+               <Card className="glass-card border-primary/20 bg-primary/5 overflow-hidden animate-in fade-in zoom-in-95">
+                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/40" />
+                 <CardHeader className="pb-6 border-b border-primary/10">
+                   <div className="flex items-center justify-between">
+                     <div className="flex items-center gap-3">
+                       <div className={cn("w-10 h-10 rounded-xl bg-background flex items-center justify-center border shadow-sm", tipoConfig[lastResult.tipo].color)}>
+                         <Package className="h-5 w-5" />
+                       </div>
+                       <div>
+                         <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest leading-none mb-1">Tipo de Captura</p>
+                         <CardTitle className="text-lg font-black tracking-tight">{tipoConfig[lastResult.tipo].label}</CardTitle>
+                       </div>
+                     </div>
+                     <Badge className={cn(
+                       "text-[10px] font-black uppercase tracking-widest px-2.5 rounded-full",
+                       statusConfig[lastResult.status]?.variant === "destructive" ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground"
+                     )}>
+                       {statusConfig[lastResult.status]?.label || lastResult.status}
+                     </Badge>
+                   </div>
+                 </CardHeader>
+                 <CardContent className="p-8 space-y-6">
+                   {/* Informações principais */}
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                     <div className="space-y-1">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Produto / SKU</p>
+                       <p className="text-base font-black text-foreground tracking-tight">{lastResult.produto}</p>
+                     </div>
+                     <div className="space-y-1">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Documento / Pedido</p>
+                       <p className="text-base font-black text-foreground tracking-tight">{lastResult.pedido}</p>
+                     </div>
+                     {lastResult.lote && (
+                       <div className="space-y-1">
+                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Lote de Origem</p>
+                         <p className="text-base font-black text-foreground tracking-tight">{lastResult.lote}</p>
+                       </div>
+                     )}
+                     <div className="space-y-1">
+                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Quantidade Capturada</p>
+                       <p className="text-2xl font-black text-primary tracking-tighter">{lastResult.quantidade} <span className="text-xs text-muted-foreground uppercase ml-1">unidades</span></p>
+                     </div>
+                     {lastResult.localizacao && (
+                       <div className="col-span-full p-4 rounded-2xl bg-background/50 border border-border/40 flex items-center gap-4">
+                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                           <MapPin className="h-5 w-5" />
+                         </div>
+                         <div>
+                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Localização no Armazém</p>
+                           <p className="text-base font-black text-foreground tracking-tight">{lastResult.localizacao}</p>
+                         </div>
+                       </div>
+                     )}
+                   </div>
 
                   {/* Datas */}
                   {(lastResult.dataRecebimento || lastResult.dataTriagem || lastResult.dataArmazenamento) && (
