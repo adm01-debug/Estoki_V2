@@ -2,6 +2,8 @@
  * Config Module - Barrel Export
  */
 
+ import { logger } from '@/utils/logger';
+ 
 // Environment
 export {
   envConfig,
@@ -75,17 +77,17 @@ export function initializeApp(): void {
       import('./analytics').then(({ initPerformanceTracking: initPerf }) => {
         import('./feature-flags').then(({ debugFeatureFlags: debugFlags }) => {
           const { valid, errors } = validate();
-          if (!valid) {
-            if (import.meta.env.DEV) console.warn('[CONFIG] Validation warnings:', errors);
-          }
+           if (!valid) {
+             logger.warn('[CONFIG] Validation warnings', { errors });
+           }
 
           setupErrors();
           initPerf();
 
-          if (!isProd()) {
-            if (import.meta.env.DEV) console.log('[APP] Initialized in', env.name, 'mode');
-            debugFlags();
-          }
+           if (!isProd()) {
+             logger.info('[APP] Initialized', { mode: env.name });
+             debugFlags();
+           }
         });
       });
     });
