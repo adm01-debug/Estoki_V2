@@ -14,7 +14,7 @@ interface UseDataTableOptions<T> {
   sortable?: boolean;
 }
 
-export function useDataTable<T extends Record<string, any>>({
+ export function useDataTable<T extends Record<string, unknown>>({
   data,
   columns,
   keyField,
