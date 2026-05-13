@@ -1,14 +1,5 @@
 /**
  * State Machines — Explicit status transitions for WMS entities
- *
- * Provides:
- * - Type-safe transition validation
- * - Visual documentation of allowed flows
- * - Guard against invalid status changes
- *
- * Usage:
- *   import { canTransition, getNextStatuses } from '@/lib/state-machines';
- *   if (canTransition('lote', 'aguardando', 'recebido')) { ... }
  */
 
 import type { Database } from '@/integrations/supabase/types';
@@ -23,37 +14,35 @@ type StatusContagem = Database['public']['Enums']['status_contagem'];
 type StatusAlerta = Database['public']['Enums']['status_alerta'];
 
 // ── Transition maps ───────────────────────────────────────
-// Each key maps to the set of states it can transition TO.
-
 const loteTransitions: Record<StatusRecebimento, readonly StatusRecebimento[]> = {
   aguardando: ['em_transito', 'cancelado'],
   em_transito: ['recebido', 'cancelado'],
   recebido: ['em_conferencia'],
   em_conferencia: ['conferido', 'divergencia'],
-  conferido: [],                 // terminal
+  conferido: [],
   divergencia: ['em_conferencia', 'conferido', 'cancelado'],
-  cancelado: [],                 // terminal
+  cancelado: [],
 };
 
 const tarefaTransitions: Record<StatusTarefa, readonly StatusTarefa[]> = {
   pendente: ['atribuida', 'bloqueada'],
   atribuida: ['em_andamento', 'pendente', 'bloqueada'],
   em_andamento: ['concluida', 'bloqueada', 'pendente'],
-  concluida: [],                 // terminal
+  concluida: [],
   bloqueada: ['pendente', 'atribuida'],
 };
 
 const ondaTransitions: Record<StatusOnda, readonly StatusOnda[]> = {
   pendente: ['em_andamento', 'cancelada'],
   em_andamento: ['concluida', 'cancelada'],
-  concluida: [],                 // terminal
-  cancelada: [],                 // terminal
+  concluida: [],
+  cancelada: [],
 };
 
 const entregaTransitions: Record<StatusEntrega, readonly StatusEntrega[]> = {
   pendente: ['em_rota', 'reagendado'],
   em_rota: ['entregue', 'recusado', 'parcial', 'reagendado'],
-  entregue: [],                  // terminal
+  entregue: [],
   recusado: ['reagendado', 'pendente'],
   parcial: ['em_rota', 'entregue'],
   reagendado: ['pendente', 'em_rota'],
@@ -62,22 +51,22 @@ const entregaTransitions: Record<StatusEntrega, readonly StatusEntrega[]> = {
 const cicloTransitions: Record<StatusCiclo, readonly StatusCiclo[]> = {
   agendado: ['em_andamento', 'cancelado'],
   em_andamento: ['concluido', 'cancelado'],
-  concluido: [],                 // terminal
-  cancelado: [],                 // terminal
+  concluido: [],
+  cancelado: [],
 };
 
 const contagemTransitions: Record<StatusContagem, readonly StatusContagem[]> = {
   pendente: ['em_andamento'],
   em_andamento: ['concluido', 'divergencia'],
-  concluido: [],                 // terminal
+  concluido: [],
   divergencia: ['em_andamento', 'concluido'],
 };
 
 const alertaTransitions: Record<StatusAlerta, readonly StatusAlerta[]> = {
   ativo: ['reconhecido', 'resolvido', 'ignorado'],
   reconhecido: ['resolvido', 'ignorado'],
-  resolvido: [],                 // terminal
-  ignorado: [],                  // terminal
+  resolvido: [],
+  ignorado: [],
 };
 
 // ── Entity registry ────────────────────────────────────────
@@ -104,8 +93,6 @@ const transitionMaps: Record<EntityType, Record<string, readonly string[]>> = {
 };
 
 // ── Public API ─────────────────────────────────────────────
-
-/** Check if a status transition is allowed */
 export function canTransition<E extends EntityType>(
   entity: E,
   from: StatusOf<E>,
@@ -117,7 +104,6 @@ export function canTransition<E extends EntityType>(
   return allowed.includes(to as string);
 }
 
-/** Get all valid next statuses from current status */
 export function getNextStatuses<E extends EntityType>(
   entity: E,
   current: StatusOf<E>,
@@ -126,7 +112,6 @@ export function getNextStatuses<E extends EntityType>(
   return (map[current as string] ?? []) as StatusOf<E>[];
 }
 
-/** Check if a status is terminal (no further transitions) */
 export function isTerminal<E extends EntityType>(
   entity: E,
   status: StatusOf<E>,
@@ -134,7 +119,6 @@ export function isTerminal<E extends EntityType>(
   return getNextStatuses(entity, status).length === 0;
 }
 
-/** Validate and execute a transition, throwing if invalid */
 export function assertTransition<E extends EntityType>(
   entity: E,
   from: StatusOf<E>,
