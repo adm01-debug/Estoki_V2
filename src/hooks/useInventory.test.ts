@@ -1,17 +1,24 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import { useInventory } from './useInventory';
 
-vi.mock('@/lib/supabase', () => ({
-  supabase: { from: vi.fn(() => ({ select: vi.fn().mockReturnThis() })) },
-}));
-
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: [], isLoading: false })),
-  useMutation: vi.fn(() => ({ mutate: vi.fn() })),
+vi.mock('./useCRUD', () => ({
+  useCRUD: vi.fn(() => ({
+    useList: vi.fn(() => ({ data: { data: [] }, isLoading: false })),
+    useGetById: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+  })),
 }));
 
 describe('useInventory', () => {
-  it('should be a valid hook', () => {
-    expect(true).toBe(true);
+  it('should be defined', () => {
+    expect(useInventory).toBeDefined();
+  });
+
+  it('should return inventory array', () => {
+    const { result } = renderHook(() => useInventory());
+    expect(Array.isArray(result.current.inventory)).toBe(true);
   });
 });
