@@ -2,10 +2,13 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { KanbanColumn } from './KanbanColumn';
 import { Layout } from 'lucide-react';
+import React from 'react';
 
-// Mock dependentes
+// Mock dependentes com forwardRef para evitar avisos do framer-motion
 vi.mock('./LoteCard', () => ({
-  LoteCard: ({ lote, onClick }: any) => <div data-testid="lote-card" onClick={onClick}>{lote.id}</div>
+  LoteCard: React.forwardRef(({ lote, onClick }: any, ref: any) => (
+    <div data-testid="lote-card" onClick={onClick} ref={ref}>{lote.id}</div>
+  ))
 }));
 
 describe('KanbanColumn', () => {
@@ -28,7 +31,7 @@ describe('KanbanColumn', () => {
 
   it('shows empty state when no items', () => {
     const emptyColumn = { ...mockColumn, items: [] };
-    render(<KanbanColumn column={emptyColumn} onLoteClick={() => {}} />);
+    render(<KanbanColumn emptyColumn={emptyColumn as any} onLoteClick={() => {}} column={emptyColumn} />);
     expect(screen.getByText('Nenhum lote')).toBeInTheDocument();
   });
 });
