@@ -7,7 +7,8 @@ import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "@/hooks/use-toast";
  import { Download, RefreshCw, Loader2, Wifi, WifiOff, Sparkles, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+ import { cn } from "@/lib/utils";
+ import { logger } from "@/utils/logger";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
@@ -27,9 +28,9 @@ const DashboardPage = () => {
         title: "PDF exportado com sucesso!", 
         description: "O relatório foi baixado para seu dispositivo" 
       });
-    } catch (err) {
-      console.error("Erro ao exportar PDF:", err);
-      toast({ 
+     } catch (err) {
+       logger.error("Erro ao exportar PDF:", err);
+       toast({ 
         variant: "destructive",
         title: "Erro na exportação", 
         description: "Não foi possível gerar o PDF do dashboard." 
