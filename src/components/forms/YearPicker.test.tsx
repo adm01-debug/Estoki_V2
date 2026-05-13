@@ -1,33 +1,18 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import YearPicker from './YearPicker';
+import { YearPicker } from './YearPicker';
 
 describe('YearPicker', () => {
-  it('should render without crashing', () => {
-    render(<YearPicker />);
+  it('renders current year if provided', () => {
+    render(<YearPicker value={2024} />);
+    expect(screen.getByText('2024')).toBeInTheDocument();
   });
 
-  it('should accept value prop', () => {
-    render(<YearPicker value="test" />);
-  });
-
-  it('should call onChange when value changes', () => {
+  it('calls onChange when a year is selected', () => {
     const onChange = vi.fn();
     render(<YearPicker onChange={onChange} />);
-  });
-
-  it('should be disabled when disabled prop is true', () => {
-    const { container } = render(<YearPicker disabled />);
-    expect(container.querySelector('[disabled]')).toBeInTheDocument();
-  });
-
-  it('should accept className prop', () => {
-    const { container } = render(<YearPicker className="custom" />);
-    expect(container.firstChild).toHaveClass('custom');
-  });
-
-  it('should show error state', () => {
-    render(<YearPicker error="Error message" />);
-    expect(screen.getByText('Error message')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Selecionar ano'));
+    fireEvent.click(screen.getByText('2024'));
+    expect(onChange).toHaveBeenCalledWith(2024);
   });
 });

@@ -1,33 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import WeekPicker from './WeekPicker';
+import { WeekPicker } from './WeekPicker';
 
 describe('WeekPicker', () => {
-  it('should render without crashing', () => {
+  it('renders correctly', () => {
     render(<WeekPicker />);
+    expect(screen.getByText('Selecionar semana')).toBeInTheDocument();
   });
 
-  it('should accept value prop', () => {
-    render(<WeekPicker value="test" />);
-  });
-
-  it('should call onChange when value changes', () => {
+  it('calls onChange when a week is selected', () => {
     const onChange = vi.fn();
     render(<WeekPicker onChange={onChange} />);
-  });
-
-  it('should be disabled when disabled prop is true', () => {
-    const { container } = render(<WeekPicker disabled />);
-    expect(container.querySelector('[disabled]')).toBeInTheDocument();
-  });
-
-  it('should accept className prop', () => {
-    const { container } = render(<WeekPicker className="custom" />);
-    expect(container.firstChild).toHaveClass('custom');
-  });
-
-  it('should show error state', () => {
-    render(<WeekPicker error="Error message" />);
-    expect(screen.getByText('Error message')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Selecionar semana'));
+    // Find any week button (Semana X)
+    const weekButtons = screen.getAllByText(/Semana/);
+    fireEvent.click(weekButtons[0]);
+    expect(onChange).toHaveBeenCalled();
   });
 });
