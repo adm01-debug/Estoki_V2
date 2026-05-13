@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingUp } from "lucide-react";
+ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { TrendingUp, ArrowUpRight, Maximize2 } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { useNavigate } from "react-router-dom";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 
 interface Props {
@@ -13,16 +15,26 @@ interface Props {
 }
 
 export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoesOcupadas, posicoesLivres }: Props) {
-  return (
-    <Card className="col-span-1 lg:col-span-2 glass-card border-border/30">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-bold flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            <TrendingUp className="h-4 w-4 text-primary" />
-          </div>
-          Taxa de Ocupação
-        </CardTitle>
-      </CardHeader>
+   const navigate = useNavigate();
+ 
+   return (
+     <Card className="col-span-1 lg:col-span-2 glass-card border-border/30 group">
+       <CardHeader className="pb-2 flex flex-row items-center justify-between">
+         <CardTitle className="text-base font-bold flex items-center gap-2">
+           <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+             <TrendingUp className="h-4 w-4 text-primary" />
+           </div>
+           Status de Ocupação
+         </CardTitle>
+         <Button 
+           variant="ghost" 
+           size="sm" 
+           className="h-8 text-[10px] uppercase font-bold tracking-widest gap-2 text-primary hover:bg-primary/5"
+           onClick={() => navigate("/ocupacao")}
+         >
+           Mapa Visual <ArrowUpRight className="h-3 w-3" />
+         </Button>
+       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex items-center justify-around py-4">
