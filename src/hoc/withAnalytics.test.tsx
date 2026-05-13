@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
 import { withAnalytics } from './withAnalytics';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('@/hooks/useAnalytics', () => ({
@@ -23,9 +23,7 @@ describe('withAnalytics', () => {
     const Wrapped = withAnalytics(TestComponent, { componentName: 'Test' });
     render(
       <MemoryRouter initialEntries={['/test']}>
-        <Routes>
-          <Route path="/test" element={<Wrapped />} />
-        </Routes>
+        <Wrapped />
       </MemoryRouter>
     );
 
