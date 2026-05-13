@@ -3442,6 +3442,9 @@ export type Database = {
         | "transferencia"
         | "inventario"
         | "expedicao"
+        | "recebimento"
+        | "triagem"
+        | "manutencao"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3677,6 +3680,9 @@ export const Constants = {
         "transferencia",
         "inventario",
         "expedicao",
+        "recebimento",
+        "triagem",
+        "manutencao",
       ],
     },
   },
