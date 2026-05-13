@@ -20,17 +20,20 @@ const loteTransitions: Record<StatusRecebimento, readonly StatusRecebimento[]> =
   recebido: ['em_conferencia'],
   em_conferencia: ['conferido', 'divergencia'],
   conferido: [],
-  divergencia: ['em_conferencia', 'conferido', 'cancelado'],
-  cancelado: [],
-};
+   divergencia: ['em_conferencia', 'conferido', 'cancelado', 'quarentena'],
+   cancelado: [],
+   quarentena: ['recebido', 'cancelado'],
+ };
 
 const tarefaTransitions: Record<StatusTarefa, readonly StatusTarefa[]> = {
   pendente: ['atribuida', 'bloqueada'],
   atribuida: ['em_andamento', 'pendente', 'bloqueada'],
-  em_andamento: ['concluida', 'bloqueada', 'pendente'],
-  concluida: [],
-  bloqueada: ['pendente', 'atribuida'],
-};
+   em_andamento: ['concluida', 'bloqueada', 'pendente', 'cancelada', 'atrasada'],
+   concluida: [],
+   bloqueada: ['pendente', 'atribuida', 'cancelada'],
+   atrasada: ['pendente', 'em_andamento', 'cancelada'],
+   cancelada: [],
+ };
 
 const ondaTransitions: Record<StatusOnda, readonly StatusOnda[]> = {
   pendente: ['em_andamento', 'cancelada'],
