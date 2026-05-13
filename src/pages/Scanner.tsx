@@ -92,30 +92,36 @@ export default function ScannerPage() {
     setScanning(true);
   };
 
-  return (
-    <AppLayout title="Scanner" showBack>
-      <div className="p-4 space-y-6">
-        {/* Seletor de Modo */}
-        <div className="flex gap-2 mb-4">
-          <Button
-            variant={mode === "qr" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setMode("qr")}
-            className="gap-2"
-          >
-            <Package className="h-4 w-4" />
-            QR Code
-          </Button>
-          <Button
-            variant={mode === "ocr" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setMode("ocr")}
-            className="gap-2"
-          >
-            <FileText className="h-4 w-4" />
-            OCR/Documento
-          </Button>
-        </div>
+   return (
+     <AppLayout title="Centro de Captura" showBack>
+       <div className="p-4 md:p-8 space-y-8 max-w-[1200px] mx-auto">
+         {/* Seletor de Modo */}
+         <div className="flex items-center justify-between bg-muted/30 p-1.5 rounded-2xl border border-border/20 max-w-sm mx-auto">
+           <Button
+             variant={mode === "qr" ? "default" : "ghost"}
+             size="sm"
+             onClick={() => setMode("qr")}
+             className={cn(
+               "flex-1 gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all",
+               mode === "qr" ? "glow-button" : "text-muted-foreground hover:bg-transparent hover:text-primary"
+             )}
+           >
+             <Package className="h-4 w-4" />
+             QR Code
+           </Button>
+           <Button
+             variant={mode === "ocr" ? "default" : "ghost"}
+             size="sm"
+             onClick={() => setMode("ocr")}
+             className={cn(
+               "flex-1 gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all",
+               mode === "ocr" ? "glow-button" : "text-muted-foreground hover:bg-transparent hover:text-primary"
+             )}
+           >
+             <FileText className="h-4 w-4" />
+             OCR
+           </Button>
+         </div>
 
         {mode === "ocr" && <ScannerOCR />}
 
