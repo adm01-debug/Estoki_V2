@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export function useInterval(callback: () => void, delay: number | null) {
   const savedCallback = useRef(callback);
@@ -8,10 +8,10 @@ export function useInterval(callback: () => void, delay: number | null) {
   }, [callback]);
 
   useEffect(() => {
-    if (delay === null) return;
-
-    const id = setInterval(() => savedCallback.current(), delay);
-    return () => clearInterval(id);
+    if (delay !== null) {
+      const id = setInterval(() => savedCallback.current(), delay);
+      return () => clearInterval(id);
+    }
   }, [delay]);
 }
 
@@ -23,9 +23,9 @@ export function useTimeout(callback: () => void, delay: number | null) {
   }, [callback]);
 
   useEffect(() => {
-    if (delay === null) return;
-
-    const id = setTimeout(() => savedCallback.current(), delay);
-    return () => clearTimeout(id);
+    if (delay !== null) {
+      const id = setTimeout(() => savedCallback.current(), delay);
+      return () => clearTimeout(id);
+    }
   }, [delay]);
 }
