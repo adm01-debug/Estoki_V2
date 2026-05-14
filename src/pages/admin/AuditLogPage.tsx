@@ -1,3 +1,4 @@
+ import { AuditoriaEnterpriseViewer } from "@/components/admin/AuditoriaEnterpriseViewer";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -104,7 +105,10 @@ export default function AuditLogPage() {
   return (
     <AppLayout title="Logs de Auditoria" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
+         <div className="p-4 space-y-8">
+           {/* Relatório Enterprise Integrado */}
+           <AuditoriaEnterpriseViewer />
+ 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
