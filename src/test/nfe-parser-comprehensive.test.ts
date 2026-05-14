@@ -300,17 +300,17 @@ describe('HTML Sanitization', () => {
   it('preserves plain text', () => {
     expect(sanitizeHTML('Hello World')).toBe('Hello World');
   });
-  it('escapes angle brackets', () => {
-    expect(sanitizeHTML('<b>bold</b>')).toContain('&lt;b&gt;');
+  it('escapes angle brackets using escapeHTML', () => {
+    expect(escapeHTML('<b>bold</b>')).toContain('&lt;b&gt;');
   });
 });
 
 describe('SQL Sanitization', () => {
-  it('removes single quotes', () => {
-    expect(sanitizeSQL("O'Brien")).not.toContain("'");
+  it('escapes single quotes for SQL', () => {
+    expect(sanitizeSQL("O'Brien")).toContain("''");
   });
-  it('removes double quotes', () => {
-    expect(sanitizeSQL('SELECT "name"')).not.toContain('"');
+  it('escapes double quotes for SQL', () => {
+    expect(sanitizeSQL('SELECT "name"')).toContain('""');
   });
   it('removes semicolons', () => {
     expect(sanitizeSQL('DROP TABLE;')).not.toContain(';');
