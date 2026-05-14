@@ -71,17 +71,17 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
 
               {import.meta.env.DEV && this.state.error && (
-                <div className="p-4 bg-muted rounded-lg text-left overflow-auto max-h-40">
+                <div className="p-4 bg-muted/50 border border-border/50 rounded-lg text-left overflow-auto max-h-60 shadow-inner">
                   <p className="text-sm font-mono text-red-600 mb-2">{this.state.error.message}</p>
                   {this.state.errorInfo && (
-                    <pre className="text-xs text-muted-foreground">
+                    <pre className="text-[10px] leading-tight text-muted-foreground/80 font-mono">
                       {this.state.errorInfo.componentStack}
                     </pre>
                   )}
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-2 justify-center pt-2">
                 <Button variant="outline" onClick={this.handleReset}>
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Tentar novamente
