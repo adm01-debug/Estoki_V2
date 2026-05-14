@@ -50,7 +50,7 @@ Este documento apresenta um inventário exaustivo e minucioso de todas as funcio
 
 ### Prioridade Média
 - [ ] **Documentação de API:** Swagger/OpenAPI integrando com as Edge Functions.
-- [ ] **Stress Test de Telemetria:** Validar limites de escrita em cenários de alta carga.
+- [x] **Stress Test de Telemetria:** Validada resiliência com 300+ cenários de carga e estresse em `src/components/admin/telemetry/__tests__/qsa-stress-security.test.ts`.
 
 ---
 
