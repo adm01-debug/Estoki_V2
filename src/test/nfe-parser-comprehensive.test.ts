@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { parseNFeXML, validateNFeXML, extractProdutosFromNFe, nfeToRecebimento } from '@/utils/parseNFXML';
-import { sanitizeHTML, sanitizeSQL, sanitizeFilename, stripTags, escapeRegex } from '@/lib/sanitize';
+import { sanitizeHTML, sanitizeSQL, sanitizeFilename, stripTags, escapeRegex, escapeHTML } from '@/lib/sanitize';
 
 // =============================================
 // SAMPLE NF-e XML
@@ -289,10 +289,13 @@ describe('NF-e to Recebimento Conversion', () => {
 // SANITIZATION - ~20 scenarios
 // =============================================
 describe('HTML Sanitization', () => {
-  it('escapes HTML tags', () => {
+  it('removes unsafe HTML tags', () => {
     const result = sanitizeHTML('<script>alert("xss")</script>');
     expect(result).not.toContain('<script>');
-    expect(result).toContain('&lt;');
+  });
+  it('escapes HTML for safe display', () => {
+    const result = escapeHTML('<script>alert("xss")</script>');
+    expect(result).toContain('&lt;script&gt;');
   });
   it('preserves plain text', () => {
     expect(sanitizeHTML('Hello World')).toBe('Hello World');
