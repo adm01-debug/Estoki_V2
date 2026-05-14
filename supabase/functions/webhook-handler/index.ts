@@ -39,13 +39,19 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    await supabase.from("alertas_historico").insert({
+    const { error: insertError } = await supabase.from("alertas_historico").insert({
       tipo: "webhook",
       titulo: `Webhook: ${event}`,
       mensagem: `Webhook recebido: ${event}`,
       dados_contexto: data,
       severidade: "info",
     });
+
+    if (insertError) {
+      console.error("Error inserting webhook history:", insertError);
+      // Continue even if logging fails, but return 202 to indicate processing issues
+      return jsonResponse({ success: true, warning: "Log insertion failed", event }, 202, req);
+    }
 
     return jsonResponse({ success: true, event, received: new Date().toISOString() }, 200, req);
   } catch (error) {
