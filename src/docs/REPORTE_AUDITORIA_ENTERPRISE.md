@@ -45,7 +45,7 @@ Este documento apresenta um inventário exaustivo e minucioso de todas as funcio
 
 ### Prioridade Alta (A Implementar/Melhorar)
 - [ ] **Validação XML NF-e:** Aprimorar extração de dados brutos (`src/components/recebimento`).
-- [ ] **Automação de Triagem:** Implementar lógica de amostragem estatística (`src/pages/Triagem.tsx`).
+- [x] **Automação de Triagem:** Implementada lógica de amostragem MIL-STD-105E/AQL (`src/components/triagem/amostragemUtils.ts`).
 - [ ] **Cobertura de Testes Lib:** Atingir 90%+ em `src/lib` (Atualmente em expansão).
 
 ### Prioridade Média
