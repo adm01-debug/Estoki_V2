@@ -1,0 +1,367 @@
+%PDF-1.3
+%ºß¬à
+3 0 obj
+<</Type /Page
+/Parent 1 0 R
+/Resources 2 0 R
+/MediaBox [0 0 595.2799999999999727 841.8899999999999864]
+/Contents 4 0 R
+>>
+endobj
+4 0 obj
+<<
+/Length 6259
+>>
+stream
+0.5670000000000001 w
+0 G
+BT
+/F1 16 Tf
+18.3999999999999986 TL
+0 g
+28.3464566929133888 813.5435433070865656 Td
+(# RELATÓRIO DE AUDITORIA ENTERPRISE - INVENTÁRIO DE) Tj
+T* (SISTEMA) Tj
+T* () Tj
+T* (## 1. RESUMO EXECUTIVO) Tj
+T* () Tj
+T* (Este documento apresenta um inventário exaustivo e minucioso de) Tj
+T* (todas as funcionalidades, módulos e componentes do sistema, baseado) Tj
+T* (em uma varredura completa do repositório. O sistema é uma plataforma) Tj
+T* (WMS \(Warehouse Management System\) avançada, com integrações) Tj
+T* (de IA, PWA e gestão em tempo real.) Tj
+T* () Tj
+T* (### Principais Indicadores:) Tj
+T* (- **Módulos Críticos:** WMS, Analytics, Admin, Features Inteligentes.) Tj
+T* (- **Saúde do Código:** Alta componentização, uso rigoroso de) Tj
+T* (TypeScript, suporte a offline e PWA.) Tj
+T* (- **Lacunas Identificadas:** Necessidade de expansão de testes) Tj
+T* (unitários em bibliotecas core \(`src/lib`\) e automação de triagem.) Tj
+T* () Tj
+T* (---) Tj
+T* () Tj
+T* (## 2. INVENTÁRIO DE MÓDULOS E FUNCIONALIDADES) Tj
+T* () Tj
+T* (| Módulo | Funcionalidade | Status | Evidência \(Path\) | Motivo de Existir |) Tj
+T* (| :--- | :--- | :--- | :--- | :--- |) Tj
+T* (| **WMS Core** | Gestão de Estoque | Implementado |) Tj
+T* (`src/pages/Estoque.tsx` | Controle central de ativos físicos. |) Tj
+T* (| | Triagem de Produtos | Implementado | `src/pages/Triagem.tsx` |) Tj
+T* (Classificação e inspeção de entrada/retorno. |) Tj
+T* (| | Recebimento \(NFe\) | Implementado | `src/pages/Recebimento.tsx` |) Tj
+T* (Validação e entrada de mercadorias. |) Tj
+T* (| | Armazenamento | Implementado | `src/pages/Armazenamento.tsx` |) Tj
+T* (Gestão de endereçamento e posições. |) Tj
+T* (| | Conferência Cega | Implementado |) Tj
+T* (`src/pages/ConferenciaRecebimento.tsx` | Garantia de integridade física) Tj
+T* (no recebimento. |) Tj
+T* (| | Scanner Integrado | Implementado | `src/pages/Scanner.tsx` |) Tj
+T* (Agilidade operacional via dispositivos móveis. |) Tj
+T* (| **Logística** | Picking & Packing | Implementado |) Tj
+T* (`src/pages/picking/PickingPage.tsx` | Fluxo de saída e separação de) Tj
+T* (pedidos. |) Tj
+T* (| | Ondas de Separação | Implementado | `src/pages/Ondas.tsx` |) Tj
+T* (Otimização de rotas de coleta. |) Tj
+T* (| | Expedição | Implementado | `src/pages/shipping/ShippingPage.tsx` |) Tj
+T* (Gestão de romaneios e transportadoras. |) Tj
+T* (| | Kanban de Pipeline | Implementado | `src/pages/KanbanPipeline.tsx` |) Tj
+T* (Visualização ágil do fluxo operacional. |) Tj
+T* (| **Analytics** | KPIs Operacionais | Implementado |) Tj
+T* (`src/pages/KPIsOperacionais.tsx` | Monitoramento de performance em) Tj
+T* (tempo real. |) Tj
+T* (| | Curva ABC | Implementado | `src/pages/CurvaABC.tsx` | Análise de) Tj
+T* (giro e importância de estoque. |) Tj
+T* (| | Produtividade | Implementado | `src/pages/Produtividade.tsx` |) Tj
+T* (Gestão de performance por colaborador. |) Tj
+T* (| | Alertas Inteligentes | Implementado |) Tj
+T* (`src/pages/AlertasInteligentes.tsx` | Detecção proativa de anomalias. |) Tj
+T* (| **Inteligência** | Assistente IA | Implementado |) Tj
+T* (`src/pages/AssistenteIA.tsx` | Suporte operacional baseado em LLM. |) Tj
+T* (| | Previsão de Demanda | Implementado |) Tj
+T* (`src/pages/PrevisaoDemandaIA.tsx` | Planejamento preditivo de) Tj
+T* (estoque. |) Tj
+T* (| | Endereçamento Auto. | Implementado |) Tj
+T* (`src/pages/EndereçamentoAutomatico.tsx` | Sugestão algorítmica de) Tj
+T* (posições. |) Tj
+T* (| **Admin** | Gestão de Usuários | Implementado |) Tj
+T* (`src/pages/admin/UsersPage.tsx` | Controle de acesso e identidade) Tj
+T* (\(RBAC\). |) Tj
+T* (| | Logs de Auditoria | Implementado |) Tj
+T* (`src/pages/admin/AuditLogPage.tsx` | Rastreabilidade total de ações) Tj
+T* (críticas. |) Tj
+T* (| | Telemetria de DB | Implementado |) Tj
+T* (`src/pages/admin/AdminTelemetriaPage.tsx` | Saúde e performance da) Tj
+T* (infraestrutura. |) Tj
+T* (| **Inovação** | Gamificação | Implementado |) Tj
+T* (`src/pages/Gamificacao.tsx` | Engajamento e incentivo da equipe. |) Tj
+T* (| | Modo Offline | Implementado | `src/pages/ModoOffline.tsx` |) Tj
+T* (Continuidade operacional em áreas sem sinal. |) Tj
+T* (| | PWA | Implementado | `src/components/pwa/InstallPrompt.tsx` |) Tj
+T* (Experiência nativa em dispositivos móveis. |) Tj
+T* () Tj
+T* (---) Tj
+T* () Tj
+T* (## 3. CHECKLIST OPERACIONAL E AUDITÁVEL) Tj
+T* () Tj
+T* (### Prioridade Alta \(A Implementar/Melhorar\)) Tj
+T* (- [ ] **Validação XML NF-e:** Aprimorar extração de dados brutos) Tj
+T* (\(`src/components/recebimento`\).) Tj
+T* (- [ ] **Automação de Triagem:** Implementar lógica de amostragem) Tj
+T* (estatística \(`src/pages/Triagem.tsx`\).) Tj
+T* (- [ ] **Cobertura de Testes Lib:** Atingir 90%+ em `src/lib` \(Atualmente) Tj
+T* (em expansão\).) Tj
+T* () Tj
+T* (### Prioridade Média) Tj
+T* (- [ ] **Documentação de API:** Swagger/OpenAPI integrando com as) Tj
+T* (Edge Functions.) Tj
+T* (- [ ] **Stress Test de Telemetria:** Validar limites de escrita em cenários) Tj
+T* (de alta carga.) Tj
+T* () Tj
+T* (---) Tj
+T* () Tj
+T* (## 4. MATRIZ DE RISCO) Tj
+T* () Tj
+T* (| Categoria | Risco | Probabilidade | Impacto | Mitigação |) Tj
+T* (| :--- | :--- | :--- | :--- | :--- |) Tj
+T* (| **Segurança** | Vazamento de Dados | Baixa | Crítico | RLS rigoroso) Tj
+T* (no Supabase e Auditoria ativa. |) Tj
+T* (| **Integridade** | Divergência de Estoque | Média | Alto | Conferência) Tj
+T* (cega e Inventário Cíclico. |) Tj
+T* (| **Disponibilidade**| Queda de Conectividade | Média | Médio | Modo) Tj
+T* (Offline e Service Workers \(PWA\). |) Tj
+T* (| **Conformidade** | Falha em Auditoria | Baixa | Médio | Logs de) Tj
+T* (sistema imutáveis em `admin/auditoria`. |) Tj
+T* () Tj
+T* (---) Tj
+T* () Tj
+T* (## 5. EVIDÊNCIAS DE SISTEMA \(ANEXO TÉCNICO\)) Tj
+T* () Tj
+T* (- **Rotas de Negócio:** Mapeadas em `src/routes/wmsRoutes.tsx` e) Tj
+T* (`featureRoutes.tsx`.) Tj
+T* (- **Componentes UI:** 300+ componentes atômicos em) Tj
+T* (`src/components/ui`.) Tj
+T* (- **Lógica de Dados:** Centralizada em `src/lib/` com suporte a) Tj
+T* (`react-query` e `zustand`.) Tj
+T* (- **Testes:** Suite Vitest localizada em `src/tests/` e) Tj
+T* (`src/components/**/__tests__/`.) Tj
+T* () Tj
+T* (---) Tj
+T* (*Documento gerado automaticamente via Auditoria Enterprise - v3.0*) Tj
+T* () Tj
+ET
+endstream
+endobj
+1 0 obj
+<</Type /Pages
+/Kids [3 0 R ]
+/Count 1
+>>
+endobj
+5 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+6 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+7 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+8 0 obj
+<<
+/Type /Font
+/BaseFont /Helvetica-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+9 0 obj
+<<
+/Type /Font
+/BaseFont /Courier
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+10 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+11 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-Oblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+12 0 obj
+<<
+/Type /Font
+/BaseFont /Courier-BoldOblique
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+13 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Roman
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+14 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Bold
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+15 0 obj
+<<
+/Type /Font
+/BaseFont /Times-Italic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+16 0 obj
+<<
+/Type /Font
+/BaseFont /Times-BoldItalic
+/Subtype /Type1
+/Encoding /WinAnsiEncoding
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+17 0 obj
+<<
+/Type /Font
+/BaseFont /ZapfDingbats
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+18 0 obj
+<<
+/Type /Font
+/BaseFont /Symbol
+/Subtype /Type1
+/FirstChar 32
+/LastChar 255
+>>
+endobj
+2 0 obj
+<<
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+/Font <<
+/F1 5 0 R
+/F2 6 0 R
+/F3 7 0 R
+/F4 8 0 R
+/F5 9 0 R
+/F6 10 0 R
+/F7 11 0 R
+/F8 12 0 R
+/F9 13 0 R
+/F10 14 0 R
+/F11 15 0 R
+/F12 16 0 R
+/F13 17 0 R
+/F14 18 0 R
+>>
+/XObject <<
+>>
+>>
+endobj
+19 0 obj
+<<
+/Producer (jsPDF 4.2.1)
+/CreationDate (D:20260514120527-00'00')
+>>
+endobj
+20 0 obj
+<<
+/Type /Catalog
+/Pages 1 0 R
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+>>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000006463 00000 n 
+0000008280 00000 n 
+0000000015 00000 n 
+0000000152 00000 n 
+0000006520 00000 n 
+0000006645 00000 n 
+0000006775 00000 n 
+0000006908 00000 n 
+0000007045 00000 n 
+0000007168 00000 n 
+0000007297 00000 n 
+0000007429 00000 n 
+0000007565 00000 n 
+0000007693 00000 n 
+0000007820 00000 n 
+0000007949 00000 n 
+0000008082 00000 n 
+0000008184 00000 n 
+0000008528 00000 n 
+0000008614 00000 n 
+trailer
+<<
+/Size 21
+/Root 20 0 R
+/Info 19 0 R
+/ID [ <949E29C2421EEB14B3DBA8300F767EA5> <949E29C2421EEB14B3DBA8300F767EA5> ]
+>>
+startxref
+8718
+%%EOF
