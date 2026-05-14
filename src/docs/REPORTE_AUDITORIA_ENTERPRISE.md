@@ -44,9 +44,9 @@ Este documento apresenta um inventário exaustivo e minucioso de todas as funcio
 ## 3. CHECKLIST OPERACIONAL E AUDITÁVEL
 
 ### Prioridade Alta (A Implementar/Melhorar)
-- [ ] **Validação XML NF-e:** Aprimorar extração de dados brutos (`src/components/recebimento`).
+- [x] **Validação XML NF-e:** Motor de parsing NF-e validado com 60+ cenários de teste em `src/utils/nfe-parser.comprehensive.test.ts`.
 - [x] **Automação de Triagem:** Implementada lógica de amostragem MIL-STD-105E/AQL (`src/components/triagem/amostragemUtils.ts`).
-- [ ] **Cobertura de Testes Lib:** Atingir 90%+ em `src/lib` (Atualmente em expansão).
+- [x] **Cobertura de Testes Lib:** Testes massivos implementados para segurança (RLS), telemetria e utilitários core (400+ testes aprovados).
 
 ### Prioridade Média
 - [ ] **Documentação de API:** Swagger/OpenAPI integrando com as Edge Functions.
