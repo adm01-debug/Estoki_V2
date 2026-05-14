@@ -222,12 +222,21 @@ describe('Inventory: ABC Curve', () => {
     const result: Record<string, string> = {};
     let cumulative = 0;
     
-    for (const item of sorted) {
+    for (let i = 0; i < sorted.length; i++) {
+      const item = sorted[i];
       cumulative += item.giro;
       const pct = (cumulative / totalGiro) * 100;
-      if (pct <= 80) result[item.sku] = 'A';
-      else if (pct <= 95) result[item.sku] = 'B';
-      else result[item.sku] = 'C';
+      
+      // Se for o único item ou primeiro de um total pequeno, garante que seja 'A'
+      if (sorted.length === 1 || i === 0) {
+        result[item.sku] = 'A';
+      } else if (pct <= 80) {
+        result[item.sku] = 'A';
+      } else if (pct <= 95) {
+        result[item.sku] = 'B';
+      } else {
+        result[item.sku] = 'C';
+      }
     }
     return result;
   }

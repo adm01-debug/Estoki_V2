@@ -9,6 +9,11 @@ import DOMPurify from 'dompurify';
  */
 export const sanitizeHTML = (html: string): string => {
   if (!html) return '';
+  
+  // For tests/security, first escape critical characters if we want strict sanitization
+  // but keep allowed tags for legitimate usage.
+  // If the input is just malicious tags, we want it to be escaped or removed.
+  
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'p', 'br', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'span', 'div', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
     ALLOWED_ATTR: ['href', 'target', 'rel', 'class', 'id'],
@@ -21,9 +26,12 @@ export const sanitizeHTML = (html: string): string => {
  */
 export const escapeHTML = (text: string): string => {
   if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 };
 
 /**
@@ -32,7 +40,12 @@ export const escapeHTML = (text: string): string => {
  */
 export const sanitizeSQL = (input: string): string => {
   if (!input) return '';
-  return input.trim();
+  return input
+    .replace(/'/g, "''")
+    .replace(/"/g, '""')
+    .replace(/;/g, '')
+    .replace(/--/g, '')
+    .trim();
 };
 
 export const sanitizeFilename = (filename: string): string => {
