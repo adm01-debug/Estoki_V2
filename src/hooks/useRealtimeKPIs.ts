@@ -135,13 +135,20 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
           }
         }
       )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "alertas_historico" },
-        () => {
-          invalidateQueries([["alertas"], ["alertas_historico"], ["dashboard"]]);
-        }
-      )
+       .on(
+         "postgres_changes",
+         { event: "*", schema: "public", table: "alertas_historico" },
+         () => {
+           invalidateQueries([["alertas"], ["alertas_historico"], ["dashboard"]]);
+         }
+       )
+       .on(
+         "postgres_changes",
+         { event: "*", schema: "public", table: "rastreamento_historico" },
+         () => {
+           invalidateQueries([["rastreamento_historico"], ["atividades_recentes"], ["dashboard"]]);
+         }
+       )
       .subscribe((subscriptionStatus) => {
         const isConnected = subscriptionStatus === "SUBSCRIBED";
         setStatus(prev => ({ ...prev, isConnected }));
