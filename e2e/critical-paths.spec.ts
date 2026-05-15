@@ -61,36 +61,54 @@ test.describe('Navigation & Route Guards', () => {
   });
 });
 
-test.describe('Core Page Loading', () => {
-  const criticalPages = [
-    '/auth',
-    '/dashboard',
-    '/estoque',
-    '/recebimento',
-    '/separacao',
-    '/romaneios',
-    '/inventario',
-    '/produtos',
-    '/relatorios',
-  ];
-
-  for (const path of criticalPages) {
-    test(`should load ${path} without crash`, async ({ page }) => {
-      const errors: string[] = [];
-      page.on('pageerror', (err) => errors.push(err.message));
-      
-      await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(1000);
-
-      const criticalErrors = errors.filter(e => 
-        !e.includes('ResizeObserver') && 
-        !e.includes('Script error') &&
-        !e.includes('Failed to fetch')
-      );
-      expect(criticalErrors).toHaveLength(0);
-    });
-  }
-});
+ test.describe('Core Page Loading & Fuzzing', () => {
+   const pages = [
+     { path: '/auth', name: 'Auth' },
+     { path: '/dashboard', name: 'Dashboard' },
+     { path: '/estoque', name: 'Estoque' },
+     { path: '/recebimento', name: 'Recebimento' },
+     { path: '/separacao', name: 'Separacao' },
+     { path: '/romaneios', name: 'Romaneios' },
+     { path: '/inventario', name: 'Inventario' },
+     { path: '/produtos', name: 'Produtos' },
+     { path: '/relatorios', name: 'Relatorios' },
+     { path: '/admin', name: 'Admin' },
+     { path: '/configuracoes', name: 'Settings' },
+   ];
+ 
+   for (const { path, name } of pages) {
+     test(`should load ${name} (${path}) without crash`, async ({ page }) => {
+       const errors: string[] = [];
+       page.on('pageerror', (err) => errors.push(err.message));
+       
+       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
+       await page.waitForTimeout(1000);
+ 
+       const criticalErrors = errors.filter(e => 
+         !e.includes('ResizeObserver') && 
+         !e.includes('Script error') &&
+         !e.includes('Failed to fetch')
+       );
+       expect(criticalErrors).toHaveLength(0);
+     });
+ 
+     test(`should handle search fuzzing on ${name}`, async ({ page }) => {
+       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
+       const searchInput = page.locator('input[placeholder*="search"], input[placeholder*="buscar"], input[type="search"]').first();
+       
+       if (await searchInput.isVisible()) {
+         const payloads = ["<script>alert(1)</script>", "' OR '1'='1", "DROP TABLE", "%;--"];
+         for (const payload of payloads) {
+           await searchInput.fill(payload);
+           await page.keyboard.press('Enter');
+           await page.waitForTimeout(500);
+           // App should remain responsive
+           await expect(page.locator('body')).toBeVisible();
+         }
+       }
+     });
+   }
+ });
 
 test.describe('Accessibility Basics', () => {
   test('should have proper page title', async ({ page }) => {
