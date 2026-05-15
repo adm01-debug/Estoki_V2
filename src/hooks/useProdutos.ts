@@ -1,4 +1,5 @@
- import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+  import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+  import { useMemo } from 'react';
  import { supabase } from '@/integrations/supabase/client';
  import { toast } from 'sonner';
  import { useAuditLog } from './useAuditLog';
@@ -82,12 +83,12 @@
       }
     });
  
-   const stats = {
-     total: produtos.length,
-     curvaA: produtos.filter((p) => p.curva_abc === 'A').length,
-     curvaB: produtos.filter((p) => p.curva_abc === 'B').length,
-     curvaC: produtos.filter((p) => p.curva_abc === 'C').length,
-   };
+    const stats = useMemo(() => ({
+      total: produtos.length,
+      curvaA: produtos.filter((p) => p.curva_abc === 'A').length,
+      curvaB: produtos.filter((p) => p.curva_abc === 'B').length,
+      curvaC: produtos.filter((p) => p.curva_abc === 'C').length,
+    }), [produtos]);
  
    return {
      produtos,

@@ -1,5 +1,6 @@
  import { useState } from "react";
- import { motion, AnimatePresence } from "framer-motion";
+import { memo, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,7 @@ interface EstoqueMapaTabProps {
   onSelectPosition: (pos: PosicaoEstoque) => void;
 }
 
- export function EstoqueMapaTab({ filteredPositions, ruas, zoom, onZoomChange, onSelectPosition }: EstoqueMapaTabProps) {
+export const EstoqueMapaTab = memo(({ filteredPositions, ruas, zoom, onZoomChange, onSelectPosition }: EstoqueMapaTabProps) => {
    const [heatmapEnabled, setHeatmapEnabled] = useState(false);
  
   const getDiasArmazenado = (pos: PosicaoEstoque): number => {
@@ -68,14 +69,15 @@ interface EstoqueMapaTabProps {
       <div className="overflow-auto pb-4">
         <TooltipProvider>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-[600px] transition-transform" style={{ transform: `scale(${zoom})`, transformOrigin: "top left" }}>
-          {ruas.map((rua, ruaIndex) => {
+          {ruas.map((rua) => {
             const ruaPositions = filteredPositions.filter(p => p.porta_palete === rua);
             if (ruaPositions.length === 0) return null;
+            
             const ruaNiveis = [...new Set(ruaPositions.map(p => p.nivel).filter(Boolean))].sort().reverse();
             const ruaSecoes = [...new Set(ruaPositions.map(p => p.secao).filter(Boolean))].sort((a, b) => parseInt(a!) - parseInt(b!));
 
             return (
-              <motion.div key={rua} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: ruaIndex * 0.1 }}>
+              <div key={rua}>
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm flex items-center justify-between">
@@ -105,24 +107,22 @@ interface EstoqueMapaTabProps {
                               return (
                                 <Tooltip key={position.id}>
                                   <TooltipTrigger asChild>
-                                <motion.button
+                                <button
                                   onClick={() => onSelectPosition(position)}
-                                   className={cn(
-                                     "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group", 
-                                     !heatmapEnabled && config.bg, 
-                                     !heatmapEnabled && config.border,
-                                     "hover:ring-2 hover:ring-primary hover:ring-offset-1"
-                                   )}
-                                   style={heatmapStyle}
-                                  whileHover={{ scale: 1.1, zIndex: 10 }}
-                                  whileTap={{ scale: 0.95 }}
+                                  className={cn(
+                                    "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group hover:scale-110 active:scale-95 z-0 hover:z-10", 
+                                    !heatmapEnabled && config.bg, 
+                                    !heatmapEnabled && config.border,
+                                    "hover:ring-2 hover:ring-primary hover:ring-offset-1"
+                                  )}
+                                  style={heatmapStyle}
                                   title={`${position.codigo} - ${config.label}`}
                                 >
                                   {position.status === 'ocupado' && diasArmazenado > 30 && (
                                     <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-warning animate-pulse" />
                                   )}
                                   <span className="opacity-0 group-hover:opacity-100 transition-opacity">{secao}</span>
-                                </motion.button>
+                                </button>
                                   </TooltipTrigger>
                                   <TooltipContent side="top" className="w-64 p-3">
                                     <div className="space-y-2">
@@ -172,7 +172,7 @@ interface EstoqueMapaTabProps {
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -211,4 +211,6 @@ interface EstoqueMapaTabProps {
       </div>
     </div>
   );
-}
+});
+
+EstoqueMapaTab.displayName = "EstoqueMapaTab";
