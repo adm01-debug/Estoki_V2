@@ -37,22 +37,9 @@ export function useInventarioCiclico() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCiclos();
-
-    const channel = supabase
-      .channel('inventario_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'inventario_ciclos' },
-        () => fetchCiclos()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchCiclos]);
+   useEffect(() => {
+     fetchCiclos();
+   }, [fetchCiclos]);
 
   const criarCiclo = async (dados: {
     nome: string;

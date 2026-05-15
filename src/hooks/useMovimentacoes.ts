@@ -80,22 +80,9 @@ export function useMovimentacoes() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchMovimentacoes();
-
-    const channel = supabase
-      .channel('movimentacoes_changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'rastreamento_historico' },
-        () => fetchMovimentacoes()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchMovimentacoes]);
+   useEffect(() => {
+     fetchMovimentacoes();
+   }, [fetchMovimentacoes]);
 
   const registrarMovimentacao = async (
     input: MovimentacaoInput & { from_posicao_id?: string; to_posicao_id?: string }
