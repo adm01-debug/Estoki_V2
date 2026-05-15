@@ -2,6 +2,17 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type LoteRow = Database['public']['Tables']['lotes']['Row'];
+type LoteInsert = Database['public']['Tables']['lotes']['Insert'];
+
+export interface RecebimentoItem extends LoteRow {
+  produto?: {
+    nome: string;
+    sku: string;
+  };
+}
 
 export const useRecebimentos = () => {
   const queryClient = useQueryClient();
@@ -15,7 +26,7 @@ export const useRecebimentos = () => {
         .select('*, produto:produtos(nome, sku)')
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return data as unknown as RecebimentoItem[];
     }
   });
 

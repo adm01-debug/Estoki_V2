@@ -92,43 +92,17 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React ecosystem
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          // UI framework
-          "vendor-ui": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-dropdown-menu",
-            "@radix-ui/react-popover",
-            "@radix-ui/react-select",
-            "@radix-ui/react-tabs",
-            "@radix-ui/react-tooltip",
-            "@radix-ui/react-toast",
-            "class-variance-authority",
-            "clsx",
-            "tailwind-merge",
-          ],
-          // Data & state
-          "vendor-data": [
-            "@tanstack/react-query",
-            "@supabase/supabase-js",
-            "zustand",
-          ],
-          // Charts (heavy)
-          "vendor-charts": ["recharts"],
-          // Icons - tree-shaken per route
-          "vendor-icons": ["lucide-react"],
-          // Date utils
-          "vendor-date": ["date-fns", "dayjs"],
-          // Forms
-          "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
-          // Export/PDF - only loaded when needed
-          "vendor-export": ["jspdf", "exceljs", "papaparse"],
-          // Animation
-          "vendor-motion": ["framer-motion"],
-          // i18n
-          "vendor-i18n": ["i18next", "react-i18next", "i18next-browser-languagedetector"],
-        },
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('@radix-ui')) return 'vendor-ui';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('recharts')) return 'vendor-charts';
+            if (id.includes('jspdf') || id.includes('exceljs') || id.includes('papaparse')) return 'vendor-export';
+            if (id.includes('@supabase') || id.includes('@tanstack')) return 'vendor-core';
+            return 'vendor';
+          }
+        }
       },
     },
   },
