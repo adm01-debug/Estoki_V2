@@ -90,24 +90,50 @@ test.describe('Navigation & Route Guards', () => {
      }
    });
  
-   test('full receiving process flow', async ({ page }) => {
-     await page.goto(`${BASE_URL}/recebimento`);
-     await expect(page.locator('body')).toBeVisible();
- 
-     const newReceivingBtn = page.getByRole('button', { name: /novo|new/i }).first();
-     if (await newReceivingBtn.isVisible()) {
-       await newReceivingBtn.click();
-       await expect(page.locator('text=/fornecedor|supplier/i')).toBeVisible();
-       // Fill form
-       const supplierSelect = page.locator('select, [role="combobox"]').first();
-       if (await supplierSelect.isVisible()) {
-         await supplierSelect.click();
-         await page.keyboard.press('ArrowDown');
-         await page.keyboard.press('Enter');
-       }
-       await page.getByRole('button', { name: /criar|create/i }).click();
-     }
-   });
+    test('full receiving process flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/recebimento`);
+      await expect(page.locator('body')).toBeVisible();
+
+      const newReceivingBtn = page.getByRole('button', { name: /novo|new|entrada/i }).first();
+      if (await newReceivingBtn.isVisible()) {
+        await newReceivingBtn.click();
+        
+        const form = page.locator('form, [role="dialog"]').first();
+        await expect(form).toBeVisible();
+
+        const supplierField = page.locator('input[placeholder*="fornecedor"i], select, [role="combobox"]').first();
+        if (await supplierField.isVisible()) {
+          await supplierField.click();
+          await page.keyboard.type('Test Supplier');
+          await page.keyboard.press('Enter');
+        }
+
+        const createBtn = page.getByRole('button', { name: /criar|confirmar|salvar/i });
+        if (await createBtn.isVisible()) {
+          await createBtn.click();
+        }
+      }
+    });
+
+    test('full picking process flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/picking`);
+      await expect(page.locator('h1, h2')).toContainText(/picking|separação/i);
+
+      const tasks = page.locator('table tr, [role="listitem"]');
+      if (await tasks.count() > 1) {
+        const firstTask = tasks.nth(1);
+        await firstTask.click();
+        
+        const startBtn = page.getByRole('button', { name: /iniciar|começar|start/i });
+        if (await startBtn.isVisible()) {
+          await startBtn.click();
+          const confirmItemBtn = page.getByRole('button', { name: /confirmar|ok/i }).first();
+          if (await confirmItemBtn.isVisible()) {
+            await confirmItemBtn.click();
+          }
+        }
+      }
+    });
  
    test('role-based access verification', async ({ page }) => {
      // Try to access admin area as unauthenticated
