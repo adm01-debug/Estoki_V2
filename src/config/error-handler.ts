@@ -45,19 +45,16 @@ const userMessages: Record<ErrorCode, string> = {
   [ErrorCode.RATE_LIMITED]: 'Muitas requisições. Aguarde um momento.',
 };
 
-// Converter erro HTTP para ErrorCode
-function httpStatusToErrorCode(status: number): ErrorCode {
-  switch (status) {
-    case 401: return ErrorCode.UNAUTHORIZED;
-    case 403: return ErrorCode.FORBIDDEN;
-    case 404: return ErrorCode.NOT_FOUND;
-    case 422: return ErrorCode.VALIDATION_ERROR;
-    case 429: return ErrorCode.RATE_LIMITED;
-    default:
-      if (status >= 500) return ErrorCode.SERVER_ERROR;
-      return ErrorCode.UNKNOWN_ERROR;
-  }
-}
+ // Converter erro HTTP para ErrorCode
+ function httpStatusToErrorCode(status: number): ErrorCode {
+   if (status === 401) return ErrorCode.UNAUTHORIZED;
+   if (status === 403) return ErrorCode.FORBIDDEN;
+   if (status === 404) return ErrorCode.NOT_FOUND;
+   if (status === 422) return ErrorCode.VALIDATION_ERROR;
+   if (status === 429) return ErrorCode.RATE_LIMITED;
+   if (status >= 500) return ErrorCode.SERVER_ERROR;
+   return ErrorCode.UNKNOWN_ERROR;
+ }
 
 // Criar AppError a partir de qualquer erro
  export function createAppError(error: unknown, context?: Record<string, unknown>): AppError {
