@@ -163,15 +163,6 @@ export const useEstoque = () => {
     }
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('estoque-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'posicoes_estoque' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
 
   const estatisticas = useMemo(() => {
     const lista = posicoes || [];
