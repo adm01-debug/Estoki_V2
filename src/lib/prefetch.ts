@@ -17,9 +17,13 @@ const routeImports: Record<string, () => Promise<unknown>> = {
   '/posicoes': () => import('../pages/Posicoes'),
   '/picking': () => import('../pages/picking/PickingPage'),
   '/romaneios': () => import('../pages/Romaneios'),
-  '/scanner': () => import('../pages/Scanner'),
-  '/tarefas': () => import('../pages/GestaoTarefas'),
-  '/relatorios': () => import('../pages/Relatorios'),
+   '/scanner': () => import('../pages/Scanner'),
+   '/tarefas': () => import('../pages/GestaoTarefas'),
+   '/relatorios': () => import('../pages/Relatorios'),
+   '/monitor': () => import('../pages/DashboardOperacional'),
+   '/kpis-operacionais': () => import('../pages/KPIsOperacionais'),
+   '/picking': () => import('../pages/picking/PickingPage'),
+   '/expedicao': () => import('../pages/shipping/ShippingPage'),
 };
 
 const prefetched = new Set<string>();
