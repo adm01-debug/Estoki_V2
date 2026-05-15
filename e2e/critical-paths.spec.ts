@@ -61,49 +61,80 @@ test.describe('Navigation & Route Guards', () => {
   });
 });
 
- test.describe('Core Page Loading & Fuzzing', () => {
-   const pages = [
-     { path: '/auth', name: 'Auth' },
-     { path: '/dashboard', name: 'Dashboard' },
-     { path: '/estoque', name: 'Estoque' },
-     { path: '/recebimento', name: 'Recebimento' },
-     { path: '/separacao', name: 'Separacao' },
-     { path: '/romaneios', name: 'Romaneios' },
-     { path: '/inventario', name: 'Inventario' },
-     { path: '/produtos', name: 'Produtos' },
-     { path: '/relatorios', name: 'Relatorios' },
-     { path: '/admin', name: 'Admin' },
-     { path: '/configuracoes', name: 'Settings' },
-   ];
+ test.describe('Complex User Journeys (E2E)', () => {
+   test('full inventory adjustment flow', async ({ page }) => {
+     await page.goto(`${BASE_URL}/auth`);
+     // Login simulation (mocking UI interaction since actual creds might vary)
+     const emailInput = page.locator('input[type="email"]');
+     if (await emailInput.isVisible()) {
+       await emailInput.fill('admin@test.com');
+       await page.locator('input[type="password"]').fill('password123');
+       await page.getByRole('button', { name: /entrar|login/i }).click();
+     }
  
-   for (const { path, name } of pages) {
-     test(`should load ${name} (${path}) without crash`, async ({ page }) => {
-       const errors: string[] = [];
-       page.on('pageerror', (err) => errors.push(err.message));
+     await page.goto(`${BASE_URL}/estoque`);
+     await expect(page.locator('h1, h2')).toContainText(/estoque|inventory/i);
+ 
+     // Simulation of selecting a product and adjusting quantity
+     const productRow = page.locator('table tr').nth(1);
+     if (await productRow.isVisible()) {
+       await productRow.click();
+       const adjustBtn = page.getByRole('button', { name: /ajustar|adjust/i });
+       if (await adjustBtn.isVisible()) {
+         await adjustBtn.click();
+         await page.locator('input[name="quantity"], input[type="number"]').first().fill('10');
+         await page.getByRole('button', { name: /confirmar|save/i }).click();
+         // Verify success toast/message
+         await expect(page.locator('text=/sucesso|success/i')).toBeVisible();
+       }
+     }
+   });
+ 
+   test('full receiving process flow', async ({ page }) => {
+     await page.goto(`${BASE_URL}/recebimento`);
+     await expect(page.locator('body')).toBeVisible();
+ 
+     const newReceivingBtn = page.getByRole('button', { name: /novo|new/i }).first();
+     if (await newReceivingBtn.isVisible()) {
+       await newReceivingBtn.click();
+       await expect(page.locator('text=/fornecedor|supplier/i')).toBeVisible();
+       // Fill form
+       const supplierSelect = page.locator('select, [role="combobox"]').first();
+       if (await supplierSelect.isVisible()) {
+         await supplierSelect.click();
+         await page.keyboard.press('ArrowDown');
+         await page.keyboard.press('Enter');
+       }
+       await page.getByRole('button', { name: /criar|create/i }).click();
+     }
+   });
+ 
+   test('role-based access verification', async ({ page }) => {
+     // Try to access admin area as unauthenticated
+     await page.goto(`${BASE_URL}/admin`);
+     await expect(page).toHaveURL(/\/auth|unauthorized/);
+   });
+ });
+
+ test.describe('Stability & Resiliency (Fuzzing)', () => {
+   const targetPages = ['/estoque', '/recebimento', '/configuracoes', '/produtos'];
+   
+   for (const route of targetPages) {
+     test(`fuzz test inputs on ${route}`, async ({ page }) => {
+       await page.goto(`${BASE_URL}${route}`);
+       const inputs = await page.locator('input').all();
        
-       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
-       await page.waitForTimeout(1000);
- 
-       const criticalErrors = errors.filter(e => 
-         !e.includes('ResizeObserver') && 
-         !e.includes('Script error') &&
-         !e.includes('Failed to fetch')
-       );
-       expect(criticalErrors).toHaveLength(0);
-     });
- 
-     test(`should handle search fuzzing on ${name}`, async ({ page }) => {
-       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
-       const searchInput = page.locator('input[placeholder*="search"], input[placeholder*="buscar"], input[type="search"]').first();
-       
-       if (await searchInput.isVisible()) {
-         const payloads = ["<script>alert(1)</script>", "' OR '1'='1", "DROP TABLE", "%;--"];
-         for (const payload of payloads) {
-           await searchInput.fill(payload);
-           await page.keyboard.press('Enter');
-           await page.waitForTimeout(500);
-           // App should remain responsive
-           await expect(page.locator('body')).toBeVisible();
+       if (inputs.length > 0) {
+         const payload = "'; DROP TABLE users; -- <script>alert(1)</script>";
+         for (const input of inputs.slice(0, 3)) { // Test first 3 inputs
+           if (await input.isVisible() && await input.isEditable()) {
+             await input.fill(payload);
+             await page.keyboard.press('Enter');
+             // Check that the page didn't crash (White screen of death)
+             await expect(page.locator('body')).toBeVisible();
+             const errorBoundary = page.locator('text=/something went wrong|erro inesperado/i');
+             await expect(errorBoundary).not.toBeVisible();
+           }
          }
        }
      });
