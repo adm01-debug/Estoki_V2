@@ -37,9 +37,13 @@ export function useAppLayoutState() {
   }, [signOut, navigate]);
 
   const handleNavigate = useCallback((path: string, isMobile = false) => {
+    if (location.pathname === path) {
+      if (isMobile) setMobileMenuOpen(false);
+      return;
+    }
     navigate(path);
     if (isMobile) setMobileMenuOpen(false);
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   useEffect(() => {
     prefetchCriticalRoutes();
