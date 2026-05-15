@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Menu, ChevronLeft, Box } from "lucide-react";
+import { Menu, ChevronLeft, Box, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
@@ -9,6 +9,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { UserMenu } from "./UserMenu";
 import { cn } from "@/lib/utils";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 
 interface HeaderProps {
   mainPadding: string;
@@ -37,6 +38,8 @@ interface HeaderProps {
   onLogout,
   isHome
 }: HeaderProps) {
+  const isOnline = useOnlineStatus();
+
   return (
      <header className="sticky top-0 z-50 border-b border-border/30">
        <div className="absolute inset-0 bg-background/70 backdrop-blur-xl" />
@@ -68,6 +71,19 @@ interface HeaderProps {
            {title && <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">{title}</h1>}
         </div>
         <div className="flex items-center gap-0.5">
+          {!isOnline && (
+            <Tooltip delayDuration={300}>
+              <TooltipTrigger asChild>
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-destructive/10 text-destructive rounded-full border border-destructive/20 mr-2 animate-pulse">
+                  <WifiOff className="h-3.5 w-3.5" />
+                  <span className="text-[10px] font-black uppercase tracking-wider hidden md:inline">Offline</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                Você está operando em modo offline. Algumas funções podem estar limitadas.
+              </TooltipContent>
+            </Tooltip>
+          )}
           <GlobalSearch />
           <LanguageSwitcher />
           <NotificationCenter />
