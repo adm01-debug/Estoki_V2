@@ -48,15 +48,6 @@ export const useRecebimentos = () => {
     }
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('recebimentos-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['recebimentos'] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
 
   return { recebimentos, isLoading, error, refetch, createRecebimento };
 };
