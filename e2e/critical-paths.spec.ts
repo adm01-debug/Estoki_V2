@@ -62,52 +62,77 @@ test.describe('Navigation & Route Guards', () => {
 });
 
  test.describe('Complex User Journeys (E2E)', () => {
-   test('full inventory adjustment flow', async ({ page }) => {
-     await page.goto(`${BASE_URL}/auth`);
-     // Login simulation (mocking UI interaction since actual creds might vary)
-     const emailInput = page.locator('input[type="email"]');
-     if (await emailInput.isVisible()) {
-       await emailInput.fill('admin@test.com');
-       await page.locator('input[type="password"]').fill('password123');
-       await page.getByRole('button', { name: /entrar|login/i }).click();
-     }
+    test('full inventory status adjustment flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/estoque`);
+      await expect(page.locator('h1, h2')).toContainText(/estoque|inventory/i);
+  
+      // Try to find a position card or list item
+      const position = page.locator('[role="button"], .aspect-square, table tr').first();
+      if (await position.isVisible()) {
+        await position.click();
+        
+        // Wait for details dialog
+        const dialog = page.locator('[role="dialog"], .bg-card').last();
+        await expect(dialog).toBeVisible();
+        
+        // Check for block/unblock actions
+        const blockBtn = dialog.getByRole('button', { name: /bloquear/i });
+        const unblockBtn = dialog.getByRole('button', { name: /liberar/i });
+        
+        if (await blockBtn.isVisible()) {
+          await blockBtn.click();
+          await expect(page.locator('text=/sucesso|bloqueado/i').first()).toBeVisible();
+        } else if (await unblockBtn.isVisible()) {
+          await unblockBtn.click();
+          await expect(page.locator('text=/sucesso|liberado/i').first()).toBeVisible();
+        }
+      }
+    });
  
-     await page.goto(`${BASE_URL}/estoque`);
-     await expect(page.locator('h1, h2')).toContainText(/estoque|inventory/i);
- 
-     // Simulation of selecting a product and adjusting quantity
-     const productRow = page.locator('table tr').nth(1);
-     if (await productRow.isVisible()) {
-       await productRow.click();
-       const adjustBtn = page.getByRole('button', { name: /ajustar|adjust/i });
-       if (await adjustBtn.isVisible()) {
-         await adjustBtn.click();
-         await page.locator('input[name="quantity"], input[type="number"]').first().fill('10');
-         await page.getByRole('button', { name: /confirmar|save/i }).click();
-         // Verify success toast/message
-         await expect(page.locator('text=/sucesso|success/i')).toBeVisible();
-       }
-     }
-   });
- 
-   test('full receiving process flow', async ({ page }) => {
-     await page.goto(`${BASE_URL}/recebimento`);
-     await expect(page.locator('body')).toBeVisible();
- 
-     const newReceivingBtn = page.getByRole('button', { name: /novo|new/i }).first();
-     if (await newReceivingBtn.isVisible()) {
-       await newReceivingBtn.click();
-       await expect(page.locator('text=/fornecedor|supplier/i')).toBeVisible();
-       // Fill form
-       const supplierSelect = page.locator('select, [role="combobox"]').first();
-       if (await supplierSelect.isVisible()) {
-         await supplierSelect.click();
-         await page.keyboard.press('ArrowDown');
-         await page.keyboard.press('Enter');
-       }
-       await page.getByRole('button', { name: /criar|create/i }).click();
-     }
-   });
+    test('full receiving process flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/recebimento`);
+      await expect(page.locator('body')).toBeVisible();
+
+      const newReceivingBtn = page.getByRole('button', { name: /novo|new|entrada/i }).first();
+      if (await newReceivingBtn.isVisible()) {
+        await newReceivingBtn.click();
+        
+        const form = page.locator('form, [role="dialog"]').first();
+        await expect(form).toBeVisible();
+
+        const supplierField = page.locator('input[placeholder*="fornecedor"i], select, [role="combobox"]').first();
+        if (await supplierField.isVisible()) {
+          await supplierField.click();
+          await page.keyboard.type('Test Supplier');
+          await page.keyboard.press('Enter');
+        }
+
+        const createBtn = page.getByRole('button', { name: /criar|confirmar|salvar/i });
+        if (await createBtn.isVisible()) {
+          await createBtn.click();
+        }
+      }
+    });
+
+    test('full picking process flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/picking`);
+      await expect(page.locator('h1, h2')).toContainText(/picking|separação/i);
+
+      const tasks = page.locator('table tr, [role="listitem"]');
+      if (await tasks.count() > 1) {
+        const firstTask = tasks.nth(1);
+        await firstTask.click();
+        
+        const startBtn = page.getByRole('button', { name: /iniciar|começar|start/i });
+        if (await startBtn.isVisible()) {
+          await startBtn.click();
+          const confirmItemBtn = page.getByRole('button', { name: /confirmar|ok/i }).first();
+          if (await confirmItemBtn.isVisible()) {
+            await confirmItemBtn.click();
+          }
+        }
+      }
+    });
  
    test('role-based access verification', async ({ page }) => {
      // Try to access admin area as unauthenticated
@@ -117,7 +142,17 @@ test.describe('Navigation & Route Guards', () => {
  });
 
  test.describe('Stability & Resiliency (Fuzzing)', () => {
-   const targetPages = ['/estoque', '/recebimento', '/configuracoes', '/produtos'];
+    const targetPages = [
+      '/estoque', 
+      '/recebimento', 
+      '/configuracoes', 
+      '/produtos', 
+      '/picking', 
+      '/ondas', 
+      '/tarefas',
+      '/pedidos',
+      '/expedicao'
+    ];
    
    for (const route of targetPages) {
      test(`fuzz test inputs on ${route}`, async ({ page }) => {
@@ -167,12 +202,12 @@ test.describe('Accessibility Basics', () => {
   });
 });
 
-test.describe('Performance Basics', () => {
-  test('should load initial page within 5 seconds', async ({ page }) => {
+test.describe('Performance & Optimization', () => {
+  test('should load initial page within 3 seconds', async ({ page }) => {
     const startTime = Date.now();
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
     const loadTime = Date.now() - startTime;
-    expect(loadTime).toBeLessThan(5000);
+    expect(loadTime).toBeLessThan(3000);
   });
 
   test('should not have memory leaks in navigation', async ({ page }) => {

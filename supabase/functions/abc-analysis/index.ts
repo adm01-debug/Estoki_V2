@@ -12,9 +12,13 @@ serve(async (req) => {
     const sales: Record<string, number> = {};
     for (const m of movements || []) { sales[m.product_id] = (sales[m.product_id] || 0) + m.quantity; }
     const analysis = (products || []).map(p => ({ ...p, totalSales: sales[p.id] || 0, value: (sales[p.id] || 0) * p.cost })).sort((a, b) => b.value - a.value);
-    const totalValue = analysis.reduce((sum, p) => sum + p.value, 0);
+    const totalValue = analysis.reduce((sum, p) => sum + p.value, 0) || 1; // Prevent division by zero
     let cumulative = 0;
-    for (const p of analysis) { cumulative += p.value; (p as any).cumulativePercent = (cumulative / totalValue) * 100; (p as any).class = (p as any).cumulativePercent <= 80 ? "A" : (p as any).cumulativePercent <= 95 ? "B" : "C"; }
+    for (const p of analysis) { 
+      cumulative += p.value; 
+      (p as any).cumulativePercent = (cumulative / totalValue) * 100; 
+      (p as any).class = (p as any).cumulativePercent <= 80 ? "A" : (p as any).cumulativePercent <= 95 ? "B" : "C"; 
+    }
     return new Response(JSON.stringify({ totalValue, analysis, summary: { A: analysis.filter((p: any) => p.class === "A").length, B: analysis.filter((p: any) => p.class === "B").length, C: analysis.filter((p: any) => p.class === "C").length } }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
 });
