@@ -88,14 +88,21 @@ export default function EstoquePage() {
   const ppPositions = useMemo(() => safePositions.filter(p => p.tipo === 'porta_palete'), [safePositions]);
   const boxPositions = useMemo(() => safePositions.filter(p => p.tipo === 'box'), [safePositions]);
 
-  const stats = useMemo(() => {
-    const estatisticas = getEstatisticas();
-    return {
-      ppStats: { ocupados: ppPositions.filter(p => p.status === 'ocupado').length, livres: ppPositions.filter(p => p.status === 'livre').length, reservados: ppPositions.filter(p => p.status === 'reservado').length, bloqueados: ppPositions.filter(p => p.status === 'bloqueado').length, total: ppPositions.length },
-      boxStats: { ocupados: boxPositions.filter(p => p.status === 'ocupado').length, livres: boxPositions.filter(p => p.status === 'livre').length, total: boxPositions.length },
-      ocupacaoTotal: Math.round(estatisticas.taxaOcupacao),
-    };
-  }, [getEstatisticas, ppPositions, boxPositions]);
+  const stats = useMemo(() => ({
+    ppStats: { 
+      ocupados: ppPositions.filter(p => p.status === 'ocupado').length, 
+      livres: ppPositions.filter(p => p.status === 'livre').length, 
+      reservados: ppPositions.filter(p => p.status === 'reservado').length, 
+      bloqueados: ppPositions.filter(p => p.status === 'bloqueado').length, 
+      total: ppPositions.length 
+    },
+    boxStats: { 
+      ocupados: boxPositions.filter(p => p.status === 'ocupado').length, 
+      livres: boxPositions.filter(p => p.status === 'livre').length, 
+      total: boxPositions.length 
+    },
+    ocupacaoTotal: Math.round(getEstatisticas().taxaOcupacao),
+  }), [getEstatisticas, ppPositions, boxPositions]);
 
    const filteredPositions = useMemo(() => {
      const searchTerm = filters.search.toLowerCase();
@@ -196,23 +203,36 @@ export default function EstoquePage() {
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground"><Box className="h-12 w-12 mb-4" /><p>Nenhum box cadastrado</p></div>
               ) : (
                 <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                  {boxPositions.map((box, index) => {
-                    const config = statusConfig[box.status];
-                    return (
-                      <motion.button key={box.id} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2, delay: index * 0.02 }} onClick={() => setSelectedPosition(box)} className={cn("aspect-square rounded-xl flex flex-col items-center justify-center border-2 transition-all", config.bg, config.border, "hover:ring-2 hover:ring-primary hover:ring-offset-2")} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <span className="font-bold text-lg">{box.box || box.codigo}</span>
-                      </motion.button>
-                    );
-                  })}
+                  {boxPositions.map((box) => (
+                    <button 
+                      key={box.id} 
+                      onClick={() => setSelectedPosition(box)} 
+                      className={cn(
+                        "aspect-square rounded-xl flex flex-col items-center justify-center border-2 transition-all hover:scale-105 active:scale-95", 
+                        statusConfig[box.status].bg, 
+                        statusConfig[box.status].border, 
+                        "hover:ring-2 hover:ring-primary hover:ring-offset-2"
+                      )}
+                    >
+                      <span className="font-bold text-lg">{box.box || box.codigo}</span>
+                    </button>
+                  ))}
                 </div>
               )}
             </TabsContent>
 
             <TabsContent value="lista" className="space-y-3">
-              {filteredPositions.filter(p => p.status === "ocupado").slice(0, 20).map((position, index) => {
+              {filteredPositions.filter(p => p.status === "ocupado").slice(0, 20).map((position) => {
                 const diasArmazenado = position.created_at ? differenceInDays(new Date(), new Date(position.created_at)) : 0;
                 return (
-                  <motion.div key={position.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, delay: index * 0.03 }} onClick={() => setSelectedPosition(position)} className={cn("p-4 rounded-lg border bg-card cursor-pointer transition-all hover:shadow-md", diasArmazenado > 30 && "border-l-4 border-l-warning")}>
+                  <div 
+                    key={position.id} 
+                    onClick={() => setSelectedPosition(position)} 
+                    className={cn(
+                      "p-4 rounded-lg border bg-card cursor-pointer transition-all hover:shadow-md", 
+                      diasArmazenado > 30 && "border-l-4 border-l-warning"
+                    )}
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline" className="font-mono">{position.codigo}</Badge>
@@ -223,7 +243,7 @@ export default function EstoquePage() {
                         <ArrowRight className="h-4 w-4 text-muted-foreground mt-2 ml-auto" />
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
               {filteredPositions.filter(p => p.status === "ocupado").length === 0 && (
