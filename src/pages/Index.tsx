@@ -121,11 +121,11 @@ export default function Dashboard() {
       <motion.div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto" variants={containerVariants} initial="hidden" animate="visible">
         <IndexHero userName={userName} isConnected={realtimeStatus.isConnected} onDashboardClick={() => navigate("/dashboard")} />
 
-        <motion.section variants={itemVariants}>
+         <motion.section variants={itemVariants} className="content-visibility-auto">
           <IndexKPIs items={kpiItems} loading={loadingKpis} onNavigate={navigate} />
         </motion.section>
 
-        <motion.section className="grid grid-cols-1 lg:grid-cols-3 gap-4" variants={itemVariants}>
+         <motion.section className="grid grid-cols-1 lg:grid-cols-3 gap-4 content-visibility-auto" variants={itemVariants}>
           <IndexOcupacaoCard
             loading={loadingEstoque}
             ocupacaoPP={ocupacaoPP}
@@ -136,7 +136,7 @@ export default function Dashboard() {
           <IndexQuickStats loading={loadingKpis} totalRecebimentos={totalRecebimentos} totalTriagens={totalTriagens} divergencias={divergencias} />
         </motion.section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 content-visibility-auto">
           <IndexOperations aguardandoRecebimento={aguardandoRecebimento} triagemPendente={triagemPendente} onNavigate={navigate} />
           <IndexAtividade atividades={atividades} loading={loadingAtividades} onSeeAll={() => navigate("/rastreabilidade")} />
         </div>
