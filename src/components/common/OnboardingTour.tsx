@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -58,7 +58,7 @@ const tourSteps: TourStep[] = [
   },
 ];
 
-export function OnboardingTour() {
+export const OnboardingTour = memo(function OnboardingTour() {
   const [tourCompleted, setTourCompleted] = useLocalStorage('wms-tour-completed', false);
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -163,4 +163,4 @@ export function OnboardingTour() {
       </div>
     </>
   );
-}
+});

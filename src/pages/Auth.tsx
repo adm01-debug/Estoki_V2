@@ -31,9 +31,13 @@ const AuthPage = () => {
   const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
   const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    if (!loading && user) navigate("/");
-  }, [user, loading, navigate]);
+   useEffect(() => {
+     if (!loading && user) {
+       const params = new URLSearchParams(window.location.search);
+       const redirectTo = params.get("redirectTo") || "/";
+       navigate(redirectTo, { replace: true });
+     }
+   }, [user, loading, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
