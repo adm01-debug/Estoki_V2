@@ -1,3 +1,10 @@
+ @layer utilities {
+   .content-visibility-auto {
+     content-visibility: auto;
+     contain-intrinsic-size: 1px 5000px;
+   }
+ }
+ 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
