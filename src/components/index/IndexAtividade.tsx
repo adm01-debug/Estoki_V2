@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ interface Props {
   onSeeAll: () => void;
 }
 
-export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
+export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) => {
   return (
     <motion.section variants={itemVariants}>
       <div className="flex items-center justify-between mb-3">
@@ -72,13 +73,9 @@ export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
               atividades.map((activity, index) => {
                 const Icon = getActivityIcon(activity.type);
                 return (
-                   <motion.div
+                   <div
                      key={activity.id}
-                     className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item"
-                     initial={{ opacity: 0, x: -20 }}
-                     animate={{ opacity: 1, x: 0 }}
-                     transition={{ duration: 0.3, delay: 0.6 + index * 0.08 }}
-                     whileHover={{ x: 4 }}
+                     className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item hover:pl-5 transition-all duration-200"
                    >
                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shadow-sm ${getStatusClasses(activity.status)} transition-transform group-hover/item:scale-110`}>
                        <Icon className="h-5 w-5" />
@@ -98,7 +95,7 @@ export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
                          <MoreVertical className="h-4 w-4 text-muted-foreground" />
                        </Button>
                      </div>
-                   </motion.div>
+                   </div>
                 );
               })
             )}
@@ -107,4 +104,6 @@ export function IndexAtividade({ atividades, loading, onSeeAll }: Props) {
       </Card>
     </motion.section>
   );
-}
+});
+
+IndexAtividade.displayName = "IndexAtividade";
