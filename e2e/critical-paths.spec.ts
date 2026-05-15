@@ -193,12 +193,12 @@ test.describe('Accessibility Basics', () => {
   });
 });
 
-test.describe('Performance Basics', () => {
-  test('should load initial page within 5 seconds', async ({ page }) => {
+test.describe('Performance & Optimization', () => {
+  test('should load initial page within 3 seconds', async ({ page }) => {
     const startTime = Date.now();
     await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
     const loadTime = Date.now() - startTime;
-    expect(loadTime).toBeLessThan(5000);
+    expect(loadTime).toBeLessThan(3000);
   });
 
   test('should not have memory leaks in navigation', async ({ page }) => {
