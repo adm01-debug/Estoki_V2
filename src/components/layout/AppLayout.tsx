@@ -93,20 +93,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
            >
              <div className="max-w-[1600px] mx-auto min-h-full flex flex-col">
                <Breadcrumbs className="lg:px-8 pt-4 pb-2" />
-               <div className="px-6 lg:px-8 pb-10 flex-1 flex flex-col">
-                 <AnimatePresence mode="wait">
-                   <motion.div 
-                     key={location.pathname} 
-                     initial={{ opacity: 0, scale: 0.99, y: 10 }} 
-                     animate={{ opacity: 1, scale: 1, y: 0 }} 
-                     exit={{ opacity: 0, scale: 1.01, y: -10 }} 
-                     transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                     className="flex-1 flex flex-col"
-                   >
-                     {children || <Outlet />}
-                   </motion.div>
-                 </AnimatePresence>
-               </div>
+                <div className="px-6 lg:px-8 pb-10 flex-1 flex flex-col relative">
+                  {/* Simplified route transition logic to reduce layout shifts and double animations */}
+                  {children || <Outlet />}
+                </div>
             </div>
           </main>
 
