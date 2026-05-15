@@ -143,7 +143,17 @@ test.describe('Navigation & Route Guards', () => {
  });
 
  test.describe('Stability & Resiliency (Fuzzing)', () => {
-   const targetPages = ['/estoque', '/recebimento', '/configuracoes', '/produtos'];
+    const targetPages = [
+      '/estoque', 
+      '/recebimento', 
+      '/configuracoes', 
+      '/produtos', 
+      '/picking', 
+      '/ondas', 
+      '/tarefas',
+      '/pedidos',
+      '/expedicao'
+    ];
    
    for (const route of targetPages) {
      test(`fuzz test inputs on ${route}`, async ({ page }) => {
