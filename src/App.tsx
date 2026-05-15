@@ -1,14 +1,6 @@
- import { Suspense, lazy, useEffect } from "react";
- const Hub = lazy(() => import("./pages/Hub"));
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { AppProvider } from "@/contexts/AppContext";
-import { NotificationProvider } from "@/contexts/NotificationContext";
-import { HelmetProvider } from 'react-helmet-async';
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { AppProviders } from "@/components/common/AppProviders";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
 import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
@@ -27,60 +19,29 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const DashboardOperacional = lazy(() => import("./pages/DashboardOperacional"));
 const Index = lazy(() => import("./pages/Index"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
-      retry: 1,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      networkMode: 'offlineFirst',
-    },
-    mutations: {
-      retry: 0,
-      networkMode: 'online',
-    },
-  },
-});
-
+const Hub = lazy(() => import("./pages/Hub"));
 const App = () => (
-  <HelmetProvider>
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <AppProvider>
-            <NotificationProvider>
-              <Sonner />
-              <InstallPrompt />
-              <UpdatePrompt />
-              <BrowserRouter>
-                <Routes>
-                  {/* Public routes */}
-                  {publicRoutes}
+  <AppProviders>
+    <BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        {publicRoutes}
 
-                  {/* Protected routes */}
-                  <Route path="/" element={<AppLayout />}>
-                    <Route index element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense></RouteErrorBoundary>} />
-                    <Route path="dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense></RouteErrorBoundary>} />
-                    <Route path="monitor" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense></RouteErrorBoundary>} />
+        {/* Protected routes */}
+        <Route path="/" element={<AppLayout />}>
+          <Route index element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense></RouteErrorBoundary>} />
+          <Route path="dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense></RouteErrorBoundary>} />
+          <Route path="monitor" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense></RouteErrorBoundary>} />
 
-                    {wmsRoutes}
-                    {analyticsRoutes}
-                     <Route path="hub" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Hub /></Suspense></RouteErrorBoundary>} />
-                     {adminRoutes}
-                    {featureRoutes}
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </NotificationProvider>
-          </AppProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
-  </HelmetProvider>
+          {wmsRoutes}
+          {analyticsRoutes}
+          <Route path="hub" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Hub /></Suspense></RouteErrorBoundary>} />
+          {adminRoutes}
+          {featureRoutes}
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </AppProviders>
 );
 
 export default App;

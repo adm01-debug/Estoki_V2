@@ -25,8 +25,14 @@ export function SEO({ title, description, path = '/', noIndex = false }: SEOProp
       <meta property="og:description" content={desc} />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
+      <meta property="og:site_name" content={SITE_NAME} />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={desc} />
+      <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)" />
+      <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     </Helmet>
   );
 }

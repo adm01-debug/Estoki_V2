@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { useSidebarFavorites } from "@/hooks/useSidebarFavorites";
@@ -23,7 +24,7 @@ function getInitials(nome: string) {
   return nome.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 }
 
-export function SidebarContent({
+export const SidebarContent = memo(function SidebarContent({
   isMobile = false,
   sidebarCollapsed,
   userName,
@@ -137,4 +138,4 @@ export function SidebarContent({
       />
     </>
   );
-}
+});
