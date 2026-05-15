@@ -62,33 +62,32 @@ test.describe('Navigation & Route Guards', () => {
 });
 
  test.describe('Complex User Journeys (E2E)', () => {
-   test('full inventory adjustment flow', async ({ page }) => {
-     await page.goto(`${BASE_URL}/auth`);
-     // Login simulation (mocking UI interaction since actual creds might vary)
-     const emailInput = page.locator('input[type="email"]');
-     if (await emailInput.isVisible()) {
-       await emailInput.fill('admin@test.com');
-       await page.locator('input[type="password"]').fill('password123');
-       await page.getByRole('button', { name: /entrar|login/i }).click();
-     }
- 
-     await page.goto(`${BASE_URL}/estoque`);
-     await expect(page.locator('h1, h2')).toContainText(/estoque|inventory/i);
- 
-     // Simulation of selecting a product and adjusting quantity
-     const productRow = page.locator('table tr').nth(1);
-     if (await productRow.isVisible()) {
-       await productRow.click();
-       const adjustBtn = page.getByRole('button', { name: /ajustar|adjust/i });
-       if (await adjustBtn.isVisible()) {
-         await adjustBtn.click();
-         await page.locator('input[name="quantity"], input[type="number"]').first().fill('10');
-         await page.getByRole('button', { name: /confirmar|save/i }).click();
-         // Verify success toast/message
-         await expect(page.locator('text=/sucesso|success/i')).toBeVisible();
-       }
-     }
-   });
+    test('full inventory status adjustment flow', async ({ page }) => {
+      await page.goto(`${BASE_URL}/estoque`);
+      await expect(page.locator('h1, h2')).toContainText(/estoque|inventory/i);
+  
+      // Try to find a position card or list item
+      const position = page.locator('[role="button"], .aspect-square, table tr').first();
+      if (await position.isVisible()) {
+        await position.click();
+        
+        // Wait for details dialog
+        const dialog = page.locator('[role="dialog"], .bg-card').last();
+        await expect(dialog).toBeVisible();
+        
+        // Check for block/unblock actions
+        const blockBtn = dialog.getByRole('button', { name: /bloquear/i });
+        const unblockBtn = dialog.getByRole('button', { name: /liberar/i });
+        
+        if (await blockBtn.isVisible()) {
+          await blockBtn.click();
+          await expect(page.locator('text=/sucesso|bloqueado/i').first()).toBeVisible();
+        } else if (await unblockBtn.isVisible()) {
+          await unblockBtn.click();
+          await expect(page.locator('text=/sucesso|liberado/i').first()).toBeVisible();
+        }
+      }
+    });
  
     test('full receiving process flow', async ({ page }) => {
       await page.goto(`${BASE_URL}/recebimento`);
