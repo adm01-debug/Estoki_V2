@@ -62,7 +62,7 @@ test.describe('Navigation & Route Guards', () => {
 });
 
  test.describe('Core Page Loading & Fuzzing', () => {
-   const criticalPages = [
+   const pages = [
      { path: '/auth', name: 'Auth' },
      { path: '/dashboard', name: 'Dashboard' },
      { path: '/estoque', name: 'Estoque' },
@@ -76,7 +76,7 @@ test.describe('Navigation & Route Guards', () => {
      { path: '/configuracoes', name: 'Settings' },
    ];
  
-   for (const { path, name } of criticalPages) {
+   for (const { path, name } of pages) {
      test(`should load ${name} (${path}) without crash`, async ({ page }) => {
        const errors: string[] = [];
        page.on('pageerror', (err) => errors.push(err.message));
@@ -109,24 +109,6 @@ test.describe('Navigation & Route Guards', () => {
      });
    }
  });
-
-  for (const path of criticalPages) {
-    test(`should load ${path} without crash`, async ({ page }) => {
-      const errors: string[] = [];
-      page.on('pageerror', (err) => errors.push(err.message));
-      
-      await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
-      await page.waitForTimeout(1000);
-
-      const criticalErrors = errors.filter(e => 
-        !e.includes('ResizeObserver') && 
-        !e.includes('Script error') &&
-        !e.includes('Failed to fetch')
-      );
-      expect(criticalErrors).toHaveLength(0);
-    });
-  }
-});
 
 test.describe('Accessibility Basics', () => {
   test('should have proper page title', async ({ page }) => {
