@@ -2,7 +2,8 @@ import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
- import { useState, useMemo, useRef, useEffect } from "react";
+  import { useState, useMemo, useRef, useEffect } from "react";
+ import { supabase } from "@/integrations/supabase/client";
  import { motion, AnimatePresence } from "framer-motion";
  import { toast } from "sonner";
  import { cn } from "@/lib/utils";
@@ -123,16 +124,19 @@ export default function TriagemPage() {
     return { emAndamento, aprovados, reprovados };
   }, [items]);
 
-  const handleIniciarTriagem = async () => {
-    try {
-      const result = await createTriagem.mutateAsync({ data_inicio: new Date().toISOString() });
-      if (result) {
-        navigate(`/triagem/${result.id}`);
-      }
-    } catch {
-      // error handled by hook
-    }
-  };
+   const handleIniciarTriagem = async () => {
+     try {
+       const result = await createTriagem.mutateAsync({ 
+         data_inicio: new Date().toISOString(),
+         operador_id: (await supabase.auth.getUser()).data.user?.id
+       });
+       if (result) {
+         navigate(`/triagem/${result.id}`);
+       }
+     } catch (err) {
+       toast.error("Erro ao iniciar triagem");
+     }
+   };
 
   if (isLoading) {
     return (

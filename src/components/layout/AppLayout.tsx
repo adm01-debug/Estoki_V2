@@ -80,6 +80,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             userEmail={userEmail}
             currentRole={currentRole}
             onLogout={handleLogout}
+            isHome={isHome}
           />
 
            <main 

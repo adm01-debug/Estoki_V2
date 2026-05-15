@@ -195,14 +195,17 @@ export const useDashboard = () => {
         giroMedio: 0,
         entradasHoje,
         saidasHoje,
-        triagensHoje: totalTriagens,
-        triagensPendentes,
-      };
+         triagensHoje: totalTriagens,
+         triagensPendentes,
+       };
 
-      return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
-    },
-    staleTime: 2 * 60 * 1000,
-  });
+       return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
+     },
+     staleTime: 2 * 60 * 1000,
+     gcTime: 5 * 60 * 1000,
+     retry: 2,
+     refetchOnWindowFocus: true,
+   });
 
   useEffect(() => {
     const channel = supabase

@@ -21,6 +21,7 @@ interface HeaderProps {
   userEmail: string;
   currentRole: string;
   onLogout: () => void;
+  isHome?: boolean;
 }
 
 export const Header = memo(function Header({
@@ -33,7 +34,8 @@ export const Header = memo(function Header({
   userName,
   userEmail,
   currentRole,
-  onLogout
+  onLogout,
+  isHome
 }: HeaderProps) {
   return (
      <header className="sticky top-0 z-50 border-b border-border/30">
@@ -55,12 +57,14 @@ export const Header = memo(function Header({
               </TooltipContent>
             </Tooltip>
           )}
-          <div className="flex items-center gap-2 lg:hidden">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
-              <Box className="h-4 w-4 text-primary-foreground" />
+          {isHome && (
+            <div className="flex items-center gap-2 lg:hidden">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
+                <Box className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
             </div>
-            <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
-          </div>
+          )}
            {title && <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">{title}</h1>}
         </div>
         <div className="flex items-center gap-0.5">

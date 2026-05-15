@@ -65,17 +65,25 @@ export default function EstoquePage() {
     return { ruas: Array.from(ruasSet).sort(), niveis: Array.from(niveisSet).sort() };
   }, [safePositions]);
 
-  const [filters, setFilters] = useState<Filters>({ status: ["livre", "ocupado", "reservado", "bloqueado"], ruas: [], niveis: [], search: "" });
+  const [filters, setFilters] = useState<Filters>({ 
+    status: ["livre", "ocupado", "reservado", "bloqueado"], 
+    ruas: [], 
+    niveis: [], 
+    search: "" 
+  });
 
-   // Substituindo useMemo por useEffect para evitar atualização de estado durante a renderização
-   useEffect(() => {
-     if (ruas.length > 0 && filters.ruas.length === 0) {
-       setFilters(prev => ({ ...prev, ruas }));
-     }
-     if (niveis.length > 0 && filters.niveis.length === 0) {
-       setFilters(prev => ({ ...prev, niveis }));
-     }
-   }, [ruas, niveis, filters.ruas.length, filters.niveis.length]);
+  // Initialize filters when streets/levels are loaded
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    if (!initialized && (ruas.length > 0 || niveis.length > 0)) {
+      setFilters(prev => ({ 
+        ...prev, 
+        ruas: prev.ruas.length === 0 ? ruas : prev.ruas, 
+        niveis: prev.niveis.length === 0 ? niveis : prev.niveis 
+      }));
+      setInitialized(true);
+    }
+  }, [ruas, niveis, initialized]);
 
   const ppPositions = useMemo(() => safePositions.filter(p => p.tipo === 'porta_palete'), [safePositions]);
   const boxPositions = useMemo(() => safePositions.filter(p => p.tipo === 'box'), [safePositions]);

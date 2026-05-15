@@ -65,11 +65,11 @@ export function MobileNavigation({
 
       {/* Bottom Navigation (Mobile) */}
        <nav 
-         className="fixed bottom-0 left-0 right-0 border-t border-border/20 px-2 py-2 md:hidden safe-area-bottom z-40" 
+         className="fixed bottom-0 left-0 right-0 border-t border-border/20 px-2 pb-safe pt-2 md:hidden z-40" 
          aria-label="Navegação mobile"
        >
-         <div className="absolute inset-0 bg-background/80 backdrop-blur-xl" />
-         <div className="relative flex items-center justify-around h-14">
+         <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/10" />
+         <div className="relative flex items-center justify-around h-14 max-w-md mx-auto">
           {mobileNavItems.slice(0, 2).map((item) => {
             const isActive = pathname === item.path;
             return (
