@@ -43,8 +43,8 @@ export function ImportSection() {
       complete: async (results) => {
         const importResult: ImportResult = { success: 0, errors: [], total: results.data.length };
 
-        for (let i = 0; i < results.data.length; i++) {
-          const row = results.data[i] as any;
+         for (let i = 0; i < results.data.length; i++) {
+           const row = results.data[i] as Record<string, unknown>;
           try {
             // Validações básicas
             if (templateId === "produtos" && (!row.sku || !row.nome)) {
@@ -86,10 +86,11 @@ export function ImportSection() {
               }
             });
 
-            const { error } = await (supabase.from(template.table as any) as any).insert(insertData);
-            if (error) throw error;
-            importResult.success++;
-          } catch (err: any) {
+             const { error } = await (supabase.from(template.table as never) as never).insert(insertData as never);
+             if (error) throw error;
+             importResult.success++;
+           } catch (err) {
+             const error = err as Error;
             importResult.errors.push({ 
               row: i + 2, 
               message: err.message || String(err) 

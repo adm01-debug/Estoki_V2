@@ -81,7 +81,7 @@ test.describe('Navigation & Route Guards', () => {
        const errors: string[] = [];
        page.on('pageerror', (err) => errors.push(err.message));
        
-       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'networkidle' });
+       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
        await page.waitForTimeout(1000);
  
        const criticalErrors = errors.filter(e => 
@@ -93,7 +93,7 @@ test.describe('Navigation & Route Guards', () => {
      });
  
      test(`should handle search fuzzing on ${name}`, async ({ page }) => {
-       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'networkidle' });
+       await page.goto(`${BASE_URL}${path}`, { waitUntil: 'domcontentloaded' });
        const searchInput = page.locator('input[placeholder*="search"], input[placeholder*="buscar"], input[type="search"]').first();
        
        if (await searchInput.isVisible()) {
