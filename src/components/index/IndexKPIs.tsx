@@ -32,7 +32,7 @@ interface Props {
   onNavigate: (path: string) => void;
 }
 
-export function IndexKPIs({ items, loading, onNavigate }: Props) {
+ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }: Props) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
