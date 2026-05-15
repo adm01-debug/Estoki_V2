@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Box, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,7 +11,7 @@ interface MobileNavigationProps {
   onNavigate: (path: string) => void;
 }
 
-export function MobileNavigation({
+export const MobileNavigation = memo(function MobileNavigation({
   fabOpen,
   setFabOpen,
   pathname,
@@ -146,4 +147,4 @@ export function MobileNavigation({
       </nav>
     </>
   );
-}
+});
