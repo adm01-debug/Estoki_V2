@@ -42,26 +42,39 @@ export default function RecebimentoPage() {
     setSearchParams(params, { replace: true });
   }, [searchTerm, statusFilter, setSearchParams]);
 
-  const filteredItems = items.filter((item) => {
-    const matchesSearch =
-      item.numero_lote.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.fornecedor || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (item.pedido_compra?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+  const filteredItems = useMemo(() => {
+    const lowerSearch = searchTerm.toLowerCase();
+    return items.filter((item) => {
+      const matchesSearch =
+        item.numero_lote.toLowerCase().includes(lowerSearch) ||
+        (item.fornecedor || '').toLowerCase().includes(lowerSearch) ||
+        (item.pedido_compra?.toLowerCase().includes(lowerSearch) ?? false);
 
-    const matchesStatus = statusFilter === "todos" || item.status === statusFilter;
+      const matchesStatus = statusFilter === "todos" || item.status === statusFilter;
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    });
+  }, [items, searchTerm, statusFilter]);
 
-  const contagens = {
-    todos: items.length,
-    aguardando: items.filter(r => r.status === 'aguardando').length,
-    em_transito: items.filter(r => r.status === 'em_transito').length,
-    recebido: items.filter(r => r.status === 'recebido').length,
-    em_conferencia: items.filter(r => r.status === 'em_conferencia').length,
-    conferido: items.filter(r => r.status === 'conferido').length,
-    divergencia: items.filter(r => r.status === 'divergencia').length,
-  };
+  const contagens = useMemo(() => {
+    const counts = {
+      todos: items.length,
+      aguardando: 0,
+      em_transito: 0,
+      recebido: 0,
+      em_conferencia: 0,
+      conferido: 0,
+      divergencia: 0,
+    };
+    
+    items.forEach(r => {
+      if (r.status in counts) {
+        (counts as any)[r.status]++;
+      }
+    });
+    
+    return counts;
+  }, [items]);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
