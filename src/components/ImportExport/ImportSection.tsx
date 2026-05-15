@@ -44,59 +44,58 @@ export function ImportSection() {
         const importResult: ImportResult = { success: 0, errors: [], total: results.data.length };
 
          for (let i = 0; i < results.data.length; i++) {
-           const row = results.data[i] as Record<string, unknown>;
-          try {
-            // Validações básicas
-            if (templateId === "produtos" && (!row.sku || !row.nome)) {
-              throw new Error("SKU e nome são obrigatórios");
-            }
-            if (templateId === "posicoes" && (!row.codigo || !row.tipo)) {
-              throw new Error("Código e tipo são obrigatórios");
-            }
-            if (templateId === "lotes" && (!row.numero_lote || !row.produto_sku)) {
-              throw new Error("Número do lote e SKU do produto são obrigatórios");
-            }
-
-            let insertData = { ...row };
-            
-            // Caso especial de lotes
-            if (templateId === "lotes" && row.produto_sku) {
-              const { data: produto } = await supabase
-                .from("produtos")
-                .select("id")
-                .eq("sku", row.produto_sku)
-                .maybeSingle();
-              
-              if (!produto) throw new Error(`Produto SKU "${row.produto_sku}" não encontrado`);
-              insertData.produto_id = produto.id;
-              delete insertData.produto_sku;
-              insertData.quantidade_inicial = Number(insertData.quantidade_inicial) || 0;
-              insertData.quantidade_atual = Number(insertData.quantidade_atual) || insertData.quantidade_inicial;
-              insertData.data_recebimento = new Date().toISOString();
-            }
-
-            // Limpeza de campos vazios e conversão numérica
-            Object.keys(insertData).forEach(key => {
-              if (insertData[key] === "") delete insertData[key];
-              
-              // Conversão automática para campos conhecidamente numéricos
-              const numericFields = ['estoque_minimo', 'estoque_maximo', 'ponto_pedido', 'capacidade_kg', 'quantidade_inicial', 'quantidade_atual'];
-              if (numericFields.includes(key) && insertData[key] !== undefined) {
-                insertData[key] = Number(insertData[key]);
-              }
-            });
-
-             const { error } = await (supabase.from(template.table as never) as never).insert(insertData as never);
+           const row = results.data[i] as any;
+           try {
+             // Validações básicas
+             if (templateId === "produtos" && (!row.sku || !row.nome)) {
+               throw new Error("SKU e nome são obrigatórios");
+             }
+             if (templateId === "posicoes" && (!row.codigo || !row.tipo)) {
+               throw new Error("Código e tipo são obrigatórios");
+             }
+             if (templateId === "lotes" && (!row.numero_lote || !row.produto_sku)) {
+               throw new Error("Número do lote e SKU do produto são obrigatórios");
+             }
+ 
+             const insertData = { ...row };
+             
+             // Caso especial de lotes
+             if (templateId === "lotes" && row.produto_sku) {
+               const { data: produto } = await supabase
+                 .from("produtos")
+                 .select("id")
+                 .eq("sku", String(row.produto_sku))
+                 .maybeSingle();
+               
+               if (!produto) throw new Error(`Produto SKU "${row.produto_sku}" não encontrado`);
+               insertData.produto_id = produto.id;
+               delete insertData.produto_sku;
+               insertData.quantidade_inicial = Number(insertData.quantidade_inicial) || 0;
+               insertData.quantidade_atual = Number(insertData.quantidade_atual) || insertData.quantidade_inicial;
+               insertData.data_recebimento = new Date().toISOString();
+             }
+ 
+             // Limpeza de campos vazios e conversão numérica
+             Object.keys(insertData).forEach(key => {
+               if (insertData[key] === "") delete insertData[key];
+               
+               // Conversão automática para campos conhecidamente numéricos
+               const numericFields = ['estoque_minimo', 'estoque_maximo', 'ponto_pedido', 'capacidade_kg', 'quantidade_inicial', 'quantidade_atual'];
+               if (numericFields.includes(key) && insertData[key] !== undefined) {
+                 insertData[key] = Number(insertData[key]);
+               }
+             });
+ 
+             const { error } = await (supabase.from(template.table as any) as any).insert(insertData);
              if (error) throw error;
              importResult.success++;
-           } catch (err) {
-             const error = err as Error;
-            importResult.errors.push({ 
-              row: i + 2, 
-              message: err.message || String(err) 
-            });
-          }
-        }
+           } catch (err: any) {
+             importResult.errors.push({ 
+               row: i + 2, 
+               message: err.message || String(err) 
+             });
+           }
+         }
 
         setResult(importResult);
         setImporting(false);
