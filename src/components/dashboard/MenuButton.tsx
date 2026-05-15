@@ -60,4 +60,4 @@ export const MenuButton = memo(function MenuButton({
       </div>
     </button>
   );
-}
+});
