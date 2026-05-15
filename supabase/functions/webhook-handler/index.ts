@@ -19,6 +19,12 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
 
   try {
+    // Check body size (max 1MB)
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength) > 1024 * 1024) {
+      return jsonResponse({ error: "Payload too large" }, 413, req);
+    }
+
     // Validate webhook secret
     const webhookSecret = Deno.env.get("WEBHOOK_SECRET");
     const providedSecret = req.headers.get("x-webhook-secret");
