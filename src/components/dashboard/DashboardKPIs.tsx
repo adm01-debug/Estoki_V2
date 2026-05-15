@@ -2,13 +2,14 @@
   import { cn } from "@/lib/utils";
  import { Progress } from "@/components/ui/progress";
   import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { memo } from "react";
 import { DashboardKPIs as DashboardKPIsInterface } from "@/hooks/useDashboard";
 
 interface DashboardKPIsProps {
   kpis: DashboardKPIsInterface;
 }
 
-export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
+export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIsProps) {
   const safeKpis = kpis || { 
     totalPosicoes: 0, 
     posicoesOcupadas: 0, 
@@ -156,5 +157,5 @@ export function DashboardKPIs({ kpis }: DashboardKPIsProps) {
          </Card>
        </div>
    </div>
-   );
- }
+    );
+  });

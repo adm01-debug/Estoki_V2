@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { LucideIcon, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +11,7 @@ interface MenuButtonProps {
   badge?: number;
 }
 
-export function MenuButton({ 
+export const MenuButton = memo(function MenuButton({ 
   icon: Icon, 
   label, 
   description,
@@ -59,4 +60,4 @@ export function MenuButton({
       </div>
     </button>
   );
-}
+});

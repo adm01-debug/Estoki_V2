@@ -1,4 +1,5 @@
- import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { memo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +17,7 @@ interface DashboardChartsProps {
   itensParados: Array<{ id: string; sku: string; descricao: string; posicao: string; diasParado: number; quantidade: number; valor: number }>;
 }
 
-export function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoStatus, itensParados }: DashboardChartsProps) {
+export const DashboardCharts = memo(function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoStatus, itensParados }: DashboardChartsProps) {
   const getOcupacaoColor = (percentual: number) => {
     if (percentual >= 90) return "text-red-600";
     if (percentual >= 70) return "text-yellow-600";
@@ -190,4 +191,4 @@ export function DashboardCharts({ ocupacaoPP, movimentacoes7dias, distribuicaoSt
       </Card>
     </>
   );
-}
+});

@@ -10,6 +10,7 @@ import {
    ArrowDownToLine,
    RefreshCw
 } from "lucide-react";
+import { memo } from "react";
 import { MenuButton } from "@/components/dashboard/MenuButton";
 
 const itemVariants = {
@@ -23,7 +24,7 @@ interface Props {
   onNavigate: (path: string) => void;
 }
 
-export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavigate }: Props) {
+export const IndexOperations = memo(function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavigate }: Props) {
   const items = [
     { icon: Package, label: "Recebimento", description: "Conferir materiais", badge: aguardandoRecebimento, path: "/recebimento" },
     { icon: Search, label: "Triagem", description: "Controle qualidade", badge: triagemPendente, path: "/triagem" },
@@ -50,4 +51,4 @@ export function IndexOperations({ aguardandoRecebimento, triagemPendente, onNavi
       </div>
     </motion.section>
   );
-}
+});
