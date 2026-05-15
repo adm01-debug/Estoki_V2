@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +15,7 @@ interface Props {
   posicoesLivres: number;
 }
 
-export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoesOcupadas, posicoesLivres }: Props) {
+export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoesOcupadas, posicoesLivres }: Props) {
    const navigate = useNavigate();
  
    return (
@@ -67,4 +68,4 @@ export function IndexOcupacaoCard({ loading, ocupacaoPP, ocupacaoBoxes, posicoes
       </CardContent>
     </Card>
   );
-}
+});

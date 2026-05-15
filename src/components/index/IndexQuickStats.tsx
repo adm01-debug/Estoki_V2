@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,7 +20,7 @@ interface Props {
   divergencias: number;
 }
 
-export function IndexQuickStats({ loading, totalRecebimentos, totalTriagens, divergencias }: Props) {
+export const IndexQuickStats = memo(function IndexQuickStats({ loading, totalRecebimentos, totalTriagens, divergencias }: Props) {
   const stats: Stat[] = [
     { icon: CheckCircle2, value: totalRecebimentos, label: "Entradas", bgClass: "bg-success/10", textClass: "text-success", borderClass: "border-success/20" },
     { icon: Target, value: totalTriagens, label: "Triagens", bgClass: "bg-primary/10", textClass: "text-primary", borderClass: "border-primary/20" },
@@ -85,4 +86,4 @@ export function IndexQuickStats({ loading, totalRecebimentos, totalTriagens, div
       </CardContent>
     </Card>
   );
-}
+});
