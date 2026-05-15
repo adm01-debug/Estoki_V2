@@ -43,15 +43,6 @@ export const useTriagens = () => {
     }
   });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('triagens-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['triagens'] });
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, [queryClient]);
 
   return { triagens, isLoading, error, refetch, createTriagem, updateTriagem };
 };
