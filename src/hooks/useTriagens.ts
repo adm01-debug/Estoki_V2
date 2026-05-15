@@ -2,6 +2,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type TriagemRow = Database['public']['Tables']['eventos_triagem']['Row'];
+type TriagemInsert = Database['public']['Tables']['eventos_triagem']['Insert'];
+type TriagemUpdate = Database['public']['Tables']['eventos_triagem']['Update'];
 
 export const useTriagens = () => {
   const queryClient = useQueryClient();
@@ -17,10 +22,10 @@ export const useTriagens = () => {
   });
 
   const createTriagem = useMutation({
-    mutationFn: async (novaTriagem: any) => {
+    mutationFn: async (novaTriagem: TriagemInsert) => {
       const { data, error } = await supabase.from('eventos_triagem').insert(novaTriagem).select().single();
       if (error) throw error;
-      return data;
+      return data as TriagemRow;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
@@ -32,10 +37,10 @@ export const useTriagens = () => {
   });
 
   const updateTriagem = useMutation({
-    mutationFn: async ({ id, ...dados }: any) => {
+    mutationFn: async ({ id, ...dados }: TriagemUpdate & { id: string }) => {
       const { data, error } = await supabase.from('eventos_triagem').update(dados).eq('id', id).select().single();
       if (error) throw error;
-      return data;
+      return data as TriagemRow;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
