@@ -207,24 +207,6 @@ export const useDashboard = () => {
      refetchOnWindowFocus: true,
    });
 
-  useEffect(() => {
-    const channel = supabase
-      .channel('dashboard-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'posicoes_estoque' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'eventos_triagem' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'lotes' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
 
   return {
     kpis: data?.kpis ?? null,
