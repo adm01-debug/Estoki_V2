@@ -58,7 +58,9 @@ const tourSteps: TourStep[] = [
   },
 ];
 
-export function OnboardingTour() {
+ import { memo } from "react";
+ 
+ export const OnboardingTour = memo(function OnboardingTour() {
   const [tourCompleted, setTourCompleted] = useLocalStorage('wms-tour-completed', false);
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(0);
