@@ -53,10 +53,10 @@ function RouteErrorFallback({ error }: RouteErrorFallbackProps) {
 export function RouteErrorBoundary({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   
-  // Reset error boundary when location changes
-  return useMemo(() => (
-    <ErrorBoundary key={location.pathname} fallback={<RouteErrorFallback />}>
-      {children}
-    </ErrorBoundary>
-  ), [children, location.pathname]);
+   // Reset error boundary when location changes to prevent stuck error states
+   return (
+     <ErrorBoundary key={location.pathname} fallback={<RouteErrorFallback />}>
+       {children}
+     </ErrorBoundary>
+   );
 }
