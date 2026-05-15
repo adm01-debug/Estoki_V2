@@ -1,7 +1,7 @@
 import { RecebimentoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -153,7 +153,7 @@ export default function RecebimentoPage() {
               icon={<Package className="h-8 w-8 text-muted-foreground" />}
             />
           ) : (
-            filteredItems.map((item) => {
+            filteredItems.map((item: any) => {
               const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
               const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
               const progresso = qtdPedida > 0 ? Math.min(100, (item.quantidade_atual / qtdPedida) * 100) : 0;
