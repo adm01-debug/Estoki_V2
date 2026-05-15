@@ -70,14 +70,11 @@ export const EstoqueMapaTab = memo(({ filteredPositions, ruas, zoom, onZoomChang
         <TooltipProvider>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-[600px] transition-transform" style={{ transform: `scale(${zoom})`, transformOrigin: "top left" }}>
           {ruas.map((rua) => {
-            const { ruaPositions, ruaNiveis, ruaSecoes } = useMemo(() => {
-              const positions = filteredPositions.filter(p => p.porta_palete === rua);
-              const niveis = [...new Set(positions.map(p => p.nivel).filter(Boolean))].sort().reverse();
-              const secoes = [...new Set(positions.map(p => p.secao).filter(Boolean))].sort((a, b) => parseInt(a!) - parseInt(b!));
-              return { ruaPositions: positions, ruaNiveis: niveis, ruaSecoes: secoes };
-            }, [filteredPositions, rua]);
-
+            const ruaPositions = filteredPositions.filter(p => p.porta_palete === rua);
             if (ruaPositions.length === 0) return null;
+            
+            const ruaNiveis = [...new Set(ruaPositions.map(p => p.nivel).filter(Boolean))].sort().reverse();
+            const ruaSecoes = [...new Set(ruaPositions.map(p => p.secao).filter(Boolean))].sort((a, b) => parseInt(a!) - parseInt(b!));
 
             return (
               <div key={rua}>
