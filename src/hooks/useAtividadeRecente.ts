@@ -195,38 +195,9 @@ export function useAtividadeRecente(limit: number = 10) {
     }
   }, [limit]);
 
-  useEffect(() => {
-    fetchAtividades();
-
-    // Realtime updates
-    const channel = supabase
-      .channel('atividades_recentes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'rastreamento_historico' },
-        () => fetchAtividades()
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'lotes' },
-        () => fetchAtividades()
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'eventos_triagem' },
-        () => fetchAtividades()
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'tarefas' },
-        () => fetchAtividades()
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [fetchAtividades]);
+   useEffect(() => {
+     fetchAtividades();
+   }, [fetchAtividades]);
 
   return {
     atividades,
