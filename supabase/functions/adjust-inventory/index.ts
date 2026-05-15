@@ -4,7 +4,13 @@ import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
-    const { productId, locationId, adjustedQuantity, reason, userId } = await req.json();
+    const body = await req.json();
+    const { productId, locationId, adjustedQuantity, reason, userId } = body;
+
+    if (!productId || !locationId || typeof adjustedQuantity !== 'number') {
+      return new Response(JSON.stringify({ error: "productId, locationId and adjustedQuantity are required" }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    }
+
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
     const { data: current } = await supabase.from("location_stock").select("quantity").eq("product_id", productId).eq("location_id", locationId).single();
     const previousQty = current?.quantity || 0;

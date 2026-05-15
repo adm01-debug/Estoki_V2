@@ -42,25 +42,34 @@ export function FormFields({
       {/* Produto */}
       <div className="space-y-2">
         <Label htmlFor="produto">Produto *</Label>
-        {loadingProdutos ? (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Carregando produtos...
-          </div>
-        ) : (
-          <Select value={formData.produto_id} onValueChange={handleProdutoChange}>
-            <SelectTrigger className={errors.produto_id ? "border-destructive" : ""}>
-              <SelectValue placeholder="Selecione um produto" />
-            </SelectTrigger>
-            <SelectContent>
-              {produtos.map(produto => (
-                <SelectItem key={produto.id} value={produto.id}>
-                  {produto.nome} ({produto.sku})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
+        <div className="relative">
+          {loadingProdutos ? (
+            <div className="flex items-center gap-2 text-muted-foreground py-2 px-3 border rounded-md">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Carregando produtos...
+            </div>
+          ) : (
+            <Select value={formData.produto_id} onValueChange={handleProdutoChange}>
+              <SelectTrigger className={errors.produto_id ? "border-destructive" : ""}>
+                <SelectValue placeholder="Selecione um produto" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {produtos.length === 0 ? (
+                  <div className="p-2 text-sm text-center text-muted-foreground">Nenhum produto encontrado</div>
+                ) : (
+                  produtos.map(produto => (
+                    <SelectItem key={produto.id} value={produto.id}>
+                      <div className="flex flex-col">
+                        <span className="font-medium">{produto.nome}</span>
+                        <span className="text-[10px] text-muted-foreground">SKU: {produto.sku}</span>
+                      </div>
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
         {errors.produto_id && <p className="text-xs text-destructive">{errors.produto_id}</p>}
       </div>
 

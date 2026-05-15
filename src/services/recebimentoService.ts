@@ -56,10 +56,14 @@ export const recebimentoService = {
      }
    },
 
-   async finalizar(id: string, hasDivergencia: boolean) {
+    async finalizar(id: string, hasDivergencia: boolean, observacoes?: string) {
      try {
        const status: StatusRecebimento = hasDivergencia ? "divergencia" : "conferido";
-       const { data, error } = await supabase.from("lotes").update({ status, data_conferencia: new Date().toISOString() } as LoteUpdate).eq("id", id).select().single();
+        const { data, error } = await supabase.from("lotes").update({ 
+          status, 
+          data_conferencia: new Date().toISOString(),
+          observacoes: observacoes || null
+        } as LoteUpdate).eq("id", id).select().single();
        if (error) throw error;
        logger.info("Conferência de recebimento finalizada", { id, status });
        return data;
