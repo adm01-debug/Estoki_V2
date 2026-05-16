@@ -7,7 +7,7 @@ import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 
 // WMS Operations
 const Estoque = lazy(() => import("@/features/inventory/pages/EstoquePage"));
-const Triagem = lazy(() => import("@/pages/Triagem"));
+const Triagem = lazy(() => import("@/features/quality/pages/TriagemPage"));
 const Recebimento = lazy(() => import("@/pages/Recebimento"));
 const Movimentacao = lazy(() => import("@/pages/Movimentacao"));
 const Armazenamento = lazy(() => import("@/pages/Armazenamento"));
@@ -35,8 +35,8 @@ const ShippingPage = lazy(() => import("@/pages/shipping/ShippingPage"));
 const KanbanPipeline = lazy(() => import("@/pages/KanbanPipeline"));
 
 // Triagem Detail
-const DashboardTriador = lazy(() => import("@/pages/DashboardTriador"));
-const FormularioTriagem = lazy(() => import("@/pages/FormularioTriagem"));
+const DashboardTriador = lazy(() => import("@/features/quality/pages/DashboardTriador"));
+const FormularioTriagem = lazy(() => import("@/features/quality/pages/FormularioTriagem"));
 const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
 const OrdersPage = lazy(() => import("@/pages/orders/OrdersPage"));
 const InventoryPage = lazy(() => import("@/pages/inventory/InventoryPage"));

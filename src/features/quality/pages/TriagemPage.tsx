@@ -7,7 +7,7 @@ import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
  import { motion, AnimatePresence } from "framer-motion";
  import { toast } from "sonner";
  import { cn } from "@/lib/utils";
-import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
+import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
   import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare, User, Clock } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -22,11 +22,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useTriagens } from "@/hooks/useTriagens";
+import { useTriagens } from "../hooks/useTriagens";
 
 // Modularized Components & Helpers
-import { TriagemStatsCards } from "@/components/triagem/formulario/TriagemStatsCards";
-import { getStatus, statusConfig, formatDate } from "@/components/triagem/formulario/triagemHelpers";
+import { TriagemStatsCards } from "../components/formulario/TriagemStatsCards";
+import { getStatus, statusConfig, formatDate } from "../components/formulario/triagemHelpers";
 
 const ITEMS_PER_PAGE = 10;
 type SortOrder = "data" | "resultado";

@@ -4,21 +4,21 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus } from "lucide-react";
  import { toast } from "sonner";
-import { useTriagens } from "@/hooks/useTriagens";
+import { useTriagens } from "../hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
-import { AmostragemAutomatica } from "@/components/triagem/AmostragemAutomatica";
-import { DefeitoHistorico, mockHistoricoDefeitos } from "@/components/triagem/DefeitoHistorico";
-import { FotosLoteObrigatorias } from "@/components/triagem/FotosLoteObrigatorias";
+import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
+import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHistorico";
+import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Trophy, Star } from "lucide-react";
 
 // Modularized Components
- import { TriagemHeaderCard } from "@/components/triagem/formulario/TriagemHeaderCard";
- import { ChecklistCard } from "@/components/triagem/formulario/ChecklistCard";
- import { ResultadoInspecaoCard } from "@/components/triagem/formulario/ResultadoInspecaoCard";
- import { checklistItems } from "@/components/triagem/formulario/constants";
+ import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
+ import { ChecklistCard } from "../components/formulario/ChecklistCard";
+ import { ResultadoInspecaoCard } from "../components/formulario/ResultadoInspecaoCard";
+ import { checklistItems } from "../components/formulario/constants";
  import { StepProgress } from "@/components/common/StepProgress";
  import { LeaveGuard } from "@/components/common/LeaveGuard";
 
