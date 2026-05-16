@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+ import { memo, useEffect } from "react";
+ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRoutePreload } from "@/hooks/useRoutePreload";
 import { useSidebarFavorites } from "@/hooks/useSidebarFavorites";
 import {
@@ -34,9 +34,16 @@ export const SidebarContent = memo(function SidebarContent({
   onLogout,
   onCloseMobile
 }: SidebarContentProps) {
-  const preloadRoute = useRoutePreload();
-  const { favorites } = useSidebarFavorites();
-  const isCollapsed = sidebarCollapsed && !isMobile;
+   const preloadRoute = useRoutePreload();
+   const { favorites } = useSidebarFavorites();
+   const isCollapsed = sidebarCollapsed && !isMobile;
+ 
+   useEffect(() => {
+     const activeElement = document.querySelector('[aria-current="page"]');
+     if (activeElement) {
+       activeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+     }
+   }, [pathname]);
 
   return (
     <>

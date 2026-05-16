@@ -23,13 +23,17 @@ export function useAppLayoutState() {
 
   const isHome = location.pathname === "/";
 
-  const handleBack = useCallback(() => {
-    const segments = location.pathname.split("/").filter(Boolean);
-    const parentRoute = segments.length > 1 ? "/" + segments.slice(0, -1).join("/") : "/";
-    
-    if (window.history.length > 2) navigate(-1);
-    else navigate(parentRoute);
-  }, [navigate, location.pathname]);
+   const handleBack = useCallback(() => {
+     const segments = location.pathname.split("/").filter(Boolean);
+     const parentRoute = segments.length > 1 ? "/" + segments.slice(0, -1).join("/") : "/";
+     
+     if (window.navigator.vibrate) {
+       window.navigator.vibrate(5);
+     }
+     
+     if (window.history.length > 2) navigate(-1);
+     else navigate(parentRoute);
+   }, [navigate, location.pathname]);
 
   const handleLogout = useCallback(async () => {
     await signOut();

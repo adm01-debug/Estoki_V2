@@ -83,9 +83,9 @@ export const MobileNavigation = memo(function MobileNavigation({
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                  isActive ? "text-primary" : "text-muted-foreground"
-                )}
-              >
+                 isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
+               )}
+             >
                 {isActive && (
                   <motion.div 
                     layoutId="mobile-indicator" 
@@ -128,9 +128,9 @@ export const MobileNavigation = memo(function MobileNavigation({
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                  isActive ? "text-primary" : "text-muted-foreground"
-                )}
-              >
+                 isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
+               )}
+             >
                 {isActive && (
                   <motion.div 
                     layoutId="mobile-indicator" 

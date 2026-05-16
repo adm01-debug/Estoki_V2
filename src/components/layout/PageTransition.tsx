@@ -12,25 +12,26 @@ export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
       initial = { opacity: 0, y: 20 },
       animate = { opacity: 1, y: 0 },
       exit = { opacity: 0, y: -10 },
-      transition = { duration: 0.3 },
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <motion.div
-        ref={ref}
-        initial={initial}
-        animate={animate}
-        exit={exit}
-        transition={transition}
-        {...props}
-      >
-        {children}
-      </motion.div>
-    );
-  },
-);
+       transition = { type: "spring", damping: 25, stiffness: 200, duration: 0.3 },
+       ...props
+     },
+     ref,
+   ) => {
+     return (
+       <motion.div
+         ref={ref}
+         initial={initial}
+         animate={animate}
+         exit={exit}
+         transition={transition}
+         {...props}
+         className="w-full"
+       >
+         {children}
+       </motion.div>
+     );
+   },
+ );
 
 PageTransition.displayName = "PageTransition";
 
