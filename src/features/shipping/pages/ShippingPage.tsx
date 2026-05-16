@@ -52,7 +52,7 @@ export default function ShippingPage() {
     }
   };
 
-  const filteredRomaneios = romaneios.filter(r => 
+  const filteredRomaneios = (romaneios as any[]).filter(r => 
     r.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.motorista?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     r.placa_veiculo?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -60,9 +60,9 @@ export default function ShippingPage() {
 
   const stats = {
     total: romaneios.length,
-    emTransito: romaneios.filter(r => r.status === "em_transito").length,
-    entreguesHoje: romaneios.filter(r => r.status === "entregue").length,
-    pedentes: romaneios.filter(r => r.status === "confirmado" || r.status === "rascunho").length
+    emTransito: (romaneios as any[]).filter(r => r.status === "em_transito").length,
+    entreguesHoje: (romaneios as any[]).filter(r => r.status === "entregue").length,
+    pedentes: (romaneios as any[]).filter(r => r.status === "confirmado" || r.status === "rascunho").length
   };
 
   return (
@@ -146,7 +146,7 @@ export default function ShippingPage() {
                 </div>
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {filteredRomaneios.map((r) => (
+                  {filteredRomaneios.map((r: any) => (
                     <Card key={r.id} className="overflow-hidden hover:border-primary/50 transition-colors group">
                       <CardHeader className="p-4 pb-2 space-y-0">
                         <div className="flex justify-between items-start">
@@ -219,7 +219,7 @@ export default function ShippingPage() {
             
             <TabsContent value="em-rota">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filteredRomaneios.filter(r => r.status === "em_transito").map((r) => (
+                {filteredRomaneios.filter((r: any) => r.status === "em_transito").map((r: any) => (
                    <Card key={r.id}>
                       <CardContent className="p-4">
                          <p className="font-bold">{r.codigo}</p>
