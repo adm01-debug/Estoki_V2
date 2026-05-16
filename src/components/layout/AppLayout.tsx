@@ -11,7 +11,7 @@ import { useSwipeBack } from "@/hooks/useSwipeBack";
 
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
 import { AuthLoading } from "./AuthLoading";
-import { Header } from "./header/Header";
+import { Header } from "@/components/organisms/layout/Header";
 import { SidebarContent } from "./SidebarContent";
 import { MobileNavigation } from "./MobileNavigation";
 
