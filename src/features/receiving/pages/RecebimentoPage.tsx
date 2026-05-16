@@ -6,6 +6,7 @@ import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncSta
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { haptics } from "@/utils/haptics";
 import AppLayout from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { Button } from "@/components/ui/button";
