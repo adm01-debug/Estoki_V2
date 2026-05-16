@@ -30,7 +30,7 @@ export default function PickingPage() {
   const [confirmQty, setConfirmQty] = useState<number | "">("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredTasks = tasks.filter(t => 
+  const filteredTasks = (tasks as PickingTask[]).filter(t => 
     t.status !== "concluido" && 
     (t.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) || 
      t.posicao_origem_codigo?.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -159,7 +159,7 @@ export default function PickingPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredTasks.map((task) => (
+              {filteredTasks.map((task: PickingTask) => (
                 <Card key={task.id} className="hover:border-primary/50 transition-colors">
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-3">
