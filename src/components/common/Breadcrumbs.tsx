@@ -160,7 +160,7 @@ interface BreadcrumbsProps {
              {i === 0 ? (
                <Link 
                  to="/" 
-                 onClick={() => haptics.selection()}
+                  onClick={() => haptics.light()}
                  className="p-1.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90 group/home"
                  title="Página Inicial"
                >
@@ -169,7 +169,7 @@ interface BreadcrumbsProps {
              ) : crumb.href ? (
                <Link 
                  to={crumb.href} 
-                 onClick={() => haptics.selection()}
+                  onClick={() => haptics.light()}
                  className="px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95 text-xs relative overflow-hidden"
                >
                  {crumb.label}
