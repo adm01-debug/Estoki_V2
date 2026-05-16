@@ -12,7 +12,7 @@ import { useSwipeBack } from "@/hooks/useSwipeBack";
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
 import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
-import { SidebarContent } from "./SidebarContent";
+import { Sidebar } from "@/components/organisms/layout/Sidebar";
 import { MobileNavigation } from "./MobileNavigation";
 
 const AppLayoutContext = createContext(false);
@@ -121,7 +121,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
            />
 
            <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
-            <SidebarContent 
+            <Sidebar
               sidebarCollapsed={sidebarCollapsed}
               userName={userName}
               userRole={currentRole}
@@ -156,7 +156,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  <SidebarContent 
+                  <Sidebar
                     isMobile={true}
                     sidebarCollapsed={sidebarCollapsed}
                     userName={userName}
