@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Layers } from "lucide-react";
-import type { PosicaoEstoque } from "@/hooks/useEstoque";
+import type { PosicaoEstoque } from "../../hooks/useEstoque";
 
 export function PosicaoInfoCard({ position }: { position: PosicaoEstoque }) {
   return (

@@ -31,7 +31,7 @@ export interface EstoquePosicaoDetalhes {
   lote?: LoteDetalhes;
 }
 
-import type { StatusPosicao } from "@/hooks/useEstoque";
+import type { StatusPosicao } from "../../hooks/useEstoque";
 
 export const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
   livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre", icon: "⬜" },

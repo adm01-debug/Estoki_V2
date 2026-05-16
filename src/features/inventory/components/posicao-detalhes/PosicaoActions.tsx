@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Eye, ArrowLeftRight, PackageOpen, Package, UserX, UserCheck } from "lucide-react";
-import type { PosicaoEstoque } from "@/hooks/useEstoque";
-import { useEstoque } from "@/hooks/useEstoque";
+import type { PosicaoEstoque } from "../../hooks/useEstoque";
+import { useEstoque } from "../../hooks/useEstoque";
 import { toast } from "sonner";
 
 export function PosicaoActions({ position }: { position: PosicaoEstoque }) {

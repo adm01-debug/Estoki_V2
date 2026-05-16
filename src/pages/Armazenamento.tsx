@@ -4,7 +4,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { useEstoque, PosicaoEstoque } from "@/hooks/useEstoque";
+import { useEstoque, PosicaoEstoque } from "@/features/inventory/hooks/useEstoque";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import { ArrowRight, AlertTriangle, MapPin, Loader2, QrCode } from "lucide-react";
 import { ArmazenamentoItemCard } from "@/components/armazenamento/ArmazenamentoItemCard";

@@ -9,9 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/hooks/useEstoque";
-import { NovaPosicaoDialog } from "@/components/estoque/NovaPosicaoDialog";
-import { PosicaoDetalhesDialog } from "@/components/estoque/PosicaoDetalhesDialog";
+import { useEstoque, type PosicaoEstoque, type StatusPosicao } from "@/features/inventory/hooks/useEstoque";
+import { NovaPosicaoDialog } from "@/features/inventory/components/NovaPosicaoDialog";
+import { PosicaoDetalhesDialog } from "@/features/inventory/components/PosicaoDetalhesDialog";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { toast } from "sonner";
 import {
