@@ -44,7 +44,7 @@ export default function RecebimentoPage() {
 
   const filteredItems = useMemo(() => {
     const lowerSearch = searchTerm.toLowerCase();
-    return items.filter((item) => {
+    return (items as any[]).filter((item) => {
       const matchesSearch =
         item.numero_lote.toLowerCase().includes(lowerSearch) ||
         (item.fornecedor || '').toLowerCase().includes(lowerSearch) ||
@@ -67,7 +67,7 @@ export default function RecebimentoPage() {
       divergencia: 0,
     };
     
-    items.forEach(r => {
+    (items as any[]).forEach(r => {
       if (r.status in counts) {
         (counts as any)[r.status]++;
       }
