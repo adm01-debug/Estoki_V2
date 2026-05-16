@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRecebimentos } from "@/hooks/useRecebimentos";
-import { NovoRecebimentoDialog } from "@/components/recebimento/NovoRecebimentoDialog";
+import { useRecebimentos } from "../hooks/useRecebimentos";
+import { NovoRecebimentoDialog } from "../components/NovoRecebimentoDialog";
 import { Progress } from "@/components/ui/progress";
 
 type StatusRecebimento = 'aguardando' | 'em_transito' | 'recebido' | 'em_conferencia' | 'conferido' | 'divergencia' | 'cancelado';

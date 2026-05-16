@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Upload, FileText, Check, AlertTriangle, Package, Building2, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 import { parseNFeXML, NFeParsed, validateNFeXML } from '@/utils/parseNFXML';
-import { useRecebimentos } from '@/hooks/useRecebimentos';
+import { useRecebimentos } from '../hooks/useRecebimentos';
 interface ImportarNFDialogProps {
   trigger?: React.ReactNode;
   onSuccess?: () => void;

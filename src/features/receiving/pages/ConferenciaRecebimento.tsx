@@ -6,7 +6,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button"; 
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useRecebimentos } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "../hooks/useRecebimentos";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { BalancaCard } from "@/components/conferencia/BalancaCard";
