@@ -91,33 +91,33 @@ import { mobileNavItems, fabActions } from "./sidebar";
              )}
            </AnimatePresence>
  
-           {mobileNavItems.slice(0, 1).map((item) => {
-             const isActive = pathname === item.path;
-             return (
-               <motion.button 
-                 key={item.path} 
-                 data-tour={item.tour} 
-                 onClick={() => onNavigate(item.path)}
-                 whileTap={{ scale: 0.9 }} 
-                 aria-label={`Ir para ${item.label}`} 
-                 aria-current={isActive ? "page" : undefined}
-                 className={cn(
-                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                   isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
-                 )}
-               >
-                 {isActive && (
-                   <motion.div 
-                     layoutId="mobile-indicator" 
-                     className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
-                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-                   />
-                 )}
-                 <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
-                 <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
-               </motion.button>
-             );
-           })}
+            {mobileNavItems.slice(0, 2).map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <motion.button 
+                  key={item.path} 
+                  data-tour={item.tour} 
+                  onClick={() => onNavigate(item.path)}
+                  whileTap={{ scale: 0.9 }} 
+                  aria-label={`Ir para ${item.label}`} 
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
+                    isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
+                  )}
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="mobile-indicator" 
+                      className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+                    />
+                  )}
+                  <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
+                  <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
+                </motion.button>
+              );
+            })}
 
           {/* FAB Center */}
           <div className="relative -mt-5">
