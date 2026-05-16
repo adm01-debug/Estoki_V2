@@ -69,11 +69,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <div className="absolute -bottom-[30%] -left-[10%] w-[40%] h-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
           </div>
 
-          <Header 
+          <Header
             mainPadding={mainPadding}
             onOpenMobileMenu={() => setMobileMenuOpen(true)}
             shouldShowBack={shouldShowBack}
-            onBack={handleBack}
             title={title}
             rightAction={rightAction}
             userName={userName}
