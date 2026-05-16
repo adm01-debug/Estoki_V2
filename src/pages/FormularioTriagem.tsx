@@ -15,10 +15,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Trophy, Star } from "lucide-react";
 
 // Modularized Components
-import { TriagemHeaderCard } from "@/components/triagem/formulario/TriagemHeaderCard";
-import { ChecklistCard } from "@/components/triagem/formulario/ChecklistCard";
-import { ResultadoInspecaoCard } from "@/components/triagem/formulario/ResultadoInspecaoCard";
-import { checklistItems } from "@/components/triagem/formulario/constants";
+ import { TriagemHeaderCard } from "@/components/triagem/formulario/TriagemHeaderCard";
+ import { ChecklistCard } from "@/components/triagem/formulario/ChecklistCard";
+ import { ResultadoInspecaoCard } from "@/components/triagem/formulario/ResultadoInspecaoCard";
+ import { checklistItems } from "@/components/triagem/formulario/constants";
+ import { StepProgress } from "@/components/common/StepProgress";
+ import { LeaveGuard } from "@/components/common/LeaveGuard";
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
@@ -51,9 +53,10 @@ export default function FormularioTriagem() {
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-
-  const quantidadeTotal = triagem?.quantidade_total || 100;
+   const [showCelebration, setShowCelebration] = useState(false);
+   const [hasChanges, setHasChanges] = useState(false);
+ 
+   const quantidadeTotal = triagem?.quantidade_total || 100;
 
   useEffect(() => {
     const carregarTriagem = async () => {
@@ -77,17 +80,19 @@ export default function FormularioTriagem() {
     };
   }, [id, triagens]);
 
-  const handleChecklistChange = (itemId: string, checked: boolean) => {
-    setChecklist(prev => ({ ...prev, [itemId]: checked }));
-  };
+   const handleChecklistChange = (itemId: string, checked: boolean) => {
+     setHasChanges(true);
+     setChecklist(prev => ({ ...prev, [itemId]: checked }));
+   };
 
   const todosItensVerificados = () => {
     return checklistItems.every(item => checklist[item.id] === true);
   };
 
-  const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']): Promise<FotoTriagem | null> => {
-    return await addFotoFromFile(file, tipo);
-  };
+   const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']): Promise<FotoTriagem | null> => {
+     setHasChanges(true);
+     return await addFotoFromFile(file, tipo);
+   };
 
   const handleRemoveFoto = async (fotoId: string) => {
     await removeFoto(fotoId);
@@ -111,12 +116,13 @@ export default function FormularioTriagem() {
         await salvarFotosTriagem(id);
       }
 
-      await updateTriagem.mutateAsync({
-        id,
-        resultado,
-        observacoes,
-        data_fim: new Date().toISOString(),
-      });
+       await updateTriagem.mutateAsync({
+         id,
+         resultado,
+         observacoes,
+         data_fim: new Date().toISOString(),
+       });
+       setHasChanges(false);
 
       if (resultado === "aprovado") {
         setShowCelebration(true);
@@ -165,10 +171,26 @@ export default function FormularioTriagem() {
     );
   }
 
-  return (
-    <AppLayout title="Formulário de Triagem" showBack>
-      <div className="p-4 space-y-6">
-        <TriagemHeaderCard 
+   const steps = [
+     { id: 1, label: "Checklist", description: "Verificar itens de qualidade" },
+     { id: 2, label: "Amostragem", description: "Conferir volumes" },
+     { id: 3, label: "Documentação", description: "Fotos do lote" },
+     { id: 4, label: "Resultado", description: "Finalizar inspeção" },
+   ];
+ 
+   const currentStep = useMemo(() => {
+     if (Object.keys(checklist).length === 0) return 0;
+     if (!amostragemConfirmada) return 1;
+     if (fotos.length < 2) return 2;
+     return 3;
+   }, [checklist, amostragemConfirmada, fotos]);
+ 
+   return (
+     <AppLayout title="Formulário de Triagem" showBack>
+       <LeaveGuard hasChanges={hasChanges} />
+       <div className="p-4 space-y-6 max-w-4xl mx-auto">
+         <StepProgress steps={steps} currentStep={currentStep} className="mb-8" />
+         <TriagemHeaderCard 
           id={id}
           loteId={triagem.lote_id}
           produtoNome={triagem.produto_nome}
