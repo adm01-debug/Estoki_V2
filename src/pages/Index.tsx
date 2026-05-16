@@ -10,7 +10,7 @@ import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
 import { useEstoque } from "@/features/inventory/hooks/useEstoque";
-import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
+import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
 import { IndexHero } from "@/components/index/IndexHero";
 import { IndexKPIs } from "@/components/index/IndexKPIs";
 import { IndexOcupacaoCard } from "@/components/index/IndexOcupacaoCard";

@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bell, Volume2, VolumeX, Settings, History } from "lucide-react";
-import { useKPIAlerts } from "@/hooks/useKPIAlerts";
+import { useKPIAlerts } from "@/features/analytics/hooks/useKPIAlerts";
 import { AlertasResumoCards } from "@/components/alertas/AlertasResumoCards";
 import { AlertasHistoricoTable, AlertaHistorico } from "@/components/alertas/AlertasHistoricoTable";
 import { AlertasConfigTable } from "@/components/alertas/AlertasConfigTable";
