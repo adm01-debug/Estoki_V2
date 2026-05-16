@@ -1,6 +1,6 @@
  import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
- import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart, History, X } from "lucide-react";
+import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart, History, X, Shield, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -228,17 +228,25 @@ const typeConfig = {
 
           <CommandSeparator />
           
-          <CommandGroup heading="Ações Rápidas">
+          <CommandGroup heading="Ações & Segurança">
             <CommandItem onSelect={() => onSelect("/recebimento")}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="mr-2 h-4 w-4 text-success" />
               Novo Recebimento
             </CommandItem>
             <CommandItem onSelect={() => onSelect("/triagem")}>
-              <Search className="mr-2 h-4 w-4" />
+              <Search className="mr-2 h-4 w-4 text-primary" />
               Iniciar Triagem
             </CommandItem>
+            <CommandItem onSelect={() => onSelect("/admin/auditoria")}>
+              <Shield className="mr-2 h-4 w-4 text-orange-500" />
+              Ver Logs de Auditoria
+            </CommandItem>
+            <CommandItem onSelect={() => onSelect("/seguranca")}>
+              <Lock className="mr-2 h-4 w-4 text-red-500" />
+              Configurações de Segurança
+            </CommandItem>
             <CommandItem onSelect={() => onSelect("/relatorios")}>
-              <FileBarChart className="mr-2 h-4 w-4" />
+              <FileBarChart className="mr-2 h-4 w-4 text-blue-500" />
               Gerar Relatório de Inventário
             </CommandItem>
           </CommandGroup>
