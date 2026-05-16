@@ -48,20 +48,26 @@ interface HeaderProps {
           <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
             <Menu className="h-5 w-5" />
           </Button>
-           <div className={cn("flex items-center transition-all duration-300", shouldShowBack ? "w-10 opacity-100" : "w-0 opacity-0 overflow-hidden")}>
-             {shouldShowBack && (
-               <Tooltip delayDuration={300}>
-                 <TooltipTrigger asChild>
-                   <Button variant="ghost" size="icon" onClick={onBack} className="touch-friendly hover:bg-primary/10" aria-label="Voltar (Alt+←)">
-                     <ChevronLeft className="h-5 w-5" />
-                   </Button>
-                 </TooltipTrigger>
-                 <TooltipContent side="bottom" className="text-xs">
-                   Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
-                 </TooltipContent>
-               </Tooltip>
-             )}
-           </div>
+            <div className={cn("flex items-center transition-all duration-300", shouldShowBack ? "w-11 opacity-100" : "w-0 opacity-0 overflow-hidden")}>
+              {shouldShowBack && (
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      onClick={onBack} 
+                      className="touch-friendly hover:bg-primary/10 active:scale-90 transition-transform bg-background/50 border border-border/20 shadow-sm" 
+                      aria-label="Voltar para tela anterior (Atalho: Alt + Seta Esquerda)"
+                    >
+                      <ChevronLeft className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" className="text-[10px] font-bold uppercase tracking-wider bg-popover/95 backdrop-blur-md border-border/40">
+                    Voltar <kbd className="ml-2 px-1 py-0.5 rounded bg-muted text-[10px] font-mono">Alt+←</kbd>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
           {isHome && (
             <div className="flex items-center gap-2 lg:hidden">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
@@ -88,8 +94,10 @@ interface HeaderProps {
           )}
           <GlobalSearch />
           <LanguageSwitcher />
-          <NotificationCenter />
-          <ThemeToggle />
+           <div role="group" aria-label="Ações rápidas" className="flex items-center gap-0.5">
+             <NotificationCenter />
+             <ThemeToggle />
+           </div>
           {rightAction}
           <div className="ml-1 pl-2 border-l border-border/40">
             <UserMenu 

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+ import { useState, useEffect, useMemo } from "react";
+ import { useParams, useNavigate } from "react-router-dom";
 import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -10,8 +10,10 @@ import { useRecebimentos } from "@/hooks/useRecebimentos";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { BalancaCard } from "@/components/conferencia/BalancaCard";
-import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
-import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
+ import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
+ import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
+ import { StepProgress } from "@/components/common/StepProgress";
+ import { LeaveGuard } from "@/components/common/LeaveGuard";
 import { Recebimento, TipoEmbalagem, VolumeData } from "@/components/conferencia/types";
 import { Mic, MicOff, Printer } from "lucide-react";
 
@@ -29,10 +31,11 @@ export default function ConferenciaRecebimento() {
   const [salvando, setSalvando] = useState(false);
   const [itemScanned, setItemScanned] = useState(false);
   const [locationScanned, setLocationScanned] = useState(false);
-  const [volumes, setVolumes] = useState<VolumeData[]>([]);
-  const [voiceActive, setVoiceActive] = useState(false);
-
-  const quantidadeEsperada = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
+   const [volumes, setVolumes] = useState<VolumeData[]>([]);
+   const [voiceActive, setVoiceActive] = useState(false);
+   const [hasChanges, setHasChanges] = useState(false);
+ 
+   const quantidadeEsperada = recebimento?.quantidade_pedida || recebimento?.quantidade_inicial || 0;
   
   useEffect(() => {
     if (recebimento && quantidadeEsperada > 0) {
@@ -53,11 +56,12 @@ export default function ConferenciaRecebimento() {
     }
   }, [recebimento, quantidadeEsperada]);
   
-  const handleVolumeChange = (volumeId: number, qtdContada: number) => {
-    setVolumes(prev => prev.map(v => 
-      v.id === volumeId ? { ...v, qtdContada } : v
-    ));
-  };
+   const handleVolumeChange = (volumeId: number, qtdContada: number) => {
+     setHasChanges(true);
+     setVolumes(prev => prev.map(v => 
+       v.id === volumeId ? { ...v, qtdContada } : v
+     ));
+   };
   
   const handleVolumeConfirm = (volumeId: number) => {
     setVolumes(prev => prev.map(v => 
@@ -88,10 +92,10 @@ export default function ConferenciaRecebimento() {
     toast({ title: "Local Validado", description: "Posição de destino confirmada." });
   };
 
-  const handleSalvar = async () => {
-    if (!recebimento || !id) return;
-    
-    if (!itemScanned || !locationScanned) {
+   const handleSalvar = async () => {
+     if (!recebimento || !id) return;
+     
+     if (!itemScanned || !locationScanned) {
       toast({
         title: "Validação Pendente",
         description: "É necessário escanear o item e o local antes de confirmar.",
@@ -109,10 +113,10 @@ export default function ConferenciaRecebimento() {
         data_conferencia: new Date().toISOString(),
       }).eq('id', id);
       
-      if (error) throw error;
-      
-      navigate("/recebimento");
-    } catch {
+       if (error) throw error;
+       setHasChanges(false);
+       navigate("/recebimento");
+     } catch {
       toast({
         title: "Erro ao salvar",
         description: "Não foi possível salvar a conferência",
@@ -160,15 +164,32 @@ export default function ConferenciaRecebimento() {
     );
   }
 
-  const progresso = quantidadeEsperada > 0 
-    ? (quantidadeConferida / quantidadeEsperada) * 100 
-    : 0;
-  const temDivergencia = quantidadeConferida !== quantidadeEsperada && quantidadeConferida > 0;
-
-  return (
-    <AppLayout title="Conferência de Recebimento" showBack>
-      <div className="p-4 space-y-6">
-        <div className="flex items-start justify-between">
+   const progresso = quantidadeEsperada > 0 
+     ? (quantidadeConferida / quantidadeEsperada) * 100 
+     : 0;
+   const temDivergencia = quantidadeConferida !== quantidadeEsperada && quantidadeConferida > 0;
+ 
+   const currentStep = useMemo(() => {
+     if (!itemScanned || !locationScanned) return 0;
+     if (quantidadeConferida === 0) return 1;
+     if (quantidadeConferida < quantidadeEsperada) return 2;
+     return 3;
+   }, [itemScanned, locationScanned, quantidadeConferida, quantidadeEsperada]);
+ 
+   const steps = [
+     { id: 1, label: "Validação", description: "Escanear item e local" },
+     { id: 2, label: "Pesagem", description: "Conferir peso total" },
+     { id: 3, label: "Contagem", description: "Conferir volumes" },
+     { id: 4, label: "Finalização", description: "Confirmar dados" },
+   ];
+ 
+   return (
+     <AppLayout title="Conferência de Recebimento" showBack>
+       <LeaveGuard hasChanges={hasChanges} />
+       <div className="p-4 space-y-6 max-w-4xl mx-auto">
+         <StepProgress steps={steps} currentStep={currentStep} className="mb-8" />
+         
+         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
               <Package className="h-5 w-5" />
