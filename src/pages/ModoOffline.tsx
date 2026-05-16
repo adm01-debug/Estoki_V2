@@ -7,12 +7,13 @@ import { useOfflineCache } from '@/hooks/useOfflineCache';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
- import { Wifi, WifiOff, RefreshCw, Database, CloudOff, Cloud, Download, Upload, CheckCircle2, AlertTriangle, Smartphone, ShieldCheck } from 'lucide-react';
+ import { Wifi, WifiOff, RefreshCw, Database, CloudOff, Cloud, Download, Upload, CheckCircle2, AlertTriangle, Smartphone, ShieldCheck, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
  import AppLayout from "@/components/layout/AppLayout";
  import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
  import { haptics } from "@/utils/haptics";
  import { SEO } from "@/components/common/SEO";
+ import { cn } from "@/lib/utils";
 
 interface CachedTable {
   key: string;
@@ -166,7 +167,7 @@ export default function ModoOffline() {
                            <p className="text-xs font-medium text-warning-foreground/70">Dados registrados localmente que precisam ser enviados para a nuvem.</p>
                          </div>
                        </div>
-                       <Button onClick={() => { haptics.heavy(); handleSyncPending(); }} disabled={!isOnline || syncing} variant="outline" className="rounded-xl border-warning/30 bg-warning/10 text-warning hover:bg-warning hover:text-white transition-all px-8 h-11 font-bold uppercase tracking-tighter">
+                       <Button onClick={() => { haptics.medium(); handleSyncPending(); }} disabled={!isOnline || syncing} variant="outline" className="rounded-xl border-warning/30 bg-warning/10 text-warning hover:bg-warning hover:text-white transition-all px-8 h-11 font-bold uppercase tracking-tighter">
                          <Upload className="h-4 w-4 mr-2" />Sincronizar
                        </Button>
                      </CardContent>
