@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Box, X } from "lucide-react";
+ import { Box, X, ArrowLeftRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mobileNavItems, fabActions } from "./sidebar";
 
