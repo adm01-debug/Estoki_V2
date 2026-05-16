@@ -6,11 +6,12 @@ import { useDashboard } from "@/features/dashboard/hooks/useDashboard";
 import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "@/hooks/use-toast";
-import { Download, RefreshCw, Wifi, WifiOff, Sparkles, Clock, AlertTriangle } from "lucide-react";
+import { Download, RefreshCw, Sparkles, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logger } from "@/utils/logger";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
+import { SystemHealthHUD } from "@/components/dashboard/SystemHealthHUD";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
@@ -155,6 +156,8 @@ const DashboardPage = () => {
           )}
 
           {kpis && <DashboardKPIs kpis={kpis} />}
+
+          <SystemHealthHUD />
 
           <DashboardCharts 
             ocupacaoPP={ocupacaoPP} 
