@@ -80,7 +80,6 @@ interface BreadcrumbsProps {
 
  export function Breadcrumbs({ className }: BreadcrumbsProps) {
    const location = useLocation();
-   const navigate = useNavigate();
    const pathname = location.pathname;
 
    // Don't show on home or dashboard
@@ -108,14 +107,7 @@ interface BreadcrumbsProps {
        aria-label="Breadcrumb"
        className={cn('flex items-center gap-4 px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
      >
-       <button 
-         onClick={() => navigate(-1)}
-         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/40 text-xs font-bold uppercase tracking-wider hover:bg-muted hover:text-primary transition-all active:scale-95 group shadow-sm"
-         aria-label="Voltar"
-       >
-         <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
-         <span className="hidden sm:inline">Voltar</span>
-       </button>
+        <BackButton size="sm" variant="outline" className="hidden sm:flex" />
        
        <div className="h-4 w-[1px] bg-border/40 mx-1 shrink-0" />
  
