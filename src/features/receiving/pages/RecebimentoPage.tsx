@@ -1,10 +1,13 @@
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { RecebimentoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import AppLayout from "@/components/layout/AppLayout";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -103,129 +106,163 @@ export default function RecebimentoPage() {
   }
 
   return (
-    <AppLayout
-      title="Recebimento"
-      showBack
-      rightAction={<NovoRecebimentoDialog />}
-    >
+    <AppLayout showBack>
       <SEO title="Recebimento" description="Gestão de recebimento de mercadorias e conferência de notas fiscais." path="/recebimento" />
-      <div className="p-4 space-y-4 animate-fade-in">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar lote, fornecedor, pedido..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
+      
+      <BasePageTemplate
+        title="Recebimento"
+        description="Gestão de entrada de mercadorias, conferência e integração com estoque."
+        headerActions={<NovoRecebimentoDialog />}
+      >
+        <div className="space-y-6">
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-3"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar lote, fornecedor, pedido..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-11 bg-card/50 border-border/20 focus:bg-card focus:ring-2 focus:ring-primary/20 transition-all rounded-xl shadow-sm"
+              />
+            </div>
+          </motion.div>
 
-        {/* Charts */}
-        {items.length > 0 && <RecebimentoCharts items={items} />}
+          {/* Charts Organism */}
+          {items.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <RecebimentoCharts items={items} />
+            </motion.div>
+          )}
 
-        <Tabs value={statusFilter} onValueChange={setStatusFilter}>
-          <TabsList className="w-full overflow-x-auto flex-nowrap justify-start">
-            <TabsTrigger value="todos" className="gap-1">
-              Todos <Badge variant="secondary" className="ml-1">{contagens.todos}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="aguardando" className="gap-1">
-              Aguardando <Badge variant="secondary" className="ml-1">{contagens.aguardando}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="em_transito" className="gap-1">
-              Trânsito <Badge variant="secondary" className="ml-1">{contagens.em_transito}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="recebido" className="gap-1">
-              Recebido <Badge variant="secondary" className="ml-1">{contagens.recebido}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="divergencia" className="gap-1">
-              Divergência <Badge variant="destructive" className="ml-1">{contagens.divergencia}</Badge>
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
+            <TabsList className="w-full overflow-x-auto flex-nowrap justify-start bg-muted/30 p-1 rounded-xl">
+              <TabsTrigger value="todos" className="gap-1 rounded-lg">
+                Todos <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.todos}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="aguardando" className="gap-1 rounded-lg">
+                Aguardando <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.aguardando}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="em_transito" className="gap-1 rounded-lg">
+                Trânsito <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.em_transito}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="recebido" className="gap-1 rounded-lg">
+                Recebido <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.recebido}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="divergencia" className="gap-1 rounded-lg">
+                Divergência <Badge variant="destructive" className="ml-1 text-[10px]">{contagens.divergencia}</Badge>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
-        <div className="space-y-3">
-          {filteredItems.length === 0 ? (
-            <EmptyState
-              title="Nenhum recebimento encontrado"
-              description={searchTerm ? "Tente ajustar os filtros de busca." : "Clique em 'Novo' para registrar um recebimento."}
-              icon={<Package className="h-8 w-8 text-muted-foreground" />}
-            />
-          ) : (
-            filteredItems.map((item: any) => {
-              const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
-              const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
-              const progresso = qtdPedida > 0 ? Math.min(100, (item.quantidade_atual / qtdPedida) * 100) : 0;
-              const temDivergencia = item.status === 'divergencia' || 
-                (item.status === 'conferido' && item.quantidade_atual !== qtdPedida);
+          <div className="grid gap-3">
+            {filteredItems.length === 0 ? (
+              <EmptyState
+                title="Nenhum recebimento encontrado"
+                description={searchTerm ? "Tente ajustar os filtros de busca." : "Clique em 'Novo' para registrar um recebimento."}
+                icon={<Package className="h-8 w-8 text-muted-foreground" />}
+              />
+            ) : (
+              filteredItems.map((item: any, index: number) => {
+                const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
+                const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
+                const progresso = qtdPedida > 0 ? Math.min(100, (item.quantidade_atual / qtdPedida) * 100) : 0;
+                const temDivergencia = item.status === 'divergencia' || 
+                  (item.status === 'conferido' && item.quantidade_atual !== qtdPedida);
 
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => navigate(`/recebimento/${item.id}`)}
-                  className="bg-card rounded-xl p-4 border border-border hover:border-primary/50 transition-all cursor-pointer active:scale-[0.99]"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="font-semibold text-primary">
-                          {item.numero_lote}
-                        </span>
-                        <Badge variant={status.variant} className="gap-1">
-                          {status.icon}
-                          {status.label}
-                        </Badge>
-                        {item.pedido_compra && (
-                          <Badge variant="outline" className="text-xs">
-                            PC: {item.pedido_compra}
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + (index * 0.05) }}
+                    onClick={() => navigate(`/recebimento/${item.id}`)}
+                    className="group bg-card hover:bg-card/80 rounded-2xl p-5 border border-border/50 hover:border-primary/30 transition-all cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
+                          <span className="font-bold text-primary tracking-tight">
+                            {item.numero_lote}
+                          </span>
+                          <Badge variant={status.variant} className="gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                            {status.icon}
+                            {status.label}
                           </Badge>
+                          {item.pedido_compra && (
+                            <Badge variant="outline" className="text-[10px] font-medium opacity-70">
+                              PC: {item.pedido_compra}
+                            </Badge>
+                          )}
+                        </div>
+                        <h3 className="text-base font-bold truncate group-hover:text-primary transition-colors">
+                          {item.produto?.nome || item.produto_id}
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-medium mt-1">
+                          {item.produto?.sku && <span className="text-primary/70">{item.produto.sku}</span>}
+                          {item.produto?.sku && " • "}
+                          {item.fornecedor || 'Fornecedor não informado'}
+                        </p>
+                        
+                        {item.previsao_chegada && item.status === 'aguardando' && (
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-3 bg-muted/30 w-fit px-2 py-1 rounded-md">
+                            <Clock className="h-3 w-3" />
+                            <span>Previsão: {new Date(item.previsao_chegada).toLocaleDateString("pt-BR")}</span>
+                          </div>
+                        )}
+
+                        {item.status === 'em_conferencia' && (
+                          <div className="mt-4 space-y-1.5 max-w-xs">
+                            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                              <span>Conferência</span>
+                              <span>{Math.round(progresso)}%</span>
+                            </div>
+                            <Progress value={progresso} className="h-1.5" />
+                          </div>
                         )}
                       </div>
-                      <p className="text-sm font-medium truncate">{item.produto?.nome || item.produto_id}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.produto?.sku && `SKU: ${item.produto.sku} • `}
-                        {item.fornecedor || 'Fornecedor s/ info'}
-                      </p>
-                      {item.previsao_chegada && item.status === 'aguardando' && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          <Clock className="h-3 w-3 inline mr-1" />
-                          Prev: {new Date(item.previsao_chegada).toLocaleDateString("pt-BR")}
-                        </p>
-                      )}
-                      {item.status === 'em_conferencia' && (
-                        <div className="mt-2 space-y-1">
-                          <div className="flex justify-between text-[10px] text-muted-foreground">
-                            <span>Conferência em progresso</span>
-                            <span>{Math.round(progresso)}%</span>
-                          </div>
-                          <Progress value={progresso} className="h-1" />
+
+                      <div className="flex flex-col items-end gap-2 shrink-0">
+                        <div className="bg-muted/30 px-3 py-1.5 rounded-xl border border-border/20 text-right">
+                          <p className={cn("text-sm font-black tracking-tight", temDivergencia ? 'text-destructive' : 'text-foreground')}>
+                            {item.quantidade_atual} / {qtdPedida}
+                          </p>
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Unidades</p>
                         </div>
-                      )}
+                        
+                        {temDivergencia && (
+                          <div className="flex items-center gap-1 text-[10px] font-black text-destructive bg-destructive/10 px-2 py-0.5 rounded-full border border-destructive/20">
+                            <AlertTriangle className="h-2.5 w-2.5" />
+                            {item.quantidade_atual - qtdPedida > 0 ? '+' : ''}{item.quantidade_atual - qtdPedida} UN
+                          </div>
+                        )}
+                        
+                        {item.data_recebimento && (
+                          <p className="text-[10px] font-medium text-muted-foreground mt-1">
+                            {formatDate(item.data_recebimento)}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="self-center p-2 rounded-full group-hover:bg-primary/10 transition-colors">
+                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+                      </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className={`text-sm font-medium ${temDivergencia ? 'text-destructive' : ''}`}>
-                        {item.quantidade_atual}/{qtdPedida} un
-                      </p>
-                      {temDivergencia && (
-                        <p className="text-xs text-destructive">
-                          {item.quantidade_atual - qtdPedida > 0 ? '+' : ''}{item.quantidade_atual - qtdPedida} un
-                        </p>
-                      )}
-                      {item.data_recebimento && (
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(item.data_recebimento)}
-                        </p>
-                      )}
-                    </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-                  </div>
-                </div>
-              );
-            })
-          )}
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
         </div>
-      </div>
+      </BasePageTemplate>
     </AppLayout>
   );
 }

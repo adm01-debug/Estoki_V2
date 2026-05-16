@@ -4,24 +4,29 @@
  */
 
 // Map route paths to their dynamic import functions
+/**
+ * Updated Route Map for Prefetching
+ * Points to the actual feature-first paths to ensure cache hits.
+ */
 const routeImports: Record<string, () => Promise<unknown>> = {
   '/': () => import('../pages/Index'),
   '/dashboard': () => import('../pages/Dashboard'),
-  '/dashboard-realtime': () => import('../pages/DashboardTempoReal'),
-   '/monitor': () => import('../pages/DashboardOperacional'),
-   '/estoque': () => import('../pages/Estoque'),
-   '/triagem': () => import('../pages/Triagem'),
-   '/recebimento': () => import('../pages/Recebimento'),
-   '/produtos': () => import('../pages/Produtos'),
-   '/lotes': () => import('../pages/Lotes'),
-   '/posicoes': () => import('../pages/Posicoes'),
-   '/picking': () => import('../pages/picking/PickingPage'),
-   '/romaneios': () => import('../pages/Romaneios'),
-   '/scanner': () => import('../pages/Scanner'),
-   '/tarefas': () => import('../pages/GestaoTarefas'),
-   '/relatorios': () => import('../pages/Relatorios'),
-   '/kpis-operacionais': () => import('../pages/KPIsOperacionais'),
-   '/expedicao': () => import('../pages/shipping/ShippingPage'),
+  '/dashboard-realtime': () => import('../features/analytics/pages/RealtimeDashboardPage'),
+  '/monitor': () => import('../pages/DashboardOperacional'),
+  '/estoque': () => import('../features/inventory/pages/EstoquePage'),
+  '/triagem': () => import('../features/quality/pages/TriagemPage'),
+  '/recebimento': () => import('../features/receiving/pages/RecebimentoPage'),
+  '/produtos': () => import('../pages/Produtos'),
+  '/lotes': () => import('../pages/Lotes'),
+  '/posicoes': () => import('../pages/Posicoes'),
+  '/picking': () => import('../features/picking/pages/PickingPage'),
+  '/romaneios': () => import('../pages/Romaneios'),
+  '/scanner': () => import('../pages/Scanner'),
+  '/tarefas': () => import('../pages/GestaoTarefas'),
+  '/relatorios': () => import('../pages/Relatorios'),
+  '/kpis-operacionais': () => import('../features/analytics/pages/KPIsPage'),
+  '/expedicao': () => import('../features/shipping/pages/ShippingPage'),
+  '/curva-abc': () => import('../features/analytics/pages/ABCAnalysisPage'),
 };
 
 const prefetched = new Set<string>();

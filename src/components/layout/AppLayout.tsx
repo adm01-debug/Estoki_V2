@@ -11,9 +11,9 @@ import { useSwipeBack } from "@/hooks/useSwipeBack";
 
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
 import { AuthLoading } from "./AuthLoading";
-import { Header } from "./header/Header";
-import { SidebarContent } from "./SidebarContent";
-import { MobileNavigation } from "./MobileNavigation";
+import { Header } from "@/components/organisms/layout/Header";
+import { Sidebar } from "@/components/organisms/layout/Sidebar";
+import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
 
 const AppLayoutContext = createContext(false);
 
@@ -69,11 +69,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <div className="absolute -bottom-[30%] -left-[10%] w-[40%] h-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
           </div>
 
-          <Header 
+          <Header
             mainPadding={mainPadding}
             onOpenMobileMenu={() => setMobileMenuOpen(true)}
             shouldShowBack={shouldShowBack}
-            onBack={handleBack}
             title={title}
             rightAction={rightAction}
             userName={userName}
@@ -122,7 +121,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
            />
 
            <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
-            <SidebarContent 
+            <Sidebar
               sidebarCollapsed={sidebarCollapsed}
               userName={userName}
               userRole={currentRole}
@@ -157,7 +156,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
-                  <SidebarContent 
+                  <Sidebar
                     isMobile={true}
                     sidebarCollapsed={sidebarCollapsed}
                     userName={userName}
