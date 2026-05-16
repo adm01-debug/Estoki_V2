@@ -6,6 +6,7 @@ import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncSta
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { haptics } from "@/utils/haptics";
 import AppLayout from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { Button } from "@/components/ui/button";
@@ -183,9 +184,9 @@ export default function RecebimentoPage() {
                     key={item.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + (index * 0.05) }}
-                    onClick={() => navigate(`/recebimento/${item.id}`)}
-                    className="group bg-card hover:bg-card/80 rounded-2xl p-5 border border-border/50 hover:border-primary/30 transition-all cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md"
+                    transition={{ delay: 0.1 + (Math.min(index, 10) * 0.05) }}
+                    onClick={() => { haptics.light(); navigate(`/recebimento/${item.id}`); }}
+                    className="group bg-card hover:bg-card/80 rounded-2xl p-5 border border-border/50 hover:border-primary/30 transition-all cursor-pointer active:scale-[0.98] shadow-sm hover:shadow-md content-visibility-auto will-change-transform"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1 min-w-0">
