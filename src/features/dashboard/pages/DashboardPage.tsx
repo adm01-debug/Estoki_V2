@@ -4,20 +4,20 @@
  import { motion } from "framer-motion";
  import { Package, Search, Warehouse, AlertTriangle } from "lucide-react";
  import { PageTransition } from "@/components/layout/PageTransition";
- import { useDashboard } from "@/hooks/useDashboard";
- import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
+import { useDashboard } from "../hooks/useDashboard";
+import { useAtividadeRecente } from "../hooks/useAtividadeRecente";
  import { useAuth } from "@/contexts/AuthContext";
  import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
  import { useEstoque } from "@/features/inventory/hooks/useEstoque";
  import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
- import { IndexHero } from "@/components/index/IndexHero";
- import { IndexKPIs } from "@/components/index/IndexKPIs";
- import { IndexOcupacaoCard } from "@/components/index/IndexOcupacaoCard";
- import { IndexQuickStats } from "@/components/index/IndexQuickStats";
+import { IndexHero } from "../components/IndexHero";
+import { IndexKPIs } from "../components/IndexKPIs";
+import { IndexOcupacaoCard } from "../components/IndexOcupacaoCard";
+import { IndexQuickStats } from "../components/IndexQuickStats";
  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 
- const IndexOperations = lazy(() => import("@/components/index/IndexOperations").then(m => ({ default: m.IndexOperations })));
- const IndexAtividade = lazy(() => import("@/components/index/IndexAtividade").then(m => ({ default: m.IndexAtividade })));
+ const IndexOperations = lazy(() => import("../components/IndexOperations").then(m => ({ default: m.IndexOperations })));
+ const IndexAtividade = lazy(() => import("../components/IndexAtividade").then(m => ({ default: m.IndexAtividade })));
 
 const containerVariants = {
   hidden: { opacity: 0 },
