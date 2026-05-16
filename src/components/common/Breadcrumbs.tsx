@@ -1,6 +1,9 @@
-  import { ChevronRight, Home, ArrowLeft } from 'lucide-react';
-  import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ChevronRight, Home } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { haptics } from '@/utils/haptics';
+import { BackButton } from '@/components/molecules/navigation/BackButton';
 
 const routeLabels: Record<string, string> = {
   '/': 'Início',
