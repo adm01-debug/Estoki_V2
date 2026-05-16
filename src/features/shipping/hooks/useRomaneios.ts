@@ -36,12 +36,7 @@ export function useRomaneios() {
       itemId: string, 
       status: StatusEntrega, 
       dados?: any 
-    }) => {
-      // Note: This needs implementation in shippingService if we want persistence
-      // For now, let's just log or implement a basic version if the user didn't have it.
-      // Wait, the original hook had it. I should implement it in shippingService.
-      return Promise.resolve(); 
-    },
+    }) => shippingService.registrarEntrega(romaneioId, itemId, status, dados),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['romaneios'] });
       toast.success('Entrega registrada!');
