@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { RecebimentoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
