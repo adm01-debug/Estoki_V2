@@ -108,12 +108,13 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             </div>
           </main>
 
-          <MobileNavigation 
-            fabOpen={fabOpen}
-            setFabOpen={setFabOpen}
-            pathname={location.pathname}
-            onNavigate={handleNavigate}
-          />
+           <MobileNavigation 
+             fabOpen={fabOpen}
+             setFabOpen={setFabOpen}
+             pathname={location.pathname}
+             onNavigate={handleNavigate}
+             onBack={handleBack}
+           />
 
            <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
             <SidebarContent 
