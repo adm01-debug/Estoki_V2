@@ -105,16 +105,8 @@ interface BreadcrumbsProps {
        aria-label="Breadcrumb"
        className={cn('flex items-center justify-between px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
      >
-       <div className="flex items-center gap-1.5">
-         <button 
-           onClick={() => navigate(-1)} 
-           className="mr-2 p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-all flex items-center gap-1 sm:hidden group"
-           aria-label="Voltar"
-         >
-           <ChevronLeft className="h-4 w-4 group-active:scale-90 transition-transform" />
-           <span className="text-xs font-medium">Voltar</span>
-         </button>
-          {crumbs.map((crumb, i) => {
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 pr-4">
+           {crumbs.map((crumb, i) => {
             const isLast = i === crumbs.length - 1;
             return (
               <span key={i} className="flex items-center gap-1.5 group/crumb">

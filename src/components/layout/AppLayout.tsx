@@ -93,18 +93,23 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
            >
              <div className="max-w-[1600px] mx-auto min-h-full flex flex-col">
                <Breadcrumbs className="lg:px-8 pt-4 pb-2" />
-                 <AnimatePresence mode="wait">
-                   <motion.div 
-                     key={location.pathname}
-                     initial={{ opacity: 0, x: 5 }}
-                     animate={{ opacity: 1, x: 0 }}
-                     exit={{ opacity: 0, x: -5 }}
-                     transition={{ duration: 0.15, ease: "easeOut" }}
-                     className="px-6 lg:px-8 pb-10 flex-1 flex flex-col relative"
-                   >
-                     {children || <Outlet />}
-                   </motion.div>
-                 </AnimatePresence>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={location.pathname}
+                      initial={{ opacity: 0, y: 8, scale: 0.995 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -8, scale: 1.005 }}
+                      transition={{ 
+                        type: "spring",
+                        stiffness: 350,
+                        damping: 30,
+                        mass: 0.8
+                      }}
+                      className="px-6 lg:px-8 pb-10 flex-1 flex flex-col relative will-change-transform"
+                    >
+                      {children || <Outlet />}
+                    </motion.div>
+                  </AnimatePresence>
             </div>
           </main>
 

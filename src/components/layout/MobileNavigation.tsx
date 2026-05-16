@@ -67,30 +67,29 @@ import { mobileNavItems, fabActions } from "./sidebar";
       </AnimatePresence>
 
       {/* Bottom Navigation (Mobile) */}
-       <nav 
-         className="fixed bottom-0 left-0 right-0 border-t border-border/20 px-2 pb-safe pt-2 md:hidden z-40" 
+       <nav
+         className="fixed bottom-0 left-0 right-0 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2 md:hidden z-40"
          aria-label="Navegação mobile"
        >
-         <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/10" />
-          <div className="relative flex items-center justify-between h-14 max-w-md mx-auto px-2">
-           {/* Mobile Back Button */}
-           <AnimatePresence>
-             {(pathname !== "/" && pathname !== "/dashboard") && (
-               <motion.button
-                 initial={{ opacity: 0, x: -10 }}
-                 animate={{ opacity: 1, x: 0 }}
-                 exit={{ opacity: 0, x: -10 }}
-                 onClick={() => onBack?.()}
-                 whileTap={{ scale: 0.9 }}
-                 className="flex flex-col items-center justify-center gap-0.5 min-w-[48px] h-full text-muted-foreground hover:text-primary transition-colors"
-                 aria-label="Voltar"
-               >
-                 <ArrowLeftRight className="h-5 w-5 rotate-180" />
-                 <span className="text-[10px] font-medium">Voltar</span>
-               </motion.button>
-             )}
-           </AnimatePresence>
- 
+         <div className="absolute inset-x-0 bottom-0 top-0 bg-background/80 backdrop-blur-2xl border-t border-border/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]" />
+          <div className="relative flex items-center justify-around h-14 max-w-md mx-auto px-1">
+            {/* Mobile Back Button - Unified & Contextual */}
+            <motion.button
+              onClick={() => onBack?.()}
+              whileTap={{ scale: 0.85 }}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-300",
+                (pathname === "/" || pathname === "/dashboard") 
+                  ? "opacity-30 grayscale cursor-not-allowed" 
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+              )}
+              disabled={pathname === "/" || pathname === "/dashboard"}
+              aria-label="Voltar"
+            >
+              <ArrowLeftRight className="h-5 w-5 rotate-180" />
+              <span className="text-[10px] font-bold">Voltar</span>
+            </motion.button>
+
             {mobileNavItems.slice(0, 2).map((item) => {
               const isActive = pathname === item.path;
               return (
