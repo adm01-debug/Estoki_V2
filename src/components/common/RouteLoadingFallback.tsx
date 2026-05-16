@@ -3,12 +3,8 @@ import { forwardRef, memo } from 'react';
 import { LoadingFallback } from './LoadingFallback';
 
  type PageType = 'dashboard' | 'table' | 'form' | 'list' | 'card' | 'default';
-         case 'list':
-           return <div ref={ref} className="p-4"><ListSkeleton /></div>;
-         case 'card':
-           return <div ref={ref} className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><CardSkeleton /><CardSkeleton /><CardSkeleton /></div>;
-
-interface RouteLoadingFallbackProps {
+ 
+ interface RouteLoadingFallbackProps {
   type?: PageType;
 }
 
@@ -24,8 +20,12 @@ export const RouteLoadingFallback = memo(
           return <div ref={ref}><DashboardSkeleton /></div>;
         case 'table':
           return <div ref={ref}><TableSkeleton /></div>;
-        case 'form':
-          return <div ref={ref}><FormSkeleton /></div>;
+         case 'form':
+           return <div ref={ref}><FormSkeleton /></div>;
+         case 'list':
+           return <div ref={ref} className="p-4"><ListSkeleton /></div>;
+         case 'card':
+           return <div ref={ref} className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><CardSkeleton /><CardSkeleton /><CardSkeleton /></div>;
         default:
           return <LoadingFallback ref={ref} />;
       }
