@@ -42,8 +42,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     handleNavigate
   } = useAppLayoutState();
 
-  const shouldShowBack = showBack || !isHome;
-  useSwipeBack(!isHome);
+   const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
+   useSwipeBack(!isHome && location.pathname !== "/dashboard");
 
   if (isNested) return <>{children}</>;
   if (loading) return <AuthLoading />;

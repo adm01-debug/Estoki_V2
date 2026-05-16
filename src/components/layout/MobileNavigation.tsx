@@ -74,43 +74,50 @@ import { mobileNavItems, fabActions } from "./sidebar";
          <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/10" />
           <div className="relative flex items-center justify-between h-14 max-w-md mx-auto px-2">
            {/* Mobile Back Button */}
-           <motion.button
-             onClick={() => onBack?.()}
-             whileTap={{ scale: 0.9 }}
-             className="flex flex-col items-center justify-center gap-0.5 min-w-[48px] h-full text-muted-foreground hover:text-primary transition-colors"
-             aria-label="Voltar"
-           >
-             <ArrowLeftRight className="h-5 w-5 rotate-180" />
-             <span className="text-[10px] font-medium">Voltar</span>
-           </motion.button>
- 
-           {mobileNavItems.slice(0, 1).map((item) => {
-             const isActive = pathname === item.path;
-             return (
-               <motion.button 
-                 key={item.path} 
-                 data-tour={item.tour} 
-                 onClick={() => onNavigate(item.path)}
-                 whileTap={{ scale: 0.9 }} 
-                 aria-label={`Ir para ${item.label}`} 
-                 aria-current={isActive ? "page" : undefined}
-                 className={cn(
-                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                   isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
-                 )}
+           <AnimatePresence>
+             {(pathname !== "/" && pathname !== "/dashboard") && (
+               <motion.button
+                 initial={{ opacity: 0, x: -10 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -10 }}
+                 onClick={() => onBack?.()}
+                 whileTap={{ scale: 0.9 }}
+                 className="flex flex-col items-center justify-center gap-0.5 min-w-[48px] h-full text-muted-foreground hover:text-primary transition-colors"
+                 aria-label="Voltar"
                >
-                 {isActive && (
-                   <motion.div 
-                     layoutId="mobile-indicator" 
-                     className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
-                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-                   />
-                 )}
-                 <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
-                 <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
+                 <ArrowLeftRight className="h-5 w-5 rotate-180" />
+                 <span className="text-[10px] font-medium">Voltar</span>
                </motion.button>
-             );
-           })}
+             )}
+           </AnimatePresence>
+ 
+            {mobileNavItems.slice(0, 2).map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <motion.button 
+                  key={item.path} 
+                  data-tour={item.tour} 
+                  onClick={() => onNavigate(item.path)}
+                  whileTap={{ scale: 0.9 }} 
+                  aria-label={`Ir para ${item.label}`} 
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
+                    isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
+                  )}
+                >
+                  {isActive && (
+                    <motion.div 
+                      layoutId="mobile-indicator" 
+                      className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+                    />
+                  )}
+                  <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
+                  <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
+                </motion.button>
+              );
+            })}
 
           {/* FAB Center */}
           <div className="relative -mt-5">
@@ -129,33 +136,33 @@ import { mobileNavItems, fabActions } from "./sidebar";
             </motion.button>
           </div>
 
-          {mobileNavItems.slice(2).map((item) => {
-            const isActive = pathname === item.path;
-            return (
-              <motion.button 
-                key={item.path} 
-                data-tour={item.tour} 
-                onClick={() => onNavigate(item.path)}
-                whileTap={{ scale: 0.9 }} 
-                aria-label={`Ir para ${item.label}`} 
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
-                 isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
-               )}
-             >
-                {isActive && (
-                  <motion.div 
-                    layoutId="mobile-indicator" 
-                    className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }} 
-                  />
+           {mobileNavItems.slice(2, 3).map((item) => {
+             const isActive = pathname === item.path;
+             return (
+               <motion.button 
+                 key={item.path} 
+                 data-tour={item.tour} 
+                 onClick={() => onNavigate(item.path)}
+                 whileTap={{ scale: 0.9 }} 
+                 aria-label={`Ir para ${item.label}`} 
+                 aria-current={isActive ? "page" : undefined}
+                 className={cn(
+                   "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-200 relative",
+                  isActive ? "text-primary bg-primary/5" : "text-muted-foreground"
                 )}
-                <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
-                <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
-              </motion.button>
-            );
-          })}
+              >
+                 {isActive && (
+                   <motion.div 
+                     layoutId="mobile-indicator" 
+                     className="absolute -top-1 w-8 h-1 bg-primary rounded-full" 
+                     transition={{ type: "spring", stiffness: 300, damping: 30 }} 
+                   />
+                 )}
+                 <item.icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_hsl(var(--primary)/0.5)]")} />
+                 <span className={cn("text-[10px]", isActive ? "font-bold" : "font-medium")}>{item.label}</span>
+               </motion.button>
+             );
+           })}
         </div>
       </nav>
     </>
