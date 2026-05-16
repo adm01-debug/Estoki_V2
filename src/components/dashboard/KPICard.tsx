@@ -72,22 +72,27 @@ export const KPICard = memo(function KPICard({
     lg: "text-4xl",
   };
 
-  return (
-    <button
-      onClick={onClick}
-      aria-label={`${label}${sublabel ? ` - ${sublabel}` : ''}: ${value}`}
-      className={cn(
-        "kpi-card w-full text-left cursor-pointer group relative overflow-hidden",
-        sizeClasses[size]
-      )}
-    >
-      {/* Gradient overlay */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-        gradientStyles[variant]
-      )} />
-      
-      <div className="relative z-10">
+   return (
+     <button
+       onClick={onClick}
+       aria-label={`${label}${sublabel ? ` - ${sublabel}` : ''}: ${value}`}
+       className={cn(
+         "kpi-card w-full text-left cursor-pointer group relative overflow-hidden",
+         "bg-card/40 backdrop-blur-md border border-border/50",
+         "shadow-sm hover:shadow-glow hover:border-primary/30 transition-all duration-300 ease-out",
+         sizeClasses[size]
+       )}
+     >
+       {/* Shine effect */}
+       <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 z-0" />
+ 
+       {/* Gradient overlay */}
+       <div className={cn(
+         "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+         gradientStyles[variant]
+       )} />
+       
+       <div className="relative z-10">
         <div className="flex items-start justify-between mb-3">
           <div className={cn(
             "rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110",

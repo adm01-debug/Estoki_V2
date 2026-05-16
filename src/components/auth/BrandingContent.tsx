@@ -6,19 +6,32 @@ export const features = [
   { icon: Users, title: "Gestão de Equipe", desc: "Gamificação e performance dos operadores" },
 ];
 
-export const BrandingContent = () => (
-  <div className="hidden lg:flex flex-col justify-between relative z-10 w-1/2 p-10 xl:p-16">
-    {/* Logo */}
-    <div className="flex items-center gap-3">
-      <div className="w-[68px] h-[68px] rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
-        <Box className="h-8 w-8 text-primary-foreground" />
-      </div>
-      <div>
-        <h2 className="text-[26px] font-bold text-sidebar-foreground tracking-tight leading-none">ESTOKI</h2>
-        <p className="text-[13px] font-semibold tracking-[0.3em] text-primary uppercase mt-1">Warehouse</p>
-        <p className="text-[11px] font-black tracking-[0.25em] text-sidebar-foreground/40 uppercase mt-0.5">Promo Brindes</p>
-      </div>
-    </div>
+ export const BrandingContent = () => (
+   <div className="hidden lg:flex flex-col justify-between relative z-10 w-1/2 p-10 xl:p-16 overflow-hidden">
+     {/* Professional Background Pattern */}
+     <div className="absolute inset-0 z-[-1] opacity-5">
+       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+       <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_100%_200px,#3b82f61a,transparent)]" />
+     </div>
+ 
+     {/* Logo */}
+     <div className="flex items-center gap-4 group cursor-default">
+       <div className="relative">
+         <div className="absolute -inset-1 bg-primary/20 rounded-2xl blur-lg group-hover:bg-primary/40 transition-all duration-500" />
+         <div className="relative w-[72px] h-[72px] rounded-2xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 flex items-center justify-center shadow-glow-lg transition-transform duration-500 group-hover:scale-105 group-hover:rotate-1">
+           <Box className="h-9 w-9 text-primary-foreground" />
+         </div>
+       </div>
+       <div>
+         <h2 className="text-3xl font-black text-sidebar-foreground tracking-tighter leading-none mb-1">ESTOKI</h2>
+         <div className="flex items-center gap-2">
+           <p className="text-[12px] font-bold tracking-[0.4em] text-primary uppercase">Warehouse</p>
+           <div className="h-1 w-1 rounded-full bg-primary/30" />
+           <p className="text-[10px] font-black tracking-[0.2em] text-sidebar-foreground/30 uppercase">Enterprise</p>
+         </div>
+         <p className="text-[11px] font-black tracking-[0.25em] text-sidebar-foreground/40 uppercase mt-1.5 border-t border-sidebar-border/30 pt-1.5 inline-block">Promo Brindes</p>
+       </div>
+     </div>
 
     {/* Hero */}
     <div className="space-y-6 max-w-lg">
