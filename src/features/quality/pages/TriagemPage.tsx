@@ -2,18 +2,17 @@ import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
-  import { useState, useMemo, useRef, useEffect } from "react";
- import { supabase } from "@/integrations/supabase/client";
- import { motion, AnimatePresence } from "framer-motion";
- import { toast } from "sonner";
- import { cn } from "@/lib/utils";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-  import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare, User, Clock } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle } from "lucide-react";
+import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -23,6 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useTriagens } from "../hooks/useTriagens";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { haptics } from "@/utils/haptics";
 
 // Modularized Components & Helpers
 import { TriagemStatsCards } from "../components/formulario/TriagemStatsCards";
