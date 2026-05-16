@@ -57,7 +57,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
    const handleExport = () => {
      toast.info("Exportando dados...");
      const headers = ["Codigo", "Tipo", "Status", "Zona", "Secao", "Nivel"];
-     const rows = filtered.map(p => [p.codigo, p.tipo, p.status, p.zona || "", p.secao || "", p.nivel || ""]);
+    const rows = filtered.map((p: any) => [p.codigo, p.tipo, p.status, p.zona || "", p.secao || "", p.nivel || ""]);
      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
      const link = document.createElement("a");
@@ -75,7 +75,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
   const [selectedPosicao, setSelectedPosicao] = useState<PosicaoEstoque | null>(null);
 
   const filtered = useMemo(() => {
-    return posicoes.filter((p) => {
+    return posicoes.filter((p: any) => {
       const matchSearch = !search || p.codigo.toLowerCase().includes(search.toLowerCase());
       const matchStatus = statusFilter === "todos" || p.status === statusFilter;
       const matchTipo = tipoFilter === "todos" || p.tipo === tipoFilter;
@@ -220,8 +220,8 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
               </CardContent></Card>
             ) : (
               <AnimatePresence>
-                {filtered.map((pos, index) => {
-                  const cfg = statusLabels[pos.status];
+                {filtered.map((pos: any, index: number) => {
+                  const cfg = statusLabels[pos.status as keyof typeof statusLabels];
                   return (
                     <motion.div key={pos.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.02 }}>
                        <Card className={cn("cursor-pointer hover:border-primary/50 transition-colors relative overflow-hidden", selectedIds.includes(pos.id) && "border-primary bg-primary/5")} onClick={() => setSelectedPosicao(pos)}>
