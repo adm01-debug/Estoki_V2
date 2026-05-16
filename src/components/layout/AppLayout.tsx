@@ -13,7 +13,7 @@ import { useAppLayoutState } from "@/hooks/useAppLayoutState";
 import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
-import { MobileNavigation } from "./MobileNavigation";
+import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
 
 const AppLayoutContext = createContext(false);
 
