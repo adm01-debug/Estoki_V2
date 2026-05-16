@@ -81,24 +81,58 @@ interface BreadcrumbsProps {
  export function Breadcrumbs({ className }: BreadcrumbsProps) {
    const location = useLocation();
    const pathname = location.pathname;
-
+ 
    // Don't show on home or dashboard
    if (pathname === '/' || pathname === '/dashboard') return null;
-
-  const segments = pathname.split('/').filter(Boolean);
-  const crumbs: { label: string; href?: string }[] = [{ label: 'Início', href: '/' }];
-
-  // Build breadcrumbs from segments
-  let accumulatedPath = '';
-  segments.forEach((segment, i) => {
-    accumulatedPath += `/${segment}`;
-    const isLast = i === segments.length - 1;
-    const label = routeLabels[accumulatedPath] || sectionLabels[segment] || segment;
-    crumbs.push({
-      label,
-      href: isLast ? undefined : accumulatedPath,
-    });
-  });
+ 
+   const segments = pathname.split('/').filter(Boolean);
+   
+   // Enhanced breadcrumb building with dynamic support
+   const crumbs = useMemo(() => {
+     const items: { label: string; href?: string }[] = [{ label: 'Início', href: '/' }];
+     let accumulatedPath = '';
+ 
+     segments.forEach((segment, i) => {
+       accumulatedPath += `/${segment}`;
+       const isLast = i === segments.length - 1;
+       
+       // Priority for label: 
+       // 1. Explicit routeLabels
+       // 2. Section labels (admin, etc)
+       // 3. Dynamic context (if it's a UUID/ID, we might want to mask it or get from state)
+       let label = routeLabels[accumulatedPath] || sectionLabels[segment] || segment;
+       
+       // Basic ID detection and masking
+       if (segment.length > 20 && !routeLabels[accumulatedPath]) {
+         label = 'Detalhes'; // Generic label for UUIDs
+       }
+ 
+       items.push({
+         label,
+         href: isLast ? undefined : accumulatedPath,
+       });
+     });
+     return items;
+   }, [pathname]);
+ 
+   if (crumbs.length <= 1) return null;
+ 
+   const container = {
+     hidden: { opacity: 0, y: -10 },
+     show: {
+       opacity: 1,
+       y: 0,
+       transition: {
+         staggerChildren: 0.1,
+         delayChildren: 0.1
+       }
+     }
+   };
+ 
+   const item = {
+     hidden: { opacity: 0, x: -5 },
+     show: { opacity: 1, x: 0 }
+   };
 
   if (crumbs.length <= 1) return null;
 
