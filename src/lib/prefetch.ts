@@ -9,7 +9,7 @@
  * Points to the actual feature-first paths to ensure cache hits.
  */
 const routeImports: Record<string, () => Promise<unknown>> = {
-  '/': () => import('../pages/Index'),
+  '/': () => import('../features/dashboard/pages/DashboardPage'),
   '/dashboard': () => import('../pages/Dashboard'),
   '/dashboard-realtime': () => import('../features/analytics/pages/RealtimeDashboardPage'),
   '/monitor': () => import('../pages/DashboardOperacional'),
