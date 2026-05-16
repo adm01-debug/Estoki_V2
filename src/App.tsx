@@ -18,7 +18,7 @@ import { featureRoutes } from "@/routes/featureRoutes";
 // ── Core pages ──
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const DashboardOperacional = lazy(() => import("./pages/DashboardOperacional"));
-const Index = lazy(() => import("./pages/Index"));
+const Index = lazy(() => import("./features/dashboard/pages/DashboardPage"));
 
 const Hub = lazy(() => import("./pages/Hub"));
  const App = () => (
