@@ -1,5 +1,5 @@
 import { forwardRef, memo } from 'react';
-  import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton } from './PageSkeleton';
+  import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton, SkeletonPulse } from './PageSkeleton';
 import { LoadingFallback } from './LoadingFallback';
 
   type PageType = 'dashboard' | 'estoque' | 'hub' | 'table' | 'form' | 'list' | 'card' | 'default';
