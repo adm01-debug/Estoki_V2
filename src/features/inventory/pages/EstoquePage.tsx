@@ -263,6 +263,8 @@ function EstoqueVirtualList({ positions, onSelect }: { positions: PosicaoEstoque
     <div
       ref={parentRef}
       className="h-[600px] overflow-auto rounded-md border border-border/50 bg-background/50"
+      role="list"
+      aria-label="Lista de posições ocupadas"
     >
       <div
         style={{
@@ -274,10 +276,12 @@ function EstoqueVirtualList({ positions, onSelect }: { positions: PosicaoEstoque
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const position = positions[virtualRow.index];
           const diasArmazenado = position.created_at ? differenceInDays(new Date(), new Date(position.created_at)) : 0;
+          const label = `Posição ${position.codigo}, ${position.tipo}, Rua ${position.porta_palete}, Nível ${position.nivel}. Ocupada há ${diasArmazenado} dias com ${position.saldos?.length || 0} itens.`;
           
           return (
             <div
               key={virtualRow.key}
+              role="listitem"
               style={{
                 position: 'absolute',
                 top: 0,
@@ -290,8 +294,17 @@ function EstoqueVirtualList({ positions, onSelect }: { positions: PosicaoEstoque
             >
               <div 
                 onClick={() => onSelect(position)} 
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelect(position);
+                  }
+                }}
+                tabIndex={0}
+                role="button"
+                aria-label={label}
                 className={cn(
-                  "h-full p-4 rounded-xl border bg-card/80 backdrop-blur-sm cursor-pointer transition-all hover:shadow-md hover:border-primary/30 flex items-center justify-between group", 
+                  "h-full p-4 rounded-xl border bg-card/80 backdrop-blur-sm cursor-pointer transition-all hover:shadow-md hover:border-primary/30 flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2", 
                   diasArmazenado > 30 && "border-l-4 border-l-warning shadow-warning/5"
                 )}
               >
