@@ -21,8 +21,10 @@ import {
   CheckCircle2,
   Clock,
   X,
-  Eye,
-} from "lucide-react";
+   Eye,
+   Copy,
+ } from "lucide-react";
+ import { CopyButton } from "@/components/ui/copy-button";
 import { cn } from "@/lib/utils";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -219,15 +221,27 @@ export default function LotesPage() {
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <p className="font-semibold">{lote.numero_lote}</p>
+                               <div className="flex items-center gap-1">
+                                 <p className="font-semibold">{lote.numero_lote}</p>
+                                 <CopyButton text={lote.numero_lote} className="h-6 w-6" />
+                               </div>
                                 <Badge variant={cfg.variant}>{cfg.label}</Badge>
                                 {diasValidade !== null && diasValidade <= 30 && diasValidade >= 0 && (
                                   <Badge variant="destructive" className="text-xs">Vence em {diasValidade}d</Badge>
                                 )}
                               </div>
-                              <p className="text-sm text-muted-foreground truncate">
-                                {lote.produtos?.nome || "Produto removido"} ({lote.produtos?.sku || "-"})
-                              </p>
+                               <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                 <span className="truncate">{lote.produtos?.nome || "Produto removido"}</span>
+                                 {lote.produtos?.sku && (
+                                   <>
+                                     <span className="mx-1">•</span>
+                                     <span className="font-mono text-xs bg-muted px-1.5 py-0.5 rounded flex items-center gap-1">
+                                       {lote.produtos.sku}
+                                       <CopyButton text={lote.produtos.sku} className="h-4 w-4" />
+                                     </span>
+                                   </>
+                                 )}
+                               </div>
                               <div className="flex gap-4 mt-1 text-xs text-muted-foreground flex-wrap">
                                 <span className="flex items-center gap-1"><Package className="h-3 w-3" /> Qtd: {lote.quantidade_atual}/{lote.quantidade_inicial}</span>
                                 {lote.fornecedor && <span>Fornecedor: {lote.fornecedor}</span>}
