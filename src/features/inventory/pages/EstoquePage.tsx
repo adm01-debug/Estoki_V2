@@ -5,7 +5,7 @@ import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle } from "lucide-react";
+ import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle, MapPin } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +25,8 @@ import { ArrowRight, History } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef } from "react";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
-import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+ import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+ import { EmptyState, emptyStates } from "@/components/common/EmptyState";
 import { haptics } from "@/utils/haptics";
 
 interface Filters { status: StatusPosicao[]; ruas: string[]; niveis: string[]; search: string; }
@@ -173,20 +174,26 @@ export default function EstoquePage() {
     </AppLayout>
   );
 
-  if (safePositions.length === 0) return (
-    <AppLayout showBack>
-      <BasePageTemplate title="Estoque" description="Visão geral e gestão física do armazém.">
-        <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-8 bg-card/50 rounded-3xl border border-dashed border-border/50">
-          <Warehouse className="h-16 w-16 text-muted-foreground/30" />
-          <h2 className="text-xl font-bold tracking-tight">Nenhuma posição cadastrada</h2>
-          <p className="text-muted-foreground text-center max-w-md font-medium">Cadastre posições de estoque para visualizar o mapa operacional.</p>
-          <NovaPosicaoDialog onSuccess={handleRefresh}>
-            <Button className="gap-2 h-11 px-8 rounded-xl glow-button shadow-primary/20"><Plus className="h-4 w-4" />Cadastrar Posições</Button>
-          </NovaPosicaoDialog>
-        </div>
-      </BasePageTemplate>
-    </AppLayout>
-  );
+   if (safePositions.length === 0) return (
+     <AppLayout showBack>
+       <BasePageTemplate title="Estoque" description="Visão geral e gestão física do armazém.">
+         <div className="flex items-center justify-center min-h-[50vh]">
+           <EmptyState
+             {...emptyStates.estoque}
+             action={{
+               label: "Cadastrar Posições",
+               onClick: () => { haptics.medium(); /* O dialog é aberto pelo wrapper */ },
+               icon: Plus
+             }}
+           >
+             <NovaPosicaoDialog onSuccess={handleRefresh}>
+               <Button className="hidden" /> {/* Button ghost para manter o trigger se necessário, mas aqui usaremos o action do EmptyState se possível */}
+             </NovaPosicaoDialog>
+           </EmptyState>
+         </div>
+       </BasePageTemplate>
+     </AppLayout>
+   );
 
   return (
     <AppLayout showBack>
@@ -305,14 +312,17 @@ export default function EstoquePage() {
                 <EstoqueMapaTab filteredPositions={filteredPositions} ruas={filters.ruas} zoom={zoom} onZoomChange={setZoom} onSelectPosition={(p) => { haptics.light(); setSelectedPosition(p); }} />
               </TabsContent>
 
-              <TabsContent value="boxes" className="space-y-4 focus-visible:outline-none">
-                {boxPositions.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-20 text-muted-foreground bg-card/30 rounded-3xl border border-dashed border-border/50">
-                    <Box className="h-12 w-12 mb-4 opacity-20" />
-                    <p className="font-bold uppercase tracking-widest text-xs">Nenhum box cadastrado</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+               <TabsContent value="boxes" className="space-y-4 focus-visible:outline-none">
+                 {boxPositions.length === 0 ? (
+                   <EmptyState
+                     variant="compact"
+                     icon={Box}
+                     title="Nenhum box disponível"
+                     description="Não foram encontrados boxes configurados nesta unidade."
+                     className="bg-card/30 rounded-3xl border border-dashed border-border/50"
+                   />
+                 ) : (
+                   <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
                     {boxPositions.map((box) => (
                       <button 
                         key={box.id} 
@@ -331,12 +341,22 @@ export default function EstoquePage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
-                <EstoqueVirtualList 
-                  positions={filteredPositions.filter(p => p.status === "ocupado")} 
-                  onSelect={(p) => { haptics.light(); setSelectedPosition(p); }} 
-                />
-              </TabsContent>
+               <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
+                 {filteredPositions.filter(p => p.status === "ocupado").length === 0 ? (
+                    <EmptyState
+                      variant="compact"
+                      icon={Package}
+                      title="Nenhuma posição ocupada"
+                      description="Não há itens armazenados que correspondam aos filtros atuais."
+                      className="bg-card/30 rounded-3xl border border-dashed border-border/50"
+                    />
+                 ) : (
+                   <EstoqueVirtualList 
+                     positions={filteredPositions.filter(p => p.status === "ocupado")} 
+                     onSelect={(p) => { haptics.light(); setSelectedPosition(p); }} 
+                   />
+                 )}
+               </TabsContent>
             </div>
           </Tabs>
 

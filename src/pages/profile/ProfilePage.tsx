@@ -8,7 +8,7 @@
  import { Badge } from '@/components/ui/badge';
  import { Input } from '@/components/ui/input';
  import { Label } from '@/components/ui/label';
- import { User, Mail, Shield, Save, Key, Clock, LogOut, Settings } from 'lucide-react';
+ import { User, Mail, Shield, Save, Key, Clock, LogOut, Settings, Laptop, Globe, Calendar } from 'lucide-react';
  import { toast } from 'sonner';
  import { cn } from '@/lib/utils';
  
@@ -16,6 +16,11 @@
    const { profile, role, user, signOut } = useAuth();
    const [isEditing, setIsEditing] = useState(false);
    const [nome, setNome] = useState(profile?.nome || '');
+ 
+   const activeSessions = [
+     { device: "MacBook Pro - Chrome", location: "São Paulo, BR", lastActive: "Agora", ip: "189.122.XX.XX", isCurrent: true },
+     { device: "iPhone 15 - Safari", location: "São Paulo, BR", lastActive: "2 horas atrás", ip: "177.34.XX.XX", isCurrent: false },
+   ];
  
    const handleSave = () => {
      toast.success("Perfil atualizado com sucesso!");
@@ -140,9 +145,48 @@
                      </div>
                      <Button variant="outline" size="sm" className="rounded-xl font-bold h-9 border-border/40 hover:bg-destructive/5 hover:text-destructive">Desativar</Button>
                    </div>
-                 </CardContent>
-               </Card>
-             </div>
+                   </CardContent>
+                 </Card>
+ 
+                 <Card className="glass-card border-border/30 shadow-lg overflow-hidden">
+                   <CardHeader className="border-b border-border/20 bg-muted/20">
+                     <CardTitle className="text-lg font-black tracking-tight">Dispositivos Conectados</CardTitle>
+                     <CardDescription className="text-xs font-medium">Sessões ativas que acessaram sua conta recentemente</CardDescription>
+                   </CardHeader>
+                   <CardContent className="p-0">
+                     <div className="divide-y divide-border/20">
+                       {activeSessions.map((session, i) => (
+                         <div key={i} className="p-6 flex items-center justify-between group hover:bg-muted/5 transition-colors">
+                           <div className="flex items-center gap-4">
+                             <div className={cn(
+                               "w-12 h-12 rounded-2xl flex items-center justify-center border",
+                               session.isCurrent ? "bg-primary/10 border-primary/20 text-primary" : "bg-muted/30 border-border/20 text-muted-foreground"
+                             )}>
+                               <Laptop className="h-6 w-6" />
+                             </div>
+                             <div className="space-y-1">
+                               <div className="flex items-center gap-2">
+                                 <p className="font-black text-sm text-foreground">{session.device}</p>
+                                 {session.isCurrent && <Badge className="bg-success/10 text-success border-success/20 text-[9px] font-black uppercase">Atual</Badge>}
+                               </div>
+                               <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
+                                 <span className="flex items-center gap-1"><Globe className="h-3 w-3" /> {session.location}</span>
+                                 <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {session.lastActive}</span>
+                               </div>
+                             </div>
+                           </div>
+                           {!session.isCurrent && (
+                             <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 rounded-xl text-destructive font-bold text-[10px] uppercase transition-all">Encerrar</Button>
+                           )}
+                         </div>
+                       ))}
+                     </div>
+                     <div className="p-4 bg-muted/10 border-t border-border/20">
+                       <Button variant="link" className="text-[10px] font-black uppercase tracking-widest text-primary w-full">Encerrar todas as outras sessões</Button>
+                     </div>
+                   </CardContent>
+                 </Card>
+               </div>
  
              {/* Sidebar do Perfil */}
              <div className="space-y-6">

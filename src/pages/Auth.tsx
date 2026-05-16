@@ -184,15 +184,27 @@ const AuthPage = () => {
             </Button>
           </div>
 
-          {/* Footer toggle */}
-          <div className="flex flex-col gap-2 text-center pt-2">
-            <Link to="/auth/forgot-password" className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors">
-              Esqueceu sua senha?
-            </Link>
-            <p className="text-[11px] text-sidebar-foreground/30 mt-2">
-              Para solicitar acesso, contate o administrador do sistema.
-            </p>
-          </div>
+           {/* Footer toggle */}
+           <div className="flex flex-col gap-2 text-center pt-2">
+             <Link to="/auth/forgot-password" className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors font-medium">
+               Esqueceu sua senha?
+             </Link>
+             <p className="text-[11px] text-sidebar-foreground/30 mt-2">
+               Para solicitar acesso, contate o administrador do sistema.
+             </p>
+           </div>
+ 
+           {/* Legal Footer */}
+           <div className="pt-8 border-t border-sidebar-border/30 mt-4">
+             <p className="text-[10px] leading-relaxed text-sidebar-foreground/20 text-center px-4">
+               Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido pela Lei nº 9.609/98 e demais normas aplicáveis. 
+               É proibida sua reprodução, cópia, modificação, distribuição ou uso não autorizado.
+               <br />
+               <span className="font-semibold text-sidebar-foreground/30 italic">
+                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
+               </span>
+             </p>
+           </div>
         </div>
       </div>
     </div>

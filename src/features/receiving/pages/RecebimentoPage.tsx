@@ -2,7 +2,8 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { RecebimentoCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
-import { PageLoader, ErrorState, EmptyState } from "@/components/common/AsyncStates";
+ import { PageLoader, ErrorState } from "@/components/common/AsyncStates";
+ import { EmptyState } from "@/components/common/EmptyState";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
@@ -164,15 +165,17 @@ export default function RecebimentoPage() {
             </TabsList>
           </Tabs>
 
-          <div className="grid gap-3">
-            {filteredItems.length === 0 ? (
-              <EmptyState
-                title="Nenhum recebimento encontrado"
-                description={searchTerm ? "Tente ajustar os filtros de busca." : "Clique em 'Novo' para registrar um recebimento."}
-                icon={<Package className="h-8 w-8 text-muted-foreground" />}
-              />
-            ) : (
-              filteredItems.map((item: any, index: number) => {
+           <div className="grid gap-3">
+             {filteredItems.length === 0 ? (
+               <EmptyState
+                 title="Nenhum recebimento encontrado"
+                 description={searchTerm ? "Tente ajustar os filtros de busca para encontrar o que procura." : "Ainda não há registros de recebimento. Clique em 'Novo Recebimento' para começar."}
+                 icon={Package}
+                 variant="compact"
+                 className="bg-card/30 rounded-3xl border border-dashed border-border/50 py-20"
+               />
+             ) : (
+               filteredItems.map((item: any, index: number) => {
                 const status = statusConfig[item.status as StatusRecebimento] || statusConfig.aguardando;
                 const qtdPedida = item.quantidade_pedida || item.quantidade_inicial;
                 const progresso = qtdPedida > 0 ? Math.min(100, (item.quantidade_atual / qtdPedida) * 100) : 0;
