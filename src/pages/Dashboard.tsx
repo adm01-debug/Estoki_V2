@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { logger } from "@/utils/logger";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
+import { DynamicAIInsights } from "@/components/dashboard/DynamicAIInsights";
 import { SystemHealthHUD } from "@/components/dashboard/SystemHealthHUD";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
@@ -135,25 +136,7 @@ const DashboardPage = () => {
             </motion.div>
           </div>
 
-          {kpis && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="p-5 rounded-3xl bg-gradient-to-br from-primary/10 via-background to-primary/5 border border-primary/20 flex items-center gap-4 shadow-sm"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 shadow-inner">
-                <Sparkles className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-black text-foreground uppercase tracking-tight">IA Insight</p>
-                <p className="text-xs text-muted-foreground font-medium leading-relaxed">
-                  O giro médio está <span className="text-primary font-bold">15% acima da meta</span>. 
-                  Considere otimizar as zonas de picking A e B para reduzir o lead time.
-                </p>
-              </div>
-            </motion.div>
-          )}
+          {kpis && <DynamicAIInsights kpis={kpis} />}
 
           {kpis && <DashboardKPIs kpis={kpis} />}
 
