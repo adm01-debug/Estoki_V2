@@ -1,5 +1,6 @@
-import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+ import { Suspense, lazy } from "react";
+ import { BrowserRouter, Routes, Route } from "react-router-dom";
+ import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
 import { AppProviders } from "@/components/common/AppProviders";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
@@ -20,10 +21,11 @@ const DashboardOperacional = lazy(() => import("./pages/DashboardOperacional"));
 const Index = lazy(() => import("./pages/Index"));
 
 const Hub = lazy(() => import("./pages/Hub"));
-const App = () => (
-  <AppProviders>
-    <BrowserRouter>
-      <Routes>
+ const App = () => (
+   <AppProviders>
+     <BrowserRouter>
+       <GlobalLoadingBar />
+       <Routes>
         {/* Public routes */}
         {publicRoutes}
 
