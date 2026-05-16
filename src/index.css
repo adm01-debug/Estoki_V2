@@ -334,16 +334,29 @@
     }
   }
 
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  .shimmer {
-    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
-  }
+   @keyframes shimmer {
+     0% { background-position: -200% 0; }
+     100% { background-position: 200% 0; }
+   }
+ 
+   .shimmer {
+     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+     background-size: 200% 100%;
+     animation: shimmer 2s infinite;
+   }
+ 
+   @keyframes bounce-subtle {
+     0%, 100% { transform: translateY(0); }
+     50% { transform: translateY(-5px); }
+   }
+ 
+   .animate-bounce-subtle {
+     animation: bounce-subtle 3s infinite ease-in-out;
+   }
+ 
+   .shadow-glow-sm {
+     box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+   }
 }
 
 @layer utilities {
