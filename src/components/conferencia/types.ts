@@ -1,4 +1,4 @@
-import { VolumeData as SharedVolumeData } from "@/components/triagem/VolumeContagem";
+import { VolumeData as SharedVolumeData } from "@/features/quality/components/VolumeContagem";
 
 export type VolumeData = SharedVolumeData;
 export type StatusRecebimento = "aguardando" | "em_transito" | "recebido" | "em_conferencia" | "conferido" | "divergencia" | "cancelado";
