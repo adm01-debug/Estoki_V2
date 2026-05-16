@@ -3,7 +3,7 @@ import { memo } from "react";
 
   import { motion } from "framer-motion";
  
-  function SkeletonPulse({ className }: { className?: string }) {
+  export function SkeletonPulse({ className }: { className?: string }) {
     return (
       <motion.div 
         initial={{ opacity: 0.5 }}
