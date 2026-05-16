@@ -18,8 +18,8 @@
  
    // Handle client-side navigation
    const blocker = useBlocker(
-     ({ currentValue, nextValue }) =>
-       hasChanges && currentValue.pathname !== nextValue.pathname
+     ({ currentLocation, nextLocation }) =>
+       hasChanges && currentLocation.pathname !== nextLocation.pathname
    );
  
    return blocker;
