@@ -1,8 +1,12 @@
 import { forwardRef, memo } from 'react';
-import { DashboardSkeleton, TableSkeleton, FormSkeleton } from './PageSkeleton';
+ import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton } from './PageSkeleton';
 import { LoadingFallback } from './LoadingFallback';
 
-type PageType = 'dashboard' | 'table' | 'form' | 'default';
+ type PageType = 'dashboard' | 'table' | 'form' | 'list' | 'card' | 'default';
+         case 'list':
+           return <div ref={ref} className="p-4"><ListSkeleton /></div>;
+         case 'card':
+           return <div ref={ref} className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><CardSkeleton /><CardSkeleton /><CardSkeleton /></div>;
 
 interface RouteLoadingFallbackProps {
   type?: PageType;
