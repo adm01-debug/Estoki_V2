@@ -34,7 +34,7 @@ interface RomaneioDetalhesDialogProps {
 export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }: RomaneioDetalhesDialogProps) {
   if (!romaneio) return null;
 
-  const config = statusConfig[romaneio.status];
+  const config = statusConfig[romaneio.status as StatusRomaneio];
 
   return (
     <Dialog open={!!romaneio} onOpenChange={() => onClose()}>
@@ -66,7 +66,7 @@ export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {romaneio.itens.map(item => {
+                  {romaneio.itens.map((item: any) => {
                     const itemStatus = (item.status || "pendente") as StatusEntrega;
                     const entregaConfig = statusEntregaConfig[itemStatus];
                     return (
