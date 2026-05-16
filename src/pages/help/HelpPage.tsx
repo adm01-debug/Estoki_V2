@@ -2,6 +2,7 @@
  import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+ import { Button } from "@/components/ui/button";
  import { BookOpen, LifeBuoy, MessageSquare, Video, Search } from "lucide-react";
  import { Input } from "@/components/ui/input";
 
