@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
  import { Skeleton } from "@/components/ui/skeleton";
- import { Search, Plus, Filter, X, Download } from "lucide-react";
+  import { Search, Plus, Filter, X, Download } from "lucide-react";
+  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
  import { useProdutos } from "@/hooks/useProdutos";
  import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
@@ -83,24 +84,13 @@ import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
     }
   };
 
-  if (loading) {
-    return (
-      <AppLayout title="Produtos" showBack>
-        <PageTransition>
-          <div className="p-4 space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i}><CardContent className="p-4"><Skeleton className="h-16 w-full" /></CardContent></Card>
-              ))}
-            </div>
-            {[1, 2, 3, 4, 5].map((i) => (
-              <Card key={i}><CardContent className="p-4"><Skeleton className="h-20 w-full" /></CardContent></Card>
-            ))}
-          </div>
-        </PageTransition>
-      </AppLayout>
-    );
-  }
+   if (loading) {
+     return (
+       <AppLayout title="Produtos" showBack>
+         <RouteLoadingFallback type="table" />
+       </AppLayout>
+     );
+   }
 
   return (
     <AppLayout
