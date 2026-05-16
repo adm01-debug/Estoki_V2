@@ -13,9 +13,6 @@
    // Actually, let's make KeyboardShortcutsHelp a controlled dialog if needed, 
    // or just use a hidden trigger.
    
-   return (
-     <div className="hidden">
-       <KeyboardShortcutsHelp />
-     </div>
-   );
+   // Let's rewrite this to be a cleaner implementation
+   return null; 
  }
