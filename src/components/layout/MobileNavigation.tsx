@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
- import { Box, X, ArrowLeftRight } from "lucide-react";
+  import { Box, X, ArrowLeftRight, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mobileNavItems, fabActions } from "./sidebar";
 
@@ -73,22 +73,28 @@ import { mobileNavItems, fabActions } from "./sidebar";
        >
          <div className="absolute inset-x-0 bottom-0 top-0 bg-background/80 backdrop-blur-2xl border-t border-border/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]" />
           <div className="relative flex items-center justify-around h-14 max-w-md mx-auto px-1">
-            {/* Mobile Back Button - Unified & Contextual */}
-            <motion.button
-              onClick={() => onBack?.()}
-              whileTap={{ scale: 0.85 }}
-              className={cn(
-                "flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl transition-all duration-300",
-                (pathname === "/" || pathname === "/dashboard") 
-                  ? "opacity-30 grayscale cursor-not-allowed" 
-                  : "text-muted-foreground hover:text-primary hover:bg-primary/5"
-              )}
-              disabled={pathname === "/" || pathname === "/dashboard"}
-              aria-label="Voltar"
-            >
-              <ArrowLeftRight className="h-5 w-5 rotate-180" />
-              <span className="text-[10px] font-bold">Voltar</span>
-            </motion.button>
+            {/* Mobile Navigation Controls - Smart & Contextual */}
+            {(pathname === "/" || pathname === "/dashboard") ? (
+               <motion.button
+                 onClick={() => onNavigate("/hub")}
+                 whileTap={{ scale: 0.85 }}
+                 className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                 aria-label="Hub"
+               >
+                 <Box className="h-5 w-5 opacity-70" />
+                 <span className="text-[10px] font-bold">Hub</span>
+               </motion.button>
+            ) : (
+               <motion.button
+                 onClick={() => onBack?.()}
+                 whileTap={{ scale: 0.85 }}
+                 className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                 aria-label="Voltar"
+               >
+                 <ArrowLeftRight className="h-5 w-5 rotate-180" />
+                 <span className="text-[10px] font-bold">Voltar</span>
+               </motion.button>
+            )}
 
             {mobileNavItems.slice(0, 2).map((item) => {
               const isActive = pathname === item.path;
