@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
  import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PosicaoEstoque, StatusPosicao } from "@/hooks/useEstoque";
+import { PosicaoEstoque, StatusPosicao } from "../hooks/useEstoque";
 import { differenceInDays } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Package, Calendar, AlertTriangle, Sparkles } from "lucide-react";
@@ -135,7 +135,7 @@ export const EstoqueMapaTab = memo(({ filteredPositions, ruas, zoom, onZoomChang
                                       
                                       {position.saldos && position.saldos.length > 0 ? (
                                         <div className="space-y-1.5">
-                                          {position.saldos.map((s, i) => (
+                                          {position.saldos.map((s: any, i: number) => (
                                             <div key={i} className="text-xs bg-muted/50 p-1.5 rounded">
                                               <div className="flex items-center gap-1 font-medium truncate">
                                                 <Package className="h-3 w-3" /> {s.produto?.nome}
