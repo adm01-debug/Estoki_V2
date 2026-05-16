@@ -51,8 +51,34 @@ export const DashboardSkeleton = memo(function DashboardSkeleton() {
         ))}
       </div>
     </div>
-  );
-});
+   );
+ });
+ 
+ export const ListSkeleton = memo(function ListSkeleton() {
+   return (
+     <div className="space-y-4">
+       {Array.from({ length: 5 }).map((_, i) => (
+         <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border">
+           <SkeletonPulse className="h-10 w-10 rounded-full shrink-0" />
+           <div className="flex-1 space-y-2">
+             <SkeletonPulse className="h-4 w-1/3" />
+             <SkeletonPulse className="h-3 w-1/2" />
+           </div>
+         </div>
+       ))}
+     </div>
+   );
+ });
+ 
+ export const CardSkeleton = memo(function CardSkeleton() {
+   return (
+     <div className="p-4 rounded-xl bg-card border border-border space-y-3">
+       <SkeletonPulse className="h-4 w-1/3" />
+       <SkeletonPulse className="h-8 w-2/3" />
+       <SkeletonPulse className="h-3 w-1/2" />
+     </div>
+   );
+ });
 
 export const TableSkeleton = memo(function TableSkeleton() {
   return (
