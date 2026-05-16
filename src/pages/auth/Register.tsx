@@ -81,6 +81,18 @@ const RegisterPage = () => {
               Já tem uma conta? <span className="text-primary font-semibold">Faça login</span>
             </Link>
           </div>
+
+          {/* Legal Footer */}
+          <div className="pt-8 border-t border-sidebar-border mt-8">
+            <p className="text-[10px] leading-relaxed text-sidebar-foreground/30 text-center">
+              Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido pela Lei nº 9.609/98 e demais normas aplicáveis. 
+              É proibida sua reprodução, cópia, modificação, distribuição ou uso não autorizado.
+              <br />
+              <span className="font-semibold text-sidebar-foreground/40 italic">
+                © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
