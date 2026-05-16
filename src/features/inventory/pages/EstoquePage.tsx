@@ -1,20 +1,17 @@
 import { EstoqueCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
- import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { motion, AnimatePresence } from "framer-motion";
+import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle } from "lucide-react";
+import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { PageTransition } from "@/components/layout/PageTransition";
 import { useEstoque } from "../hooks/useEstoque";
 import { type PosicaoEstoque, type StatusPosicao } from "../hooks/useEstoque";
 import { toast } from "sonner";
@@ -27,6 +24,9 @@ import { differenceInDays } from "date-fns";
 import { ArrowRight, History } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef } from "react";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { haptics } from "@/utils/haptics";
 
 interface Filters { status: StatusPosicao[]; ruas: string[]; niveis: string[]; search: string; }
 
@@ -147,95 +147,203 @@ export default function EstoquePage() {
     bloqueado: { bg: "bg-destructive/20", border: "border-destructive" },
   };
 
+  const handleRefresh = useCallback(() => {
+    haptics.light();
+    refetch();
+  }, [refetch]);
+
   if (loading) return (
-    <AppLayout title="Estoque" showBack><PageTransition><div className="p-4 space-y-4"><div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{[1,2,3,4].map(i => <Card key={i}><CardContent className="p-4"><Skeleton className="h-16 w-full" /></CardContent></Card>)}</div><Skeleton className="h-10 w-full" /></div></PageTransition></AppLayout>
+    <AppLayout showBack>
+      <div className="p-4 md:p-6 lg:p-8">
+        <RouteLoadingFallback type="dashboard" />
+      </div>
+    </AppLayout>
   );
 
   if (error) return (
-    <AppLayout title="Estoque" showBack><PageTransition><div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4"><p className="text-destructive">{error instanceof Error ? error.message : "Erro ao carregar"}</p><Button onClick={() => refetch()}>Tentar novamente</Button></div></PageTransition></AppLayout>
+    <AppLayout showBack>
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center p-6">
+        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+          <AlertTriangle className="h-8 w-8 text-destructive" />
+        </div>
+        <h2 className="text-xl font-bold">Erro ao carregar estoque</h2>
+        <p className="text-muted-foreground max-w-md">{error instanceof Error ? error.message : "Erro desconhecido"}</p>
+        <Button onClick={handleRefresh} variant="outline" className="rounded-xl px-8 h-11">Tentar novamente</Button>
+      </div>
+    </AppLayout>
   );
 
   if (safePositions.length === 0) return (
-    <AppLayout title="Estoque" showBack><PageTransition><div className="p-4 flex flex-col items-center justify-center min-h-[50vh] gap-4"><Warehouse className="h-16 w-16 text-muted-foreground" /><h2 className="text-xl font-semibold">Nenhuma posição cadastrada</h2><p className="text-muted-foreground text-center max-w-md">Cadastre posições de estoque para visualizar o mapa.</p><NovaPosicaoDialog onSuccess={() => refetch()}><Button className="gap-2"><Plus className="h-4 w-4" />Cadastrar Posições</Button></NovaPosicaoDialog></div></PageTransition></AppLayout>
+    <AppLayout showBack>
+      <BasePageTemplate title="Estoque" description="Visão geral e gestão física do armazém.">
+        <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-8 bg-card/50 rounded-3xl border border-dashed border-border/50">
+          <Warehouse className="h-16 w-16 text-muted-foreground/30" />
+          <h2 className="text-xl font-bold tracking-tight">Nenhuma posição cadastrada</h2>
+          <p className="text-muted-foreground text-center max-w-md font-medium">Cadastre posições de estoque para visualizar o mapa operacional.</p>
+          <NovaPosicaoDialog onSuccess={handleRefresh}>
+            <Button className="gap-2 h-11 px-8 rounded-xl glow-button shadow-primary/20"><Plus className="h-4 w-4" />Cadastrar Posições</Button>
+          </NovaPosicaoDialog>
+        </div>
+      </BasePageTemplate>
+    </AppLayout>
   );
 
   return (
-    <AppLayout title="Estoque" showBack rightAction={
-      <div className="flex gap-2">
-        <NovaPosicaoDialog onSuccess={() => refetch()}><Button size="sm" variant="default" className="gap-2"><Plus className="h-4 w-4" /><span className="hidden sm:inline">Nova Posição</span></Button></NovaPosicaoDialog>
-        <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate("/scanner")}><QrCode className="h-4 w-4" /><span className="hidden sm:inline">Scan</span></Button>
-      </div>
-    }>
+    <AppLayout showBack>
       <SEO title="Estoque" description="Gestão de posições, ocupação e movimentação de estoque." path="/estoque" />
-      <PageTransition>
-        <div className="p-4 space-y-4">
-          {selectedIds.length > 0 && (
-            <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20">
-              <CheckSquare className="h-4 w-4 text-primary" /><span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
-              <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
-               <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("bloqueado")}><Lock className="h-3 w-3 mr-1" />Bloquear</Button>
-               <Button size="sm" variant="outline" onClick={() => handleBulkUpdate("livre")}><Unlock className="h-3 w-3 mr-1" />Liberar</Button>
-            </div>
-          )}
+      
+      <BasePageTemplate
+        title="Estoque"
+        description="Visão geral e gestão física do armazém, ruas e posições."
+        headerActions={
+          <div className="flex gap-2">
+            <NovaPosicaoDialog onSuccess={handleRefresh}>
+              <Button size="sm" variant="default" className="gap-2 h-10 rounded-xl glow-button shadow-primary/20">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Nova Posição</span>
+              </Button>
+            </NovaPosicaoDialog>
+            <Button size="sm" variant="outline" className="gap-2 h-10 rounded-xl border-border/40 hover:bg-primary/5 transition-all" onClick={() => { haptics.light(); navigate("/scanner"); }}>
+              <QrCode className="h-4 w-4" />
+              <span className="hidden sm:inline">Scan</span>
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-6">
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex items-center gap-3 p-4 bg-primary/10 rounded-2xl border border-primary/20 shadow-sm"
+              >
+                <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                  <CheckSquare className="h-4 w-4 text-primary" />
+                </div>
+                <span className="text-sm font-bold text-primary">{selectedIds.length} selecionado(s)</span>
+                <div className="flex-1" />
+                <div className="flex gap-1.5">
+                  <Button size="sm" variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase" onClick={() => { haptics.light(); clearSelection(); }}>Limpar</Button>
+                  <Button size="sm" variant="outline" className="h-8 rounded-lg text-[10px] font-bold uppercase bg-background" onClick={() => { haptics.medium(); handleBulkUpdate("bloqueado"); }}><Lock className="h-3 w-3 mr-1.5" />Bloquear</Button>
+                  <Button size="sm" variant="outline" className="h-8 rounded-lg text-[10px] font-bold uppercase bg-background" onClick={() => { haptics.medium(); handleBulkUpdate("livre"); }}><Unlock className="h-3 w-3 mr-1.5" />Liberar</Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <EstoqueStatsCards stats={stats} />
-          <EstoqueCharts posicoes={safePositions} />
-
-          <motion.div className="flex gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 }}>
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input type="text" placeholder="Buscar posição..." className="pl-10" value={filters.search} onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))} />
-              {filters.search && <button className="absolute right-3 top-1/2 -translate-y-1/2" onClick={() => setFilters(prev => ({ ...prev, search: "" }))}><X className="h-4 w-4 text-muted-foreground hover:text-foreground" /></button>}
-            </div>
-            <EstoqueFilterSheet open={showFilters} onOpenChange={setShowFilters} filters={filters} ruas={ruas} niveis={niveis} activeFiltersCount={activeFiltersCount} onToggleFilter={toggleFilter} onReset={resetFilters} />
+          
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <EstoqueCharts posicoes={safePositions} />
           </motion.div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="mapa" className="gap-2"><Warehouse className="h-4 w-4" />Mapa</TabsTrigger>
-              <TabsTrigger value="boxes" className="gap-2"><Box className="h-4 w-4" />Boxes ({boxPositions.length})</TabsTrigger>
-              <TabsTrigger value="lista" className="gap-2"><Layers className="h-4 w-4" />Lista</TabsTrigger>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                type="text" 
+                placeholder="Buscar posição, SKU, Rua..." 
+                className="pl-10 h-11 bg-card/50 border-border/20 focus:bg-card focus:ring-2 focus:ring-primary/20 transition-all rounded-xl shadow-sm" 
+                value={filters.search} 
+                onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))} 
+              />
+              {filters.search && (
+                <button className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full transition-colors" onClick={() => { haptics.light(); setFilters(prev => ({ ...prev, search: "" })); }}>
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              className={cn(
+                "h-11 px-4 gap-2 rounded-xl border-border/20 bg-card/50 hover:bg-card transition-all",
+                activeFiltersCount > 0 && "border-primary/50 text-primary bg-primary/5"
+              )}
+              onClick={() => { haptics.light(); setShowFilters(true); }}
+            >
+              <Layers className="h-4 w-4" />
+              <span className="hidden sm:inline">Filtros</span>
+              {activeFiltersCount > 0 && (
+                <Badge variant="default" className="ml-1 h-5 min-w-[20px] px-1 rounded-full text-[10px] font-bold">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
+            <EstoqueFilterSheet 
+              open={showFilters} 
+              onOpenChange={setShowFilters} 
+              filters={filters} 
+              ruas={ruas} 
+              niveis={niveis} 
+              activeFiltersCount={activeFiltersCount} 
+              onToggleFilter={toggleFilter} 
+              onReset={resetFilters} 
+            />
+          </div>
+
+          <Tabs value={activeTab} onValueChange={(v) => { haptics.light(); setActiveTab(v); }} className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-muted/30 p-1 rounded-2xl h-12">
+              <TabsTrigger value="mapa" className="gap-2 rounded-xl font-bold uppercase tracking-tighter text-xs">
+                <Warehouse className="h-4 w-4" />Mapa
+              </TabsTrigger>
+              <TabsTrigger value="boxes" className="gap-2 rounded-xl font-bold uppercase tracking-tighter text-xs">
+                <Box className="h-4 w-4" />Boxes ({boxPositions.length})
+              </TabsTrigger>
+              <TabsTrigger value="lista" className="gap-2 rounded-xl font-bold uppercase tracking-tighter text-xs">
+                <Layers className="h-4 w-4" />Lista Ocupada
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="mapa">
-              <EstoqueMapaTab filteredPositions={filteredPositions} ruas={filters.ruas} zoom={zoom} onZoomChange={setZoom} onSelectPosition={setSelectedPosition} />
-            </TabsContent>
+            <div className="mt-6">
+              <TabsContent value="mapa" className="focus-visible:outline-none">
+                <EstoqueMapaTab filteredPositions={filteredPositions} ruas={filters.ruas} zoom={zoom} onZoomChange={setZoom} onSelectPosition={(p) => { haptics.light(); setSelectedPosition(p); }} />
+              </TabsContent>
 
-            <TabsContent value="boxes" className="space-y-4">
-              {boxPositions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground"><Box className="h-12 w-12 mb-4" /><p>Nenhum box cadastrado</p></div>
-              ) : (
-                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
-                  {boxPositions.map((box) => (
-                    <button 
-                      key={box.id} 
-                      onClick={() => setSelectedPosition(box)} 
-                      className={cn(
-                        "aspect-square rounded-xl flex flex-col items-center justify-center border-2 transition-all hover:scale-105 active:scale-95", 
-                        statusConfig[box.status].bg, 
-                        statusConfig[box.status].border, 
-                        "hover:ring-2 hover:ring-primary hover:ring-offset-2"
-                      )}
-                    >
-                      <span className="font-bold text-lg">{box.box || box.codigo}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </TabsContent>
+              <TabsContent value="boxes" className="space-y-4 focus-visible:outline-none">
+                {boxPositions.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-20 text-muted-foreground bg-card/30 rounded-3xl border border-dashed border-border/50">
+                    <Box className="h-12 w-12 mb-4 opacity-20" />
+                    <p className="font-bold uppercase tracking-widest text-xs">Nenhum box cadastrado</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                    {boxPositions.map((box) => (
+                      <button 
+                        key={box.id} 
+                        onClick={() => { haptics.light(); setSelectedPosition(box); }} 
+                        className={cn(
+                          "aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all hover:scale-105 active:scale-95 shadow-sm", 
+                          statusConfig[box.status].bg, 
+                          statusConfig[box.status].border, 
+                          "hover:ring-4 hover:ring-primary/20"
+                        )}
+                      >
+                        <span className="font-black text-lg tracking-tighter">{box.box || box.codigo}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
 
-            <TabsContent value="lista" className="flex-1 min-h-0">
-              <EstoqueVirtualList 
-                positions={filteredPositions.filter(p => p.status === "ocupado")} 
-                onSelect={setSelectedPosition} 
-              />
-            </TabsContent>
+              <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
+                <EstoqueVirtualList 
+                  positions={filteredPositions.filter(p => p.status === "ocupado")} 
+                  onSelect={(p) => { haptics.light(); setSelectedPosition(p); }} 
+                />
+              </TabsContent>
+            </div>
           </Tabs>
 
           <PosicaoDetalhesDialog position={selectedPosition} onClose={() => setSelectedPosition(null)} />
           {etiquetaData && <GeradorEtiquetas open={showEtiquetas} onOpenChange={setShowEtiquetas} data={etiquetaData} />}
         </div>
-      </PageTransition>
+      </BasePageTemplate>
     </AppLayout>
   );
 }

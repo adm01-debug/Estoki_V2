@@ -2,18 +2,17 @@ import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
-  import { useState, useMemo, useRef, useEffect } from "react";
- import { supabase } from "@/integrations/supabase/client";
- import { motion, AnimatePresence } from "framer-motion";
- import { toast } from "sonner";
- import { cn } from "@/lib/utils";
+import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-  import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, ChevronLeft, Play, Download, Trash2, CheckSquare, User, Clock } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft } from "lucide-react";
+import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
   SelectContent,
@@ -23,6 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useTriagens } from "../hooks/useTriagens";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { haptics } from "@/utils/haptics";
 
 // Modularized Components & Helpers
 import { TriagemStatsCards } from "../components/formulario/TriagemStatsCards";
@@ -138,25 +140,16 @@ export default function TriagemPage() {
      }
    };
 
+  const handleRefresh = useCallback(async () => {
+    haptics.light();
+    await refetch();
+  }, [refetch]);
+
   if (isLoading) {
     return (
-      <AppLayout title="Triagem" showBack>
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            {[1, 2, 3].map(i => (
-              <Skeleton key={i} className="h-20 rounded-xl" />
-            ))}
-          </div>
-          <div className="flex gap-3">
-            <Skeleton className="h-10 flex-1" />
-            <Skeleton className="h-10 w-[140px]" />
-            <Skeleton className="h-10 w-10" />
-          </div>
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map(i => (
-              <Skeleton key={i} className="h-32 rounded-xl" />
-            ))}
-          </div>
+      <AppLayout showBack>
+        <div className="p-4 md:p-6 lg:p-8">
+          <RouteLoadingFallback type="dashboard" />
         </div>
       </AppLayout>
     );
@@ -164,116 +157,124 @@ export default function TriagemPage() {
 
   if (error) {
     return (
-      <AppLayout title="Triagem" showBack>
-        <div className="p-4 text-center text-destructive">
-          <p>Erro ao carregar triagens: {error.message}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
-            Tentar novamente
-          </Button>
+      <AppLayout showBack>
+        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4 text-center p-6">
+          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+            <AlertTriangle className="h-8 w-8 text-destructive" />
+          </div>
+          <h2 className="text-xl font-bold">Erro ao carregar triagem</h2>
+          <p className="text-muted-foreground max-w-md">{error.message}</p>
+          <Button onClick={handleRefresh} variant="outline" className="rounded-xl px-8 h-11">Tentar novamente</Button>
         </div>
       </AppLayout>
     );
   }
 
-   return (
-     <AppLayout
-       title="Controle de Qualidade"
-       showBack
-       rightAction={
+  return (
+    <AppLayout showBack>
+      <SEO title="Triagem Operacional" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
+      
+      <BasePageTemplate
+        title="Controle de Qualidade"
+        description="Monitoramento de triagens, inspeção de lotes e conformidade técnica."
+        headerActions={
           <div className="flex gap-2">
-            <Button size="sm" variant="outline" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={handleExportCSV} title="Exportar CSV">
-              <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Exportar</span>
+            <Button size="sm" variant="outline" className="h-10 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider hidden sm:flex" onClick={() => { haptics.light(); handleExportCSV(); }}>
+              <Download className="h-4 w-4" /> Exportar
             </Button>
-           <Button size="sm" variant="outline" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => navigate("/scanner")}>
-             <QrCode className="h-4 w-4" />
-             <span className="hidden sm:inline">Scanner</span>
-           </Button>
-           <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="h-9 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => setShowAmostragem(!showAmostragem)}>
-             <Calculator className="h-4 w-4" />
-             <span className="hidden sm:inline">Amostragem</span>
-           </Button>
-           <Button size="sm" className="h-9 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={handleIniciarTriagem}>
-             <Play className="h-4 w-4" />
-             <span className="hidden sm:inline">Nova Triagem</span>
-           </Button>
-         </div>
-       }
-     >
-       <SEO title="Triagem Operacional" description="Triagem de qualidade com amostragem automática e rastreabilidade." path="/triagem" />
-        <div ref={containerRef} className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto relative">
-         {selectedIds.length > 0 && (
-           <motion.div 
-             initial={{ opacity: 0, y: -10 }} 
-             animate={{ opacity: 1, y: 0 }}
-             className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg border border-primary/20 sticky top-0 z-20"
-           >
-             <CheckSquare className="h-4 w-4 text-primary" />
-             <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
-             <div className="flex-1" />
-             <Button size="sm" variant="ghost" onClick={clearSelection}>Limpar</Button>
-             <Button size="sm" variant="outline" className="text-destructive gap-1" onClick={async () => {
-               // No deleteMutation exposed yet in useTriagens, but we could add it or just toast for now.
-               // For now let's just mark as finished if not finished
-               toast.info("Ação em massa para triagens selecionadas");
-             }}><Trash2 className="h-3 w-3" />Ações</Button>
-           </motion.div>
-         )}
-        <PullToRefreshIndicator 
-          pullDistance={pullDistance} 
-          threshold={pullThreshold} 
-          isRefreshing={isRefreshing} 
-        />
-        {showAmostragem && (
-          <AmostragemAutomatica
-            tamanhoLote={100}
-            onConfirmarAmostra={() => { /* Amostragem confirmada */ }}
+            <Button size="sm" variant="outline" className="h-10 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.light(); navigate("/scanner"); }}>
+              <QrCode className="h-4 w-4" /> <span className="hidden md:inline">Scanner</span>
+            </Button>
+            <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="h-10 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.light(); setShowAmostragem(!showAmostragem); }}>
+              <Calculator className="h-4 w-4" /> <span className="hidden md:inline">Amostragem</span>
+            </Button>
+            <Button size="sm" className="h-10 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.medium(); handleIniciarTriagem(); }}>
+              <Play className="h-4 w-4" /> <span className="hidden md:inline">Nova Triagem</span>
+            </Button>
+          </div>
+        }
+      >
+        <div ref={containerRef} className="space-y-6 relative">
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: -20 }} 
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="flex items-center gap-3 p-4 bg-primary/10 rounded-2xl border border-primary/20 shadow-sm sticky top-0 z-20"
+              >
+                <CheckSquare className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-primary">{selectedIds.length} selecionado(s)</span>
+                <div className="flex-1" />
+                <Button size="sm" variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase" onClick={() => { haptics.light(); clearSelection(); }}>Limpar</Button>
+                <Button size="sm" variant="outline" className="h-8 rounded-lg text-destructive border-destructive/20 bg-background text-[10px] font-bold uppercase" onClick={() => haptics.error()}><Trash2 className="h-3 w-3 mr-1.5" />Ações</Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <PullToRefreshIndicator 
+            pullDistance={pullDistance} 
+            threshold={pullThreshold} 
+            isRefreshing={isRefreshing} 
           />
-        )}
-        {items.length > 0 && <TriagemCharts items={items} />}
 
-        <TriagemStatsCards stats={stats} />
+          {showAmostragem && (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+              <AmostragemAutomatica
+                tamanhoLote={100}
+                onConfirmarAmostra={() => { haptics.success(); }}
+              />
+            </motion.div>
+          )}
 
-         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-muted/20 p-6 rounded-2xl border border-border/30">
-           <div className="relative flex-1 max-w-xl">
-             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
-             <Input
-               placeholder="Buscar por ID ou Lote..."
-               value={searchTerm}
-               onChange={(e) => setSearchTerm(e.target.value)}
-               className="pl-10 h-11 rounded-xl bg-background border-border/40 focus:ring-2 focus:ring-primary/20 transition-all"
-             />
-           </div>
-           <div className="flex flex-wrap items-center gap-2">
-             <Select value={statusFilter} onValueChange={setStatusFilter}>
-               <SelectTrigger className="w-[160px] h-11 rounded-xl bg-background border-border/40">
-                 <SelectValue placeholder="Status" />
-               </SelectTrigger>
-               <SelectContent className="rounded-xl border-border/40">
-                 <SelectItem value="todos">Todos os Status</SelectItem>
-                 <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                 <SelectItem value="aprovado">Aprovados</SelectItem>
-                 <SelectItem value="ressalva">Ressalvas</SelectItem>
-                 <SelectItem value="reprovado">Reprovados</SelectItem>
-               </SelectContent>
-             </Select>
-             <Button
-               variant="outline"
-               size="icon"
-               className="h-11 w-11 rounded-xl border-border/40 bg-background"
-               onClick={() => {
-                 const orders: SortOrder[] = ["data", "resultado"];
-                 const currentIndex = orders.indexOf(sortOrder);
-                 setSortOrder(orders[(currentIndex + 1) % orders.length]);
-               }}
-               title={`Ordenar por: ${sortOrder}`}
-             >
-               <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
-             </Button>
-           </div>
-         </div>
+          {items.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+              <TriagemCharts items={items} />
+            </motion.div>
+          )}
 
-         <div className="space-y-4">
+          <TriagemStatsCards stats={stats} />
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/50 p-4 rounded-2xl border border-border/20 shadow-sm">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+              <Input
+                placeholder="Buscar por ID ou Lote..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 h-11 rounded-xl bg-background border-border/20 focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Select value={statusFilter} onValueChange={(v) => { haptics.light(); setStatusFilter(v); }}>
+                <SelectTrigger className="w-[160px] h-11 rounded-xl bg-background border-border/20 font-medium">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl">
+                  <SelectItem value="todos">Todos Status</SelectItem>
+                  <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                  <SelectItem value="aprovado">Aprovados</SelectItem>
+                  <SelectItem value="ressalva">Ressalvas</SelectItem>
+                  <SelectItem value="reprovado">Reprovados</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-xl border-border/20 bg-background hover:bg-muted"
+                onClick={() => {
+                  haptics.light();
+                  const orders: SortOrder[] = ["data", "resultado"];
+                  const currentIndex = orders.indexOf(sortOrder);
+                  setSortOrder(orders[(currentIndex + 1) % orders.length]);
+                }}
+              >
+                <ArrowUpDown className={cn("h-4 w-4 transition-transform", sortOrder === "resultado" && "rotate-180")} />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
            {filteredAndSortedItems.length === 0 ? (
              <div className="text-center py-20 bg-muted/10 rounded-3xl border border-dashed border-border/40">
                <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
@@ -410,6 +411,7 @@ export default function TriagemPage() {
           </div>
         )}
       </div>
+      </BasePageTemplate>
     </AppLayout>
   );
 }
