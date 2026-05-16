@@ -114,22 +114,34 @@ interface BreadcrumbsProps {
            <ChevronLeft className="h-4 w-4 group-active:scale-90 transition-transform" />
            <span className="text-xs font-medium">Voltar</span>
          </button>
-         {crumbs.map((crumb, i) => (
-           <span key={i} className="flex items-center gap-1.5">
-          {i > 0 && <ChevronRight className="h-3 w-3 shrink-0" />}
-          {i === 0 ? (
-            <Link to="/" className="hover:text-foreground transition-colors">
-              <Home className="h-3.5 w-3.5" />
-            </Link>
-          ) : crumb.href ? (
-            <Link to={crumb.href} className="hover:text-foreground transition-colors">
-              {crumb.label}
-            </Link>
-          ) : (
-            <span className="text-foreground font-medium">{crumb.label}</span>
-          )}
-           </span>
-         ))}
+          {crumbs.map((crumb, i) => {
+            const isLast = i === crumbs.length - 1;
+            return (
+              <span key={i} className="flex items-center gap-1.5 group/crumb">
+                {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/40" />}
+                {i === 0 ? (
+                  <Link 
+                    to="/" 
+                    className="p-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
+                    title="Página Inicial"
+                  >
+                    <Home className="h-3.5 w-3.5" />
+                  </Link>
+                ) : crumb.href ? (
+                  <Link 
+                    to={crumb.href} 
+                    className="px-2 py-0.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95"
+                  >
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className="px-2 py-0.5 font-bold text-foreground bg-muted/30 rounded-md">
+                    {crumb.label}
+                  </span>
+                )}
+              </span>
+            );
+          })}
        </div>
      </nav>
    );
