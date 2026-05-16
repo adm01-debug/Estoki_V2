@@ -23,17 +23,22 @@ export function useAppLayoutState() {
 
   const isHome = location.pathname === "/";
 
-   const handleBack = useCallback(() => {
-     const segments = location.pathname.split("/").filter(Boolean);
-     const parentRoute = segments.length > 1 ? "/" + segments.slice(0, -1).join("/") : "/";
-     
-     if (window.navigator.vibrate) {
-       window.navigator.vibrate(5);
-     }
-     
-     if (window.history.length > 2) navigate(-1);
-     else navigate(parentRoute);
-   }, [navigate, location.pathname]);
+  const handleBack = useCallback(() => {
+    const segments = location.pathname.split("/").filter(Boolean);
+    
+    if (window.navigator.vibrate) {
+      window.navigator.vibrate([5, 10, 5]);
+    }
+
+    // Logic for returning: if we have history, use it. 
+    // If not, calculate the logical parent or fallback to dashboard
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      const parentRoute = segments.length > 1 ? "/" + segments.slice(0, -1).join("/") : "/dashboard";
+      navigate(parentRoute);
+    }
+  }, [navigate, location.pathname]);
 
   const handleLogout = useCallback(async () => {
     await signOut();
