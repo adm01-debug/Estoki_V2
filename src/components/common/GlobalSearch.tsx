@@ -97,14 +97,16 @@ export function GlobalSearch() {
     search();
   }, [debouncedQuery]);
 
-  const handleSelect = useCallback(
-    (result: SearchResult) => {
-      const config = typeConfig[result.type];
-      navigate(config.route);
-      setOpen(false);
-    },
-    [navigate]
-  );
+   const handleSelect = useCallback(
+     (result: SearchResult) => {
+       const config = typeConfig[result.type];
+       // Visual feedback for navigation
+       if (window.navigator.vibrate) window.navigator.vibrate(5);
+       navigate(config.route);
+       setOpen(false);
+     },
+     [navigate]
+   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
