@@ -1,4 +1,4 @@
-import { onCLS, onFID, onLCP, onFCP, onTTFB, onINP } from 'web-vitals';
+import { onCLS, onLCP, onFCP, onTTFB, onINP } from 'web-vitals';
 import { logger } from '@/utils/logger';
 
 /**
@@ -9,7 +9,6 @@ export const performanceService = {
   init() {
     if (import.meta.env.PROD) {
       this.trackMetric('CLS', onCLS);
-      this.trackMetric('FID', onFID);
       this.trackMetric('LCP', onLCP);
       this.trackMetric('FCP', onFCP);
       this.trackMetric('TTFB', onTTFB);
