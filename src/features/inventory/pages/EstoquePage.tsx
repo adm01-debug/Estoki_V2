@@ -1,20 +1,17 @@
 import { EstoqueCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
- import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare } from "lucide-react";
-import { AppLayout } from "@/components/layout/AppLayout";
+import { motion, AnimatePresence } from "framer-motion";
+import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle } from "lucide-react";
+import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { PageTransition } from "@/components/layout/PageTransition";
 import { useEstoque } from "../hooks/useEstoque";
 import { type PosicaoEstoque, type StatusPosicao } from "../hooks/useEstoque";
 import { toast } from "sonner";
@@ -27,6 +24,9 @@ import { differenceInDays } from "date-fns";
 import { ArrowRight, History } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef } from "react";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { haptics } from "@/utils/haptics";
 
 interface Filters { status: StatusPosicao[]; ruas: string[]; niveis: string[]; search: string; }
 
