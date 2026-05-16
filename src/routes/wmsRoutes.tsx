@@ -19,7 +19,7 @@ const Produtos = lazy(() => import("@/pages/Produtos"));
 const Lotes = lazy(() => import("@/pages/Lotes"));
 const Posicoes = lazy(() => import("@/pages/Posicoes"));
 const InventarioCiclico = lazy(() => import("@/pages/InventarioCiclico"));
-const CurvaABC = lazy(() => import("@/pages/CurvaABC"));
+const CurvaABC = lazy(() => import("@/features/analytics/pages/ABCAnalysisPage"));
 const OcupacaoVisual = lazy(() => import("@/pages/OcupacaoVisual"));
 
 // Picking & Waves

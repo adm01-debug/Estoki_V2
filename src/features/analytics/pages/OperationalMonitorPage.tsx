@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { useOperationalLive, type ActivityItem } from '@/hooks/useOperationalLive';
+import { useOperationalLive, type ActivityItem } from '../hooks/useOperationalLive';
 import { DashboardSkeleton } from '@/components/common/PageSkeleton';
 import { cn } from '@/lib/utils';
 import {

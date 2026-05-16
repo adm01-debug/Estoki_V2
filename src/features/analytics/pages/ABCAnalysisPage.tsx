@@ -3,7 +3,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCurvaABC } from "@/hooks/useCurvaABC";
+import { useCurvaABC } from "../hooks/useCurvaABC";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { ABCStatsCards } from "@/components/analytics/abc/ABCStatsCards";
 import { ABCCharts } from "@/components/analytics/abc/ABCCharts";
