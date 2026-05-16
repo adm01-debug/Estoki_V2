@@ -80,8 +80,8 @@ interface BreadcrumbsProps {
    const navigate = useNavigate();
    const pathname = location.pathname;
 
-  // Don't show on home
-  if (pathname === '/') return null;
+   // Don't show on home or dashboard
+   if (pathname === '/' || pathname === '/dashboard') return null;
 
   const segments = pathname.split('/').filter(Boolean);
   const crumbs: { label: string; href?: string }[] = [{ label: 'Início', href: '/' }];
