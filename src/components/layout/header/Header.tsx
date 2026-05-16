@@ -94,8 +94,10 @@ interface HeaderProps {
           )}
           <GlobalSearch />
           <LanguageSwitcher />
-          <NotificationCenter />
-          <ThemeToggle />
+           <div role="group" aria-label="Ações rápidas" className="flex items-center gap-0.5">
+             <NotificationCenter />
+             <ThemeToggle />
+           </div>
           {rightAction}
           <div className="ml-1 pl-2 border-l border-border/40">
             <UserMenu 
