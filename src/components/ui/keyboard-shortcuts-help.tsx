@@ -32,8 +32,10 @@ function KeyboardKey({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function KeyboardShortcutsHelp() {
-  const [open, setOpen] = useState(false);
+ export function KeyboardShortcutsHelp({ open: controlledOpen, onOpenChange }: { open?: boolean; onOpenChange?: (open: boolean) => void }) {
+   const [internalOpen, setInternalOpen] = useState(false);
+   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
+   const setOpen = onOpenChange || setInternalOpen;
 
   const groupedShortcuts = shortcuts.reduce((acc, item) => {
     const category = item.category || 'Outros';
