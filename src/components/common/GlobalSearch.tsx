@@ -1,10 +1,3 @@
-  // Listen for custom event to open search
-  useEffect(() => {
-    const handleOpen = () => setOpen(true);
-    window.addEventListener("open-global-search", handleOpen);
-    return () => window.removeEventListener("open-global-search", handleOpen);
-  }, []);
-
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart } from "lucide-react";
@@ -45,6 +38,13 @@ export function GlobalSearch() {
   const navigate = useNavigate();
   const debouncedQuery = useDebounce(query, 300);
   const { light } = useHaptics();
+
+  // Listen for custom event to open search
+  useEffect(() => {
+    const handleOpen = () => setOpen(true);
+    window.addEventListener("open-global-search", handleOpen);
+    return () => window.removeEventListener("open-global-search", handleOpen);
+  }, []);
 
   // Keyboard shortcut
   useEffect(() => {
