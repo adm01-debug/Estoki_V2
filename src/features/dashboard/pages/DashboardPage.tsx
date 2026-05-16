@@ -10,7 +10,8 @@ import { useAtividadeRecente } from "../hooks/useAtividadeRecente";
  import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
  import { useEstoque } from "@/features/inventory/hooks/useEstoque";
  import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
-import { IndexHero } from "../components/IndexHero";
+ import { IndexHero } from "../components/IndexHero";
+ import { SystemHealthMonitor } from "../components/SystemHealthMonitor";
 import { IndexKPIs } from "../components/IndexKPIs";
 import { IndexOcupacaoCard } from "../components/IndexOcupacaoCard";
 import { IndexQuickStats } from "../components/IndexQuickStats";
@@ -102,9 +103,11 @@ export default function Dashboard() {
   return (
     <PageTransition>
       <SEO title="Painel Principal" description="Visão geral do armazém com KPIs em tempo real, alertas e atividades recentes." path="/" />
-      <motion.div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto" variants={containerVariants} initial="hidden" animate="visible">
-        <IndexHero userName={userName} isConnected={realtimeStatus.isConnected} onDashboardClick={() => navigate("/dashboard")} />
-
+       <motion.div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto" variants={containerVariants} initial="hidden" animate="visible">
+         <div className="space-y-4">
+           <SystemHealthMonitor />
+           <IndexHero userName={userName} isConnected={realtimeStatus.isConnected} onDashboardClick={() => navigate("/dashboard")} />
+         </div>
          <motion.section variants={itemVariants} className="content-visibility-auto">
           <IndexKPIs items={kpiItems} loading={loadingKpis} onNavigate={navigate} />
         </motion.section>
