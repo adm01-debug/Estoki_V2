@@ -13,6 +13,7 @@
    // Actually, let's make KeyboardShortcutsHelp a controlled dialog if needed, 
    // or just use a hidden trigger.
    
-   // Let's rewrite this to be a cleaner implementation
-   return null; 
+   return (
+     <KeyboardShortcutsHelp open={showHelp} onOpenChange={setShowHelp} />
+   );
  }
