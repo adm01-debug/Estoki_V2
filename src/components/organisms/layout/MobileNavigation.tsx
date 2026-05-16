@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Box, X, ArrowLeft } from "lucide-react";
+import { Box, X, ArrowLeft, MoreHorizontal } from "lucide-react";
+import { haptics } from "@/utils/haptics";
 import { cn } from "@/lib/utils";
 import { mobileNavItems, fabActions } from "@/components/layout/sidebar";
 
@@ -52,8 +53,12 @@ export const MobileNavigation = memo(function MobileNavigation({
               {fabActions.map((action, i) => (
                 <motion.button 
                   key={action.path} 
-                  onClick={() => { setFabOpen(false); onNavigate(action.path); }}
-                  className="flex flex-col items-center gap-2 w-20 py-3 rounded-2xl hover:bg-primary/10 transition-colors active:scale-95"
+              onClick={() => { 
+                haptics.light();
+                setFabOpen(false); 
+                onNavigate(action.path); 
+              }}
+              className="flex flex-col items-center gap-2 w-[72px] sm:w-20 py-3 rounded-2xl hover:bg-primary/10 transition-colors active:scale-95"
                   initial={{ opacity: 0, y: 10 }} 
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
@@ -79,7 +84,7 @@ export const MobileNavigation = memo(function MobileNavigation({
           {/* Contextual Back/Hub Button */}
           {(pathname === "/" || pathname === "/dashboard") ? (
             <motion.button
-              onClick={() => onNavigate("/hub")}
+              onClick={() => { haptics.light(); onNavigate("/hub"); }}
               whileTap={{ scale: 0.85 }}
               className="flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] px-2 rounded-2xl text-muted-foreground hover:text-primary transition-all active:bg-primary/10"
               aria-label="Hub"
@@ -89,7 +94,7 @@ export const MobileNavigation = memo(function MobileNavigation({
             </motion.button>
           ) : (
             <motion.button
-              onClick={() => onBack?.()}
+              onClick={() => { haptics.light(); onBack?.(); }}
               whileTap={{ scale: 0.85 }}
               className="flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] px-2 rounded-2xl text-muted-foreground hover:text-primary transition-all active:bg-primary/10"
               aria-label="Voltar"
@@ -104,7 +109,7 @@ export const MobileNavigation = memo(function MobileNavigation({
             return (
               <motion.button 
                 key={item.path} 
-                onClick={() => onNavigate(item.path)}
+                onClick={() => { haptics.light(); onNavigate(item.path); }}
                 whileTap={{ scale: 0.9 }} 
                 className={cn(
                   "flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] px-2 rounded-2xl transition-all duration-200 relative",
@@ -127,7 +132,7 @@ export const MobileNavigation = memo(function MobileNavigation({
           {/* FAB Center Action */}
           <div className="relative -mt-10">
             <motion.button 
-              onClick={() => setFabOpen(!fabOpen)} 
+              onClick={() => { haptics.medium(); setFabOpen(!fabOpen); }}
               whileTap={{ scale: 0.85 }}
               className={cn(
                 "w-16 h-16 rounded-[2rem] flex items-center justify-center shadow-glow-lg transition-all duration-500 border-4 border-background",
@@ -146,7 +151,7 @@ export const MobileNavigation = memo(function MobileNavigation({
             return (
               <motion.button 
                 key={item.path} 
-                onClick={() => onNavigate(item.path)}
+                onClick={() => { haptics.light(); onNavigate(item.path); }}
                 whileTap={{ scale: 0.9 }} 
                 className={cn(
                   "flex flex-col items-center justify-center gap-1 min-w-[64px] min-h-[48px] px-2 rounded-2xl transition-all duration-200 relative",
