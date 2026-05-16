@@ -74,15 +74,22 @@ import { mobileNavItems, fabActions } from "./sidebar";
          <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/10" />
           <div className="relative flex items-center justify-between h-14 max-w-md mx-auto px-2">
            {/* Mobile Back Button */}
-           <motion.button
-             onClick={() => onBack?.()}
-             whileTap={{ scale: 0.9 }}
-             className="flex flex-col items-center justify-center gap-0.5 min-w-[48px] h-full text-muted-foreground hover:text-primary transition-colors"
-             aria-label="Voltar"
-           >
-             <ArrowLeftRight className="h-5 w-5 rotate-180" />
-             <span className="text-[10px] font-medium">Voltar</span>
-           </motion.button>
+           <AnimatePresence>
+             {(pathname !== "/" && pathname !== "/dashboard") && (
+               <motion.button
+                 initial={{ opacity: 0, x: -10 }}
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -10 }}
+                 onClick={() => onBack?.()}
+                 whileTap={{ scale: 0.9 }}
+                 className="flex flex-col items-center justify-center gap-0.5 min-w-[48px] h-full text-muted-foreground hover:text-primary transition-colors"
+                 aria-label="Voltar"
+               >
+                 <ArrowLeftRight className="h-5 w-5 rotate-180" />
+                 <span className="text-[10px] font-medium">Voltar</span>
+               </motion.button>
+             )}
+           </AnimatePresence>
  
            {mobileNavItems.slice(0, 1).map((item) => {
              const isActive = pathname === item.path;
