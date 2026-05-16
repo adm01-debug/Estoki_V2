@@ -1,8 +1,8 @@
 import { forwardRef, memo } from 'react';
- import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton } from './PageSkeleton';
+  import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton } from './PageSkeleton';
 import { LoadingFallback } from './LoadingFallback';
 
- type PageType = 'dashboard' | 'table' | 'form' | 'list' | 'card' | 'default';
+  type PageType = 'dashboard' | 'estoque' | 'table' | 'form' | 'list' | 'card' | 'default';
  
  interface RouteLoadingFallbackProps {
   type?: PageType;
@@ -19,8 +19,10 @@ import { LoadingFallback } from './LoadingFallback';
      function RouteLoadingFallback({ type = 'default' }, ref) {
        const content = (() => {
          switch (type) {
-           case 'dashboard':
-             return <DashboardSkeleton />;
+            case 'dashboard':
+              return <DashboardSkeleton />;
+            case 'estoque':
+              return <EstoqueSkeleton />;
            case 'table':
              return <TableSkeleton />;
            case 'form':
