@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { RecebimentoItem, LoteInsert, LoteUpdate } from '../types';
+import { handleReceivingError } from '../utils/receivingUtils';
 
 export const receivingService = {
   async getRecebimentos(): Promise<RecebimentoItem[]> {
@@ -8,7 +9,7 @@ export const receivingService = {
       .select('*, produto:produtos(nome, sku)')
       .order('created_at', { ascending: false });
     
-    if (error) throw error;
+    if (error) throw handleReceivingError(error, "Busca de Recebimentos");
     return data as unknown as RecebimentoItem[];
   },
 
@@ -34,7 +35,7 @@ export const receivingService = {
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) throw handleReceivingError(error, "Criação de Recebimento");
     return data as unknown as RecebimentoItem;
   },
 
@@ -46,7 +47,7 @@ export const receivingService = {
       .select()
       .single();
     
-    if (error) throw error;
+    if (error) throw handleReceivingError(error, "Atualização de Recebimento");
     return data as unknown as RecebimentoItem;
   }
 };
