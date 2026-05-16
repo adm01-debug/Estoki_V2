@@ -42,18 +42,18 @@ export default function TriagemPage() {
  
    const clearSelection = () => setSelectedIds([]);
  
-   const handleExportCSV = () => {
-     const headers = ["ID", "Lote ID", "Resultado", "Data Inicio", "Data Fim", "Operador"];
-     const rows = filteredAndSortedItems.map(t => [t.id, t.lote_id || "", t.resultado || "Pendente", t.data_inicio, t.data_fim || "", t.operador_id || ""]);
-     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-     const link = document.createElement("a");
-     link.href = URL.createObjectURL(blob);
-     link.setAttribute("download", `triagem_estoki_${new Date().toISOString().split('T')[0]}.csv`);
-     document.body.appendChild(link);
-     link.click();
-     document.body.removeChild(link);
-   };
+  const handleExportCSV = () => {
+    const headers = ["ID", "Lote ID", "Resultado", "Data Inicio", "Data Fim", "Operador"];
+    const rows = filteredAndSortedItems.map((t: any) => [t.id, t.lote_id || "", t.resultado || "Pendente", t.data_inicio, t.data_fim || "", t.operador_id || ""]);
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `triagem_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
  
   
   const items = triagens || [];
@@ -76,7 +76,7 @@ export default function TriagemPage() {
   }, [bindPullRefresh]);
 
   const filteredAndSortedItems = useMemo(() => {
-    let filtered = items.filter((item) => {
+    let filtered = (items as any[]).filter((item) => {
       const matchesSearch =
         item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (item.lote_id?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
@@ -117,9 +117,9 @@ export default function TriagemPage() {
   }, [searchTerm, statusFilter, currentPage, setSearchParams]);
 
   const stats = useMemo(() => {
-    const emAndamento = items.filter(i => !i.data_fim).length;
-    const aprovados = items.filter(i => i.resultado === "aprovado").length;
-    const reprovados = items.filter(i => i.resultado === "reprovado").length;
+    const emAndamento = (items as any[]).filter(i => !i.data_fim).length;
+    const aprovados = (items as any[]).filter(i => i.resultado === "aprovado").length;
+    const reprovados = (items as any[]).filter(i => i.resultado === "reprovado").length;
     
     return { emAndamento, aprovados, reprovados };
   }, [items]);
@@ -283,11 +283,11 @@ export default function TriagemPage() {
                <p className="text-xs text-muted-foreground/60 mt-1">Ajuste sua busca ou inicie um novo processo.</p>
              </div>
            ) : (
-             <AnimatePresence mode="popLayout">
-               {paginatedItems.map((item, idx) => {
-                 const status = getStatus(item);
-                 const isSelected = selectedIds.includes(item.id);
-                 return (
+              <AnimatePresence mode="popLayout">
+                {paginatedItems.map((item: any, idx: number) => {
+                  const status = getStatus(item);
+                  const isSelected = selectedIds.includes(item.id);
+                  return (
                     <motion.div
                       key={item.id}
                       layout
