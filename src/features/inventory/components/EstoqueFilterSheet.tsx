@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Filter, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { StatusPosicao } from "@/hooks/useEstoque";
+import { StatusPosicao } from "../hooks/useEstoque";
 
 const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string }> = {
   livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre" },

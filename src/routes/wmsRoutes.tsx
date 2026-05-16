@@ -6,7 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 
 // WMS Operations
-const Estoque = lazy(() => import("@/pages/Estoque"));
+const Estoque = lazy(() => import("@/features/inventory/pages/EstoquePage"));
 const Triagem = lazy(() => import("@/pages/Triagem"));
 const Recebimento = lazy(() => import("@/pages/Recebimento"));
 const Movimentacao = lazy(() => import("@/pages/Movimentacao"));

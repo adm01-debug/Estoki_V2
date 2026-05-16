@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInDays } from "date-fns";
-import type { PosicaoEstoque } from "@/hooks/useEstoque";
+import type { PosicaoEstoque } from "../hooks/useEstoque";
 import { EstoquePosicaoDetalhes, ProdutoDetalhes, LoteDetalhes, statusConfig } from "./posicao-detalhes/types";
 import { PosicaoInfoCard } from "./posicao-detalhes/PosicaoInfoCard";
 import { ProdutoInfoCard } from "./posicao-detalhes/ProdutoInfoCard";
