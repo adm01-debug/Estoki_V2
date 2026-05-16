@@ -23,7 +23,7 @@ const CurvaABC = lazy(() => import("@/pages/CurvaABC"));
 const OcupacaoVisual = lazy(() => import("@/pages/OcupacaoVisual"));
 
 // Picking & Waves
-const PickingPage = lazy(() => import("@/pages/picking/PickingPage"));
+const PickingPage = lazy(() => import("@/features/picking/pages/PickingPage"));
 const PutawayPage = lazy(() => import("@/pages/putaway/PutawayPage"));
 const Ondas = lazy(() => import("@/pages/Ondas"));
 const GestaoTarefas = lazy(() => import("@/pages/GestaoTarefas"));
@@ -31,7 +31,7 @@ const AjustesEstoque = lazy(() => import("@/pages/AjustesEstoque"));
 
 // Shipping
 const Romaneios = lazy(() => import("@/pages/Romaneios"));
-const ShippingPage = lazy(() => import("@/pages/shipping/ShippingPage"));
+const ShippingPage = lazy(() => import("@/features/shipping/pages/ShippingPage"));
 const KanbanPipeline = lazy(() => import("@/pages/KanbanPipeline"));
 
 // Triagem Detail

@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { useRomaneios, Romaneio, StatusRomaneio, StatusEntrega } from "@/hooks/useRomaneios";
+import { useRomaneios, Romaneio, StatusRomaneio, StatusEntrega } from "@/features/shipping/hooks/useRomaneios";
 import { Truck, Plus, Search, Filter, Clock, CheckCircle2, XCircle, AlertTriangle, Play, FileText, User, MapPin } from "lucide-react";
 import { NovoRomaneioDialog } from "@/components/romaneios/NovoRomaneioDialog";
 import { RomaneioDetalhesDialog } from "@/components/romaneios/RomaneioDetalhesDialog";

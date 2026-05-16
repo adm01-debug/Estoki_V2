@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Truck, User, MapPin, Package } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Romaneio, StatusRomaneio, StatusEntrega } from "@/hooks/useRomaneios";
+import { Romaneio, StatusRomaneio, StatusEntrega } from "@/features/shipping/hooks/useRomaneios";
 
 const statusConfig: Record<StatusRomaneio, { label: string; color: string }> = {
   rascunho: { label: "Rascunho", color: "bg-muted" },

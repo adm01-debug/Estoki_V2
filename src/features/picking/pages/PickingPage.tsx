@@ -17,7 +17,7 @@ import {
   Search,
   ArrowLeft
 } from "lucide-react";
-import { usePicking, PickingTask } from "@/hooks/usePicking";
+import { usePicking, PickingTask } from "../hooks/usePicking";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
