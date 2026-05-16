@@ -113,13 +113,13 @@ export function GlobalSearch() {
       <Button
         variant="ghost"
         size="icon"
-        className="h-9 w-9 lg:w-64 lg:justify-start lg:px-3 lg:bg-muted/50 lg:border lg:border-border/30 lg:hover:bg-muted transition-all"
+         className="h-9 w-9 lg:w-72 lg:justify-start lg:px-3 lg:bg-muted/30 lg:border lg:border-border/20 lg:hover:bg-muted lg:hover:border-primary/30 transition-all duration-300 group/search"
         onClick={() => setOpen(true)}
         title="Buscar (Ctrl+K)"
       >
         <Search className="h-4 w-4 shrink-0" />
-        <span className="hidden lg:inline-flex ml-2 text-xs text-muted-foreground font-medium flex-1">Buscar no sistema...</span>
-        <kbd className="hidden lg:inline-flex ml-auto pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+         <span className="hidden lg:inline-flex ml-2 text-xs text-muted-foreground font-medium flex-1 group-hover/search:text-foreground transition-colors">Buscar (funções, produtos, lotes)...</span>
+         <kbd className="hidden lg:inline-flex ml-auto pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 group-hover/search:border-primary/50 group-hover/search:text-primary transition-all">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
