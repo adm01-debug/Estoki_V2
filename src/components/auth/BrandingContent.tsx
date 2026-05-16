@@ -10,12 +10,13 @@ export const BrandingContent = () => (
   <div className="hidden lg:flex flex-col justify-between relative z-10 w-1/2 p-10 xl:p-16">
     {/* Logo */}
     <div className="flex items-center gap-3">
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
-        <Box className="h-6 w-6 text-primary-foreground" />
+      <div className="w-[62px] h-[62px] rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow">
+        <Box className="h-8 w-8 text-primary-foreground" />
       </div>
       <div>
-        <h2 className="text-xl font-bold text-sidebar-foreground tracking-tight">ESTOKI</h2>
-        <p className="text-[10px] font-semibold tracking-[0.3em] text-primary uppercase">Warehouse Suite</p>
+        <h2 className="text-[26px] font-bold text-sidebar-foreground tracking-tight leading-none">ESTOKI</h2>
+        <p className="text-[13px] font-semibold tracking-[0.3em] text-primary uppercase mt-1">Warehouse</p>
+        <p className="text-[11px] font-black tracking-[0.25em] text-sidebar-foreground/40 uppercase mt-0.5">Promo Brindes</p>
       </div>
     </div>
 
