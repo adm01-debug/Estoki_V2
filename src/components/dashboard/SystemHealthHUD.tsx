@@ -13,7 +13,7 @@ export const SystemHealthHUD = () => {
     const checkLatency = async () => {
       const start = performance.now();
       try {
-        await supabase.from('posicao_palete').select('count', { count: 'exact', head: true }).limit(1);
+        await supabase.from('posicoes_estoque').select('count', { count: 'exact', head: true }).limit(1);
         const end = performance.now();
         const duration = Math.round(end - start);
         setLatency(duration);
