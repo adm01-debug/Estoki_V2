@@ -20,43 +20,27 @@ import { memo } from "react";
 export const DashboardSkeleton = memo(function DashboardSkeleton() {
   return (
     <div className="p-4 lg:p-6 space-y-6">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="p-4 rounded-xl bg-card border border-border space-y-3">
-            <SkeletonPulse className="h-4 w-20" />
-            <SkeletonPulse className="h-8 w-16" />
-            <SkeletonPulse className="h-3 w-24" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-8 space-y-6">
+          <SkeletonPulse className="h-24 w-full rounded-3xl" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonPulse key={i} className="h-28 w-full rounded-2xl" />
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Charts */}
-      <div className="grid lg:grid-cols-2 gap-4">
-        <div className="rounded-xl bg-card border border-border p-4 space-y-3">
-          <SkeletonPulse className="h-5 w-32" />
-          <SkeletonPulse className="h-52" />
-        </div>
-        <div className="rounded-xl bg-card border border-border p-4 space-y-3">
-          <SkeletonPulse className="h-5 w-32" />
-          <SkeletonPulse className="h-52" />
-        </div>
-      </div>
-      {/* Activity feed */}
-      <div className="rounded-xl bg-card border border-border p-4 space-y-3">
-        <SkeletonPulse className="h-5 w-40" />
-        {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <SkeletonPulse className="h-8 w-8 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <SkeletonPulse className="h-4 w-3/4" />
-              <SkeletonPulse className="h-3 w-1/2" />
-            </div>
+          <div className="grid lg:grid-cols-2 gap-4">
+            <SkeletonPulse className="h-64 rounded-2xl" />
+            <SkeletonPulse className="h-64 rounded-2xl" />
           </div>
-        ))}
+        </div>
+        <div className="lg:col-span-4 space-y-6">
+          <SkeletonPulse className="h-96 rounded-[32px]" />
+          <SkeletonPulse className="h-48 rounded-[32px]" />
+        </div>
       </div>
     </div>
-   );
- });
+  );
+});
  
  export const ListSkeleton = memo(function ListSkeleton() {
    return (
