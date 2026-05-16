@@ -1,18 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import type { Database } from '@/integrations/supabase/types';
-
-type LoteRow = Database['public']['Tables']['lotes']['Row'];
-type LoteInsert = Database['public']['Tables']['lotes']['Insert'];
-
-export interface RecebimentoItem extends LoteRow {
-  produto?: {
-    nome: string;
-    sku: string;
-  };
-}
+import { receivingService } from '../services/receivingService';
+import type { RecebimentoItem } from '../types';
 
 export const useRecebimentos = () => {
   const queryClient = useQueryClient();
@@ -20,35 +9,17 @@ export const useRecebimentos = () => {
 
   const { data: recebimentos, isLoading, error, refetch } = useQuery({
     queryKey: ['recebimentos'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('lotes')
-        .select('*, produto:produtos(nome, sku)')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data as unknown as RecebimentoItem[];
-    }
+    queryFn: receivingService.getRecebimentos
   });
 
   const createRecebimento = useMutation({
-    mutationFn: async (novo: any) => {
+    mutationFn: (novo: any) => {
       const payload = {
-        numero_lote: novo.numero_lote,
-        produto_id: novo.produto_id,
-        quantidade_inicial: novo.quantidade || novo.quantidade_inicial || 0,
-        quantidade_atual: novo.quantidade || novo.quantidade_atual || 0,
-        quantidade_pedida: novo.quantidade_pedida,
-        fornecedor: novo.fornecedor,
-        nf_entrada: novo.nf_entrada,
-        previsao_chegada: novo.previsao_chegada,
-        pedido_compra: novo.pedido_compra,
-        data_validade: novo.data_validade,
-        data_fabricacao: novo.data_fabricacao,
-        status: novo.status || 'aguardando',
+        ...novo,
+        quantidade_inicial: novo.quantidade || novo.quantidade_inicial,
+        quantidade_atual: novo.quantidade || novo.quantidade_atual,
       };
-      const { data, error } = await supabase.from('lotes').insert(payload).select().single();
-      if (error) throw error;
-      return data;
+      return receivingService.createRecebimento(payload);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recebimentos'] });
