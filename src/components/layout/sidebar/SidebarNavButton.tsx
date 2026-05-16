@@ -1,8 +1,10 @@
-import { memo } from "react";
+ import { memo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import type { NavItem } from "./sidebarNavData";
+ import { useSound } from "@/hooks/useSound";
+ import { useHaptics } from "@/hooks/useHaptics";
 
 interface SidebarNavButtonProps {
   item: NavItem;
@@ -12,7 +14,16 @@ interface SidebarNavButtonProps {
   onHover?: (path: string) => void;
 }
 
-export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: SidebarNavButtonProps) {
+ export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: SidebarNavButtonProps) {
+   const { play } = useSound();
+   const haptics = useHaptics();
+ 
+   const handleClick = useCallback(() => {
+     haptics.light();
+     play("notification", 0.1); // Subtle sound for navigation
+     onClick();
+   }, [haptics, play, onClick]);
+ 
   const className = cn(
      "w-full flex items-center gap-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
      collapsed ? "px-0 h-11 w-11 mx-auto justify-center" : "px-3 py-2.5",
@@ -53,32 +64,38 @@ export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive,
     </>
   );
 
-  if (collapsed) {
+   if (collapsed) {
+     return (
+       <Tooltip delayDuration={0}>
+         <TooltipTrigger asChild>
+           <button 
+             type="button" 
+             onClick={handleClick} 
+             onMouseEnter={() => onHover?.(item.path)} 
+             data-tour={item.tour} 
+             className={className}
+           >
+             {content}
+           </button>
+         </TooltipTrigger>
+         <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
+           {item.label}
+         </TooltipContent>
+       </Tooltip>
+     );
+   }
+ 
     return (
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <button type="button" onClick={onClick} onMouseEnter={() => onHover?.(item.path)} data-tour={item.tour} className={className}>
-            {content}
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
-          {item.label}
-        </TooltipContent>
-      </Tooltip>
+      <motion.button
+        data-tour={item.tour}
+        onClick={handleClick}
+        onMouseEnter={() => onHover?.(item.path)}
+        whileHover={{ x: 4 }}
+        whileTap={{ scale: 0.97 }}
+        className={className}
+        aria-current={isActive ? "page" : undefined}
+      >
+        {content}
+      </motion.button>
     );
-  }
-
-   return (
-     <motion.button
-       data-tour={item.tour}
-       onClick={onClick}
-       onMouseEnter={() => onHover?.(item.path)}
-       whileHover={{ x: 4 }}
-       whileTap={{ scale: 0.97 }}
-       className={className}
-       aria-current={isActive ? "page" : undefined}
-     >
-       {content}
-     </motion.button>
-   );
-});
+ });
