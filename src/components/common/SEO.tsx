@@ -7,7 +7,7 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const SITE_NAME = 'ESTOKI WMS';
+const SITE_NAME = 'ESTOKI WAREHOUSE PROMO BRINDES';
 const BASE_URL = 'https://estoki.app';
 
 export function SEO({ title, description, path = '/', noIndex = false }: SEOProps) {
