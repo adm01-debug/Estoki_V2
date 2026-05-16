@@ -40,7 +40,12 @@ export default function RomaneiosPage() {
     return matchStatus && matchBusca;
   });
 
-  const stats = { total: romaneios.length, emTransito: romaneios.filter(r => r.status === "em_transito").length, entregas: romaneios.reduce((acc, r) => acc + r.entregas_realizadas, 0), pendentes: romaneios.reduce((acc, r) => acc + (r.total_entregas - r.entregas_realizadas), 0) };
+  const stats = { 
+    total: romaneios.length, 
+    emTransito: romaneios.filter(r => r.status === "em_transito").length, 
+    entregas: romaneios.reduce((acc, r) => acc + (r.entregas_realizadas || 0), 0), 
+    pendentes: romaneios.reduce((acc, r) => acc + ((r.total_entregas || 0) - (r.entregas_realizadas || 0)), 0) 
+  };
 
   const handleCriarRomaneio = async () => {
     const validation = validateForm(romaneioSchema, novoRomaneio);
