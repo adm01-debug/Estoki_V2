@@ -1,4 +1,5 @@
-import { ChevronRight, Home } from 'lucide-react';
+ import { ChevronRight, Home } from 'lucide-react';
+ import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -133,46 +134,60 @@ interface BreadcrumbsProps {
      hidden: { opacity: 0, x: -5 },
      show: { opacity: 1, x: 0 }
    };
-
-  if (crumbs.length <= 1) return null;
-
+ 
    return (
-     <nav
+     <motion.nav
+       variants={container}
+       initial="hidden"
+       animate="show"
        aria-label="Breadcrumb"
-       className={cn('flex items-center gap-4 px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
+       className={cn('flex items-center gap-3 px-4 lg:px-6 py-2 text-sm text-muted-foreground bg-background/50 backdrop-blur-sm border-b border-border/5 shadow-sm sticky top-16 z-30', className)}
      >
-        <BackButton size="sm" variant="outline" className="hidden sm:flex" />
+       <motion.div variants={item}>
+         <BackButton size="sm" variant="ghost" className="hover:bg-primary/10 transition-colors" />
+       </motion.div>
        
-       <div className="h-4 w-[1px] bg-border/40 mx-1 shrink-0" />
+       <div className="h-4 w-[1px] bg-border/20 mx-1 shrink-0" />
  
        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 pr-4">
          {crumbs.map((crumb, i) => (
-           <span key={i} className="flex items-center gap-1.5 group/crumb whitespace-nowrap">
-             {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/30" />}
+           <motion.span 
+             key={i} 
+             variants={item}
+             className="flex items-center gap-1.5 group/crumb whitespace-nowrap"
+           >
+             {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/30 group-hover/crumb:text-primary/50 transition-colors" />}
              {i === 0 ? (
                <Link 
                  to="/" 
-                 className="p-1.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
+                 onClick={() => haptics.selection()}
+                 className="p-1.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90 group/home"
                  title="Página Inicial"
                >
-                 <Home className="h-3.5 w-3.5" />
+                 <Home className="h-3.5 w-3.5 group-hover/home:scale-110 transition-transform" />
                </Link>
              ) : crumb.href ? (
                <Link 
                  to={crumb.href} 
-                 className="px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95 text-xs"
+                 onClick={() => haptics.selection()}
+                 className="px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95 text-xs relative overflow-hidden"
                >
                  {crumb.label}
+                 <motion.div 
+                   className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/20" 
+                   initial={{ scaleX: 0 }}
+                   whileHover={{ scaleX: 1 }}
+                 />
                </Link>
              ) : (
-               <span className="px-2.5 py-1 text-xs font-bold text-foreground bg-muted/40 rounded-md shadow-sm border border-border/20">
+               <span className="px-2.5 py-1 text-xs font-bold text-foreground bg-primary/5 rounded-md shadow-sm border border-primary/10 backdrop-blur-md">
                  {crumb.label}
                </span>
              )}
-           </span>
+           </motion.span>
          ))}
        </div>
-     </nav>
+     </motion.nav>
    );
 }
 
