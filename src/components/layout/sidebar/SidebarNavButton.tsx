@@ -68,16 +68,17 @@ export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive,
     );
   }
 
-  return (
-    <motion.button
-      data-tour={item.tour}
-      onClick={onClick}
-      onMouseEnter={() => onHover?.(item.path)}
-      whileHover={{ x: 4 }}
-      whileTap={{ scale: 0.97 }}
-      className={className}
-    >
-      {content}
-    </motion.button>
-  );
+   return (
+     <motion.button
+       data-tour={item.tour}
+       onClick={onClick}
+       onMouseEnter={() => onHover?.(item.path)}
+       whileHover={{ x: 4 }}
+       whileTap={{ scale: 0.97 }}
+       className={className}
+       aria-current={isActive ? "page" : undefined}
+     >
+       {content}
+     </motion.button>
+   );
 });
