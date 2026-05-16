@@ -1,5 +1,6 @@
-import { memo } from "react";
-import { Menu, Box, WifiOff } from "lucide-react";
+ import { memo } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { Menu, Box, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
@@ -52,9 +53,19 @@ export const Header = memo(function Header({
             <Menu className="h-5 w-5" />
           </Button>
           
-          <div className={cn("flex items-center transition-all duration-300", shouldShowBack ? "w-11 opacity-100" : "w-0 opacity-0 overflow-hidden")}>
-            {shouldShowBack && <BackButton />}
-          </div>
+           <AnimatePresence mode="wait">
+             {shouldShowBack && (
+               <motion.div
+                 initial={{ opacity: 0, x: -10, width: 0 }}
+                 animate={{ opacity: 1, x: 0, width: "auto" }}
+                 exit={{ opacity: 0, x: -10, width: 0 }}
+                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                 className="flex items-center"
+               >
+                 <BackButton />
+               </motion.div>
+             )}
+           </AnimatePresence>
 
           {isHome && (
             <div className="flex items-center gap-2 lg:hidden">

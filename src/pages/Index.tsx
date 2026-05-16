@@ -1,22 +1,23 @@
-import { SEO } from "@/components/common/SEO";
-import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { Package, Search, Warehouse, AlertTriangle } from "lucide-react";
-import { PageTransition } from "@/components/layout/PageTransition";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useDashboard } from "@/hooks/useDashboard";
-import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
-import { useEstoque } from "@/features/inventory/hooks/useEstoque";
-import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
-import { IndexHero } from "@/components/index/IndexHero";
-import { IndexKPIs } from "@/components/index/IndexKPIs";
-import { IndexOcupacaoCard } from "@/components/index/IndexOcupacaoCard";
-import { IndexQuickStats } from "@/components/index/IndexQuickStats";
-import { IndexOperations } from "@/components/index/IndexOperations";
-import { IndexAtividade } from "@/components/index/IndexAtividade";
+ import { SEO } from "@/components/common/SEO";
+ import { useNavigate } from "react-router-dom";
+ import { useMemo, Suspense, lazy } from "react";
+ import { motion } from "framer-motion";
+ import { Package, Search, Warehouse, AlertTriangle } from "lucide-react";
+ import { PageTransition } from "@/components/layout/PageTransition";
+ import { useDashboard } from "@/hooks/useDashboard";
+ import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
+ import { useAuth } from "@/contexts/AuthContext";
+ import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
+ import { useEstoque } from "@/features/inventory/hooks/useEstoque";
+ import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
+ import { IndexHero } from "@/components/index/IndexHero";
+ import { IndexKPIs } from "@/components/index/IndexKPIs";
+ import { IndexOcupacaoCard } from "@/components/index/IndexOcupacaoCard";
+ import { IndexQuickStats } from "@/components/index/IndexQuickStats";
+ import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+
+ const IndexOperations = lazy(() => import("@/components/index/IndexOperations").then(m => ({ default: m.IndexOperations })));
+ const IndexAtividade = lazy(() => import("@/components/index/IndexAtividade").then(m => ({ default: m.IndexAtividade })));
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,26 +53,9 @@ export default function Dashboard() {
 
   const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
 
-  if (loadingKpis && loadingEstoque) {
-    return (
-      <div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto">
-        <div className="flex items-center justify-between">
-          <div>
-            <Skeleton className="h-8 w-64 mb-2" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-          <Skeleton className="h-10 w-32 hidden sm:block" />
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Skeleton className="col-span-1 lg:col-span-2 h-64 rounded-xl" />
-          <Skeleton className="h-64 rounded-xl" />
-        </div>
-      </div>
-    );
-  }
+   if (loadingKpis && loadingEstoque) {
+     return <RouteLoadingFallback type="dashboard" />;
+   }
 
    const kpiItems = [
      { 
@@ -136,10 +120,12 @@ export default function Dashboard() {
           <IndexQuickStats loading={loadingKpis} totalRecebimentos={totalRecebimentos} totalTriagens={totalTriagens} divergencias={divergencias} />
         </motion.section>
 
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 content-visibility-auto">
-          <IndexOperations aguardandoRecebimento={aguardandoRecebimento} triagemPendente={triagemPendente} onNavigate={navigate} />
-          <IndexAtividade atividades={atividades} loading={loadingAtividades} onSeeAll={() => navigate("/rastreabilidade")} />
-        </div>
+          <Suspense fallback={<RouteLoadingFallback type="list" />}>
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 content-visibility-auto">
+             <IndexOperations aguardandoRecebimento={aguardandoRecebimento} triagemPendente={triagemPendente} onNavigate={navigate} />
+             <IndexAtividade atividades={atividades} loading={loadingAtividades} onSeeAll={() => navigate("/rastreabilidade")} />
+           </div>
+         </Suspense>
       </motion.div>
     </PageTransition>
   );
