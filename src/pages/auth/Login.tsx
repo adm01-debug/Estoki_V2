@@ -117,10 +117,13 @@ const LoginPage = () => {
             {googleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
             Entrar com Google
           </Button>
-          <div className="text-center pt-2">
-            <Link to="/auth/register" className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors">
-              Não tem uma conta? <span className="text-primary font-semibold">Cadastre-se</span>
+          <div className="text-center pt-2 space-y-2">
+            <Link to="/auth/forgot-password" className="block text-sm text-sidebar-foreground/50 hover:text-primary transition-colors">
+              Esqueceu sua senha?
             </Link>
+            <p className="text-[11px] text-sidebar-foreground/30">
+              Sistema de uso exclusivo. Para solicitar acesso, contate o administrador.
+            </p>
           </div>
 
           {/* Legal Footer */}

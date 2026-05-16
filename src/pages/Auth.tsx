@@ -1,35 +1,24 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Box, Loader2, Zap } from "lucide-react";
+import { Box, Loader2 } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
-import { Link } from "react-router-dom";
-import { loginSchema, signupSchema } from "@/components/auth/authSchema";
+import { loginSchema } from "@/components/auth/authSchema";
 import { BrandingContent } from "@/components/auth/BrandingContent";
 import { LoginForm } from "@/components/auth/LoginForm";
-import { SignupForm } from "@/components/auth/SignupForm";
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { user, loading, signIn, signUp } = useAuth();
+  const { user, loading, signIn } = useAuth();
 
-  const [mode, setMode] = useState<"login" | "signup">("login");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // Login fields
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginErrors, setLoginErrors] = useState<Record<string, string>>({});
-
-  // Signup fields
-  const [signupNome, setSignupNome] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
-  const [signupErrors, setSignupErrors] = useState<Record<string, string>>({});
 
    useEffect(() => {
      if (!loading && user) {
@@ -59,28 +48,6 @@ const AuthPage = () => {
     } else {
       toast({ title: "Login realizado!", description: "Bem-vindo ao sistema" });
       navigate("/");
-    }
-    setIsSubmitting(false);
-  };
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSignupErrors({});
-    const result = signupSchema.safeParse({ nome: signupNome, email: signupEmail, password: signupPassword, confirmPassword: signupConfirmPassword });
-    if (!result.success) {
-      const errors: Record<string, string> = {};
-      result.error.errors.forEach((err) => { if (err.path[0]) errors[err.path[0].toString()] = err.message; });
-      setSignupErrors(errors);
-      return;
-    }
-    setIsSubmitting(true);
-    const { error } = await signUp(signupEmail, signupPassword, signupNome);
-    if (error) {
-      let msg = "Erro ao criar conta";
-      if (error.message.includes("User already registered")) msg = "Este email já está cadastrado";
-      toast({ title: "Erro no cadastro", description: msg, variant: "destructive" });
-    } else {
-      toast({ title: "Conta criada!", description: "Verifique seu email para confirmar o cadastro" });
     }
     setIsSubmitting(false);
   };
@@ -166,40 +133,26 @@ const AuthPage = () => {
           {/* Header */}
           <div>
             <h2 className="text-2xl xl:text-3xl font-bold text-sidebar-foreground">
-              {mode === "login" ? "Bem-vindo de volta" : "Crie sua conta"}
+              Bem-vindo de volta
             </h2>
             <p className="text-sidebar-foreground/40 text-sm mt-1">
-              {mode === "login" ? "Entre com suas credenciais para continuar" : "Preencha os dados para começar"}
+              Entre com suas credenciais para continuar
+            </p>
+            <p className="text-[11px] text-sidebar-foreground/30 mt-2 italic">
+              Sistema de uso exclusivo. Acesso restrito a colaboradores autorizados.
             </p>
           </div>
 
-          {mode === "login" ? (
-            <LoginForm 
-              onSubmit={handleLogin}
-              email={loginEmail}
-              setEmail={setLoginEmail}
-              password={loginPassword}
-              setPassword={setLoginPassword}
-              errors={loginErrors}
-              isSubmitting={isSubmitting}
-              inputClasses={inputClasses}
-            />
-          ) : (
-            <SignupForm 
-              onSubmit={handleSignup}
-              nome={signupNome}
-              setNome={setSignupNome}
-              email={signupEmail}
-              setEmail={setSignupEmail}
-              password={signupPassword}
-              setPassword={setSignupPassword}
-              confirmPassword={signupConfirmPassword}
-              setConfirmPassword={setSignupConfirmPassword}
-              errors={signupErrors}
-              isSubmitting={isSubmitting}
-              inputClasses={inputClasses}
-            />
-          )}
+          <LoginForm 
+            onSubmit={handleLogin}
+            email={loginEmail}
+            setEmail={setLoginEmail}
+            password={loginPassword}
+            setPassword={setLoginPassword}
+            errors={loginErrors}
+            isSubmitting={isSubmitting}
+            inputClasses={inputClasses}
+          />
 
           {/* Divider */}
           <div className="flex items-center gap-3">
@@ -233,24 +186,12 @@ const AuthPage = () => {
 
           {/* Footer toggle */}
           <div className="flex flex-col gap-2 text-center pt-2">
-            <button
-              type="button"
-              className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors"
-              onClick={() => {
-                setMode(mode === "login" ? "signup" : "login");
-                setLoginErrors({});
-                setSignupErrors({});
-              }}
-            >
-              {mode === "login" ? (
-                <>Não tem uma conta? <span className="text-primary font-semibold">Cadastre-se</span></>
-              ) : (
-                <>Já tem uma conta? <span className="text-primary font-semibold">Faça login</span></>
-              )}
-            </button>
-            <Link to="/auth/login" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-              Tentar nova interface modular (Beta)
+            <Link to="/auth/forgot-password" className="text-sm text-sidebar-foreground/50 hover:text-primary transition-colors">
+              Esqueceu sua senha?
             </Link>
+            <p className="text-[11px] text-sidebar-foreground/30 mt-2">
+              Para solicitar acesso, contate o administrador do sistema.
+            </p>
           </div>
         </div>
       </div>
