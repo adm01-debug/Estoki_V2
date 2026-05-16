@@ -1,5 +1,5 @@
- import { ChevronRight, Home, ChevronLeft } from 'lucide-react';
- import { Link, useLocation, useNavigate } from 'react-router-dom';
+  import { ChevronRight, Home, ArrowLeft } from 'lucide-react';
+  import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const routeLabels: Record<string, string> = {
@@ -103,37 +103,45 @@ interface BreadcrumbsProps {
    return (
      <nav
        aria-label="Breadcrumb"
-       className={cn('flex items-center justify-between px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
+       className={cn('flex items-center gap-4 px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
      >
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 pr-4">
-           {crumbs.map((crumb, i) => {
-            const isLast = i === crumbs.length - 1;
-            return (
-              <span key={i} className="flex items-center gap-1.5 group/crumb">
-                {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/40" />}
-                {i === 0 ? (
-                  <Link 
-                    to="/" 
-                    className="p-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
-                    title="Página Inicial"
-                  >
-                    <Home className="h-3.5 w-3.5" />
-                  </Link>
-                ) : crumb.href ? (
-                  <Link 
-                    to={crumb.href} 
-                    className="px-2 py-0.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95"
-                  >
-                    {crumb.label}
-                  </Link>
-                ) : (
-                  <span className="px-2 py-0.5 font-bold text-foreground bg-muted/30 rounded-md">
-                    {crumb.label}
-                  </span>
-                )}
-              </span>
-            );
-          })}
+       <button 
+         onClick={() => navigate(-1)}
+         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/40 text-xs font-bold uppercase tracking-wider hover:bg-muted hover:text-primary transition-all active:scale-95 group shadow-sm"
+         aria-label="Voltar"
+       >
+         <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+         <span className="hidden sm:inline">Voltar</span>
+       </button>
+       
+       <div className="h-4 w-[1px] bg-border/40 mx-1 shrink-0" />
+ 
+       <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-1 pr-4">
+         {crumbs.map((crumb, i) => (
+           <span key={i} className="flex items-center gap-1.5 group/crumb whitespace-nowrap">
+             {i > 0 && <ChevronRight className="h-3 w-3 shrink-0 text-muted-foreground/30" />}
+             {i === 0 ? (
+               <Link 
+                 to="/" 
+                 className="p-1.5 rounded-md hover:bg-primary/10 hover:text-primary transition-all active:scale-90"
+                 title="Página Inicial"
+               >
+                 <Home className="h-3.5 w-3.5" />
+               </Link>
+             ) : crumb.href ? (
+               <Link 
+                 to={crumb.href} 
+                 className="px-2 py-1 rounded-md hover:bg-primary/10 hover:text-primary transition-all font-medium active:scale-95 text-xs"
+               >
+                 {crumb.label}
+               </Link>
+             ) : (
+               <span className="px-2.5 py-1 text-xs font-bold text-foreground bg-muted/40 rounded-md shadow-sm border border-border/20">
+                 {crumb.label}
+               </span>
+             )}
+           </span>
+         ))}
        </div>
      </nav>
    );

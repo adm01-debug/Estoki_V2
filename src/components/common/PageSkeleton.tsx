@@ -1,9 +1,17 @@
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 
-function SkeletonPulse({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-lg bg-muted", className)} />;
-}
+ function SkeletonPulse({ className }: { className?: string }) {
+   return (
+     <div 
+       className={cn(
+         "animate-pulse rounded-lg bg-gradient-to-r from-muted via-muted-foreground/5 to-muted", 
+         className
+       )} 
+       style={{ backgroundSize: '200% 100%' }}
+     />
+   );
+ }
 
 export const DashboardSkeleton = memo(function DashboardSkeleton() {
   return (
