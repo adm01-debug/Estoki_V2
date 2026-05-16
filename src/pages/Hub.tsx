@@ -2,12 +2,22 @@
  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
  import { Button } from "@/components/ui/button";
  import { Badge } from "@/components/ui/badge";
- import { Globe, RefreshCw, Link2, ShieldCheck, Database, Server } from "lucide-react";
- import { useState } from "react";
+  import { Globe, RefreshCw, Link2, ShieldCheck, Database, Server, AlertTriangle } from "lucide-react";
+  import { useState, useEffect } from "react";
+  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
  import { toast } from "sonner";
  
- export default function HubPage() {
-   const [syncing, setSyncing] = useState(false);
+  export default function HubPage() {
+    const [syncing, setSyncing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }, []);
  
    const projects = [
      { id: 1, name: "Unidade São Paulo - Matriz", status: "online", lastSync: "2 min atrás", type: "WMS Central" },
@@ -27,8 +37,33 @@
      }, 2000);
    };
  
-   return (
-     <AppLayout title="Hub de Integração" showBack>
+    if (loading) {
+      return (
+        <AppLayout title="Hub de Integração" showBack>
+          <RouteLoadingFallback type="hub" />
+        </AppLayout>
+      );
+    }
+
+    if (error) {
+      return (
+        <AppLayout title="Hub de Integração" showBack>
+          <div className="flex flex-col items-center justify-center min-h-[60vh] p-4 text-center">
+            <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+              <AlertTriangle className="h-8 w-8 text-destructive" />
+            </div>
+            <h2 className="text-xl font-bold mb-2">Erro ao carregar o Hub</h2>
+            <p className="text-muted-foreground mb-6 max-w-md">{error}</p>
+            <Button onClick={() => { setError(null); setLoading(true); }} variant="outline">
+              Tentar novamente
+            </Button>
+          </div>
+        </AppLayout>
+      );
+    }
+
+    return (
+      <AppLayout title="Hub de Integração" showBack>
        <div className="p-4 space-y-6">
          <div className="flex justify-between items-center">
            <div>

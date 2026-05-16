@@ -1,8 +1,8 @@
 import { forwardRef, memo } from 'react';
- import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton } from './PageSkeleton';
+  import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton, SkeletonPulse } from './PageSkeleton';
 import { LoadingFallback } from './LoadingFallback';
 
- type PageType = 'dashboard' | 'table' | 'form' | 'list' | 'card' | 'default';
+  type PageType = 'dashboard' | 'estoque' | 'hub' | 'table' | 'form' | 'list' | 'card' | 'default';
  
  interface RouteLoadingFallbackProps {
   type?: PageType;
@@ -19,8 +19,31 @@ import { LoadingFallback } from './LoadingFallback';
      function RouteLoadingFallback({ type = 'default' }, ref) {
        const content = (() => {
          switch (type) {
-           case 'dashboard':
-             return <DashboardSkeleton />;
+            case 'dashboard':
+              return <DashboardSkeleton />;
+            case 'hub':
+              return <div className="p-4 md:p-6 lg:p-8 space-y-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="space-y-2">
+                    <SkeletonPulse className="h-8 w-48" />
+                    <SkeletonPulse className="h-4 w-64" />
+                  </div>
+                  <SkeletonPulse className="h-10 w-40 rounded-xl" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <SkeletonPulse className="h-32 rounded-xl" />
+                  <SkeletonPulse className="h-32 rounded-xl" />
+                  <SkeletonPulse className="h-32 rounded-xl" />
+                </div>
+                <div className="space-y-4 pt-4">
+                  <SkeletonPulse className="h-6 w-32" />
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <SkeletonPulse key={i} className="h-20 w-full rounded-xl" />
+                  ))}
+                </div>
+              </div>;
+            case 'estoque':
+              return <EstoqueSkeleton />;
            case 'table':
              return <TableSkeleton />;
            case 'form':
