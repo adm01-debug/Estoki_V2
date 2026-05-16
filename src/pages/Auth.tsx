@@ -140,11 +140,15 @@ const AuthPage = () => {
       <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md space-y-6">
           {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-4">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow mb-3">
-              <Box className="h-7 w-7 text-primary-foreground" />
+          <div className="lg:hidden flex flex-col items-center text-center mb-6">
+            <div className="w-[68px] h-[68px] rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow mb-4">
+              <Box className="h-8 w-8 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-sidebar-foreground">ESTOKI</h1>
+            <div className="space-y-1">
+              <h1 className="text-3xl font-black tracking-tighter leading-none gradient-text">ESTOKI</h1>
+              <p className="text-xs font-black tracking-[0.3em] text-primary uppercase">WAREHOUSE</p>
+              <p className="text-[9px] font-black tracking-[0.2em] text-sidebar-foreground/40 uppercase">PROMO BRINDES</p>
+            </div>
           </div>
 
           {/* Header */}
