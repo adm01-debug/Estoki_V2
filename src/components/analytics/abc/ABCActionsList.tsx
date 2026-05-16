@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle } from "lucide-react";
-import { ProdutoABC, ClassificacaoABC } from "@/hooks/useCurvaABC";
+import { ProdutoABC, ClassificacaoABC } from "@/features/analytics/hooks/useCurvaABC";
 
 const curvaConfig: Record<ClassificacaoABC, { label: string }> = {
   A: { label: "Curva A" },

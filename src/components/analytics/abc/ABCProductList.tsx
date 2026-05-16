@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Package, TrendingUp, Target, Search, Filter, ArrowUpDown } from "lucide-react";
-import { ProdutoABC, ClassificacaoABC } from "@/hooks/useCurvaABC";
+import { ProdutoABC, ClassificacaoABC } from "@/features/analytics/hooks/useCurvaABC";
 
 const curvaConfig: Record<ClassificacaoABC, { label: string; textColor: string }> = {
   A: { label: "Curva A", textColor: "text-green-600" },

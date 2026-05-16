@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import type { MetaKPI } from "@/hooks/useKPIsOperacionais";
+import type { MetaKPI } from "@/features/analytics/hooks/useKPIsOperacionais";
 
 interface MetaFormState {
   nome: string;

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
-import { EstatisticasABC, ProdutoABC, ClassificacaoABC } from "@/hooks/useCurvaABC";
+import { EstatisticasABC, ProdutoABC, ClassificacaoABC } from "@/features/analytics/hooks/useCurvaABC";
 import {
   ResponsiveContainer,
   PieChart,

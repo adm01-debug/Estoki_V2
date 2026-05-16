@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Package } from "lucide-react";
-import { EstatisticasABC } from "@/hooks/useCurvaABC";
+import { EstatisticasABC } from "@/features/analytics/hooks/useCurvaABC";
 
 interface ABCStatsCardsProps {
   estatisticas: EstatisticasABC;

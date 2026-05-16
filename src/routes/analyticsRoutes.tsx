@@ -5,7 +5,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 
 const Relatorios = lazy(() => import("@/pages/Relatorios"));
-const KPIsOperacionais = lazy(() => import("@/pages/KPIsOperacionais"));
+const KPIsOperacionais = lazy(() => import("@/features/analytics/pages/KPIsPage"));
 const Produtividade = lazy(() => import("@/pages/Produtividade"));
 const Rastreabilidade = lazy(() => import("@/pages/Rastreabilidade"));
 const RelatorioDivergencias = lazy(() => import("@/pages/RelatorioDivergencias"));

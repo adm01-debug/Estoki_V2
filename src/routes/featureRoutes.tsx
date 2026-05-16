@@ -27,14 +27,14 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const AssistenteIA = lazy(() => import("@/pages/AssistenteIA"));
 const ImportExport = lazy(() => import("@/pages/ImportExport"));
 const Automacoes = lazy(() => import("@/pages/Automacoes"));
-const DashboardTempoReal = lazy(() => import("@/pages/DashboardTempoReal"));
+const DashboardTempoReal = lazy(() => import("@/features/analytics/pages/RealtimeDashboardPage"));
 const RelatoriosAgendados = lazy(() => import("@/pages/RelatoriosAgendados"));
 const AprovacaoMovimentacoes = lazy(() => import("@/pages/AprovacaoMovimentacoes"));
 const FornecedoresAvancado = lazy(() => import("@/pages/FornecedoresAvancado"));
 const ModoOffline = lazy(() => import("@/pages/ModoOffline"));
 const EndereçamentoAutomatico = lazy(() => import("@/pages/EndereçamentoAutomatico"));
 const IntegracaoTransportadoras = lazy(() => import("@/pages/IntegracaoTransportadoras"));
-const PrevisaoDemandaIA = lazy(() => import("@/pages/PrevisaoDemandaIA"));
+const PrevisaoDemandaIA = lazy(() => import("@/features/analytics/pages/DemandForecastPage"));
 const Etiquetas = lazy(() => import("@/pages/Etiquetas"));
 
 export const featureRoutes = (
