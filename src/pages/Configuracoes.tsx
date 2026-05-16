@@ -70,9 +70,10 @@ const ConfiguracoesPage = () => {
   const updateEstoque = (updates: Partial<ConfiguracaoEstoque>) => { setEstoque(p => ({ ...p, ...updates })); setAlterado(true); };
   const updatePreferencias = (updates: Partial<PreferenciasUsuario>) => { setPreferencias(p => ({ ...p, ...updates })); setAlterado(true); };
 
-  return (
-    <AppLayout title="Configurações" showBack>
-      <div className="p-4 space-y-4 pb-24">
+   return (
+     <AppLayout title="Configurações" showBack>
+       <LeaveGuard hasChanges={alterado} />
+       <div className="p-4 space-y-4 pb-24">
         <AlertasConfigCard alertas={alertas} onChange={updateAlertas} />
         <EstoqueConfigCard estoque={estoque} onChange={updateEstoque} />
         <PreferenciasCard preferencias={preferencias} theme={theme} onChange={updatePreferencias} onThemeChange={setTheme} />
