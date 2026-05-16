@@ -295,9 +295,9 @@ export default function TriagemPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.3, delay: idx * 0.03 }}
+                      transition={{ duration: 0.3, delay: Math.min(idx, 10) * 0.03 }}
                       className={cn(
-                        "group/card bg-card rounded-2xl p-5 border transition-all duration-300 relative overflow-hidden",
+                        "group/card bg-card rounded-2xl p-5 border transition-all duration-300 relative overflow-hidden content-visibility-auto will-change-transform",
                         isSelected ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-lg shadow-primary/5" : "border-border/30 hover:border-primary/40 hover:shadow-md"
                       )}
                     >
