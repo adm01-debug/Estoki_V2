@@ -1,3 +1,7 @@
+import { cn } from "@/lib/utils";
+import { memo } from "react";
+import { motion } from "framer-motion";
+
  export const EstoqueSkeleton = memo(function EstoqueSkeleton() {
    return (
      <div className="p-4 md:p-6 lg:p-8 space-y-6">
@@ -46,11 +50,6 @@
      </div>
    );
  });
- 
-import { cn } from "@/lib/utils";
-import { memo } from "react";
-
-  import { motion } from "framer-motion";
  
   export function SkeletonPulse({ className }: { className?: string }) {
     return (
