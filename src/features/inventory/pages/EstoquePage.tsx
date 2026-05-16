@@ -153,13 +153,11 @@ export default function EstoquePage() {
     refetch();
   }, [refetch]);
 
-  if (loading) return (
-    <AppLayout showBack>
-      <div className="p-4 md:p-6 lg:p-8">
-        <RouteLoadingFallback type="dashboard" />
-      </div>
-    </AppLayout>
-  );
+   if (loading) return (
+     <AppLayout showBack>
+       <RouteLoadingFallback type="estoque" />
+     </AppLayout>
+   );
 
   if (error) return (
     <AppLayout showBack>
