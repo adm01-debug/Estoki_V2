@@ -41,9 +41,10 @@ interface HeaderProps {
   const isOnline = useOnlineStatus();
 
   return (
-     <header className="sticky top-0 z-50 border-b border-border/30">
-       <div className="absolute inset-0 bg-background/70 backdrop-blur-xl" />
-       <div className={cn("relative flex items-center justify-between h-16 px-6 max-w-[1600px] mx-auto transition-all duration-300", mainPadding)}>
+      <header className="sticky top-0 z-50 border-b border-border/10">
+        <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60" />
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50" />
+        <div className={cn("relative flex items-center justify-between h-16 px-4 lg:px-6 max-w-[1600px] mx-auto transition-all duration-500 ease-in-out", mainPadding)}>
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
             <Menu className="h-5 w-5" />

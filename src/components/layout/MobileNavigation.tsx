@@ -67,11 +67,11 @@ import { mobileNavItems, fabActions } from "./sidebar";
       </AnimatePresence>
 
       {/* Bottom Navigation (Mobile) */}
-       <nav 
-         className="fixed bottom-0 left-0 right-0 border-t border-border/20 px-2 pb-safe pt-2 md:hidden z-40" 
+       <nav
+         className="fixed bottom-0 left-0 right-0 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2 md:hidden z-40"
          aria-label="Navegação mobile"
        >
-         <div className="absolute inset-0 bg-background/80 backdrop-blur-xl border-t border-border/10" />
+         <div className="absolute inset-x-0 bottom-0 top-0 bg-background/80 backdrop-blur-2xl border-t border-border/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]" />
           <div className="relative flex items-center justify-around h-14 max-w-md mx-auto px-1">
             {/* Mobile Back Button - Unified & Contextual */}
             <motion.button
