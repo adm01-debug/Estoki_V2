@@ -1,51 +1,30 @@
- # Quality & Automation Excellence Plan (10/10) - COMPLETED
+ # UX/UI Excellence & Flow Perfection Plan (10/10)
  
- This plan has been fully executed to reach 10/10 production readiness.
+ This plan focuses on transforming the technical utility into operational excellence via HCI principles.
  
- ## Completed Improvements
+ ## Proposed Improvements
  
- ### 1. Comprehensive E2E Test Suite ✅
- - Extended `e2e/critical-paths.spec.ts` with full user journeys for **Receiving**, **Picking**, and **Inventory**.
- - Added exhaustive **Fuzz Testing** coverage for critical routes.
- - Improved selectors and resiliency for automation.
+ ### 1. Navigation & Spatial Orientation
+ - [ ] **Dynamic Breadcrumbs with Teleportation**: Upgrade `Breadcrumbs.tsx` to handle dynamic route names and nested contexts (e.g., `Inventory > Aisle A > Shelf 4`).
+ - [ ] **Persistent Progress Stepper**: Implement a sticky/persistent stepper for high-density flows like "Conferência Cega" to ensure users always know their progress.
  
- ### 2. Edge Function Integration Tests ✅
- - Created `supabase/functions/tests/` and implemented Deno tests.
- - Added `abc-analysis` math logic validation and division-by-zero protection.
- - Hardened `webhook-handler` with payload size limits and schema validation.
+ ### 2. Micro-Interactions & Cognitive Feedback
+ - [ ] **Phased State Transitions**: Enhance Framer Motion usage in `AppLayout` for smoother shared-element-like transitions between list and detail views.
+ - [ ] **Extended Haptic Engine**: Deep integration of vibration feedback for success/error/warning states in scanners and forms.
  
- ### 3. Enhanced CI Pipeline ✅
- - Updated `vitest.config.ts` to enforce **85% coverage threshold**.
- - Verified `.github/workflows/ci.yml` and `dependency-review.yml` for strict merge requirements.
- - Configured automated linting, type-checking, and cross-platform testing.
+ ### 3. High-Density Flow Optimization
+ - [ ] **Refined Skeleton States**: Create specific skeletons for all major modules (Warehouse, Analytics, Admin) to reach 10/10 perceived performance.
+ - [ ] **Edge Swipe Navigation**: Enable gesture-based navigation on mobile for a native-app feel.
  
- ### 4. Stability & Security Fixes ✅
- - Fixed critical logic bugs in inventory calculation.
- - Implemented defensive checks against malicious payloads.
+ ### 4. Accessibility & Resilience
+ - [ ] **High Contrast & Dynamic Type**: Audit and fix contrast ratios and support for larger font sizes for warehouse environments.
  
- The system is now certified 10/10 for production entry.
+ ## Implementation Strategy
+ 1. **Step 1**: Upgrade Breadcrumbs to be truly dynamic.
+ 2. **Step 2**: Implement the Persistent Stepper in `ConferenciaRecebimento`.
+ 3. **Step 3**: Refine Page Transitions and Mobile Gestures.
  
  ## Technical Details
- 
- ### E2E Coverage
- ```typescript
- // Example new E2E journey
- test('full receiving journey', async ({ page }) => {
-   await login(page);
-   await page.goto('/recebimento');
-   await expect(page.locator('h1')).toContainText('Recebimento');
-   // ... automated steps
- });
- ```
- 
- ### Edge Function Validation
- ```typescript
- // Example Deno test for webhook
- Deno.test("webhook-handler should reject invalid secret", async () => {
-   const response = await callFunction("webhook-handler", { headers: { "x-webhook-secret": "wrong" } });
-   assertEquals(response.status, 401);
- });
- ```
- 
- ## User Review Required
- > No action required. Executing immediately as requested.
+ - Components will use `Framer Motion` for animations.
+ - `haptics` utility will be used for sensory feedback.
+ - `Atomic Design` structure (Atoms/Molecules/Organisms) will be strictly followed.
