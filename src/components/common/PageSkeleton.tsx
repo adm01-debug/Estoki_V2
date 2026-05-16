@@ -1,3 +1,52 @@
+ export const EstoqueSkeleton = memo(function EstoqueSkeleton() {
+   return (
+     <div className="p-4 md:p-6 lg:p-8 space-y-6">
+       {/* Header Actions */}
+       <div className="flex justify-between items-center mb-4">
+         <div className="space-y-2">
+           <SkeletonPulse className="h-6 w-48" />
+           <SkeletonPulse className="h-4 w-64" />
+         </div>
+         <div className="flex gap-2">
+           <SkeletonPulse className="h-10 w-32 rounded-xl" />
+           <SkeletonPulse className="h-10 w-24 rounded-xl" />
+         </div>
+       </div>
+ 
+       {/* Stats Cards */}
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+         {Array.from({ length: 4 }).map((_, i) => (
+           <SkeletonPulse key={i} className="h-32 w-full rounded-3xl" />
+         ))}
+       </div>
+ 
+       {/* Charts Section */}
+       <SkeletonPulse className="h-64 w-full rounded-[32px]" />
+ 
+       {/* Search and Filters */}
+       <div className="flex gap-3">
+         <SkeletonPulse className="h-11 flex-1 rounded-xl" />
+         <SkeletonPulse className="h-11 w-28 rounded-xl" />
+       </div>
+ 
+       {/* Tabs List */}
+       <SkeletonPulse className="h-12 w-full rounded-2xl" />
+ 
+       {/* Tab Content (Map view skeleton) */}
+       <div className="grid lg:grid-cols-3 gap-6">
+         <div className="lg:col-span-2">
+           <SkeletonPulse className="h-[600px] rounded-[32px]" />
+         </div>
+         <div className="space-y-4">
+           <SkeletonPulse className="h-48 rounded-[32px]" />
+           <SkeletonPulse className="h-48 rounded-[32px]" />
+           <SkeletonPulse className="h-48 rounded-[32px]" />
+         </div>
+       </div>
+     </div>
+   );
+ });
+ 
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 
