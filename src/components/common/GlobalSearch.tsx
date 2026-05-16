@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart } from "lucide-react";
+ import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart, History, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -31,11 +31,31 @@ const typeConfig = {
   pedido: { icon: FileText, label: "Pedido", color: "text-purple-500", route: "/pedidos" },
 };
 
-export function GlobalSearch() {
-  const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+ export function GlobalSearch() {
+   const [open, setOpen] = useState(false);
+   const [query, setQuery] = useState("");
+   const [results, setResults] = useState<SearchResult[]>([]);
+   const [loading, setLoading] = useState(false);
+   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+   // Load recent searches
+   useEffect(() => {
+     const saved = localStorage.getItem("recent-searches");
+     if (saved) setRecentSearches(JSON.parse(saved));
+   }, []);
+ 
+   const addRecentSearch = (term: string) => {
+     if (!term || term.length < 2) return;
+     const newRecent = [term, ...recentSearches.filter(t => t !== term)].slice(0, 5);
+     setRecentSearches(newRecent);
+     localStorage.setItem("recent-searches", JSON.stringify(newRecent));
+   };
+ 
+   const removeRecentSearch = (term: string) => {
+     const newRecent = recentSearches.filter(t => t !== term);
+     setRecentSearches(newRecent);
+     localStorage.setItem("recent-searches", JSON.stringify(newRecent));
+   };
+ 
   const navigate = useNavigate();
   const debouncedQuery = useDebounce(query, 300);
   const { light } = useHaptics();
@@ -100,14 +120,16 @@ export function GlobalSearch() {
     search();
   }, [debouncedQuery]);
 
-  const onSelect = useCallback(
-    (path: string) => {
-      light();
-      navigate(path);
-      setOpen(false);
-    },
-    [navigate, light]
-  );
+   const onSelect = useCallback(
+     (path: string, term?: string) => {
+       if (term) addRecentSearch(term);
+       light();
+       navigate(path);
+       setOpen(false);
+       setQuery("");
+     },
+     [navigate, light, recentSearches]
+   );
 
   return (
     <>
@@ -154,29 +176,55 @@ export function GlobalSearch() {
              {!loading && "Nenhum resultado encontrado."}
            </CommandEmpty>
           
-          {results.length > 0 && (
-            <CommandGroup heading="Resultados do Banco">
-              {results.map((result) => (
-                <CommandItem
-                  key={`${result.type}-${result.id}`}
-                  onSelect={() => onSelect(typeConfig[result.type].route)}
-                  className="flex items-center gap-3 py-3"
-                >
-                  <div className={`p-2 rounded-lg bg-background border border-border`}>
-                    {(() => {
-                      const Icon = typeConfig[result.type].icon;
-                      return <Icon className={`h-4 w-4 ${typeConfig[result.type].color}`} />;
-                    })()}
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-medium text-sm">{result.title}</span>
-                    <span className="text-xs text-muted-foreground">{result.subtitle}</span>
-                  </div>
-                  <CommandShortcut>{typeConfig[result.type].label}</CommandShortcut>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
+           {!query && recentSearches.length > 0 && (
+             <CommandGroup heading="Buscas Recentes">
+               {recentSearches.map((term) => (
+                 <CommandItem
+                   key={term}
+                   onSelect={() => setQuery(term)}
+                   className="flex items-center justify-between py-3 group"
+                 >
+                   <div className="flex items-center gap-3">
+                     <History className="h-4 w-4 text-muted-foreground" />
+                     <span className="font-medium">{term}</span>
+                   </div>
+                   <button 
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       removeRecentSearch(term);
+                     }}
+                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded-md transition-all"
+                   >
+                     <X className="h-3 w-3" />
+                   </button>
+                 </CommandItem>
+               ))}
+             </CommandGroup>
+           )}
+ 
+           {results.length > 0 && (
+             <CommandGroup heading="Resultados do Banco">
+               {results.map((result) => (
+                 <CommandItem
+                   key={`${result.type}-${result.id}`}
+                   onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
+                   className="flex items-center gap-3 py-3"
+                 >
+                   <div className={`p-2 rounded-lg bg-background border border-border`}>
+                     {(() => {
+                       const Icon = typeConfig[result.type].icon;
+                       return <Icon className={`h-4 w-4 ${typeConfig[result.type].color}`} />;
+                     })()}
+                   </div>
+                   <div className="flex flex-col">
+                     <span className="font-medium text-sm">{result.title}</span>
+                     <span className="text-xs text-muted-foreground">{result.subtitle}</span>
+                   </div>
+                   <CommandShortcut>{typeConfig[result.type].label}</CommandShortcut>
+                 </CommandItem>
+               ))}
+             </CommandGroup>
+           )}
 
           <CommandSeparator />
           
