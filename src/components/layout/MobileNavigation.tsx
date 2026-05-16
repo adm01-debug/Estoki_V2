@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-  import { Box, X, ArrowLeftRight, Home } from "lucide-react";
+  import { Box, X, ArrowLeft, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mobileNavItems, fabActions } from "./sidebar";
 
@@ -91,7 +91,7 @@ import { mobileNavItems, fabActions } from "./sidebar";
                  className="flex flex-col items-center justify-center gap-0.5 min-w-[56px] min-h-[48px] px-2 py-1.5 rounded-xl text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
                  aria-label="Voltar"
                >
-                 <ArrowLeftRight className="h-5 w-5 rotate-180" />
+                <ArrowLeft className="h-5 w-5" />
                  <span className="text-[10px] font-bold">Voltar</span>
                </motion.button>
             )}
