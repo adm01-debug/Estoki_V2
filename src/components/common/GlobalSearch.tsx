@@ -13,8 +13,9 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
+   CommandShortcut,
+ } from "@/components/ui/command";
+ import { SkeletonPulse } from "./PageSkeleton";
 
 interface SearchResult {
   id: string;
@@ -130,10 +131,28 @@ export function GlobalSearch() {
           value={query}
           onValueChange={setQuery}
         />
-        <CommandList className="scrollbar-hide">
-          <CommandEmpty>
-            {loading ? "Buscando..." : "Nenhum resultado encontrado."}
-          </CommandEmpty>
+         <CommandList className="scrollbar-hide">
+           {loading && (
+             <div className="p-4 space-y-3">
+               <div className="flex items-center gap-3">
+                 <SkeletonPulse className="h-10 w-10 rounded-lg" />
+                 <div className="flex-1 space-y-2">
+                   <SkeletonPulse className="h-4 w-1/2" />
+                   <SkeletonPulse className="h-3 w-1/4" />
+                 </div>
+               </div>
+               <div className="flex items-center gap-3">
+                 <SkeletonPulse className="h-10 w-10 rounded-lg" />
+                 <div className="flex-1 space-y-2">
+                   <SkeletonPulse className="h-4 w-2/3" />
+                   <SkeletonPulse className="h-3 w-1/3" />
+                 </div>
+               </div>
+             </div>
+           )}
+           <CommandEmpty>
+             {!loading && "Nenhum resultado encontrado."}
+           </CommandEmpty>
           
           {results.length > 0 && (
             <CommandGroup heading="Resultados do Banco">
