@@ -1,5 +1,6 @@
-import { memo } from "react";
-import { Menu, Box, WifiOff } from "lucide-react";
+ import { memo } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { Menu, Box, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
