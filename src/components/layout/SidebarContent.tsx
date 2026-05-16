@@ -181,14 +181,15 @@ export const SidebarContent = memo(function SidebarContent({
                ))}
              </>
            )}
-         </nav>
-
-      <SidebarFooter 
-        pathname={pathname} 
-        onNavigate={(path) => onNavigate(path, isMobile)} 
-        onLogout={onLogout} 
-        isCollapsed={isCollapsed} 
-      />
-    </>
-  );
-});
+          </nav>
+        </ScrollArea>
+ 
+       <SidebarFooter 
+         pathname={pathname} 
+         onNavigate={(path) => onNavigate(path, isMobile)} 
+         onLogout={onLogout} 
+         isCollapsed={isCollapsed} 
+       />
+     </>
+   );
+ });
