@@ -3,7 +3,7 @@
  import { Progress } from "@/components/ui/progress";
   import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { memo } from "react";
-import { DashboardKPIs as DashboardKPIsInterface } from "@/hooks/useDashboard";
+import { DashboardKPIs as DashboardKPIsInterface } from "@/features/dashboard/hooks/useDashboard";
 
 interface DashboardKPIsProps {
   kpis: DashboardKPIsInterface;

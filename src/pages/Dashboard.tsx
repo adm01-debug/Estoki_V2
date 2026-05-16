@@ -2,7 +2,7 @@ import { SEO } from "@/components/common/SEO";
 import { useState, useCallback } from "react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { useDashboard } from "@/hooks/useDashboard";
+import { useDashboard } from "@/features/dashboard/hooks/useDashboard";
 import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
 import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "@/hooks/use-toast";

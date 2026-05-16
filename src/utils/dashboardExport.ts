@@ -1,4 +1,4 @@
-import { DashboardKPIs, OcupacaoPP, ItemParado } from "@/hooks/useDashboard";
+import { DashboardKPIs, OcupacaoPP, ItemParado } from "@/features/dashboard/hooks/useDashboard";
 
 export async function exportDashboardToPDF(
   kpis: DashboardKPIs,
