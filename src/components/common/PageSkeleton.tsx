@@ -1,17 +1,21 @@
 import { cn } from "@/lib/utils";
 import { memo } from "react";
 
- function SkeletonPulse({ className }: { className?: string }) {
-   return (
-     <div 
-       className={cn(
-         "animate-pulse rounded-lg bg-gradient-to-r from-muted via-muted-foreground/5 to-muted", 
-         className
-       )} 
-       style={{ backgroundSize: '200% 100%' }}
-     />
-   );
- }
+  import { motion } from "framer-motion";
+ 
+  function SkeletonPulse({ className }: { className?: string }) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0.5 }}
+        animate={{ opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+        className={cn(
+          "rounded-lg bg-muted shadow-[inset_0_0_20px_rgba(0,0,0,0.02)]", 
+          className
+        )} 
+      />
+    );
+  }
 
 export const DashboardSkeleton = memo(function DashboardSkeleton() {
   return (
