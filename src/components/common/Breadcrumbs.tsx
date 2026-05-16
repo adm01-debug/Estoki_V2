@@ -1,5 +1,5 @@
-import { ChevronRight, Home } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+ import { ChevronRight, Home, ChevronLeft } from 'lucide-react';
+ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const routeLabels: Record<string, string> = {
@@ -75,9 +75,10 @@ interface BreadcrumbsProps {
   className?: string;
 }
 
-export function Breadcrumbs({ className }: BreadcrumbsProps) {
-  const location = useLocation();
-  const pathname = location.pathname;
+ export function Breadcrumbs({ className }: BreadcrumbsProps) {
+   const location = useLocation();
+   const navigate = useNavigate();
+   const pathname = location.pathname;
 
   // Don't show on home
   if (pathname === '/') return null;
@@ -99,13 +100,22 @@ export function Breadcrumbs({ className }: BreadcrumbsProps) {
 
   if (crumbs.length <= 1) return null;
 
-  return (
-    <nav
-      aria-label="Breadcrumb"
-      className={cn('flex items-center gap-1.5 px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
-    >
-      {crumbs.map((crumb, i) => (
-        <span key={i} className="flex items-center gap-1.5">
+   return (
+     <nav
+       aria-label="Breadcrumb"
+       className={cn('flex items-center justify-between px-4 lg:px-6 py-2 text-sm text-muted-foreground', className)}
+     >
+       <div className="flex items-center gap-1.5">
+         <button 
+           onClick={() => navigate(-1)} 
+           className="mr-2 p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-all flex items-center gap-1 sm:hidden group"
+           aria-label="Voltar"
+         >
+           <ChevronLeft className="h-4 w-4 group-active:scale-90 transition-transform" />
+           <span className="text-xs font-medium">Voltar</span>
+         </button>
+         {crumbs.map((crumb, i) => (
+           <span key={i} className="flex items-center gap-1.5">
           {i > 0 && <ChevronRight className="h-3 w-3 shrink-0" />}
           {i === 0 ? (
             <Link to="/" className="hover:text-foreground transition-colors">
@@ -118,10 +128,11 @@ export function Breadcrumbs({ className }: BreadcrumbsProps) {
           ) : (
             <span className="text-foreground font-medium">{crumb.label}</span>
           )}
-        </span>
-      ))}
-    </nav>
-  );
+           </span>
+         ))}
+       </div>
+     </nav>
+   );
 }
 
 export default Breadcrumbs;

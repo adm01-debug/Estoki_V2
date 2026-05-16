@@ -48,18 +48,20 @@ interface HeaderProps {
           <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
             <Menu className="h-5 w-5" />
           </Button>
-          {shouldShowBack && (
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={onBack} className="touch-friendly hover:bg-primary/10" aria-label="Voltar (Alt+←)">
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
-              </TooltipContent>
-            </Tooltip>
-          )}
+           <div className={cn("flex items-center transition-all duration-300", shouldShowBack ? "w-10 opacity-100" : "w-0 opacity-0 overflow-hidden")}>
+             {shouldShowBack && (
+               <Tooltip delayDuration={300}>
+                 <TooltipTrigger asChild>
+                   <Button variant="ghost" size="icon" onClick={onBack} className="touch-friendly hover:bg-primary/10" aria-label="Voltar (Alt+←)">
+                     <ChevronLeft className="h-5 w-5" />
+                   </Button>
+                 </TooltipTrigger>
+                 <TooltipContent side="bottom" className="text-xs">
+                   Voltar <kbd className="ml-1 px-1 py-0.5 rounded bg-muted text-[10px]">Alt+←</kbd>
+                 </TooltipContent>
+               </Tooltip>
+             )}
+           </div>
           {isHome && (
             <div className="flex items-center gap-2 lg:hidden">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
