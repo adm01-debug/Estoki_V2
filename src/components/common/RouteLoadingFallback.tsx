@@ -12,23 +12,40 @@ import { LoadingFallback } from './LoadingFallback';
  * Route-specific loading fallback that shows contextual skeletons
  * based on the type of page being loaded.
  */
-export const RouteLoadingFallback = memo(
-  forwardRef<HTMLDivElement, RouteLoadingFallbackProps>(
-    function RouteLoadingFallback({ type = 'default' }, ref) {
-      switch (type) {
-        case 'dashboard':
-          return <div ref={ref}><DashboardSkeleton /></div>;
-        case 'table':
-          return <div ref={ref}><TableSkeleton /></div>;
-         case 'form':
-           return <div ref={ref}><FormSkeleton /></div>;
-         case 'list':
-           return <div ref={ref} className="p-4"><ListSkeleton /></div>;
-         case 'card':
-           return <div ref={ref} className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><CardSkeleton /><CardSkeleton /><CardSkeleton /></div>;
-        default:
-          return <LoadingFallback ref={ref} />;
-      }
-    }
-  )
-);
+ import { motion } from "framer-motion";
+ 
+ export const RouteLoadingFallback = memo(
+   forwardRef<HTMLDivElement, RouteLoadingFallbackProps>(
+     function RouteLoadingFallback({ type = 'default' }, ref) {
+       const content = (() => {
+         switch (type) {
+           case 'dashboard':
+             return <DashboardSkeleton />;
+           case 'table':
+             return <TableSkeleton />;
+           case 'form':
+             return <FormSkeleton />;
+           case 'list':
+             return <div className="p-4"><ListSkeleton /></div>;
+           case 'card':
+             return <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"><CardSkeleton /><CardSkeleton /><CardSkeleton /></div>;
+           default:
+             return <LoadingFallback />;
+         }
+       })();
+ 
+       return (
+         <motion.div 
+           ref={ref}
+           initial={{ opacity: 0 }}
+           animate={{ opacity: 1 }}
+           exit={{ opacity: 0 }}
+           transition={{ duration: 0.3 }}
+           className="w-full"
+         >
+           {content}
+         </motion.div>
+       );
+     }
+   )
+ );
