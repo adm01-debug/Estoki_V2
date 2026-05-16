@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useAtividadeRecente } from "@/hooks/useAtividadeRecente";
 import { useAuth } from "@/contexts/AuthContext";
-import { useRecebimentos } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "@/features/receiving/hooks/useRecebimentos";
 import { useEstoque } from "@/features/inventory/hooks/useEstoque";
 import { useRealtimeKPIs } from "@/hooks/useRealtimeKPIs";
 import { IndexHero } from "@/components/index/IndexHero";

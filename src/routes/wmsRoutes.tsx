@@ -8,10 +8,10 @@ import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
 // WMS Operations
 const Estoque = lazy(() => import("@/features/inventory/pages/EstoquePage"));
 const Triagem = lazy(() => import("@/features/quality/pages/TriagemPage"));
-const Recebimento = lazy(() => import("@/pages/Recebimento"));
+const Recebimento = lazy(() => import("@/features/receiving/pages/RecebimentoPage"));
 const Movimentacao = lazy(() => import("@/pages/Movimentacao"));
 const Armazenamento = lazy(() => import("@/pages/Armazenamento"));
-const ConferenciaRecebimento = lazy(() => import("@/pages/ConferenciaRecebimento"));
+const ConferenciaRecebimento = lazy(() => import("@/features/receiving/pages/ConferenciaRecebimento"));
 const Scanner = lazy(() => import("@/pages/Scanner"));
 
 // Products & Inventory

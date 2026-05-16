@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useRecebimentos } from "@/hooks/useRecebimentos";
+import { useRecebimentos } from "../hooks/useRecebimentos";
 import { Produto, RecebimentoFormData, recebimentoSchema } from "./novo-recebimento/types";
 import { FormFields } from "./novo-recebimento/FormFields";
 
