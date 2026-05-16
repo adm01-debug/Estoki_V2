@@ -80,5 +80,31 @@ export const shippingService = {
       .eq('id', id);
 
     if (error) throw error;
+  },
+
+  async registrarEntrega(
+    romaneioId: string,
+    itemId: string,
+    status: StatusEntrega,
+    dados?: any
+  ): Promise<void> {
+    // Registrar comprovante
+    const { error: comprovanteError } = await supabase
+      .from('comprovantes_entrega')
+      .insert({
+        romaneio_id: romaneioId,
+        romaneio_item_id: itemId,
+        status,
+        data_entrega: status === 'entregue' ? new Date().toISOString() : null,
+        recebedor_nome: dados?.recebedor_nome,
+        recebedor_documento: dados?.recebedor_documento,
+        assinatura_url: dados?.assinatura_url,
+        foto_entrega_url: dados?.foto_entrega_url,
+        observacoes: dados?.observacoes,
+      });
+
+    if (comprovanteError) throw comprovanteError;
+
+    // Note: Totals update logic could also move here if needed
   }
 };
