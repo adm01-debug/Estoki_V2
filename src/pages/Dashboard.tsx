@@ -13,11 +13,14 @@ import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
 import { DashboardKPIs } from "@/components/dashboard/DashboardKPIs";
 import { DynamicAIInsights } from "@/components/dashboard/DynamicAIInsights";
 import { SystemHealthHUD } from "@/components/dashboard/SystemHealthHUD";
+import { DashboardActivityFeed } from "@/components/dashboard/DashboardActivityFeed";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { haptics } from "@/utils/haptics";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
+import { History, Zap, ShieldCheck, Search as SearchIcon } from "lucide-react";
 
 const DashboardPage = () => {
   const [exportando, setExportando] = useState(false);
@@ -136,18 +139,75 @@ const DashboardPage = () => {
             </motion.div>
           </div>
 
-          {kpis && <DynamicAIInsights kpis={kpis} />}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-8 space-y-6">
+              {kpis && <DynamicAIInsights kpis={kpis} />}
+              {kpis && <DashboardKPIs kpis={kpis} />}
+              
+              <DashboardCharts 
+                ocupacaoPP={ocupacaoPP} 
+                movimentacoes7dias={movimentacoes7dias} 
+                distribuicaoStatus={distribuicaoStatus} 
+                itensParados={itensParados} 
+              />
+            </div>
 
-          {kpis && <DashboardKPIs kpis={kpis} />}
+            <div className="lg:col-span-4 space-y-6">
+              <Card className="rounded-[32px] border-border/40 shadow-sm overflow-hidden bg-background/50 backdrop-blur-xl">
+                <CardHeader className="pb-3 border-b border-border/10 bg-muted/20">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                        <History className="h-4 w-4 text-primary" />
+                        Atividade Operacional
+                      </CardTitle>
+                      <CardDescription className="text-[10px] font-bold uppercase opacity-60">Tempo Real</CardDescription>
+                    </div>
+                    <div className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4 px-3">
+                  <DashboardActivityFeed />
+                  <Button variant="ghost" className="w-full mt-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 h-8 rounded-xl" onClick={() => haptics.light()}>
+                    Ver Log Completo
+                  </Button>
+                </CardContent>
+              </Card>
 
-          <SystemHealthHUD />
+              <Card className="rounded-[32px] border-border/40 shadow-sm bg-gradient-to-br from-primary/5 to-transparent border-l-primary/20">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                      <Zap className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="space-y-0.5">
+                      <h4 className="text-sm font-black uppercase tracking-tight">Atalhos de Elite</h4>
+                      <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Navegação Rápida</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 rounded-2xl bg-background/50 border border-border/20 group hover:border-primary/30 transition-all cursor-help">
+                      <div className="flex items-center gap-2">
+                        <SearchIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-[11px] font-bold">Busca Global</span>
+                      </div>
+                      <kbd className="h-5 px-1.5 rounded border bg-muted flex items-center text-[10px] font-mono font-black">⌘ K</kbd>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-2xl bg-background/50 border border-border/20 group hover:border-primary/30 transition-all cursor-help">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="text-[11px] font-bold">Auditoria</span>
+                      </div>
+                      <kbd className="h-5 px-1.5 rounded border bg-muted flex items-center text-[10px] font-mono font-black">⌘ L</kbd>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-          <DashboardCharts 
-            ocupacaoPP={ocupacaoPP} 
-            movimentacoes7dias={movimentacoes7dias} 
-            distribuicaoStatus={distribuicaoStatus} 
-            itensParados={itensParados} 
-          />
+              <SystemHealthHUD />
+            </div>
+          </div>
         </div>
       </BasePageTemplate>
     </AppLayout>
