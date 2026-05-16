@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { BalancaCard } from "@/components/conferencia/BalancaCard";
  import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
  import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
- import { StepProgress } from "@/components/common/StepProgress";
+  import { PersistentStepper } from "@/components/molecules/navigation/PersistentStepper";
  import { LeaveGuard } from "@/components/common/LeaveGuard";
 import { Recebimento, TipoEmbalagem, VolumeData } from "@/components/conferencia/types";
 import { Mic, MicOff, Printer } from "lucide-react";
@@ -183,11 +183,11 @@ export default function ConferenciaRecebimento() {
      { id: 4, label: "Finalização", description: "Confirmar dados" },
    ];
  
-   return (
-     <AppLayout title="Conferência de Recebimento" showBack>
-       <LeaveGuard hasChanges={hasChanges} />
-       <div className="p-4 space-y-6 max-w-4xl mx-auto">
-         <StepProgress steps={steps} currentStep={currentStep} className="mb-8" />
+    return (
+      <AppLayout title="Conferência de Recebimento" showBack>
+        <LeaveGuard hasChanges={hasChanges} />
+        <PersistentStepper steps={steps} currentStep={currentStep} />
+        <div className="p-4 space-y-6 max-w-4xl mx-auto mt-4">
          
          <div className="flex items-start justify-between">
           <div>
