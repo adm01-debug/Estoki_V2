@@ -15,7 +15,14 @@ export const useTriagens = () => {
   const { data: triagens, isLoading, error, refetch } = useQuery({
     queryKey: ['triagens'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('eventos_triagem').select('*').order('created_at', { ascending: false });
+       const { data, error } = await supabase.from('eventos_triagem').select(`
+         *,
+         lotes (
+           quantidade_inicial,
+           numero_lote,
+           produtos (nome, sku)
+         )
+       `).order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     }
