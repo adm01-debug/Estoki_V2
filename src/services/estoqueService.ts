@@ -21,14 +21,21 @@ export interface Estoque {
  type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 export const estoqueService = {
-  async getAll(): Promise<Estoque[]> {
+   async getAll(options?: { page?: number; pageSize?: number }): Promise<{ data: Estoque[]; total: number }> {
+      const { page = 1, pageSize = 20 } = options || {};
      try {
-       const { data, error } = await supabase
-         .from('posicoes_estoque')
-         .select('*')
-         .order('created_at', { ascending: false });
-       if (error) throw error;
-       return (data || []) as unknown as Estoque[];
+        const from = (page - 1) * pageSize;
+        const { data, error, count } = await supabase
+          .from('posicoes_estoque')
+          .select('*', { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, from + pageSize - 1);
+
+        if (error) throw error;
+        return { 
+          data: (data || []) as unknown as Estoque[],
+          total: count || 0
+        };
      } catch (error) {
        logger.error("Erro ao buscar todas as posições de estoque", error);
        throw error;

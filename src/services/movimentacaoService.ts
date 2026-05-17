@@ -67,8 +67,10 @@ export const movimentacaoService = {
     tipo?: string;
     data_inicio?: string;
     data_fim?: string;
-    limit?: number;
-  }): Promise<Movimentacao[]> {
+    page?: number;
+    pageSize?: number;
+  }): Promise<{ data: Movimentacao[]; total: number }> {
+    const { page = 1, pageSize = 20 } = filtros || {};
     try {
       let query = supabase
         .from('rastreamento_historico')
@@ -87,35 +89,36 @@ export const movimentacaoService = {
       if (filtros?.data_fim) {
         query = query.lte('created_at', filtros.data_fim);
       }
-      if (filtros?.limit) {
-        query = query.limit(filtros.limit);
+      const from = (page - 1) * pageSize;
+      query = query.range(from, from + pageSize - 1);
+
+      const { data, error, count } = await query;
+
+      if (error) {
+        logger.error('Erro ao buscar histórico', error);
+        return { data: [], total: 0 };
       }
 
-      const { data, error } = await query;
+      const mappedData = (data || []).map((item: RastreamentoHistorico) => {
+        const detalhes = item.detalhes as Record<string, unknown> | null;
+        return {
+          id: item.id,
+          tipo: item.tipo_evento as Movimentacao['tipo'],
+          lote_id: item.lote_id ?? undefined,
+          posicao_origem: detalhes?.posicao_origem as string | undefined,
+          posicao_destino: detalhes?.posicao_destino as string | undefined,
+          quantidade: item.quantidade ?? 0,
+          motivo: item.descricao ?? undefined,
+          usuario_id: item.operador_id ?? '',
+          produto_id: detalhes?.produto_id as string | undefined,
+          created_at: item.created_at,
+        };
+      });
 
-       if (error) {
-         logger.error('Erro ao buscar histórico', error);
-         return [];
-       }
- 
-       return (data || []).map((item: RastreamentoHistorico) => {
-         const detalhes = item.detalhes as Record<string, unknown> | null;
-         return {
-           id: item.id,
-           tipo: item.tipo_evento as Movimentacao['tipo'],
-           lote_id: item.lote_id ?? undefined,
-           posicao_origem: detalhes?.posicao_origem as string | undefined,
-           posicao_destino: detalhes?.posicao_destino as string | undefined,
-           quantidade: item.quantidade ?? 0,
-           motivo: item.descricao ?? undefined,
-           usuario_id: item.operador_id ?? '',
-           produto_id: detalhes?.produto_id as string | undefined,
-           created_at: item.created_at,
-         };
-       });
+      return { data: mappedData, total: count || 0 };
      } catch (error) {
        logger.error('Erro inesperado ao buscar histórico', error);
-       return [];
+        return { data: [], total: 0 };
      }
   },
 

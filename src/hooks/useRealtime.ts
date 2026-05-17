@@ -1,20 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const useRealtime = (table: string, queryKey: string[]) => {
   const queryClient = useQueryClient();
 
+  const queryKeyRef = useRef(queryKey);
+  queryKeyRef.current = queryKey;
+
   useEffect(() => {
+    const channelId = `${table}-realtime-${queryKey.join('-')}`;
     const channel = supabase
-      .channel(`${table}-realtime`)
+      .channel(channelId)
       .on('postgres_changes', { event: '*', schema: 'public', table }, () => {
-        queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({ queryKey: queryKeyRef.current });
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`Subscribed to realtime changes for ${table}`);
+        }
+      });
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [table, queryKey, queryClient]);
+  }, [table, queryClient]);
 };

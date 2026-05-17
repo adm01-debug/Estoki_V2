@@ -11,7 +11,8 @@
  }
 
 export const orderService = {
-   async getAll(filters?: OrderFilters) {
+    async getAll(filters?: OrderFilters & { page?: number; pageSize?: number }) {
+      const { page = 1, pageSize = 20 } = filters || {};
      try {
        let query = supabase
          .from("orders")
@@ -24,11 +25,21 @@ export const orderService = {
          `)
          .order("created_at", { ascending: false });
 
-       if (filters?.status) query = query.eq("status", filters.status);
+        if (filters?.status) query = query.eq("status", filters.status);
 
-       const { data, error } = await query;
-       if (error) throw error;
-       return data;
+        const from = (page - 1) * pageSize;
+        query = query.range(from, from + pageSize - 1);
+
+        const { data, error, count } = await query;
+
+        if (error) throw error;
+        return {
+          data,
+          total: count || 0,
+          page,
+          pageSize,
+          totalPages: Math.ceil((count || 0) / pageSize)
+        };
      } catch (error) {
        logger.error("Erro ao buscar pedidos", error, filters);
        throw error;
