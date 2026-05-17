@@ -2475,6 +2475,8 @@ export type Database = {
           posicao_id: string | null
           produto_id: string | null
           quantidade: number | null
+          setor_atual: string | null
+          status_timeline: string | null
           tipo_evento: Database["public"]["Enums"]["tipo_evento_rastreamento"]
         }
         Insert: {
@@ -2490,6 +2492,8 @@ export type Database = {
           posicao_id?: string | null
           produto_id?: string | null
           quantidade?: number | null
+          setor_atual?: string | null
+          status_timeline?: string | null
           tipo_evento: Database["public"]["Enums"]["tipo_evento_rastreamento"]
         }
         Update: {
@@ -2505,6 +2509,8 @@ export type Database = {
           posicao_id?: string | null
           produto_id?: string | null
           quantidade?: number | null
+          setor_atual?: string | null
+          status_timeline?: string | null
           tipo_evento?: Database["public"]["Enums"]["tipo_evento_rastreamento"]
         }
         Relationships: [
@@ -2531,6 +2537,73 @@ export type Database = {
           },
           {
             foreignKeyName: "rastreamento_historico_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recuperacao_materiais: {
+        Row: {
+          created_at: string | null
+          data_entrada: string | null
+          data_saida: string | null
+          defeito_identificado: string | null
+          id: string
+          lote_id: string | null
+          operador_responsavel: string | null
+          produto_id: string | null
+          quantidade_original: number
+          quantidade_perda: number | null
+          quantidade_recuperada: number | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_entrada?: string | null
+          data_saida?: string | null
+          defeito_identificado?: string | null
+          id?: string
+          lote_id?: string | null
+          operador_responsavel?: string | null
+          produto_id?: string | null
+          quantidade_original: number
+          quantidade_perda?: number | null
+          quantidade_recuperada?: number | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          data_entrada?: string | null
+          data_saida?: string | null
+          defeito_identificado?: string | null
+          id?: string
+          lote_id?: string | null
+          operador_responsavel?: string | null
+          produto_id?: string | null
+          quantidade_original?: number
+          quantidade_perda?: number | null
+          quantidade_recuperada?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recuperacao_materiais_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recuperacao_materiais_operador_responsavel_fkey"
+            columns: ["operador_responsavel"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recuperacao_materiais_produto_id_fkey"
             columns: ["produto_id"]
             isOneToOne: false
             referencedRelation: "produtos"
@@ -2850,6 +2923,67 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      setores_checkpoint: {
+        Row: {
+          created_at: string | null
+          id: string
+          lote_id: string | null
+          observacoes: string | null
+          operador_id: string | null
+          produto_id: string | null
+          quantidade: number
+          setor_destino: string
+          setor_origem: string
+          status_integridade: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id?: string | null
+          produto_id?: string | null
+          quantidade: number
+          setor_destino: string
+          setor_origem: string
+          status_integridade?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lote_id?: string | null
+          observacoes?: string | null
+          operador_id?: string | null
+          produto_id?: string | null
+          quantidade?: number
+          setor_destino?: string
+          setor_origem?: string
+          status_integridade?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "setores_checkpoint_lote_id_fkey"
+            columns: ["lote_id"]
+            isOneToOne: false
+            referencedRelation: "lotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "setores_checkpoint_operador_id_fkey"
+            columns: ["operador_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "setores_checkpoint_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       streaks_historico: {
         Row: {
@@ -3434,6 +3568,20 @@ export type Database = {
         | "entrega"
         | "devolucao"
         | "ajuste_estoque"
+      tipo_evento_rastreamento_v2:
+        | "recebimento_entrada"
+        | "triagem_conferencia"
+        | "armazenamento_pallet"
+        | "saida_para_gravacao"
+        | "retorno_da_gravacao"
+        | "saida_para_manuseio"
+        | "retorno_do_manuseio"
+        | "setor_conserto_entrada"
+        | "setor_conserto_saida"
+        | "expedicao_saida_conferencia"
+        | "expedicao_saida_liberado"
+        | "devolucao_fornecedor"
+        | "perda_confirmada"
       tipo_posicao: "porta_palete" | "box"
       tipo_registro_td: "troca" | "devolucao"
       tipo_tarefa:
@@ -3671,6 +3819,21 @@ export const Constants = {
         "entrega",
         "devolucao",
         "ajuste_estoque",
+      ],
+      tipo_evento_rastreamento_v2: [
+        "recebimento_entrada",
+        "triagem_conferencia",
+        "armazenamento_pallet",
+        "saida_para_gravacao",
+        "retorno_da_gravacao",
+        "saida_para_manuseio",
+        "retorno_do_manuseio",
+        "setor_conserto_entrada",
+        "setor_conserto_saida",
+        "expedicao_saida_conferencia",
+        "expedicao_saida_liberado",
+        "devolucao_fornecedor",
+        "perda_confirmada",
       ],
       tipo_posicao: ["porta_palete", "box"],
       tipo_registro_td: ["troca", "devolucao"],
