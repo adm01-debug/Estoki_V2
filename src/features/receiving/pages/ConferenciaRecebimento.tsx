@@ -65,10 +65,28 @@ export default function ConferenciaRecebimento() {
   
   const handleVolumeConfirm = (volumeId: number) => {
     setVolumes(prev => prev.map(v => 
-      v.id === volumeId ? { ...v, conferido: true } : v
+      v.id === volumeId ? { ...v, conferido: true, integridade: v.integridade || 'ok' } : v
     ));
     const total = volumes.reduce((acc, v) => acc + (v.id === volumeId ? (v.qtdContada || 0) : (v.conferido ? (v.qtdContada || 0) : 0)), 0);
     setQuantidadeConferida(total);
+  };
+
+  const handleVolumeIntegrityChange = (volumeId: number, integridade: 'ok' | 'avaiado' | 'critico') => {
+    setHasChanges(true);
+    setVolumes(prev => prev.map(v => 
+      v.id === volumeId ? { ...v, integridade } : v
+    ));
+  };
+
+  const handleVolumeHandoff = (volumeId: number) => {
+    setHasChanges(true);
+    setVolumes(prev => prev.map(v => 
+      v.id === volumeId ? { ...v, handoffConfirmado: true } : v
+    ));
+    toast({
+      title: "Volume Liberado",
+      description: `Volume ${volumeId} encaminhado para triagem.`,
+    });
   };
 
   useEffect(() => {
@@ -300,6 +318,8 @@ export default function ConferenciaRecebimento() {
           quantidadeEsperada={quantidadeEsperada}
           handleVolumeChange={handleVolumeChange}
           handleVolumeConfirm={handleVolumeConfirm}
+          handleVolumeIntegrityChange={handleVolumeIntegrityChange}
+          handleVolumeHandoff={handleVolumeHandoff}
           balancaConectada={false} // Simulado ou passado via props se necessário
           leituraBalanca={null}
         />

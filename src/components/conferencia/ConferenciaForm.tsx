@@ -20,6 +20,8 @@ interface ConferenciaFormProps {
   quantidadeEsperada: number;
   handleVolumeChange: (id: number, qtd: number) => void;
   handleVolumeConfirm: (id: number) => void;
+  handleVolumeIntegrityChange?: (id: number, integridade: 'ok' | 'avaiado' | 'critico') => void;
+  handleVolumeHandoff?: (id: number) => void;
   balancaConectada: boolean;
   leituraBalanca: { peso: number } | null;
 }
@@ -37,6 +39,8 @@ export function ConferenciaForm({
   quantidadeEsperada,
   handleVolumeChange,
   handleVolumeConfirm,
+  handleVolumeIntegrityChange,
+  handleVolumeHandoff,
   balancaConectada,
   leituraBalanca
 }: ConferenciaFormProps) {
@@ -45,12 +49,14 @@ export function ConferenciaForm({
       <div>
         <Label htmlFor="quantidade">Quantidade Conferida</Label>
         {volumes.length > 1 && (
-          <VolumeContagem
-            volumes={volumes}
-            onVolumeChange={handleVolumeChange}
+          <VolumeContagem 
+            volumes={volumes} 
+            onVolumeChange={handleVolumeChange} 
             onVolumeConfirm={handleVolumeConfirm}
-            totalEsperado={quantidadeEsperada}
-            className="mb-4"
+            onVolumeIntegrityChange={handleVolumeIntegrityChange}
+            onVolumeHandoff={handleVolumeHandoff}
+            totalEsperado={quantidadeEsperada} 
+            className="mb-4" 
           />
         )}
         <Input
