@@ -12,7 +12,7 @@ import { LoadingFallback } from './LoadingFallback';
  * Route-specific loading fallback that shows contextual skeletons
  * based on the type of page being loaded.
  */
- import { motion } from "framer-motion";
+  import { motion, AnimatePresence } from "framer-motion";
  
  export const RouteLoadingFallback = memo(
    forwardRef<HTMLDivElement, RouteLoadingFallbackProps>(
@@ -57,18 +57,24 @@ import { LoadingFallback } from './LoadingFallback';
          }
        })();
  
-       return (
-         <motion.div 
-           ref={ref}
-           initial={{ opacity: 0 }}
-           animate={{ opacity: 1 }}
-           exit={{ opacity: 0 }}
-           transition={{ duration: 0.3 }}
-           className="w-full"
-         >
-           {content}
-         </motion.div>
-       );
+        return (
+          <AnimatePresence mode="wait">
+            <motion.div 
+              ref={ref}
+              key={type}
+              initial={{ opacity: 0, scale: 0.99 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.01 }}
+              transition={{ 
+                duration: 0.25,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              className="w-full will-change-transform"
+            >
+              {content}
+            </motion.div>
+          </AnimatePresence>
+        );
      }
    )
  );
