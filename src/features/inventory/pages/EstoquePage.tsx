@@ -17,9 +17,11 @@ import { type PosicaoEstoque, type StatusPosicao } from "../hooks/useEstoque";
 import { toast } from "sonner";
 import { NovaPosicaoDialog } from "../components/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "../components/PosicaoDetalhesDialog";
-import { EstoqueStatsCards } from "../components/EstoqueStatsCards";
-import { EstoqueFilterSheet } from "../components/EstoqueFilterSheet";
-import { EstoqueMapaTab } from "../components/EstoqueMapaTab";
+ import { EstoqueStatsCards } from "../components/EstoqueStatsCards";
+ import { EstoqueFilterSheet } from "../components/EstoqueFilterSheet";
+ import { EstoqueMapaTab } from "../components/EstoqueMapaTab";
+ import { AlertaPerdaLogistica } from "../components/AlertaPerdaLogistica";
+ import { MapaCalorOcupacao } from "../components/MapaCalorOcupacao";
 import { differenceInDays } from "date-fns";
 import { ArrowRight, History } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -238,15 +240,23 @@ export default function EstoquePage() {
             )}
           </AnimatePresence>
 
-          <EstoqueStatsCards stats={stats} />
-          
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <EstoqueCharts posicoes={safePositions} />
-          </motion.div>
+           <EstoqueStatsCards stats={stats} />
+
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+             <div className="lg:col-span-2 space-y-6">
+               <AlertaPerdaLogistica />
+               <motion.div
+                 initial={{ opacity: 0, y: 10 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 transition={{ delay: 0.2 }}
+               >
+                 <EstoqueCharts posicoes={safePositions} />
+               </motion.div>
+             </div>
+             <div className="lg:col-span-1">
+               <MapaCalorOcupacao />
+             </div>
+           </div>
 
           <div className="flex gap-3">
             <div className="relative flex-1">
