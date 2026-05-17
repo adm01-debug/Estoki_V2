@@ -60,42 +60,46 @@ export default function Dashboard() {
    }
 
    const kpiItems = [
-     { 
-       icon: Package, 
-       value: aguardandoRecebimento, 
-       label: "Aguardando", 
-       sublabel: "Recebimento", 
-       variant: "warning" as const, 
-       path: "/recebimento",
-       trend: { value: 12, isUp: true, label: "vs ontem" }
-     },
-     { 
-       icon: Search, 
-       value: triagemPendente, 
-       label: "Triagem", 
-       sublabel: "Pendente", 
-       variant: "default" as const, 
-       path: "/triagem",
-       trend: { value: 5, isUp: false, label: "vs ontem" }
-     },
-     { 
-       icon: Warehouse, 
-       value: itensEstoque.toLocaleString(), 
-       label: "Posições", 
-       sublabel: "Ocupadas", 
-       variant: "success" as const, 
-       path: "/estoque",
-       trend: { value: 2, isUp: true, label: "vs ontem" }
-     },
-     { 
-       icon: AlertTriangle, 
-       value: divergencias, 
-       label: "Divergências", 
-       sublabel: "Pendentes", 
-       variant: "danger" as const, 
-       path: "/divergencias",
-       trend: { value: 0, isUp: true, label: "vs ontem" }
-     },
+      { 
+        icon: Package, 
+        value: aguardandoRecebimento, 
+        label: "Aguardando", 
+        sublabel: "Recebimento", 
+        variant: "warning" as const, 
+        path: "/recebimento",
+        trend: { value: 12, isUp: true, label: "vs ontem" },
+        excellence: true
+      },
+      { 
+        icon: Search, 
+        value: triagemPendente, 
+        label: "Triagem", 
+        sublabel: "Pendente", 
+        variant: "default" as const, 
+        path: "/triagem",
+        trend: { value: 5, isUp: false, label: "vs ontem" },
+        excellence: true
+      },
+      { 
+        icon: Warehouse, 
+        value: itensEstoque.toLocaleString(), 
+        label: "Posições", 
+        sublabel: "Ocupadas", 
+        variant: "success" as const, 
+        path: "/estoque",
+        trend: { value: 2, isUp: true, label: "vs ontem" },
+        excellence: true
+      },
+      { 
+        icon: AlertTriangle, 
+        value: divergencias, 
+        label: "Divergências", 
+        sublabel: "Pendentes", 
+        variant: "danger" as const, 
+        path: "/divergencias",
+        trend: { value: 0, isUp: true, label: "vs ontem" },
+        excellence: true
+      },
    ];
 
    const totalRecebimentos = stats?.entradasHoje || 0;
