@@ -40,8 +40,15 @@ export function useMovimentacoes() {
   const { toast } = useToast();
   const { user } = useAuth();
 
-  const fetchMovimentacoes = useCallback(async (limit = 50) => {
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const fetchMovimentacoes = useCallback(async (page = 1, pageSize = 50) => {
     try {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      abortControllerRef.current = new AbortController();
+
       setLoading(true);
       setError(null);
 
@@ -54,7 +61,8 @@ export function useMovimentacoes() {
           profiles:operador_id (nome)
         `)
         .order('created_at', { ascending: false })
-        .limit(limit);
+        .range((page - 1) * pageSize, page * pageSize - 1)
+        .abortSignal(abortControllerRef.current.signal);
 
       if (fetchError) throw fetchError;
 

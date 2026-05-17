@@ -9,14 +9,20 @@
    const queryClient = useQueryClient();
    const { log } = useAuditLog();
  
-   const { data: produtos = [], isLoading, error, refetch } = useQuery({
-     queryKey: ['produtos'],
-     queryFn: async () => {
-       const { data, error } = await supabase.from('produtos').select('*').order('nome');
-       if (error) throw error;
-       return data as Produto[];
-     }
-   });
+    const { data: result, isLoading, error, refetch } = useQuery({
+      queryKey: ['produtos', { page: 1, pageSize: 100 }], // Padrão para lista gerenciada
+      queryFn: async () => {
+        const { data, error, count } = await supabase
+          .from('produtos')
+          .select('*', { count: 'exact' })
+          .order('nome')
+          .range(0, 99);
+        if (error) throw error;
+        return { data: data as Produto[], total: count || 0 };
+      }
+    });
+
+    const produtos = result?.data || [];
  
    const createProduto = useMutation({
      mutationFn: async (novoProduto: any) => {
