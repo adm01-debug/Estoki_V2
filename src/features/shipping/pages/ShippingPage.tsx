@@ -19,9 +19,10 @@ import {
   Printer,
   MapPin,
   QrCode,
-  MoreVertical,
-  ArrowRight
-} from "lucide-react";
+   MoreVertical,
+   ArrowRight,
+   LayoutDashboard
+ } from "lucide-react";
 import { useRomaneios, StatusRomaneio } from "../hooks/useRomaneios";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -32,9 +33,11 @@ import { Progress } from "@/components/ui/progress";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+   DropdownMenuItem,
+   DropdownMenuTrigger,
+ } from "@/components/ui/dropdown-menu";
+ import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
+ import { VolumeChecklist } from "../components/VolumeChecklist";
 
 export default function ShippingPage() {
   const { romaneios, loading, atualizarStatus } = useRomaneios();
@@ -70,7 +73,8 @@ export default function ShippingPage() {
       <PageTransition>
         <div className="p-4 space-y-6 pb-24 md:pb-6">
           {/* Stats Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+           {/* Stats Summary */}
+           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="bg-primary/5 border-primary/20">
               <CardContent className="p-4 flex items-center justify-between">
                 <div>
@@ -106,9 +110,19 @@ export default function ShippingPage() {
                 </div>
                 <div className="p-2 bg-destructive/10 rounded-full"><AlertCircle className="h-5 w-5 text-destructive" /></div>
               </CardContent>
-            </Card>
-          </div>
-
+             </Card>
+           </div>
+ 
+           {/* Promo Brindes Operational Views */}
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+             <div className="lg:col-span-2">
+               <VolumeChecklist />
+             </div>
+             <div className="lg:col-span-1">
+               <ExpedicaoTimeline />
+             </div>
+           </div>
+ 
           {/* Control bar */}
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-96">
