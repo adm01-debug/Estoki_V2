@@ -213,24 +213,23 @@ export function VolumeContagem({
         })}
       </div>
 
-      {/* Resumo Total */}
-      <div className="mt-4 pt-4 border-t border-border">
+      <div className="mt-6 pt-6 border-t-2 border-dashed border-border/50">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="text-xs text-muted-foreground">Esperado</div>
-            <div className="text-lg font-bold">{totalEsperado}</div>
+          <div className="bg-muted/30 rounded-2xl p-3 border border-border/20">
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Esperado</div>
+            <div className="text-xl font-black text-foreground">{totalEsperado}</div>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="text-xs text-muted-foreground">Contado</div>
-            <div className="text-lg font-bold">{totalContado}</div>
+          <div className="bg-muted/30 rounded-2xl p-3 border border-border/20">
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Contado</div>
+            <div className="text-xl font-black text-foreground">{totalContado}</div>
           </div>
           <div className={cn(
-            "rounded-lg p-2",
-            totalDiferenca === 0 ? "bg-success/10" : totalDiferenca > 0 ? "bg-warning/10" : "bg-destructive/10"
+            "rounded-2xl p-3 border",
+            totalDiferenca === 0 ? "bg-success/10 border-success/20" : totalDiferenca > 0 ? "bg-warning/10 border-warning/20" : "bg-destructive/10 border-destructive/20"
           )}>
-            <div className="text-xs text-muted-foreground">Diferença</div>
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Divergência</div>
             <div className={cn(
-              "text-lg font-bold",
+              "text-xl font-black",
               totalDiferenca === 0 ? "text-success" : totalDiferenca > 0 ? "text-warning" : "text-destructive"
             )}>
               {totalDiferenca > 0 ? "+" : ""}{totalDiferenca}
