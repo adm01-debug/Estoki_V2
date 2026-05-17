@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
- import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info } from "lucide-react";
+  import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PosicaoEstoque, StatusPosicao } from "../hooks/useEstoque";
 import { differenceInDays } from "date-fns";
@@ -107,22 +107,39 @@ export const EstoqueMapaTab = memo(({ filteredPositions, ruas, zoom, onZoomChang
                               return (
                                 <Tooltip key={position.id}>
                                   <TooltipTrigger asChild>
-                                <button
-                                  onClick={() => onSelectPosition(position)}
-                                  className={cn(
-                                    "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group hover:scale-110 active:scale-95 z-0 hover:z-10", 
-                                    !heatmapEnabled && config.bg, 
-                                    !heatmapEnabled && config.border,
-                                    "hover:ring-2 hover:ring-primary hover:ring-offset-1"
-                                  )}
-                                  style={heatmapStyle}
-                                  title={`${position.codigo} - ${config.label}`}
-                                >
-                                  {position.status === 'ocupado' && diasArmazenado > 30 && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-warning animate-pulse" />
-                                  )}
-                                  <span className="opacity-0 group-hover:opacity-100 transition-opacity">{secao}</span>
-                                </button>
+                                 <button
+                                   onClick={() => onSelectPosition(position)}
+                                   className={cn(
+                                     "h-8 rounded-md border-2 transition-all text-[10px] font-medium relative group hover:scale-110 active:scale-95 z-0 hover:z-10 flex items-center justify-center", 
+                                     !heatmapEnabled && config.bg, 
+                                     !heatmapEnabled && config.border,
+                                     "hover:ring-2 hover:ring-primary hover:ring-offset-1",
+                                     position.status === 'livre' && "hover:bg-success/10",
+                                     position.status === 'bloqueado' && "cursor-not-allowed opacity-60"
+                                   )}
+                                   style={heatmapStyle}
+                                   title={`${position.codigo} - ${config.label}`}
+                                 >
+                                   {position.status === 'ocupado' && (
+                                     <div className="flex flex-col items-center">
+                                       {diasArmazenado > 30 ? (
+                                         <Clock className="h-3 w-3 text-warning animate-pulse" />
+                                       ) : (
+                                         <Package className="h-3 w-3 opacity-60" />
+                                       )}
+                                     </div>
+                                   )}
+                                   {position.status === 'livre' && (
+                                     <CheckCircle2 className="h-3 w-3 opacity-0 group-hover:opacity-40 transition-opacity" />
+                                   )}
+                                   {position.status === 'bloqueado' && (
+                                     <XCircle className="h-3 w-3 text-destructive" />
+                                   )}
+                                   {position.status === 'reservado' && (
+                                     <Clock className="h-3 w-3 text-warning" />
+                                   )}
+                                   <span className="absolute bottom-0 right-0.5 text-[7px] opacity-40 group-hover:opacity-100 transition-opacity">{secao}</span>
+                                 </button>
                                   </TooltipTrigger>
                                   <TooltipContent side="top" className="w-64 p-3">
                                     <div className="space-y-2">
