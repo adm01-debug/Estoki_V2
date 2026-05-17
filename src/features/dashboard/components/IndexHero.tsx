@@ -46,7 +46,7 @@ interface Props {
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground mt-1">Sua central de inteligência logística está pronta.</p>
+          <p className="text-muted-foreground mt-1">Seu ecossistema 10/10 de alta performance está pronto.</p>
         </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
