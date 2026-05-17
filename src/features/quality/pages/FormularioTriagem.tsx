@@ -2,7 +2,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus } from "lucide-react";
+ import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus, AlertCircle } from "lucide-react";
  import { toast } from "sonner";
 import { useTriagens } from "../hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
@@ -19,6 +19,7 @@ import { Sparkles, Trophy, Star } from "lucide-react";
  import { ChecklistCard } from "../components/formulario/ChecklistCard";
  import { ResultadoInspecaoCard } from "../components/formulario/ResultadoInspecaoCard";
  import { checklistItems } from "../components/formulario/constants";
+ import { VolumeContagem, VolumeData } from "../components/VolumeContagem";
  import { StepProgress } from "@/components/common/StepProgress";
  import { LeaveGuard } from "@/components/common/LeaveGuard";
 
@@ -55,6 +56,8 @@ export default function FormularioTriagem() {
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
    const [showCelebration, setShowCelebration] = useState(false);
    const [hasChanges, setHasChanges] = useState(false);
+  const [volumes, setVolumes] = useState<VolumeData[]>([]);
+  const [missingReported, setMissingReported] = useState(false);
  
    const quantidadeTotal = triagem?.quantidade_total || 100;
 
@@ -67,6 +70,17 @@ export default function FormularioTriagem() {
         const found = triagens.find(t => t.id === id);
         if (found) {
           setTriagem(found);
+          // Mock volumes based on quantity if not present
+          const totalVolumes = Math.ceil(found.quantidade_total / 50) || 1; // Example: 50 items per box
+          const initialVolumes: VolumeData[] = Array.from({ length: totalVolumes }, (_, i) => ({
+            id: i + 1,
+            numero: String(i + 1).padStart(2, '0'),
+            qtdEsperada: i === totalVolumes - 1 ? (found.quantidade_total % 50 || 50) : 50,
+            qtdContada: null,
+            conferido: false,
+            integridade: 'ok'
+          }));
+          setVolumes(initialVolumes);
           iniciarTimer();
         }
       }
@@ -180,10 +194,12 @@ export default function FormularioTriagem() {
  
    const currentStep = useMemo(() => {
      if (Object.keys(checklist).length === 0) return 0;
-     if (!amostragemConfirmada) return 1;
-     if (fotos.length < 2) return 2;
-     return 3;
-   }, [checklist, amostragemConfirmada, fotos]);
+     const volumesConferidos = volumes.filter(v => v.conferido).length;
+     if (volumesConferidos < volumes.length && !missingReported) return 1;
+     if (!amostragemConfirmada) return 2;
+     if (fotos.length < 2) return 3;
+     return 4;
+   }, [checklist, volumes, amostragemConfirmada, fotos, missingReported]);
  
    return (
      <AppLayout title="Formulário de Triagem" showBack>
@@ -201,12 +217,56 @@ export default function FormularioTriagem() {
           onIniciar={iniciarTimer}
         />
 
-        {mostrarAmostragem && quantidadeTotal > 0 && !amostragemConfirmada && (
-          <AmostragemAutomatica
-            tamanhoLote={quantidadeTotal}
-            onConfirmarAmostra={() => setAmostragemConfirmada(true)}
-          />
-        )}
+         <div className="space-y-6">
+           {volumes.length > 0 && (
+             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+               <VolumeContagem
+                 volumes={volumes}
+                 totalEsperado={quantidadeTotal}
+                 onVolumeChange={(volId, val) => {
+                   setHasChanges(true);
+                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, qtdContada: val } : v));
+                 }}
+                 onVolumeConfirm={(volId) => {
+                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, conferido: true } : v));
+                 }}
+                 onVolumeIntegrityChange={(volId, integrity) => {
+                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, integridade: integrity } : v));
+                 }}
+                 onReportMissing={(volId) => {
+                   setMissingReported(true);
+                   toast.warning("Alerta de Extravio Emitido", {
+                     description: `O volume ${volId} foi marcado como ausente. A gerência foi notificada.`,
+                     duration: 5000,
+                   });
+                 }}
+                 onVolumeHandoff={(volId) => {
+                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, handoffConfirmado: true } : v));
+                   toast.success(`Volume ${volId} liberado para triagem interna.`);
+                 }}
+               />
+             </motion.div>
+           )}
+
+           {missingReported && (
+             <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-top duration-300">
+               <div className="bg-destructive/20 p-2 rounded-full">
+                 <AlertCircle className="h-6 w-6 text-destructive" />
+               </div>
+               <div className="flex-1">
+                 <p className="text-sm font-black text-destructive uppercase tracking-tighter">Material Faltante Detectado</p>
+                 <p className="text-xs text-destructive/80">O processo continuará com ressalva. A discrepância de volumes será registrada no laudo final.</p>
+               </div>
+             </div>
+           )}
+
+           {mostrarAmostragem && quantidadeTotal > 0 && !amostragemConfirmada && (
+             <AmostragemAutomatica
+               tamanhoLote={quantidadeTotal}
+               onConfirmarAmostra={() => setAmostragemConfirmada(true)}
+             />
+           )}
+         </div>
 
         <ChecklistCard 
           checklist={checklist}
