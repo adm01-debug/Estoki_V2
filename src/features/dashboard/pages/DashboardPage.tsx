@@ -47,9 +47,10 @@ export default function Dashboard() {
      const div = recebimentosList.filter(r => r.status === 'divergencia').length;
      const triagem = stats?.triagensPendentes || 0;
      const itens = estatisticas.posicoesOcupadas;
-     const pp = Math.round(estatisticas.taxaOcupacao);
-     const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.8) : 0;
-     return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
+      const pp = Math.round(estatisticas.taxaOcupacao);
+      // Simulação de ocupação de boxes com base na taxa global para maior precisão visual
+      const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.82) : 0;
+      return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
    }, [recebimentos, stats, estatisticas]);
 
   const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
