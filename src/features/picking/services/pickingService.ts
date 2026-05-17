@@ -17,8 +17,8 @@ export const pickingService = {
     
     return (data || []).map(t => ({
       ...t,
-      produto_nome: (t.produto as any)?.nome,
-      posicao_origem_codigo: (t.posicao_origem as any)?.codigo
+      produto_nome: (t.produto as any)?.nome || 'Produto Indefinido',
+      posicao_origem_codigo: (t.posicao_origem as any)?.codigo || '---'
     })) as PickingTask[];
   },
 
