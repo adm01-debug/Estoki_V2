@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, ArrowRightCircle } from "lucide-react";
+ import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, ArrowRightCircle, UserCheck, History, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,12 +13,15 @@ export interface VolumeData {
   conferido: boolean;
   integridade?: 'ok' | 'avaiado' | 'critico';
   handoffConfirmado?: boolean;
+  responsavelHandoff?: string;
+  timestampHandoff?: string;
 }
 
 interface VolumeContagemProps {
   volumes: VolumeData[];
   onVolumeChange: (volumeId: number, qtdContada: number) => void;
   onVolumeConfirm: (volumeId: number) => void;
+  onReportMissing?: (volumeId: number) => void;
   totalEsperado: number;
   className?: string;
   onVolumeIntegrityChange?: (volumeId: number, integridade: 'ok' | 'avaiado' | 'critico') => void;
@@ -42,6 +45,7 @@ export function VolumeContagem({
   const totalContado = volumes.reduce((acc, v) => acc + (v.qtdContada || 0), 0);
   const totalDiferenca = totalContado - totalEsperado;
   const todosConferidos = volumesConferidos === volumes.length;
+  const volumesFaltantes = volumes.filter(v => v.qtdContada === 0 || v.integridade === 'critico').length;
 
   const getVolumeStatus = (volume: VolumeData) => {
     if (volume.integridade === 'critico') return { color: "border-destructive", bg: "bg-destructive/10", icon: <AlertCircle className="h-4 w-4 text-destructive" /> };
@@ -63,25 +67,68 @@ export function VolumeContagem({
         </Badge>
       </div>
 
-      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
-        {volumes.map((v) => (
-          <div 
-            key={v.id}
-            title={`Volume ${v.numero}`}
-            className={cn(
-              "aspect-square rounded-lg border-2 flex items-center justify-center transition-all cursor-help",
-              v.handoffConfirmado ? "bg-primary/20 border-primary" :
-              v.conferido ? (v.integridade === 'ok' ? "bg-success/20 border-success" : "bg-warning/20 border-warning") :
-              "bg-muted/30 border-muted-foreground/20"
-            )}
-          >
-            {v.handoffConfirmado ? (
-              <ArrowRightCircle className="h-4 w-4 text-primary" />
-            ) : (
-              <span className="text-[10px] font-bold opacity-50">{v.numero}</span>
-            )}
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-tighter">
+          <Package className="h-4 w-4" />
+          Controle de Volumes e Integridade
+        </h3>
+        <div className="flex gap-2">
+          {volumesFaltantes > 0 && (
+            <Badge variant="destructive" className="animate-pulse rounded-full px-3 py-1 text-[10px] font-black uppercase flex items-center gap-1.5">
+              <AlertTriangle className="h-3 w-3" />
+              {volumesFaltantes} Alerta(s)
+            </Badge>
+          )}
+          <Badge variant={todosConferidos ? "default" : "secondary"} className={cn("rounded-full px-4", todosConferidos ? "bg-success hover:bg-success" : "")}>
+            {volumesConferidos}/{volumes.length} conferidos
+          </Badge>
+        </div>
+      </div>
+
+      {/* Promo Brindes Specific: Handoff Chain of Custody */}
+      <div className="mb-6 p-4 bg-primary/5 rounded-2xl border border-primary/10 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+            <UserCheck className="h-5 w-5 text-primary" />
           </div>
-        ))}
+          <div>
+            <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Cadeia de Custódia</p>
+            <p className="text-xs font-bold">Responsável pela Entrega: <span className="text-primary underline cursor-pointer">Definir</span></p>
+          </div>
+        </div>
+        <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase gap-1.5 text-primary/70">
+          <History className="h-3 w-3" /> Log
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
+        {volumes.map((v) => {
+          const isMissing = v.conferido && (v.qtdContada === 0 || v.integridade === 'critico');
+          return (
+            <div 
+              key={v.id}
+              title={`Volume ${v.numero}`}
+              className={cn(
+                "aspect-square rounded-lg border-2 flex items-center justify-center transition-all cursor-help relative overflow-hidden",
+                v.handoffConfirmado ? "bg-primary/20 border-primary shadow-[0_0_10px_rgba(var(--primary),0.2)]" :
+                isMissing ? "bg-destructive/10 border-destructive animate-pulse" :
+                v.conferido ? (v.integridade === 'ok' ? "bg-success/20 border-success" : "bg-warning/20 border-warning") :
+                "bg-muted/30 border-muted-foreground/20"
+              )}
+            >
+              {v.handoffConfirmado ? (
+                <ArrowRightCircle className="h-4 w-4 text-primary" />
+              ) : isMissing ? (
+                <AlertCircle className="h-4 w-4 text-destructive" />
+              ) : (
+                <span className="text-[10px] font-bold opacity-50">{v.numero}</span>
+              )}
+              {v.conferido && !v.handoffConfirmado && !isMissing && (
+                <div className="absolute top-0 right-0 w-2 h-2 bg-success rounded-bl-sm" />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       <div className="mb-6 space-y-1.5">
@@ -182,15 +229,26 @@ export function VolumeContagem({
                     </div>
                     
                     <div className="grid grid-cols-2 gap-3">
-                      <Button
-                        variant="outline"
-                        className="gap-2 rounded-xl h-11 border-primary/20 hover:bg-primary/5 text-primary"
-                        onClick={() => onVolumeHandoff?.(volume.id)}
-                        disabled={!volume.conferido}
-                      >
-                        <ArrowRightCircle className="h-4 w-4" />
-                        <span className="text-[10px] font-black uppercase">Liberar Triagem</span>
-                      </Button>
+                      {volume.qtdContada === 0 ? (
+                        <Button
+                          variant="destructive"
+                          className="gap-2 rounded-xl h-11 shadow-lg shadow-destructive/20 border-destructive/30"
+                          onClick={() => onReportMissing?.(volume.id)}
+                        >
+                          <AlertTriangle className="h-4 w-4" />
+                          <span className="text-[10px] font-black uppercase">Reportar Extravio</span>
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          className="gap-2 rounded-xl h-11 border-primary/20 hover:bg-primary/5 text-primary"
+                          onClick={() => onVolumeHandoff?.(volume.id)}
+                          disabled={!volume.conferido}
+                        >
+                          <ArrowRightCircle className="h-4 w-4" />
+                          <span className="text-[10px] font-black uppercase">Liberar Triagem</span>
+                        </Button>
+                      )}
 
                       <Button
                         className="gap-2 rounded-xl h-11 shadow-lg shadow-primary/20"
