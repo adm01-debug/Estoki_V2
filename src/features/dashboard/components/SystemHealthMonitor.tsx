@@ -3,18 +3,20 @@
  import { useEffect, useState } from "react";
  import { cn } from "@/lib/utils";
  
- export function SystemHealthMonitor() {
-   const [latency, setLatency] = useState<number>(24);
-   const [uptime, setUptime] = useState("99.98%");
-   const [lastSync, setLastSync] = useState(new Date());
- 
-   useEffect(() => {
-     const interval = setInterval(() => {
-       setLatency(Math.floor(Math.random() * (45 - 18) + 18));
-       if (Math.random() > 0.8) setLastSync(new Date());
-     }, 5000);
-     return () => clearInterval(interval);
-   }, []);
+  export function SystemHealthMonitor() {
+    const [latency, setLatency] = useState<number>(18);
+    const [lastSync, setLastSync] = useState(new Date());
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setLatency(prev => {
+          const next = prev + (Math.random() > 0.5 ? 1 : -1);
+          return Math.min(Math.max(next, 15), 35);
+        });
+        if (Math.random() > 0.7) setLastSync(new Date());
+      }, 3000);
+      return () => clearInterval(interval);
+    }, []);
  
    const stats = [
      { label: "Status", value: "Operacional", icon: ShieldCheck, color: "text-success" },

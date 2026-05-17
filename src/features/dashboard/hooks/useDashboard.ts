@@ -82,6 +82,7 @@ export const useDashboard = () => {
         saidasHoje,
         posicoesData,
         itensParadosData,
+        giroData
       ] = await Promise.all([
         getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true })),
         getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true }).eq('status', 'ocupado')),
@@ -89,11 +90,14 @@ export const useDashboard = () => {
         getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
-       supabase.from('posicoes_estoque').select('porta_palete, status, secao, nivel').limit(5000),
+        supabase.from('posicoes_estoque').select('porta_palete, status, secao, nivel').limit(5000),
         supabase.from('estoque_posicao')
           .select('id, quantidade, posicao_id, produto_id, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
           .order('data_entrada', { ascending: true })
           .limit(100),
+        supabase.from('rastreamento_historico')
+          .select('id, tipo_evento, created_at')
+          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
       ]);
 
       const taxaOcupacao = totalPosicoes > 0 ? Math.round((posicoesOcupadas / totalPosicoes) * 100) : 0;
@@ -186,18 +190,21 @@ export const useDashboard = () => {
         }
       }
 
+      const totalMovimentacoes = giroData.data?.length || 0;
+      const giroMedio = totalPosicoes > 0 ? Number((totalMovimentacoes / totalPosicoes).toFixed(2)) : 0;
+
       const kpis: DashboardKPIs = {
         totalPosicoes,
         posicoesOcupadas,
         taxaOcupacao,
         itensParados30dias: itensParados.length,
         valorParado: itensParados.reduce((acc, i) => acc + i.valor, 0),
-        giroMedio: 0,
+        giroMedio,
         entradasHoje,
         saidasHoje,
-         triagensHoje: totalTriagens,
-         triagensPendentes,
-       };
+        triagensHoje: totalTriagens,
+        triagensPendentes,
+      };
 
        return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
      },

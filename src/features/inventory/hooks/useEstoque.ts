@@ -95,49 +95,40 @@ export const useEstoque = () => {
   const updatePosicao = useMutation({
     mutationFn: async ({ id, ids, motivo, ...dados }: (PosicaoUpdate & { id?: string; ids?: string[]; motivo?: string })) => {
       const payload = { ...dados };
-        
-        // Se estiver bloqueando ou reservando, registra quem e quando
-        // Note: auth should be handled here to get current user ID
-        const { data: { user } } = await supabase.auth.getUser();
-        
-         const typedPayload = payload as Record<string, unknown>;
-         if (dados.status === 'bloqueado' && user) {
-           typedPayload.bloqueado_por = user.id;
-           typedPayload.bloqueado_em = new Date().toISOString();
-         } else if (dados.status === 'reservado' && user) {
-           typedPayload.reservado_por = user.id;
-           typedPayload.reservado_em = new Date().toISOString();
-         } else if (dados.status === 'livre') {
-           typedPayload.bloqueado_por = null;
-           typedPayload.bloqueado_em = null;
-           typedPayload.reservado_por = null;
-           typedPayload.reservado_em = null;
-         }
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const typedPayload = payload as Record<string, unknown>;
+      if (dados.status === 'bloqueado' && user) {
+        typedPayload.bloqueado_por = user.id;
+        typedPayload.bloqueado_em = new Date().toISOString();
+      } else if (dados.status === 'reservado' && user) {
+        typedPayload.reservado_por = user.id;
+        typedPayload.reservado_em = new Date().toISOString();
+      } else if (dados.status === 'livre') {
+        typedPayload.bloqueado_por = null;
+        typedPayload.bloqueado_em = null;
+        typedPayload.reservado_por = null;
+        typedPayload.reservado_em = null;
+      }
 
-        let updatedData;
-        const posIds = ids && ids.length > 0 ? ids : (id ? [id] : []);
-        
-        if (posIds.length === 0) {
-          throw new Error('ID ou lista de IDs não fornecida para atualização');
-        }
+      const posIds = ids && ids.length > 0 ? ids : (id ? [id] : []);
+      if (posIds.length === 0) throw new Error('ID não fornecido');
 
-        const { data, error } = await supabase.from('posicoes_estoque').update(payload).in('id', posIds).select();
-        if (error) throw error;
-        updatedData = data;
+      const { data, error } = await supabase.from('posicoes_estoque').update(payload).in('id', posIds).select();
+      if (error) throw error;
 
-        // Log status change if status was updated
-        if (dados.status && user) {
-          const logs = posIds.map(posId => ({
-            posicao_id: posId,
-            status_novo: dados.status as string,
-            operador_id: user.id,
-            motivo: motivo || 'Alteração manual via painel'
-          }));
-          await supabase.from('posicao_status_log').insert(logs);
-        }
+      if (dados.status && user) {
+        const logs = posIds.map(posId => ({
+          posicao_id: posId,
+          status_novo: dados.status as string,
+          operador_id: user.id,
+          motivo: motivo || 'Alteração manual via painel'
+        }));
+        await supabase.from('posicao_status_log').insert(logs);
+      }
 
-         return updatedData;
-       },
+      return data;
+    },
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
         const count = Array.isArray(data) ? data.length : 1;
