@@ -48,12 +48,14 @@ export default function RecebimentoPage() {
   }, [searchTerm, statusFilter, setSearchParams]);
 
   const filteredItems = useMemo(() => {
-    const lowerSearch = searchTerm.toLowerCase();
+    const lowerSearch = searchTerm.trim().toLowerCase();
     return (items as any[]).filter((item) => {
-      const matchesSearch =
-        item.numero_lote.toLowerCase().includes(lowerSearch) ||
-        (item.fornecedor || '').toLowerCase().includes(lowerSearch) ||
-        (item.pedido_compra?.toLowerCase().includes(lowerSearch) ?? false);
+      const matchesSearch = !lowerSearch ||
+        (item.numero_lote && item.numero_lote.toLowerCase().includes(lowerSearch)) ||
+        (item.fornecedor && item.fornecedor.toLowerCase().includes(lowerSearch)) ||
+        (item.pedido_compra && item.pedido_compra.toLowerCase().includes(lowerSearch)) ||
+        (item.produto?.nome && item.produto.nome.toLowerCase().includes(lowerSearch)) ||
+        (item.produto?.sku && item.produto.sku.toLowerCase().includes(lowerSearch));
 
       const matchesStatus = statusFilter === "todos" || item.status === statusFilter;
 

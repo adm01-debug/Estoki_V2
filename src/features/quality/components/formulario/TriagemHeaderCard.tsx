@@ -99,7 +99,9 @@ export function TriagemHeaderCard({
                 Salvar Rascunho
              </Button>
              <Button className="flex-1 md:flex-none h-11 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider bg-primary hover:bg-primary/90">
+              <Button variant="default" className="flex-1 md:flex-none h-11 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider bg-primary hover:bg-primary/90" onClick={() => {}}>
                 <CheckCircle2 className="h-4 w-4" /> Validar Parcial
+              </Button>
              </Button>
           </div>
         </div>

@@ -42,20 +42,7 @@ export default function TriagemPage() {
      setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
    };
  
-   const clearSelection = () => setSelectedIds([]);
- 
-  const handleExportCSV = () => {
-    const headers = ["ID", "Lote ID", "Resultado", "Data Inicio", "Data Fim", "Operador"];
-    const rows = filteredAndSortedItems.map((t: any) => [t.id, t.lote_id || "", t.resultado || "Pendente", t.data_inicio, t.data_fim || "", t.operador_id || ""]);
-    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `triagem_estoki_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const clearSelection = () => setSelectedIds([]);
  
   
   const items = triagens || [];
@@ -103,6 +90,26 @@ export default function TriagemPage() {
 
     return filtered;
   }, [items, searchTerm, statusFilter, sortOrder]);
+
+  const handleExportCSV = useCallback(() => {
+    const headers = ["ID", "Lote ID", "Resultado", "Data Inicio", "Data Fim", "Operador"];
+    const rows = filteredAndSortedItems.map((t: any) => [
+      t.id, 
+      t.lote_id || "", 
+      t.resultado || "Pendente", 
+      t.data_inicio, 
+      t.data_fim || "", 
+      t.operador_id || ""
+    ]);
+    const csvContent = [headers, ...rows].map(e => e.map(val => `"${val}"`).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `triagem_promo_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [filteredAndSortedItems]);
 
   const totalPages = Math.ceil(filteredAndSortedItems.length / ITEMS_PER_PAGE);
   const paginatedItems = useMemo(() => {

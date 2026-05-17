@@ -15,7 +15,7 @@ interface TourStep {
 
 const tourSteps: TourStep[] = [
   {
-    title: '🚀 Bem-vindo ao ESTOKI!',
+    title: '🚀 Bem-vindo ao PROMO BRINDES!',
     content: 'Este é seu sistema de gestão de estoque. Vamos fazer um tour rápido pelos módulos principais.',
   },
   {

@@ -62,10 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          setTimeout(() => {
-            if (mounted) fetchUserData(currentSession.user.id);
-          }, 0);
-        } else {
+          fetchUserData(currentSession.user.id);
+        } else if (event === 'SIGNED_OUT') {
           setProfile(null);
           setRole(null);
         }

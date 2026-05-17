@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -33,7 +33,8 @@ export default function PickingPage() {
   const filteredTasks = (tasks as PickingTask[]).filter(t => 
     t.status !== "concluido" && 
     (t.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     t.posicao_origem_codigo?.toLowerCase().includes(searchTerm.toLowerCase()))
+     t.posicao_origem_codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     t.produto_id?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleStartTask = (task: PickingTask) => {
@@ -41,13 +42,9 @@ export default function PickingPage() {
     setActiveTask(task);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (!activeTask) return;
-    if (scannedCode !== activeTask.produto_id && scannedCode !== "CONFIRM") {
-       // Em um cenário real, validaríamos o código de barras do produto
-       // Aqui vamos permitir qualquer código se o usuário clicar no botão de "Simular Scan"
-    }
-
+    
     const qty = Number(confirmQty);
     if (isNaN(qty) || qty <= 0) {
       toast.error("Quantidade inválida");
@@ -58,7 +55,7 @@ export default function PickingPage() {
     setActiveTask(null);
     setScannedCode("");
     setConfirmQty("");
-  };
+  }, [activeTask, confirmQty, finishTask]);
 
   if (activeTask) {
     return (

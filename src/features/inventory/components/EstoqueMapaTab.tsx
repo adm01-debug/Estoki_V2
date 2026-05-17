@@ -43,7 +43,10 @@ export const EstoqueMapaTab = memo(({ filteredPositions, ruas, zoom, onZoomChang
             variant="outline" 
             size="sm" 
             className="gap-2 text-primary border-primary/20 bg-primary/5 hover:bg-primary/10"
-            onClick={() => toast.success("IA: As melhores posições para recebimento hoje são na Rua A, Nível 1.", { icon: <Sparkles className="h-4 w-4 text-primary" /> })}
+            onClick={() => {
+              const suggested = ruas.length > 0 ? `Rua ${ruas[0]}, Nível 1` : "em posições livres da Zona A";
+              toast.success(`IA: Melhores posições sugeridas para recebimento: ${suggested}.`, { icon: <Sparkles className="h-4 w-4 text-primary" /> });
+            }}
           >
             <Sparkles className="h-4 w-4" /> Sugestão IA
           </Button>

@@ -95,26 +95,31 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
 
     setLoading(true);
 
-    const result = await createRecebimento.mutateAsync({
-      produto_id: formData.produto_id,
-      numero_lote: formData.numero_lote,
-      fornecedor: formData.fornecedor || undefined,
-      nf_entrada: formData.nf_entrada || undefined,
-      quantidade: formData.quantidade,
-      quantidade_pedida: formData.quantidade_pedida,
-      previsao_chegada: formData.previsao_chegada || undefined,
-      pedido_compra: formData.pedido_compra || undefined,
-      data_validade: formData.data_validade || undefined,
-      data_fabricacao: formData.data_fabricacao || undefined,
-    });
+    try {
+      const result = await createRecebimento.mutateAsync({
+        produto_id: formData.produto_id,
+        numero_lote: formData.numero_lote,
+        fornecedor: formData.fornecedor || undefined,
+        nf_entrada: formData.nf_entrada || undefined,
+        quantidade: formData.quantidade,
+        quantidade_pedida: formData.quantidade_pedida,
+        previsao_chegada: formData.previsao_chegada || undefined,
+        pedido_compra: formData.pedido_compra || undefined,
+        data_validade: formData.data_validade || undefined,
+        data_fabricacao: formData.data_fabricacao || undefined,
+      });
 
-    setLoading(false);
-
-    if (result) {
-      setOpen(false);
-      resetForm();
-      onSuccess?.();
+      if (result) {
+        setOpen(false);
+        resetForm();
+        onSuccess?.();
+      }
+    } catch (err) {
+      // Error already handled by mutation toast
+    } finally {
+      setLoading(false);
     }
+
   };
 
   const resetForm = () => {

@@ -23,13 +23,13 @@ export const features = [
          </div>
        </div>
        <div>
-         <h2 className="text-3xl font-black text-sidebar-foreground tracking-tighter leading-none mb-1">ESTOKI</h2>
+          <h2 className="text-3xl font-black text-sidebar-foreground tracking-tighter leading-none mb-1">PROMO BRINDES</h2>
          <div className="flex items-center gap-2">
-           <p className="text-[12px] font-bold tracking-[0.4em] text-primary uppercase">Warehouse</p>
+            <p className="text-[12px] font-bold tracking-[0.4em] text-primary uppercase">Intelligence</p>
            <div className="h-1 w-1 rounded-full bg-primary/30" />
-           <p className="text-[10px] font-black tracking-[0.2em] text-sidebar-foreground/30 uppercase">Enterprise</p>
+            <p className="text-[10px] font-black tracking-[0.2em] text-sidebar-foreground/30 uppercase">WMS v10.0</p>
          </div>
-         <p className="text-[11px] font-black tracking-[0.25em] text-sidebar-foreground/40 uppercase mt-1.5 border-t border-sidebar-border/30 pt-1.5 inline-block">Promo Brindes</p>
+          <p className="text-[11px] font-black tracking-[0.25em] text-sidebar-foreground/40 uppercase mt-1.5 border-t border-sidebar-border/30 pt-1.5 inline-block">Cadeia de Excelência</p>
        </div>
      </div>
 

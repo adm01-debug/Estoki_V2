@@ -72,7 +72,7 @@ export const Header = memo(function Header({
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
                 <Box className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
+               <span className="font-extrabold text-foreground gradient-text hidden sm:block uppercase">Promo Brindes</span>
             </div>
           )}
           {title && <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">{title}</h1>}

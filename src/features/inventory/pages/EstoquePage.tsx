@@ -110,27 +110,27 @@ export default function EstoquePage() {
     ocupacaoTotal: Math.round(getEstatisticas().taxaOcupacao),
   }), [getEstatisticas, ppPositions, boxPositions]);
 
-   const filteredPositions = useMemo(() => {
-     const searchTerm = filters.search.toLowerCase();
-     return ppPositions.filter(p => {
-       if (!filters.status.includes(p.status)) return false;
-       if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
-       if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
-       
-       if (searchTerm) {
-         const matchCodigo = p.codigo.toLowerCase().includes(searchTerm);
-         const matchRua = p.porta_palete?.toLowerCase().includes(searchTerm);
-         const matchNivel = p.nivel?.toLowerCase().includes(searchTerm);
-         const matchZona = p.zona?.toLowerCase().includes(searchTerm);
-          const matchProduto = p.saldos?.some(s => 
-            s.produto?.nome.toLowerCase().includes(searchTerm) || 
-            s.produto?.sku.toLowerCase().includes(searchTerm)
-          );
-          return matchCodigo || matchRua || matchNivel || matchZona || matchProduto;
-       }
-       return true;
-     });
-   }, [ppPositions, filters]);
+  const filteredPositions = useMemo(() => {
+    const search = filters.search.trim().toLowerCase();
+    return ppPositions.filter(p => {
+      if (filters.status.length > 0 && !filters.status.includes(p.status)) return false;
+      if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
+      if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
+      
+      if (search) {
+        const matchCodigo = p.codigo?.toLowerCase().includes(search);
+        const matchRua = p.porta_palete?.toLowerCase().includes(search);
+        const matchNivel = p.nivel?.toLowerCase().includes(search);
+        const matchZona = p.zona?.toLowerCase().includes(search);
+        const matchProduto = p.saldos?.some(s => 
+          s.produto?.nome?.toLowerCase().includes(search) || 
+          s.produto?.sku?.toLowerCase().includes(search)
+        );
+        return matchCodigo || matchRua || matchNivel || matchZona || matchProduto;
+      }
+      return true;
+    });
+  }, [ppPositions, filters]);
 
   const activeFiltersCount = (4 - filters.status.length) + (ruas.length - filters.ruas.length) + (niveis.length - filters.niveis.length);
 
