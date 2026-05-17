@@ -118,7 +118,7 @@ export const movimentacaoService = {
       return { data: mappedData, total: count || 0 };
      } catch (error) {
        logger.error('Erro inesperado ao buscar histórico', error);
-       return [];
+        return { data: [], total: 0 };
      }
   },
 

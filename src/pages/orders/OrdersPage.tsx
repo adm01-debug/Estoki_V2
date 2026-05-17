@@ -20,8 +20,8 @@ export default function OrdersPage() {
 
   async function loadOrders() {
     try {
-      const data = await orderService.getAll();
-      setOrders(data || []);
+      const result = await orderService.getAll();
+      setOrders(result.data || []);
     } catch (err) {
       console.error(err);
     } finally {
