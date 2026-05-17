@@ -11,7 +11,24 @@ import {
   Filter
 } from "lucide-react";
 import { tipoLabels } from "@/components/rastreabilidade/constants";
-import { RastreabilidadeKPIs } from "@/components/rastreabilidade/RastreabilidadeKPIs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge as UIContextBadge } from "@/components/ui/badge";
+import { 
+  Clock, 
+  CheckCircle2, 
+  AlertTriangle, 
+  ClipboardList,
+  Timer, 
+  ArrowRight, 
+  Package, 
+  PenTool, 
+  Truck, 
+  Boxes, 
+  Wrench, 
+  History as HistoryIcon 
+} from "lucide-react";
 import { MovimentacaoCard } from "@/components/rastreabilidade/MovimentacaoCard";
 import { BuscaProdutoTab } from "@/components/rastreabilidade/BuscaProdutoTab";
 
@@ -64,8 +81,86 @@ export default function RastreabilidadePage() {
           <p className="text-sm text-muted-foreground">Histórico completo de movimentações</p>
         </div>
 
-        {/* KPIs */}
-        <RastreabilidadeKPIs stats={stats} />
+        {/* Dashboard de Fluxo Promo Brindes */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+          {/* Resumo de Progresso */}
+          <Card className="lg:col-span-3">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2">
+                <Timer className="h-4 w-4 text-primary" />
+                Timeline Operacional: Ciclo de Personalização
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative pt-8 pb-4">
+                {/* Linha de Conexão */}
+                <div className="absolute top-[52px] left-[10%] right-[10%] h-0.5 bg-muted-foreground/20 -z-10" />
+                
+                <div className="flex justify-between items-start relative">
+                  {[
+                    { label: "Entrada", icon: Truck, status: "complete", date: "10:00" },
+                    { label: "Triagem", icon: ClipboardList, status: "complete", date: "11:30" },
+                    { label: "Pallet", icon: Boxes, status: "complete", date: "14:00" },
+                    { label: "Gravação", icon: PenTool, status: "current", date: "Agora" },
+                    { label: "Manuseio", icon: Package, status: "pending" },
+                    { label: "Expedição", icon: CheckCircle2, status: "pending" }
+                  ].map((step, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2 group">
+                      <div className={`
+                        w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all
+                        ${step.status === 'complete' ? 'bg-primary border-primary text-primary-foreground' : 
+                          step.status === 'current' ? 'bg-background border-primary text-primary animate-pulse' : 
+                          'bg-muted border-muted-foreground/20 text-muted-foreground'}
+                      `}>
+                        <step.icon className="h-5 w-5" />
+                      </div>
+                      <div className="text-center">
+                        <p className={`text-[10px] font-bold uppercase tracking-tight ${step.status === 'pending' ? 'text-muted-foreground' : 'text-foreground'}`}>
+                          {step.label}
+                        </p>
+                        {step.date && <p className="text-[9px] text-muted-foreground">{step.date}</p>}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="mt-6 p-3 bg-muted/30 rounded-xl border border-dashed border-muted-foreground/20">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold uppercase text-muted-foreground">Ocupação do Setor: Gravação</span>
+                  <span className="text-[10px] font-bold text-primary">75% Capacidade</span>
+                </div>
+                <Progress value={75} className="h-1.5" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Alertas e Perdas */}
+          <Card className="bg-destructive/5 border-destructive/20">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-bold uppercase text-destructive flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4" />
+                Setor de Conserto
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <div className="flex justify-between items-end mb-1">
+                  <p className="text-2xl font-black tracking-tighter text-destructive">12</p>
+                  <p className="text-[10px] font-bold text-destructive/60 uppercase">Peças Retidas</p>
+                </div>
+                <p className="text-[10px] text-muted-foreground leading-tight">
+                  Itens em recuperação (zíper, costura, defeitos leves).
+                </p>
+              </div>
+              <div className="pt-4 border-t border-destructive/10">
+                <Button variant="outline" size="sm" className="w-full text-[10px] font-bold uppercase h-8 rounded-lg border-destructive/20 text-destructive hover:bg-destructive/10">
+                  Ver Itens Retidos
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Tabs */}
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
