@@ -10,12 +10,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
 
-const tipoLabels: Record<TipoMovimentacao, string> = {
-  recebimento_nf: "Recebimento NF", conferencia: "Conferência", triagem_inicio: "Triagem Início",
-  triagem_fim: "Triagem Fim", armazenamento: "Armazenamento", reserva: "Reserva",
-  separacao: "Separação", conferencia_expedicao: "Conf. Expedição", carregamento: "Carregamento",
-   saida_transporte: "Saída Transporte", entrega: "Entrega", devolucao: "Devolução", ajuste_estoque: "Ajuste Estoque", transferencia: "Remanejamento",
-};
+import { tipoLabels } from "@/components/rastreabilidade/constants";
 
 interface RelatorioFiltersProps {
   searchTerm: string;
