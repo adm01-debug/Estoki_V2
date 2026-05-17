@@ -126,9 +126,8 @@ export default function TriagemPage() {
      const emGravacao = (items as any[]).filter(i => i.status_producao === "em_gravacao").length;
      const emManuseio = (items as any[]).filter(i => i.status_producao === "em_manuseio").length;
      
-     return { emAndamento, aprovados, reprovados, retidosConserto, emGravacao, emManuseio };
-   }, [items]);
-  }, [items]);
+      return { emAndamento, aprovados, reprovados, retidosConserto, emGravacao, emManuseio };
+    }, [items]);
 
    const handleIniciarTriagem = async () => {
      try {
