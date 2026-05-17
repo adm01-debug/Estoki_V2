@@ -59,7 +59,7 @@ export default function FormularioTriagem() {
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
   const [missingReported, setMissingReported] = useState(false);
  
-   const quantidadeTotal = triagem?.quantidade_total || 100;
+    const quantidadeTotal = (triagem as any)?.lotes?.quantidade_inicial || (triagem as any)?.quantidade_total || 100;
 
   useEffect(() => {
     const carregarTriagem = async () => {
@@ -71,11 +71,12 @@ export default function FormularioTriagem() {
         if (found) {
           setTriagem(found);
           // Mock volumes based on quantity if not present
-          const totalVolumes = Math.ceil(found.quantidade_total / 50) || 1; // Example: 50 items per box
+          const qty = (found as any)?.lotes?.quantidade_inicial || (found as any)?.quantidade_total || 100;
+          const totalVolumes = Math.ceil(qty / 50) || 1; // Example: 50 items per box
           const initialVolumes: VolumeData[] = Array.from({ length: totalVolumes }, (_, i) => ({
             id: i + 1,
             numero: String(i + 1).padStart(2, '0'),
-            qtdEsperada: i === totalVolumes - 1 ? (found.quantidade_total % 50 || 50) : 50,
+            qtdEsperada: i === totalVolumes - 1 ? (qty % 50 || 50) : 50,
             qtdContada: null,
             conferido: false,
             integridade: 'ok'
