@@ -32,6 +32,7 @@ export function VolumeContagem({
   volumes,
   onVolumeChange,
   onVolumeConfirm,
+  onReportMissing,
   onVolumeIntegrityChange,
   onVolumeHandoff,
   totalEsperado,
