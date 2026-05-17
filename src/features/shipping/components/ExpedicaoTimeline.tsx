@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Clock, Truck, Package, MapPin, AlertCircle } from "lucide-react";
+ import { CheckCircle2, Clock, Truck, Package, MapPin, AlertCircle, FileText, Camera } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -32,6 +32,14 @@ export function ExpedicaoTimeline() {
       icon: CheckCircle2,
     },
     {
+       id: "5",
+       title: "Protocolo de Custódia",
+       description: "Evidência fotográfica gerada para o romaneio #ROM-442",
+       time: new Date(Date.now() - 1000 * 60 * 45),
+       status: "success",
+       icon: Camera,
+     },
+     {
       id: "3",
       title: "Em Carregamento",
       description: "Veículo ABC-1234 em plataforma 02",
