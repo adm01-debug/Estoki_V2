@@ -6,7 +6,7 @@ import { SEO } from "@/components/common/SEO";
  import { EmptyState } from "@/components/common/EmptyState";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
+import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle, ArrowRightCircle } from "lucide-react";
 import { haptics } from "@/utils/haptics";
 import AppLayout from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
@@ -223,13 +223,23 @@ export default function RecebimentoPage() {
                           </div>
                         )}
 
-                        {item.status === 'em_conferencia' && (
-                          <div className="mt-4 space-y-1.5 max-w-xs">
-                            <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                              <span>Conferência</span>
-                              <span>{Math.round(progresso)}%</span>
+                        {(item.status === 'em_conferencia' || item.status === 'recebido') && (
+                          <div className="mt-4 flex items-center gap-3">
+                            <div className="flex-1 space-y-1.5 max-w-[120px]">
+                              <div className="flex justify-between text-[8px] font-black uppercase tracking-wider text-muted-foreground">
+                                <span>Fluxo</span>
+                                <span>{Math.round(progresso)}%</span>
+                              </div>
+                              <Progress value={progresso} className="h-1" />
                             </div>
-                            <Progress value={progresso} className="h-1.5" />
+                            <div className="flex gap-1">
+                              <div title="Volumes Conferidos" className={cn("w-5 h-5 rounded-full flex items-center justify-center border", item.quantidade_atual > 0 ? "bg-success/10 border-success/30 text-success" : "bg-muted border-border/30 text-muted-foreground")}>
+                                <CheckCircle className="h-3 w-3" />
+                              </div>
+                              <div title="Handoff para Triagem" className="w-5 h-5 rounded-full flex items-center justify-center border bg-muted border-border/30 text-muted-foreground">
+                                <ArrowRightCircle className="h-3 w-3" />
+                              </div>
+                            </div>
                           </div>
                         )}
                       </div>

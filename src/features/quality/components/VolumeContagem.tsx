@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, ArrowRightCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ export interface VolumeData {
   qtdEsperada: number;
   qtdContada: number | null;
   conferido: boolean;
+  integridade?: 'ok' | 'avaiado' | 'critico';
+  handoffConfirmado?: boolean;
 }
 
 interface VolumeContagemProps {
@@ -19,12 +21,16 @@ interface VolumeContagemProps {
   onVolumeConfirm: (volumeId: number) => void;
   totalEsperado: number;
   className?: string;
+  onVolumeIntegrityChange?: (volumeId: number, integridade: 'ok' | 'avaiado' | 'critico') => void;
+  onVolumeHandoff?: (volumeId: number) => void;
 }
 
 export function VolumeContagem({
   volumes,
   onVolumeChange,
   onVolumeConfirm,
+  onVolumeIntegrityChange,
+  onVolumeHandoff,
   totalEsperado,
   className,
 }: VolumeContagemProps) {
@@ -38,83 +44,87 @@ export function VolumeContagem({
   const todosConferidos = volumesConferidos === volumes.length;
 
   const getVolumeStatus = (volume: VolumeData) => {
-    if (!volume.conferido) return { color: "border-muted", bg: "bg-muted/30", icon: null };
-    
+    if (volume.integridade === 'critico') return { color: "border-destructive", bg: "bg-destructive/10", icon: <AlertCircle className="h-4 w-4 text-destructive" /> };
     const diff = (volume.qtdContada || 0) - volume.qtdEsperada;
-    if (diff === 0) return { color: "border-success", bg: "bg-success/10", icon: <CheckCircle2 className="h-4 w-4 text-success" /> };
-    return { color: "border-warning", bg: "bg-warning/10", icon: <AlertCircle className="h-4 w-4 text-warning" /> };
+    if (volume.integridade === 'avaiado' || diff !== 0) return { color: "border-warning", bg: "bg-warning/10", icon: <AlertTriangle className="h-4 w-4 text-warning" /> };
+    if (diff === 0 && volume.conferido) return { color: "border-success", bg: "bg-success/10", icon: <CheckCircle2 className="h-4 w-4 text-success" /> };
+    return { color: "border-muted", bg: "bg-muted/30", icon: null };
   };
 
   return (
-    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
+    <div className={cn("bg-card rounded-3xl p-6 border-2 border-border/50 shadow-xl", className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+        <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-tighter">
           <Package className="h-4 w-4" />
-          CONTAGEM POR VOLUME
+          Controle de Volumes e Integridade
         </h3>
-        <Badge variant={todosConferidos ? "default" : "secondary"} className={todosConferidos ? "bg-success" : ""}>
+        <Badge variant={todosConferidos ? "default" : "secondary"} className={cn("rounded-full px-4", todosConferidos ? "bg-success hover:bg-success" : "")}>
           {volumesConferidos}/{volumes.length} conferidos
         </Badge>
       </div>
 
-      {/* Progress */}
-      <div className="mb-4">
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
+        {volumes.map((v) => (
+          <div 
+            key={v.id}
+            title={`Volume ${v.numero}`}
+            className={cn(
+              "aspect-square rounded-lg border-2 flex items-center justify-center transition-all cursor-help",
+              v.handoffConfirmado ? "bg-primary/20 border-primary" :
+              v.conferido ? (v.integridade === 'ok' ? "bg-success/20 border-success" : "bg-warning/20 border-warning") :
+              "bg-muted/30 border-muted-foreground/20"
+            )}
+          >
+            {v.handoffConfirmado ? (
+              <ArrowRightCircle className="h-4 w-4 text-primary" />
+            ) : (
+              <span className="text-[10px] font-bold opacity-50">{v.numero}</span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-6 space-y-1.5">
+        <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+          <span>Fluxo de Recebimento</span>
+          <span>{Math.round((volumesConferidos / (volumes.length || 1)) * 100)}%</span>
+        </div>
+        <div className="h-3 bg-muted rounded-full overflow-hidden border border-border/20">
           <div
-            className="h-full bg-success transition-all"
-            style={{ width: `${(volumesConferidos / volumes.length) * 100}%` }}
+            className="h-full bg-primary transition-all shadow-[0_0_10px_rgba(var(--primary),0.5)]"
+            style={{ width: `${(volumesConferidos / (volumes.length || 1)) * 100}%` }}
           />
         </div>
       </div>
 
-      {/* Lista de Volumes */}
       <div className="space-y-2">
         {volumes.map((volume) => {
           const status = getVolumeStatus(volume);
           const isExpanded = expandedVolume === volume.id;
-          const diferenca = volume.conferido ? (volume.qtdContada || 0) - volume.qtdEsperada : null;
 
           return (
-            <div
-              key={volume.id}
-              className={cn(
-                "rounded-lg border transition-all",
-                status.color,
-                status.bg
-              )}
-            >
-              {/* Header do Volume */}
-              <button
-                onClick={() => setExpandedVolume(isExpanded ? null : volume.id)}
-                className="w-full p-3 flex items-center justify-between text-left"
-              >
+            <div key={volume.id} className={cn("rounded-2xl border-2 transition-all overflow-hidden mb-3 shadow-sm", status.color, status.bg)}>
+              <button onClick={() => setExpandedVolume(isExpanded ? null : volume.id)} className="w-full p-4 flex items-center justify-between text-left">
                 <div className="flex items-center gap-3">
-                  <div className={cn(
-                    "w-10 h-10 rounded-lg flex items-center justify-center font-bold text-sm",
-                    volume.conferido ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"
-                  )}>
+                  <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center font-black text-sm shadow-inner", volume.conferido ? "bg-success/20 text-success" : "bg-muted text-muted-foreground")}>
                     {volume.numero}
                   </div>
                   <div>
-                    <div className="font-medium flex items-center gap-2">
+                    <div className="font-bold flex items-center gap-2">
                       Volume {volume.numero}
                       {status.icon}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      Esperado: {volume.qtdEsperada} un
-                      {volume.conferido && (
-                        <span className={cn(
-                          "ml-2",
-                          diferenca === 0 ? "text-success" : "text-warning"
+                      {volume.integridade && (
+                        <Badge variant="outline" className={cn(
+                          "text-[9px] uppercase font-black",
+                          volume.integridade === 'ok' ? "text-success border-success/30" : 
+                          volume.integridade === 'avaiado' ? "text-warning border-warning/30" : "text-destructive border-destructive/30"
                         )}>
-                          | Contado: {volume.qtdContada} un
-                          {diferenca !== null && diferenca !== 0 && (
-                            <span className="ml-1">
-                              ({diferenca > 0 ? "+" : ""}{diferenca})
-                            </span>
-                          )}
-                        </span>
+                          {volume.integridade}
+                        </Badge>
                       )}
+                    </div>
+                    <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-tight">
+                      Esperado: {volume.qtdEsperada} un
                     </div>
                   </div>
                 </div>
@@ -125,51 +135,76 @@ export function VolumeContagem({
                 )}
               </button>
 
-              {/* Conteúdo Expandido */}
               {isExpanded && (
-                <div className="px-3 pb-3 pt-0">
-                  <div className="bg-background rounded-lg p-3 space-y-3">
-                    <div>
-                      <label className="text-xs text-muted-foreground block mb-1">
-                        Quantidade Contada
-                      </label>
-                      <Input
-                        type="number"
-                        min={0}
-                        value={volume.qtdContada ?? ""}
-                        onChange={(e) => onVolumeChange(volume.id, parseInt(e.target.value) || 0)}
-                        placeholder={`Esperado: ${volume.qtdEsperada}`}
-                        className="text-lg font-bold h-12 text-center"
-                      />
+                <div className="px-4 pb-4 pt-0">
+                  <div className="bg-background/80 backdrop-blur-sm rounded-xl p-4 space-y-4 border border-border/50 shadow-inner">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-muted-foreground block">Integridade</label>
+                        <div className="flex gap-2">
+                          <Button 
+                            variant={volume.integridade === 'ok' ? 'default' : 'outline'} 
+                            size="sm" 
+                            className="flex-1 rounded-lg h-10"
+                            onClick={() => onVolumeIntegrityChange?.(volume.id, 'ok')}
+                          >
+                            <ShieldCheck className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant={volume.integridade === 'avaiado' ? 'secondary' : 'outline'} 
+                            size="sm" 
+                            className="flex-1 rounded-lg h-10"
+                            onClick={() => onVolumeIntegrityChange?.(volume.id, 'avaiado')}
+                          >
+                            <AlertTriangle className="h-4 w-4" />
+                          </Button>
+                          <Button 
+                            variant={volume.integridade === 'critico' ? 'destructive' : 'outline'} 
+                            size="sm" 
+                            className="flex-1 rounded-lg h-10"
+                            onClick={() => onVolumeIntegrityChange?.(volume.id, 'critico')}
+                          >
+                            <AlertCircle className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-black uppercase text-muted-foreground block">Quantidade Contada</label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={volume.qtdContada ?? ""}
+                          onChange={(e) => onVolumeChange(volume.id, parseInt(e.target.value) || 0)}
+                          className="text-lg font-black h-10 text-center rounded-lg bg-muted/50 focus:bg-background transition-colors"
+                        />
+                      </div>
                     </div>
                     
-                    {volume.qtdContada !== null && volume.qtdContada !== volume.qtdEsperada && (
-                      <div className={cn(
-                        "text-sm p-2 rounded-lg text-center",
-                        (volume.qtdContada || 0) > volume.qtdEsperada 
-                          ? "bg-warning/10 text-warning" 
-                          : "bg-destructive/10 text-destructive"
-                      )}>
-                        {(volume.qtdContada || 0) > volume.qtdEsperada 
-                          ? `+${(volume.qtdContada || 0) - volume.qtdEsperada} unidades a mais`
-                          : `${volume.qtdEsperada - (volume.qtdContada || 0)} unidades faltando`
-                        }
-                      </div>
-                    )}
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        className="gap-2 rounded-xl h-11 border-primary/20 hover:bg-primary/5 text-primary"
+                        onClick={() => onVolumeHandoff?.(volume.id)}
+                        disabled={!volume.conferido}
+                      >
+                        <ArrowRightCircle className="h-4 w-4" />
+                        <span className="text-[10px] font-black uppercase">Liberar Triagem</span>
+                      </Button>
 
-                    <Button
-                      className="w-full gap-2"
-                      onClick={() => {
-                        onVolumeConfirm(volume.id);
-                        // Avançar para próximo volume não conferido
-                        const nextVolume = volumes.find((v) => !v.conferido && v.id !== volume.id);
-                        setExpandedVolume(nextVolume?.id ?? null);
-                      }}
-                      disabled={volume.qtdContada === null}
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                      Confirmar Volume
-                    </Button>
+                      <Button
+                        className="gap-2 rounded-xl h-11 shadow-lg shadow-primary/20"
+                        onClick={() => {
+                          onVolumeConfirm(volume.id);
+                          const nextVolume = volumes.find((v) => !v.conferido && v.id !== volume.id);
+                          setExpandedVolume(nextVolume?.id ?? null);
+                        }}
+                        disabled={volume.qtdContada === null || !volume.integridade}
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span className="text-[10px] font-black uppercase">Confirmar Volume</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -178,24 +213,23 @@ export function VolumeContagem({
         })}
       </div>
 
-      {/* Resumo Total */}
-      <div className="mt-4 pt-4 border-t border-border">
+      <div className="mt-6 pt-6 border-t-2 border-dashed border-border/50">
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="text-xs text-muted-foreground">Esperado</div>
-            <div className="text-lg font-bold">{totalEsperado}</div>
+          <div className="bg-muted/30 rounded-2xl p-3 border border-border/20">
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Esperado</div>
+            <div className="text-xl font-black text-foreground">{totalEsperado}</div>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2">
-            <div className="text-xs text-muted-foreground">Contado</div>
-            <div className="text-lg font-bold">{totalContado}</div>
+          <div className="bg-muted/30 rounded-2xl p-3 border border-border/20">
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Contado</div>
+            <div className="text-xl font-black text-foreground">{totalContado}</div>
           </div>
           <div className={cn(
-            "rounded-lg p-2",
-            totalDiferenca === 0 ? "bg-success/10" : totalDiferenca > 0 ? "bg-warning/10" : "bg-destructive/10"
+            "rounded-2xl p-3 border",
+            totalDiferenca === 0 ? "bg-success/10 border-success/20" : totalDiferenca > 0 ? "bg-warning/10 border-warning/20" : "bg-destructive/10 border-destructive/20"
           )}>
-            <div className="text-xs text-muted-foreground">Diferença</div>
+            <div className="text-[10px] font-black uppercase text-muted-foreground mb-1">Divergência</div>
             <div className={cn(
-              "text-lg font-bold",
+              "text-xl font-black",
               totalDiferenca === 0 ? "text-success" : totalDiferenca > 0 ? "text-warning" : "text-destructive"
             )}>
               {totalDiferenca > 0 ? "+" : ""}{totalDiferenca}
