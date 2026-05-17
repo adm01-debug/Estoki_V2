@@ -11,7 +11,8 @@
     ClipboardList,
     Wrench,
     PackageCheck,
-    Boxes
+    Boxes,
+    AlertCircle
   } from "lucide-react";
 import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
 
