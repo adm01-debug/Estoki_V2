@@ -18,6 +18,7 @@ interface KPIItem {
     isUp: boolean;
     label: string;
   };
+  excellence?: boolean;
 }
 
 const variantStyles = {
@@ -59,8 +60,13 @@ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }:
                 <Card className="glass-card border-border/30 h-full overflow-hidden group">
                   <CardContent className="p-4 md:p-5 relative">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-8 -mt-8 transition-transform group-hover:scale-110" />
-                    <div className={`w-11 h-11 rounded-2xl flex items-center justify-center border shadow-sm ${variantStyles[item.variant]} mb-4 transition-transform group-hover:rotate-6`}>
-                      <item.icon className="h-5 w-5" />
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`w-11 h-11 rounded-2xl flex items-center justify-center border shadow-sm ${variantStyles[item.variant]} transition-transform group-hover:rotate-6`}>
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                      {item.excellence && (
+                        <div className="text-[8px] font-black bg-primary text-primary-foreground px-1.5 py-0.5 rounded uppercase tracking-widest animate-pulse shadow-lg shadow-primary/20">10/10</div>
+                      )}
                     </div>
                     <div className="flex items-baseline justify-between gap-2">
                       <p className="text-3xl font-black text-foreground tracking-tight">{item.value}</p>

@@ -38,7 +38,7 @@
          </div>
          <div className="flex flex-col">
            <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground leading-none">Status do Sistema</span>
-           <span className="text-sm font-black tracking-tight text-foreground uppercase">Brasil Marcas Cloud <span className="text-primary">v2.6</span></span>
+            <span className="text-sm font-black tracking-tight text-foreground uppercase">Promo Brindes Intelligence <span className="text-primary">v10.0</span></span>
          </div>
        </div>
  
