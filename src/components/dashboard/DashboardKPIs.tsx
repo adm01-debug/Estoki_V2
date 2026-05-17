@@ -1,9 +1,10 @@
   import { Card, CardContent } from "@/components/ui/card";
   import { cn } from "@/lib/utils";
  import { Progress } from "@/components/ui/progress";
-  import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { BarChart3, Package, TrendingUp, AlertTriangle, ClipboardList, ArrowUpRight, ArrowDownRight, Info } from "lucide-react";
 import { memo } from "react";
 import { DashboardKPIs as DashboardKPIsInterface } from "@/features/dashboard/hooks/useDashboard";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface DashboardKPIsProps {
   kpis: DashboardKPIsInterface;
@@ -32,7 +33,19 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
    return (
      <div className="space-y-6">
        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+          <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3 w-3 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Percentual de posições ocupadas em relação ao total disponível.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
            <CardContent className="p-5">
              <div className="flex items-center justify-between mb-3">
                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
@@ -58,7 +71,19 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
            </CardContent>
          </Card>
 
-         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+          <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3 w-3 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Número de endereços logísticos com itens armazenados.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
            <CardContent className="p-5">
              <div className="flex items-center justify-between mb-3">
                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
@@ -76,7 +101,19 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
            </CardContent>
          </Card>
  
-         <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
+          <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3 w-3 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Tempo médio de permanência dos produtos no estoque.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
            <CardContent className="p-5">
              <div className="flex items-center justify-between mb-3">
                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
@@ -97,7 +134,19 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
            </CardContent>
          </Card>
  
-         <Card className="glass-card border-warning/20 bg-warning/5 group hover:border-warning/40 transition-all duration-300">
+          <Card className="glass-card border-warning/20 bg-warning/5 group hover:border-warning/40 transition-all duration-300 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Info className="h-3 w-3 text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-xs">Produtos sem movimentação por mais de 30 dias.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
            <CardContent className="p-5">
              <div className="flex items-center justify-between mb-3">
                <div className="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center border border-warning/20 group-hover:scale-110 transition-transform">
