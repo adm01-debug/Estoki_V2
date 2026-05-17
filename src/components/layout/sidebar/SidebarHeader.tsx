@@ -16,7 +16,7 @@ export const SidebarHeader = memo(function SidebarHeader({
   onCloseMobile 
 }: SidebarHeaderProps) {
   return (
-     <div className={cn("px-4 h-16 flex items-center border-b border-sidebar-border/30", isCollapsed && "px-2")}>
+     <div className={cn("px-4 min-h-[100px] flex items-center border-b border-sidebar-border/30", isCollapsed && "px-2 min-h-[64px] h-16")}>
       <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3")}>
          <div className="flex items-center gap-3">
             <div className="flex flex-col">

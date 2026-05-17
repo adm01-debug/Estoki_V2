@@ -51,7 +51,24 @@ import { motion } from "framer-motion";
    );
  });
  
-  export function SkeletonPulse({ className }: { className?: string }) {
+  export function SkeletonPulse({ className, delay = 0 }: { className?: string; delay?: number }) {
+     return (
+       <motion.div 
+         initial={{ opacity: 0.4 }}
+         animate={{ opacity: [0.4, 0.7, 0.4] }}
+         transition={{ 
+           duration: 2, 
+           repeat: Infinity, 
+           ease: "easeInOut",
+           delay: delay 
+         }}
+         className={cn(
+           "rounded-lg bg-muted/60 relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent", 
+           className
+         )} 
+       />
+     );
+   }
     return (
       <motion.div 
         initial={{ opacity: 0.5 }}
