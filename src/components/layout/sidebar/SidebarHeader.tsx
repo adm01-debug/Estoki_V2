@@ -32,15 +32,15 @@ export const SidebarHeader = memo(function SidebarHeader({
                   <Box className={cn("text-primary-foreground transition-all duration-300", isCollapsed ? "h-5 w-5" : "h-9 w-9")} />
                 </motion.div>
                 {!isCollapsed && (
-                  <div className="min-w-0 flex flex-col justify-center">
-                     <h1 className="font-black text-sidebar-foreground text-[28px] tracking-tighter leading-[0.8] gradient-text">ESTOKI</h1>
-                     <p className="text-[13px] text-primary font-black tracking-[0.25em] uppercase mt-1.5 leading-none">WAREHOUSE</p>
-                  </div>
-                )}
-              </div>
-              {!isCollapsed && (
-                <p className="text-[9px] text-sidebar-foreground/40 font-black tracking-[0.2em] uppercase mt-1 ml-0.5 whitespace-nowrap">PROMO BRINDES</p>
+                <div className="min-w-0 flex flex-col justify-center">
+                   <h1 className="font-black text-sidebar-foreground text-[22px] tracking-tighter leading-[0.8] gradient-text">PROMO</h1>
+                   <p className="text-[13px] text-primary font-black tracking-[0.25em] uppercase mt-1.5 leading-none">BRINDES</p>
+                </div>
               )}
+            </div>
+            {!isCollapsed && (
+              <p className="text-[9px] text-sidebar-foreground/40 font-black tracking-[0.2em] uppercase mt-1 ml-0.5 whitespace-nowrap">INTELLIGENCE WMS</p>
+            )}
             </div>
          </div>
         {isMobile && (
