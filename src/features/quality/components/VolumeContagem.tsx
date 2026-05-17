@@ -44,31 +44,55 @@ export function VolumeContagem({
   const todosConferidos = volumesConferidos === volumes.length;
 
   const getVolumeStatus = (volume: VolumeData) => {
-    if (!volume.conferido) return { color: "border-muted", bg: "bg-muted/30", icon: null };
-    
+    if (volume.integridade === 'critico') return { color: "border-destructive", bg: "bg-destructive/10", icon: <AlertCircle className="h-4 w-4 text-destructive" /> };
     const diff = (volume.qtdContada || 0) - volume.qtdEsperada;
-    if (diff === 0) return { color: "border-success", bg: "bg-success/10", icon: <CheckCircle2 className="h-4 w-4 text-success" /> };
-    return { color: "border-warning", bg: "bg-warning/10", icon: <AlertCircle className="h-4 w-4 text-warning" /> };
+    if (volume.integridade === 'avaiado' || diff !== 0) return { color: "border-warning", bg: "bg-warning/10", icon: <AlertTriangle className="h-4 w-4 text-warning" /> };
+    if (diff === 0 && volume.conferido) return { color: "border-success", bg: "bg-success/10", icon: <CheckCircle2 className="h-4 w-4 text-success" /> };
+    return { color: "border-muted", bg: "bg-muted/30", icon: null };
   };
 
   return (
-    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
+    <div className={cn("bg-card rounded-3xl p-6 border-2 border-border/50 shadow-xl", className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+        <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-tighter">
           <Package className="h-4 w-4" />
-          CONTAGEM POR VOLUME
+          Controle de Volumes e Integridade
         </h3>
-        <Badge variant={todosConferidos ? "default" : "secondary"} className={todosConferidos ? "bg-success" : ""}>
+        <Badge variant={todosConferidos ? "default" : "secondary"} className={cn("rounded-full px-4", todosConferidos ? "bg-success hover:bg-success" : "")}>
           {volumesConferidos}/{volumes.length} conferidos
         </Badge>
       </div>
 
-      {/* Progress */}
-      <div className="mb-4">
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+      <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
+        {volumes.map((v) => (
+          <div 
+            key={v.id}
+            title={`Volume ${v.numero}`}
+            className={cn(
+              "aspect-square rounded-lg border-2 flex items-center justify-center transition-all cursor-help",
+              v.handoffConfirmado ? "bg-primary/20 border-primary" :
+              v.conferido ? (v.integridade === 'ok' ? "bg-success/20 border-success" : "bg-warning/20 border-warning") :
+              "bg-muted/30 border-muted-foreground/20"
+            )}
+          >
+            {v.handoffConfirmado ? (
+              <ArrowRightCircle className="h-4 w-4 text-primary" />
+            ) : (
+              <span className="text-[10px] font-bold opacity-50">{v.numero}</span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mb-6 space-y-1.5">
+        <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+          <span>Fluxo de Recebimento</span>
+          <span>{Math.round((volumesConferidos / (volumes.length || 1)) * 100)}%</span>
+        </div>
+        <div className="h-3 bg-muted rounded-full overflow-hidden border border-border/20">
           <div
-            className="h-full bg-success transition-all"
-            style={{ width: `${(volumesConferidos / volumes.length) * 100}%` }}
+            className="h-full bg-primary transition-all shadow-[0_0_10px_rgba(var(--primary),0.5)]"
+            style={{ width: `${(volumesConferidos / (volumes.length || 1)) * 100}%` }}
           />
         </div>
       </div>
