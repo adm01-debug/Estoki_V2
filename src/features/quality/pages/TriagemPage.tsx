@@ -122,8 +122,9 @@ export default function TriagemPage() {
     const emAndamento = (items as any[]).filter(i => !i.data_fim).length;
     const aprovados = (items as any[]).filter(i => i.resultado === "aprovado").length;
     const reprovados = (items as any[]).filter(i => i.resultado === "reprovado").length;
+    const retidosConserto = (items as any[]).filter(i => i.resultado === "ressalva" || i.resultado === "triagem_conferencia").length;
     
-    return { emAndamento, aprovados, reprovados };
+    return { emAndamento, aprovados, reprovados, retidosConserto };
   }, [items]);
 
    const handleIniciarTriagem = async () => {
