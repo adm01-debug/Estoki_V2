@@ -11,7 +11,22 @@ import {
   Filter
 } from "lucide-react";
 import { tipoLabels } from "@/components/rastreabilidade/constants";
-import { RastreabilidadeKPIs } from "@/components/rastreabilidade/RastreabilidadeKPIs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge as UIContextBadge } from "@/components/ui/badge";
+import { 
+  Clock, 
+  CheckCircle2, 
+  AlertTriangle, 
+  Timer, 
+  ArrowRight, 
+  Package, 
+  PenTool, 
+  Truck, 
+  Boxes, 
+  Wrench, 
+  History as HistoryIcon 
+} from "lucide-react";
 import { MovimentacaoCard } from "@/components/rastreabilidade/MovimentacaoCard";
 import { BuscaProdutoTab } from "@/components/rastreabilidade/BuscaProdutoTab";
 
