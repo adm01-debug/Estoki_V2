@@ -120,13 +120,6 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
       setLoading(false);
     }
 
-    setLoading(false);
-
-    if (result) {
-      setOpen(false);
-      resetForm();
-      onSuccess?.();
-    }
   };
 
   const resetForm = () => {
