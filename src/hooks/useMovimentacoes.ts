@@ -4,7 +4,10 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import type { Database } from '@/integrations/supabase/types';
 
- export type TipoMovimentacao = Database['public']['Enums']['tipo_evento_rastreamento'] | 'transferencia';
+  export type TipoMovimentacao = Database['public']['Enums']['tipo_evento_rastreamento'] | 'transferencia' |
+    'recebimento_entrada' | 'triagem_conferencia' | 'armazenamento_pallet' |
+    'saida_para_gravacao' | 'retorno_da_gravacao' | 'saida_para_manuseio' | 'retorno_do_manuseio' |
+    'setor_conserto_entrada' | 'setor_conserto_saida' | 'expedicao_saida_conferencia' | 'expedicao_saida_liberado' | 'perda_confirmada';
 
 export interface Movimentacao {
   id: string;

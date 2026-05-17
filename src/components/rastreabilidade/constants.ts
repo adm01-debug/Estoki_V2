@@ -1,4 +1,18 @@
- import { Package, CheckCircle2, History, MapPin, ArrowRight, Route as RouteIcon, RefreshCw } from "lucide-react";
+  import { 
+    Package, 
+    CheckCircle2, 
+    History, 
+    MapPin, 
+    ArrowRight, 
+    Route as RouteIcon, 
+    RefreshCw,
+    PenTool,
+    Truck,
+    ClipboardList,
+    Wrench,
+    PackageCheck,
+    Boxes
+  } from "lucide-react";
 import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
 
  export const tipoLabels: Record<TipoMovimentacao, string> = {
@@ -16,6 +30,19 @@ import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
    entrega: "Entrega",
    devolucao: "Devolução",
    ajuste_estoque: "Ajuste Estoque",
+   // Novos tipos para Promo Brindes
+   recebimento_entrada: "Entrada Promo",
+   triagem_conferencia: "Triagem Promo",
+   armazenamento_pallet: "Armaz. Pallet",
+   saida_para_gravacao: "Para Gravação",
+   retorno_da_gravacao: "Da Gravação",
+   saida_para_manuseio: "Para Manuseio",
+   retorno_do_manuseio: "Do Manuseio",
+   setor_conserto_entrada: "Entrada Conserto",
+   setor_conserto_saida: "Saída Conserto",
+   expedicao_saida_conferencia: "Conf. Final",
+   expedicao_saida_liberado: "Liberado Exp.",
+   perda_confirmada: "Perda/Extravio"
  };
 
  export const tipoColors: Record<TipoMovimentacao, string> = {
@@ -33,6 +60,19 @@ import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
    entrega: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
    devolucao: "bg-rose-500/10 text-rose-600 border-rose-500/30",
    ajuste_estoque: "bg-gray-500/10 text-gray-600 border-gray-500/30",
+   // Cores Promo Brindes
+   recebimento_entrada: "bg-blue-600/10 text-blue-700 border-blue-600/30",
+   triagem_conferencia: "bg-amber-600/10 text-amber-700 border-amber-600/30",
+   armazenamento_pallet: "bg-indigo-600/10 text-indigo-700 border-indigo-600/30",
+   saida_para_gravacao: "bg-fuchsia-500/10 text-fuchsia-600 border-fuchsia-500/30",
+   retorno_da_gravacao: "bg-fuchsia-700/10 text-fuchsia-800 border-fuchsia-700/30",
+   saida_para_manuseio: "bg-orange-500/10 text-orange-600 border-orange-500/30",
+   retorno_do_manuseio: "bg-orange-700/10 text-orange-800 border-orange-700/30",
+   setor_conserto_entrada: "bg-red-500/10 text-red-600 border-red-500/30",
+   setor_conserto_saida: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
+   expedicao_saida_conferencia: "bg-slate-500/10 text-slate-600 border-slate-500/30",
+   expedicao_saida_liberado: "bg-blue-500/10 text-blue-600 border-blue-500/30",
+   perda_confirmada: "bg-black/10 text-black border-black/30"
  };
 
  export const tipoIcons: Record<TipoMovimentacao, any> = {
@@ -50,4 +90,17 @@ import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
    entrega: CheckCircle2,
    devolucao: History,
    ajuste_estoque: History,
+   // Ícones Promo Brindes
+   recebimento_entrada: Truck,
+   triagem_conferencia: ClipboardList,
+   armazenamento_pallet: Boxes,
+   saida_para_gravacao: PenTool,
+   retorno_da_gravacao: PenTool,
+   saida_para_manuseio: Package,
+   retorno_do_manuseio: PackageCheck,
+   setor_conserto_entrada: Wrench,
+   setor_conserto_saida: CheckCircle2,
+   expedicao_saida_conferencia: CheckCircle2,
+   expedicao_saida_liberado: RouteIcon,
+   perda_confirmada: AlertCircle
  };
