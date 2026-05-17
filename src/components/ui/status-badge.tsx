@@ -11,14 +11,14 @@ const statusConfig: Record<string, { label: string; variant: string; icon: React
   completed: { label: 'Concluido', variant: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle },
   cancelled: { label: 'Cancelado', variant: 'bg-gray-100 text-gray-800 border-gray-200', icon: XCircle },
   error: { label: 'Erro', variant: 'bg-red-100 text-red-800 border-red-200', icon: AlertCircle },
-  shipped: { label: 'Enviado', variant: 'bg-purple-100 text-purple-800 border-purple-200', icon: Truck },
-  delivered: { label: 'Entregue', variant: 'bg-emerald-100 text-emerald-800 border-emerald-200', icon: Package },
-  picking: { label: 'Separando', variant: 'bg-orange-100 text-orange-800 border-orange-200', icon: Package },
-  packed: { label: 'Embalado', variant: 'bg-indigo-100 text-indigo-800 border-indigo-200', icon: Package },
-  livre: { label: 'Livre', variant: 'bg-green-100 text-green-800 border-green-200', icon: CheckCircle },
-  ocupado: { label: 'Ocupada', variant: 'bg-blue-100 text-blue-800 border-blue-200', icon: Package },
-  bloqueado: { label: 'Bloqueada', variant: 'bg-red-100 text-red-800 border-red-200', icon: XCircle },
-  manutencao: { label: 'Manutenção', variant: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: AlertCircle },
+   shipped: { label: 'Enviado', variant: 'bg-purple-500/10 text-purple-600 border-purple-200/50 dark:border-purple-500/20', icon: Truck },
+   delivered: { label: 'Entregue', variant: 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50 dark:border-emerald-500/20', icon: Package },
+   picking: { label: 'Separando', variant: 'bg-orange-500/10 text-orange-600 border-orange-200/50 dark:border-orange-500/20', icon: Package },
+   packed: { label: 'Embalado', variant: 'bg-indigo-500/10 text-indigo-600 border-indigo-200/50 dark:border-indigo-500/20', icon: Package },
+   livre: { label: 'Livre', variant: 'bg-emerald-500/10 text-emerald-600 border-emerald-200/50 dark:border-emerald-500/20', icon: CheckCircle },
+   ocupado: { label: 'Ocupada', variant: 'bg-blue-500/10 text-blue-600 border-blue-200/50 dark:border-blue-500/20', icon: Package },
+   bloqueado: { label: 'Bloqueada', variant: 'bg-red-500/10 text-red-600 border-red-200/50 dark:border-red-500/20', icon: XCircle },
+   manutencao: { label: 'Manutenção', variant: 'bg-amber-500/10 text-amber-600 border-amber-200/50 dark:border-amber-500/20', icon: AlertCircle },
 };
 
 export interface StatusBadgeProps {

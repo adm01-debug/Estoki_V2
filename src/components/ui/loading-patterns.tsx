@@ -15,9 +15,17 @@ import { motion } from "framer-motion";
 
 // ── Skeleton Base ────────────────────────────────────────
 
-export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse bg-muted rounded", className)} />;
-}
+ export function Skeleton({ className }: { className?: string }) {
+   return (
+     <div 
+       className={cn(
+         "animate-pulse bg-gradient-to-r from-muted via-muted/60 to-muted rounded relative overflow-hidden",
+         "after:absolute after:inset-0 after:-translate-x-full after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/5 after:to-transparent",
+         className
+       )} 
+     />
+   );
+ }
 
 // ── Card Skeleton ────────────────────────────────────────
 
