@@ -59,7 +59,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
   return (
     <AppLayoutContext.Provider value={true}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="ESTOKI WMS">
+        <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="Promo Brindes Intel WMS">
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
             Pular para conteúdo principal
           </a>
