@@ -4,7 +4,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
- import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock, MoreVertical } from "lucide-react";
+import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock, MoreVertical, ExternalLink } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getStatusClasses } from "@/lib/statusColors";
 
 const itemVariants = {
@@ -70,34 +72,65 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                 <p className="text-xs text-muted-foreground/60 mt-1">As atividades aparecerão aqui</p>
               </div>
             ) : (
-              atividades.map((activity, index) => {
-                const Icon = getActivityIcon(activity.type);
-                return (
-                   <div
-                     key={activity.id}
-                     className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item hover:pl-5 transition-all duration-200"
-                   >
-                     <div className={`w-11 h-11 rounded-xl flex items-center justify-center border shadow-sm ${getStatusClasses(activity.status)} transition-transform group-hover/item:scale-110`}>
-                       <Icon className="h-5 w-5" />
-                     </div>
-                     <div className="flex-1 min-w-0">
-                       <p className="text-sm font-bold text-foreground truncate tracking-tight">{activity.desc}</p>
-                       <div className="flex items-center gap-2 mt-0.5">
-                         <Clock className="h-3 w-3 text-muted-foreground/60" />
-                         <p className="text-[11px] font-medium text-muted-foreground">{activity.time}</p>
-                       </div>
-                     </div>
-                     <div className="flex items-center gap-2">
-                       <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-wider px-2 rounded-full ${getStatusClasses(activity.status)}`}>
-                         {activity.type}
-                       </Badge>
-                       <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                         <MoreVertical className="h-4 w-4 text-muted-foreground" />
-                       </Button>
-                     </div>
-                   </div>
-                );
-              })
+              <TooltipProvider>
+                {atividades.map((activity, index) => {
+                  const Icon = getActivityIcon(activity.type);
+                  return (
+                    <div
+                      key={activity.id}
+                      className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item hover:pl-5 transition-all duration-200 relative overflow-hidden"
+                    >
+                      {/* Indicador lateral dinâmico */}
+                      <div className={cn(
+                        "absolute left-0 top-0 bottom-0 w-1 opacity-0 group-hover/item:opacity-100 transition-opacity",
+                        activity.status === 'success' ? "bg-success" :
+                        activity.status === 'danger' ? "bg-destructive" :
+                        activity.status === 'warning' ? "bg-warning" : "bg-primary"
+                      )} />
+
+                      <div className={cn(
+                        "w-11 h-11 rounded-xl flex items-center justify-center border shadow-sm transition-transform group-hover/item:scale-110 shrink-0",
+                        getStatusClasses(activity.status)
+                      )}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-foreground truncate tracking-tight group-hover/item:text-primary transition-colors">
+                          {activity.desc}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Clock className="h-3 w-3 text-muted-foreground/60" />
+                          <p className="text-[11px] font-medium text-muted-foreground">{activity.time}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Badge variant="outline" className={cn(
+                              "text-[10px] font-bold uppercase tracking-wider px-2 rounded-full border-none",
+                              getStatusClasses(activity.status)
+                            )}>
+                              {activity.type}
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent side="left">
+                            <p className="text-xs">Evento de {activity.type}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        
+                        <div className="flex items-center opacity-0 group-hover/item:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </TooltipProvider>
             )}
           </div>
         </CardContent>
