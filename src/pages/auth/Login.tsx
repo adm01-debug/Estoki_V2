@@ -87,7 +87,7 @@ const LoginPage = () => {
             <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow mb-3">
               <Box className="h-7 w-7 text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-sidebar-foreground">ESTOKI</h1>
+            <h1 className="text-2xl font-bold text-sidebar-foreground">PROMO BRINDES</h1>
           </div>
           <div>
             <h2 className="text-2xl xl:text-3xl font-bold text-sidebar-foreground">Bem-vindo de volta</h2>

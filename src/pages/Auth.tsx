@@ -124,9 +124,9 @@ const AuthPage = () => {
               <Box className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="space-y-1">
-              <h1 className="text-3xl font-black tracking-tighter leading-none gradient-text">ESTOKI</h1>
-              <p className="text-xs font-black tracking-[0.3em] text-primary uppercase">WAREHOUSE</p>
-              <p className="text-[9px] font-black tracking-[0.2em] text-sidebar-foreground/40 uppercase">PROMO BRINDES</p>
+              <h1 className="text-3xl font-black tracking-tighter leading-none gradient-text">PROMO BRINDES</h1>
+              <p className="text-xs font-black tracking-[0.3em] text-primary uppercase">INTELLIGENCE</p>
+              <p className="text-[9px] font-black tracking-[0.2em] text-sidebar-foreground/40 uppercase">WMS 10/10</p>
             </div>
           </div>
 
