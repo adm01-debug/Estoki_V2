@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Package, CheckCircle2, AlertCircle, ChevronDown, ChevronUp, AlertTriangle, ShieldCheck, ArrowRightCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,8 @@ export interface VolumeData {
   qtdEsperada: number;
   qtdContada: number | null;
   conferido: boolean;
+  integridade?: 'ok' | 'avaiado' | 'critico';
+  handoffConfirmado?: boolean;
 }
 
 interface VolumeContagemProps {
@@ -19,12 +21,16 @@ interface VolumeContagemProps {
   onVolumeConfirm: (volumeId: number) => void;
   totalEsperado: number;
   className?: string;
+  onVolumeIntegrityChange?: (volumeId: number, integridade: 'ok' | 'avaiado' | 'critico') => void;
+  onVolumeHandoff?: (volumeId: number) => void;
 }
 
 export function VolumeContagem({
   volumes,
   onVolumeChange,
   onVolumeConfirm,
+  onVolumeIntegrityChange,
+  onVolumeHandoff,
   totalEsperado,
   className,
 }: VolumeContagemProps) {
