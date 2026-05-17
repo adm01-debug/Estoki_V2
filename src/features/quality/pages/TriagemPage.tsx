@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft } from "lucide-react";
+ import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft, Target, Hammer } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,12 +119,15 @@ export default function TriagemPage() {
   }, [searchTerm, statusFilter, currentPage, setSearchParams]);
 
   const stats = useMemo(() => {
-    const emAndamento = (items as any[]).filter(i => !i.data_fim).length;
-    const aprovados = (items as any[]).filter(i => i.resultado === "aprovado").length;
-    const reprovados = (items as any[]).filter(i => i.resultado === "reprovado").length;
-    const retidosConserto = (items as any[]).filter(i => i.resultado === "ressalva" || i.resultado === "triagem_conferencia").length;
-    
-    return { emAndamento, aprovados, reprovados, retidosConserto };
+     const emAndamento = (items as any[]).filter(i => !i.data_fim).length;
+     const aprovados = (items as any[]).filter(i => i.resultado === "aprovado").length;
+     const reprovados = (items as any[]).filter(i => i.resultado === "reprovado").length;
+     const retidosConserto = (items as any[]).filter(i => i.resultado === "ressalva" || i.resultado === "triagem_conferencia").length;
+     const emGravacao = (items as any[]).filter(i => i.status_producao === "em_gravacao").length;
+     const emManuseio = (items as any[]).filter(i => i.status_producao === "em_manuseio").length;
+     
+     return { emAndamento, aprovados, reprovados, retidosConserto, emGravacao, emManuseio };
+   }, [items]);
   }, [items]);
 
    const handleIniciarTriagem = async () => {
@@ -234,7 +237,44 @@ export default function TriagemPage() {
             </motion.div>
           )}
 
-          <TriagemStatsCards stats={stats} />
+           <div className="space-y-4">
+             <TriagemStatsCards stats={stats} />
+             
+             {/* Production Tracking for Promo Brindes */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <motion.div 
+                 whileHover={{ y: -4 }}
+                 className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+               >
+                 <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                     <Target className="h-6 w-6 text-indigo-600" />
+                   </div>
+                   <div>
+                     <p className="text-[10px] font-bold text-indigo-600/70 uppercase tracking-widest">Fila de Gravação</p>
+                     <p className="text-xl font-black text-indigo-700">{stats.emGravacao} Lotes</p>
+                   </div>
+                 </div>
+                 <Badge variant="outline" className="bg-white/50 border-indigo-200 text-indigo-600 font-bold">Prioridade Alta</Badge>
+               </motion.div>
+ 
+               <motion.div 
+                 whileHover={{ y: -4 }}
+                 className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+               >
+                 <div className="flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
+                     <Hammer className="h-6 w-6 text-orange-600" />
+                   </div>
+                   <div>
+                     <p className="text-[10px] font-bold text-orange-600/70 uppercase tracking-widest">Fila de Manuseio</p>
+                     <p className="text-xl font-black text-orange-700">{stats.emManuseio} Lotes</p>
+                   </div>
+                 </div>
+                 <Badge variant="outline" className="bg-white/50 border-orange-200 text-orange-600 font-bold">Triagem Final</Badge>
+               </motion.div>
+             </div>
+           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/50 p-4 rounded-2xl border border-border/20 shadow-sm">
             <div className="relative flex-1">
