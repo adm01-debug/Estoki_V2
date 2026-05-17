@@ -1,6 +1,6 @@
  import { useState, useEffect, useMemo } from "react";
  import { useParams, useNavigate } from "react-router-dom";
-import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download } from "lucide-react";
+import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download, Info } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button"; 
@@ -189,15 +189,25 @@ export default function ConferenciaRecebimento() {
  
    const currentStep = useMemo(() => {
      if (!itemScanned || !locationScanned) return 0;
-     if (quantidadeConferida === 0) return 1;
-     if (quantidadeConferida < quantidadeEsperada) return 2;
+     const allVolumesConferidos = volumes.every(v => v.conferido);
+     const allHandoffs = volumes.every(v => v.handoffConfirmado);
+     if (!allVolumesConferidos) return 1;
+     if (!allHandoffs) return 2;
      return 3;
-   }, [itemScanned, locationScanned, quantidadeConferida, quantidadeEsperada]);
+   }, [itemScanned, locationScanned, volumes]);
+
+   const volumesFaltantes = useMemo(() => {
+     return volumes.filter(v => v.conferido && v.integridade === 'critico').length;
+   }, [volumes]);
+
+   const volumesNaoEncontrados = useMemo(() => {
+     return volumes.filter(v => !v.conferido).length;
+   }, [volumes]);
  
    const steps = [
      { id: 1, label: "Validação", description: "Escanear item e local" },
-     { id: 2, label: "Pesagem", description: "Conferir peso total" },
-     { id: 3, label: "Contagem", description: "Conferir volumes" },
+     { id: 2, label: "Conferência", description: "Conferir volumes e integridade" },
+     { id: 3, label: "Handoff", description: "Liberar para Triagem" },
      { id: 4, label: "Finalização", description: "Confirmar dados" },
    ];
  
@@ -287,21 +297,17 @@ export default function ConferenciaRecebimento() {
         </div>
 
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span>Progresso da conferência</span>
-            <span className={temDivergencia ? "text-red-500 font-medium" : ""}>
-              {quantidadeConferida} / {quantidadeEsperada}
-            </span>
-          </div>
-          <Progress 
-            value={Math.min(progresso, 100)} 
-            className={temDivergencia ? "[&>div]:bg-red-500" : ""} 
-          />
-          {temDivergencia && (
-            <p className="text-sm text-red-500 flex items-center gap-1">
-              <AlertTriangle className="h-4 w-4" />
-              Divergência detectada
-            </p>
+          {(volumesNaoEncontrados > 0 || volumesFaltantes > 0) && (
+            <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-2xl flex items-start gap-3 animate-pulse">
+              <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
+              <div>
+                <p className="text-sm font-black text-destructive uppercase tracking-tighter">Atenção: Inconsistência Detectada</p>
+                <p className="text-xs text-destructive/80 font-medium">
+                  {volumesNaoEncontrados > 0 && `${volumesNaoEncontrados} volume(s) ainda não foram localizados no pátio. `}
+                  {volumesFaltantes > 0 && `${volumesFaltantes} volume(s) marcados com avaria crítica.`}
+                </p>
+              </div>
+            </div>
           )}
         </div>
 
