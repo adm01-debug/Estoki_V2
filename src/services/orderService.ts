@@ -30,13 +30,7 @@ export const orderService = {
         const from = (page - 1) * pageSize;
         query = query.range(from, from + pageSize - 1);
 
-        const { data, error, count } = await query.select(`
-          *,
-          itens:order_items(
-            *,
-            produto:produtos(nome, sku)
-          )
-        `, { count: 'exact' });
+        const { data, error, count } = await query;
 
         if (error) throw error;
         return {

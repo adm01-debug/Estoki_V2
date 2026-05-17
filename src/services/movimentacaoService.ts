@@ -92,7 +92,7 @@ export const movimentacaoService = {
       const from = (page - 1) * pageSize;
       query = query.range(from, from + pageSize - 1);
 
-      const { data, error, count } = await query.select('*', { count: 'exact' });
+      const { data, error, count } = await query;
 
       if (error) {
         logger.error('Erro ao buscar histórico', error);
