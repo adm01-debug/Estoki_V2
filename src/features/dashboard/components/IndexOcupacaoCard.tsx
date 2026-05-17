@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { motion } from "framer-motion";
- import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
  import { Skeleton } from "@/components/ui/skeleton";
  import { TrendingUp, ArrowUpRight, Maximize2 } from "lucide-react";
  import { Button } from "@/components/ui/button";
