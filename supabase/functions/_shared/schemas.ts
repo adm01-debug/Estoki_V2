@@ -66,6 +66,13 @@ export const InventoryAdjustSchema = z.object({
   lote_id: z.string().uuid().optional(),
 });
 
+export const InventoryReserveSchema = z.object({
+  produto_id: z.string().uuid(),
+  quantidade: z.number().positive(),
+  pedido_id: z.string().uuid().optional(),
+  prioridade: z.enum(["baixa", "media", "alta"]).optional().default("media"),
+});
+
 // ── Shipping schemas ──────────────────────────────────────
 export const ShippingQuoteSchema = z.object({
   carrier: z.enum(["correios", "jadlog", "azul", "fedex", "dhl"]),
