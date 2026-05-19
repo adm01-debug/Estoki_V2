@@ -1,13 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-  async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      logger.error("Erro ao autenticar usuário", error, { email });
-      throw error;
-    }
-    return data;
-  },
-
 import { logger } from '@/utils/logger';
 
 export type AppRole = "operador" | "supervisor" | "admin";
@@ -19,6 +10,15 @@ export interface Profile {
 }
 
 export const authService = {
+  async signIn(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      logger.error("Erro ao autenticar usuário", error, { email });
+      throw error;
+    }
+    return data;
+  },
+
   async getProfile(userId: string): Promise<Profile | null> {
     const { data, error } = await supabase
       .from("profiles")
