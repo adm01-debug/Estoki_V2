@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
  import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
 import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
-import { ProdutoDetailDialog, Produto } from "@/components/produtos/ProdutoDetailDialog";
+import { ProdutoDetailDialog } from "@/components/produtos/ProdutoDetailDialog";
+import type { Produto } from "@/types/product";
 import { ProdutosList } from "@/components/produtos/ProdutosList";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
 
@@ -75,7 +76,7 @@ import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
      document.body.removeChild(link);
    };
 
-  const getCurvaBadge = (curva?: string) => {
+  const getCurvaBadge = (curva?: string | null) => {
     switch (curva) {
       case "A": return <Badge className="bg-primary text-primary-foreground">Curva A</Badge>;
       case "B": return <Badge variant="secondary">Curva B</Badge>;

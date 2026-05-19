@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Package, Eye } from "lucide-react";
 import type { ReactNode } from "react";
-import type { Produto } from "./ProdutoDetailDialog";
+import type { Produto } from "@/types/product";
 
 interface Props {
   produtos: Produto[];
   onSelect: (p: Produto) => void;
-  getCurvaBadge: (curva?: string) => ReactNode;
+  getCurvaBadge: (curva?: string | null) => ReactNode;
 }
 
 export const ProdutosList = memo(({ produtos, onSelect, getCurvaBadge }: Props) => {

@@ -9,26 +9,12 @@ import { Badge } from "@/components/ui/badge";
  import { History, Info, Package, ArrowUpRight, ArrowDownLeft, RefreshCcw, Loader2 } from "lucide-react";
  import type { ReactNode } from "react";
 
-export interface Produto {
-  id: string;
-  sku: string;
-  nome: string;
-  descricao?: string;
-  unidade?: string;
-  curva_abc?: string;
-  estoque_minimo?: number;
-  estoque_maximo?: number;
-  ponto_pedido?: number;
-  peso_unitario?: number;
-  fornecedor_principal?: string;
-  giro_mensal?: number;
-  created_at: string;
-}
+import type { Produto } from "@/types/product";
 
 interface Props {
   produto: Produto | null;
   onClose: () => void;
-  getCurvaBadge: (curva?: string) => ReactNode;
+  getCurvaBadge: (curva?: string | null) => ReactNode;
 }
 
 export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) {

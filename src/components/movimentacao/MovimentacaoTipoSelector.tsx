@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { tiposMovimento } from "./movimentacaoHelpers";
-import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 
 interface MovimentacaoTipoSelectorProps {
   tipoMovimento: TipoMovimentacao;

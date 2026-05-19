@@ -14,7 +14,7 @@
     Boxes,
     AlertCircle
   } from "lucide-react";
-import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 
  export const tipoLabels: Record<TipoMovimentacao, string> = {
    recebimento_nf: "Recebimento NF",

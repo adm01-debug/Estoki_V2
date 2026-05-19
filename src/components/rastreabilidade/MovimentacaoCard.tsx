@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Movimentacao } from "@/hooks/useMovimentacoes";
+import type { Movimentacao } from "@/types/movimentacao";
 import { tipoLabels, tipoColors, tipoIcons } from "./constants";
 
 interface MovimentacaoCardProps {

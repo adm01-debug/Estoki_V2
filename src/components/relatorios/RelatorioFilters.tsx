@@ -8,7 +8,7 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Filter, Search, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 
 import { tipoLabels } from "@/components/rastreabilidade/constants";
 

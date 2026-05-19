@@ -1,38 +1,34 @@
-// Types para Movimentação
-export type TipoMovimentacao = 'entrada' | 'saida' | 'transferencia' | 'ajuste' | 'devolucao';
+import { Database } from '@/integrations/supabase/types';
+
+export type TipoEventoRastreamento = Database['public']['Enums']['tipo_evento_rastreamento'];
+
+export type TipoMovimentacao = TipoEventoRastreamento | 'transferencia' |
+    'recebimento_entrada' | 'triagem_conferencia' | 'armazenamento_pallet' |
+    'saida_para_gravacao' | 'retorno_da_gravacao' | 'saida_para_manuseio' | 'retorno_do_manuseio' |
+    'setor_conserto_entrada' | 'setor_conserto_saida' | 'expedicao_saida_conferencia' | 'expedicao_saida_liberado' | 'perda_confirmada';
 
 export interface Movimentacao {
   id: string;
   tipo: TipoMovimentacao;
-  produto_id: string;
+  produto_id?: string;
   produto_nome?: string;
   lote_id?: string;
-  posicao_origem?: string;
-  posicao_destino?: string;
+  lote_numero?: string;
   quantidade: number;
-  motivo?: string;
-  documento_referencia?: string;
-  responsavel?: string;
-  data_movimentacao: string;
-  observacoes?: string;
+  localizacao?: string;
+  descricao: string;
+  operador_id?: string;
+  operador_nome?: string;
+  created_at: string;
 }
 
 export interface MovimentacaoInput {
   tipo: TipoMovimentacao;
-  produto_id: string;
+  produto_id?: string;
   lote_id?: string;
-  posicao_origem?: string;
-  posicao_destino?: string;
   quantidade: number;
-  motivo?: string;
-  documento_referencia?: string;
-  observacoes?: string;
+  localizacao?: string;
+  descricao: string;
+  from_posicao_id?: string;
+  to_posicao_id?: string;
 }
-
-export const tipoMovimentacaoConfig: Record<TipoMovimentacao, { label: string; color: string }> = {
-  entrada: { label: 'Entrada', color: 'bg-green-500' },
-  saida: { label: 'Saída', color: 'bg-red-500' },
-  transferencia: { label: 'Transferência', color: 'bg-blue-500' },
-  ajuste: { label: 'Ajuste', color: 'bg-amber-500' },
-  devolucao: { label: 'Devolução', color: 'bg-purple-500' },
-};

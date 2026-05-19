@@ -3,14 +3,15 @@ import { DataGrid } from '@/components/data/DataGrid';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search } from 'lucide-react';
-import { productService, Product } from '@/services/productService';
+import { productService } from '@/services/productService';
+import type { Produto } from '@/types/product';
 import { toast } from 'sonner';
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Produto[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   useEffect(() => { loadProducts(); }, []);
-  const loadProducts = async () => { try { const data = await productService.getAll(); setProducts(data); } catch (e) { toast.error('Erro ao carregar produtos'); } finally { setLoading(false); } };
+  const loadProducts = async () => { try { const { data } = await productService.getAll(); setProducts(data); } catch (e) { toast.error('Erro ao carregar produtos'); } finally { setLoading(false); } };
   const columns = [
     { key: 'sku' as const, header: 'SKU' }, 
     { key: 'nome' as const, header: 'Nome' }, 
