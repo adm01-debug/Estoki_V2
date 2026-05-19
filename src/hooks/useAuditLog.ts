@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { auditService, type AuditLogEntry, type AuditAction } from "@/services/auditService";
+import { auditService } from "@/services/auditService";
+import type { AuditLogEntry, AuditAction } from "@/services/auditService";
 
-export type { AuditLogEntry, AuditAction } from "@/services/auditService";
+export type { AuditLogEntry, AuditAction };
 
 export function useAuditLog() {
   const { user } = useAuth();

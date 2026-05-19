@@ -4,8 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { shippingService } from "../services/shippingService";
 import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
-
-export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
+export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega };
 
 export function useRomaneios(options?: { enableRealtime?: boolean }) {
   const queryClient = useQueryClient();

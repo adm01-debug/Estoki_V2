@@ -5,8 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { pickingService } from "../services/pickingService";
 import type { PickingTask } from "../types";
-
-export type { PickingTask } from "../types";
+export type { PickingTask };
 
 export function usePicking(options?: { enableRealtime?: boolean }) {
   const { user } = useAuth();
