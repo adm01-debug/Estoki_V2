@@ -1,6 +1,7 @@
- import { Clock, CheckCircle, AlertTriangle, TrendingUp, Filter, Wrench, PackageSearch } from "lucide-react";
- import { Card, CardContent } from "@/components/ui/card";
- import { cn } from "@/lib/utils";
+import { Clock, CheckCircle, AlertTriangle, TrendingUp, Filter, Wrench, PackageSearch } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { memo } from "react";
 
 interface TriagemStatsCardsProps {
   stats: {
