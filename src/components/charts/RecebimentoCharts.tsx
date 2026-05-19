@@ -7,7 +7,7 @@ interface RecebimentoChartsProps {
   items: { status: string; fornecedor?: string | null; quantidade_atual: number; quantidade_inicial: number }[];
 }
 
-export function RecebimentoCharts({ items }: RecebimentoChartsProps) {
+export const RecebimentoCharts = memo(function RecebimentoCharts({ items }: RecebimentoChartsProps) {
   const statusData = useMemo(() => {
     const map: Record<string, number> = {};
     items.forEach(i => { map[i.status] = (map[i.status] || 0) + 1; });
