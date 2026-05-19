@@ -15,7 +15,7 @@ interface EstoqueStatsCardsProps {
   stats: EstoqueStats;
 }
 
-export function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
+export const EstoqueStatsCards = memo(function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
   return (
     <motion.div
       className="grid grid-cols-2 lg:grid-cols-4 gap-3"
