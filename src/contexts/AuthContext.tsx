@@ -1,15 +1,8 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
- import { User, Session } from "@supabase/supabase-js";
- import { supabase } from "@/integrations/supabase/client";
- import { logger } from "@/utils/logger";
-
-type AppRole = "operador" | "supervisor" | "admin";
-
-interface Profile {
-  id: string;
-  nome: string | null;
-  email: string | null;
-}
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
+import { authService, type AppRole, type Profile } from "@/services/authService";
 
 interface AuthContextType {
   user: User | null;
@@ -38,16 +31,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = useCallback(async (userId: string) => {
     try {
-      const [profileRes, roleRes] = await Promise.all([
-        supabase.from("profiles").select("id, nome, email").eq("id", userId).maybeSingle(),
-        supabase.from("user_roles").select("role").eq("user_id", userId).maybeSingle(),
-      ]);
-
-      if (profileRes.data) setProfile(profileRes.data);
-      if (roleRes.data) setRole(roleRes.data.role as AppRole);
-     } catch (error) {
-       logger.error("Error fetching user data:", error);
-     }
+      const { profile: userProfile, role: userRole } = await authService.getUserData(userId);
+      if (userProfile) setProfile(userProfile);
+      if (userRole) setRole(userRole);
+    } catch (error) {
+      logger.error("Erro ao sincronizar dados do usuário:", error);
+    }
   }, []);
 
   useEffect(() => {
