@@ -1,30 +1,28 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
-
-interface PickConfirmItem {
-  pick_item_id: string;
-  picked_quantity: number;
-  location_id?: string;
-  lot_number?: string;
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { validateInput, PickingConfirmSchema } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
+    const body = await req.json();
+    const validation = validateInput(PickingConfirmSchema, body);
 
-    const { pick_list_id, items, picker_id }: { pick_list_id: string; items: PickConfirmItem[]; picker_id: string } = await req.json();
-
-    if (!pick_list_id || !items?.length) {
-      return new Response(JSON.stringify({ error: "pick_list_id and items are required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    if (!validation.success) {
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
     }
+
+    const { pick_list_id, items, picker_id } = validation.data;
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!, 
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
     for (const item of items) {
       // Atualizar item do pick list
@@ -91,11 +89,18 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ success: true, items_confirmed: items.length, completed: allPicked }),
+      JSON.stringify({ 
+        success: true, 
+        items_confirmed: items.length, 
+        completed: allPicked,
+        timestamp: new Date().toISOString()
+      }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({ error: "Erro interno", message: error.message }),
+      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+    );
   }
 });

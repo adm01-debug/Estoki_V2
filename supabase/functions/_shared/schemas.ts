@@ -79,7 +79,20 @@ export const ShippingQuoteSchema = z.object({
   }).optional(),
 });
 
+// ── Picking schemas ──────────────────────────────────────
+export const PickingConfirmSchema = z.object({
+  pick_list_id: z.string().uuid("ID do Pick List inválido"),
+  picker_id: z.string().uuid("ID do Separador inválido"),
+  items: z.array(z.object({
+    pick_item_id: z.string().uuid("ID do Item de Pick inválido"),
+    picked_quantity: z.number().min(0, "Quantidade não pode ser negativa"),
+    location_id: z.string().uuid().optional(),
+    lot_number: z.string().optional(),
+  })).min(1, "É necessário ao menos um item"),
+});
+
 // ── Helper: validate and return typed result ──────────────
+
 export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): 
   { success: true; data: T } | { success: false; error: string; details: Record<string, string[]> } {
   const result = schema.safeParse(data);
