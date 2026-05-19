@@ -66,6 +66,13 @@ export const InventoryAdjustSchema = z.object({
   lote_id: z.string().uuid().optional(),
 });
 
+export const InventoryReserveSchema = z.object({
+  produto_id: z.string().uuid(),
+  quantidade: z.number().positive(),
+  pedido_id: z.string().uuid().optional(),
+  prioridade: z.enum(["baixa", "media", "alta"]).optional().default("media"),
+});
+
 // ── Shipping schemas ──────────────────────────────────────
 export const ShippingQuoteSchema = z.object({
   carrier: z.enum(["correios", "jadlog", "azul", "fedex", "dhl"]),
@@ -79,6 +86,24 @@ export const ShippingQuoteSchema = z.object({
   }).optional(),
 });
 
+export const CarrierQuoteRequestSchema = z.object({
+  origin_cep: z.string().regex(/^\d{8}$/, "CEP de origem inválido"),
+  destination_cep: z.string().regex(/^\d{8}$/, "CEP de destino inválido"),
+  weight: z.number().positive(),
+  dimensions: z.object({
+    width: z.number().positive(),
+    height: z.number().positive(),
+    length: z.number().positive(),
+  }),
+  carriers: z.array(z.string()).optional().default(["correios", "jadlog", "azul"]),
+});
+
+export const CreateShipmentSchema = z.object({
+  orderId: z.string().uuid("ID do pedido inválido"),
+  carrier: z.string().min(1, "Transportadora é obrigatória"),
+  trackingNumber: z.string().min(1, "Número de rastreio é obrigatório"),
+});
+
 // ── Picking schemas ──────────────────────────────────────
 export const PickingConfirmSchema = z.object({
   pick_list_id: z.string().uuid("ID do Pick List inválido"),
@@ -89,6 +114,13 @@ export const PickingConfirmSchema = z.object({
     location_id: z.string().uuid().optional(),
     lot_number: z.string().optional(),
   })).min(1, "É necessário ao menos um item"),
+});
+
+// ── AI schemas ─────────────────────────────────────────────
+export const AiClassificationSchema = z.object({
+  text: z.string().min(1, "Texto é obrigatório").max(10000),
+  categories: z.array(z.string()).min(1, "Ao menos uma categoria é obrigatória"),
+  model: z.enum(["simple", "advanced"]).optional().default("simple"),
 });
 
 // ── Helper: validate and return typed result ──────────────

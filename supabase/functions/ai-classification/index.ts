@@ -1,13 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
-
-interface ClassificationRequest {
-  text: string;
-  categories: string[];
-  model?: "simple" | "advanced";
-}
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { AiClassificationSchema, validateInput } from "../_shared/schemas.ts";
 
 interface ClassificationResult {
   category: string;
@@ -27,11 +22,17 @@ serve(async (req) => {
       { global: { headers: { Authorization: req.headers.get("Authorization")! } } }
     );
 
-    const { text, categories, model = "simple" }: ClassificationRequest = await req.json();
-
-    if (!text || !categories || categories.length === 0) {
-      throw new Error("text e categories são obrigatórios");
+    const body = await req.json();
+    const validation = validateInput(AiClassificationSchema, body);
+    
+    if (!validation.success) {
+      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { 
+        status: 400, 
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } 
+      });
     }
+
+    const { text, categories, model } = validation.data;
 
     // Classificação simples baseada em keywords
     const scores: Record<string, number> = {};
