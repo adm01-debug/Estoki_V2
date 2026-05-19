@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function GlobalLoadingBar() {
   const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
+  const isLoading = isFetching > 0 || isMutating > 0;
 
   return (
     <AnimatePresence>
