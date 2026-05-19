@@ -1,29 +1,7 @@
- import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
- import { Json } from "@/integrations/supabase/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
-
-export type AuditAction = 
-  | "create" | "update" | "delete" | "view" 
-  | "login" | "logout" | "export" | "import"
-  | "approve" | "reject" | "transfer" | "adjust" | "bulk_create";
-
-export interface AuditLogEntry {
-  id: string;
-  user_id: string;
-  user_email?: string;
-  user_nome?: string;
-  action: AuditAction;
-  entity_type: string;
-  entity_id?: string;
-  entity_label?: string;
-   old_values?: Json;
-   new_values?: Json;
-  ip_address?: string;
-  user_agent?: string;
-   metadata?: Json;
-  created_at: string;
-}
+import { auditService, type AuditLogEntry, type AuditAction } from "@/services/auditService";
 
 export function useAuditLog() {
   const { user } = useAuth();
@@ -31,16 +9,7 @@ export function useAuditLog() {
   
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ["audit-logs"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-         .from("audit_log")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(1000);
-        
-      if (error) throw error;
-      return data as AuditLogEntry[];
-    }
+    queryFn: () => auditService.getAll(1000)
   });
   
   const logAction = useMutation({
@@ -50,15 +19,12 @@ export function useAuditLog() {
       const newEntry = {
         ...entry,
         user_id: user.id,
-        user_email: user.email,
-        user_agent: navigator.userAgent,
+        user_email: user.email || undefined,
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : 'server-side',
         ip_address: "client-side"
       };
 
-       const { data, error } = await supabase.from("audit_log").insert([newEntry]).select().single();
-
-      if (error) throw error;
-      return data;
+      return auditService.log(newEntry as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
@@ -66,19 +32,19 @@ export function useAuditLog() {
   });
   
   const log = {
-     create: (entityType: string, entityId: string, entityLabel?: string, newValues?: Json) => 
+    create: (entityType: string, entityId: string, entityLabel?: string, newValues?: Json) => 
       logAction.mutate({ action: "create", entity_type: entityType, entity_id: entityId, entity_label: entityLabel, new_values: newValues }),
-     update: (entityType: string, entityId: string, oldValues?: Json, newValues?: Json) => 
+    update: (entityType: string, entityId: string, oldValues?: Json, newValues?: Json) => 
       logAction.mutate({ action: "update", entity_type: entityType, entity_id: entityId, old_values: oldValues, new_values: newValues }),
     delete: (entityType: string, entityId: string, entityLabel?: string) => 
       logAction.mutate({ action: "delete", entity_type: entityType, entity_id: entityId, entity_label: entityLabel }),
     view: (entityType: string, entityId?: string) => 
       logAction.mutate({ action: "view", entity_type: entityType, entity_id: entityId }),
-     export: (entityType: string, metadata?: Json) => 
+    export: (entityType: string, metadata?: Json) => 
       logAction.mutate({ action: "export", entity_type: entityType, metadata }),
     login: () => logAction.mutate({ action: "login", entity_type: "session" }),
     logout: () => logAction.mutate({ action: "logout", entity_type: "session" }),
-     custom: (action: AuditAction, entityType: string, metadata?: Json) => 
+    custom: (action: AuditAction, entityType: string, metadata?: Json) => 
       logAction.mutate({ action, entity_type: entityType, metadata })
   };
   

@@ -1,86 +1,52 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
+import type { Json } from '@/integrations/supabase/types';
+
+export type AuditAction = 
+  | "create" | "update" | "delete" | "view" 
+  | "login" | "logout" | "export" | "import"
+  | "approve" | "reject" | "transfer" | "adjust" | "bulk_create";
 
 export interface AuditLogEntry {
   id: string;
-  user_id: string | null;
-  action: string;
+  user_id: string;
+  user_email?: string;
+  user_nome?: string;
+  action: AuditAction;
   entity_type: string;
-  entity_id: string | null;
-  old_values: Record<string, any> | null;
-  new_values: Record<string, any> | null;
-  metadata: Record<string, any>;
-  ip_address: string | null;
-  user_agent: string | null;
+  entity_id?: string;
+  entity_label?: string;
+  old_values?: Json;
+  new_values?: Json;
+  ip_address?: string;
+  user_agent?: string;
+  metadata?: Json;
   created_at: string;
 }
 
-export interface AuditLogFilters {
-  userId?: string;
-  action?: string;
-  entityType?: string;
-  entityId?: string;
-  startDate?: Date;
-  endDate?: Date;
-  limit?: number;
-  offset?: number;
-}
-
 export const auditService = {
-  async log(
-    action: string,
-    entityType: string,
-    entityId?: string,
-    oldValues?: Record<string, any>,
-    newValues?: Record<string, any>,
-    metadata?: Record<string, any>
-  ): Promise<string | null> {
-    try {
-      const { data, error } = await (supabase.rpc as any)('log_audit_event', {
-        p_action: action,
-        p_entity_type: entityType,
-        p_entity_id: entityId || null,
-        p_old_values: oldValues || null,
-        p_new_values: newValues || null,
-        p_metadata: metadata || {},
-      });
-
-      if (error) {
-        if (import.meta.env.DEV) console.error('Failed to log audit event:', error);
-        return null;
-      }
-
-      return data;
-    } catch (err) {
-      if (import.meta.env.DEV) console.error('Audit log error:', err);
-      return null;
+  async getAll(limit = 1000): Promise<AuditLogEntry[]> {
+    const { data, error } = await supabase
+      .from("audit_log")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(limit);
+      
+    if (error) {
+      logger.error("Erro ao buscar logs de auditoria", error);
+      throw error;
     }
+    return data as AuditLogEntry[];
   },
 
-  async getLogs(filters: AuditLogFilters = {}): Promise<AuditLogEntry[]> {
-    let query = (supabase.from as any)('audit_log')
-      .select('*')
-      .order('created_at', { ascending: false });
+  async log(entry: Omit<AuditLogEntry, "id" | "created_at">): Promise<void> {
+    const { error } = await supabase
+      .from("audit_log")
+      .insert([entry]);
 
-    if (filters.userId) query = query.eq('user_id', filters.userId);
-    if (filters.action) query = query.eq('action', filters.action);
-    if (filters.entityType) query = query.eq('entity_type', filters.entityType);
-    if (filters.entityId) query = query.eq('entity_id', filters.entityId);
-    if (filters.startDate) query = query.gte('created_at', filters.startDate.toISOString());
-    if (filters.endDate) query = query.lte('created_at', filters.endDate.toISOString());
-    if (filters.limit) query = query.limit(filters.limit);
-
-    const { data, error } = await query;
-    if (error) return [];
-    return (data || []) as AuditLogEntry[];
-  },
-
-  async getByEntity(entityType: string, entityId: string): Promise<AuditLogEntry[]> {
-    return this.getLogs({ entityType, entityId });
-  },
-
-  async getByUser(userId: string): Promise<AuditLogEntry[]> {
-    return this.getLogs({ userId });
-  },
+    if (error) {
+      logger.error("Erro ao registrar ação de auditoria", error, { entry });
+      throw error;
+    }
+  }
 };
-
-export default auditService;
