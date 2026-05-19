@@ -60,9 +60,12 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <AppLayout showBack>
-        <div className="p-4 md:p-6 lg:p-8">
-          <RouteLoadingFallback type="dashboard" />
-        </div>
+        <BasePageTemplate 
+          title="Dashboard Analítico" 
+          description="Monitoramento operacional em tempo real e inteligência de estoque."
+        >
+          <DashboardSkeleton />
+        </BasePageTemplate>
       </AppLayout>
     );
   }
