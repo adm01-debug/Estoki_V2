@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { VirtualizedTable } from "@/components/data/VirtualizedTable";
 
 export default function AuditLogPage() {
   const { logs, isLoading, getStats } = useAuditLog();
