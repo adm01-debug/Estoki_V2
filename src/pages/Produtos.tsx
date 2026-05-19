@@ -1,26 +1,29 @@
-  import { useState, useMemo } from "react";
-  import { AppLayout } from "@/components/layout/AppLayout";
-  import { PageTransition } from "@/components/layout/PageTransition";
+import { useState, useMemo, useEffect } from "react";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
- import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
- import { Skeleton } from "@/components/ui/skeleton";
-  import { Search, Plus, Filter, X, Download } from "lucide-react";
-  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
- import { useProdutos } from "@/hooks/useProdutos";
- import { produtoSchema, validateForm } from "@/lib/validations";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Plus, Filter, X, Download } from "lucide-react";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { useProdutos } from "@/hooks/useProdutos";
+import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
 import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
 import { ProdutoDetailDialog } from "@/components/produtos/ProdutoDetailDialog";
 import type { Produto } from "@/types/product";
-import { ProdutosList } from "@/components/produtos/ProdutosList";
+import { ProductGrid } from "@/components/produtos/ProductGrid";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
+import { useDebounce } from "@/hooks/useDebounce";
 
- export default function ProdutosPage() {
-    const { produtos, loading, createProduto, stats } = useProdutos();
-    const [search, setSearch] = useState("");
+export default function ProdutosPage() {
+  const { produtos, loading: productsLoading, createProduto, stats } = useProdutos();
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const [isSearching, setIsSearching] = useState(false);
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
@@ -29,8 +32,16 @@ import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
     estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0,
     peso_unitario: 0, fornecedor_principal: "",
   });
-  const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (search !== debouncedSearch) {
+      setIsSearching(true);
+    } else {
+      const timer = setTimeout(() => setIsSearching(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [search, debouncedSearch]);
 
    const handleSave = async () => {
      const validation = validateForm(produtoSchema, formData);
@@ -85,7 +96,7 @@ import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
     }
   };
 
-   if (loading) {
+   if (productsLoading) {
      return (
        <AppLayout title="Produtos" showBack>
          <RouteLoadingFallback type="table" />
@@ -136,7 +147,12 @@ import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
             </Select>
           </div>
 
-          <ProdutosList produtos={filtered} onSelect={setSelectedProduto} getCurvaBadge={getCurvaBadge} />
+          <ProductGrid 
+            produtos={filtered} 
+            loading={isSearching}
+            onSelect={setSelectedProduto} 
+            getCurvaBadge={getCurvaBadge} 
+          />
         </div>
       </PageTransition>
 
