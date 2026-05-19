@@ -15,6 +15,7 @@ interface UserMenuProps {
   userName: string;
   userEmail: string;
   currentRole: string;
+  avatarUrl?: string | null;
   onLogout: () => void;
 }
 
