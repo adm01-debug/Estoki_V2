@@ -362,7 +362,6 @@ export default function EstoquePage() {
                  ) : (
                    <EstoqueVirtualList 
                      positions={filteredPositions.filter(p => p.status === "ocupado")} 
-                     className="min-h-[400px]"
                      onSelect={(p) => { haptics.light(); setSelectedPosition(p); }} 
                    />
                  )}
