@@ -1,6 +1,6 @@
  import { memo } from "react";
  import { motion, AnimatePresence } from "framer-motion";
- import { Menu, Box, WifiOff } from "lucide-react";
+ import { Menu, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
@@ -10,7 +10,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { UserMenu } from "@/components/layout/header/UserMenu";
 import { BackButton } from "@/components/molecules/navigation/BackButton";
 import { cn } from "@/lib/utils";
-import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { WMSStatusBadge } from "@/components/common/WMSStatusBadge";
 
 interface HeaderProps {
   mainPadding: string;
@@ -41,7 +41,6 @@ export const Header = memo(function Header({
   onLogout,
   isHome
 }: HeaderProps) {
-  const isOnline = useOnlineStatus();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/10">
@@ -79,19 +78,9 @@ export const Header = memo(function Header({
         </div>
         
         <div className="flex items-center gap-0.5">
-          {!isOnline && (
-            <Tooltip delayDuration={300}>
-              <TooltipTrigger asChild>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-destructive/10 text-destructive rounded-full border border-destructive/20 mr-2 animate-pulse">
-                  <WifiOff className="h-3.5 w-3.5" />
-                  <span className="text-[10px] font-black uppercase tracking-wider hidden md:inline">Offline</span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="text-xs">
-                Você está operando em modo offline. Algumas funções podem estar limitadas.
-              </TooltipContent>
-            </Tooltip>
-          )}
+          <div className="hidden md:flex mr-2">
+            <WMSStatusBadge />
+          </div>
           <GlobalSearch />
           <LanguageSwitcher />
           <div role="group" aria-label="Ações rápidas" className="flex items-center gap-0.5">

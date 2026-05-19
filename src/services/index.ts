@@ -6,11 +6,22 @@ import { authService } from './authService';
 import { backupService } from './backupService';
 import { barcodeService } from './barcodeService';
 import { batchService } from './batchService';
+import { categoryService } from './categoryService';
+import { customerService } from './customerService';
+import { gamificacaoService } from './gamificacaoService';
 import { inventoryService } from './inventoryService';
+import { locationService } from './locationService';
+import { lotService } from './lotService';
+import { movimentacaoService } from './movimentacaoService';
+import { notificacaoService } from './notificacaoService';
 import { orderService } from './orderService';
 import { productService } from './productService';
+import { qualityService } from './qualityService';
 import { receivingService } from './receivingService';
+import { relatorioService } from './relatorioService';
 import { stockService } from './stockService';
+import { supplierService } from './supplierService';
+import { warehouseService } from './warehouseService';
 
 export * from "./abcService";
 export * from "./alertService";
@@ -30,11 +41,11 @@ export * from "./movimentacaoService";
 export * from "./notificacaoService";
 export * from "./orderService";
 export * from "./productService";
+export * from "./qualityService";
 export * from "./receivingService";
 export * from "./relatorioService";
 export * from "./stockService";
 export * from "./supplierService";
-
 export * from "./warehouseService";
 
 export function createServices() {
@@ -47,10 +58,21 @@ export function createServices() {
     backup: backupService,
     barcode: barcodeService,
     batch: batchService,
+    category: categoryService,
+    customer: customerService,
+    gamificacao: gamificacaoService,
     inventory: inventoryService,
+    location: locationService,
+    lot: lotService,
+    movimentacao: movimentacaoService,
+    notificacao: notificacaoService,
     order: orderService,
     product: productService,
+    quality: qualityService,
     receiving: receivingService,
+    relatorio: relatorioService,
     stock: stockService,
+    supplier: supplierService,
+    warehouse: warehouseService,
   };
 }
