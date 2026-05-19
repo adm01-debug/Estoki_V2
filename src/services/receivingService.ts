@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { RecebimentoItem, LoteInsert, LoteUpdate } from '../types';
-import { handleReceivingError } from '../utils/receivingUtils';
+import type { RecebimentoItem, LoteInsert, LoteUpdate } from '@/features/receiving/types';
+import { handleReceivingError } from '@/features/receiving/utils/receivingUtils';
 
 export const receivingService = {
   async getRecebimentos(): Promise<RecebimentoItem[]> {

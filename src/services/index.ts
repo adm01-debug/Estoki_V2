@@ -6,10 +6,10 @@ import { authService } from './authService';
 import { backupService } from './backupService';
 import { barcodeService } from './barcodeService';
 import { batchService } from './batchService';
-import { estoqueService } from './estoqueService';
 import { inventoryService } from './inventoryService';
 import { orderService } from './orderService';
 import { productService } from './productService';
+import { receivingService } from './receivingService';
 import { stockService } from './stockService';
 
 export * from "./abcService";
@@ -22,7 +22,6 @@ export * from "./barcodeService";
 export * from "./batchService";
 export * from "./categoryService";
 export * from "./customerService";
-export * from "./estoqueService";
 export * from "./gamificacaoService";
 export * from "./inventoryService";
 export * from "./locationService";
@@ -30,9 +29,8 @@ export * from "./lotService";
 export * from "./movimentacaoService";
 export * from "./notificacaoService";
 export * from "./orderService";
-export * from "./posicaoService";
 export * from "./productService";
-export * from "./recebimentoService";
+export * from "./receivingService";
 export * from "./relatorioService";
 export * from "./stockService";
 export * from "./supplierService";
@@ -49,10 +47,10 @@ export function createServices() {
     backup: backupService,
     barcode: barcodeService,
     batch: batchService,
-    estoque: estoqueService,
     inventory: inventoryService,
     order: orderService,
     product: productService,
+    receiving: receivingService,
     stock: stockService,
   };
 }

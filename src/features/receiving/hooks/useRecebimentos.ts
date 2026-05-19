@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { receivingService } from '../services/receivingService';
+import { receivingService } from '@/services/receivingService';
 import type { RecebimentoItem } from '../types';
 
 export const useRecebimentos = () => {
