@@ -9,13 +9,26 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
-// Mock Lucide icons
-vi.mock('lucide-react', () => ({
-  Package: () => <div data-testid="icon-package" />,
-  Eye: () => <div data-testid="icon-eye" />,
-  Search: () => <div data-testid="icon-search" />,
-  Plus: () => <div data-testid="icon-plus" />,
-  Filter: () => <div data-testid="icon-filter" />,
-  X: () => <div data-testid="icon-x" />,
-  Download: () => <div data-testid="icon-download" />,
-}));
+// Mock Lucide icons using a Proxy to handle any icon name
+vi.mock('lucide-react', () => {
+  return new Proxy({}, {
+    get: (_target, name) => {
+      return (props: any) => <div data-testid={`icon-${String(name).toLowerCase()}`} {...props} />;
+    }
+  });
+});
+
+// Mock browser APIs not available in JSDOM
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
