@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { Romaneio, RomaneioInput, RomaneioItemInput, StatusRomaneio, StatusEntrega } from '../types';
+import { logger } from '@/utils/logger';
+import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from '../types';
 
 export const shippingService = {
   async getRomaneios(): Promise<Romaneio[]> {
@@ -11,7 +12,10 @@ export const shippingService = {
       `)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Erro ao buscar romaneios', error);
+      throw error;
+    }
 
     return (data || []).map(r => ({
       id: r.id,
@@ -62,7 +66,10 @@ export const shippingService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Erro ao criar romaneio', error);
+      throw error;
+    }
     return data as any;
   },
 
@@ -79,7 +86,10 @@ export const shippingService = {
       .update(updates)
       .eq('id', id);
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Erro ao atualizar status do romaneio', error, { id, status });
+      throw error;
+    }
   },
 
   async registrarEntrega(
@@ -88,7 +98,6 @@ export const shippingService = {
     status: StatusEntrega,
     dados?: any
   ): Promise<void> {
-    // Registrar comprovante
     const { error: comprovanteError } = await supabase
       .from('comprovantes_entrega')
       .insert({
@@ -103,8 +112,9 @@ export const shippingService = {
         observacoes: dados?.observacoes,
       });
 
-    if (comprovanteError) throw comprovanteError;
-
-    // Note: Totals update logic could also move here if needed
+    if (comprovanteError) {
+      logger.error('Erro ao registrar comprovante de entrega', comprovanteError);
+      throw comprovanteError;
+    }
   }
 };
