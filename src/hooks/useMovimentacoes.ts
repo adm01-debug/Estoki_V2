@@ -103,6 +103,56 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     });
   };
 
+  const registrarEntrada = async (
+    produtoId: string,
+    quantidade: number,
+    localizacao: string,
+    loteId?: string,
+    descricao?: string
+  ): Promise<boolean> => {
+    return registrarMovimentacao({
+      tipo: 'recebimento_nf',
+      produto_id: produtoId,
+      lote_id: loteId,
+      quantidade,
+      localizacao,
+      descricao: descricao || 'Entrada de material',
+    });
+  };
+
+  const registrarSaida = async (
+    produtoId: string,
+    quantidade: number,
+    localizacao: string,
+    tipo: 'saida_transporte' | 'separacao' = 'saida_transporte',
+    loteId?: string,
+    descricao?: string
+  ): Promise<boolean> => {
+    return registrarMovimentacao({
+      tipo,
+      produto_id: produtoId,
+      lote_id: loteId,
+      quantidade,
+      localizacao,
+      descricao: descricao || 'Saída de material',
+    });
+  };
+
+  const ajustarEstoque = async (
+    produtoId: string,
+    quantidade: number,
+    localizacao: string,
+    descricao: string
+  ): Promise<boolean> => {
+    return registrarMovimentacao({
+      tipo: 'ajuste_estoque',
+      produto_id: produtoId,
+      quantidade,
+      localizacao,
+      descricao,
+    });
+  };
+
   return {
     movimentacoes,
     loading,
@@ -110,6 +160,9 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     refetch: fetchMovimentacoes,
     registrarMovimentacao,
     transferir,
+    registrarEntrada,
+    registrarSaida,
+    ajustarEstoque,
     getMovimentacoesPorProduto: movimentacaoService.getByProduto,
     getMovimentacoesPorLote: movimentacaoService.getByLote,
   };

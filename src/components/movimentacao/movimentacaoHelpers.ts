@@ -1,5 +1,5 @@
  import { ArrowRight, Package, Truck, RotateCcw, ClipboardEdit, RefreshCw } from "lucide-react";
-import { TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 
  export const tiposMovimento: Array<{ value: TipoMovimentacao; label: string; icon: any }> = [
    { value: "armazenamento", label: "Alocação", icon: Package },
