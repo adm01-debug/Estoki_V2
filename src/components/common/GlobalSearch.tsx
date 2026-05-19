@@ -229,23 +229,23 @@ const typeConfig = {
           <CommandSeparator />
           
           <CommandGroup heading="Ações & Segurança">
-            <CommandItem onSelect={() => onSelect("/recebimento")}>
+            <CommandItem onSelect={() => onSelect("/recebimento")} keywords={["entrada", "chegada", "fornecedor", "inbound", "new"]}>
               <Plus className="mr-2 h-4 w-4 text-success" />
               Novo Recebimento
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/triagem")}>
+            <CommandItem onSelect={() => onSelect("/triagem")} keywords={["conferência", "qualidade", "check", "inspection"]}>
               <Search className="mr-2 h-4 w-4 text-primary" />
               Iniciar Triagem
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/admin/auditoria")}>
+            <CommandItem onSelect={() => onSelect("/admin/auditoria")} keywords={["logs", "histórico", "segurança", "audit", "events"]}>
               <Shield className="mr-2 h-4 w-4 text-orange-500" />
               Ver Logs de Auditoria
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/seguranca")}>
+            <CommandItem onSelect={() => onSelect("/seguranca")} keywords={["senha", "mfa", "permissões", "access", "privacy"]}>
               <Lock className="mr-2 h-4 w-4 text-red-500" />
               Configurações de Segurança
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/relatorios")}>
+            <CommandItem onSelect={() => onSelect("/relatorios")} keywords={["pdf", "excel", "exportar", "analytics", "data"]}>
               <FileBarChart className="mr-2 h-4 w-4 text-blue-500" />
               Gerar Relatório de Inventário
             </CommandItem>
@@ -254,23 +254,23 @@ const typeConfig = {
           <CommandSeparator />
 
           <CommandGroup heading="Navegação">
-            <CommandItem onSelect={() => onSelect("/")}>
+            <CommandItem onSelect={() => onSelect("/")} keywords={["home", "painel", "resumo"]}>
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Início
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/dashboard")}>
+            <CommandItem onSelect={() => onSelect("/dashboard")} keywords={["kpis", "gráficos", "estatísticas", "charts"]}>
               <Activity className="mr-2 h-4 w-4" />
               Dashboard Analítico
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/estoque")}>
+            <CommandItem onSelect={() => onSelect("/estoque")} keywords={["inventário", "produtos", "armazenamento", "warehouse"]}>
               <Warehouse className="mr-2 h-4 w-4" />
               Estoque Central
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/expedicao")}>
+            <CommandItem onSelect={() => onSelect("/expedicao")} keywords={["saída", "romaneio", "transporte", "shipping", "outbound"]}>
               <Truck className="mr-2 h-4 w-4" />
               Expedição
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/movimentacao")}>
+            <CommandItem onSelect={() => onSelect("/movimentacao")} keywords={["transferência", "mudança", "local", "move"]}>
               <ArrowLeftRight className="mr-2 h-4 w-4" />
               Movimentar Itens
             </CommandItem>
