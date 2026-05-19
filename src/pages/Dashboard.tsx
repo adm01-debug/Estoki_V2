@@ -145,15 +145,22 @@ const DashboardPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 space-y-6">
-              {kpis && <DynamicAIInsights kpis={kpis} />}
-              {kpis && <DashboardKPIs kpis={kpis} />}
+              <ModuleErrorBoundary moduleName="Insights de IA">
+                {kpis && <DynamicAIInsights kpis={kpis} />}
+              </ModuleErrorBoundary>
               
-              <DashboardCharts 
-                ocupacaoPP={ocupacaoPP} 
-                movimentacoes7dias={movimentacoes7dias} 
-                distribuicaoStatus={distribuicaoStatus} 
-                itensParados={itensParados} 
-              />
+              <ModuleErrorBoundary moduleName="Métricas Operacionais">
+                {kpis && <DashboardKPIs kpis={kpis} />}
+              </ModuleErrorBoundary>
+              
+              <ModuleErrorBoundary moduleName="Gráficos Analíticos">
+                <DashboardCharts 
+                  ocupacaoPP={ocupacaoPP} 
+                  movimentacoes7dias={movimentacoes7dias} 
+                  distribuicaoStatus={distribuicaoStatus} 
+                  itensParados={itensParados} 
+                />
+              </ModuleErrorBoundary>
             </div>
 
             <div className="lg:col-span-4 space-y-6">
