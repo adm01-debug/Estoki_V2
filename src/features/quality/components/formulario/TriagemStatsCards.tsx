@@ -77,4 +77,4 @@ export const TriagemStatsCards = memo(function TriagemStatsCards({ stats }: Tria
       </Card>
     </div>
   );
-}
+});
