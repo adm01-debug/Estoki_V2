@@ -83,6 +83,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             currentRole={currentRole}
             onLogout={handleLogout}
             isHome={isHome}
+            avatarUrl={profile?.avatar_url}
           />
 
            <main 
