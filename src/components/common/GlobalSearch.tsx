@@ -206,11 +206,11 @@ const typeConfig = {
            {results.length > 0 && (
              <CommandGroup heading="Resultados do Banco">
                {results.map((result) => (
-                 <CommandItem
-                   key={`${result.type}-${result.id}`}
-                   onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
-                   className="flex items-center gap-3 py-3"
-                 >
+                  <CommandItem
+                    key={`${result.type}-${result.id}`}
+                    onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
+                    className="flex items-center gap-3 py-3 cursor-pointer rounded-xl mx-2 my-0.5"
+                  >
                    <div className={`p-2 rounded-lg bg-background border border-border`}>
                      {(() => {
                        const Icon = typeConfig[result.type].icon;
