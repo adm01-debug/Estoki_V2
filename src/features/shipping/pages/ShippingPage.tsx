@@ -25,7 +25,8 @@ import {
   ShieldAlert,
   BarChart3
  } from "lucide-react";
-import { useRomaneios, StatusRomaneio } from "../hooks/useRomaneios";
+import { useRomaneios } from "../hooks/useRomaneios";
+import type { StatusRomaneio } from "../hooks/useRomaneios";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
