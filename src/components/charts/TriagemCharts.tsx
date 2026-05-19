@@ -32,4 +32,4 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
       </Card>
     </div>
   );
-}
+});
