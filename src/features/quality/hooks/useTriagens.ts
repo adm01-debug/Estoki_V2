@@ -2,11 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { triagemService } from '@/services/triagemService';
+import { qualityService } from '@/services/qualityService';
 import type { Database } from '@/integrations/supabase/types';
 
-type TriagemRow = Database['public']['Tables']['eventos_triagem']['Row'];
-type TriagemInsert = Database['public']['Tables']['eventos_triagem']['Insert'];
 type TriagemUpdate = Database['public']['Tables']['eventos_triagem']['Update'];
 
 export const useTriagens = (options?: { enableRealtime?: boolean }) => {
@@ -39,25 +37,25 @@ export const useTriagens = (options?: { enableRealtime?: boolean }) => {
     };
   }, [options?.enableRealtime, queryClient]);
 
-  const { data: triagens, isLoading, error, refetch } = useQuery({
+  const { data: triagens = [], isLoading, error, refetch } = useQuery({
     queryKey: ['triagens'],
-    queryFn: () => triagemService.getAll()
+    queryFn: qualityService.getAll
   });
 
   const createTriagem = useMutation({
-    mutationFn: triagemService.create,
+    mutationFn: qualityService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
-      toast({ title: 'Sucesso', description: 'Triagem registrada!' });
+      toast({ title: 'Sucesso', description: 'Triagem iniciada!' });
     },
     onError: () => {
-      toast({ title: 'Erro', description: 'Falha ao registrar triagem', variant: 'destructive' });
+      toast({ title: 'Erro', description: 'Falha ao iniciar triagem', variant: 'destructive' });
     }
   });
 
   const updateTriagem = useMutation({
     mutationFn: async ({ id, ...dados }: TriagemUpdate & { id: string }) => {
-      return triagemService.update(id, dados as any);
+      return qualityService.update(id, dados);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
