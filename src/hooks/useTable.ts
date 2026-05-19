@@ -60,7 +60,7 @@ export function useTable<T extends Record<string, any>>({
   }, [filteredData, sortConfig]);
 
   // 3. Paginação
-  const totalPages = Math.ceil(sortedData.length / pageSize);
+  const totalPages = Math.max(1, Math.ceil(sortedData.length / pageSize));
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return sortedData.slice(start, start + pageSize);
@@ -91,13 +91,17 @@ export function useTable<T extends Record<string, any>>({
     setSelectedIds(new Set());
   }, []);
 
+  const goToPage = useCallback((page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  }, [totalPages]);
+
   return {
     // State
     query,
     setQuery,
     sortConfig,
     currentPage,
-    setCurrentPage,
+    setCurrentPage: goToPage,
     pageSize,
     setPageSize,
     selectedIds: Array.from(selectedIds),
@@ -112,6 +116,7 @@ export function useTable<T extends Record<string, any>>({
     toggleSelection,
     selectAll,
     clearSelection,
+    goToPage,
     
     // Helpers
     hasNext: currentPage < totalPages,
