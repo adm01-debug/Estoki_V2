@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
  import { Badge } from "@/components/ui/badge";
  import { Button } from "@/components/ui/button";
  import { BarChart3, Wifi, Zap, Plus, Search, FileText } from "lucide-react";
