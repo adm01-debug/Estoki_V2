@@ -12,7 +12,7 @@ interface EstoqueVirtualListProps {
   className?: string;
 }
 
-export function EstoqueVirtualList({ positions, onSelect }: EstoqueVirtualListProps) {
+export function EstoqueVirtualList({ positions, onSelect, className }: EstoqueVirtualListProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
