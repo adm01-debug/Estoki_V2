@@ -66,6 +66,19 @@ export const InventoryAdjustSchema = z.object({
   lote_id: z.string().uuid().optional(),
 });
 
+// ── Shipping schemas ──────────────────────────────────────
+export const ShippingQuoteSchema = z.object({
+  carrier: z.enum(["correios", "jadlog", "azul", "fedex", "dhl"]),
+  originZip: z.string().regex(/^\d{8}$/, "CEP de origem inválido (8 dígitos)"),
+  destZip: z.string().regex(/^\d{8}$/, "CEP de destino inválido (8 dígitos)"),
+  weight: z.number().positive("Peso deve ser maior que zero"),
+  dimensions: z.object({
+    width: z.number().positive(),
+    height: z.number().positive(),
+    length: z.number().positive(),
+  }).optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): 
   { success: true; data: T } | { success: false; error: string; details: Record<string, string[]> } {
