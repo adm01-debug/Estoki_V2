@@ -95,12 +95,11 @@ export default defineConfig(({ mode }) => ({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('lucide-react')) return 'vendor-icons';
-            if (id.includes('@radix-ui')) return 'vendor-ui';
-            if (id.includes('framer-motion')) return 'vendor-motion';
-            if (id.includes('recharts')) return 'vendor-charts';
-            if (id.includes('jspdf') || id.includes('exceljs') || id.includes('papaparse')) return 'vendor-export';
-            if (id.includes('@supabase') || id.includes('@tanstack')) return 'vendor-core';
-            return 'vendor';
+            if (id.includes('@radix-ui') || id.includes('lucide-react')) return 'vendor-ui';
+            if (id.includes('framer-motion') || id.includes('recharts')) return 'vendor-visuals';
+            if (id.includes('jspdf') || id.includes('exceljs') || id.includes('papaparse')) return 'vendor-utils';
+            if (id.includes('@supabase') || id.includes('@tanstack') || id.includes('react-router-dom')) return 'vendor-core';
+            return 'vendor-libs';
           }
         }
       },
