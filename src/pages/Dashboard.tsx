@@ -17,6 +17,7 @@ import { DashboardActivityFeed } from "@/components/dashboard/DashboardActivityF
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { ModuleErrorBoundary } from "@/components/common/ModuleErrorBoundary";
 import { haptics } from "@/utils/haptics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
