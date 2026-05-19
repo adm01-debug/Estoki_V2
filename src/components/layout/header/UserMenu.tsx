@@ -38,6 +38,7 @@ export const UserMenu = memo(function UserMenu({
         <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10 rounded-xl" aria-label="Menu do usuário">
           <div className="relative">
              <Avatar className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-background transition-all hover:ring-primary/40">
+              <AvatarImage src={avatarUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-xs font-bold">
                 {getInitials(userName)}
               </AvatarFallback>
