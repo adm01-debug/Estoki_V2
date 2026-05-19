@@ -116,6 +116,16 @@ export const PickingConfirmSchema = z.object({
   })).min(1, "É necessário ao menos um item"),
 });
 
+export const CarrierTrackSchema = z.object({
+  tracking_number: z.string().min(1, "Número de rastreio é obrigatório"),
+  carrier: z.string().optional().default("auto"),
+});
+
+export const WebhookEventSchema = z.object({
+  event: z.string().min(1).max(200),
+  data: z.record(z.unknown()).optional().default({}),
+});
+
 // ── AI schemas ─────────────────────────────────────────────
 export const AiClassificationSchema = z.object({
   text: z.string().min(1, "Texto é obrigatório").max(10000),
