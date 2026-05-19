@@ -14,6 +14,7 @@ import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
 import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
+import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
 
 const AppLayoutContext = createContext(false);
 
