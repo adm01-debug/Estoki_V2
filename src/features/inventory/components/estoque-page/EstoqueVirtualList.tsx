@@ -34,7 +34,7 @@ export function EstoqueVirtualList({ positions, onSelect, className }: EstoqueVi
   return (
     <div
       ref={parentRef}
-      className="h-[600px] overflow-auto rounded-md border border-border/50 bg-background/50"
+      className={cn("h-[600px] overflow-auto rounded-md border border-border/50 bg-background/50", className)}
       role="list"
       aria-label="Lista de posições ocupadas"
     >
