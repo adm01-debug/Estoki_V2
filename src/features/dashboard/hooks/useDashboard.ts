@@ -211,7 +211,7 @@ export const useDashboard = () => {
      staleTime: 2 * 60 * 1000,
      gcTime: 5 * 60 * 1000,
      retry: 2,
-     refetchOnWindowFocus: true,
+     refetchOnWindowFocus: false,
    });
 
 
