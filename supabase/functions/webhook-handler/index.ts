@@ -1,18 +1,14 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { WebhookEventSchema, validateInput } from "../_shared/schemas.ts";
 
 const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
     status,
     headers: { ...getCorsHeaders(request), "Content-Type": "application/json" },
   });
-
-const WebhookSchema = z.object({
-  event: z.string().min(1).max(200),
-  data: z.record(z.unknown()).optional().default({}),
-});
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -33,12 +29,14 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Unauthorized" }, 401, req);
     }
 
-    const parsed = WebhookSchema.safeParse(await req.json());
-    if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
+    const body = await req.json();
+    const validation = validateInput(WebhookEventSchema, body);
+    
+    if (!validation.success) {
+      return jsonResponse({ error: validation.error, details: validation.details }, 400, req);
     }
 
-    const { event, data } = parsed.data;
+    const { event, data } = validation.data;
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
