@@ -29,7 +29,7 @@ export * from "./movimentacaoService";
 export * from "./notificacaoService";
 export * from "./orderService";
 export * from "./productService";
-export * from "./recebimentoService";
+export * from "./receivingService";
 export * from "./relatorioService";
 export * from "./stockService";
 export * from "./supplierService";
@@ -49,6 +49,7 @@ export function createServices() {
     inventory: inventoryService,
     order: orderService,
     product: productService,
+    receiving: receivingService,
     stock: stockService,
   };
 }
