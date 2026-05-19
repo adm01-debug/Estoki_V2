@@ -1,30 +1,29 @@
-import { supabase } from "@/lib/supabase";
-
-export interface Product {
-  id: string;
-  nome: string;
-  sku: string;
-  categoria?: string;
-  estoque_minimo: number;
-  estoque_maximo?: number;
-  giro_mensal?: number;
-  curva_abc?: string;
-  imagem_url?: string;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
+import type { Produto, ProdutoInsert, ProdutoUpdate, ProdutoComEstoque } from '@/types/product';
 
 export const productService = {
-  async getAll() {
-    const { data, error } = await supabase
-      .from("produtos")
-      .select("*")
-      .order("nome");
-    if (error) throw error;
-    return data as Product[];
+  async getAll(options?: { page?: number; pageSize?: number }) {
+    const { page = 1, pageSize = 100 } = options || {};
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    const { data, error, count } = await supabase
+      .from('produtos')
+      .select('*', { count: 'exact' })
+      .order('nome')
+      .range(from, to);
+
+    if (error) {
+      logger.error('Erro ao buscar produtos', error);
+      throw error;
+    }
+    return { data: data as Produto[], total: count || 0 };
   },
 
   async getById(id: string) {
     const { data, error } = await supabase
-      .from("produtos")
+      .from('produtos')
       .select(`
         *,
         estoque:estoque_posicao(
@@ -32,20 +31,67 @@ export const productService = {
           posicao:posicoes_estoque(codigo, zona)
         )
       `)
-      .eq("id", id)
+      .eq('id', id)
       .single();
-    if (error) throw error;
-    return data;
+
+    if (error) {
+      logger.error('Erro ao buscar produto por ID', error, { id });
+      throw error;
+    }
+    return data as ProdutoComEstoque;
   },
 
-  async update(id: string, updates: Partial<Product>) {
+  async create(produto: ProdutoInsert) {
     const { data, error } = await supabase
-      .from("produtos")
-      .update(updates)
-      .eq("id", id)
+      .from('produtos')
+      .insert(produto)
       .select()
       .single();
-    if (error) throw error;
-    return data;
+
+    if (error) {
+      logger.error('Erro ao criar produto', error, { produto });
+      throw error;
+    }
+    return data as Produto;
+  },
+
+  async update(id: string, updates: ProdutoUpdate) {
+    const { data, error } = await supabase
+      .from('produtos')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Erro ao atualizar produto', error, { id, updates });
+      throw error;
+    }
+    return data as Produto;
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('produtos')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      logger.error('Erro ao deletar produto', error, { id });
+      throw error;
+    }
+  },
+
+  async bulkCreate(produtos: ProdutoInsert[]) {
+    const { data, error } = await supabase
+      .from('produtos')
+      .insert(produtos)
+      .select();
+
+    if (error) {
+      logger.error('Erro ao criar produtos em massa', error);
+      throw error;
+    }
+    return data as Produto[];
   }
 };
