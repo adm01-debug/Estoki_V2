@@ -3476,6 +3476,7 @@ export type Database = {
         }
       }
       reset_login_attempts: { Args: { p_email: string }; Returns: undefined }
+      validate_ean13: { Args: { ean: string }; Returns: boolean }
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
@@ -3554,6 +3555,8 @@ export type Database = {
         | "gargalo_triagem"
         | "divergencia_inventario"
         | "item_sem_movimentacao"
+        | "webhook"
+        | "sistema"
       tipo_evento_rastreamento:
         | "recebimento_nf"
         | "conferencia"
@@ -3804,6 +3807,8 @@ export const Constants = {
         "gargalo_triagem",
         "divergencia_inventario",
         "item_sem_movimentacao",
+        "webhook",
+        "sistema",
       ],
       tipo_evento_rastreamento: [
         "recebimento_nf",
