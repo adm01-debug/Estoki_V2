@@ -164,26 +164,28 @@ const DashboardPage = () => {
             </div>
 
             <div className="lg:col-span-4 space-y-6">
-              <Card className="rounded-[32px] border-border/40 shadow-sm overflow-hidden bg-background/50 backdrop-blur-xl">
-                <CardHeader className="pb-3 border-b border-border/10 bg-muted/20">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                        <History className="h-4 w-4 text-primary" />
-                        Atividade Operacional
-                      </CardTitle>
-                      <CardDescription className="text-[10px] font-bold uppercase opacity-60">Tempo Real</CardDescription>
+              <ModuleErrorBoundary moduleName="Feed de Atividades">
+                <Card className="rounded-[32px] border-border/40 shadow-sm overflow-hidden bg-background/50 backdrop-blur-xl">
+                  <CardHeader className="pb-3 border-b border-border/10 bg-muted/20">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                          <History className="h-4 w-4 text-primary" />
+                          Atividade Operacional
+                        </CardTitle>
+                        <CardDescription className="text-[10px] font-bold uppercase opacity-60">Tempo Real</CardDescription>
+                      </div>
+                      <div className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                     </div>
-                    <div className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-4 px-3">
-                  <DashboardActivityFeed />
-                  <Button variant="ghost" className="w-full mt-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 h-8 rounded-xl" onClick={() => haptics.light()}>
-                    Ver Log Completo
-                  </Button>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="pt-4 px-3">
+                    <DashboardActivityFeed />
+                    <Button variant="ghost" className="w-full mt-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 h-8 rounded-xl" onClick={() => haptics.light()}>
+                      Ver Log Completo
+                    </Button>
+                  </CardContent>
+                </Card>
+              </ModuleErrorBoundary>
 
               <Card className="rounded-[32px] border-border/40 shadow-sm bg-gradient-to-br from-primary/5 to-transparent border-l-primary/20">
                 <CardContent className="p-6">
