@@ -63,16 +63,6 @@ export function VolumeContagem({
           <Package className="h-4 w-4" />
           Controle de Volumes e Integridade
         </h3>
-        <Badge variant={todosConferidos ? "default" : "secondary"} className={cn("rounded-full px-4", todosConferidos ? "bg-success hover:bg-success" : "")}>
-          {volumesConferidos}/{volumes.length} conferidos
-        </Badge>
-      </div>
-
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-black text-primary flex items-center gap-2 uppercase tracking-tighter">
-          <Package className="h-4 w-4" />
-          Controle de Volumes e Integridade
-        </h3>
         <div className="flex gap-2">
           {volumesFaltantes > 0 && (
             <Badge variant="destructive" className="animate-pulse rounded-full px-3 py-1 text-[10px] font-black uppercase flex items-center gap-1.5">

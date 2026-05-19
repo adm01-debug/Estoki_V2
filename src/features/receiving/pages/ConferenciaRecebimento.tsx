@@ -67,8 +67,14 @@ export default function ConferenciaRecebimento() {
     setVolumes(prev => prev.map(v => 
       v.id === volumeId ? { ...v, conferido: true, integridade: v.integridade || 'ok' } : v
     ));
-    const total = volumes.reduce((acc, v) => acc + (v.id === volumeId ? (v.qtdContada || 0) : (v.conferido ? (v.qtdContada || 0) : 0)), 0);
-    setQuantidadeConferida(total);
+    setVolumes(prevVolumes => {
+      const updatedVolumes = prevVolumes.map(v => 
+        v.id === volumeId ? { ...v, conferido: true, integridade: v.integridade || 'ok' } : v
+      );
+      const total = updatedVolumes.reduce((acc, v) => acc + (v.conferido ? (v.qtdContada || 0) : 0), 0);
+      setQuantidadeConferida(total);
+      return updatedVolumes;
+    });
   };
 
   const handleVolumeIntegrityChange = (volumeId: number, integridade: 'ok' | 'avaiado' | 'critico') => {
