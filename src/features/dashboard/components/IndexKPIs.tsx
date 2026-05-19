@@ -38,7 +38,21 @@ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }:
   if (loading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-        {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i} className="glass-card border-border/30 h-full overflow-hidden">
+            <CardContent className="p-4 md:p-5">
+              <div className="flex justify-between items-start mb-4">
+                <Skeleton className="w-11 h-11 rounded-2xl" />
+              </div>
+              <div className="flex items-baseline justify-between gap-2">
+                <Skeleton className="h-8 w-16" />
+                <Skeleton className="h-4 w-10 rounded-full" />
+              </div>
+              <Skeleton className="h-4 w-24 mt-2" />
+              <Skeleton className="h-3 w-16 mt-1" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }

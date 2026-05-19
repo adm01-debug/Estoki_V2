@@ -55,9 +55,13 @@ export default function Dashboard() {
 
   const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
 
-   if (loadingKpis && loadingEstoque) {
-     return <RouteLoadingFallback type="dashboard" />;
-   }
+    // Partial loading is handled by individual components for a smoother 10/10 experience
+    // Only block the entire page if something critical fails, but let the skeletons do their work.
+    const isInitialLoad = loadingKpis && loadingEstoque && !stats;
+    
+    if (isInitialLoad) {
+      return <RouteLoadingFallback type="dashboard" />;
+    }
 
    const kpiItems = [
       { 

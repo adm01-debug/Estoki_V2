@@ -9,10 +9,16 @@ export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
   (
     {
       children,
-      initial = { opacity: 0, y: 20 },
-      animate = { opacity: 1, y: 0 },
-      exit = { opacity: 0, y: -10 },
-       transition = { type: "spring", damping: 25, stiffness: 200, duration: 0.3 },
+      initial = { opacity: 0, y: 8, scale: 0.99 },
+      animate = { opacity: 1, y: 0, scale: 1 },
+      exit = { opacity: 0, y: -8, scale: 1.01 },
+      transition = { 
+        type: "spring", 
+        damping: 30, 
+        stiffness: 300, 
+        mass: 0.8,
+        opacity: { duration: 0.2 } 
+      },
        ...props
      },
      ref,

@@ -11,6 +11,7 @@ import { UserMenu } from "@/components/layout/header/UserMenu";
 import { BackButton } from "@/components/molecules/navigation/BackButton";
 import { cn } from "@/lib/utils";
 import { WMSStatusBadge } from "@/components/common/WMSStatusBadge";
+import { PresenceAvatars } from "@/components/common/PresenceAvatars";
 
 interface HeaderProps {
   mainPadding: string;
@@ -78,8 +79,12 @@ export const Header = memo(function Header({
         </div>
         
         <div className="flex items-center gap-0.5">
-          <div className="hidden md:flex mr-2">
-            <WMSStatusBadge />
+          <div className="hidden sm:flex items-center gap-2 mr-2">
+            <PresenceAvatars />
+            <div className="hidden md:block w-px h-4 bg-border/40 mx-1" />
+            <div className="hidden md:block">
+              <WMSStatusBadge />
+            </div>
           </div>
           <GlobalSearch />
           <LanguageSwitcher />
