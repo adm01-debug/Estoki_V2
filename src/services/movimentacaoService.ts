@@ -1,149 +1,131 @@
-  import { supabase } from '@/lib/supabase';
- import { logger } from '@/utils/logger';
- import { Database } from '@/integrations/supabase/types';
- 
- type RastreamentoHistorico = Database['public']['Tables']['rastreamento_historico']['Row'];
-  type RastreamentoInsert = Database['public']['Tables']['rastreamento_historico']['Insert'];
-  type TipoEvento = Database['public']['Tables']['rastreamento_historico']['Row']['tipo_evento'];
- 
-export interface Movimentacao {
-  id?: string;
-  tipo: 'entrada' | 'saida' | 'transferencia' | 'ajuste';
-  produto_id?: string;
-  lote_id?: string;
-  posicao_origem?: string;
-  posicao_destino?: string;
-  quantidade: number;
-  motivo?: string;
-  usuario_id: string;
-  created_at?: string;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
+import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from '@/types/movimentacao';
 
 export const movimentacaoService = {
-   async registrar(mov: Omit<Movimentacao, 'id' | 'created_at'>): Promise<boolean> {
-     try {
-       // Mapeamento de tipos simplificados para tipos do banco de dados
-       const mapTipo = (tipo: Movimentacao['tipo']): TipoEvento => {
-         switch (tipo) {
-           case 'ajuste': return 'ajuste_estoque';
-           case 'entrada': return 'recebimento_nf';
-           case 'saida': return 'saida_transporte';
-           case 'transferencia': return 'armazenamento';
-           default: return 'ajuste_estoque';
-         }
-       };
+  async getAll(options?: { page?: number; pageSize?: number }) {
+    const { page = 1, pageSize = 50 } = options || {};
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
 
-       const { error } = await supabase
-         .from('rastreamento_historico')
-         .insert({
-           tipo_evento: mapTipo(mov.tipo),
-           lote_id: mov.lote_id,
-           descricao: mov.motivo || `Movimentação: ${mov.tipo}`,
-           quantidade: mov.quantidade,
-           operador_id: mov.usuario_id,
-           localizacao: mov.posicao_destino || mov.posicao_origem,
-           detalhes: {
-             produto_id: mov.produto_id,
-             posicao_origem: mov.posicao_origem,
-             posicao_destino: mov.posicao_destino,
-           } as any,
-         } as RastreamentoInsert);
+    const { data, error, count } = await supabase
+      .from('rastreamento_historico')
+      .select(`
+        *,
+        produtos (nome),
+        lotes (numero_lote),
+        profiles:operador_id (nome)
+      `, { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range(from, to);
 
-       if (error) {
-         logger.error('Erro ao registrar movimentação', error);
-         return false;
-       }
- 
-       return true;
-     } catch (error) {
-       logger.error('Erro inesperado ao registrar movimentação', error);
-       return false;
-     }
-   },
+    if (error) {
+      logger.error('Erro ao buscar movimentações', error);
+      throw error;
+    }
 
-  async getHistorico(filtros?: {
-    lote_id?: string;
-    produto_id?: string;
-    tipo?: string;
-    data_inicio?: string;
-    data_fim?: string;
-    page?: number;
-    pageSize?: number;
-  }): Promise<{ data: Movimentacao[]; total: number }> {
-    const { page = 1, pageSize = 20 } = filtros || {};
-    try {
-      let query = supabase
-        .from('rastreamento_historico')
-        .select('*')
-        .order('created_at', { ascending: false });
+    const mapped = (data || []).map(mov => ({
+      id: mov.id,
+      tipo: mov.tipo_evento as TipoMovimentacao,
+      produto_id: mov.produto_id || undefined,
+      produto_nome: mov.produtos?.nome || undefined,
+      lote_id: mov.lote_id || undefined,
+      lote_numero: mov.lotes?.numero_lote || undefined,
+      quantidade: mov.quantidade || 0,
+      localizacao: mov.localizacao || undefined,
+      descricao: mov.descricao,
+      operador_id: mov.operador_id || undefined,
+      operador_nome: mov.profiles?.nome || undefined,
+      created_at: mov.created_at,
+    }));
 
-      if (filtros?.lote_id) {
-        query = query.eq('lote_id', filtros.lote_id);
-      }
-      if (filtros?.tipo) {
-        query = query.eq('tipo_evento', filtros.tipo as TipoEvento);
-      }
-      if (filtros?.data_inicio) {
-        query = query.gte('created_at', filtros.data_inicio);
-      }
-      if (filtros?.data_fim) {
-        query = query.lte('created_at', filtros.data_fim);
-      }
-      const from = (page - 1) * pageSize;
-      query = query.range(from, from + pageSize - 1);
-
-      const { data, error, count } = await query;
-
-      if (error) {
-        logger.error('Erro ao buscar histórico', error);
-        return { data: [], total: 0 };
-      }
-
-      const mappedData = (data || []).map((item: RastreamentoHistorico) => {
-        const detalhes = item.detalhes as Record<string, unknown> | null;
-        return {
-          id: item.id,
-          tipo: item.tipo_evento as Movimentacao['tipo'],
-          lote_id: item.lote_id ?? undefined,
-          posicao_origem: detalhes?.posicao_origem as string | undefined,
-          posicao_destino: detalhes?.posicao_destino as string | undefined,
-          quantidade: item.quantidade ?? 0,
-          motivo: item.descricao ?? undefined,
-          usuario_id: item.operador_id ?? '',
-          produto_id: detalhes?.produto_id as string | undefined,
-          created_at: item.created_at,
-        };
-      });
-
-      return { data: mappedData, total: count || 0 };
-     } catch (error) {
-       logger.error('Erro inesperado ao buscar histórico', error);
-        return { data: [], total: 0 };
-     }
+    return { data: mapped as Movimentacao[], total: count || 0 };
   },
 
-  async getUltimaMovimentacao(loteId: string): Promise<Movimentacao | null> {
+  async registrar(input: MovimentacaoInput & { operador_id: string }): Promise<void> {
+    if (!input.lote_id) {
+      throw new Error('ID do lote é obrigatório para esta operação');
+    }
+
+    const { error: rpcError } = await supabase.rpc('move_stock', {
+      p_lote_id: input.lote_id,
+      p_from_posicao_id: input.from_posicao_id || null,
+      p_to_posicao_id: input.to_posicao_id || null,
+      p_quantidade: input.quantidade,
+      p_operador_id: input.operador_id,
+      p_tipo_evento: input.tipo === 'transferencia' ? 'armazenamento' : input.tipo,
+      p_descricao: input.descricao
+    } as any);
+
+    if (rpcError) {
+      logger.error('Erro ao registrar movimentação via RPC', rpcError, { input });
+      throw rpcError;
+    }
+  },
+
+  async getByProduto(produtoId: string) {
     const { data, error } = await supabase
       .from('rastreamento_historico')
-      .select('*')
-      .eq('lote_id', loteId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .select(`
+        *,
+        produtos (nome),
+        lotes (numero_lote),
+        profiles:operador_id (nome)
+      `)
+      .eq('produto_id', produtoId)
+      .order('created_at', { ascending: false });
 
-    if (error || !data) return null;
+    if (error) {
+      logger.error('Erro ao buscar movimentações por produto', error, { produtoId });
+      throw error;
+    }
 
-     const detalhes = data.detalhes as Record<string, unknown> | null;
-     return {
-       id: data.id,
-       tipo: data.tipo_evento as Movimentacao['tipo'],
-       lote_id: data.lote_id ?? undefined,
-       posicao_origem: detalhes?.posicao_origem as string | undefined,
-       posicao_destino: detalhes?.posicao_destino as string | undefined,
-       quantidade: data.quantidade ?? 0,
-       motivo: data.descricao ?? undefined,
-       usuario_id: data.operador_id ?? '',
-       created_at: data.created_at,
-     };
+    return (data || []).map(mov => ({
+      id: mov.id,
+      tipo: mov.tipo_evento as TipoMovimentacao,
+      produto_id: mov.produto_id || undefined,
+      produto_nome: mov.produtos?.nome || undefined,
+      lote_id: mov.lote_id || undefined,
+      lote_numero: mov.lotes?.numero_lote || undefined,
+      quantidade: mov.quantidade || 0,
+      localizacao: mov.localizacao || undefined,
+      descricao: mov.descricao,
+      operador_id: mov.operador_id || undefined,
+      operador_nome: mov.profiles?.nome || undefined,
+      created_at: mov.created_at,
+    })) as Movimentacao[];
   },
+
+  async getByLote(loteId: string) {
+    const { data, error } = await supabase
+      .from('rastreamento_historico')
+      .select(`
+        *,
+        produtos (nome),
+        lotes (numero_lote),
+        profiles:operador_id (nome)
+      `)
+      .eq('lote_id', loteId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      logger.error('Erro ao buscar movimentações por lote', error, { loteId });
+      throw error;
+    }
+
+    return (data || []).map(mov => ({
+      id: mov.id,
+      tipo: mov.tipo_evento as TipoMovimentacao,
+      produto_id: mov.produto_id || undefined,
+      produto_nome: mov.produtos?.nome || undefined,
+      lote_id: mov.lote_id || undefined,
+      lote_numero: mov.lotes?.numero_lote || undefined,
+      quantidade: mov.quantidade || 0,
+      localizacao: mov.localizacao || undefined,
+      descricao: mov.descricao,
+      operador_id: mov.operador_id || undefined,
+      operador_nome: mov.profiles?.nome || undefined,
+      created_at: mov.created_at,
+    })) as Movimentacao[];
+  }
 };
