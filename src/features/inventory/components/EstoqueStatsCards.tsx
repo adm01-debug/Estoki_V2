@@ -98,6 +98,6 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({ stats }: Esto
            </div>
          </CardContent>
        </Card>
-    </motion.div>
+     </motion.div>
   );
-}
+});
