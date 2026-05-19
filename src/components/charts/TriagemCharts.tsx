@@ -5,7 +5,7 @@ import { tooltipStyle, chartCardClass } from "./chartStyles";
 
 interface TriagemChartsProps { items: { resultado?: string | null; data_fim?: string | null; created_at: string }[]; }
 
-export function TriagemCharts({ items }: TriagemChartsProps) {
+export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChartsProps) {
   const resultadoData = useMemo(() => [
     { name: "Em Andamento", value: items.filter(i => !i.data_fim).length, color: "hsl(221, 83%, 53%)" },
     { name: "Aprovados", value: items.filter(i => i.resultado === "aprovado").length, color: "hsl(142, 76%, 36%)" },
