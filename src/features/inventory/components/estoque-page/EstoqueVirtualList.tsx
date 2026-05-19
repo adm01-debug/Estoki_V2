@@ -9,6 +9,7 @@ import type { PosicaoEstoque } from "@/types/inventory";
 interface EstoqueVirtualListProps {
   positions: PosicaoEstoque[];
   onSelect: (p: PosicaoEstoque) => void;
+  className?: string;
 }
 
 export function EstoqueVirtualList({ positions, onSelect }: EstoqueVirtualListProps) {
