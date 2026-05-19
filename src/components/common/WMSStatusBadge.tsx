@@ -10,6 +10,22 @@ export function WMSStatusBadge() {
   const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const [lastSync, setLastSync] = useState<Date>(new Date());
   const [isSyncing, setIsSyncing] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleManualSync = useCallback(async () => {
+    if (isSyncing) return;
+    
+    setIsSyncing(true);
+    try {
+      await queryClient.invalidateQueries();
+      setLastSync(new Date());
+      toast.success("Dados sincronizados com sucesso");
+    } catch (error) {
+      toast.error("Erro ao sincronizar dados");
+    } finally {
+      setTimeout(() => setIsSyncing(false), 800);
+    }
+  }, [isSyncing, queryClient]);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
