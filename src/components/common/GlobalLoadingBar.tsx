@@ -1,4 +1,4 @@
-import { useIsFetching } from "@tanstack/react-query";
+import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function GlobalLoadingBar() {
