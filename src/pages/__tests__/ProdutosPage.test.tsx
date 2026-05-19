@@ -52,7 +52,7 @@ describe('ProdutosPage Search Interaction', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <ProdutosPage />
+          <Produtos />
         </BrowserRouter>
       </QueryClientProvider>
     );
