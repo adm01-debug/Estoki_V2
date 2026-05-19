@@ -23,6 +23,7 @@ export const UserMenu = memo(function UserMenu({
   userName,
   userEmail,
   currentRole,
+  avatarUrl,
   onLogout
 }: UserMenuProps) {
   const navigate = useNavigate();
