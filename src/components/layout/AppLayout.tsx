@@ -14,6 +14,8 @@ import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
 import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
+import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
+import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
 
 const AppLayoutContext = createContext(false);
 
@@ -60,6 +62,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     <AppLayoutContext.Provider value={true}>
       <TooltipProvider>
         <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="Promo Brindes Intel WMS">
+          <GlobalLoadingBar />
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
             Pular para conteúdo principal
           </a>
@@ -173,6 +176,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </AnimatePresence>
 
           <OnboardingTour />
+          <ShortcutsHUD />
         </div>
       </TooltipProvider>
     </AppLayoutContext.Provider>

@@ -16,7 +16,8 @@ import { SystemHealthHUD } from "@/components/dashboard/SystemHealthHUD";
 import { DashboardActivityFeed } from "@/components/dashboard/DashboardActivityFeed";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
-import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { ModuleErrorBoundary } from "@/components/common/ModuleErrorBoundary";
 import { haptics } from "@/utils/haptics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
@@ -60,9 +61,12 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <AppLayout showBack>
-        <div className="p-4 md:p-6 lg:p-8">
-          <RouteLoadingFallback type="dashboard" />
-        </div>
+        <BasePageTemplate 
+          title="Dashboard Analítico" 
+          description="Monitoramento operacional em tempo real e inteligência de estoque."
+        >
+          <DashboardSkeleton />
+        </BasePageTemplate>
       </AppLayout>
     );
   }
@@ -141,38 +145,47 @@ const DashboardPage = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8 space-y-6">
-              {kpis && <DynamicAIInsights kpis={kpis} />}
-              {kpis && <DashboardKPIs kpis={kpis} />}
+              <ModuleErrorBoundary moduleName="Insights de IA">
+                {kpis && <DynamicAIInsights kpis={kpis} />}
+              </ModuleErrorBoundary>
               
-              <DashboardCharts 
-                ocupacaoPP={ocupacaoPP} 
-                movimentacoes7dias={movimentacoes7dias} 
-                distribuicaoStatus={distribuicaoStatus} 
-                itensParados={itensParados} 
-              />
+              <ModuleErrorBoundary moduleName="Métricas Operacionais">
+                {kpis && <DashboardKPIs kpis={kpis} />}
+              </ModuleErrorBoundary>
+              
+              <ModuleErrorBoundary moduleName="Gráficos Analíticos">
+                <DashboardCharts 
+                  ocupacaoPP={ocupacaoPP} 
+                  movimentacoes7dias={movimentacoes7dias} 
+                  distribuicaoStatus={distribuicaoStatus} 
+                  itensParados={itensParados} 
+                />
+              </ModuleErrorBoundary>
             </div>
 
             <div className="lg:col-span-4 space-y-6">
-              <Card className="rounded-[32px] border-border/40 shadow-sm overflow-hidden bg-background/50 backdrop-blur-xl">
-                <CardHeader className="pb-3 border-b border-border/10 bg-muted/20">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                        <History className="h-4 w-4 text-primary" />
-                        Atividade Operacional
-                      </CardTitle>
-                      <CardDescription className="text-[10px] font-bold uppercase opacity-60">Tempo Real</CardDescription>
+              <ModuleErrorBoundary moduleName="Feed de Atividades">
+                <Card className="rounded-[32px] border-border/40 shadow-sm overflow-hidden bg-background/50 backdrop-blur-xl">
+                  <CardHeader className="pb-3 border-b border-border/10 bg-muted/20">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-1">
+                        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                          <History className="h-4 w-4 text-primary" />
+                          Atividade Operacional
+                        </CardTitle>
+                        <CardDescription className="text-[10px] font-bold uppercase opacity-60">Tempo Real</CardDescription>
+                      </div>
+                      <div className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                     </div>
-                    <div className="h-2 w-2 rounded-full bg-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-4 px-3">
-                  <DashboardActivityFeed />
-                  <Button variant="ghost" className="w-full mt-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 h-8 rounded-xl" onClick={() => haptics.light()}>
-                    Ver Log Completo
-                  </Button>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="pt-4 px-3">
+                    <DashboardActivityFeed />
+                    <Button variant="ghost" className="w-full mt-2 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 h-8 rounded-xl" onClick={() => haptics.light()}>
+                      Ver Log Completo
+                    </Button>
+                  </CardContent>
+                </Card>
+              </ModuleErrorBoundary>
 
               <Card className="rounded-[32px] border-border/40 shadow-sm bg-gradient-to-br from-primary/5 to-transparent border-l-primary/20">
                 <CardContent className="p-6">
