@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { tooltipStyle, chartCardClass } from "./chartStyles";
@@ -7,7 +7,7 @@ interface EstoqueChartsProps {
   posicoes: { status: string; tipo?: string | null; porta_palete?: string | null }[];
 }
 
-export function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
+export const EstoqueCharts = memo(function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
   const statusData = useMemo(() => {
     const map: Record<string, number> = {};
     posicoes.forEach(p => { map[p.status] = (map[p.status] || 0) + 1; });
@@ -65,4 +65,4 @@ export function EstoqueCharts({ posicoes }: EstoqueChartsProps) {
       )}
     </div>
   );
-}
+});

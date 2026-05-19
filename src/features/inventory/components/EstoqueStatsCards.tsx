@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
- import { Package, Box, Clock, TrendingUp, Info } from "lucide-react";
- import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Package, Box, Clock, TrendingUp, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { memo } from "react";
 
 interface EstoqueStats {
   ppStats: { ocupados: number; livres: number; reservados: number; bloqueados: number; total: number };
@@ -14,7 +15,7 @@ interface EstoqueStatsCardsProps {
   stats: EstoqueStats;
 }
 
-export function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
+export const EstoqueStatsCards = memo(function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
   return (
     <motion.div
       className="grid grid-cols-2 lg:grid-cols-4 gap-3"
@@ -97,6 +98,6 @@ export function EstoqueStatsCards({ stats }: EstoqueStatsCardsProps) {
            </div>
          </CardContent>
        </Card>
-    </motion.div>
+     </motion.div>
   );
-}
+});

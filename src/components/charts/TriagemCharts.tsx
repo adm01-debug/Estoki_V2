@@ -1,11 +1,11 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { tooltipStyle, chartCardClass } from "./chartStyles";
 
 interface TriagemChartsProps { items: { resultado?: string | null; data_fim?: string | null; created_at: string }[]; }
 
-export function TriagemCharts({ items }: TriagemChartsProps) {
+export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChartsProps) {
   const resultadoData = useMemo(() => [
     { name: "Em Andamento", value: items.filter(i => !i.data_fim).length, color: "hsl(221, 83%, 53%)" },
     { name: "Aprovados", value: items.filter(i => i.resultado === "aprovado").length, color: "hsl(142, 76%, 36%)" },
@@ -32,4 +32,4 @@ export function TriagemCharts({ items }: TriagemChartsProps) {
       </Card>
     </div>
   );
-}
+});

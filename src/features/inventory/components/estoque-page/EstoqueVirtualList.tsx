@@ -9,9 +9,10 @@ import type { PosicaoEstoque } from "@/types/inventory";
 interface EstoqueVirtualListProps {
   positions: PosicaoEstoque[];
   onSelect: (p: PosicaoEstoque) => void;
+  className?: string;
 }
 
-export function EstoqueVirtualList({ positions, onSelect }: EstoqueVirtualListProps) {
+export function EstoqueVirtualList({ positions, onSelect, className }: EstoqueVirtualListProps) {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
@@ -33,7 +34,7 @@ export function EstoqueVirtualList({ positions, onSelect }: EstoqueVirtualListPr
   return (
     <div
       ref={parentRef}
-      className="h-[600px] overflow-auto rounded-md border border-border/50 bg-background/50"
+      className={cn("h-[600px] overflow-auto rounded-md border border-border/50 bg-background/50", className)}
       role="list"
       aria-label="Lista de posições ocupadas"
     >

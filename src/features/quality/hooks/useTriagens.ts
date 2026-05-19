@@ -39,7 +39,9 @@ export const useTriagens = (options?: { enableRealtime?: boolean }) => {
 
   const { data: triagens = [], isLoading, error, refetch } = useQuery({
     queryKey: ['triagens'],
-    queryFn: qualityService.getAll
+    queryFn: qualityService.getAll,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
   });
 
   const createTriagem = useMutation({

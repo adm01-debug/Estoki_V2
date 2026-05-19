@@ -12,7 +12,7 @@ export type { PosicaoEstoque, StatusPosicao, TipoPosicao, SaldoPosicao };
 type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
 type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
- export const useEstoque = (options?: { enableRealtime?: boolean }) => {
+ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: boolean }) => {
    const queryClient = useQueryClient();
    const { toast } = useToast();
    const subscriptionRef = useRef<any>(null);
@@ -50,10 +50,12 @@ type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
      };
    }, [options?.enableRealtime, queryClient]);
 
-  const { data: posicoes, isLoading, error, refetch } = useQuery({
-    queryKey: ['estoque-posicoes'],
-    queryFn: inventoryService.getAll
-  });
+   const { data: posicoes, isLoading, error, refetch } = useQuery({
+     queryKey: ['estoque-posicoes'],
+     queryFn: inventoryService.getAll,
+     staleTime: 1000 * 60 * 2, // 2 minutes
+     gcTime: 1000 * 60 * 10, // 10 minutes
+   });
 
   const createPosicao = useMutation({
     mutationFn: inventoryService.create,

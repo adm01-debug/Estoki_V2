@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import { tooltipStyle, chartCardClass } from "./chartStyles";
@@ -7,7 +7,7 @@ interface RecebimentoChartsProps {
   items: { status: string; fornecedor?: string | null; quantidade_atual: number; quantidade_inicial: number }[];
 }
 
-export function RecebimentoCharts({ items }: RecebimentoChartsProps) {
+export const RecebimentoCharts = memo(function RecebimentoCharts({ items }: RecebimentoChartsProps) {
   const statusData = useMemo(() => {
     const map: Record<string, number> = {};
     items.forEach(i => { map[i.status] = (map[i.status] || 0) + 1; });
@@ -47,4 +47,4 @@ export function RecebimentoCharts({ items }: RecebimentoChartsProps) {
       )}
     </div>
   );
-}
+});
