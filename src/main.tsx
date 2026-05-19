@@ -4,6 +4,10 @@ import "./index.css";
 import "./i18n";
 import { prefetchCriticalRoutes } from "./lib/prefetch";
 import { initWebVitals } from "./lib/web-vitals";
+import { setupGlobalErrorHandler } from "./config/error-handler";
+// 0) Setup global monitoring
+setupGlobalErrorHandler();
+
 
 // Suppress noisy errors
 window.addEventListener("unhandledrejection", (event) => {
