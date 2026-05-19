@@ -100,6 +100,7 @@ export const Header = memo(function Header({
               userName={userName} 
               userEmail={userEmail} 
               currentRole={currentRole} 
+              avatarUrl={avatarUrl}
               onLogout={onLogout} 
             />
           </div>
