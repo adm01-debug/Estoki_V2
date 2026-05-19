@@ -65,4 +65,4 @@ export const EstoqueCharts = memo(function EstoqueCharts({ posicoes }: EstoqueCh
       )}
     </div>
   );
-}
+});
