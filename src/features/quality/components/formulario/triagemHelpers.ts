@@ -17,12 +17,9 @@ export const getStatus = (triagem: { resultado?: string | null; data_fim?: strin
   return 'aprovado';
 };
 
+import { formatDateTime } from "@/utils/date";
+
 export const formatDate = (dateString?: string | null) => {
-  if (!dateString) return null;
-  return new Date(dateString).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  if (!dateString) return "—";
+  return formatDateTime(dateString);
 };
