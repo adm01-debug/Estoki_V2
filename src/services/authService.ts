@@ -7,6 +7,8 @@ export interface Profile {
   id: string;
   nome: string | null;
   email: string | null;
+  avatar_url?: string | null;
+  departamento?: string | null;
 }
 
 export const authService = {
@@ -22,7 +24,7 @@ export const authService = {
   async getProfile(userId: string): Promise<Profile | null> {
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, nome, email")
+      .select("id, nome, email, avatar_url, departamento")
       .eq("id", userId)
       .maybeSingle();
 
