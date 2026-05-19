@@ -24,6 +24,7 @@ interface HeaderProps {
   currentRole: string;
   onLogout: () => void;
   isHome?: boolean;
+  avatarUrl?: string | null;
 }
 
 /**
@@ -40,7 +41,8 @@ export const Header = memo(function Header({
   userEmail,
   currentRole,
   onLogout,
-  isHome
+  isHome,
+  avatarUrl
 }: HeaderProps) {
 
   return (
@@ -98,6 +100,7 @@ export const Header = memo(function Header({
               userName={userName} 
               userEmail={userEmail} 
               currentRole={currentRole} 
+              avatarUrl={avatarUrl}
               onLogout={onLogout} 
             />
           </div>

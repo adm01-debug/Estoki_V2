@@ -148,6 +148,7 @@ const typeConfig = {
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
+        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
         <CommandInput 
           placeholder="O que você está procurando?" 
           value={query}
@@ -179,11 +180,11 @@ const typeConfig = {
            {!query && recentSearches.length > 0 && (
              <CommandGroup heading="Buscas Recentes">
                {recentSearches.map((term) => (
-                 <CommandItem
-                   key={term}
-                   onSelect={() => setQuery(term)}
-                   className="flex items-center justify-between py-3 group"
-                 >
+                  <CommandItem
+                    key={term}
+                    onSelect={() => setQuery(term)}
+                    className="flex items-center justify-between py-3 group cursor-pointer rounded-xl mx-2 my-0.5"
+                  >
                    <div className="flex items-center gap-3">
                      <History className="h-4 w-4 text-muted-foreground" />
                      <span className="font-medium">{term}</span>
@@ -205,11 +206,11 @@ const typeConfig = {
            {results.length > 0 && (
              <CommandGroup heading="Resultados do Banco">
                {results.map((result) => (
-                 <CommandItem
-                   key={`${result.type}-${result.id}`}
-                   onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
-                   className="flex items-center gap-3 py-3"
-                 >
+                  <CommandItem
+                    key={`${result.type}-${result.id}`}
+                    onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
+                    className="flex items-center gap-3 py-3 cursor-pointer rounded-xl mx-2 my-0.5"
+                  >
                    <div className={`p-2 rounded-lg bg-background border border-border`}>
                      {(() => {
                        const Icon = typeConfig[result.type].icon;
@@ -229,48 +230,48 @@ const typeConfig = {
           <CommandSeparator />
           
           <CommandGroup heading="Ações & Segurança">
-            <CommandItem onSelect={() => onSelect("/recebimento")} keywords={["entrada", "chegada", "fornecedor", "inbound", "new"]}>
+            <CommandItem onSelect={() => onSelect("/recebimento")} keywords={["entrada", "chegada", "fornecedor", "inbound", "new"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Plus className="mr-2 h-4 w-4 text-success" />
               Novo Recebimento
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/triagem")} keywords={["conferência", "qualidade", "check", "inspection"]}>
+            <CommandItem onSelect={() => onSelect("/triagem")} keywords={["conferência", "qualidade", "check", "inspection"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Search className="mr-2 h-4 w-4 text-primary" />
               Iniciar Triagem
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/admin/auditoria")} keywords={["logs", "histórico", "segurança", "audit", "events"]}>
+            <CommandItem onSelect={() => onSelect("/admin/auditoria")} keywords={["logs", "histórico", "segurança", "audit", "events"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Shield className="mr-2 h-4 w-4 text-orange-500" />
               Ver Logs de Auditoria
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/seguranca")} keywords={["senha", "mfa", "permissões", "access", "privacy"]}>
+            <CommandItem onSelect={() => onSelect("/seguranca")} keywords={["senha", "mfa", "permissões", "access", "privacy"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Lock className="mr-2 h-4 w-4 text-red-500" />
               Configurações de Segurança
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/relatorios")} keywords={["pdf", "excel", "exportar", "analytics", "data"]}>
+            <CommandItem onSelect={() => onSelect("/relatorios")} keywords={["pdf", "excel", "exportar", "analytics", "data"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <FileBarChart className="mr-2 h-4 w-4 text-blue-500" />
               Gerar Relatório de Inventário
             </CommandItem>
           </CommandGroup>
 
-          <CommandSeparator />
+          <CommandSeparator className="bg-border/40" />
 
           <CommandGroup heading="Navegação">
-            <CommandItem onSelect={() => onSelect("/")} keywords={["home", "painel", "resumo"]}>
+            <CommandItem onSelect={() => onSelect("/")} keywords={["home", "painel", "resumo"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Início
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/dashboard")} keywords={["kpis", "gráficos", "estatísticas", "charts"]}>
+            <CommandItem onSelect={() => onSelect("/dashboard")} keywords={["kpis", "gráficos", "estatísticas", "charts"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Activity className="mr-2 h-4 w-4" />
               Dashboard Analítico
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/estoque")} keywords={["inventário", "produtos", "armazenamento", "warehouse"]}>
+            <CommandItem onSelect={() => onSelect("/estoque")} keywords={["inventário", "produtos", "armazenamento", "warehouse"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Warehouse className="mr-2 h-4 w-4" />
               Estoque Central
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/expedicao")} keywords={["saída", "romaneio", "transporte", "shipping", "outbound"]}>
+            <CommandItem onSelect={() => onSelect("/expedicao")} keywords={["saída", "romaneio", "transporte", "shipping", "outbound"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <Truck className="mr-2 h-4 w-4" />
               Expedição
             </CommandItem>
-            <CommandItem onSelect={() => onSelect("/movimentacao")} keywords={["transferência", "mudança", "local", "move"]}>
+            <CommandItem onSelect={() => onSelect("/movimentacao")} keywords={["transferência", "mudança", "local", "move"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
               <ArrowLeftRight className="mr-2 h-4 w-4" />
               Movimentar Itens
             </CommandItem>

@@ -6,7 +6,7 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { getRoleBadgeColor, getRoleLabel } from "../sidebar/sidebarNavData";
@@ -15,6 +15,7 @@ interface UserMenuProps {
   userName: string;
   userEmail: string;
   currentRole: string;
+  avatarUrl?: string | null;
   onLogout: () => void;
 }
 
@@ -22,6 +23,7 @@ export const UserMenu = memo(function UserMenu({
   userName,
   userEmail,
   currentRole,
+  avatarUrl,
   onLogout
 }: UserMenuProps) {
   const navigate = useNavigate();
@@ -36,6 +38,7 @@ export const UserMenu = memo(function UserMenu({
         <Button variant="ghost" size="icon" className="touch-friendly relative hover:bg-primary/10 rounded-xl" aria-label="Menu do usuário">
           <div className="relative">
              <Avatar className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-background transition-all hover:ring-primary/40">
+              <AvatarImage src={avatarUrl || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-primary-foreground text-xs font-bold">
                 {getInitials(userName)}
               </AvatarFallback>
@@ -55,11 +58,11 @@ export const UserMenu = memo(function UserMenu({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer rounded-xl h-10">
           <Settings className="h-4 w-4 mr-2" />Configurações
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive cursor-pointer" onClick={onLogout}>
+        <DropdownMenuItem className="text-destructive cursor-pointer rounded-xl h-10 hover:bg-destructive/10" onClick={onLogout}>
           <LogOut className="h-4 w-4 mr-2" />Sair
         </DropdownMenuItem>
       </DropdownMenuContent>

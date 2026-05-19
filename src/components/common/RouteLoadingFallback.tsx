@@ -62,12 +62,12 @@ import { LoadingFallback } from './LoadingFallback';
             <motion.div 
               ref={ref}
               key={type}
-              initial={{ opacity: 0, scale: 0.99 }}
+              initial={{ opacity: 0, scale: 0.995 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.01 }}
+              exit={{ opacity: 0, scale: 1.005 }}
               transition={{ 
-                duration: 0.25,
-                ease: [0.22, 1, 0.36, 1]
+                duration: 0.2,
+                ease: "easeOut"
               }}
               className="w-full will-change-transform"
             >

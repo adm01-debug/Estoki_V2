@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
  import { Badge } from "@/components/ui/badge";
  import { Button } from "@/components/ui/button";
  import { BarChart3, Wifi, Zap, Plus, Search, FileText } from "lucide-react";
@@ -40,13 +40,21 @@ interface Props {
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
               {getGreeting()}, <span className="gradient-text">{userName}</span>! 👋
             </h1>
-            {isConnected && (
-              <Badge variant="outline" className="bg-success/10 text-success border-success/30 gap-1.5 animate-pulse">
-                <Wifi className="h-3 w-3" />Live
-              </Badge>
-            )}
+            <AnimatePresence>
+              {isConnected && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                >
+                  <Badge variant="outline" className="bg-success/10 text-success border-success/30 gap-1.5 animate-pulse">
+                    <Wifi className="h-3 w-3" />Live
+                  </Badge>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <p className="text-muted-foreground mt-1">Seu ecossistema 10/10 de alta performance está pronto.</p>
+          <p className="text-muted-foreground mt-1 text-sm md:text-base font-medium">Seu ecossistema 10/10 de alta performance está pronto.</p>
         </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
