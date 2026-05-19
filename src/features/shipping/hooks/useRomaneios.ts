@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { shippingService } from "../services/shippingService";
 import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
 
+export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega };
+
 export function useRomaneios(options?: { enableRealtime?: boolean }) {
   const queryClient = useQueryClient();
   const subscriptionRef = useRef<any>(null);
@@ -73,6 +75,14 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     error,
     refetch,
     createRomaneio,
-    updateStatus: (id: string, status: StatusRomaneio) => updateStatus.mutate({ id, status })
+    updateStatus: (id: string, status: StatusRomaneio) => updateStatus.mutate({ id, status }),
+    // Compatibility aliases for legacy code
+    loading: isLoading,
+    atualizarStatus: (id: string, status: StatusRomaneio) => updateStatus.mutate({ id, status }),
+    criarRomaneio: createRomaneio.mutate,
+    registrarEntrega: async (id: string) => {
+        // Mock or actual implementation if needed
+        toast.info("Funcionalidade em desenvolvimento");
+    }
   };
 }
