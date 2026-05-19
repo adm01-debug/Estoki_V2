@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
- import { Package, Box, Clock, TrendingUp, Info } from "lucide-react";
- import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Package, Box, Clock, TrendingUp, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
+import { memo } from "react";
 
 interface EstoqueStats {
   ppStats: { ocupados: number; livres: number; reservados: number; bloqueados: number; total: number };
