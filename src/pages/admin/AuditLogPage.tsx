@@ -213,105 +213,113 @@ export default function AuditLogPage() {
               <CardTitle>Histórico Detalhado</CardTitle>
               <CardDescription>Rastreabilidade completa de todas as mudanças no sistema</CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-4">
               {isLoading ? (
-                <div className="p-8 space-y-4">
+                <div className="space-y-4">
                   {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-12 w-full" />)}
                 </div>
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data/Hora</TableHead>
-                      <TableHead>Usuário</TableHead>
-                      <TableHead>Ação</TableHead>
-                      <TableHead>Entidade</TableHead>
-                      <TableHead>Detalhes</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredLogs.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="font-mono text-xs whitespace-nowrap">
-                          {format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-medium">{log.user_nome || "Sistema"}</span>
-                            <span className="text-xs text-muted-foreground">{log.user_email}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getActionBadge(log.action)}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="text-xs font-semibold uppercase">{log.entity_type}</span>
-                            <span className="text-[10px] text-muted-foreground font-mono">{log.entity_id?.slice(0, 8)}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-sm">{log.entity_label || "-"}</span>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-2xl">
-                              <DialogHeader>
-                                <DialogTitle className="flex items-center gap-2">
-                                  <FileJson className="h-5 w-5 text-primary" />
-                                  Detalhes do Evento
-                                </DialogTitle>
-                              </DialogHeader>
-                              <ScrollArea className="max-h-[60vh] p-4 bg-muted rounded-md">
-                                <div className="space-y-4">
-                                  <div>
-                                    <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Informações Gerais</h4>
-                                    <pre className="text-xs">{JSON.stringify({
-                                      id: log.id,
-                                      created_at: log.created_at,
-                                      ip: log.ip_address,
-                                      agent: log.user_agent
-                                    }, null, 2)}</pre>
-                                  </div>
-                                  {log.old_values && (
-                                    <div>
-                                      <h4 className="text-xs font-bold uppercase text-red-500 mb-2">Valores Anteriores</h4>
-                                      <pre className="text-xs bg-red-500/5 p-2 rounded">{JSON.stringify(log.old_values, null, 2)}</pre>
-                                    </div>
-                                  )}
-                                  {log.new_values && (
-                                    <div>
-                                      <h4 className="text-xs font-bold uppercase text-success mb-2">Novos Valores</h4>
-                                      <pre className="text-xs bg-success/5 p-2 rounded">{JSON.stringify(log.new_values, null, 2)}</pre>
-                                    </div>
-                                  )}
-                                  {log.metadata && Object.keys(log.metadata).length > 0 && (
-                                    <div>
-                                      <h4 className="text-xs font-bold uppercase text-primary mb-2">Metadados Adicionais</h4>
-                                      <pre className="text-xs">{JSON.stringify(log.metadata, null, 2)}</pre>
-                                    </div>
-                                  )}
+                <VirtualizedTable 
+                  data={filteredLogs}
+                  columns={[
+                    {
+                      header: "Data/Hora",
+                      className: "w-[180px] font-mono text-xs",
+                      cell: (log) => format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })
+                    },
+                    {
+                      header: "Usuário",
+                      className: "flex-[2]",
+                      cell: (log) => (
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{log.user_nome || "Sistema"}</span>
+                          <span className="text-xs text-muted-foreground truncate">{log.user_email}</span>
+                        </div>
+                      )
+                    },
+                    {
+                      header: "Ação",
+                      className: "w-[120px]",
+                      cell: (log) => getActionBadge(log.action)
+                    },
+                    {
+                      header: "Entidade",
+                      className: "flex-1",
+                      cell: (log) => (
+                        <div className="flex flex-col">
+                          <span className="text-xs font-semibold uppercase">{log.entity_type}</span>
+                          <span className="text-[10px] text-muted-foreground font-mono">{log.entity_id?.slice(0, 8)}</span>
+                        </div>
+                      )
+                    },
+                    {
+                      header: "Detalhes",
+                      className: "flex-[2]",
+                      cell: (log) => <span className="text-sm truncate block">{log.entity_label || "-"}</span>
+                    },
+                    {
+                      header: "Ver",
+                      className: "w-[60px] text-right",
+                      cell: (log) => (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                              <DialogTitle className="flex items-center gap-2">
+                                <FileJson className="h-5 w-5 text-primary" />
+                                Detalhes do Evento
+                              </DialogTitle>
+                            </DialogHeader>
+                            <ScrollArea className="max-h-[60vh] p-4 bg-muted rounded-md">
+                              <div className="space-y-4">
+                                <div>
+                                  <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Informações Gerais</h4>
+                                  <pre className="text-xs">{JSON.stringify({
+                                    id: log.id,
+                                    created_at: log.created_at,
+                                    ip: log.ip_address,
+                                    agent: log.user_agent
+                                  }, null, 2)}</pre>
                                 </div>
-                              </ScrollArea>
-                            </DialogContent>
-                          </Dialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {filteredLogs.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                          Nenhum registro encontrado com os filtros atuais.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                                {log.old_values && (
+                                  <div>
+                                    <h4 className="text-xs font-bold uppercase text-red-500 mb-2">Valores Anteriores</h4>
+                                    <pre className="text-xs bg-red-500/5 p-2 rounded">{JSON.stringify(log.old_values, null, 2)}</pre>
+                                  </div>
+                                )}
+                                {log.new_values && (
+                                  <div>
+                                    <h4 className="text-xs font-bold uppercase text-success mb-2">Novos Valores</h4>
+                                    <pre className="text-xs bg-success/5 p-2 rounded">{JSON.stringify(log.new_values, null, 2)}</pre>
+                                  </div>
+                                )}
+                                {log.metadata && Object.keys(log.metadata).length > 0 && (
+                                  <div>
+                                    <h4 className="text-xs font-bold uppercase text-primary mb-2">Metadados Adicionais</h4>
+                                    <pre className="text-xs">{JSON.stringify(log.metadata, null, 2)}</pre>
+                                  </div>
+                                )}
+                              </div>
+                            </ScrollArea>
+                          </DialogContent>
+                        </Dialog>
+                      )
+                    }
+                  ]}
+                  height="500px"
+                />
               )}
+              {filteredLogs.length === 0 && !isLoading && (
+                <div className="h-32 flex flex-col items-center justify-center text-muted-foreground">
+                  <p>Nenhum registro encontrado com os filtros atuais.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
             </CardContent>
           </Card>
         </div>
