@@ -58,11 +58,11 @@ export const UserMenu = memo(function UserMenu({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => navigate("/configuracoes")} className="cursor-pointer rounded-xl h-10">
           <Settings className="h-4 w-4 mr-2" />Configurações
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-destructive cursor-pointer" onClick={onLogout}>
+        <DropdownMenuItem className="text-destructive cursor-pointer rounded-xl h-10 hover:bg-destructive/10" onClick={onLogout}>
           <LogOut className="h-4 w-4 mr-2" />Sair
         </DropdownMenuItem>
       </DropdownMenuContent>
