@@ -63,7 +63,7 @@ export default function SimulationPage() {
                   min={1}
                   max={5000}
                 />
-                <p className="text-[10px] text-muted-foreground">Recomendado para stress-test: > 500 eventos.</p>
+                <p className="text-[10px] text-muted-foreground">Recomendado para stress-test: {'>'} 500 eventos.</p>
               </div>
               <Button 
                 className="w-full gap-2" 
