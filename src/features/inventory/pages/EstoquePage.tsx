@@ -35,7 +35,7 @@ interface Filters { status: StatusPosicao[]; ruas: string[]; niveis: string[]; s
 
 export default function EstoquePage() {
   const navigate = useNavigate();
-  const { posicoes, loading, error, getEstatisticas, refetch, updatePosicao } = useEstoque();
+   const { posicoes, loading, error, getEstatisticas, refetch, updatePosicao } = useEstoque({ enableRealtime: true });
   const { log } = useAuditLog();
   const safePositions = posicoes ?? [];
 

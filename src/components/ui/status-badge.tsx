@@ -1,4 +1,4 @@
-import React from 'react';
+ import React, { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { CheckCircle, Clock, XCircle, AlertCircle, Loader2, Truck, Package } from 'lucide-react';
@@ -39,8 +39,19 @@ export function getStatusVariant(status: string): string {
   return config?.variant || 'bg-gray-100 text-gray-800';
 }
 
-export function StatusBadge({ status, variant, label, showIcon = true, size = 'md', className, dot, children }: StatusBadgeProps) {
-  const statusKey = status || (typeof children === 'string' ? children : '');
+ export function StatusBadge({ 
+   status, 
+   variant, 
+   label, 
+   showIcon = true, 
+   size = 'md', 
+   className, 
+   dot, 
+   children 
+ }: StatusBadgeProps) {
+   const isReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+   
+   const statusKey = useMemo(() => status || (typeof children === 'string' ? children : ''), [status, children]);
   const config = statusConfig[statusKey.toLowerCase()] || { label: statusKey, variant: variant || 'bg-gray-100 text-gray-800', icon: AlertCircle };
   const Icon = config.icon;
   const displayLabel = children || label || config.label;
@@ -49,7 +60,13 @@ export function StatusBadge({ status, variant, label, showIcon = true, size = 'm
   return (
     <Badge variant="outline" className={cn('font-medium border', appliedVariant, sizeClasses[size], className)}>
       {dot && <span className="w-2 h-2 rounded-full bg-current mr-1.5" />}
-      {showIcon && !dot && <Icon className={cn('mr-1', size === 'sm' ? 'h-3 w-3' : 'h-4 w-4', statusKey === 'processing' && 'animate-spin')} />}
+       {showIcon && !dot && (
+         <Icon className={cn(
+           'mr-1', 
+           size === 'sm' ? 'h-3 w-3' : 'h-4 w-4', 
+           statusKey === 'processing' && !isReducedMotion && 'animate-spin'
+         )} />
+       )}
       {displayLabel}
     </Badge>
   );
