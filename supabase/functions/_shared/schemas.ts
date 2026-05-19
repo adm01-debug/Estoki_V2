@@ -91,6 +91,13 @@ export const PickingConfirmSchema = z.object({
   })).min(1, "É necessário ao menos um item"),
 });
 
+// ── AI schemas ─────────────────────────────────────────────
+export const AiClassificationSchema = z.object({
+  text: z.string().min(1, "Texto é obrigatório").max(10000),
+  categories: z.array(z.string()).min(1, "Ao menos uma categoria é obrigatória"),
+  model: z.enum(["simple", "advanced"]).optional().default("simple"),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): 
