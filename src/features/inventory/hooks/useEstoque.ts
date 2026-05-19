@@ -1,6 +1,6 @@
  import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
  import { supabase } from '@/integrations/supabase/client';
- import { useEffect, useCallback, useMemo } from 'react';
+ import { useEffect, useCallback, useMemo, useRef } from 'react';
  import { useToast } from '@/hooks/use-toast';
  import type { Database } from '@/integrations/supabase/types';
  import { logger } from '@/utils/logger';
@@ -48,9 +48,43 @@ export interface PosicaoEstoque {
    saldos?: SaldoPosicao[];
 }
 
-export const useEstoque = () => {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
+ export const useEstoque = (options?: { enableRealtime?: boolean }) => {
+   const queryClient = useQueryClient();
+   const { toast } = useToast();
+   const subscriptionRef = useRef<any>(null);
+ 
+   useEffect(() => {
+     if (!options?.enableRealtime) return;
+ 
+     if (subscriptionRef.current) {
+       subscriptionRef.current.unsubscribe();
+     }
+ 
+     subscriptionRef.current = supabase
+       .channel('inventory-changes')
+       .on(
+         'postgres_changes',
+         { event: '*', schema: 'public', table: 'posicoes_estoque' },
+         () => {
+           queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
+         }
+       )
+       .on(
+         'postgres_changes',
+         { event: '*', schema: 'public', table: 'estoque_posicao' },
+         () => {
+           // This table handles occupancy (saldos)
+           queryClient.invalidateQueries({ queryKey: ['estoque-posicoes'] });
+         }
+       )
+       .subscribe();
+ 
+     return () => {
+       if (subscriptionRef.current) {
+         subscriptionRef.current.unsubscribe();
+       }
+     };
+   }, [options?.enableRealtime, queryClient]);
 
   const { data: posicoes, isLoading, error, refetch } = useQuery({
     queryKey: ['estoque-posicoes'],
