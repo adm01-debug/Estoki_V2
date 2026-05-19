@@ -132,6 +132,7 @@ export const sidebarAdminItems: NavItem[] = [
   { path: "/admin/configuracoes", icon: Settings, label: "Config Admin" },
   { path: "/admin/auditoria", icon: ClipboardList, label: "Auditoria" },
   { path: "/admin/integracoes", icon: Activity, label: "Integrações" },
+  { path: "/admin/simulacao", icon: Zap, label: "Simulador de Stress" },
 ];
 
 export const sidebarUtilityItems: NavItem[] = [
