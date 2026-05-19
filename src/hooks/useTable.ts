@@ -99,6 +99,8 @@ export function useTable<T extends Record<string, any>>({
     // State
     query,
     setQuery,
+    globalFilter: query,
+    setGlobalFilter: setQuery,
     sortConfig,
     currentPage,
     setCurrentPage: goToPage,
@@ -108,6 +110,9 @@ export function useTable<T extends Record<string, any>>({
     
     // Data
     data: paginatedData,
+    filteredData,
+    sortedData,
+    paginatedData,
     totalItems: sortedData.length,
     totalPages,
     
