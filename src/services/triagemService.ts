@@ -1,12 +1,24 @@
 import { supabase } from "@/integrations/supabase/client";
 
 export const triagemService = {
-  async getAll(resultado?: string) {
-    let query = supabase.from("eventos_triagem").select("*").order("created_at", { ascending: false }).limit(500);
+  async getAll(resultado?: string): Promise<any[]> {
+    let query = supabase
+      .from("eventos_triagem")
+      .select(`
+        *,
+        lotes (
+          quantidade_inicial,
+          numero_lote,
+          produtos (nome, sku)
+        )
+      `)
+      .order("created_at", { ascending: false });
+      
     if (resultado) query = query.eq("resultado", resultado);
+    
     const { data, error } = await query;
     if (error) throw error;
-    return data;
+    return data || [];
   },
 
   async getById(id: string) {

@@ -1,39 +1,51 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { triagemService } from '@/services/triagemService';
 import type { Database } from '@/integrations/supabase/types';
 
 type TriagemRow = Database['public']['Tables']['eventos_triagem']['Row'];
 type TriagemInsert = Database['public']['Tables']['eventos_triagem']['Insert'];
 type TriagemUpdate = Database['public']['Tables']['eventos_triagem']['Update'];
 
-export const useTriagens = () => {
+export const useTriagens = (options?: { enableRealtime?: boolean }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const subscriptionRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!options?.enableRealtime) return;
+
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe();
+    }
+
+    subscriptionRef.current = supabase
+      .channel('triagem-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'eventos_triagem' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['triagens'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+      }
+    };
+  }, [options?.enableRealtime, queryClient]);
 
   const { data: triagens, isLoading, error, refetch } = useQuery({
     queryKey: ['triagens'],
-    queryFn: async () => {
-       const { data, error } = await supabase.from('eventos_triagem').select(`
-         *,
-         lotes (
-           quantidade_inicial,
-           numero_lote,
-           produtos (nome, sku)
-         )
-       `).order('created_at', { ascending: false });
-      if (error) throw error;
-      return data;
-    }
+    queryFn: () => triagemService.getAll()
   });
 
   const createTriagem = useMutation({
-    mutationFn: async (novaTriagem: TriagemInsert) => {
-      const { data, error } = await supabase.from('eventos_triagem').insert(novaTriagem).select().single();
-      if (error) throw error;
-      return data as TriagemRow;
-    },
+    mutationFn: triagemService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
       toast({ title: 'Sucesso', description: 'Triagem registrada!' });
@@ -45,16 +57,13 @@ export const useTriagens = () => {
 
   const updateTriagem = useMutation({
     mutationFn: async ({ id, ...dados }: TriagemUpdate & { id: string }) => {
-      const { data, error } = await supabase.from('eventos_triagem').update(dados).eq('id', id).select().single();
-      if (error) throw error;
-      return data as TriagemRow;
+      return triagemService.update(id, dados as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['triagens'] });
       toast({ title: 'Sucesso', description: 'Triagem atualizada!' });
     }
   });
-
 
   return { triagens, isLoading, error, refetch, createTriagem, updateTriagem };
 };

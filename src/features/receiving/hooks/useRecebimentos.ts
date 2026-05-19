@@ -1,11 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { receivingService } from '@/services/receivingService';
-import type { RecebimentoItem } from '../types';
 
-export const useRecebimentos = () => {
+export const useRecebimentos = (options?: { enableRealtime?: boolean }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const subscriptionRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!options?.enableRealtime) return;
+
+    if (subscriptionRef.current) {
+      subscriptionRef.current.unsubscribe();
+    }
+
+    subscriptionRef.current = supabase
+      .channel('receiving-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'lotes' },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ['recebimentos'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      if (subscriptionRef.current) {
+        subscriptionRef.current.unsubscribe();
+      }
+    };
+  }, [options?.enableRealtime, queryClient]);
 
   const { data: recebimentos, isLoading, error, refetch } = useQuery({
     queryKey: ['recebimentos'],
@@ -29,7 +56,6 @@ export const useRecebimentos = () => {
       toast({ title: 'Erro', description: 'Falha ao registrar', variant: 'destructive' });
     }
   });
-
 
   return { recebimentos, isLoading, error, refetch, createRecebimento };
 };
