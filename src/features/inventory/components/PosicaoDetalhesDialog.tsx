@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
  import { X, MapPin, Package, AlertTriangle, Clock, Loader2, History, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,8 +18,9 @@ interface PosicaoDetalhesDialogProps {
   onClose: () => void;
 }
 
-export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDialogProps) {
-  const [detalhes, setDetalhes] = useState<EstoquePosicaoDetalhes | null>(null);
+ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDialogProps) {
+   const shouldReduceMotion = useReducedMotion();
+   const [detalhes, setDetalhes] = useState<EstoquePosicaoDetalhes | null>(null);
    const [loading, setLoading] = useState(false);
    const [history, setHistory] = useState<any[]>([]);
    const [loadingHistory, setLoadingHistory] = useState(false);
@@ -86,17 +87,21 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
 
   return (
     <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50"
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <motion.div
-          className="bg-card w-full sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl"
-          initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", damping: 25 }}
-          onClick={(e) => e.stopPropagation()}
-        >
+       <motion.div
+         className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center z-50"
+         initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+         animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1 }}
+         exit={shouldReduceMotion ? { opacity: 0 } : { opacity: 0 }}
+         onClick={onClose}
+       >
+         <motion.div
+           className="bg-card w-full sm:max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl"
+           initial={shouldReduceMotion ? { opacity: 0 } : { y: 100, opacity: 0 }}
+           animate={shouldReduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+           exit={shouldReduceMotion ? { opacity: 0 } : { y: 100, opacity: 0 }}
+           transition={shouldReduceMotion ? { duration: 0.1 } : { type: "spring", damping: 25 }}
+           onClick={(e) => e.stopPropagation()}
+         >
           <div className="sticky top-0 bg-card border-b p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
