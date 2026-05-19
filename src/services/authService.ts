@@ -1,53 +1,48 @@
-import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
+
+export type AppRole = "operador" | "supervisor" | "admin";
+
+export interface Profile {
+  id: string;
+  nome: string | null;
+  email: string | null;
+}
 
 export const authService = {
-  async signIn(email: string, password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+  async getProfile(userId: string): Promise<Profile | null> {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("id, nome, email")
+      .eq("id", userId)
+      .maybeSingle();
+
+    if (error) {
+      logger.error("Erro ao buscar perfil do usuário", error, { userId });
+      throw error;
+    }
     return data;
   },
 
-  async signUp(email: string, password: string, metadata?: Record<string, unknown>) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: metadata },
-    });
-    if (error) throw error;
-    return data;
+  async getRole(userId: string): Promise<AppRole | null> {
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      logger.error("Erro ao buscar permissões do usuário", error, { userId });
+      throw error;
+    }
+    return (data?.role as AppRole) || null;
   },
 
-  async signOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-  },
-
-  async resetPassword(email: string) {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
-    if (error) throw error;
-  },
-
-  async updatePassword(newPassword: string) {
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) throw error;
-  },
-
-  async getUser() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    return user;
-  },
-
-  async getSession() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    return session;
-  },
-
-  onAuthStateChange(callback: (event: AuthChangeEvent, session: Session | null) => void) {
-    return supabase.auth.onAuthStateChange(callback);
-  },
+  async getUserData(userId: string) {
+    const [profile, role] = await Promise.all([
+      this.getProfile(userId),
+      this.getRole(userId)
+    ]);
+    return { profile, role };
+  }
 };
