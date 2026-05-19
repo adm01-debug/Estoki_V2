@@ -1,22 +1,23 @@
-  import { useState, useMemo } from "react";
-  import { AppLayout } from "@/components/layout/AppLayout";
-  import { PageTransition } from "@/components/layout/PageTransition";
+import { useState, useMemo, useEffect } from "react";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
- import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
- import { Skeleton } from "@/components/ui/skeleton";
-  import { Search, Plus, Filter, X, Download } from "lucide-react";
-  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
- import { useProdutos } from "@/hooks/useProdutos";
- import { produtoSchema, validateForm } from "@/lib/validations";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search, Plus, Filter, X, Download } from "lucide-react";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { useProdutos } from "@/hooks/useProdutos";
+import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
 import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
 import { ProdutoDetailDialog } from "@/components/produtos/ProdutoDetailDialog";
 import type { Produto } from "@/types/product";
-import { ProdutosList } from "@/components/produtos/ProdutosList";
+import { ProductGrid } from "@/components/produtos/ProductGrid";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
+import { useDebounce } from "@/hooks/useDebounce";
 
  export default function ProdutosPage() {
     const { produtos, loading, createProduto, stats } = useProdutos();
