@@ -147,7 +147,12 @@ export default function ProdutosPage() {
             </Select>
           </div>
 
-          <ProdutosList produtos={filtered} onSelect={setSelectedProduto} getCurvaBadge={getCurvaBadge} />
+          <ProductGrid 
+            produtos={filtered} 
+            loading={isSearching}
+            onSelect={setSelectedProduto} 
+            getCurvaBadge={getCurvaBadge} 
+          />
         </div>
       </PageTransition>
 
