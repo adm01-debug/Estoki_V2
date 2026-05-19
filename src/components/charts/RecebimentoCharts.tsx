@@ -47,4 +47,4 @@ export const RecebimentoCharts = memo(function RecebimentoCharts({ items }: Rece
       )}
     </div>
   );
-}
+});
