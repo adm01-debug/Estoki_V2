@@ -9,6 +9,7 @@ import { batchService } from './batchService';
 import { inventoryService } from './inventoryService';
 import { orderService } from './orderService';
 import { productService } from './productService';
+import { receivingService } from './receivingService';
 import { stockService } from './stockService';
 
 export * from "./abcService";
