@@ -3,8 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { inventoryService } from '@/services/inventoryService';
-import type { PosicaoEstoque, StatusPosicao } from '@/types/inventory';
+import { logger } from '@/utils/logger';
+import type { PosicaoEstoque, StatusPosicao, TipoPosicao, SaldoPosicao } from '@/types/inventory';
 import type { Database } from '@/integrations/supabase/types';
+
+export type { PosicaoEstoque, StatusPosicao, TipoPosicao, SaldoPosicao };
 
 type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
 type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
