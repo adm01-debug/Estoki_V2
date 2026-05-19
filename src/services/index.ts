@@ -34,7 +34,7 @@ export * from "./receivingService";
 export * from "./relatorioService";
 export * from "./stockService";
 export * from "./supplierService";
-export * from "./triagemService";
+
 export * from "./warehouseService";
 
 export function createServices() {

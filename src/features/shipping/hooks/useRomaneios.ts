@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { shippingService } from "../services/shippingService";
 import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
 
+export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega };
+
 export function useRomaneios(options?: { enableRealtime?: boolean }) {
   const queryClient = useQueryClient();
   const subscriptionRef = useRef<any>(null);
@@ -46,7 +48,7 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     queryFn: shippingService.getRomaneios
   });
 
-  const createRomaneio = useMutation({
+  const createRomaneioMutation = useMutation({
     mutationFn: shippingService.criarRomaneio,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
@@ -57,7 +59,7 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     }
   });
 
-  const updateStatus = useMutation({
+  const updateStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string, status: StatusRomaneio }) => {
       return shippingService.atualizarStatus(id, status);
     },
@@ -70,9 +72,16 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
   return {
     romaneios,
     isLoading,
+    loading: isLoading,
     error,
     refetch,
-    createRomaneio,
-    updateStatus: (id: string, status: StatusRomaneio) => updateStatus.mutate({ id, status })
+    createRomaneio: createRomaneioMutation.mutate,
+    criarRomaneio: createRomaneioMutation.mutate,
+    updateStatus: (id: string, status: StatusRomaneio) => updateStatusMutation.mutate({ id, status }),
+    atualizarStatus: (id: string, status: StatusRomaneio) => updateStatusMutation.mutate({ id, status }),
+    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
+        // Implementación real o placeholder
+        toast.info("Registro de entrega en desarrollo");
+    }
   };
 }

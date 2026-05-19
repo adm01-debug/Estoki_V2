@@ -3,6 +3,8 @@ import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { auditService, type AuditLogEntry, type AuditAction } from "@/services/auditService";
 
+export type { AuditLogEntry, AuditAction };
+
 export function useAuditLog() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -61,5 +63,12 @@ export function useAuditLog() {
     return { total: logs.length, hoje: logsHoje.length, porAcao: actionCounts, porEntidade: entityCounts };
   };
   
-  return { logs, isLoading, log, getStats };
+  return { 
+    logs, 
+    isLoading, 
+    log, 
+    getStats,
+    // Compatibilidad si se espera un loading booleano simple
+    loading: isLoading 
+  };
 }

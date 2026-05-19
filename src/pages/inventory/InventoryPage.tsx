@@ -1,223 +1,55 @@
+import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
- import { Badge } from "@/components/ui/badge";
- import { Input } from "@/components/ui/input";
- import { motion } from "framer-motion";
- import { cn } from "@/lib/utils";
 import { useInventoryCount } from "@/hooks/useInventoryCount";
-import { 
-  ClipboardList, 
-  Plus, 
-   History, 
-   TrendingUp, 
-   Package, 
-   AlertTriangle,
-   ArrowRight,
-   Search,
-   Filter,
-   Download,
-   Zap,
-   Clock
-} from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { useNavigate } from "react-router-dom";
+import { Plus, Download, Clock } from "lucide-react";
+import { InventoryStats } from "@/features/inventory/components/inventory-page/InventoryStats";
+import { InventoryActionCards } from "@/features/inventory/components/inventory-page/InventoryActionCards";
+import { InventorySessionList } from "@/features/inventory/components/inventory-page/InventorySessionList";
 
 export default function InventoryPage() {
-  const navigate = useNavigate();
   const { items, getAccuracy, getTotalVariance } = useInventoryCount();
+  const [query, setQuery] = useState("");
+
   const accuracy = getAccuracy();
   const variance = getTotalVariance();
 
-   return (
-     <AppLayout title="Centro de Inventário" showBack>
-       <PageTransition>
-         <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
-           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-             <div className="space-y-1">
-               <h1 className="text-2xl font-black tracking-tight text-foreground">Controle de Inventário</h1>
-               <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">
-                 <Clock className="h-3.5 w-3.5" />
-                 Última atualização: {new Date().toLocaleTimeString()}
-               </div>
-             </div>
-             <div className="flex items-center gap-2">
-               <Button variant="outline" size="sm" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-xs uppercase tracking-wider">
-                 <Download className="h-4 w-4" /> Exportar
-               </Button>
-               <Button size="sm" className="h-9 rounded-xl glow-button gap-2 font-bold text-xs uppercase tracking-wider">
-                 <Plus className="h-4 w-4" /> Nova Contagem
-               </Button>
-             </div>
-           </div>
- 
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <Card className="glass-card border-primary/20 bg-primary/5 group hover:border-primary/40 transition-all duration-300">
-               <CardContent className="p-6">
-                 <div className="flex items-center justify-between mb-4">
-                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:scale-110 transition-transform">
-                     <TrendingUp className="h-5 w-5 text-primary" />
-                   </div>
-                   <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold">Meta 99%</Badge>
-                 </div>
-                 <div className="space-y-1">
-                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Acuracidade do Estoque</p>
-                   <p className="text-3xl font-black tracking-tight text-primary">{accuracy.toFixed(1)}%</p>
-                 </div>
-                 <Progress value={accuracy} className="h-1.5 mt-4 bg-primary/10" indicatorClassName="bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-               </CardContent>
-             </Card>
- 
-             <Card className="glass-card border-border/30 group hover:border-primary/30 transition-all duration-300">
-               <CardContent className="p-6">
-                 <div className="flex items-center justify-between mb-4">
-                   <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center border border-border/50 group-hover:scale-110 transition-transform">
-                     <Package className="h-5 w-5 text-muted-foreground" />
-                   </div>
-                 </div>
-                 <div className="space-y-1">
-                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Itens em Processo</p>
-                   <p className="text-3xl font-black tracking-tight text-foreground">{items.length}</p>
-                 </div>
-                 <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Sessão de contagem ativa</p>
-               </CardContent>
-             </Card>
- 
-             <Card className={cn(
-               "glass-card group transition-all duration-300",
-               variance !== 0 ? "border-destructive/30 bg-destructive/5 hover:border-destructive/50" : "border-border/30 hover:border-primary/30"
-             )}>
-               <CardContent className="p-6">
-                 <div className="flex items-center justify-between mb-4">
-                   <div className={cn(
-                     "w-10 h-10 rounded-xl flex items-center justify-center border transition-transform group-hover:scale-110",
-                     variance !== 0 ? "bg-destructive/10 border-destructive/20" : "bg-muted border-border/50"
-                   )}>
-                     <AlertTriangle className={cn("h-5 w-5", variance !== 0 ? "text-destructive" : "text-muted-foreground")} />
-                   </div>
-                 </div>
-                 <div className="space-y-1">
-                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Divergência Acumulada</p>
-                   <p className={cn("text-3xl font-black tracking-tight", variance !== 0 ? "text-destructive" : "text-foreground")}>
-                     {variance > 0 ? `+${variance}` : variance}
-                   </p>
-                 </div>
-                 <p className="text-[10px] font-bold text-muted-foreground/60 mt-4 uppercase">Físico vs Sistêmico</p>
-               </CardContent>
-             </Card>
-           </div>
+  return (
+    <AppLayout title="Centro de Inventário" showBack>
+      <PageTransition>
+        <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-black tracking-tight text-foreground">Controle de Inventário</h1>
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest">
+                <Clock className="h-3.5 w-3.5" />
+                Última atualização: {new Date().toLocaleTimeString()}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="h-9 rounded-xl border-border/40 gap-2 font-bold text-xs uppercase tracking-wider">
+                <Download className="h-4 w-4" /> Exportar
+              </Button>
+              <Button size="sm" className="h-9 rounded-xl glow-button gap-2 font-bold text-xs uppercase tracking-wider">
+                <Plus className="h-4 w-4" /> Nova Contagem
+              </Button>
+            </div>
+          </div>
 
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-             <Card className="glass-card border-border/30 group hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden" onClick={() => navigate("/inventario-ciclico")}>
-               <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity rotate-12 group-hover:scale-110 transition-transform duration-700">
-                 <ClipboardList className="h-32 w-32 text-primary" />
-               </div>
-               <CardContent className="p-8">
-                 <div className="flex items-center gap-6">
-                   <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:shadow-glow-sm transition-all duration-300">
-                     <ClipboardList className="h-8 w-8 text-primary" />
-                   </div>
-                   <div className="flex-1 space-y-1">
-                     <CardTitle className="text-xl font-black tracking-tight group-hover:text-primary transition-colors">Inventário Cíclico</CardTitle>
-                     <CardDescription className="text-sm font-medium">Contagens rotativas baseadas em Curva ABC ou por Zona. Ideal para manutenção diária da acuracidade.</CardDescription>
-                   </div>
-                   <div className="w-10 h-10 rounded-full border border-border/40 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
-                     <ArrowRight className="h-5 w-5" />
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
- 
-             <Card className="glass-card border-border/30 group hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden" onClick={() => navigate("/inventory/movements")}>
-               <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity rotate-12 group-hover:scale-110 transition-transform duration-700">
-                 <History className="h-32 w-32 text-primary" />
-               </div>
-               <CardContent className="p-8">
-                 <div className="flex items-center gap-6">
-                   <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center border border-border/50 group-hover:shadow-glow-sm transition-all duration-300">
-                     <History className="h-8 w-8 text-foreground/70" />
-                   </div>
-                   <div className="flex-1 space-y-1">
-                     <CardTitle className="text-xl font-black tracking-tight group-hover:text-primary transition-colors">Histórico de Fluxo</CardTitle>
-                     <CardDescription className="text-sm font-medium">Rastreabilidade completa e auditável de todas as movimentações de estoque, entradas e saídas.</CardDescription>
-                   </div>
-                   <div className="w-10 h-10 rounded-full border border-border/40 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all">
-                     <ArrowRight className="h-5 w-5" />
-                   </div>
-                 </div>
-               </CardContent>
-             </Card>
-           </div>
+          <InventoryStats 
+            accuracy={accuracy} 
+            itemCount={items.length} 
+            variance={variance} 
+          />
 
-           <Card className="glass-card border-border/30 overflow-hidden">
-             <CardHeader className="border-b border-border/20 px-8 py-6 flex flex-row items-center justify-between bg-muted/20">
-               <div className="space-y-1">
-                 <CardTitle className="text-lg font-black tracking-tight">Itens da Sessão Atual</CardTitle>
-                 <CardDescription className="text-xs font-medium">Contagens realizadas nas últimas 24 horas</CardDescription>
-               </div>
-               <div className="flex items-center gap-2">
-                 <div className="relative">
-                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
-                   <Input placeholder="Filtrar SKU..." className="pl-9 h-9 w-48 text-xs rounded-xl bg-background/50" />
-                 </div>
-                 <Button variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl">
-                   <Filter className="h-4 w-4" />
-                 </Button>
-               </div>
-             </CardHeader>
-             <CardContent className="p-0">
-               {items.length === 0 ? (
-                 <div className="text-center py-20">
-                   <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-4">
-                     <ClipboardList className="h-8 w-8 text-muted-foreground/40" />
-                   </div>
-                   <p className="text-sm font-bold text-muted-foreground">Nenhuma contagem ativa</p>
-                   <p className="text-xs text-muted-foreground/60 mt-1">Inicie uma nova contagem para ver os resultados aqui.</p>
-                 </div>
-               ) : (
-                 <div className="divide-y divide-border/20">
-                   {items.map((item, idx) => (
-                     <motion.div 
-                       key={idx} 
-                       className="flex items-center justify-between px-8 py-5 hover:bg-muted/30 transition-colors group/item"
-                       initial={{ opacity: 0, x: -10 }}
-                       animate={{ opacity: 1, x: 0 }}
-                       transition={{ delay: idx * 0.05 }}
-                     >
-                       <div className="flex items-center gap-4">
-                         <div className={cn(
-                           "w-10 h-10 rounded-xl flex items-center justify-center border shadow-sm transition-transform group-hover/item:scale-110",
-                           item.variance === 0 ? "bg-success/5 border-success/20 text-success" : "bg-destructive/5 border-destructive/20 text-destructive"
-                         )}>
-                           {item.variance === 0 ? <Zap className="h-5 w-5" /> : <AlertTriangle className="h-5 w-5" />}
-                         </div>
-                         <div className="space-y-0.5">
-                           <p className="font-black text-sm text-foreground tracking-tight">{item.sku}</p>
-                           <div className="flex items-center gap-3">
-                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Esperado: <span className="text-foreground">{item.expected}</span></span>
-                             <div className="w-1 h-1 rounded-full bg-border" />
-                             <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Contado: <span className="text-foreground">{item.counted}</span></span>
-                           </div>
-                         </div>
-                       </div>
-                       <div className="flex items-center gap-4">
-                         <Badge variant={item.variance === 0 ? "outline" : "destructive"} className={cn(
-                           "text-[10px] font-black uppercase tracking-widest px-2.5 rounded-full",
-                           item.variance === 0 ? "border-success/30 text-success bg-success/5" : ""
-                         )}>
-                           {item.variance === 0 ? "Acurado" : `Divergência: ${item.variance}`}
-                         </Badge>
-                         <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                           <ArrowRight className="h-4 w-4" />
-                         </Button>
-                       </div>
-                     </motion.div>
-                   ))}
-                 </div>
-               )}
-             </CardContent>
-           </Card>
+          <InventoryActionCards />
+
+          <InventorySessionList 
+            items={items} 
+            query={query} 
+            onQueryChange={setQuery} 
+          />
         </div>
       </PageTransition>
     </AppLayout>
