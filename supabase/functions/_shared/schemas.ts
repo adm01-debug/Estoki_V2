@@ -86,6 +86,18 @@ export const ShippingQuoteSchema = z.object({
   }).optional(),
 });
 
+export const CarrierQuoteRequestSchema = z.object({
+  origin_cep: z.string().regex(/^\d{8}$/, "CEP de origem inválido"),
+  destination_cep: z.string().regex(/^\d{8}$/, "CEP de destino inválido"),
+  weight: z.number().positive(),
+  dimensions: z.object({
+    width: z.number().positive(),
+    height: z.number().positive(),
+    length: z.number().positive(),
+  }),
+  carriers: z.array(z.string()).optional().default(["correios", "jadlog", "azul"]),
+});
+
 // ── Picking schemas ──────────────────────────────────────
 export const PickingConfirmSchema = z.object({
   pick_list_id: z.string().uuid("ID do Pick List inválido"),
