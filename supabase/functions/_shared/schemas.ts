@@ -98,6 +98,12 @@ export const CarrierQuoteRequestSchema = z.object({
   carriers: z.array(z.string()).optional().default(["correios", "jadlog", "azul"]),
 });
 
+export const CreateShipmentSchema = z.object({
+  orderId: z.string().uuid("ID do pedido inválido"),
+  carrier: z.string().min(1, "Transportadora é obrigatória"),
+  trackingNumber: z.string().min(1, "Número de rastreio é obrigatório"),
+});
+
 // ── Picking schemas ──────────────────────────────────────
 export const PickingConfirmSchema = z.object({
   pick_list_id: z.string().uuid("ID do Pick List inválido"),
