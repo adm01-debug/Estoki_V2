@@ -174,6 +174,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           </AnimatePresence>
 
           <OnboardingTour />
+          <ShortcutsHUD />
         </div>
       </TooltipProvider>
     </AppLayoutContext.Provider>
