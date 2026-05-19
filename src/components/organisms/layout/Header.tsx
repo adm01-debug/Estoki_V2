@@ -41,7 +41,8 @@ export const Header = memo(function Header({
   userEmail,
   currentRole,
   onLogout,
-  isHome
+  isHome,
+  avatarUrl
 }: HeaderProps) {
 
   return (
