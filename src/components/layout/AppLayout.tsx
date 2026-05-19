@@ -15,6 +15,7 @@ import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
 import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
 import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
+import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
 
 const AppLayoutContext = createContext(false);
 
