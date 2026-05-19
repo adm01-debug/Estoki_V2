@@ -140,10 +140,10 @@ export default function TriagemPage() {
 
    const handleIniciarTriagem = async () => {
      try {
-       const result = await createTriagem.mutateAsync({ 
-         data_inicio: new Date().toISOString(),
-         operador_id: (await supabase.auth.getUser()).data.user?.id
-       });
+        const { data: { user } } = await supabase.auth.getUser();
+        const result = await createTriagem.mutateAsync({ 
+          operador_id: user?.id
+        });
        if (result) {
          navigate(`/triagem/${result.id}`);
        }
