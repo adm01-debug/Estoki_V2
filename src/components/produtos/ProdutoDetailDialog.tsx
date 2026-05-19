@@ -14,7 +14,7 @@ import type { Produto } from "@/types/product";
 interface Props {
   produto: Produto | null;
   onClose: () => void;
-  getCurvaBadge: (curva?: string) => ReactNode;
+  getCurvaBadge: (curva?: string | null) => ReactNode;
 }
 
 export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) {

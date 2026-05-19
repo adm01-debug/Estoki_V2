@@ -11,7 +11,8 @@ export default function DashboardPage() {
     try {
       const { data: products } = await productService.getAll();
       // Simulando estoque baixo baseado em estoque_minimo (em um cenário real seria via join com estoque_posicao)
-      const lowStock = products.filter(p => (p.estoque_atual || 0) <= (p.estoque_minimo || 0));
+      // biome-ignore lint/suspicious/noExplicitAny: using any for calculation simulation
+      const lowStock = products.filter(p => ((p as any).estoque_atual || 0) <= (p.estoque_minimo || 0));
       const result = await orderService.getAll({ status: 'pendente' });
       setStats({ products: products.length, lowStock: lowStock.length, pendingOrders: result.total, todayMovements: 0 });
     } catch (e) { if (import.meta.env.DEV) console.error(e); }
