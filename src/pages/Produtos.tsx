@@ -19,9 +19,11 @@ import { ProductGrid } from "@/components/produtos/ProductGrid";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 
- export default function ProdutosPage() {
-    const { produtos, loading, createProduto, stats } = useProdutos();
-    const [search, setSearch] = useState("");
+export default function ProdutosPage() {
+  const { produtos, loading: productsLoading, createProduto, stats } = useProdutos();
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const [isSearching, setIsSearching] = useState(false);
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
@@ -30,8 +32,16 @@ import { useDebounce } from "@/hooks/useDebounce";
     estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0,
     peso_unitario: 0, fornecedor_principal: "",
   });
-  const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (search !== debouncedSearch) {
+      setIsSearching(true);
+    } else {
+      const timer = setTimeout(() => setIsSearching(false), 200);
+      return () => clearTimeout(timer);
+    }
+  }, [search, debouncedSearch]);
 
    const handleSave = async () => {
      const validation = validateForm(produtoSchema, formData);
