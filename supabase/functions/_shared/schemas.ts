@@ -133,6 +133,14 @@ export const AiClassificationSchema = z.object({
   model: z.enum(["simple", "advanced"]).optional().default("simple"),
 });
 
+export const InventoryTransferSchema = z.object({
+  produto_id: z.string().uuid("ID do produto inválido"),
+  origem_id: z.string().uuid("ID da posição de origem inválido"),
+  destino_id: z.string().uuid("ID da posição de destino inválido"),
+  quantidade: z.number().positive("Quantidade deve ser positiva"),
+  lote_id: z.string().uuid().optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): 
