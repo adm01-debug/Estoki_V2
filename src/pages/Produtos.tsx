@@ -96,7 +96,7 @@ export default function ProdutosPage() {
     }
   };
 
-   if (loading) {
+   if (productsLoading) {
      return (
        <AppLayout title="Produtos" showBack>
          <RouteLoadingFallback type="table" />
