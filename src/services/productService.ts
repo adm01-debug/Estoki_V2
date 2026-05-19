@@ -93,5 +93,19 @@ export const productService = {
       throw error;
     }
     return data as Produto[];
+  },
+
+  async getHistory(produtoId: string) {
+    const { data, error } = await supabase
+      .from('rastreamento_historico')
+      .select('*')
+      .eq('produto_id', produtoId)
+      .order('data_evento', { ascending: false });
+
+    if (error) {
+      logger.error('Erro ao buscar histórico do produto', error, { produtoId });
+      throw error;
+    }
+    return data;
   }
 };
