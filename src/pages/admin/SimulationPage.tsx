@@ -11,6 +11,7 @@ import { Zap, Play, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function SimulationPage() {
   const [count, setCount] = useState(100);
@@ -23,7 +24,7 @@ export default function SimulationPage() {
     try {
       const { data, error } = await supabase.functions.invoke('simulation-test', {
         method: 'GET',
-        queries: { count: count.toString() }
+        headers: { 'X-Simulation-Count': count.toString() }
       });
 
       if (error) throw error;
@@ -127,7 +128,7 @@ export default function SimulationPage() {
                     )}
 
                     <div className="flex justify-center">
-                      <Badge variant={report.failure === 0 ? "success" : "warning"} className="gap-1 px-4 py-1">
+                      <Badge variant={report.failure === 0 ? "outline" : "destructive"} className={cn("gap-1 px-4 py-1", report.failure === 0 && "bg-success/10 text-success border-success/20")}>
                         {report.failure === 0 ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
                         {report.failure === 0 ? "Sistema Resiliente (10/10)" : "Gaps Identificados"}
                       </Badge>

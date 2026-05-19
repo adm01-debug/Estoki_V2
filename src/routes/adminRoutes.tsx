@@ -12,9 +12,11 @@ const IntegrationsPage = lazy(() => import("@/pages/admin/IntegrationsPage"));
 const AdminTelemetriaPage = lazy(() => import("@/pages/admin/AdminTelemetriaPage"));
 const Seguranca = lazy(() => import("@/pages/Seguranca"));
 const Governanca = lazy(() => import("@/pages/Governanca"));
+const SimulationPage = lazy(() => import("@/pages/admin/SimulationPage"));
 
 export const adminRoutes = (
   <>
+    <Route path="admin/simulacao" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin"]}><SimulationPage /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
     <Route path="admin/usuarios" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><UsersPage /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
     <Route path="admin/roles" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin"]}><RolesPage /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
     <Route path="admin/configuracoes" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="form" />}><ProtectedRoute allowedRoles={["admin"]}><AdminSettingsPage /></ProtectedRoute></Suspense></RouteErrorBoundary>} />

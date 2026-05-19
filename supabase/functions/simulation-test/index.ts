@@ -53,7 +53,8 @@ async function runSimulation(count = 10) {
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
-  const count = parseInt(url.searchParams.get("count") || "100");
+  const countHeader = req.headers.get("X-Simulation-Count");
+  const count = parseInt(countHeader || url.searchParams.get("count") || "100");
   
   const report = await runSimulation(count);
   
