@@ -1,109 +1,120 @@
- import { supabase } from "@/lib/supabase";
- import { logger } from "@/utils/logger";
- import { Database } from "@/integrations/supabase/types";
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
+import type { PosicaoEstoque } from '@/types/inventory';
+import type { Database } from '@/integrations/supabase/types';
 
- type RastreamentoInsert = Database['public']['Tables']['rastreamento_historico']['Insert'];
- type EstoquePosicaoInsert = Database['public']['Tables']['estoque_posicao']['Insert'];
-
- interface InventoryFilters extends Record<string, unknown> {
-   produtoId?: string;
-   tipo?: Database['public']['Tables']['rastreamento_historico']['Row']['tipo_evento'];
- }
+type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
+type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 export const inventoryService = {
-  async getStockByPosition(posicaoId: string) {
-     try {
-       const { data, error } = await supabase
-         .from("estoque_posicao")
-         .select(`
-           *,
-           produto:produtos(*)
-         `)
-         .eq("posicao_id", posicaoId);
-       if (error) throw error;
-       return data;
-     } catch (error) {
-       logger.error("Erro ao buscar estoque por posição", error, { posicaoId });
-       throw error;
-     }
+  async getAll(): Promise<PosicaoEstoque[]> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select(`
+        *,
+        saldos:estoque_posicao(
+          id,
+          produto_id,
+          lote_id,
+          quantidade,
+          data_entrada,
+          produto:produtos(nome, sku, curva_abc),
+          lote:lotes(numero_lote, data_validade)
+        )
+      `)
+      .order('codigo');
+
+    if (error) {
+      logger.error('Erro ao buscar posições de estoque', error);
+      throw error;
+    }
+    return (data || []) as unknown as PosicaoEstoque[];
   },
 
-  async adjustStock(params: { 
-    produtoId: string, 
-    posicaoId: string, 
-    quantidade: number, 
-    motivo: string,
-    operadorId: string 
-  }) {
-     try {
-       // Registro histórico do ajuste
-       const { error: histError } = await supabase
-         .from("rastreamento_historico")
-         .insert({
-           produto_id: params.produtoId,
-           posicao_id: params.posicaoId,
-           tipo_evento: "ajuste_estoque",
-           quantidade: params.quantidade,
-           descricao: params.motivo,
-           operador_id: params.operadorId
-         } as RastreamentoInsert);
+  async getById(id: string): Promise<PosicaoEstoque | null> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select(`
+        *,
+        saldos:estoque_posicao(
+          id,
+          produto_id,
+          lote_id,
+          quantidade,
+          data_entrada,
+          produto:produtos(nome, sku, curva_abc),
+          lote:lotes(numero_lote, data_validade)
+        )
+      `)
+      .eq('id', id)
+      .single();
 
-       if (histError) throw histError;
-
-       // Atualização real
-       const { data: current, error: fetchError } = await supabase
-         .from("estoque_posicao")
-         .select("quantidade")
-         .eq("produto_id", params.produtoId)
-         .eq("posicao_id", params.posicaoId)
-         .maybeSingle();
-
-       if (fetchError) throw fetchError;
-
-       if (current) {
-         const { error: updateError } = await supabase
-           .from("estoque_posicao")
-           .update({ quantidade: current.quantidade + params.quantidade })
-           .eq("produto_id", params.produtoId)
-           .eq("posicao_id", params.posicaoId);
-         if (updateError) throw updateError;
-       } else {
-         const { error: insertError } = await supabase
-           .from("estoque_posicao")
-           .insert({
-             produto_id: params.produtoId,
-             posicao_id: params.posicaoId,
-             quantidade: params.quantidade
-           } as EstoquePosicaoInsert);
-         if (insertError) throw insertError;
-       }
-       logger.info("Ajuste de estoque realizado com sucesso", params);
-     } catch (error) {
-       logger.error("Erro ao ajustar estoque", error, params);
-       throw error;
-     }
+    if (error) {
+      logger.error('Erro ao buscar posição por ID', error, { id });
+      throw error;
+    }
+    return data as unknown as PosicaoEstoque;
   },
 
-   async getMovements(filters?: InventoryFilters) {
-     try {
-       let query = supabase
-         .from("rastreamento_historico")
-         .select(`
-           *,
-           produto:produtos(nome, sku),
-           operador:profiles(nome)
-         `)
-         .order("created_at", { ascending: false });
+  async updateStatus(ids: string[], status: string, motivo?: string, operadorId?: string): Promise<void> {
+    const updates: PosicaoUpdate = { 
+      status: status as any,
+      updated_at: new Date().toISOString()
+    };
 
-       if (filters?.produtoId) query = query.eq("produto_id", filters.produtoId);
-       if (filters?.tipo) query = query.eq("tipo_evento", filters.tipo);
+    if (status === 'bloqueado') {
+      updates.bloqueado_por = operadorId;
+      updates.bloqueado_em = new Date().toISOString();
+    } else if (status === 'reservado') {
+      updates.reservado_por = operadorId;
+      updates.reservado_em = new Date().toISOString();
+    } else if (status === 'livre') {
+      updates.bloqueado_por = null;
+      updates.bloqueado_em = null;
+      updates.reservado_por = null;
+      updates.reservado_em = null;
+    }
 
-       const { data, error } = await query.limit(100);
-       if (error) throw error;
-       return data;
-     } catch (error) {
-       logger.error("Erro ao buscar movimentações", error, filters);
-       throw error;
-     }
+    const { error } = await supabase
+      .from('posicoes_estoque')
+      .update(updates)
+      .in('id', ids);
+
+    if (error) {
+      logger.error('Erro ao atualizar status de posições', error, { ids, status });
+      throw error;
+    }
+
+    if (operadorId) {
+      const logs = ids.map(posId => ({
+        posicao_id: posId,
+        status_novo: status,
+        operador_id: operadorId,
+        motivo: motivo || 'Alteração manual via painel'
+      }));
+      await supabase.from('posicao_status_log').insert(logs);
+    }
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase.from('posicoes_estoque').delete().eq('id', id);
+    if (error) {
+      logger.error('Erro ao deletar posição de estoque', error, { id });
+      throw error;
+    }
+  },
+
+  async create(posicao: PosicaoInsert): Promise<PosicaoEstoque> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .insert(posicao)
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Erro ao criar posição de estoque', error, { posicao });
+      throw error;
+    }
+    return data as unknown as PosicaoEstoque;
   }
 };
