@@ -16,7 +16,7 @@ import { SystemHealthHUD } from "@/components/dashboard/SystemHealthHUD";
 import { DashboardActivityFeed } from "@/components/dashboard/DashboardActivityFeed";
 import { exportDashboardToPDF } from "@/utils/dashboardExport";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
-import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 import { haptics } from "@/utils/haptics";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
