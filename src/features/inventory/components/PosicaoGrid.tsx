@@ -1,5 +1,3 @@
-import { PosicaoCard } from "./PosicaoCard";
-
  import { PosicaoCard } from "./PosicaoCard";
  import { motion, AnimatePresence } from "framer-motion";
  import { ListSkeleton } from "@/components/ui/loading-skeleton";
