@@ -36,7 +36,9 @@ export const useRecebimentos = (options?: { enableRealtime?: boolean }) => {
 
   const { data: recebimentos, isLoading, error, refetch } = useQuery({
     queryKey: ['recebimentos'],
-    queryFn: receivingService.getRecebimentos
+    queryFn: receivingService.getRecebimentos,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
   });
 
   const createRecebimento = useMutation({
