@@ -148,6 +148,7 @@ const typeConfig = {
       </Button>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
+        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
         <CommandInput 
           placeholder="O que você está procurando?" 
           value={query}
