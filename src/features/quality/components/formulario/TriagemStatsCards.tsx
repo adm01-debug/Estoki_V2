@@ -13,7 +13,7 @@ interface TriagemStatsCardsProps {
   };
 }
 
-export function TriagemStatsCards({ stats }: TriagemStatsCardsProps) {
+export const TriagemStatsCards = memo(function TriagemStatsCards({ stats }: TriagemStatsCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       <Card className="glass-card border-primary/20 bg-primary/5 group hover:border-primary/40 transition-all duration-300">
