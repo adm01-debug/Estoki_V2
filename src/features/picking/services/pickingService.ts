@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 import type { PickingTask } from '../types';
 
 export const pickingService = {
@@ -13,7 +14,10 @@ export const pickingService = {
       .eq("tipo", "separacao")
       .order("prioridade", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Erro ao buscar tarefas de picking', error);
+      throw error;
+    }
     
     return (data || []).map(t => ({
       ...t,
@@ -39,6 +43,34 @@ export const pickingService = {
       .update(updates)
       .eq("id", taskId);
 
-    if (error) throw error;
+    if (error) {
+      logger.error('Erro ao atualizar status da tarefa', error, { taskId, status });
+      throw error;
+    }
+
+    // Se concluiu, registrar evento de picking
+    if (status === "concluido" && qty) {
+      const { data: task } = await supabase
+        .from("tarefas")
+        .select("*")
+        .eq("id", taskId)
+        .single();
+
+      if (task) {
+        const { error: eventError } = await supabase.from("eventos_picking").insert({
+          tarefa_id: taskId,
+          operador_id: userId,
+          produto_id: task.produto_id,
+          posicao_id: task.posicao_origem_id,
+          quantidade_solicitada: task.quantidade,
+          quantidade_separada: qty,
+          correto: qty === task.quantidade,
+          data_inicio: task.data_inicio || new Date().toISOString(),
+          data_fim: new Date().toISOString()
+        });
+        
+        if (eventError) logger.error('Erro ao registrar evento de picking', eventError);
+      }
+    }
   }
 };
