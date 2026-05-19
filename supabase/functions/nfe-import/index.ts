@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { XMLParser } from "https://esm.sh/fast-xml-parser@4.3.2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { NfeImportSchema, validateInput } from "../_shared/schemas.ts";
 
@@ -21,18 +22,45 @@ serve(async (req) => {
     const { xml_content, access_key } = validation.data;
     const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
-    const nfeData = {
-      access_key: access_key || `NFE${Date.now()}`,
-      number: Math.floor(Math.random() * 999999),
-      series: 1,
-      issue_date: new Date().toISOString(),
-      operation_type: "entrada",
-      emitter: { cnpj: "00000000000000", name: "Fornecedor Exemplo" },
-      items: [{ code: "PROD001", description: "Produto Exemplo", quantity: 100, unit_price: 10.0, total: 1000.0 }],
-      totals: { products: 1000.0, total: 1230.0 },
-    };
+    let nfeData: any = {};
 
-    const { data: nfe } = await supabase.from("nfe_documents").insert({
+    if (xml_content) {
+      const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_" });
+      const xmlObj = parser.parse(xml_content);
+      
+      const infNFe = xmlObj.nfeProc?.NFe?.infNFe || xmlObj.NFe?.infNFe;
+      if (!infNFe) {
+        throw new Error("Formato de XML de NF-e inválido ou incompleto");
+      }
+
+      const ide = infNFe.ide;
+      const emit = infNFe.emit;
+      const det = Array.isArray(infNFe.det) ? infNFe.det : [infNFe.det];
+      const total = infNFe.total?.ICMSTot;
+
+      nfeData = {
+        access_key: infNFe["@_Id"]?.replace("NFe", "") || access_key,
+        number: ide.nNF,
+        series: ide.serie,
+        issue_date: ide.dhEmi || new Date().toISOString(),
+        operation_type: ide.tpNF === 0 ? "entrada" : "saida",
+        emitter: { cnpj: emit.CNPJ || emit.CPF, name: emit.xNome },
+        items: det.map((d: any) => ({
+          code: d.prod.cProd,
+          description: d.prod.xProd,
+          quantity: parseFloat(d.prod.qCom),
+          unit_price: parseFloat(d.prod.vUnCom),
+          total: parseFloat(d.prod.vProd),
+        })),
+        totals: { products: parseFloat(total?.vProd || 0), total: parseFloat(total?.vNF || 0) },
+      };
+    } else {
+      // Logic for fetching by access_key if content is not provided
+      // For now, if no xml_content, we fallback to a minimal record or error
+      throw new Error("xml_content é obrigatório para processamento completo neste estágio");
+    }
+
+    const { data: nfe, error: nfeError } = await supabase.from("nfe_documents").upsert({
       access_key: nfeData.access_key,
       number: nfeData.number,
       series: nfeData.series,
@@ -45,17 +73,25 @@ serve(async (req) => {
       status: "imported",
       xml_content: xml_content ?? null,
       imported_at: new Date().toISOString(),
-    }).select().single();
+    }, { onConflict: 'access_key' }).select().single();
 
-    for (const item of nfeData.items) {
-      await supabase.from("nfe_items").insert({
-        nfe_id: nfe?.id,
+    if (nfeError) throw nfeError;
+
+    if (nfeData.items) {
+      // Clear existing items if re-importing
+      await supabase.from("nfe_items").delete().eq("nfe_id", nfe.id);
+      
+      const itemsToInsert = nfeData.items.map((item: any) => ({
+        nfe_id: nfe.id,
         product_code: item.code,
         description: item.description,
         quantity: item.quantity,
         unit_price: item.unit_price,
         total: item.total,
-      });
+      }));
+
+      const { error: itemsError } = await supabase.from("nfe_items").insert(itemsToInsert);
+      if (itemsError) throw itemsError;
     }
 
     return new Response(JSON.stringify({
@@ -65,6 +101,7 @@ serve(async (req) => {
       items_imported: nfeData.items.length,
     }), { headers });
   } catch (error) {
+    console.error("NFE Import error:", error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }
 });
