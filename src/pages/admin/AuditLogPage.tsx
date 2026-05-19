@@ -21,7 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { useAuditLog, AuditAction, AuditLogEntry } from "@/hooks/useAuditLog";
+import { useAuditLog } from "@/hooks/useAuditLog";
+import type { AuditAction, AuditLogEntry } from "@/hooks/useAuditLog";
 import { useExport } from "@/hooks/useExport";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";

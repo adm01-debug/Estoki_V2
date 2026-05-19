@@ -30,11 +30,11 @@ export * from "./movimentacaoService";
 export * from "./notificacaoService";
 export * from "./orderService";
 export * from "./productService";
+export * from "./qualityService";
 export * from "./receivingService";
 export * from "./relatorioService";
 export * from "./stockService";
 export * from "./supplierService";
-
 export * from "./warehouseService";
 
 export function createServices() {
