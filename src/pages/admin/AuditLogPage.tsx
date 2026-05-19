@@ -320,8 +320,6 @@ export default function AuditLogPage() {
               )}
             </CardContent>
           </Card>
-            </CardContent>
-          </Card>
         </div>
       </PageTransition>
     </AppLayout>
