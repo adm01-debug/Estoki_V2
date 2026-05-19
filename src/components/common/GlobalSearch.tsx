@@ -180,11 +180,11 @@ const typeConfig = {
            {!query && recentSearches.length > 0 && (
              <CommandGroup heading="Buscas Recentes">
                {recentSearches.map((term) => (
-                 <CommandItem
-                   key={term}
-                   onSelect={() => setQuery(term)}
-                   className="flex items-center justify-between py-3 group"
-                 >
+                  <CommandItem
+                    key={term}
+                    onSelect={() => setQuery(term)}
+                    className="flex items-center justify-between py-3 group cursor-pointer rounded-xl mx-2 my-0.5"
+                  >
                    <div className="flex items-center gap-3">
                      <History className="h-4 w-4 text-muted-foreground" />
                      <span className="font-medium">{term}</span>
