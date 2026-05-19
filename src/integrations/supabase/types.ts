@@ -3476,6 +3476,16 @@ export type Database = {
         }
       }
       reset_login_attempts: { Args: { p_email: string }; Returns: undefined }
+      transferir_estoque: {
+        Args: {
+          p_destino_id: string
+          p_lote_id?: string
+          p_origem_id: string
+          p_produto_id: string
+          p_quantidade: number
+        }
+        Returns: Json
+      }
       validate_ean13: { Args: { ean: string }; Returns: boolean }
     }
     Enums: {
