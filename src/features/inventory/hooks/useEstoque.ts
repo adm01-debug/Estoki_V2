@@ -12,7 +12,7 @@ export type { PosicaoEstoque, StatusPosicao, TipoPosicao, SaldoPosicao };
 type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
 type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
- export const useEstoque = (options?: { enableRealtime?: boolean }) => {
+ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: boolean }) => {
    const queryClient = useQueryClient();
    const { toast } = useToast();
    const subscriptionRef = useRef<any>(null);
