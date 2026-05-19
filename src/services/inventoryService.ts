@@ -31,6 +31,31 @@ export const inventoryService = {
     return (data || []) as unknown as PosicaoEstoque[];
   },
 
+  async getAllOccupied(): Promise<PosicaoEstoque[]> {
+    const { data, error } = await supabase
+      .from('posicoes_estoque')
+      .select(`
+        *,
+        saldos:estoque_posicao(
+          id,
+          produto_id,
+          lote_id,
+          quantidade,
+          data_entrada,
+          produto:produtos(nome, sku, curva_abc),
+          lote:lotes(numero_lote, data_validade)
+        )
+      `)
+      .eq('status', 'ocupado')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      logger.error('Erro ao buscar posições ocupadas', error);
+      throw error;
+    }
+    return (data || []) as unknown as PosicaoEstoque[];
+  },
+
   async getById(id: string): Promise<PosicaoEstoque | null> {
     const { data, error } = await supabase
       .from('posicoes_estoque')

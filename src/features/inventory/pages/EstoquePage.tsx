@@ -350,8 +350,8 @@ export default function EstoquePage() {
                 )}
               </TabsContent>
 
-               <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
-                 {filteredPositions.filter(p => p.status === "ocupado").length === 0 ? (
+                <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
+                  {filteredPositions.filter(p => p.status === "ocupado").length === 0 ? (
                     <EmptyState
                       variant="compact"
                       icon={Package}
