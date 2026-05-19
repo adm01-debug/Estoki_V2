@@ -24,7 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMovimentacoes, type TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import { useMovimentacoes } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 import { MovimentacaoTipoSelector } from "@/components/movimentacao/MovimentacaoTipoSelector";
 import { MovimentacaoDetalhesForm } from "@/components/movimentacao/MovimentacaoDetalhesForm";
 import { MovimentacaoHistorico } from "@/components/movimentacao/MovimentacaoHistorico";

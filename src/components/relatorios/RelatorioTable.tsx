@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { FileText, Download, FileSpreadsheet } from "lucide-react";
 import { format } from "date-fns";
-import { Movimentacao, TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import type { Movimentacao, TipoMovimentacao } from "@/types/movimentacao";
 import { tipoLabels } from "./RelatorioFilters";
 
 const getTipoColor = (tipo: string) => {

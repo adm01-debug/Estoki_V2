@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { ArrowRightLeft, TrendingUp, TrendingDown, BarChart3, Loader2, GitCompareArrows, AlertTriangle, PackageSearch, Clock, Download } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMovimentacoes, TipoMovimentacao } from "@/hooks/useMovimentacoes";
+import { useMovimentacoes } from "@/hooks/useMovimentacoes";
+import type { TipoMovimentacao } from "@/types/movimentacao";
 import { RelatorioFilters, tipoLabels } from "@/components/relatorios/RelatorioFilters";
 import { RelatorioTable } from "@/components/relatorios/RelatorioTable";
 

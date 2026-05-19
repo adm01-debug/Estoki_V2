@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, Package } from "lucide-react";
 import { format } from "date-fns";
-import { Movimentacao } from "@/hooks/useMovimentacoes";
+import type { Movimentacao } from "@/types/movimentacao";
 import { tipoLabels, tipoIcons } from "./constants";
 
 interface BuscaProdutoTabProps {
