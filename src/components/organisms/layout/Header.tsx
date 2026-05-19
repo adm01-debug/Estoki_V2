@@ -24,6 +24,7 @@ interface HeaderProps {
   currentRole: string;
   onLogout: () => void;
   isHome?: boolean;
+  avatarUrl?: string | null;
 }
 
 /**
