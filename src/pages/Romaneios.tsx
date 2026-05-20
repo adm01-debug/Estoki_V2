@@ -153,10 +153,10 @@ export default function RomaneiosPage() {
             </Select>
           </div>
           <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-             <Button variant={viewMode === "grid" ? "white" : "ghost"} size="icon" className="h-8 w-8 shadow-sm" onClick={() => setViewMode("grid")}>
+             <Button variant={viewMode === "grid" ? "secondary" : "ghost"} size="icon" className="h-8 w-8 shadow-sm" onClick={() => setViewMode("grid")}>
                <LayoutGrid className="h-4 w-4" />
              </Button>
-             <Button variant={viewMode === "list" ? "white" : "ghost"} size="icon" className="h-8 w-8" onClick={() => setViewMode("list")}>
+             <Button variant={viewMode === "list" ? "secondary" : "ghost"} size="icon" className="h-8 w-8" onClick={() => setViewMode("list")}>
                <List className="h-4 w-4" />
              </Button>
           </div>
@@ -225,7 +225,7 @@ export default function RomaneiosPage() {
                               <Play className="h-3 w-3 mr-2" /> Iniciar Rota
                             </Button>
                           )}
-                          <Button variant="white" className="flex-1 h-9 border shadow-sm" onClick={() => setRomaneioSelecionado(romaneio)}>
+                          <Button variant="outline" className="flex-1 h-9 border shadow-sm" onClick={() => setRomaneioSelecionado(romaneio)}>
                             Detalhes
                           </Button>
                           <DropdownMenu>
