@@ -1,11 +1,12 @@
- import { useState, useMemo, useEffect } from "react";
- import { supabase } from "@/integrations/supabase/client";
- import { logger } from "@/utils/logger";
+import { useState, useMemo, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
 import {
   Clock,
   CheckCircle,
@@ -13,14 +14,15 @@ import {
   Target,
   Award,
   Zap,
-   Package,
-   Trophy,
-   Flame,
-   Star,
-   Loader2,
-   ArrowRight,
-   ClipboardCheck,
-   History,
+  Package,
+  Trophy,
+  Flame,
+  Star,
+  Loader2,
+  ArrowRight,
+  ClipboardCheck,
+  History,
+  ShieldCheck,
 } from "lucide-react";
  import { Button } from "@/components/ui/button";
  import { useNavigate } from "react-router-dom";
