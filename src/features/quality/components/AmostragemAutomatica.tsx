@@ -38,6 +38,18 @@ export function AmostragemAutomatica({
   useEffect(() => {
     if (sku && mockHistoricoDefeitos[sku]) {
       const hist = mockHistoricoDefeitos[sku];
+      
+      // Fast-Track Platinum: 100% clean history for 30 days (mocked as totalTriagens >= 10 and no history)
+      if (hist.totalTriagens >= 10 && hist.historico.length === 0) {
+        setMetodoSelecionado("aql_reduzido");
+        toast("🚀 Fast-Track Platinum Ativado", {
+          description: "Fornecedor com histórico 100% limpo. Inspeção ultra-rápida liberada.",
+          icon: <ShieldCheck className="h-4 w-4 text-primary" />,
+          duration: 6000
+        });
+        return;
+      }
+
       // Se não há histórico de defeitos e mais de 5 triagens, sugere Reduzido
       if (hist.totalTriagens >= 5) {
         if (hist.historico.length === 0) {
