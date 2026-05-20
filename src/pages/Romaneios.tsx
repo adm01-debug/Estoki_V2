@@ -42,8 +42,10 @@ export default function RomaneiosPage() {
   const { romaneios, loading, criarRomaneio, atualizarStatus, registrarEntrega, refetch } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [romaneioSelecionado, setRomaneioSelecionado] = useState<Romaneio | null>(null);
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [novoRomaneio, setNovoRomaneio] = useState({ motorista: "", placa_veiculo: "", tipo_veiculo: "", data_prevista_entrega: "", rota: "" });
 
