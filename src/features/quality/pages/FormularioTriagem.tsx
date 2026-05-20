@@ -186,12 +186,13 @@ export default function FormularioTriagem() {
     );
   }
 
-   const steps = [
-     { id: 1, label: "Checklist", description: "Verificar itens de qualidade" },
-     { id: 2, label: "Amostragem", description: "Conferir volumes" },
-     { id: 3, label: "Documentação", description: "Fotos do lote" },
-     { id: 4, label: "Resultado", description: "Finalizar inspeção" },
-   ];
+    const steps = [
+      { id: 1, label: "Checklist Técnico", description: "Verificação de conformidade" },
+      { id: 2, label: "Volumes e Lacre", description: "Integridade de embalagens" },
+      { id: 3, label: "Documentação", description: "Evidência fotográfica" },
+      { id: 4, label: "Rastreabilidade", description: "Vinculação de lote" },
+      { id: 5, label: "Resultado", description: "Finalização do laudo" },
+    ];
  
    const currentStep = useMemo(() => {
      if (Object.keys(checklist).length === 0) return 0;
@@ -314,32 +315,32 @@ export default function FormularioTriagem() {
           setObservacoes={setObservacoes}
         />
 
-        <div className="flex gap-3">
+        <div className="flex gap-4 pt-6">
           <Button
-            variant="destructive"
-            className="flex-1"
+            variant="outline"
+            className="flex-1 h-12 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/5 font-black uppercase tracking-widest"
             onClick={() => handleSubmit("reprovado")}
             disabled={submitting}
           >
             {submitting ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
             ) : (
-              <XCircle className="h-4 w-4 mr-2" />
+              <XCircle className="h-5 w-5 mr-2" />
             )}
-            Reprovar
+            Reprovar Lote
           </Button>
           <Button
             variant="default"
-            className="flex-1"
+            className="flex-1 h-12 rounded-xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest"
             onClick={() => handleSubmit("aprovado")}
-            disabled={submitting || !todosItensVerificados()}
+            disabled={submitting || !todosItensVerificados() || (volumes.length > 0 && !volumes.every(v => v.conferido))}
           >
             {submitting ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              <Loader2 className="h-5 w-5 animate-spin mr-2" />
             ) : (
-              <CheckCircle2 className="h-4 w-4 mr-2" />
+              <CheckCircle2 className="h-5 w-5 mr-2" />
             )}
-            Aprovar
+            Aprovar e Liberar
           </Button>
         </div>
 
