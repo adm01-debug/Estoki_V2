@@ -249,39 +249,55 @@ export default function TriagemPage() {
              <TriagemStatsCards stats={stats} />
              
              {/* Production Tracking for Promo Brindes */}
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <motion.div 
-                 whileHover={{ y: -4 }}
-                 className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
-               >
-                 <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                     <Target className="h-6 w-6 text-indigo-600" />
-                   </div>
-                   <div>
-                     <p className="text-[10px] font-bold text-indigo-600/70 uppercase tracking-widest">Fila de Gravação</p>
-                     <p className="text-xl font-black text-indigo-700">{stats.emGravacao} Lotes</p>
-                   </div>
-                 </div>
-                 <Badge variant="outline" className="bg-white/50 border-indigo-200 text-indigo-600 font-bold">Prioridade Alta</Badge>
-               </motion.div>
- 
-               <motion.div 
-                 whileHover={{ y: -4 }}
-                 className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
-               >
-                 <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
-                     <Hammer className="h-6 w-6 text-orange-600" />
-                   </div>
-                   <div>
-                     <p className="text-[10px] font-bold text-orange-600/70 uppercase tracking-widest">Fila de Manuseio</p>
-                     <p className="text-xl font-black text-orange-700">{stats.emManuseio} Lotes</p>
-                   </div>
-                 </div>
-                 <Badge variant="outline" className="bg-white/50 border-orange-200 text-orange-600 font-bold">Triagem Final</Badge>
-               </motion.div>
-             </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
+                      <Target className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-indigo-600/70 uppercase tracking-widest">Fila de Gravação</p>
+                      <p className="text-xl font-black text-indigo-700">{stats.emGravacao} Lotes</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="bg-white/50 border-indigo-200 text-indigo-600 font-bold">Urgente</Badge>
+                </motion.div>
+  
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
+                      <Hammer className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-orange-600/70 uppercase tracking-widest">Fila de Manuseio</p>
+                      <p className="text-xl font-black text-orange-700">{stats.emManuseio} Lotes</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="bg-white/50 border-orange-200 text-orange-600 font-bold">Triagem Final</Badge>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-gradient-to-br from-success/10 to-emerald-500/10 border border-success/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center border border-success/30">
+                      <CheckCircle className="h-6 w-6 text-success" />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-success/70 uppercase tracking-widest">Aguardando Handoff</p>
+                      <p className="text-xl font-black text-success-foreground">{stats.aprovados} Lotes</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="bg-white/50 border-success-200 text-success font-bold">Pronto</Badge>
+                </motion.div>
+              </div>
            </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/50 p-4 rounded-2xl border border-border/20 shadow-sm">
