@@ -23,6 +23,8 @@ import { haptics } from "@/utils/haptics";
   import { StepProgress } from "@/components/common/StepProgress";
   import { LeaveGuard } from "@/components/common/LeaveGuard";
   import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
+  import { RepairControlWorkflow } from "../components/formulario/RepairControlWorkflow";
+
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
