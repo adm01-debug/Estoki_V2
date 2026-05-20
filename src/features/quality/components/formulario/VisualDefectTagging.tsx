@@ -29,7 +29,7 @@ export function VisualDefectTagging() {
       type: selectedType
     };
 
-    haptics.impact();
+    haptics.medium();
     setPoints([...points, newPoint]);
   };
 
