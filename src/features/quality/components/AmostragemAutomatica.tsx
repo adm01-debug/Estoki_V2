@@ -11,7 +11,7 @@ import { AmostragemProgresso } from "./AmostragemProgresso";
 import { AmostragemSelecao } from "./AmostragemSelecao";
 import { mockHistoricoDefeitos } from "./DefeitoHistorico";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ShieldCheck } from "lucide-react";
 
 
 interface AmostragemAutomaticaProps {
