@@ -220,24 +220,29 @@ export function VolumeContagem({
                     </div>
                     
                     <div className="grid grid-cols-2 gap-3">
-                      {volume.qtdContada === 0 ? (
+                      {volume.qtdContada === 0 || volume.integridade === 'critico' ? (
                         <Button
                           variant="destructive"
-                          className="gap-2 rounded-xl h-11 shadow-lg shadow-destructive/20 border-destructive/30"
+                          className="gap-2 rounded-xl h-11 shadow-lg shadow-destructive/20 border-destructive/30 animate-pulse"
                           onClick={() => onReportMissing?.(volume.id)}
                         >
                           <AlertTriangle className="h-4 w-4" />
-                          <span className="text-[10px] font-black uppercase">Reportar Extravio</span>
+                          <span className="text-[10px] font-black uppercase">Ocorrência Crítica</span>
                         </Button>
                       ) : (
                         <Button
                           variant="outline"
-                          className="gap-2 rounded-xl h-11 border-primary/20 hover:bg-primary/5 text-primary"
+                          className={cn(
+                            "gap-2 rounded-xl h-11 border-primary/20 transition-all",
+                            volume.handoffConfirmado ? "bg-success/10 border-success/40 text-success" : "hover:bg-primary/5 text-primary"
+                          )}
                           onClick={() => onVolumeHandoff?.(volume.id)}
                           disabled={!volume.conferido}
                         >
                           <ArrowRightCircle className="h-4 w-4" />
-                          <span className="text-[10px] font-black uppercase">Liberar Triagem</span>
+                          <span className="text-[10px] font-black uppercase">
+                            {volume.handoffConfirmado ? "Handoff Realizado" : "Liberar Triagem"}
+                          </span>
                         </Button>
                       )}
 

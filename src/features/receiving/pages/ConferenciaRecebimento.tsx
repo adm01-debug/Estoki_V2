@@ -119,10 +119,19 @@ export default function ConferenciaRecebimento() {
    const handleSalvar = async () => {
      if (!recebimento || !id) return;
      
-     if (!itemScanned || !locationScanned) {
+     if (!itemScanned) {
       toast({
-        title: "Validação Pendente",
-        description: "É necessário escanear o item e o local antes de confirmar.",
+        title: "Item não validado",
+        description: "É necessário escanear o produto para garantir a acuracidade.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!locationScanned) {
+      toast({
+        title: "Local não validado",
+        description: "Escaneie a etiqueta da posição de triagem/estoque.",
         variant: "destructive",
       });
       return;
@@ -252,30 +261,37 @@ export default function ConferenciaRecebimento() {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <QrCode className="h-4 w-4" />
-                Validação Obrigatória
+                Validação de Fluxo
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex gap-2">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 gap-3">
                 <Button 
                   variant={itemScanned ? "secondary" : "outline"} 
-                  className="flex-1 gap-2" 
+                  className={cn("h-12 justify-between px-4 transition-all", itemScanned && "bg-success/20 border-success/40 text-success")}
                   onClick={handleScanItem}
                 >
-                  {itemScanned ? <Check className="h-4 w-4 text-green-500" /> : <QrCode className="h-4 w-4" />}
-                  Scan Item
+                  <div className="flex items-center gap-2">
+                    <QrCode className="h-5 w-5" />
+                    <span className="font-bold">Escanear Produto (SKU/EAN)</span>
+                  </div>
+                  {itemScanned && <Check className="h-5 w-5 animate-in zoom-in" />}
                 </Button>
                 <Button 
                   variant={locationScanned ? "secondary" : "outline"} 
-                  className="flex-1 gap-2" 
+                  className={cn("h-12 justify-between px-4 transition-all", locationScanned && "bg-success/20 border-success/40 text-success")}
                   onClick={handleScanLocation}
                 >
-                  {locationScanned ? <Check className="h-4 w-4 text-green-500" /> : <QrCode className="h-4 w-4" />}
-                  Scan Local
+                  <div className="flex items-center gap-2">
+                    <QrCode className="h-5 w-5" />
+                    <span className="font-bold">Escanear Endereço/Posição</span>
+                  </div>
+                  {locationScanned && <Check className="h-5 w-5 animate-in zoom-in" />}
                 </Button>
               </div>
-              <p className="text-[10px] text-muted-foreground text-center">
-                Escaneie o código do produto e a etiqueta da posição para liberar a confirmação.
+              <p className="text-[10px] text-muted-foreground font-medium leading-tight">
+                <Info className="h-3 w-3 inline mr-1" />
+                A validação física é obrigatória para evitar erros de troca de mercadoria ou endereçamento indevido no WMS.
               </p>
             </CardContent>
           </Card>
