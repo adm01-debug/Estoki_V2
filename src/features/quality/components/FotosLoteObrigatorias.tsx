@@ -119,7 +119,7 @@ export function FotosLoteObrigatorias({
               onClick={() => handleCapture(tipo.tipo)}
               disabled={uploading}
               className={cn(
-                "p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all disabled:opacity-50",
+                "relative p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all disabled:opacity-50 group/btn overflow-hidden",
                 temFoto
                   ? "border-success bg-success/5 hover:bg-success/10"
                   : isObrigatorio
@@ -127,6 +127,14 @@ export function FotosLoteObrigatorias({
                   : "border-border hover:border-primary hover:bg-primary/5"
               )}
             >
+              {/* Overlay Guideline Grid */}
+              <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-10 transition-opacity pointer-events-none">
+                <div className="w-full h-px bg-foreground absolute top-1/3" />
+                <div className="w-full h-px bg-foreground absolute top-2/3" />
+                <div className="h-full w-px bg-foreground absolute left-1/3" />
+                <div className="h-full w-px bg-foreground absolute left-2/3" />
+              </div>
+
               <span className="text-2xl">{tipo.emoji}</span>
               <span className="text-xs font-medium">{tipo.label}</span>
               {temFoto && <CheckCircle2 className="h-4 w-4 text-success" />}
