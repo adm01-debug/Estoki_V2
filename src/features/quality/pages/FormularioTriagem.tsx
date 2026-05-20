@@ -225,6 +225,8 @@ export default function FormularioTriagem() {
           isRunning={isRunning}
           onPausar={pausarTimer}
           onIniciar={iniciarTimer}
+          taktTime={activeStep === 4 ? "0:42" : "---"}
+          tempoEstimado={activeStep === 4 ? "08:15" : "---"}
         />
 
         {/* Operator HUD - Real-time stats */}

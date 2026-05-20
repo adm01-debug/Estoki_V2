@@ -1,7 +1,7 @@
  import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
- import { Package, Timer, Truck, CheckCircle2, PauseCircle, PlayCircle, Layers } from "lucide-react";
+ import { Package, Timer, Truck, CheckCircle2, PauseCircle, PlayCircle, Layers, Zap, Clock } from "lucide-react";
  import { cn } from "@/lib/utils";
 
 interface TriagemHeaderCardProps {
@@ -13,6 +13,8 @@ interface TriagemHeaderCardProps {
   isRunning: boolean;
   onPausar: () => void;
   onIniciar: () => void;
+  taktTime?: string;
+  tempoEstimado?: string;
 }
 
 export function TriagemHeaderCard({
@@ -23,7 +25,9 @@ export function TriagemHeaderCard({
   formattedTime,
   isRunning,
   onPausar,
-  onIniciar
+  onIniciar,
+  taktTime = "00:45",
+  tempoEstimado = "12:30"
 }: TriagemHeaderCardProps) {
   return (
     <Card className="border-2 border-primary/10 overflow-hidden bg-gradient-to-br from-card to-primary/5 shadow-xl">
@@ -90,6 +94,30 @@ export function TriagemHeaderCard({
                 <span className="text-sm font-black uppercase tracking-tight">
                   {isRunning ? "Em Conferência Ativa" : "Pausado / Aguardando"}
                 </span>
+              </div>
+            </div>
+            
+            <div className="h-10 w-px bg-border/50 hidden lg:block" />
+
+            <div className="space-y-1 hidden lg:block">
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest flex items-center gap-1">
+                <Zap className="h-3 w-3 text-yellow-500" /> Takt Time
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black text-foreground tracking-tight">{taktTime}</span>
+                <span className="text-[10px] text-muted-foreground font-bold">seg/un</span>
+              </div>
+            </div>
+
+            <div className="h-10 w-px bg-border/50 hidden lg:block" />
+
+            <div className="space-y-1 hidden lg:block">
+              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest flex items-center gap-1">
+                <Clock className="h-3 w-3 text-primary" /> Est. Conclusão
+              </p>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black text-foreground tracking-tight">{tempoEstimado}</span>
+                <span className="text-[10px] text-muted-foreground font-bold">min</span>
               </div>
             </div>
           </div>
