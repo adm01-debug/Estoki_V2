@@ -16,10 +16,12 @@ import { Sparkles } from "lucide-react";
 
 interface AmostragemAutomaticaProps {
   tamanhoLote: number;
+  sku?: string;
   onConfirmarAmostra: (tamanhoAmostra: number, metodo: string, criterios: { aceite: number; rejeite: number }) => void;
   itensVerificados?: number;
   defeitosEncontrados?: number;
 }
+
 
 export function AmostragemAutomatica({
   tamanhoLote,
