@@ -14,7 +14,8 @@ import { useRomaneios } from "@/features/shipping/hooks/useRomaneios";
 import type { Romaneio, StatusRomaneio, StatusEntrega } from "@/features/shipping/hooks/useRomaneios";
 import { 
   Truck, Plus, Search, Filter, Clock, CheckCircle2, XCircle, AlertTriangle, Play, FileText, User, MapPin, 
-  ChevronRight, BarChart3, Navigation, ExternalLink, Printer, Share2, MoreHorizontal, LayoutGrid, List
+  ChevronRight, BarChart3, Navigation, ExternalLink, Printer, Share2, MoreHorizontal, LayoutGrid, List,
+  RefreshCw, Package
 } from "lucide-react";
 import { NovoRomaneioDialog } from "@/components/romaneios/NovoRomaneioDialog";
 import { RomaneioDetalhesDialog } from "@/components/romaneios/RomaneioDetalhesDialog";
