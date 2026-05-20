@@ -159,12 +159,14 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
         <div className="flex-1 overflow-hidden">
           {!nfeData ? (
             <div className="space-y-4">
-              <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <div className="border-4 border-dashed rounded-3xl p-12 text-center bg-muted/20 hover:bg-muted/30 transition-all border-primary/20 hover:border-primary/40 group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                  <Upload className="h-10 w-10 text-primary" />
+                </div>
                 <Label htmlFor="nf-file" className="cursor-pointer">
-                  <span className="text-lg font-medium">Clique para selecionar o arquivo XML</span>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Suporta arquivos XML de NF-e no padrão brasileiro
+                  <span className="text-2xl font-black tracking-tight text-foreground">Importação Inteligente de NF-e</span>
+                  <p className="text-sm text-muted-foreground mt-2 max-w-sm mx-auto leading-relaxed">
+                    Arraste o XML da nota ou clique para selecionar. O sistema extrairá automaticamente fornecedor, produtos, quantidades e impostos.
                   </p>
                 </Label>
                 <Input

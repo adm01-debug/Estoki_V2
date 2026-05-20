@@ -6,7 +6,7 @@ import { SEO } from "@/components/common/SEO";
  import { EmptyState } from "@/components/common/EmptyState";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle, ArrowRightCircle } from "lucide-react";
+import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle, ArrowRightCircle, ShieldCheck } from "lucide-react";
 import { haptics } from "@/utils/haptics";
 import AppLayout from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecebimentos } from "../hooks/useRecebimentos";
 import { NovoRecebimentoDialog } from "../components/NovoRecebimentoDialog";
+import { ImportarNFDialog } from "../components/ImportarNFDialog";
 import { Progress } from "@/components/ui/progress";
 
 type StatusRecebimento = 'aguardando' | 'em_transito' | 'recebido' | 'em_conferencia' | 'conferido' | 'divergencia' | 'cancelado';
@@ -116,7 +117,12 @@ export default function RecebimentoPage() {
       <BasePageTemplate
         title="Recebimento"
         description="Gestão de entrada de mercadorias, conferência e integração com estoque."
-        headerActions={<NovoRecebimentoDialog />}
+        headerActions={(
+          <div className="flex gap-2">
+            <ImportarNFDialog />
+            <NovoRecebimentoDialog />
+          </div>
+        )}
       >
         <div className="space-y-6">
           <motion.div 
@@ -148,21 +154,24 @@ export default function RecebimentoPage() {
           )}
 
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
-            <TabsList className="w-full overflow-x-auto flex-nowrap justify-start bg-muted/30 p-1 rounded-xl">
+            <TabsList className="w-full overflow-x-auto flex-nowrap justify-start bg-muted/30 p-1 rounded-xl scrollbar-hide">
               <TabsTrigger value="todos" className="gap-1 rounded-lg">
                 Todos <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.todos}</Badge>
               </TabsTrigger>
               <TabsTrigger value="aguardando" className="gap-1 rounded-lg">
-                Aguardando <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.aguardando}</Badge>
+                <Clock className="h-3 w-3 mr-1" /> Aguardando <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.aguardando}</Badge>
               </TabsTrigger>
               <TabsTrigger value="em_transito" className="gap-1 rounded-lg">
-                Trânsito <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.em_transito}</Badge>
+                <Truck className="h-3 w-3 mr-1" /> Trânsito <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.em_transito}</Badge>
               </TabsTrigger>
               <TabsTrigger value="recebido" className="gap-1 rounded-lg">
-                Recebido <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.recebido}</Badge>
+                <Package className="h-3 w-3 mr-1" /> Recebido <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.recebido}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="em_conferencia" className="gap-1 rounded-lg">
+                <Loader2 className="h-3 w-3 mr-1 animate-spin" /> Em Conferência <Badge variant="secondary" className="ml-1 text-[10px]">{contagens.em_conferencia}</Badge>
               </TabsTrigger>
               <TabsTrigger value="divergencia" className="gap-1 rounded-lg">
-                Divergência <Badge variant="destructive" className="ml-1 text-[10px]">{contagens.divergencia}</Badge>
+                <AlertTriangle className="h-3 w-3 mr-1" /> Divergência <Badge variant="destructive" className="ml-1 text-[10px]">{contagens.divergencia}</Badge>
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -199,10 +208,15 @@ export default function RecebimentoPage() {
                           <span className="font-bold text-primary tracking-tight">
                             {item.numero_lote}
                           </span>
-                          <Badge variant={status.variant} className="gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                          <Badge variant={status.variant} className={cn("gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider", item.status === 'divergencia' && "animate-pulse")}>
                             {status.icon}
                             {status.label}
                           </Badge>
+                          {item.nf_entrada && (
+                            <Badge variant="outline" className="text-[10px] font-black border-primary/30 text-primary">
+                              NF: {item.nf_entrada}
+                            </Badge>
+                          )}
                           {item.pedido_compra && (
                             <Badge variant="outline" className="text-[10px] font-medium opacity-70">
                               PC: {item.pedido_compra}
@@ -225,22 +239,41 @@ export default function RecebimentoPage() {
                           </div>
                         )}
 
-                        {(item.status === 'em_conferencia' || item.status === 'recebido') && (
-                          <div className="mt-4 flex items-center gap-3">
-                            <div className="flex-1 space-y-1.5 max-w-[120px]">
-                              <div className="flex justify-between text-[8px] font-black uppercase tracking-wider text-muted-foreground">
-                                <span>Fluxo</span>
-                                <span>{Math.round(progresso)}%</span>
+                        {(item.status === 'em_conferencia' || item.status === 'recebido' || item.status === 'divergencia') && (
+                          <div className="mt-4 flex flex-col gap-2">
+                            <div className="flex items-center gap-3">
+                              <div className="flex-1 space-y-1.5">
+                                <div className="flex justify-between text-[8px] font-black uppercase tracking-wider text-muted-foreground">
+                                  <span>Progresso da Conferência</span>
+                                  <span>{Math.round(progresso)}%</span>
+                                </div>
+                                <Progress value={progresso} className={cn("h-1.5", item.status === 'divergencia' ? "bg-destructive/20" : "")} />
                               </div>
-                              <Progress value={progresso} className="h-1" />
                             </div>
-                            <div className="flex gap-1">
-                              <div title="Volumes Conferidos" className={cn("w-5 h-5 rounded-full flex items-center justify-center border", item.quantidade_atual > 0 ? "bg-success/10 border-success/30 text-success" : "bg-muted border-border/30 text-muted-foreground")}>
-                                <CheckCircle className="h-3 w-3" />
+                            <div className="flex items-center justify-between">
+                              <div className="flex gap-1.5">
+                                <div title="Volumes Conferidos" className={cn("w-6 h-6 rounded-lg flex items-center justify-center border transition-all", item.quantidade_atual > 0 ? "bg-success/10 border-success/30 text-success" : "bg-muted border-border/20 text-muted-foreground")}>
+                                  <CheckCircle className="h-3.5 w-3.5" />
+                                </div>
+                                <div title="Integridade Validada" className={cn("w-6 h-6 rounded-lg flex items-center justify-center border transition-all", item.status === 'conferido' || item.status === 'divergencia' ? "bg-primary/10 border-primary/30 text-primary" : "bg-muted border-border/20 text-muted-foreground")}>
+                                  <ShieldCheck className="h-3.5 w-3.5" />
+                                </div>
+                                <div title="Handoff para Triagem" className="w-6 h-6 rounded-lg flex items-center justify-center border bg-muted border-border/20 text-muted-foreground">
+                                  <ArrowRightCircle className="h-3.5 w-3.5" />
+                                </div>
                               </div>
-                              <div title="Handoff para Triagem" className="w-5 h-5 rounded-full flex items-center justify-center border bg-muted border-border/30 text-muted-foreground">
-                                <ArrowRightCircle className="h-3 w-3" />
-                              </div>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-7 text-[9px] font-black uppercase p-1 px-2 hover:bg-primary/10 hover:text-primary transition-all"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/recebimento/conferencia/${item.id}`);
+                                }}
+                              >
+                                {item.status === 'divergencia' ? 'Resolver Divergência' : 'Continuar'}
+                                <ChevronRight className="h-3 w-3 ml-1" />
+                              </Button>
                             </div>
                           </div>
                         )}
