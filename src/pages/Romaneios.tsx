@@ -12,9 +12,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress";
 import { useRomaneios } from "@/features/shipping/hooks/useRomaneios";
 import type { Romaneio, StatusRomaneio, StatusEntrega } from "@/features/shipping/hooks/useRomaneios";
-import { Truck, Plus, Search, Filter, Clock, CheckCircle2, XCircle, AlertTriangle, Play, FileText, User, MapPin } from "lucide-react";
+import { 
+  Truck, Plus, Search, Filter, Clock, CheckCircle2, XCircle, AlertTriangle, Play, FileText, User, MapPin, 
+  ChevronRight, BarChart3, Navigation, ExternalLink, Printer, Share2, MoreHorizontal, LayoutGrid, List
+} from "lucide-react";
 import { NovoRomaneioDialog } from "@/components/romaneios/NovoRomaneioDialog";
 import { RomaneioDetalhesDialog } from "@/components/romaneios/RomaneioDetalhesDialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 
 const statusConfig: Record<StatusRomaneio, { label: string; color: string; icon: React.ReactNode }> = {
