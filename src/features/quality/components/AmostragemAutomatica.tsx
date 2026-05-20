@@ -25,6 +25,7 @@ interface AmostragemAutomaticaProps {
 
 export function AmostragemAutomatica({
   tamanhoLote,
+  sku,
   onConfirmarAmostra,
   itensVerificados = 0,
   defeitosEncontrados = 0,
@@ -32,6 +33,33 @@ export function AmostragemAutomatica({
   const [metodoSelecionado, setMetodoSelecionado] = useState<MetodoAmostragem>("aql_normal");
   const [amostraConfirmada, setAmostraConfirmada] = useState(false);
   const [tamanhoAmostraConfirmado, setTamanhoAmostraConfirmado] = useState(0);
+  const [recomendacaoInteligente, setRecomendacaoInteligente] = useState<MetodoAmostragem | null>(null);
+
+  useEffect(() => {
+    if (sku && mockHistoricoDefeitos[sku]) {
+      const hist = mockHistoricoDefeitos[sku];
+      // Se taxa de defeito histórico < 2% e mais de 5 triagens, sugere Reduzido
+      if (hist.totalTriagens >= 5) {
+        const taxaDefeito = hist.historico.reduce((acc, curr) => acc + (curr.aprovados === 0 ? 1 : 0), 0) / hist.totalTriagens;
+        
+        if (taxaDefeito === 0) {
+          setRecomendacaoInteligente("aql_reduzido");
+          setMetodoSelecionado("aql_reduzido");
+          toast("Amostragem Inteligente Ativada", {
+            description: "Histórico impecável detectado. Sugerimos inspeção reduzida.",
+            icon: <Sparkles className="h-4 w-4 text-yellow-500" />
+          });
+        } else if (taxaDefeito > 0.3) {
+          setRecomendacaoInteligente("aql_rigoroso");
+          setMetodoSelecionado("aql_rigoroso");
+          toast.warning("Alerta de Amostragem Progressiva", {
+            description: "Histórico com recorrência de falhas. Rigor aumentado."
+          });
+        }
+      }
+    }
+  }, [sku]);
+
 
   const calculos = useMemo(() => {
     const raizQuadrada = calcularAmostraRaizQuadrada(tamanhoLote);
