@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
- import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft, Target, Hammer } from "lucide-react";
+ import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft, Target, Hammer, TrendingUp } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -248,54 +248,70 @@ export default function TriagemPage() {
            <div className="space-y-4">
              <TriagemStatsCards stats={stats} />
              
-             {/* Production Tracking for Promo Brindes */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             {/* Advanced Quality HUD */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <motion.div 
                   whileHover={{ y: -4 }}
-                  className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center border border-indigo-500/30">
-                      <Target className="h-6 w-6 text-indigo-600" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                      <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-indigo-600/70 uppercase tracking-widest">Fila de Gravação</p>
-                      <p className="text-xl font-black text-indigo-700">{stats.emGravacao} Lotes</p>
-                    </div>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-primary border-primary/20">OEE: 94%</Badge>
                   </div>
-                  <Badge variant="outline" className="bg-white/50 border-indigo-200 text-indigo-600 font-bold">Urgente</Badge>
-                </motion.div>
-  
-                <motion.div 
-                  whileHover={{ y: -4 }}
-                  className="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
-                      <Hammer className="h-6 w-6 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-orange-600/70 uppercase tracking-widest">Fila de Manuseio</p>
-                      <p className="text-xl font-black text-orange-700">{stats.emManuseio} Lotes</p>
-                    </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Acuracidade Técnica</p>
+                    <p className="text-2xl font-black text-foreground">99.8%</p>
                   </div>
-                  <Badge variant="outline" className="bg-white/50 border-orange-200 text-orange-600 font-bold">Triagem Final</Badge>
                 </motion.div>
 
                 <motion.div 
                   whileHover={{ y: -4 }}
-                  className="bg-gradient-to-br from-success/10 to-emerald-500/10 border border-success/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center border border-success/30">
-                      <CheckCircle className="h-6 w-6 text-success" />
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-500/20">
+                      <Target className="h-5 w-5 text-indigo-600" />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-success/70 uppercase tracking-widest">Aguardando Handoff</p>
-                      <p className="text-xl font-black text-success-foreground">{stats.aprovados} Lotes</p>
-                    </div>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-indigo-600 border-indigo-200">Crítico</Badge>
                   </div>
-                  <Badge variant="outline" className="bg-white/50 border-success-200 text-success font-bold">Pronto</Badge>
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Fila de Gravação</p>
+                    <p className="text-2xl font-black text-foreground">{stats.emGravacao} Lotes</p>
+                  </div>
+                </motion.div>
+  
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
+                      <Hammer className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-orange-600 border-orange-200">Produção</Badge>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Fila de Manuseio</p>
+                    <p className="text-2xl font-black text-foreground">{stats.emManuseio} Lotes</p>
+                  </div>
+                </motion.div>
+
+                <motion.div 
+                  whileHover={{ y: -4 }}
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center border border-success/20">
+                      <CheckCircle className="h-5 w-5 text-success" />
+                    </div>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-success border-success-200">Pronto</Badge>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Liberados p/ Expedição</p>
+                    <p className="text-2xl font-black text-foreground">{stats.aprovados} Lotes</p>
+                  </div>
                 </motion.div>
               </div>
            </div>
