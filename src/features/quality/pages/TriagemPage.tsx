@@ -30,6 +30,7 @@ import { haptics } from "@/utils/haptics";
 import { TriagemStatsCards } from "../components/formulario/TriagemStatsCards";
 import { getStatus, statusConfig, formatDate } from "../components/formulario/triagemHelpers";
 import { TriagemListItem } from "../components/triagem-page/TriagemListItem";
+import { QuickScanner } from "../components/triagem-page/QuickScanner";
 
 const ITEMS_PER_PAGE = 10;
 type SortOrder = "data" | "resultado";
@@ -53,6 +54,7 @@ export default function TriagemPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("data");
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
   const [showAmostragem, setShowAmostragem] = useState(false);
+  const [zenMode, setZenMode] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { bind: bindPullRefresh, isRefreshing, pullDistance, pullThreshold } = usePullToRefresh(async () => {
@@ -200,6 +202,9 @@ export default function TriagemPage() {
             <Button size="sm" variant={showAmostragem ? "secondary" : "outline"} className="h-10 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.light(); setShowAmostragem(!showAmostragem); }}>
               <Calculator className="h-4 w-4" /> <span className="hidden md:inline">Amostragem</span>
             </Button>
+            <Button size="sm" variant={zenMode ? "secondary" : "outline"} className="h-10 rounded-xl border-border/40 gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.light(); setZenMode(!zenMode); }}>
+              {zenMode ? <Target className="h-4 w-4" /> : <BarChart3 className="h-4 w-4" />} <span className="hidden md:inline">{zenMode ? "Sair Zen" : "Modo Zen"}</span>
+            </Button>
             <Button size="sm" className="h-10 rounded-xl glow-button gap-2 font-bold text-[10px] uppercase tracking-wider" onClick={() => { haptics.medium(); handleIniciarTriagem(); }}>
               <Play className="h-4 w-4" /> <span className="hidden md:inline">Nova Triagem</span>
             </Button>
@@ -239,13 +244,13 @@ export default function TriagemPage() {
             </motion.div>
           )}
 
-          {items.length > 0 && (
+          {items.length > 0 && !zenMode && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
               <TriagemCharts items={items} />
             </motion.div>
           )}
 
-           <div className="space-y-4">
+           <div className={cn("space-y-4 transition-all duration-500", zenMode && "opacity-0 h-0 overflow-hidden pointer-events-none")}>
              <TriagemStatsCards stats={stats} />
              
              {/* Advanced Quality HUD */}
@@ -316,7 +321,13 @@ export default function TriagemPage() {
               </div>
            </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-card/50 p-4 rounded-2xl border border-border/20 shadow-sm">
+          <motion.div 
+            layout
+            className={cn(
+              "flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border transition-all duration-300 shadow-sm",
+              zenMode ? "bg-primary/5 border-primary/20 sticky top-4 z-30" : "bg-card/50 border-border/20"
+            )}
+          >
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
               <Input
@@ -325,6 +336,7 @@ export default function TriagemPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-11 rounded-xl bg-background border-border/20 focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
               />
+              <QuickScanner />
             </div>
             <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={(v) => { haptics.light(); setStatusFilter(v); }}>
@@ -353,6 +365,17 @@ export default function TriagemPage() {
                 <ArrowUpDown className={cn("h-4 w-4 transition-transform", sortOrder === "resultado" && "rotate-180")} />
               </Button>
             </div>
+          </motion.div>
+
+          {/* Floating Action Button for Mobile */}
+          <div className="fixed bottom-6 right-6 z-50 md:hidden">
+            <Button 
+              size="icon" 
+              className="h-14 w-14 rounded-full shadow-2xl shadow-primary/40 glow-button"
+              onClick={() => { haptics.medium(); handleIniciarTriagem(); }}
+            >
+              <Play className="h-6 w-6" />
+            </Button>
           </div>
 
           <div className="space-y-4">

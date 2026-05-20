@@ -20,8 +20,9 @@ import { haptics } from "@/utils/haptics";
  import { ResultadoInspecaoCard } from "../components/formulario/ResultadoInspecaoCard";
  import { checklistItems } from "../components/formulario/constants";
  import { VolumeContagem, VolumeData } from "../components/VolumeContagem";
- import { StepProgress } from "@/components/common/StepProgress";
- import { LeaveGuard } from "@/components/common/LeaveGuard";
+  import { StepProgress } from "@/components/common/StepProgress";
+  import { LeaveGuard } from "@/components/common/LeaveGuard";
+  import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
@@ -225,6 +226,8 @@ export default function FormularioTriagem() {
           isRunning={isRunning}
           onPausar={pausarTimer}
           onIniciar={iniciarTimer}
+          taktTime={activeStep === 4 ? "0:42" : "---"}
+          tempoEstimado={activeStep === 4 ? "08:15" : "---"}
         />
 
         {/* Operator HUD - Real-time stats */}
@@ -404,7 +407,10 @@ export default function FormularioTriagem() {
                  <Card className="border-primary/20">
                     <CardContent className="pt-6">
                       <div className="space-y-4">
-                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Causa Raiz do Defeito (Se houver)</p>
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Mapeamento Visual de Defeitos</p>
+                        <VisualDefectTagging />
+                        
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mt-6">Causa Raiz do Defeito (Se houver)</p>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                           {['Funcional', 'Estético', 'Embalagem', 'Incompleto'].map((cat) => (
                             <Button
