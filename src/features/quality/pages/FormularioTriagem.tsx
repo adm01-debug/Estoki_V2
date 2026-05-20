@@ -11,8 +11,11 @@ import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { haptics } from "@/utils/haptics";
+
 
 // Modularized Components
  import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
