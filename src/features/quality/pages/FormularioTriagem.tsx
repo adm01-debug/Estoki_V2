@@ -55,6 +55,7 @@ export default function FormularioTriagem() {
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
+  const [quantidadeConserto, setQuantidadeConserto] = useState(0);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
@@ -394,6 +395,8 @@ export default function FormularioTriagem() {
                    setQuantidadeAprovada={setQuantidadeAprovada}
                    quantidadeReprovada={quantidadeReprovada}
                    setQuantidadeReprovada={setQuantidadeReprovada}
+                   quantidadeConserto={quantidadeConserto}
+                   setQuantidadeConserto={setQuantidadeConserto}
                    observacoes={observacoes}
                    setObservacoes={setObservacoes}
                  />
