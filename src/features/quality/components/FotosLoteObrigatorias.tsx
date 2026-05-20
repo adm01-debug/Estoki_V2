@@ -127,12 +127,19 @@ export function FotosLoteObrigatorias({
                   : "border-border hover:border-primary hover:bg-primary/5"
               )}
             >
-              {/* Overlay Guideline Grid */}
-              <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-10 transition-opacity pointer-events-none">
-                <div className="w-full h-px bg-foreground absolute top-1/3" />
-                <div className="w-full h-px bg-foreground absolute top-2/3" />
-                <div className="h-full w-px bg-foreground absolute left-1/3" />
-                <div className="h-full w-px bg-foreground absolute left-2/3" />
+              {/* Overlay Guideline Grid - Implementation forlegible capture */}
+              <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-40 transition-opacity pointer-events-none">
+                {/* Horizontal lines */}
+                <div className="w-full h-px bg-primary absolute top-1/3" />
+                <div className="w-full h-px bg-primary absolute top-2/3" />
+                {/* Vertical lines */}
+                <div className="h-full w-px bg-primary absolute left-1/3" />
+                <div className="h-full w-px bg-primary absolute left-2/3" />
+                
+                {/* Focus box for Labels/Seals */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/4 border-2 border-primary/50 rounded-lg flex items-center justify-center">
+                   <div className="text-[6px] font-black text-primary/40 uppercase">Enquadrar Etiqueta</div>
+                </div>
               </div>
 
               <span className="text-2xl">{tipo.emoji}</span>
