@@ -2,8 +2,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
- import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus, AlertCircle } from "lucide-react";
- import { toast } from "sonner";
+import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus, AlertCircle, Calculator, Target, ChevronRight, Sparkles, Trophy, Star } from "lucide-react";
+import { toast } from "sonner";
 import { useTriagens } from "../hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
@@ -12,7 +12,7 @@ import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHi
 import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Trophy, Star } from "lucide-react";
+import { haptics } from "@/utils/haptics";
 
 // Modularized Components
  import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
