@@ -447,12 +447,6 @@ export default function DashboardTriadorPage() {
                       </div>
                     ))}
                   </div>
-                ) || (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Award className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>Nenhuma conquista ainda</p>
-                    <p className="text-sm">Continue trabalhando para desbloquear!</p>
-                  </div>
                 )}
               </CardContent>
             </Card>
