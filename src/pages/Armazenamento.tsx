@@ -375,7 +375,7 @@ const ArmazenamentoPage = () => {
               <>
                 <Button 
                   variant="outline" 
-                  size="xl"
+                  size="lg"
                   className={`flex-1 md:w-56 h-14 text-lg font-bold transition-all border-2 ${scannedPosicao === posicaoSelecionada.codigo ? "bg-green-500 text-white border-green-600 shadow-green-200 shadow-lg" : "hover:border-primary/50"}`}
                   onClick={() => {
                     toast({ title: "Scanner Ativado" });
