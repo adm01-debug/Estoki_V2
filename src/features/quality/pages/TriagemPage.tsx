@@ -30,6 +30,7 @@ import { haptics } from "@/utils/haptics";
 import { TriagemStatsCards } from "../components/formulario/TriagemStatsCards";
 import { getStatus, statusConfig, formatDate } from "../components/formulario/triagemHelpers";
 import { TriagemListItem } from "../components/triagem-page/TriagemListItem";
+import { QuickScanner } from "../components/triagem-page/QuickScanner";
 
 const ITEMS_PER_PAGE = 10;
 type SortOrder = "data" | "resultado";
@@ -335,6 +336,7 @@ export default function TriagemPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 h-11 rounded-xl bg-background border-border/20 focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
               />
+              <QuickScanner />
             </div>
             <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={(v) => { haptics.light(); setStatusFilter(v); }}>
