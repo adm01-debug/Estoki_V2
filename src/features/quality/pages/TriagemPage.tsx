@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { useNavigate, useSearchParams } from "react-router-dom";
- import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft, Target, Hammer, TrendingUp } from "lucide-react";
+ import { Search, QrCode, Calculator, ChevronRight, CheckCircle, ArrowUpDown, BarChart3, Play, Download, Trash2, CheckSquare, User, Clock, AlertTriangle, ChevronLeft, Target, Hammer, TrendingUp, Zap, Trophy, Star, ShieldCheck } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -137,7 +137,9 @@ export default function TriagemPage() {
      const emManuseio = (items as any[]).filter(i => i.status_producao === "em_manuseio").length;
      const divergenciasVolume = (items as any[]).filter(i => i.resultado === "divergente").length;
      
-      return { emAndamento, aprovados, reprovados, retidosConserto, emGravacao, emManuseio, divergenciasVolume };
+      const performance = (aprovados / (items.length || 1)) * 100;
+      
+      return { emAndamento, aprovados, reprovados, retidosConserto, emGravacao, emManuseio, divergenciasVolume, performance };
     }, [items]);
 
    const handleIniciarTriagem = async () => {
@@ -257,17 +259,25 @@ export default function TriagemPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <motion.div 
                   whileHover={{ y: -4 }}
-                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all relative overflow-hidden group"
                 >
+                  <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <Trophy className="h-12 w-12 text-primary" />
+                  </div>
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
                       <TrendingUp className="h-5 w-5 text-primary" />
                     </div>
-                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-primary border-primary/20">OEE: 94%</Badge>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-primary border-primary/20 bg-primary/5">
+                      <Star className="h-3 w-3 mr-1 text-yellow-500 fill-yellow-500" /> Nível 14
+                    </Badge>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Acuracidade Técnica</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Score de Acuracidade</p>
                     <p className="text-2xl font-black text-foreground">99.8%</p>
+                    <div className="mt-2 h-1 w-full bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: '99.8%' }} />
+                    </div>
                   </div>
                 </motion.div>
 
@@ -305,17 +315,19 @@ export default function TriagemPage() {
 
                 <motion.div 
                   whileHover={{ y: -4 }}
-                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all"
+                  className="bg-background border border-border/40 rounded-2xl p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-all border-l-4 border-l-success"
                 >
                   <div className="flex items-center justify-between mb-4">
                     <div className="w-10 h-10 rounded-xl bg-success/10 flex items-center justify-center border border-success/20">
-                      <CheckCircle className="h-5 w-5 text-success" />
+                      <ShieldCheck className="h-5 w-5 text-success" />
                     </div>
-                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-success border-success-200">Pronto</Badge>
+                    <Badge variant="outline" className="text-[9px] uppercase font-bold text-success border-success-200 bg-success/5">
+                      <Zap className="h-3 w-3 mr-1 text-yellow-500 fill-yellow-500" /> Fast-Track
+                    </Badge>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Liberados p/ Expedição</p>
-                    <p className="text-2xl font-black text-foreground">{stats.aprovados} Lotes</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Lotes Platinum (30d)</p>
+                    <p className="text-2xl font-black text-foreground">Ativo</p>
                   </div>
                 </motion.div>
               </div>

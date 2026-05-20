@@ -83,8 +83,8 @@ export function VolumeContagem({
             <UserCheck className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Cadeia de Custódia</p>
-            <p className="text-xs font-bold">Responsável pela Entrega: <span className="text-primary underline cursor-pointer">Definir</span></p>
+            <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Cadeia de Custódia Digital</p>
+            <p className="text-xs font-bold">Handoff Logística → Qualidade: <span className="text-primary underline cursor-pointer hover:text-primary/80 transition-colors">Auditado por Blockchain ID</span></p>
           </div>
         </div>
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase gap-1.5 text-primary/70">
