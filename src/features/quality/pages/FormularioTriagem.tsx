@@ -11,8 +11,11 @@ import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
 import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { haptics } from "@/utils/haptics";
+
 
 // Modularized Components
  import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
@@ -23,6 +26,8 @@ import { haptics } from "@/utils/haptics";
   import { StepProgress } from "@/components/common/StepProgress";
   import { LeaveGuard } from "@/components/common/LeaveGuard";
   import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
+  import { RepairControlWorkflow } from "../components/formulario/RepairControlWorkflow";
+
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
@@ -321,12 +326,14 @@ export default function FormularioTriagem() {
                      <CardDescription>Defina o rigor da inspeção com base no nível de confiança.</CardDescription>
                    </CardHeader>
                    <CardContent className="pt-6">
-                     {mostrarAmostragem && quantidadeTotal > 0 && (
-                       <AmostragemAutomatica
-                         tamanhoLote={quantidadeTotal}
-                         onConfirmarAmostra={() => setAmostragemConfirmada(true)}
-                       />
-                     )}
+                      {mostrarAmostragem && quantidadeTotal > 0 && (
+                        <AmostragemAutomatica
+                          tamanhoLote={quantidadeTotal}
+                          sku={triagem?.produto_sku}
+                          onConfirmarAmostra={() => setAmostragemConfirmada(true)}
+                        />
+                      )}
+
                    </CardContent>
                  </Card>
                </motion.div>
@@ -404,28 +411,54 @@ export default function FormularioTriagem() {
                    setObservacoes={setObservacoes}
                  />
 
-                 <Card className="border-primary/20">
-                    <CardContent className="pt-6">
-                      <div className="space-y-4">
-                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Mapeamento Visual de Defeitos</p>
-                        <VisualDefectTagging />
-                        
-                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mt-6">Causa Raiz do Defeito (Se houver)</p>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                          {['Funcional', 'Estético', 'Embalagem', 'Incompleto'].map((cat) => (
-                            <Button
-                              key={cat}
-                              variant={defectCategory === cat.toLowerCase() ? "default" : "outline"}
-                              className="h-10 rounded-xl text-[10px] font-bold uppercase"
-                              onClick={() => setDefectCategory(cat.toLowerCase())}
-                            >
-                              {cat}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    </CardContent>
-                 </Card>
+                  {quantidadeConserto > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <RepairControlWorkflow 
+                        quantity={quantidadeConserto}
+                        onConfirm={(data) => {
+                          toast.success("Plano de Retrabalho Configurado", {
+                            description: "As ações de conserto foram vinculadas a este lote."
+                          });
+                        }}
+                      />
+                    </motion.div>
+                  )}
+
+                  <Card className="border-primary/20 shadow-md">
+                     <CardContent className="pt-6">
+                       <div className="space-y-4">
+                         <div className="flex items-center justify-between">
+                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Mapeamento Visual de Defeitos</p>
+                            <Badge variant="outline" className="text-[9px] font-black uppercase">Opcional</Badge>
+                         </div>
+                         <VisualDefectTagging />
+                         
+                         <div className="pt-4 border-t border-border/40">
+                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4">Causa Raiz do Defeito (Pareto)</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                              {['Funcional', 'Estético', 'Embalagem', 'Incompleto'].map((cat) => (
+                                <Button
+                                  key={cat}
+                                  variant={defectCategory === cat.toLowerCase() ? "default" : "outline"}
+                                  className={cn(
+                                    "h-10 rounded-xl text-[10px] font-bold uppercase transition-all",
+                                    defectCategory === cat.toLowerCase() ? "shadow-lg shadow-primary/20" : ""
+                                  )}
+                                  onClick={() => setDefectCategory(cat.toLowerCase())}
+                                >
+                                  {cat}
+                                </Button>
+                              ))}
+                            </div>
+                         </div>
+                       </div>
+                     </CardContent>
+                  </Card>
+
                </motion.div>
              )}
            </AnimatePresence>
