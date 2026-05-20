@@ -326,12 +326,14 @@ export default function FormularioTriagem() {
                      <CardDescription>Defina o rigor da inspeção com base no nível de confiança.</CardDescription>
                    </CardHeader>
                    <CardContent className="pt-6">
-                     {mostrarAmostragem && quantidadeTotal > 0 && (
-                       <AmostragemAutomatica
-                         tamanhoLote={quantidadeTotal}
-                         onConfirmarAmostra={() => setAmostragemConfirmada(true)}
-                       />
-                     )}
+                      {mostrarAmostragem && quantidadeTotal > 0 && (
+                        <AmostragemAutomatica
+                          tamanhoLote={quantidadeTotal}
+                          sku={triagem?.produto_sku}
+                          onConfirmarAmostra={() => setAmostragemConfirmada(true)}
+                        />
+                      )}
+
                    </CardContent>
                  </Card>
                </motion.div>
