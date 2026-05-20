@@ -151,12 +151,16 @@ export default function FormularioTriagem() {
 
       if (resultado === "aprovado") {
         setShowCelebration(true);
+        // Play success haptics
+        haptics.success();
+        
         toast.success("Excelente! Triagem aprovada.", {
-          description: `Você ganhou +50 XP! Tempo: ${formattedTime}`,
+          description: `Você ganhou +50 XP e Badge de Acuracidade! Tempo: ${formattedTime}`,
           icon: <Trophy className="h-4 w-4 text-yellow-500" />
         });
         setTimeout(() => navigate("/triagem"), 3000);
       } else {
+        haptics.error();
         toast.error("Triagem reprovada", {
           description: `Tempo: ${formattedTime}`,
           icon: <XCircle className="h-4 w-4" />

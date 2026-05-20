@@ -1,11 +1,12 @@
- import { useState, useMemo, useEffect } from "react";
- import { supabase } from "@/integrations/supabase/client";
- import { logger } from "@/utils/logger";
+import { useState, useMemo, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
 import {
   Clock,
   CheckCircle,
@@ -13,14 +14,15 @@ import {
   Target,
   Award,
   Zap,
-   Package,
-   Trophy,
-   Flame,
-   Star,
-   Loader2,
-   ArrowRight,
-   ClipboardCheck,
-   History,
+  Package,
+  Trophy,
+  Flame,
+  Star,
+  Loader2,
+  ArrowRight,
+  ClipboardCheck,
+  History,
+  ShieldCheck,
 } from "lucide-react";
  import { Button } from "@/components/ui/button";
  import { useNavigate } from "react-router-dom";
@@ -395,11 +397,16 @@ export default function DashboardTriadorPage() {
 
           <TabsContent value="conquistas" className="space-y-4">
             <Card>
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
                   <Award className="h-4 w-4" />
                   Minhas Conquistas ({conquistasUsuario.length})
                 </CardTitle>
+                <div className="flex gap-2">
+                   <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20 gap-1 text-[10px] font-black uppercase">
+                      <Star className="h-3 w-3 fill-current" /> Platinum
+                   </Badge>
+                </div>
               </CardHeader>
               <CardContent>
                 {conquistasUsuario.length === 0 ? (
@@ -409,13 +416,32 @@ export default function DashboardTriadorPage() {
                     <p className="text-sm">Continue trabalhando para desbloquear!</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {/* Badge de Acuracidade - Gamification Phase 7 */}
+                    <motion.div 
+                      whileHover={{ scale: 1.05 }}
+                      className="p-4 rounded-2xl border-2 bg-gradient-to-br from-indigo-500/10 to-primary/5 border-primary/30 relative overflow-hidden group"
+                    >
+                      <div className="absolute -right-2 -top-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <ShieldCheck className="w-16 h-16" />
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mb-3">
+                         <ShieldCheck className="h-6 w-6 text-primary" />
+                      </div>
+                      <h4 className="font-black text-[11px] uppercase tracking-tighter">Guardião da Acuracidade</h4>
+                      <p className="text-[10px] text-muted-foreground leading-tight mt-1">Zero divergência em 50 auditorias consecutivas.</p>
+                      <div className="mt-3 flex items-center justify-between">
+                         <Badge variant="secondary" className="text-[9px] font-bold">+500 XP</Badge>
+                         <Star className="h-3 w-3 text-yellow-500 fill-current" />
+                      </div>
+                    </motion.div>
+
                     {conquistasUsuario.map((c) => (
-                      <div key={c.id} className="p-4 rounded-lg border bg-gradient-to-br from-yellow-500/10 to-amber-500/5 border-yellow-500/30">
-                        <div className="text-3xl mb-2">🏆</div>
-                        <h4 className="font-semibold text-sm">{c.nome}</h4>
-                        <p className="text-xs text-muted-foreground">{c.descricao}</p>
-                        <Badge variant="outline" className="mt-2 gap-1">
+                      <div key={c.id} className="p-4 rounded-2xl border bg-card/50 hover:bg-card transition-colors">
+                        <div className="text-2xl mb-2">🏆</div>
+                        <h4 className="font-bold text-[11px] uppercase tracking-tighter">{c.nome}</h4>
+                        <p className="text-[10px] text-muted-foreground leading-tight mt-1">{c.descricao}</p>
+                        <Badge variant="outline" className="mt-3 gap-1 text-[9px]">
                           <Zap className="h-3 w-3" />+{c.pontos} XP
                         </Badge>
                       </div>

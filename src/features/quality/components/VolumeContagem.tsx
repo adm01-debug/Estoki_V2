@@ -85,6 +85,10 @@ export function VolumeContagem({
           <div>
             <p className="text-[10px] font-black uppercase text-primary/60 tracking-widest">Cadeia de Custódia Digital</p>
             <p className="text-xs font-bold">Handoff Logística → Qualidade: <span className="text-primary underline cursor-pointer hover:text-primary/80 transition-colors">Auditado por Blockchain ID</span></p>
+            <div className="flex items-center gap-1 mt-1 text-[9px] text-muted-foreground font-medium bg-background/50 px-2 py-0.5 rounded-full w-fit">
+               <ShieldCheck className="h-2.5 w-2.5 text-primary" />
+               ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}
+            </div>
           </div>
         </div>
         <Button variant="ghost" size="sm" className="h-8 text-[10px] font-black uppercase gap-1.5 text-primary/70">
