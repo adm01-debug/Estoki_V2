@@ -6,7 +6,7 @@ import { SEO } from "@/components/common/SEO";
  import { EmptyState } from "@/components/common/EmptyState";
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle, ArrowRightCircle } from "lucide-react";
+import { Plus, Search, Package, ChevronRight, Loader2, Truck, Clock, CheckCircle, AlertTriangle, XCircle, ArrowRightCircle, ShieldCheck } from "lucide-react";
 import { haptics } from "@/utils/haptics";
 import AppLayout from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecebimentos } from "../hooks/useRecebimentos";
 import { NovoRecebimentoDialog } from "../components/NovoRecebimentoDialog";
+import { ImportarNFDialog } from "../components/ImportarNFDialog";
 import { Progress } from "@/components/ui/progress";
 
 type StatusRecebimento = 'aguardando' | 'em_transito' | 'recebido' | 'em_conferencia' | 'conferido' | 'divergencia' | 'cancelado';

@@ -1,6 +1,7 @@
  import { useState, useEffect, useMemo } from "react";
  import { useParams, useNavigate } from "react-router-dom";
-import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download, Info } from "lucide-react";
+import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download, Info, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button"; 
