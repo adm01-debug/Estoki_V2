@@ -38,27 +38,30 @@ export function AmostragemAutomatica({
   useEffect(() => {
     if (sku && mockHistoricoDefeitos[sku]) {
       const hist = mockHistoricoDefeitos[sku];
-      // Se taxa de defeito histórico < 2% e mais de 5 triagens, sugere Reduzido
+      // Se não há histórico de defeitos e mais de 5 triagens, sugere Reduzido
       if (hist.totalTriagens >= 5) {
-        const taxaDefeito = hist.historico.reduce((acc, curr) => acc + (curr.aprovados === 0 ? 1 : 0), 0) / hist.totalTriagens;
-        
-        if (taxaDefeito === 0) {
+        if (hist.historico.length === 0) {
           setRecomendacaoInteligente("aql_reduzido");
           setMetodoSelecionado("aql_reduzido");
           toast("Amostragem Inteligente Ativada", {
             description: "Histórico impecável detectado. Sugerimos inspeção reduzida.",
             icon: <Sparkles className="h-4 w-4 text-yellow-500" />
           });
-        } else if (taxaDefeito > 0.3) {
-          setRecomendacaoInteligente("aql_rigoroso");
-          setMetodoSelecionado("aql_rigoroso");
-          toast.warning("Alerta de Amostragem Progressiva", {
-            description: "Histórico com recorrência de falhas. Rigor aumentado."
-          });
+        } else {
+          // Se tem defeito recorrente (algum com > 50% de ocorrência), sugere Rigoroso
+          const temRecorrente = hist.historico.some(d => d.percentualLotes >= 50);
+          if (temRecorrente) {
+            setRecomendacaoInteligente("aql_rigoroso");
+            setMetodoSelecionado("aql_rigoroso");
+            toast.warning("Alerta de Amostragem Progressiva", {
+              description: "Histórico com recorrência de falhas. Rigor aumentado."
+            });
+          }
         }
       }
     }
   }, [sku]);
+
 
 
   const calculos = useMemo(() => {
