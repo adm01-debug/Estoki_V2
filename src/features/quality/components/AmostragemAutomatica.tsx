@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   MetodoAmostragem,
   tabelaAQL,
@@ -9,6 +9,10 @@ import {
 } from "./amostragemUtils";
 import { AmostragemProgresso } from "./AmostragemProgresso";
 import { AmostragemSelecao } from "./AmostragemSelecao";
+import { mockHistoricoDefeitos } from "./DefeitoHistorico";
+import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
+
 
 interface AmostragemAutomaticaProps {
   tamanhoLote: number;
