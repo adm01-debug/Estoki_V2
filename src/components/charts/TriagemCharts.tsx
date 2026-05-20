@@ -42,6 +42,26 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
 
   return (
     <div className="space-y-4">
+      <div className="flex items-center justify-between bg-card/50 p-3 rounded-2xl border border-border/20">
+        <div className="flex items-center gap-4">
+          <Badge variant="outline" className="h-8 rounded-full border-primary/20 bg-primary/5 text-primary text-[10px] font-black uppercase">
+            Quality Dashboard 2.0
+          </Badge>
+          <div className="h-4 w-px bg-border" />
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">OEE Global:</span>
+            <span className="text-sm font-black text-primary">94.2%</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="h-8 rounded-lg text-[10px] font-bold uppercase gap-2">
+            <Filter className="h-3 w-3" /> Filtros Avançados
+          </Button>
+          <Button variant="outline" size="sm" className="h-8 rounded-lg text-[10px] font-bold uppercase">
+            30 Dias
+          </Button>
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className={chartCardClass}>
           <CardHeader className="pb-2"><CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status Operacional</CardTitle></CardHeader>
