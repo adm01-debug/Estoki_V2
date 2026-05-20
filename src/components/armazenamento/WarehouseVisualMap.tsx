@@ -6,11 +6,16 @@ import { Info, MapPin } from "lucide-react";
 interface PosicaoSugerida {
   id: string;
   codigo: string;
+  zona?: string;
+  tipo: string;
+  status: string;
+  score: number;
+  motivos: string[];
   rua: string;
   nivelNumero: number;
   coluna: number;
-  status: string;
-  score: number;
+  ocupacaoAtual?: number;
+  capacidadeMax?: number;
 }
 
 interface WarehouseVisualMapProps {
