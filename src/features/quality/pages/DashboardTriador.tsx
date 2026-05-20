@@ -455,14 +455,6 @@ export default function DashboardTriadorPage() {
               </CardContent>
             </Card>
           </TabsContent>
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="ranking" className="space-y-4">
             <Card>
