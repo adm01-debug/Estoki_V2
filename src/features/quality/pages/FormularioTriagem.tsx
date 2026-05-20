@@ -2,8 +2,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
- import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus, AlertCircle } from "lucide-react";
- import { toast } from "sonner";
+import { Loader2, AlertTriangle, CheckCircle2, XCircle, ImagePlus, AlertCircle, Calculator, Target, ChevronRight, Sparkles, Trophy, Star } from "lucide-react";
+import { toast } from "sonner";
 import { useTriagens } from "../hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
@@ -12,7 +12,7 @@ import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHi
 import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Trophy, Star } from "lucide-react";
+import { haptics } from "@/utils/haptics";
 
 // Modularized Components
  import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
@@ -48,16 +48,20 @@ export default function FormularioTriagem() {
   const [triagem, setTriagem] = useState<any>(null);
   const [loadingTriagem, setLoadingTriagem] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
   const [checklist, setChecklist] = useState<Record<string, boolean>>({});
   const [observacoes, setObservacoes] = useState("");
   const [quantidadeAprovada, setQuantidadeAprovada] = useState(0);
   const [quantidadeReprovada, setQuantidadeReprovada] = useState(0);
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
-   const [showCelebration, setShowCelebration] = useState(false);
-   const [hasChanges, setHasChanges] = useState(false);
+  const [quantidadeConserto, setQuantidadeConserto] = useState(0);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
   const [missingReported, setMissingReported] = useState(false);
+  const [defectCategory, setDefectCategory] = useState<string>("funcional");
+  const [productivity, setProductivity] = useState({ itemsPerHour: 0, efficiency: 100 });
  
     const quantidadeTotal = (triagem as any)?.lotes?.quantidade_inicial || (triagem as any)?.quantidade_total || 100;
 
@@ -194,14 +198,18 @@ export default function FormularioTriagem() {
       { id: 5, label: "Resultado", description: "Finalização do laudo" },
     ];
  
-   const currentStep = useMemo(() => {
-     if (Object.keys(checklist).length === 0) return 0;
-     const volumesConferidos = volumes.filter(v => v.conferido).length;
-     if (volumesConferidos < volumes.length && !missingReported) return 1;
-     if (!amostragemConfirmada) return 2;
-     if (fotos.length < 2) return 3;
-     return 4;
-   }, [checklist, volumes, amostragemConfirmada, fotos, missingReported]);
+   const currentStep = activeStep;
+  
+   const canGoNext = useMemo(() => {
+     switch (activeStep) {
+       case 0: return volumes.every(v => v.conferido);
+       case 1: return amostragemConfirmada;
+       case 2: return todosItensVerificados();
+       case 3: return fotos.length >= 2;
+       case 4: return true;
+       default: return false;
+     }
+   }, [activeStep, volumes, amostragemConfirmada, checklist, fotos]);
  
    return (
      <AppLayout title="Formulário de Triagem" showBack>
@@ -219,138 +227,258 @@ export default function FormularioTriagem() {
           onIniciar={iniciarTimer}
         />
 
+        {/* Operator HUD - Real-time stats */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="fixed top-24 right-4 z-40 hidden lg:block"
+        >
+          <div className="bg-background/80 backdrop-blur-md border border-primary/20 p-4 rounded-2xl shadow-xl space-y-3 w-48">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Sessão Ativa</span>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">Produtividade</p>
+              <p className="text-xl font-black text-primary">{Math.round(quantidadeAprovada + quantidadeReprovada)} <span className="text-[10px]">itens</span></p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">Precisão</p>
+              <div className="h-1.5 w-full bg-muted rounded-full mt-1 overflow-hidden">
+                <div className="h-full bg-primary" style={{ width: '98%' }} />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
          <div className="space-y-6">
-           {volumes.length > 0 && (
-             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-               <VolumeContagem
-                 volumes={volumes}
-                 totalEsperado={quantidadeTotal}
-                 onVolumeChange={(volId, val) => {
-                   setHasChanges(true);
-                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, qtdContada: val } : v));
-                 }}
-                 onVolumeConfirm={(volId) => {
-                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, conferido: true } : v));
-                 }}
-                 onVolumeIntegrityChange={(volId, integrity) => {
-                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, integridade: integrity } : v));
-                 }}
-                 onReportMissing={(volId) => {
-                   setMissingReported(true);
-                   toast.warning("Alerta de Extravio Emitido", {
-                     description: `O volume ${volId} foi marcado como ausente. A gerência foi notificada.`,
-                     duration: 5000,
-                   });
-                 }}
-                 onVolumeHandoff={(volId) => {
-                   setVolumes(prev => prev.map(v => v.id === volId ? { ...v, handoffConfirmado: true } : v));
-                   toast.success(`Volume ${volId} liberado para triagem interna.`);
-                 }}
-               />
-             </motion.div>
-           )}
+           <AnimatePresence mode="wait">
+             {activeStep === 0 && (
+               <motion.div 
+                 key="step-0"
+                 initial={{ opacity: 0, x: 20 }} 
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+                 className="space-y-6"
+               >
+                 <Card className="border-primary/20 shadow-lg overflow-hidden">
+                   <CardHeader className="bg-primary/5 border-b border-primary/10">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                       <Calculator className="h-5 w-5 text-primary" />
+                       Fase 1: Conferência de Volumes
+                     </CardTitle>
+                     <CardDescription>Valide a integridade física de cada caixa/volume.</CardDescription>
+                   </CardHeader>
+                   <CardContent className="pt-6">
+                     {volumes.length > 0 && (
+                       <VolumeContagem
+                         volumes={volumes}
+                         totalEsperado={quantidadeTotal}
+                         onVolumeChange={(volId, val) => {
+                           setHasChanges(true);
+                           setVolumes(prev => prev.map(v => v.id === volId ? { ...v, qtdContada: val } : v));
+                         }}
+                         onVolumeConfirm={(volId) => {
+                           setVolumes(prev => prev.map(v => v.id === volId ? { ...v, conferido: true } : v));
+                         }}
+                         onVolumeIntegrityChange={(volId, integrity) => {
+                           setVolumes(prev => prev.map(v => v.id === volId ? { ...v, integridade: integrity } : v));
+                         }}
+                         onReportMissing={(volId) => {
+                           setMissingReported(true);
+                           toast.warning("Alerta de Extravio Emitido", {
+                             description: `O volume ${volId} foi marcado como ausente.`,
+                             duration: 5000,
+                           });
+                         }}
+                         onVolumeHandoff={(volId) => {
+                           setVolumes(prev => prev.map(v => v.id === volId ? { ...v, handoffConfirmado: true } : v));
+                           toast.success(`Volume ${volId} liberado.`);
+                         }}
+                       />
+                     )}
+                   </CardContent>
+                 </Card>
+               </motion.div>
+             )}
 
-           {missingReported && (
-             <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-top duration-300">
-               <div className="bg-destructive/20 p-2 rounded-full">
-                 <AlertCircle className="h-6 w-6 text-destructive" />
-               </div>
-               <div className="flex-1">
-                 <p className="text-sm font-black text-destructive uppercase tracking-tighter">Material Faltante Detectado</p>
-                 <p className="text-xs text-destructive/80">O processo continuará com ressalva. A discrepância de volumes será registrada no laudo final.</p>
-               </div>
+             {activeStep === 1 && (
+               <motion.div 
+                 key="step-1"
+                 initial={{ opacity: 0, x: 20 }} 
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+               >
+                 <Card className="border-primary/20 shadow-lg">
+                   <CardHeader className="bg-primary/5 border-b border-primary/10">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                       <Target className="h-5 w-5 text-primary" />
+                       Fase 2: Amostragem Estatística
+                     </CardTitle>
+                     <CardDescription>Defina o rigor da inspeção com base no nível de confiança.</CardDescription>
+                   </CardHeader>
+                   <CardContent className="pt-6">
+                     {mostrarAmostragem && quantidadeTotal > 0 && (
+                       <AmostragemAutomatica
+                         tamanhoLote={quantidadeTotal}
+                         onConfirmarAmostra={() => setAmostragemConfirmada(true)}
+                       />
+                     )}
+                   </CardContent>
+                 </Card>
+               </motion.div>
+             )}
+
+             {activeStep === 2 && (
+               <motion.div 
+                 key="step-2"
+                 initial={{ opacity: 0, x: 20 }} 
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+                 className="space-y-6"
+               >
+                 <ChecklistCard 
+                   checklist={checklist}
+                   onChecklistChange={handleChecklistChange}
+                 />
+                 
+                 {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
+                   <DefeitoHistorico
+                     sku={triagem.produto_sku}
+                     produto={triagem.produto_nome || "Produto"}
+                     historico={mockHistoricoDefeitos[triagem.produto_sku].historico}
+                     totalTriagens={mockHistoricoDefeitos[triagem.produto_sku].totalTriagens}
+                   />
+                 )}
+               </motion.div>
+             )}
+
+             {activeStep === 3 && (
+               <motion.div 
+                 key="step-3"
+                 initial={{ opacity: 0, x: 20 }} 
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+               >
+                 <Card className="border-primary/20 shadow-lg">
+                   <CardHeader className="bg-primary/5 border-b border-primary/10">
+                     <CardTitle className="text-lg flex items-center gap-2">
+                       <ImagePlus className="h-5 w-5 text-primary" />
+                       Fase 4: Evidências Fotográficas
+                     </CardTitle>
+                     <CardDescription>Capture fotos em alta resolução para rastreabilidade técnica.</CardDescription>
+                   </CardHeader>
+                   <CardContent className="pt-6">
+                     <FotosLoteObrigatorias
+                       triagemId={id}
+                       fotos={fotos}
+                       onAddFoto={handleAddFoto}
+                       onRemoveFoto={handleRemoveFoto}
+                       uploading={loadingFotos}
+                     />
+                   </CardContent>
+                 </Card>
+               </motion.div>
+             )}
+
+             {activeStep === 4 && (
+               <motion.div 
+                 key="step-4"
+                 initial={{ opacity: 0, x: 20 }} 
+                 animate={{ opacity: 1, x: 0 }}
+                 exit={{ opacity: 0, x: -20 }}
+                 className="space-y-6"
+               >
+                 <ResultadoInspecaoCard 
+                   quantidadeTotal={quantidadeTotal}
+                   quantidadeAprovada={quantidadeAprovada}
+                   setQuantidadeAprovada={setQuantidadeAprovada}
+                   quantidadeReprovada={quantidadeReprovada}
+                   setQuantidadeReprovada={setQuantidadeReprovada}
+                   quantidadeConserto={quantidadeConserto}
+                   setQuantidadeConserto={setQuantidadeConserto}
+                   observacoes={observacoes}
+                   setObservacoes={setObservacoes}
+                 />
+
+                 <Card className="border-primary/20">
+                    <CardContent className="pt-6">
+                      <div className="space-y-4">
+                        <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Causa Raiz do Defeito (Se houver)</p>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                          {['Funcional', 'Estético', 'Embalagem', 'Incompleto'].map((cat) => (
+                            <Button
+                              key={cat}
+                              variant={defectCategory === cat.toLowerCase() ? "default" : "outline"}
+                              className="h-10 rounded-xl text-[10px] font-bold uppercase"
+                              onClick={() => setDefectCategory(cat.toLowerCase())}
+                            >
+                              {cat}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                 </Card>
+               </motion.div>
+             )}
+           </AnimatePresence>
+         </div>
+
+         <div className="flex gap-4 pt-6 sticky bottom-4 z-30 bg-background/80 backdrop-blur-md p-2 rounded-2xl border border-border/20 shadow-2xl">
+           {activeStep > 0 && (
+             <Button
+               variant="outline"
+               className="h-12 rounded-xl border-border/40 font-bold uppercase px-8"
+               onClick={() => setActiveStep(prev => prev - 1)}
+             >
+               Voltar
+             </Button>
+           )}
+           
+           {activeStep < 4 ? (
+             <Button
+               className="flex-1 h-12 rounded-xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest glow-button"
+               onClick={() => {
+                 haptics.medium();
+                 if (canGoNext) setActiveStep(prev => prev + 1);
+                 else toast.warning("Complete a fase atual para prosseguir.");
+               }}
+             >
+               Próxima Fase
+               <ChevronRight className="ml-2 h-5 w-5" />
+             </Button>
+           ) : (
+             <div className="flex-1 flex gap-4">
+               <Button
+                 variant="outline"
+                 className="flex-1 h-12 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/5 font-black uppercase tracking-widest"
+                 onClick={() => handleSubmit("reprovado")}
+                 disabled={submitting}
+               >
+                 {submitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <XCircle className="h-5 w-5 mr-2" />}
+                 Reprovar
+               </Button>
+               <Button
+                 variant="default"
+                 className="flex-1 h-12 rounded-xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest"
+                 onClick={() => handleSubmit("aprovado")}
+                 disabled={submitting}
+               >
+                 {submitting ? <Loader2 className="h-5 w-5 animate-spin mr-2" /> : <CheckCircle2 className="h-5 w-5 mr-2" />}
+                 Aprovar e Liberar
+               </Button>
              </div>
-           )}
-
-           {mostrarAmostragem && quantidadeTotal > 0 && !amostragemConfirmada && (
-             <AmostragemAutomatica
-               tamanhoLote={quantidadeTotal}
-               onConfirmarAmostra={() => setAmostragemConfirmada(true)}
-             />
            )}
          </div>
 
-        <ChecklistCard 
-          checklist={checklist}
-          onChecklistChange={handleChecklistChange}
-        />
-
-        {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
-          <DefeitoHistorico
-            sku={triagem.produto_sku}
-            produto={triagem.produto_nome || "Produto"}
-            historico={mockHistoricoDefeitos[triagem.produto_sku].historico}
-            totalTriagens={mockHistoricoDefeitos[triagem.produto_sku].totalTriagens}
-          />
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <ImagePlus className="h-5 w-5" />
-              Fotos do Lote
-            </CardTitle>
-            <CardDescription>
-              Tire fotos do produto para documentação
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FotosLoteObrigatorias
-              triagemId={id}
-              fotos={fotos}
-              onAddFoto={handleAddFoto}
-              onRemoveFoto={handleRemoveFoto}
-              uploading={loadingFotos}
-            />
-          </CardContent>
-        </Card>
-
-        <ResultadoInspecaoCard 
-          quantidadeTotal={quantidadeTotal}
-          quantidadeAprovada={quantidadeAprovada}
-          setQuantidadeAprovada={setQuantidadeAprovada}
-          quantidadeReprovada={quantidadeReprovada}
-          setQuantidadeReprovada={setQuantidadeReprovada}
-          observacoes={observacoes}
-          setObservacoes={setObservacoes}
-        />
-
-        <div className="flex gap-4 pt-6">
-          <Button
-            variant="outline"
-            className="flex-1 h-12 rounded-xl border-destructive/20 text-destructive hover:bg-destructive/5 font-black uppercase tracking-widest"
-            onClick={() => handleSubmit("reprovado")}
-            disabled={submitting}
-          >
-            {submitting ? (
-              <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            ) : (
-              <XCircle className="h-5 w-5 mr-2" />
-            )}
-            Reprovar Lote
-          </Button>
-          <Button
-            variant="default"
-            className="flex-1 h-12 rounded-xl shadow-xl shadow-primary/20 font-black uppercase tracking-widest"
-            onClick={() => handleSubmit("aprovado")}
-            disabled={submitting || !todosItensVerificados() || (volumes.length > 0 && !volumes.every(v => v.conferido))}
-          >
-            {submitting ? (
-              <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            ) : (
-              <CheckCircle2 className="h-5 w-5 mr-2" />
-            )}
-            Aprovar e Liberar
-          </Button>
-        </div>
-
-        {!todosItensVerificados() && (
-          <p className="text-sm text-amber-500 text-center flex items-center justify-center gap-1">
-            <AlertTriangle className="h-4 w-4" />
-            Complete todos os itens do checklist para aprovar
-          </p>
-        )}
-      </div>
+         {!canGoNext && activeStep < 4 && (
+           <p className="text-sm text-amber-500 text-center flex items-center justify-center gap-1 animate-pulse">
+             <AlertTriangle className="h-4 w-4" />
+             Complete todos os requisitos da {steps[activeStep].label}
+           </p>
+         )}
+       </div>
 
       <AnimatePresence>
         {showCelebration && (
