@@ -3,9 +3,11 @@ import { useTarefas } from "@/hooks/useTarefas";
 import { toast } from "sonner";
 import { TipoTarefa, StatusTarefa, PrioridadeTarefa, statusLabels, tipoLabels } from "@/types/tarefas";
 
+const COLORS = ['hsl(var(--primary))', 'hsl(142, 76%, 36%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)', 'hsl(221, 83%, 53%)'];
+
 export function useGestaoTarefasPage() {
   const { tarefas, isLoading, error, createTarefa, completarTarefa } = useTarefas();
-  const safeTarefas = tarefas ?? [];
+  const safeTarefas = useMemo(() => tarefas ?? [], [tarefas]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
@@ -35,8 +37,6 @@ export function useGestaoTarefasPage() {
       return matchSearch && matchStatus && matchTipo;
     });
   }, [safeTarefas, searchTerm, filtroStatus, filtroTipo]);
-
-  const COLORS = ['hsl(var(--primary))', 'hsl(142, 76%, 36%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)', 'hsl(221, 83%, 53%)'];
 
   const dadosStatus = useMemo(() => {
     return Object.entries(statusLabels).map(([status, label], i) => ({

@@ -41,7 +41,7 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
     queryFn: () => productService.getAll({ page: 1, pageSize: 100 })
   });
 
-  const produtos = result?.data || [];
+  const produtos = useMemo(() => result?.data || [], [result?.data]);
 
   const createProduto = useMutation({
     mutationFn: productService.create,
