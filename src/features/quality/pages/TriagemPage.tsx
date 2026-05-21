@@ -47,7 +47,7 @@ export default function TriagemPage() {
   const clearSelection = () => setSelectedIds([]);
  
   
-  const items = triagens || [];
+  const items = useMemo(() => triagens || [], [triagens]);
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");

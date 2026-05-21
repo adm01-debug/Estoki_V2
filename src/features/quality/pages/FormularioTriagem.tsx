@@ -1,4 +1,4 @@
- import { useState, useEffect, useMemo } from "react";
+ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -110,9 +110,9 @@ export default function FormularioTriagem() {
      setChecklist(prev => ({ ...prev, [itemId]: checked }));
    };
 
-  const todosItensVerificados = () => {
+  const todosItensVerificados = useCallback(() => {
     return checklistItems.every(item => checklist[item.id] === true);
-  };
+  }, [checklist]);
 
    const handleAddFoto = async (file: File, tipo: FotoTriagem['tipo']): Promise<FotoTriagem | null> => {
      setHasChanges(true);
@@ -185,7 +185,7 @@ export default function FormularioTriagem() {
        case 4: return true;
        default: return false;
      }
-   }, [activeStep, volumes, amostragemConfirmada, checklist, fotos]);
+   }, [activeStep, volumes, amostragemConfirmada, fotos, todosItensVerificados]);
 
   if (loadingTriagem || triagensLoading) {
     return (

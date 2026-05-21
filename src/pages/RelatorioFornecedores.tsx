@@ -17,9 +17,9 @@ export default function RelatorioFornecedoresPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [classificacaoFilter, setClassificacaoFilter] = useState<string>("todos");
 
-  const estatisticas = useMemo(() => getEstatisticasGerais(), [fornecedores]);
-  const topFornecedores = useMemo(() => getTopFornecedores(5), [fornecedores]);
-  const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [fornecedores]);
+  const estatisticas = useMemo(() => getEstatisticasGerais(), [getEstatisticasGerais]);
+  const topFornecedores = useMemo(() => getTopFornecedores(5), [getTopFornecedores]);
+  const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [getFornecedoresCriticos]);
 
   const fornecedoresFiltrados = useMemo(() => {
     return fornecedores.filter(f => {

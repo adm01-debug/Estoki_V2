@@ -38,7 +38,7 @@ export default function EstoquePage() {
   const navigate = useNavigate();
    const { posicoes, loading, error, getEstatisticas, refetch, updatePosicao } = useEstoque({ enableRealtime: true });
   const { log } = useAuditLog();
-  const safePositions = posicoes ?? [];
+  const safePositions = useMemo(() => posicoes ?? [], [posicoes]);
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const toggleSelection = (id: string) => setSelectedIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);

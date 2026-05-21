@@ -45,7 +45,7 @@ const CHART_COLORS: Record<string, string> = {
      const matchTipo = tipoFiltro === "todos" || mov.tipo === tipoFiltro;
      const matchOperador = operadorFiltro === "todos" || mov.operador_id === operadorFiltro;
      return dentroDoPeriodo && matchSearch && matchTipo && matchOperador;
-  }), [movimentacoes, searchTerm, tipoFiltro, dataInicio, dataFim]);
+  }), [movimentacoes, searchTerm, tipoFiltro, operadorFiltro, dataInicio, dataFim]);
 
   const kpis = useMemo(() => {
     const entradas = dadosFiltrados.filter(m => m.tipo === "recebimento_nf" || m.tipo === "devolucao");

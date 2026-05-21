@@ -222,6 +222,8 @@ export function useDivergencias(diasIniciais: number = 30): UseDivergenciasRetur
     }
     
     return resultados;
+    // getTopFornecedoresCriticos é declarado adiante neste hook (TDZ); incluí-lo no array quebraria o render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [divergencias, enviarAlertaDivergencia]);
 
   // KPIs calculados

@@ -69,7 +69,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
      document.body.removeChild(link);
    };
  
-  const posicoes = rawPosicoes || [];
+  const posicoes = useMemo(() => rawPosicoes || [], [rawPosicoes]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [tipoFilter, setTipoFilter] = useState<string>("todos");
@@ -84,7 +84,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
     });
   }, [posicoes, search, statusFilter, tipoFilter]);
 
-  const stats = useMemo(() => getEstatisticas(), [posicoes, getEstatisticas]);
+  const stats = useMemo(() => getEstatisticas(), [getEstatisticas]);
 
   if (loading) {
     return (

@@ -36,7 +36,7 @@ export default function RecebimentoPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { recebimentos, isLoading, error } = useRecebimentos();
   
-  const items = recebimentos || [];
+  const items = useMemo(() => recebimentos || [], [recebimentos]);
   
   const [searchTerm, setSearchTerm] = useState(searchParams.get("q") || "");
   const [statusFilter, setStatusFilter] = useState<string>(searchParams.get("status") || "todos");
