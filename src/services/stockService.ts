@@ -13,7 +13,25 @@ export const stockService = {
   async createMovement(movement: Omit<StockMovement, 'id' | 'created_at' | 'previous_qty' | 'new_qty'>) {
     const { data: product } = await from('products').select('stock_quantity').eq('id', movement.product_id).single();
     const previousQty = product?.stock_quantity || 0;
-    const newQty = movement.type === 'IN' ? previousQty + movement.quantity : previousQty - movement.quantity;
+    let newQty: number;
+    switch (movement.type) {
+      case 'IN':
+        newQty = previousQty + movement.quantity;
+        break;
+      case 'OUT':
+        newQty = previousQty - movement.quantity;
+        break;
+      case 'ADJUSTMENT':
+        // quantity is treated as a signed delta (positive = add, negative = remove)
+        newQty = previousQty + movement.quantity;
+        break;
+      case 'TRANSFER':
+        // Transfers move stock between locations; total product quantity is unchanged
+        newQty = previousQty;
+        break;
+      default:
+        newQty = previousQty;
+    }
     if (newQty < 0) throw new Error('Estoque insuficiente');
     await from('products').update({ stock_quantity: newQty }).eq('id', movement.product_id);
     const { data, error } = await from('stock_movements').insert({ ...movement, previous_qty: previousQty, new_qty: newQty }).select().single();

@@ -82,17 +82,13 @@ interface BreadcrumbsProps {
  export function Breadcrumbs({ className }: BreadcrumbsProps) {
    const location = useLocation();
    const pathname = location.pathname;
- 
-   // Don't show on home or dashboard
-   if (pathname === '/' || pathname === '/dashboard') return null;
- 
-   const segments = pathname.split('/').filter(Boolean);
-   
+
    // Enhanced breadcrumb building with dynamic support
    const crumbs = useMemo(() => {
+     const segments = pathname.split('/').filter(Boolean);
      const items: { label: string; href?: string }[] = [{ label: 'Início', href: '/' }];
      let accumulatedPath = '';
- 
+
      segments.forEach((segment, i) => {
        accumulatedPath += `/${segment}`;
        const isLast = i === segments.length - 1;
@@ -115,7 +111,10 @@ interface BreadcrumbsProps {
      });
      return items;
    }, [pathname]);
- 
+
+   // Don't show on home or dashboard
+   if (pathname === '/' || pathname === '/dashboard') return null;
+
    if (crumbs.length <= 1) return null;
  
    const container = {

@@ -22,7 +22,7 @@ export const orderService = {
              *,
              produto:produtos(nome, sku)
            )
-         `)
+         `, { count: 'exact' })
          .order("created_at", { ascending: false });
 
         if (filters?.status) query = query.eq("status", filters.status);

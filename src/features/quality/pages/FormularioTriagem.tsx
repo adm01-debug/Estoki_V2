@@ -176,6 +176,17 @@ export default function FormularioTriagem() {
     }
   };
 
+   const canGoNext = useMemo(() => {
+     switch (activeStep) {
+       case 0: return volumes.every(v => v.conferido);
+       case 1: return amostragemConfirmada;
+       case 2: return todosItensVerificados();
+       case 3: return fotos.length >= 2;
+       case 4: return true;
+       default: return false;
+     }
+   }, [activeStep, volumes, amostragemConfirmada, checklist, fotos]);
+
   if (loadingTriagem || triagensLoading) {
     return (
       <AppLayout title="Triagem" showBack>
@@ -209,18 +220,7 @@ export default function FormularioTriagem() {
     ];
  
    const currentStep = activeStep;
-  
-   const canGoNext = useMemo(() => {
-     switch (activeStep) {
-       case 0: return volumes.every(v => v.conferido);
-       case 1: return amostragemConfirmada;
-       case 2: return todosItensVerificados();
-       case 3: return fotos.length >= 2;
-       case 4: return true;
-       default: return false;
-     }
-   }, [activeStep, volumes, amostragemConfirmada, checklist, fotos]);
- 
+
    return (
      <AppLayout title="Formulário de Triagem" showBack>
        <LeaveGuard hasChanges={hasChanges} />

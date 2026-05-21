@@ -39,8 +39,12 @@ const typeConfig = {
    const [recentSearches, setRecentSearches] = useState<string[]>([]);
    // Load recent searches
    useEffect(() => {
-     const saved = localStorage.getItem("recent-searches");
-     if (saved) setRecentSearches(JSON.parse(saved));
+     try {
+       const saved = localStorage.getItem("recent-searches");
+       if (saved) setRecentSearches(JSON.parse(saved));
+     } catch {
+       /* ignore corrupted localStorage */
+     }
    }, []);
  
    const addRecentSearch = (term: string) => {

@@ -4,8 +4,9 @@ export function useRefreshOnFocus(callback: () => void) {
   savedCallback.current = callback;
   useEffect(() => {
     const handler = () => { if (document.visibilityState === 'visible') savedCallback.current(); };
+    const focusHandler = () => savedCallback.current();
     document.addEventListener('visibilitychange', handler);
-    window.addEventListener('focus', () => savedCallback.current());
-    return () => { document.removeEventListener('visibilitychange', handler); window.removeEventListener('focus', () => savedCallback.current()); };
+    window.addEventListener('focus', focusHandler);
+    return () => { document.removeEventListener('visibilitychange', handler); window.removeEventListener('focus', focusHandler); };
   }, []);
 }

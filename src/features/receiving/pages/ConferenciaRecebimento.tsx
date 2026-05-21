@@ -174,6 +174,23 @@ export default function ConferenciaRecebimento() {
     }
   };
 
+   const currentStep = useMemo(() => {
+     if (!itemScanned || !locationScanned) return 0;
+     const allVolumesConferidos = volumes.every(v => v.conferido);
+     const allHandoffs = volumes.every(v => v.handoffConfirmado);
+     if (!allVolumesConferidos) return 1;
+     if (!allHandoffs) return 2;
+     return 3;
+   }, [itemScanned, locationScanned, volumes]);
+
+   const volumesFaltantes = useMemo(() => {
+     return volumes.filter(v => v.conferido && v.integridade === 'critico').length;
+   }, [volumes]);
+
+   const volumesNaoEncontrados = useMemo(() => {
+     return volumes.filter(v => !v.conferido).length;
+   }, [volumes]);
+
   if (isLoading) {
     return (
       <AppLayout title="Conferência" showBack>
@@ -202,24 +219,7 @@ export default function ConferenciaRecebimento() {
      ? (quantidadeConferida / quantidadeEsperada) * 100 
      : 0;
    const temDivergencia = quantidadeConferida !== quantidadeEsperada && quantidadeConferida > 0;
- 
-   const currentStep = useMemo(() => {
-     if (!itemScanned || !locationScanned) return 0;
-     const allVolumesConferidos = volumes.every(v => v.conferido);
-     const allHandoffs = volumes.every(v => v.handoffConfirmado);
-     if (!allVolumesConferidos) return 1;
-     if (!allHandoffs) return 2;
-     return 3;
-   }, [itemScanned, locationScanned, volumes]);
 
-   const volumesFaltantes = useMemo(() => {
-     return volumes.filter(v => v.conferido && v.integridade === 'critico').length;
-   }, [volumes]);
-
-   const volumesNaoEncontrados = useMemo(() => {
-     return volumes.filter(v => !v.conferido).length;
-   }, [volumes]);
- 
    const steps = [
      { id: 1, label: "Validação", description: "Escanear item e local" },
      { id: 2, label: "Conferência", description: "Conferir volumes e integridade" },
