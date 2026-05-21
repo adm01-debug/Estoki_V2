@@ -225,6 +225,36 @@ export type Database = {
           },
         ]
       }
+      analytics_events: {
+        Row: {
+          event: string
+          id: string
+          properties: Json | null
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          event: string
+          id?: string
+          properties?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          event?: string
+          id?: string
+          properties?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       aprovacoes_movimentacao: {
         Row: {
           aprovador_id: string | null
@@ -2412,6 +2442,53 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      quality_inspections: {
+        Row: {
+          created_at: string
+          id: string
+          inspection_type: string
+          inspector_id: string | null
+          metadata: Json | null
+          passed: boolean
+          product_id: string | null
+          results: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inspection_type: string
+          inspector_id?: string | null
+          metadata?: Json | null
+          passed?: boolean
+          product_id?: string | null
+          results?: Json | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inspection_type?: string
+          inspector_id?: string | null
+          metadata?: Json | null
+          passed?: boolean
+          product_id?: string | null
+          results?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quality_inspections_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       query_telemetry: {
         Row: {
