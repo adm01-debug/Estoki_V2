@@ -48,7 +48,7 @@ export type ProdutoFormData = z.infer<typeof produtoSchema>;
 export const romaneioSchema = z.object({
   motorista: z.string().trim().min(2, msg.min(2)).max(100, msg.max(100)),
   placa_veiculo: z.string().trim().min(7, "Placa deve ter pelo menos 7 caracteres").max(10, msg.max(10))
-    .regex(/^[A-Za-z0-9\-]+$/, msg.invalidPlaca),
+    .regex(/^[A-Za-z0-9-]+$/, msg.invalidPlaca),
   tipo_veiculo: z.string().trim().max(50, msg.max(50)).optional().or(z.literal("")),
   data_prevista_entrega: z.string().min(1, "Selecione a data prevista"),
   rota: z.string().trim().max(200, msg.max(200)).optional().or(z.literal("")),

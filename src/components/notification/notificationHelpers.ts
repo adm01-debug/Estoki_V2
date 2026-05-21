@@ -30,7 +30,7 @@ export const playNotificationSound = (type: 'info' | 'warning' | 'critical' = 'i
     const duration = type === 'critical' ? 0.15 : 0.1;
     oscillator.type = 'sine';
     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    let time = audioContext.currentTime;
+    const time = audioContext.currentTime;
     freqs.forEach((freq, i) => { oscillator.frequency.setValueAtTime(freq, time + i * duration); });
     const totalDuration = freqs.length * duration;
     gainNode.gain.exponentialRampToValueAtTime(0.01, time + totalDuration);

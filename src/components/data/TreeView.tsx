@@ -10,7 +10,7 @@ function TreeNodeItem({ node, onSelect, level = 0 }: { node: TreeNode; onSelect?
   const hasChildren = node.children && node.children.length > 0;
   return (
     <div style={{ paddingLeft: level * 16 }}>
-      <div className="flex items-center gap-1 p-1 hover:bg-accent rounded cursor-pointer" onClick={() => { hasChildren && setExpanded(!expanded); onSelect?.(node); }}>
+      <div className="flex items-center gap-1 p-1 hover:bg-accent rounded cursor-pointer" onClick={() => { if (hasChildren) setExpanded(!expanded); onSelect?.(node); }}>
         {hasChildren ? (expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />) : <span className="w-4" />}
         <span>{node.label}</span>
       </div>

@@ -73,7 +73,7 @@ export default function Etiquetas() {
   const filteredEntregas = useMemo(() => { if (!searchTerm) return entregas; const t = searchTerm.toLowerCase(); return entregas.filter(e => e.cliente.toLowerCase().includes(t) || (e.pedido_referencia || "").toLowerCase().includes(t) || (e.nf_saida || "").toLowerCase().includes(t) || (e.romaneio_codigo || "").toLowerCase().includes(t)); }, [entregas, searchTerm]);
   const currentItems = fonte === "lotes" ? filteredLotes : filteredEntregas;
 
-  const toggleSelect = (id: string) => { setSelectedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; }); };
+  const toggleSelect = (id: string) => { setSelectedIds(prev => { const n = new Set(prev); if (n.has(id)) n.delete(id); else n.add(id); return n; }); };
   const selectAll = () => { if (selectedIds.size === currentItems.length) setSelectedIds(new Set()); else setSelectedIds(new Set(currentItems.map(i => i.id))); };
 
   const handleGenerate = async (action: "download" | "print") => {

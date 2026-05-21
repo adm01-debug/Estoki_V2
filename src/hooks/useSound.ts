@@ -18,7 +18,7 @@ export function useSound() {
       audioRef.current = new Audio(sounds[sound]);
       audioRef.current.volume = volume;
       audioRef.current.play().catch(() => {});
-    } catch {}
+    } catch { /* ignore audio playback errors */ }
   }, []);
 
   const playSuccess = useCallback(() => play('success'), [play]);

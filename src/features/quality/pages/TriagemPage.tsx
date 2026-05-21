@@ -68,7 +68,7 @@ export default function TriagemPage() {
   }, [bindPullRefresh]);
 
   const filteredAndSortedItems = useMemo(() => {
-    let filtered = (items as any[]).filter((item) => {
+    const filtered = (items as any[]).filter((item) => {
       const matchesSearch =
         item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (item.lote_id?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);

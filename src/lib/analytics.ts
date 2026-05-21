@@ -9,7 +9,7 @@ export function initAnalytics() {
 
      window.dataLayer = window.dataLayer || [];
      const dataLayer = window.dataLayer;
-     window.gtag = function () { dataLayer.push(arguments); };
+     window.gtag = function (...args: unknown[]) { dataLayer.push(args); };
     window.gtag("js", new Date());
     window.gtag("config", import.meta.env.VITE_GA_ID);
   }

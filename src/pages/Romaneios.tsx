@@ -67,7 +67,7 @@ export default function RomaneiosPage() {
     const validation = validateForm(romaneioSchema, novoRomaneio);
     if (!validation.success) { setFormErrors(validation.errors); return; }
     setFormErrors({});
-    try { await criarRomaneio(novoRomaneio); setNovoRomaneioOpen(false); setNovoRomaneio({ motorista: "", placa_veiculo: "", tipo_veiculo: "", data_prevista_entrega: "", rota: "" }); } catch {}
+    try { await criarRomaneio(novoRomaneio); setNovoRomaneioOpen(false); setNovoRomaneio({ motorista: "", placa_veiculo: "", tipo_veiculo: "", data_prevista_entrega: "", rota: "" }); } catch { /* erro tratado no hook */ }
   };
 
   const handleFieldChange = (field: string, value: string) => {

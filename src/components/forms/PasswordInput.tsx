@@ -93,7 +93,7 @@ export function PasswordInput({
     uppercase: !requirements.uppercase || /[A-Z]/.test(value),
     lowercase: !requirements.lowercase || /[a-z]/.test(value),
     number: !requirements.number || /\d/.test(value),
-    special: !requirements.special || /[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\;'`~]/.test(value),
+    special: !requirements.special || /[!@#$%^&*(),.?":{}|<>_\-+=[\]\\;'`~]/.test(value),
   };
 
   const passed = Object.values(checks).filter(Boolean).length;
