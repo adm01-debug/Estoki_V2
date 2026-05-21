@@ -38,9 +38,19 @@ export const barcodeService = {
   },
 
   async generateBarcode(type: 'EAN13' | 'CODE128'): Promise<string> {
-    // Implementação simplificada de geração
-    const prefix = type === 'EAN13' ? '789' : 'EST';
     const random = Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
-    return `${prefix}${random}`;
+
+    if (type === 'EAN13') {
+      // 12 dígitos base (prefixo 789 = Brasil) + dígito verificador EAN-13
+      const base = `789${random}`;
+      let soma = 0;
+      for (let i = 0; i < 12; i++) {
+        soma += parseInt(base[i], 10) * (i % 2 === 0 ? 1 : 3);
+      }
+      const digitoVerificador = (10 - (soma % 10)) % 10;
+      return `${base}${digitoVerificador}`;
+    }
+
+    return `EST${random}`;
   }
 };
