@@ -28,6 +28,8 @@ export function GamificacaoLoja() {
   useEffect(() => {
     fetchLoja();
     fetchSaldo();
+    // recarrega ao trocar de usuário
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   async function fetchLoja() {

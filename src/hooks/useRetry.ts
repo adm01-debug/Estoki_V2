@@ -9,6 +9,6 @@ export function useRetry<T>(asyncFn: () => Promise<T>, maxRetries = 3, delay = 1
       catch (e) { setError(e as Error); if (i < maxRetries) { setIsRetrying(true); await new Promise(r => setTimeout(r, delay * Math.pow(2, i))); setIsRetrying(false); } }
     }
     throw error;
-  }, [asyncFn, maxRetries, delay]);
+  }, [asyncFn, maxRetries, delay, error]);
   return { execute, attempts, error, isRetrying };
 }

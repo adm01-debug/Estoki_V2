@@ -52,6 +52,8 @@ export function useKeyboardShortcuts() {
         return;
       }
     }
+    // shortcuts é definido estaticamente pelo consumidor; evita recriar o handler a cada render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [navigate]);
 
   useEffect(() => {

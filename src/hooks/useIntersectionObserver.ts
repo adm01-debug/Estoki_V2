@@ -9,6 +9,8 @@ export function useIntersectionObserver<T extends HTMLElement>(options?: Options
     const observer = new IntersectionObserver(([e]) => { setIsIntersecting(e.isIntersecting); setEntry(e); }, options);
     observer.observe(ref.current);
     return () => observer.disconnect();
+    // observa novamente apenas quando as opções escalares mudam (options é objeto novo a cada render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options?.threshold, options?.root, options?.rootMargin]);
   return [ref, isIntersecting, entry];
 }

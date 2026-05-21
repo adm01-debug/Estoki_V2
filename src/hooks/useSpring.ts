@@ -13,6 +13,8 @@ export function useSpring(target: number, config = { stiffness: 170, damping: 26
     };
     raf.current = requestAnimationFrame(animate);
     return () => { if (raf.current) cancelAnimationFrame(raf.current); };
+    // value é lido como ponto de partida da animação; incluí-lo reiniciaria a cada frame
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, config.stiffness, config.damping]);
   return value;
 }

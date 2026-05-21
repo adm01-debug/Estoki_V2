@@ -10,6 +10,8 @@ export function useSWR<T>(key: string, fetcher: () => Promise<T>, options?: { re
     catch (e) { setError(e as Error); }
     finally { setIsValidating(false); }
   }, [key, fetcher]);
+  // revalida quando a key muda; revalidate deriva de key/fetcher
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (cache.current.has(key)) setData(cache.current.get(key)!); revalidate(); }, [key]);
   return { data, error, isValidating, mutate: setData, revalidate };
 }

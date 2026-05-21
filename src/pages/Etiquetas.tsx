@@ -55,6 +55,8 @@ export default function Etiquetas() {
     finally { setLoading(false); }
   }, [toast, previewId]);
 
+  // recarrega ao trocar a fonte; fetchLotes/fetchEntregas dependem de previewId e não devem disparar aqui
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { setSelectedIds(new Set()); setPreviewId(null); setQrUrl(null); if (fonte === "lotes") fetchLotes(); else fetchEntregas(); }, [fonte]);
 
   useEffect(() => {

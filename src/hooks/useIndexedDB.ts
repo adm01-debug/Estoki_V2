@@ -6,6 +6,8 @@ export function useIndexedDB(dbName: string, storeName: string) {
     request.onupgradeneeded = () => { request.result.createObjectStore(storeName, { keyPath: 'id' }); };
     request.onsuccess = () => setDb(request.result);
     return () => { db?.close(); };
+    // db é definido por este efeito; incluí-lo reabriria a conexão em loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dbName, storeName]);
   const get = useCallback(async (id: string) => { if (!db) return null; return new Promise((resolve) => { const tx = db.transaction(storeName, 'readonly'); const store = tx.objectStore(storeName); const req = store.get(id); req.onsuccess = () => resolve(req.result); }); }, [db, storeName]);
   const set = useCallback(async (data: unknown) => { if (!db) return; const tx = db.transaction(storeName, 'readwrite'); tx.objectStore(storeName).put(data); }, [db, storeName]);

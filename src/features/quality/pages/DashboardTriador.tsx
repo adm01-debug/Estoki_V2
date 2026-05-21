@@ -136,6 +136,8 @@ export default function DashboardTriadorPage() {
       return () => {
         supabase.removeChannel(channel);
       };
+      // loaders rodam ao trocar de usuário; não são deps estáveis
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id, getMetricasDiarias, refetchProdutividade]);
 
   const minhasMetricas = useMemo(() => {

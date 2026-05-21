@@ -47,12 +47,12 @@ const typeConfig = {
      }
    }, []);
  
-   const addRecentSearch = (term: string) => {
+   const addRecentSearch = useCallback((term: string) => {
      if (!term || term.length < 2) return;
      const newRecent = [term, ...recentSearches.filter(t => t !== term)].slice(0, 5);
      setRecentSearches(newRecent);
      localStorage.setItem("recent-searches", JSON.stringify(newRecent));
-   };
+   }, [recentSearches]);
  
    const removeRecentSearch = (term: string) => {
      const newRecent = recentSearches.filter(t => t !== term);
@@ -132,7 +132,7 @@ const typeConfig = {
        setOpen(false);
        setQuery("");
      },
-     [navigate, light, recentSearches]
+     [navigate, light, addRecentSearch]
    );
 
   return (

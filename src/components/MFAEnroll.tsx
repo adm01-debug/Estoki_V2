@@ -25,6 +25,8 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
         cancelEnrollment();
       }
     };
+    // limpeza apenas no unmount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleStart = async () => {

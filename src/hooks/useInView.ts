@@ -7,6 +7,8 @@ export function useInView<T extends HTMLElement>(options?: IntersectionObserverI
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), options);
     observer.observe(ref.current);
     return () => observer.disconnect();
+    // observa novamente apenas quando as opções escalares mudam (options é objeto novo a cada render)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options?.threshold, options?.root, options?.rootMargin]);
   return [ref, inView];
 }

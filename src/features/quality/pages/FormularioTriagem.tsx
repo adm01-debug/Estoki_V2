@@ -103,6 +103,8 @@ export default function FormularioTriagem() {
     return () => {
       pararTimer();
     };
+    // iniciarTimer/pararTimer não são deps estáveis; recarrega por id/triagens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, triagens]);
 
    const handleChecklistChange = (itemId: string, checked: boolean) => {

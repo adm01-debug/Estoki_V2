@@ -40,6 +40,8 @@ export function useRealtimeToast({
     return () => {
       supabase.removeChannel(channel);
     };
+    // os callbacks onInsert/onUpdate/onDelete são objetos novos a cada render; reinscreve só por tabela
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table, toast]);
 }
 

@@ -30,6 +30,8 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
       newDate.setMinutes(minutes);
       setDate(newDate);
     }
+    // setDate é callback do componente pai; sincroniza ao mudar selectedDate/time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, time]);
 
   return (

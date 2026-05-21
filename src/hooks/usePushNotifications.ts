@@ -53,6 +53,8 @@ export function usePushNotifications() {
       toast.error('Erro ao solicitar permissão de notificações');
       return false;
     }
+    // showNotification é declarado adiante neste hook (TDZ)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSupported]);
 
   const showNotification = useCallback((options: PushNotificationOptions): Notification | null => {

@@ -23,6 +23,8 @@ export function useQuery<T>(queryKey: string, queryFn: () => Promise<T>, options
 
   useEffect(() => {
     if (enabled) fetch();
+    // refetch apenas quando enabled/queryKey mudam
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, queryKey]);
 
   useEffect(() => {

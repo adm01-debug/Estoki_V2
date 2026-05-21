@@ -14,6 +14,8 @@ export function Counter({ value, duration = 1000, prefix, suffix, className }: C
       if (progress < 1) requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
+    // displayValue é capturado como valor inicial da animação; incluí-lo reiniciaria a cada frame
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, duration]);
   return <span className={cn("tabular-nums", className)}>{prefix}{displayValue.toLocaleString('pt-BR')}{suffix}</span>;
 }

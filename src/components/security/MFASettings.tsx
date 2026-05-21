@@ -19,6 +19,8 @@ export const MFASettings: React.FC = () => {
 
   useEffect(() => {
     loadMFAStatus();
+    // carrega status uma vez na montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMFAStatus = async () => {

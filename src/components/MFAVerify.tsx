@@ -21,6 +21,8 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
     if (!propFactorId) {
       loadFactors();
     }
+    // loadFactors é declarado adiante; recarrega apenas quando propFactorId muda
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propFactorId]);
 
   const loadFactors = async () => {

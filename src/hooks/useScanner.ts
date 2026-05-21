@@ -208,6 +208,8 @@ export function useScanner(): UseScannerReturn {
     } finally {
       setIsLoading(false);
     }
+    // processQRCode é declarado adiante neste hook (TDZ)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const processQRCode = useCallback(async (qrData: string): Promise<ScanResult | null> => {

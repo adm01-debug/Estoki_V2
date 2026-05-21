@@ -29,6 +29,8 @@ export function Countdown({ targetDate, onComplete }: CountdownProps) {
       }
     }, 1000);
     return () => clearInterval(timer);
+    // calculateTimeLeft deriva de targetDate, já presente nas deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDate, onComplete]);
 
   return (
