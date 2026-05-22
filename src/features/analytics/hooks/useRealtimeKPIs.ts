@@ -54,6 +54,11 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
     }, 300);
   }, [queryClient]);
 
+  const optionsRef = useRef(options);
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
+
   useEffect(() => {
     const channel = supabase
       .channel("kpi-realtime-updates")
@@ -62,8 +67,8 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
         { event: "*", schema: "public", table: "metricas_operacionais" },
         (payload) => {
           invalidateQueries([["metricas_operacionais"], ["dashboard"]]);
-          options.onMetricUpdate?.();
-          if (showToasts && payload.eventType === "INSERT") {
+          optionsRef.current.onMetricUpdate?.();
+          if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
             toast.info("KPIs atualizados", { duration: 3000 });
           }
         }
@@ -78,7 +83,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
             ["ocupacao_por_porta_palete"],
             ["dashboard"],
           ]);
-          options.onPositionUpdate?.();
+          optionsRef.current.onPositionUpdate?.();
         }
       )
       .on(
@@ -90,7 +95,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
             ["posicoes_estoque"],
             ["dashboard"],
           ]);
-          options.onPositionUpdate?.();
+          optionsRef.current.onPositionUpdate?.();
         }
       )
       .on(
@@ -102,8 +107,8 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
             ["eventos_triagem"],
             ["dashboard"],
           ]);
-          options.onTriageUpdate?.();
-          if (showToasts && payload.eventType === "INSERT") {
+          optionsRef.current.onTriageUpdate?.();
+          if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
             toast.success("Triagem registrada", { duration: 2000 });
           }
         }
@@ -113,7 +118,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
         { event: "*", schema: "public", table: "eventos_picking" },
         () => {
           invalidateQueries([["metricas_operacionais"], ["eventos_picking"], ["dashboard"]]);
-          options.onPickingUpdate?.();
+          optionsRef.current.onPickingUpdate?.();
         }
       )
       .on(
@@ -121,7 +126,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
         { event: "*", schema: "public", table: "tarefas" },
         () => {
           invalidateQueries([["tarefas"], ["ondas_separacao"], ["dashboard"]]);
-          options.onTaskUpdate?.();
+          optionsRef.current.onTaskUpdate?.();
         }
       )
       .on(
@@ -129,8 +134,8 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
         { event: "*", schema: "public", table: "lotes" },
         (payload) => {
           invalidateQueries([["lotes"], ["recebimentos"], ["dashboard"]]);
-          options.onLoteUpdate?.();
-          if (showToasts && payload.eventType === "INSERT") {
+          optionsRef.current.onLoteUpdate?.();
+          if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
             toast.info("Novo lote recebido", { duration: 2000 });
           }
         }
@@ -159,8 +164,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
       supabase.removeChannel(channel);
       setStatus(prev => ({ ...prev, isConnected: false }));
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [invalidateQueries, showToasts]);
+  }, [invalidateQueries]);
 
   return status;
 }
