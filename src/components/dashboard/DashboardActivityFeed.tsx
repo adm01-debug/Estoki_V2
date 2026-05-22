@@ -5,10 +5,11 @@ import { ptBR } from "date-fns/locale";
 import { Activity, Package, User, ShoppingCart, Truck, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { AuditLogEntry } from "@/services/auditService";
 
 export const DashboardActivityFeed = () => {
-  const { logs, isLoading } = useAuditLog();
-  const recentLogs = logs.slice(0, 5);
+  const { logs, isLoading } = useAuditLog({ pageSize: 5 });
+  const recentLogs = Array.isArray(logs) ? logs.slice(0, 5) : [];
 
   const getIcon = (action: string, type: string) => {
     if (type === "produto") return <Package className="h-4 w-4 text-blue-500" />;
@@ -37,7 +38,7 @@ export const DashboardActivityFeed = () => {
 
   return (
     <div className="space-y-1">
-      {recentLogs.map((log, index) => (
+      {recentLogs.map((log: AuditLogEntry, index: number) => (
         <motion.div
           key={log.id}
           initial={{ opacity: 0, x: -10 }}
@@ -80,7 +81,7 @@ export const DashboardActivityFeed = () => {
         </motion.div>
       ))}
       
-      {logs.length === 0 && (
+      {(!Array.isArray(logs) || logs.length === 0) && (
         <div className="py-12 text-center">
           <Activity className="h-8 w-8 text-muted-foreground/30 mx-auto mb-3" />
           <p className="text-xs text-muted-foreground font-medium">Nenhuma atividade recente registrada.</p>
