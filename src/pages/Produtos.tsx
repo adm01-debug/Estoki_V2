@@ -1,23 +1,21 @@
 import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Search, Plus, Filter, X, Download } from "lucide-react";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { useProdutos } from "@/hooks/useProdutos";
-import { produtoSchema, validateForm } from "@/lib/validations";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
-import { ProdutoFormDialog, ProdutoFormData } from "@/components/produtos/ProdutoFormDialog";
+import { ProdutoFormDialog } from "@/components/produtos/ProdutoFormDialog";
 import { ProdutoDetailDialog } from "@/components/produtos/ProdutoDetailDialog";
 import type { Produto } from "@/types/product";
 import { ProductGrid } from "@/components/produtos/ProductGrid";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
 import { useDebounce } from "@/hooks/useDebounce";
+import { type ProdutoFormData } from "@/components/produtos/produtoSchema";
 
 export default function ProdutosPage() {
   const { produtos, loading: productsLoading, createProduto, stats } = useProdutos();
@@ -27,12 +25,6 @@ export default function ProdutosPage() {
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
-  const [formData, setFormData] = useState<ProdutoFormData>({
-    sku: "", nome: "", descricao: "", unidade: "UN",
-    estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0,
-    peso_unitario: 0, fornecedor_principal: "",
-  });
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (search !== debouncedSearch) {
@@ -43,28 +35,18 @@ export default function ProdutosPage() {
     }
   }, [search, debouncedSearch]);
 
-   const handleSave = async () => {
-     const validation = validateForm(produtoSchema, formData);
-     if (!validation.success) { setFormErrors(validation.errors); return; }
-     setFormErrors({});
-     await createProduto.mutateAsync({
-       sku: formData.sku, 
-       nome: formData.nome,
-       descricao: formData.descricao || null,
-       unidade: formData.unidade,
-       estoque_minimo: formData.estoque_minimo,
-       estoque_maximo: formData.estoque_maximo,
-       ponto_pedido: formData.ponto_pedido,
-       peso_unitario: formData.peso_unitario || null,
-       fornecedor_principal: formData.fornecedor_principal || null,
-     }, {
-       onSuccess: () => {
-         setShowAddDialog(false);
-         setFormData({ sku: "", nome: "", descricao: "", unidade: "UN", estoque_minimo: 0, estoque_maximo: 0, ponto_pedido: 0, peso_unitario: 0, fornecedor_principal: "" });
-         setFormErrors({});
-       }
-     });
-   };
+  const handleSave = async (data: ProdutoFormData) => {
+    await createProduto.mutateAsync({
+      ...data,
+      descricao: data.descricao || null,
+      peso_unitario: data.peso_unitario || null,
+      fornecedor_principal: data.fornecedor_principal || null,
+    }, {
+      onSuccess: () => {
+        setShowAddDialog(false);
+      }
+    });
+  };
 
   const filtered = useMemo(() => {
     return produtos.filter((p) => {
@@ -74,18 +56,18 @@ export default function ProdutosPage() {
     });
   }, [produtos, search, curvaFilter]);
 
-   const handleExport = () => {
-     const headers = ["SKU", "Nome", "Unidade", "Curva ABC", "Estoque Min", "Estoque Max", "Fornecedor"];
-     const rows = filtered.map(p => [p.sku, p.nome, p.unidade, p.curva_abc || "", p.estoque_minimo, p.estoque_maximo, p.fornecedor_principal || ""]);
-     const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-     const link = document.createElement("a");
-     link.href = URL.createObjectURL(blob);
-     link.setAttribute("download", `produtos_estoki_${new Date().toISOString().split('T')[0]}.csv`);
-     document.body.appendChild(link);
-     link.click();
-     document.body.removeChild(link);
-   };
+  const handleExport = () => {
+    const headers = ["SKU", "Nome", "Unidade", "Curva ABC", "Estoque Min", "Estoque Max", "Fornecedor"];
+    const rows = filtered.map(p => [p.sku, p.nome, p.unidade, p.curva_abc || "", p.estoque_minimo, p.estoque_maximo, p.fornecedor_principal || ""]);
+    const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute("download", `produtos_estoki_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const getCurvaBadge = (curva?: string | null) => {
     switch (curva) {
@@ -96,31 +78,31 @@ export default function ProdutosPage() {
     }
   };
 
-   if (productsLoading) {
-     return (
-       <AppLayout title="Produtos" showBack>
-         <RouteLoadingFallback type="table" />
-       </AppLayout>
-     );
-   }
+  if (productsLoading) {
+    return (
+      <AppLayout title="Produtos" showBack>
+        <RouteLoadingFallback type="table" />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout
       title="Produtos"
       showBack
-       rightAction={
-         <div className="flex gap-2">
-            <BulkImportDialog />
-           <Button size="sm" variant="outline" className="gap-2" onClick={handleExport} title="Exportar CSV">
-             <Download className="h-4 w-4" />
-             <span className="hidden sm:inline">Exportar</span>
-           </Button>
-           <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
-             <Plus className="h-4 w-4" />
-             <span className="hidden sm:inline">Novo Produto</span>
-           </Button>
-         </div>
-       }
+      rightAction={
+        <div className="flex gap-2">
+          <BulkImportDialog />
+          <Button size="sm" variant="outline" className="gap-2" onClick={handleExport} title="Exportar CSV">
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+          <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
+            <Plus className="h-4 w-4" />
+            <span className="hidden sm:inline">Novo Produto</span>
+          </Button>
+        </div>
+      }
     >
       <PageTransition>
         <div className="p-4 space-y-4">
@@ -156,16 +138,12 @@ export default function ProdutosPage() {
         </div>
       </PageTransition>
 
-       <ProdutoFormDialog
-         open={showAddDialog}
-         onOpenChange={setShowAddDialog}
-         formData={formData}
-         setFormData={setFormData}
-         formErrors={formErrors}
-         setFormErrors={setFormErrors}
-         saving={createProduto.isPending}
-         onSave={handleSave}
-       />
+      <ProdutoFormDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        saving={createProduto.isPending}
+        onSave={handleSave}
+      />
 
       <ProdutoDetailDialog produto={selectedProduto} onClose={() => setSelectedProduto(null)} getCurvaBadge={getCurvaBadge} />
     </AppLayout>
