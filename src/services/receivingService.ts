@@ -14,9 +14,9 @@ export const receivingService = {
   },
 
   async createRecebimento(payload: Partial<LoteInsert>): Promise<RecebimentoItem> {
-    const finalPayload = {
-      numero_lote: payload.numero_lote,
-      produto_id: payload.produto_id,
+    const finalPayload: LoteInsert = {
+      numero_lote: payload.numero_lote || '',
+      produto_id: payload.produto_id || '',
       quantidade_inicial: payload.quantidade_inicial || 0,
       quantidade_atual: payload.quantidade_atual || 0,
       quantidade_pedida: payload.quantidade_pedida,
@@ -31,7 +31,7 @@ export const receivingService = {
 
     const { data, error } = await supabase
       .from('lotes')
-      .insert(finalPayload as any)
+      .insert(finalPayload)
       .select()
       .single();
     

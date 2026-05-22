@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Upload, Loader2, FileText } from "lucide-react";
+import { logger } from "@/utils/logger";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TemplateCard } from "./TemplateCard";
@@ -87,7 +88,10 @@ export function ImportSection() {
              });
  
              const { error } = await (supabase.from(template.table as any) as any).insert(insertData);
-             if (error) throw error;
+             if (error) {
+               logger.error('Erro ao inserir registro durante importação', error, { table: template.table });
+               throw error;
+             }
              importResult.success++;
            } catch (err: any) {
              importResult.errors.push({ 
