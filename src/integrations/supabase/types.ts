@@ -1397,6 +1397,50 @@ export type Database = {
           },
         ]
       }
+      inventory_lots: {
+        Row: {
+          batch_number: string
+          created_at: string | null
+          id: string
+          location: string | null
+          metadata: Json | null
+          product_id: string | null
+          quantity: number | null
+          received_at: string | null
+          status: string | null
+        }
+        Insert: {
+          batch_number: string
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          product_id?: string | null
+          quantity?: number | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          batch_number?: string
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          product_id?: string | null
+          quantity?: number | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_lots_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ip_whitelist: {
         Row: {
           created_at: string
@@ -1424,6 +1468,45 @@ export type Database = {
           id?: string
           ip_address?: unknown
           is_active?: boolean
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          aisle: string | null
+          bin: string | null
+          created_at: string | null
+          id: string
+          level: string | null
+          rack: string | null
+          status: string | null
+          updated_at: string | null
+          warehouse_id: string | null
+          zone: string | null
+        }
+        Insert: {
+          aisle?: string | null
+          bin?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          rack?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+          zone?: string | null
+        }
+        Update: {
+          aisle?: string | null
+          bin?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          rack?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+          zone?: string | null
         }
         Relationships: []
       }
@@ -1509,6 +1592,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lot_movements: {
+        Row: {
+          created_at: string | null
+          id: string
+          lot_number: string
+          movement_type: string
+          quantity: number | null
+          to_location: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lot_number: string
+          movement_type: string
+          quantity?: number | null
+          to_location?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lot_number?: string
+          movement_type?: string
+          quantity?: number | null
+          to_location?: string | null
+        }
+        Relationships: []
       }
       lotes: {
         Row: {
@@ -2214,6 +2324,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pick_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       posicao_status_log: {
         Row: {
           created_at: string
@@ -2306,6 +2437,36 @@ export type Database = {
           tipo?: Database["public"]["Enums"]["tipo_posicao"]
           updated_at?: string
           zona?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          quality_status: string | null
+          sku: string
+          stock_quantity: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          quality_status?: string | null
+          sku: string
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          quality_status?: string | null
+          sku?: string
+          stock_quantity?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2440,6 +2601,57 @@ export type Database = {
           id?: string
           nome?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          items: Json | null
+          order_number: string
+          status: string | null
+          supplier_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          order_number: string
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          order_number?: string
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      putaway_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          receiving_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          receiving_id?: string | null
+          status?: string | null
         }
         Relationships: []
       }
@@ -2617,6 +2829,113 @@ export type Database = {
             columns: ["produto_id"]
             isOneToOne: false
             referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receiving_items: {
+        Row: {
+          created_at: string | null
+          expected_quantity: number
+          expiration_date: string | null
+          id: string
+          lot_number: string | null
+          notes: string | null
+          product_id: string | null
+          quality_status: string | null
+          received_at: string | null
+          received_quantity: number | null
+          receiving_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expected_quantity: number
+          expiration_date?: string | null
+          id?: string
+          lot_number?: string | null
+          notes?: string | null
+          product_id?: string | null
+          quality_status?: string | null
+          received_at?: string | null
+          received_quantity?: number | null
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expected_quantity?: number
+          expiration_date?: string | null
+          id?: string
+          lot_number?: string | null
+          notes?: string | null
+          product_id?: string | null
+          quality_status?: string | null
+          received_at?: string | null
+          received_quantity?: number | null
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiving_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receiving_items_receiving_id_fkey"
+            columns: ["receiving_id"]
+            isOneToOne: false
+            referencedRelation: "receivings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivings: {
+        Row: {
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string | null
+          id: string
+          items: Json | null
+          purchase_order_id: string | null
+          received_by: string | null
+          receiving_number: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          purchase_order_id?: string | null
+          received_by?: string | null
+          receiving_number: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          purchase_order_id?: string | null
+          received_by?: string | null
+          receiving_number?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivings_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
             referencedColumns: ["id"]
           },
         ]
@@ -3058,6 +3377,47 @@ export type Database = {
             columns: ["produto_id"]
             isOneToOne: false
             referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stock_movements: {
+        Row: {
+          created_at: string | null
+          from_location: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          to_location: string | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_location?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          to_location?: string | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_location?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          to_location?: string | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
