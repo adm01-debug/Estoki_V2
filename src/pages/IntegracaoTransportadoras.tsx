@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Truck, Search, MapPin, Clock, Package, CheckCircle2, XCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { logger } from '@/utils/logger';
 
 interface Rastreio {
   codigo: string;
