@@ -4,31 +4,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-
-export interface ProdutoFormData {
-  sku: string;
-  nome: string;
-  descricao: string;
-  unidade: string;
-  estoque_minimo: number;
-  estoque_maximo: number;
-  ponto_pedido: number;
-  peso_unitario: number;
-  fornecedor_principal: string;
-}
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { produtoSchema, type ProdutoFormData } from "./produtoSchema";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { useEffect } from "react";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  formData: ProdutoFormData;
-  setFormData: (data: ProdutoFormData) => void;
-  formErrors: Record<string, string>;
-  setFormErrors: (errors: Record<string, string> | ((p: Record<string, string>) => Record<string, string>)) => void;
+  initialData?: Partial<ProdutoFormData>;
   saving: boolean;
-  onSave: () => void;
+  onSave: (data: ProdutoFormData) => void;
 }
 
-export function ProdutoFormDialog({ open, onOpenChange, formData, setFormData, formErrors, setFormErrors, saving, onSave }: Props) {
+export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onSave }: Props) {
+  const form = useForm<ProdutoFormData>({
+    resolver: zodResolver(produtoSchema),
+    defaultValues: {
+      sku: "",
+      nome: "",
+      unidade: "UN",
+      estoque_minimo: 0,
+      estoque_maximo: 0,
+      ponto_pedido: 0,
+      peso_unitario: 0,
+      ...initialData
+    }
+  });
+
+  useEffect(() => {
+    if (open && initialData) {
+      form.reset({ ...form.getValues(), ...initialData });
+    }
+  }, [open, initialData, form]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">

@@ -3856,6 +3856,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_role_v2: {
+        Args: {
+          required_role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Returns: boolean
+      }
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number }
         Returns: undefined

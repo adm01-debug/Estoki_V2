@@ -53,7 +53,7 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
         id: data.id 
       });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(err.message || 'Erro ao salvar produto');
     }
   });
@@ -70,7 +70,7 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
         id: data.id 
       });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(err.message || 'Erro ao atualizar produto');
     }
   });
@@ -82,7 +82,7 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
       toast.success('Produto removido!');
       log.custom('delete', 'produtos', { id });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast.error(err.message || 'Erro ao remover produto');
     }
   });
