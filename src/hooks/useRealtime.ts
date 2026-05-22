@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { logger } from '@/utils/logger';
 import { supabase } from '@/integrations/supabase/client';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -16,8 +17,8 @@ export const useRealtime = (table: string, queryKey: string[]) => {
         queryClient.invalidateQueries({ queryKey: queryKeyRef.current });
       })
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED' && import.meta.env.DEV) {
-          console.log(`Subscribed to realtime changes for ${table}`);
+        if (status === 'SUBSCRIBED') {
+          logger.debug(`Subscribed to realtime changes for ${table}`);
         }
       });
 
