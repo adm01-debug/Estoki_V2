@@ -17,8 +17,8 @@ export function ExportSection() {
 
     setExporting(templateId);
     try {
-      const { data, error } = await supabase
-        .from(template.table as keyof Database['public']['Tables'])
+      const { data, error } = await (supabase as any)
+        .from(template.table)
         .select("*")
         .limit(5000);
         
