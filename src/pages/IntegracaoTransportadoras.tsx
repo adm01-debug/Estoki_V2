@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Truck, Search, MapPin, Clock, Package, CheckCircle2, XCircle, RefreshCw, ExternalLink } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { logger } from '@/utils/logger';
 
 interface Rastreio {
   codigo: string;
@@ -34,8 +35,23 @@ export default function IntegracaoTransportadoras() {
 
   useEffect(() => {
     const fetchRomaneios = async () => {
-      const { data } = await supabase.from('romaneios').select('id, codigo, motorista, status, data_saida').in('status', ['em_transito', 'confirmado']).order('data_saida', { ascending: false }).limit(20);
-      setRomaneios(data || []);
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('romaneios')
+          .select('id, codigo, motorista, status, data_saida')
+          .in('status', ['em_transito', 'confirmado'])
+          .order('data_saida', { ascending: false })
+          .limit(20);
+        
+        if (error) throw error;
+        setRomaneios(data || []);
+      } catch (err) {
+        logger.error("Erro ao carregar romaneios:", err);
+        toast.error("Não foi possível carregar os romaneios em trânsito.");
+      } finally {
+        setLoading(false);
+      }
     };
     fetchRomaneios();
   }, []);

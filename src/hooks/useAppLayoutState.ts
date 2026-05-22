@@ -59,10 +59,10 @@ export function useAppLayoutState() {
   }, []);
 
   useEffect(() => {
-    if (isSupported && permission === "default") {
-      requestPermission();
-    }
-  }, [isSupported, permission, requestPermission]);
+    // Notifications request permission should ideally be triggered by a user action
+    // or after some time, not immediately on every mount of the layout.
+    // Moved to a more appropriate place or handled via settings.
+  }, [isSupported, permission]);
 
   useEffect(() => {
     setMobileMenuOpen(false);

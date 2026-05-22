@@ -67,17 +67,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // 2) Hydrate: get the persisted session
     const hydrate = async () => {
+      logger.info("Iniciando hidratação de sessão...");
       try {
-        const { data } = await Promise.race([
+        const { data, error } = await Promise.race([
           supabase.auth.getSession(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("getSession timeout")), 3000)
+          new Promise<any>((_, reject) =>
+            setTimeout(() => reject(new Error("getSession timeout")), 5000)
           ),
         ]);
+
+        if (error) {
+          logger.error("Erro ao obter sessão:", error);
+        }
 
         if (!mounted) return;
 
         const sess = data?.session ?? null;
+        logger.info("Sessão recuperada:", { hasSession: !!sess, userId: sess?.user?.id });
+        
         setSession(sess);
         setUser(sess?.user ?? null);
 
@@ -90,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (mounted) {
           hydrated.current = true;
           setLoading(false);
+          logger.info("Hidratação concluída.");
         }
       }
     };
