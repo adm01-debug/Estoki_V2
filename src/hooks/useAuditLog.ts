@@ -2,18 +2,20 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Json } from "@/integrations/supabase/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { auditService } from "@/services/auditService";
-import type { AuditLogEntry, AuditAction } from "@/services/auditService";
+import type { AuditLogEntry, AuditAction, AuditFilter } from "@/services/auditService";
 
 export type { AuditLogEntry, AuditAction };
 
-export function useAuditLog() {
+export function useAuditLog(filters: AuditFilter = { pageSize: 200 }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   
-  const { data: logs = [], isLoading } = useQuery({
-    queryKey: ["audit-logs"],
-    queryFn: () => auditService.getAll(200) // Reduced from 1000 for better performance
+  const { data, isLoading } = useQuery({
+    queryKey: ["audit-logs", filters],
+    queryFn: () => auditService.getAll(filters)
   });
+
+  const logs = data?.data || [];
   
   const logAction = useMutation({
     mutationFn: async (entry: Omit<AuditLogEntry, "id" | "created_at" | "user_id">) => {
@@ -54,14 +56,23 @@ export function useAuditLog() {
   const getStats = () => {
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
-    const logsHoje = logs.filter(l => new Date(l.created_at) >= hoje);
+    const logsHoje = Array.isArray(logs) ? logs.filter(l => new Date(l.created_at) >= hoje) : [];
     const actionCounts: Record<string, number> = {};
     const entityCounts: Record<string, number> = {};
-    logs.forEach(l => {
-      actionCounts[l.action] = (actionCounts[l.action] || 0) + 1;
-      entityCounts[l.entity_type] = (entityCounts[l.entity_type] || 0) + 1;
-    });
-    return { total: logs.length, hoje: logsHoje.length, porAcao: actionCounts, porEntidade: entityCounts };
+    
+    if (Array.isArray(logs)) {
+      logs.forEach(l => {
+        actionCounts[l.action] = (actionCounts[l.action] || 0) + 1;
+        entityCounts[l.entity_type] = (entityCounts[l.entity_type] || 0) + 1;
+      });
+    }
+    
+    return { 
+      total: data?.count || logs.length, 
+      hoje: logsHoje.length, 
+      porAcao: actionCounts, 
+      porEntidade: entityCounts 
+    };
   };
   
   return { 
@@ -69,7 +80,8 @@ export function useAuditLog() {
     isLoading, 
     log, 
     getStats,
-    // Compatibilidad si se espera un loading booleano simple
+    count: data?.count || 0,
     loading: isLoading 
   };
 }
+

@@ -1,4 +1,4 @@
- import { AuditoriaEnterpriseViewer } from "@/components/admin/AuditoriaEnterpriseViewer";
+import { AuditoriaEnterpriseViewer } from "@/components/admin/AuditoriaEnterpriseViewer";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -22,22 +22,19 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { useAuditLog } from "@/hooks/useAuditLog";
-import type { AuditAction, AuditLogEntry } from "@/hooks/useAuditLog";
+import type { AuditAction, AuditLogEntry } from "@/services/auditService";
 import { useExport } from "@/hooks/useExport";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { 
   Search, 
   Download, 
-  Filter, 
   RefreshCw, 
   History, 
   Shield, 
   Activity, 
-  User,
   FileJson,
   Eye,
-  MoreVertical
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -57,11 +54,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { VirtualizedTable } from "@/components/data/VirtualizedTable";
 
 export default function AuditLogPage() {
-  const { logs, isLoading, getStats } = useAuditLog();
+  const [filters, setFilters] = useState({ page: 1, pageSize: 100 });
+  const { logs, isLoading, getStats } = useAuditLog(filters);
   
-   const { exportData, isExporting } = useExport<AuditLogEntry>({
-     table: "audit_log",
-     filename: `audit_log_${format(new Date(), "yyyy-MM-dd")}`,
+  const { exportData, isExporting } = useExport<AuditLogEntry>({
+    table: "audit_log",
+    filename: `audit_log_${format(new Date(), "yyyy-MM-dd")}`,
     columns: [
       { key: "created_at", header: "Data/Hora", transform: (v) => format(new Date(v as string), "dd/MM/yyyy HH:mm:ss") },
       { key: "user_email", header: "Usuário" },
@@ -71,23 +69,19 @@ export default function AuditLogPage() {
       { key: "ip_address", header: "IP" }
     ]
   });
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [actionFilter, setActionFilter] = useState<string>("all");
-  const [entityFilter, setEntityFilter] = useState<string>("all");
   const stats = getStats();
 
-  const filteredLogs = logs.filter((log) => {
+  const filteredLogs = Array.isArray(logs) ? logs.filter((log: AuditLogEntry) => {
     const matchesSearch = 
       log.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.entity_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
       log.entity_id?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesAction = actionFilter === "all" || log.action === actionFilter;
-    const matchesEntity = entityFilter === "all" || log.entity_type === entityFilter;
-
-    return matchesSearch && matchesAction && matchesEntity;
-  });
+    return matchesSearch;
+  }) : [];
 
   const getActionBadge = (action: AuditAction) => {
     switch (action) {
@@ -102,16 +96,14 @@ export default function AuditLogPage() {
     }
   };
 
-  const uniqueEntities = Array.from(new Set(logs.map(l => l.entity_type)));
+  const uniqueEntities = Array.from(new Set(Array.isArray(logs) ? logs.map((l: AuditLogEntry) => l.entity_type) : []));
 
   return (
     <AppLayout title="Logs de Auditoria" showBack>
       <PageTransition>
-         <div className="p-4 space-y-8">
-           {/* Relatório Enterprise Integrado */}
-           <AuditoriaEnterpriseViewer />
+        <div className="p-4 space-y-8">
+          <AuditoriaEnterpriseViewer />
  
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card>
               <CardHeader className="pb-2">
@@ -122,7 +114,7 @@ export default function AuditLogPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.total}</div>
-                <p className="text-xs text-muted-foreground">Últimos 1000 registros</p>
+                <p className="text-xs text-muted-foreground">Últimos registros</p>
               </CardContent>
             </Card>
             <Card>
@@ -134,7 +126,7 @@ export default function AuditLogPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.hoje}</div>
-                <p className="text-xs text-muted-foreground">Ações registradas nas últimas 24h</p>
+                <p className="text-xs text-muted-foreground">Ações registradas hoje</p>
               </CardContent>
             </Card>
             <Card>
@@ -151,7 +143,6 @@ export default function AuditLogPage() {
             </Card>
           </div>
 
-          {/* Filters */}
           <Card>
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row gap-4">
@@ -164,29 +155,6 @@ export default function AuditLogPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Select value={actionFilter} onValueChange={setActionFilter}>
-                  <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="Ação" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as Ações</SelectItem>
-                    <SelectItem value="create">Criação</SelectItem>
-                    <SelectItem value="update">Atualização</SelectItem>
-                    <SelectItem value="delete">Exclusão</SelectItem>
-                    <SelectItem value="login">Login</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={entityFilter} onValueChange={setEntityFilter}>
-                  <SelectTrigger className="w-full md:w-[180px]">
-                    <SelectValue placeholder="Entidade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as Entidades</SelectItem>
-                    {uniqueEntities.map(entity => (
-                      <SelectItem key={entity} value={entity}>{entity}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <Button variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
@@ -207,7 +175,6 @@ export default function AuditLogPage() {
             </CardContent>
           </Card>
 
-          {/* Table */}
           <Card>
             <CardHeader className="pb-0">
               <CardTitle>Histórico Detalhado</CardTitle>
@@ -225,12 +192,12 @@ export default function AuditLogPage() {
                     {
                       header: "Data/Hora",
                       className: "w-[180px] font-mono text-xs",
-                      cell: (log) => format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })
+                      cell: (log: AuditLogEntry) => format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })
                     },
                     {
                       header: "Usuário",
                       className: "flex-[2]",
-                      cell: (log) => (
+                      cell: (log: AuditLogEntry) => (
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{log.user_nome || "Sistema"}</span>
                           <span className="text-xs text-muted-foreground truncate">{log.user_email}</span>
@@ -240,12 +207,12 @@ export default function AuditLogPage() {
                     {
                       header: "Ação",
                       className: "w-[120px]",
-                      cell: (log) => getActionBadge(log.action)
+                      cell: (log: AuditLogEntry) => getActionBadge(log.action)
                     },
                     {
                       header: "Entidade",
                       className: "flex-1",
-                      cell: (log) => (
+                      cell: (log: AuditLogEntry) => (
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold uppercase">{log.entity_type}</span>
                           <span className="text-[10px] text-muted-foreground font-mono">{log.entity_id?.slice(0, 8)}</span>
@@ -255,12 +222,12 @@ export default function AuditLogPage() {
                     {
                       header: "Detalhes",
                       className: "flex-[2]",
-                      cell: (log) => <span className="text-sm truncate block">{log.entity_label || "-"}</span>
+                      cell: (log: AuditLogEntry) => <span className="text-sm truncate block">{log.entity_label || "-"}</span>
                     },
                     {
                       header: "Ver",
                       className: "w-[60px] text-right",
-                      cell: (log) => (
+                      cell: (log: AuditLogEntry) => (
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="ghost" size="icon">
@@ -297,7 +264,7 @@ export default function AuditLogPage() {
                                     <pre className="text-xs bg-success/5 p-2 rounded">{JSON.stringify(log.new_values, null, 2)}</pre>
                                   </div>
                                 )}
-                                {log.metadata && Object.keys(log.metadata).length > 0 && (
+                                {log.metadata && typeof log.metadata === 'object' && log.metadata !== null && Object.keys(log.metadata).length > 0 && (
                                   <div>
                                     <h4 className="text-xs font-bold uppercase text-primary mb-2">Metadados Adicionais</h4>
                                     <pre className="text-xs">{JSON.stringify(log.metadata, null, 2)}</pre>
@@ -325,3 +292,4 @@ export default function AuditLogPage() {
     </AppLayout>
   );
 }
+
