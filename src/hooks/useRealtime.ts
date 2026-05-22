@@ -16,7 +16,7 @@ export const useRealtime = (table: string, queryKey: string[]) => {
         queryClient.invalidateQueries({ queryKey: queryKeyRef.current });
       })
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
+        if (status === 'SUBSCRIBED' && import.meta.env.DEV) {
           console.log(`Subscribed to realtime changes for ${table}`);
         }
       });
