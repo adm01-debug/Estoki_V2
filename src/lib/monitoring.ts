@@ -1,25 +1,42 @@
 import * as Sentry from '@sentry/react';
+import { supabase } from '@/integrations/supabase/client';
+
+export const initMonitoring = () => {
+  if (import.meta.env.PROD) {
+    Sentry.init({
+      dsn: import.meta.env.VITE_SENTRY_DSN,
+      integrations: [
+        Sentry.browserTracingIntegration(),
+        Sentry.replayIntegration(),
+      ],
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+    });
+  }
+};
 
 export const logError = (error: Error, context?: Record<string, any>): void => {
   if (import.meta.env.DEV) console.error(error);
   Sentry.captureException(error, { extra: context });
+  
+  // Also log to Supabase for internal tracking if needed
+  supabase.from('audit_log').insert([{
+    action: 'error',
+    entity_type: 'system',
+    metadata: { message: error.message, ...context },
+    created_at: new Date().toISOString()
+  }]).then(({ error: pgError }) => {
+    if (pgError) console.error('Failed to log error to DB', pgError);
+  });
 };
 
-export const logMessage = (message: string, level: 'info' | 'warning' | 'error' = 'info'): void => {
-  Sentry.captureMessage(message, level);
-};
-
-export const setUserContext = (userId: string, email?: string): void => {
-  Sentry.setUser({ id: userId, email });
-};
-
-export const clearUserContext = (): void => {
-  Sentry.setUser(null);
-};
-
-export const trackPerformance = (name: string, fn: () => void): void => {
-  const start = performance.now();
-  fn();
-  const duration = performance.now() - start;
-  if (import.meta.env.DEV) console.log(`[Perf] ${name}: ${duration.toFixed(2)}ms`);
+export const trackEvent = (name: string, properties?: Record<string, any>) => {
+  if (import.meta.env.DEV) console.log(`[Event] ${name}:`, properties);
+  Sentry.addBreadcrumb({
+    category: 'event',
+    message: name,
+    data: properties,
+    level: 'info',
+  });
 };
