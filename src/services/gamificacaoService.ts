@@ -33,10 +33,11 @@ export const gamificacaoService = {
          return false;
        }
 
-      await (supabase.from as any)('xp_historico').insert({
+      await supabase.from('xp_historico').insert({
         user_id: userId,
-        xp_ganho: amount,
+        quantidade: amount,
         motivo: reason,
+        tipo: 'xp' as any
       });
 
       return true;
