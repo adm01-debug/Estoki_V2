@@ -333,7 +333,53 @@ export default function TriagemPage() {
               </div>
            </div>
 
+          {/* Gamification: Hall of Fame - Strategic Perfection Stage */}
+          {!zenMode && (
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-card/30 border border-primary/20 rounded-3xl p-6 shadow-xl backdrop-blur-sm relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-5">
+                <Trophy className="w-32 h-32 text-primary" />
+              </div>
+              
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                  <Trophy className="h-6 w-6 text-yellow-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black tracking-tight text-foreground uppercase italic">Guardiões da Acuracidade</h3>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Top 3 Operadores do Mês</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { name: 'Ana Silva', accuracy: '99.9%', items: 1240, rank: 1, color: 'text-yellow-500' },
+                  { name: 'Carlos Oliveira', accuracy: '99.5%', items: 980, rank: 2, color: 'text-gray-400' },
+                  { name: 'Juliana Mendes', accuracy: '99.2%', items: 850, rank: 3, color: 'text-orange-400' }
+                ].map((op, idx) => (
+                  <div key={idx} className="flex items-center gap-4 p-4 rounded-2xl bg-background/50 border border-border/40 hover:border-primary/40 transition-all hover:scale-[1.02] cursor-default">
+                    <div className={cn("w-10 h-10 rounded-full flex items-center justify-center font-black text-lg", op.color)}>
+                      {op.rank}º
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-black">{op.name}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-[9px] font-black h-4 px-1">{op.accuracy}</Badge>
+                        <span className="text-[10px] text-muted-foreground">{op.items} itens</span>
+                      </div>
+                    </div>
+                    <Star className={cn("h-4 w-4", op.rank === 1 ? "fill-yellow-500 text-yellow-500" : "text-muted-foreground/30")} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           <motion.div 
+
             layout
             className={cn(
               "flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border transition-all duration-300 shadow-sm",

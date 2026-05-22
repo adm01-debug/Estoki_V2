@@ -66,11 +66,37 @@ export function TriagemListItem({ item, idx, isSelected, onToggleSelection, onNa
               <p className="text-sm font-black text-foreground tracking-tight truncate">
                 {item.lote_id ? item.lote_id : "Não Vinculado"}
               </p>
+              
+              {/* Chain of Custody Timeline - Strategic Visual */}
+              <div className="flex items-center gap-1 mt-2">
+                {[
+                  { label: 'Logística', done: true },
+                  { label: 'Qualidade', done: !!item.data_inicio },
+                  { label: 'Auditado', done: !!item.data_fim },
+                  { label: 'Stock', done: item.resultado === 'aprovado' }
+                ].map((step, sidx) => (
+                  <div key={sidx} className="flex items-center group/step">
+                    <div 
+                      className={cn(
+                        "w-2 h-2 rounded-full border transition-all duration-500",
+                        step.done ? "bg-primary border-primary shadow-[0_0_5px_rgba(var(--primary-rgb),0.5)]" : "bg-muted border-border/40"
+                      )} 
+                      title={step.label}
+                    />
+                    {sidx < 3 && (
+                      <div className={cn(
+                        "w-3 h-[1px] transition-all duration-500",
+                        step.done ? "bg-primary" : "bg-border/20"
+                      )} />
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="space-y-1 sm:text-right">
               <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest block">Informações da Operação</span>
               <div className="flex flex-wrap sm:justify-end items-center gap-3 text-[11px] font-medium text-muted-foreground/70">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 hover:text-primary transition-colors cursor-help">
                   <User className="h-3 w-3" />
                   {item.operador_id?.slice(0, 8) || "Sistema"}
                 </div>
@@ -81,6 +107,7 @@ export function TriagemListItem({ item, idx, isSelected, onToggleSelection, onNa
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
