@@ -12,7 +12,7 @@ export function useAuditLog() {
   
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ["audit-logs"],
-    queryFn: () => auditService.getAll(1000)
+    queryFn: () => auditService.getAll(200) // Reduced from 1000 for better performance
   });
   
   const logAction = useMutation({
