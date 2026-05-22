@@ -1,11 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
 
-type TableName = keyof Database["public"]["Tables"];
+// Simplificando os tipos para evitar erros de profundidade de recursão no TypeScript
+// (TS2589: Type instantiation is excessively deep)
 
-export async function apiGet<T>(table: TableName, query?: Record<string, unknown>): Promise<T[]> {
+export async function apiGet<T>(table: string, query?: Record<string, unknown>): Promise<T[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let builder = supabase.from(table).select("*") as any;
+  let builder = supabase.from(table as any).select("*");
   if (query) {
     Object.entries(query).forEach(([key, value]) => {
       builder = builder.eq(key, value);
@@ -16,29 +16,29 @@ export async function apiGet<T>(table: TableName, query?: Record<string, unknown
   return (data ?? []) as T[];
 }
 
-export async function apiGetById<T>(table: TableName, id: string): Promise<T | null> {
+export async function apiGetById<T>(table: string, id: string): Promise<T | null> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase.from(table).select("*").eq("id", id).single() as any);
+  const { data, error } = await supabase.from(table as any).select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data as T;
 }
 
-export async function apiCreate<T>(table: TableName, payload: Partial<T>): Promise<T> {
+export async function apiCreate<T>(table: string, payload: Partial<T>): Promise<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: result, error } = await (supabase.from(table).insert(payload as any).select().single() as any);
+  const { data: result, error } = await supabase.from(table as any).insert(payload as any).select().single();
   if (error) throw error;
   return result as T;
 }
 
-export async function apiUpdate<T>(table: TableName, id: string, payload: Partial<T>): Promise<T> {
+export async function apiUpdate<T>(table: string, id: string, payload: Partial<T>): Promise<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: result, error } = await (supabase.from(table).update(payload as any).eq("id", id).select().single() as any);
+  const { data: result, error } = await supabase.from(table as any).update(payload as any).eq("id", id).select().single();
   if (error) throw error;
   return result as T;
 }
 
-export async function apiDelete(table: TableName, id: string): Promise<void> {
+export async function apiDelete(table: string, id: string): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from(table).delete().eq("id", id) as any);
+  const { error } = await supabase.from(table as any).delete().eq("id", id);
   if (error) throw error;
 }

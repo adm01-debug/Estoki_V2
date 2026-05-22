@@ -25,7 +25,7 @@ export interface AuditLogEntry {
 }
 
 export const auditService = {
-  async getAll(limit = 1000): Promise<AuditLogEntry[]> {
+  async getAll(limit = 200): Promise<AuditLogEntry[]> {
     const { data, error } = await supabase
       .from("audit_log")
       .select("*")
