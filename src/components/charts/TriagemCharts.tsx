@@ -6,8 +6,10 @@ import { Filter, TrendingUp, ShieldCheck, Zap, AlertTriangle, Info } from "lucid
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line } from "recharts";
 import { tooltipStyle, chartCardClass } from "./chartStyles";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface TriagemChartsProps { 
+
   items: { 
     resultado?: string | null; 
     data_fim?: string | null; 
