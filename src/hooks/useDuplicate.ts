@@ -43,10 +43,10 @@ const DEFAULT_EXCLUDE_FIELDS = [
 
   const duplicateMutation = useMutation({
      mutationFn: async (sourceId: string) => {
-       const { data: sourceRecord, error: fetchError } = await supabase
+       const { data: sourceRecord, error: fetchError } = await (supabase as any)
          .from(table)
          .select("*")
-         .eq("id" as never, sourceId as never)
+         .eq("id", sourceId)
          .single();
  
        if (fetchError) throw fetchError;
@@ -67,9 +67,9 @@ const DEFAULT_EXCLUDE_FIELDS = [
          finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
        }
  
-       const { data: newRecord, error: insertError } = await supabase
+       const { data: newRecord, error: insertError } = await (supabase as any)
          .from(table)
-         .insert(finalData as any)
+         .insert(finalData)
          .select()
          .single();
  
@@ -99,10 +99,10 @@ const DEFAULT_EXCLUDE_FIELDS = [
          excludeFields?: string[];
        }>;
      }) => {
-       const { data: sourceRecord, error: fetchError } = await supabase
+       const { data: sourceRecord, error: fetchError } = await (supabase as any)
          .from(table)
          .select("*")
-         .eq("id" as never, sourceId as never)
+         .eq("id", sourceId)
          .single();
  
        if (fetchError) throw fetchError;
@@ -122,23 +122,23 @@ const DEFAULT_EXCLUDE_FIELDS = [
          finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
        }
  
-       const { data: newRecord, error: insertError } = await supabase
+       const { data: newRecord, error: insertError } = await (supabase as any)
          .from(table)
-         .insert(finalData as any)
+         .insert(finalData)
          .select()
          .single();
  
        if (insertError) throw insertError;
  
-       for (const relation of relations) {
-         const { data: relatedRecords } = await supabase
-           .from(relation.table)
-           .select("*")
-           .eq(relation.foreignKey as never, sourceId as never);
- 
-         if (relatedRecords && relatedRecords.length > 0) {
-           const newRelatedRecords = relatedRecords.map((record: Record<string, unknown>) => {
-             const newRelRecord = { ...record };
+        for (const relation of relations) {
+          const { data: relatedRecords } = await (supabase as any)
+            .from(relation.table)
+            .select("*")
+            .eq(relation.foreignKey, sourceId);
+
+          if (relatedRecords && relatedRecords.length > 0) {
+            const newRelatedRecords = (relatedRecords as Record<string, unknown>[]).map((record) => {
+              const newRelRecord: Record<string, unknown> = { ...record };
              [...DEFAULT_EXCLUDE_FIELDS, ...(relation.excludeFields || [])].forEach(
                (field) => delete newRelRecord[field]
              );
@@ -146,7 +146,7 @@ const DEFAULT_EXCLUDE_FIELDS = [
              return newRelRecord;
            });
  
-           await supabase.from(relation.table).insert(newRelatedRecords as any);
+            await (supabase as any).from(relation.table).insert(newRelatedRecords);
          }
        }
  
