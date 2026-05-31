@@ -1,11 +1,41 @@
 import {
-  LayoutDashboard, Package, Search, Warehouse, Box, QrCode,
-  ArrowLeftRight, Truck, Undo2, Settings, BarChart3, Shield,
-  Users, ClipboardList, Layers, ListTodo, BellRing, Activity,
-  Route, Building2, FileText, AlertTriangle, UserCircle, HelpCircle,
-  Bell, FolderTree, Scan, Sparkles, Radio, CalendarClock, ShieldCheck,
-  WifiOff, MapPin, Brain, Tag, Zap,
-  type LucideIcon
+  LayoutDashboard,
+  Package,
+  Search,
+  Warehouse,
+  Box,
+  QrCode,
+  ArrowLeftRight,
+  Truck,
+  Undo2,
+  Settings,
+  BarChart3,
+  Shield,
+  Users,
+  ClipboardList,
+  Layers,
+  ListTodo,
+  BellRing,
+  Activity,
+  Route,
+  Building2,
+  FileText,
+  AlertTriangle,
+  UserCircle,
+  HelpCircle,
+  Bell,
+  FolderTree,
+  Scan,
+  Sparkles,
+  Radio,
+  CalendarClock,
+  ShieldCheck,
+  WifiOff,
+  MapPin,
+  Brain,
+  Tag,
+  Zap,
+  type LucideIcon,
 } from "lucide-react";
 
 export interface NavItem {
@@ -144,7 +174,7 @@ export const sidebarUtilityItems: NavItem[] = [
 export function getAllNavItems(): NavItem[] {
   return [
     ...sidebarMainItems,
-    ...sidebarGroups.flatMap(g => g.items),
+    ...sidebarGroups.flatMap((g) => g.items),
     ...sidebarAdminItems,
     ...sidebarUtilityItems,
   ];
@@ -152,16 +182,22 @@ export function getAllNavItems(): NavItem[] {
 
 export const getRoleBadgeColor = (role: string) => {
   switch (role) {
-    case "admin": return "bg-primary/20 text-primary border-primary/30";
-    case "supervisor": return "bg-info/20 text-info border-info/30";
-    default: return "bg-success/20 text-success border-success/30";
+    case "admin":
+      return "bg-primary/20 text-primary border-primary/30";
+    case "supervisor":
+      return "bg-info/20 text-info border-info/30";
+    default:
+      return "bg-success/20 text-success border-success/30";
   }
 };
 
 export const getRoleLabel = (role: string) => {
   switch (role) {
-    case "admin": return "Administrador";
-    case "supervisor": return "Supervisor";
-    default: return "Operador";
+    case "admin":
+      return "Administrador";
+    case "supervisor":
+      return "Supervisor";
+    default:
+      return "Operador";
   }
 };

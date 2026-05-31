@@ -25,12 +25,19 @@ export const ChangePasswordSchema = z.object({
 });
 
 // ── NF-e schemas ──────────────────────────────────────────
-export const NfeImportSchema = z.object({
-  xml_content: z.string().min(1).max(5_000_000).optional(),
-  access_key: z.string().min(44).max(44).regex(/^\d{44}$/, "Chave de acesso deve ter 44 dígitos").optional(),
-}).refine(d => d.xml_content || d.access_key, {
-  message: "xml_content ou access_key é obrigatório",
-});
+export const NfeImportSchema = z
+  .object({
+    xml_content: z.string().min(1).max(5_000_000).optional(),
+    access_key: z
+      .string()
+      .min(44)
+      .max(44)
+      .regex(/^\d{44}$/, "Chave de acesso deve ter 44 dígitos")
+      .optional(),
+  })
+  .refine((d) => d.xml_content || d.access_key, {
+    message: "xml_content ou access_key é obrigatório",
+  });
 
 // ── Generic operation schemas ─────────────────────────────
 export const IdSchema = z.object({
@@ -79,11 +86,13 @@ export const ShippingQuoteSchema = z.object({
   originZip: z.string().regex(/^\d{8}$/, "CEP de origem inválido (8 dígitos)"),
   destZip: z.string().regex(/^\d{8}$/, "CEP de destino inválido (8 dígitos)"),
   weight: z.number().positive("Peso deve ser maior que zero"),
-  dimensions: z.object({
-    width: z.number().positive(),
-    height: z.number().positive(),
-    length: z.number().positive(),
-  }).optional(),
+  dimensions: z
+    .object({
+      width: z.number().positive(),
+      height: z.number().positive(),
+      length: z.number().positive(),
+    })
+    .optional(),
 });
 
 export const CarrierQuoteRequestSchema = z.object({
@@ -108,12 +117,16 @@ export const CreateShipmentSchema = z.object({
 export const PickingConfirmSchema = z.object({
   pick_list_id: z.string().uuid("ID do Pick List inválido"),
   picker_id: z.string().uuid("ID do Separador inválido"),
-  items: z.array(z.object({
-    pick_item_id: z.string().uuid("ID do Item de Pick inválido"),
-    picked_quantity: z.number().min(0, "Quantidade não pode ser negativa"),
-    location_id: z.string().uuid().optional(),
-    lot_number: z.string().optional(),
-  })).min(1, "É necessário ao menos um item"),
+  items: z
+    .array(
+      z.object({
+        pick_item_id: z.string().uuid("ID do Item de Pick inválido"),
+        picked_quantity: z.number().min(0, "Quantidade não pode ser negativa"),
+        location_id: z.string().uuid().optional(),
+        lot_number: z.string().optional(),
+      })
+    )
+    .min(1, "É necessário ao menos um item"),
 });
 
 export const CarrierTrackSchema = z.object({
@@ -143,8 +156,12 @@ export const InventoryTransferSchema = z.object({
 
 // ── Helper: validate and return typed result ──────────────
 
-export function validateInput<T>(schema: z.ZodSchema<T>, data: unknown): 
-  { success: true; data: T } | { success: false; error: string; details: Record<string, string[]> } {
+export function validateInput<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+):
+  | { success: true; data: T }
+  | { success: false; error: string; details: Record<string, string[]> } {
   const result = schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };

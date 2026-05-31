@@ -16,7 +16,9 @@ export function useSidebarFavorites() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-    } catch {}
+    } catch {
+      // localStorage may be unavailable (private mode, storage quota)
+    }
   }, [favorites]);
 
   const toggleFavorite = useCallback((path: string) => {
@@ -29,10 +31,7 @@ export function useSidebarFavorites() {
     });
   }, []);
 
-  const isFavorite = useCallback(
-    (path: string) => favorites.includes(path),
-    [favorites]
-  );
+  const isFavorite = useCallback((path: string) => favorites.includes(path), [favorites]);
 
   return { favorites, toggleFavorite, isFavorite };
 }

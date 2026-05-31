@@ -40,10 +40,9 @@ serve(async (req) => {
 
       case "get_order":
         if (!data?.order_id) throw new Error("order_id é obrigatório");
-        const orderResp = await fetch(
-          `${AMAZON_SP_API_BASE}/orders/v0/orders/${data.order_id}`,
-          { headers }
-        );
+        const orderResp = await fetch(`${AMAZON_SP_API_BASE}/orders/v0/orders/${data.order_id}`, {
+          headers,
+        });
         result = await orderResp.json();
         break;
 
@@ -91,13 +90,16 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "amazon",
-      action,
-      request: { action, data, marketplace_id },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "amazon",
+        action,
+        request: { action, data, marketplace_id },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

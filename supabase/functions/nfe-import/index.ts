@@ -10,24 +10,33 @@ serve(async (req) => {
 
   try {
     if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers,
+      });
     }
 
     const body = await req.json();
     const validation = validateInput(NfeImportSchema, body);
     if (!validation.success) {
-      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { status: 400, headers });
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers }
+      );
     }
 
     const { xml_content, access_key } = validation.data;
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
     let nfeData: any = {};
 
     if (xml_content) {
       const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_" });
       const xmlObj = parser.parse(xml_content);
-      
+
       const infNFe = xmlObj.nfeProc?.NFe?.infNFe || xmlObj.NFe?.infNFe;
       if (!infNFe) {
         throw new Error("Formato de XML de NF-e inválido ou incompleto");
@@ -60,27 +69,34 @@ serve(async (req) => {
       throw new Error("xml_content é obrigatório para processamento completo neste estágio");
     }
 
-    const { data: nfe, error: nfeError } = await supabase.from("nfe_documents").upsert({
-      access_key: nfeData.access_key,
-      number: nfeData.number,
-      series: nfeData.series,
-      issue_date: nfeData.issue_date,
-      operation_type: nfeData.operation_type,
-      emitter_cnpj: nfeData.emitter.cnpj,
-      emitter_name: nfeData.emitter.name,
-      total_products: nfeData.totals.products,
-      total_nfe: nfeData.totals.total,
-      status: "imported",
-      xml_content: xml_content ?? null,
-      imported_at: new Date().toISOString(),
-    }, { onConflict: 'access_key' }).select().single();
+    const { data: nfe, error: nfeError } = await supabase
+      .from("nfe_documents")
+      .upsert(
+        {
+          access_key: nfeData.access_key,
+          number: nfeData.number,
+          series: nfeData.series,
+          issue_date: nfeData.issue_date,
+          operation_type: nfeData.operation_type,
+          emitter_cnpj: nfeData.emitter.cnpj,
+          emitter_name: nfeData.emitter.name,
+          total_products: nfeData.totals.products,
+          total_nfe: nfeData.totals.total,
+          status: "imported",
+          xml_content: xml_content ?? null,
+          imported_at: new Date().toISOString(),
+        },
+        { onConflict: "access_key" }
+      )
+      .select()
+      .single();
 
     if (nfeError) throw nfeError;
 
     if (nfeData.items) {
       // Clear existing items if re-importing
       await supabase.from("nfe_items").delete().eq("nfe_id", nfe.id);
-      
+
       const itemsToInsert = nfeData.items.map((item: any) => ({
         nfe_id: nfe.id,
         product_code: item.code,
@@ -94,12 +110,15 @@ serve(async (req) => {
       if (itemsError) throw itemsError;
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      nfe_id: nfe?.id,
-      access_key: nfeData.access_key,
-      items_imported: nfeData.items.length,
-    }), { headers });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        nfe_id: nfe?.id,
+        access_key: nfeData.access_key,
+        items_imported: nfeData.items.length,
+      }),
+      { headers }
+    );
   } catch (error) {
     console.error("NFE Import error:", error);
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });

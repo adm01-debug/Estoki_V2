@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from "react";
 
 export function useLongPress(callback: () => void, delay = 500) {
   const [isPressed, setIsPressed] = useState(false);

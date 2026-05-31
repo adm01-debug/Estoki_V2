@@ -50,22 +50,25 @@ serve(async (req) => {
 
           if (!error) {
             results.synced++;
-            results.updates.push({ sku, action: "updated", old_qty: existing.quantity, new_qty: quantity });
+            results.updates.push({
+              sku,
+              action: "updated",
+              old_qty: existing.quantity,
+              new_qty: quantity,
+            });
           }
         } else {
           // Criar novo
-          const { error } = await supabase
-            .from("inventory")
-            .insert({
-              sku,
-              quantity,
-              warehouse_id: warehouse_id || "default",
-              location,
-              batch,
-              expiration_date,
-              last_sync_at: new Date().toISOString(),
-              sync_source: source,
-            });
+          const { error } = await supabase.from("inventory").insert({
+            sku,
+            quantity,
+            warehouse_id: warehouse_id || "default",
+            location,
+            batch,
+            expiration_date,
+            last_sync_at: new Date().toISOString(),
+            sync_source: source,
+          });
 
           if (!error) {
             results.synced++;

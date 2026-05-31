@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 /**
  * Hook para persistir estado no localStorage
- * 
+ *
  * @example
  * const [theme, setTheme] = useLocalStorage("theme", "light");
  */
@@ -31,8 +31,7 @@ export function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
       try {
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
+        const valueToStore = value instanceof Function ? value(storedValue) : value;
 
         setStoredValue(valueToStore);
 

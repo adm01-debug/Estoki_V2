@@ -1,7 +1,7 @@
-import { ReactNode, useCallback, useRef, useState } from 'react';
-import { useSwipeGesture } from '@/hooks/useTouchGestures';
-import { cn } from '@/lib/utils';
-import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
+import { ReactNode, useCallback, useRef, useState } from "react";
+import { useSwipeGesture } from "@/hooks/useTouchGestures";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 interface SwipeableListItemProps {
   children: ReactNode;
@@ -33,7 +33,7 @@ export function SwipeableListItem({
   disabled = false,
 }: SwipeableListItemProps) {
   const [offset, setOffset] = useState(0);
-  const [isOpen, setIsOpen] = useState<'left' | 'right' | null>(null);
+  const [isOpen, setIsOpen] = useState<"left" | "right" | null>(null);
   const startX = useRef(0);
   const currentX = useRef(0);
   const isDragging = useRef(false);
@@ -43,57 +43,66 @@ export function SwipeableListItem({
   const THRESHOLD = 40;
 
   // Integração com useSwipeGesture para callbacks externos
-  const swipeRef = useSwipeGesture({
-    onSwipeLeft: () => {
-      if (disabled) return;
-      if (onSwipeLeft) onSwipeLeft();
-      if (rightAction) {
-        rightAction.onClick();
-        close();
-      }
+  const swipeRef = useSwipeGesture(
+    {
+      onSwipeLeft: () => {
+        if (disabled) return;
+        if (onSwipeLeft) onSwipeLeft();
+        if (rightAction) {
+          rightAction.onClick();
+          close();
+        }
+      },
+      onSwipeRight: () => {
+        if (disabled) return;
+        if (onSwipeRight) onSwipeRight();
+        if (leftAction) {
+          leftAction.onClick();
+          close();
+        }
+      },
     },
-    onSwipeRight: () => {
-      if (disabled) return;
-      if (onSwipeRight) onSwipeRight();
-      if (leftAction) {
-        leftAction.onClick();
-        close();
-      }
-    },
-  }, {
-    threshold: 100,
-    timeout: 500,
-  });
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (disabled) return;
-    startX.current = e.touches[0].clientX;
-    isDragging.current = true;
-  }, [disabled]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isDragging.current || disabled) return;
-
-    currentX.current = e.touches[0].clientX;
-    const diff = currentX.current - startX.current;
-
-    // Adjust for already open state
-    let newOffset = isOpen === 'right' ? diff - ACTION_WIDTH : 
-                    isOpen === 'left' ? diff + ACTION_WIDTH : diff;
-
-    // Apply resistance at edges
-    if (newOffset > ACTION_WIDTH) {
-      newOffset = ACTION_WIDTH + (newOffset - ACTION_WIDTH) * 0.3;
-    } else if (newOffset < -ACTION_WIDTH) {
-      newOffset = -ACTION_WIDTH + (newOffset + ACTION_WIDTH) * 0.3;
+    {
+      threshold: 100,
+      timeout: 500,
     }
+  );
 
-    // Limit based on available actions
-    if (!leftAction && newOffset > 0) newOffset = 0;
-    if (!rightAction && newOffset < 0) newOffset = 0;
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (disabled) return;
+      startX.current = e.touches[0].clientX;
+      isDragging.current = true;
+    },
+    [disabled]
+  );
 
-    setOffset(newOffset);
-  }, [isOpen, leftAction, rightAction, disabled]);
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isDragging.current || disabled) return;
+
+      currentX.current = e.touches[0].clientX;
+      const diff = currentX.current - startX.current;
+
+      // Adjust for already open state
+      let newOffset =
+        isOpen === "right" ? diff - ACTION_WIDTH : isOpen === "left" ? diff + ACTION_WIDTH : diff;
+
+      // Apply resistance at edges
+      if (newOffset > ACTION_WIDTH) {
+        newOffset = ACTION_WIDTH + (newOffset - ACTION_WIDTH) * 0.3;
+      } else if (newOffset < -ACTION_WIDTH) {
+        newOffset = -ACTION_WIDTH + (newOffset + ACTION_WIDTH) * 0.3;
+      }
+
+      // Limit based on available actions
+      if (!leftAction && newOffset > 0) newOffset = 0;
+      if (!rightAction && newOffset < 0) newOffset = 0;
+
+      setOffset(newOffset);
+    },
+    [isOpen, leftAction, rightAction, disabled]
+  );
 
   const handleTouchEnd = useCallback(() => {
     if (disabled) return;
@@ -101,10 +110,10 @@ export function SwipeableListItem({
 
     if (offset > THRESHOLD && leftAction) {
       setOffset(ACTION_WIDTH);
-      setIsOpen('left');
+      setIsOpen("left");
     } else if (offset < -THRESHOLD && rightAction) {
       setOffset(-ACTION_WIDTH);
-      setIsOpen('right');
+      setIsOpen("right");
     } else {
       setOffset(0);
       setIsOpen(null);
@@ -123,15 +132,16 @@ export function SwipeableListItem({
   }, []);
 
   return (
-    <div 
+    <div
       ref={(el) => {
         // Merge refs
-        if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
-        if (swipeRef && typeof swipeRef === 'function') swipeRef(el);
+        if (containerRef)
+          (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        if (swipeRef && typeof swipeRef === "function") swipeRef(el);
       }}
       className={cn(
-        'relative overflow-hidden touch-pan-y',
-        disabled && 'opacity-50 pointer-events-none',
+        "relative touch-pan-y overflow-hidden",
+        disabled && "pointer-events-none opacity-50",
         className
       )}
     >
@@ -139,8 +149,8 @@ export function SwipeableListItem({
       {leftAction && (
         <div
           className={cn(
-            'absolute left-0 top-0 bottom-0 flex items-center justify-center cursor-pointer',
-            'transition-opacity duration-200',
+            "absolute bottom-0 left-0 top-0 flex cursor-pointer items-center justify-center",
+            "transition-opacity duration-200",
             leftAction.color
           )}
           style={{ width: ACTION_WIDTH, opacity: offset > 0 ? 1 : 0 }}
@@ -150,7 +160,7 @@ export function SwipeableListItem({
         >
           <div className="flex flex-col items-center text-white">
             {leftAction.icon}
-            <span className="text-xs mt-1 font-medium">{leftAction.label}</span>
+            <span className="mt-1 text-xs font-medium">{leftAction.label}</span>
           </div>
         </div>
       )}
@@ -159,8 +169,8 @@ export function SwipeableListItem({
       {rightAction && (
         <div
           className={cn(
-            'absolute right-0 top-0 bottom-0 flex items-center justify-center cursor-pointer',
-            'transition-opacity duration-200',
+            "absolute bottom-0 right-0 top-0 flex cursor-pointer items-center justify-center",
+            "transition-opacity duration-200",
             rightAction.color
           )}
           style={{ width: ACTION_WIDTH, opacity: offset < 0 ? 1 : 0 }}
@@ -170,7 +180,7 @@ export function SwipeableListItem({
         >
           <div className="flex flex-col items-center text-white">
             {rightAction.icon}
-            <span className="text-xs mt-1 font-medium">{rightAction.label}</span>
+            <span className="mt-1 text-xs font-medium">{rightAction.label}</span>
           </div>
         </div>
       )}
@@ -178,8 +188,8 @@ export function SwipeableListItem({
       {/* Main Content */}
       <div
         className={cn(
-          'relative bg-background',
-          !isDragging.current && 'transition-transform duration-200 ease-out'
+          "relative bg-background",
+          !isDragging.current && "transition-transform duration-200 ease-out"
         )}
         style={{ transform: `translateX(${offset}px)` }}
         onTouchStart={handleTouchStart}
@@ -188,17 +198,17 @@ export function SwipeableListItem({
         onClick={isOpen ? close : undefined}
       >
         {children}
-        
+
         {/* Swipe indicators */}
         {!isOpen && !disabled && (
           <>
             {leftAction && (
-              <div className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none">
+              <div className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground/30">
                 <ChevronRight className="h-4 w-4" />
               </div>
             )}
             {rightAction && (
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30 pointer-events-none">
+              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30">
                 <ChevronLeft className="h-4 w-4" />
               </div>
             )}
@@ -233,17 +243,15 @@ export function PullToRefreshIndicator({
     >
       <div
         className={cn(
-          'w-8 h-8 rounded-full border-2 border-primary flex items-center justify-center',
-          isRefreshing && 'animate-spin'
+          "flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary",
+          isRefreshing && "animate-spin"
         )}
         style={{
           opacity: progress,
           transform: `rotate(${rotation}deg)`,
         }}
       >
-        {!isRefreshing && (
-          <MoreHorizontal className="h-4 w-4 text-primary" />
-        )}
+        {!isRefreshing && <MoreHorizontal className="h-4 w-4 text-primary" />}
       </div>
     </div>
   );

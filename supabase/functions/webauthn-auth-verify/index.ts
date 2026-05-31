@@ -12,16 +12,17 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const jwtSecret = Deno.env.get("SUPABASE_AUTH_JWT_SECRET") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const jwtSecret =
+      Deno.env.get("SUPABASE_AUTH_JWT_SECRET") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { credential, challengeId, userId } = await req.json();
 
     if (!credential || !credential.id || !challengeId || !userId) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Get and verify the challenge
@@ -34,24 +35,21 @@ serve(async (req) => {
       .single();
 
     if (challengeError || !challengeData) {
-      return new Response(
-        JSON.stringify({ error: "Challenge not found or expired" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Challenge not found or expired" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Delete used challenge
-    await supabase
-      .from("webauthn_challenges")
-      .delete()
-      .eq("id", challengeId);
+    await supabase.from("webauthn_challenges").delete().eq("id", challengeId);
 
     // Verify challenge expiration
     if (new Date(challengeData.expires_at) < new Date()) {
-      return new Response(
-        JSON.stringify({ error: "Challenge expired" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Challenge expired" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Verify the credential exists and belongs to the user
@@ -63,29 +61,32 @@ serve(async (req) => {
       .single();
 
     if (credError || !storedCredential) {
-      return new Response(
-        JSON.stringify({ error: "Credential not found" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Credential not found" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Update last used timestamp
     await supabase
       .from("passkey_credentials")
-      .update({ 
+      .update({
         last_used_at: new Date().toISOString(),
-        counter: storedCredential.counter + 1
+        counter: storedCredential.counter + 1,
       })
       .eq("id", storedCredential.id);
 
     // Get user info
-    const { data: { user }, error: userError } = await supabase.auth.admin.getUserById(userId);
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.admin.getUserById(userId);
+
     if (userError || !user) {
-      return new Response(
-        JSON.stringify({ error: "User not found" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Generate a custom session/token for the user
@@ -111,8 +112,8 @@ serve(async (req) => {
     console.log("Passkey authentication successful for user:", userId);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         user: {
           id: user.id,
           email: user.email,
@@ -126,9 +127,9 @@ serve(async (req) => {
   } catch (error: unknown) {
     console.error("Error verifying authentication:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

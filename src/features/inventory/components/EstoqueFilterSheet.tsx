@@ -7,11 +7,34 @@ import { Filter, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StatusPosicao } from "../hooks/useEstoque";
 
-const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string }> = {
-  livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre" },
-  ocupado: { color: "text-success", bg: "bg-success/20", border: "border-success", label: "Ocupado" },
-  reservado: { color: "text-warning", bg: "bg-warning/20", border: "border-warning", label: "Reservado" },
-  bloqueado: { color: "text-destructive", bg: "bg-destructive/20", border: "border-destructive", label: "Bloqueado" },
+const statusConfig: Record<
+  StatusPosicao,
+  { color: string; bg: string; border: string; label: string }
+> = {
+  livre: {
+    color: "text-muted-foreground",
+    bg: "bg-muted/50",
+    border: "border-dashed border-border",
+    label: "Livre",
+  },
+  ocupado: {
+    color: "text-success",
+    bg: "bg-success/20",
+    border: "border-success",
+    label: "Ocupado",
+  },
+  reservado: {
+    color: "text-warning",
+    bg: "bg-warning/20",
+    border: "border-warning",
+    label: "Reservado",
+  },
+  bloqueado: {
+    color: "text-destructive",
+    bg: "bg-destructive/20",
+    border: "border-destructive",
+    label: "Bloqueado",
+  },
 };
 
 interface Filters {
@@ -32,15 +55,26 @@ interface EstoqueFilterSheetProps {
   onReset: () => void;
 }
 
-export function EstoqueFilterSheet({ open, onOpenChange, filters, ruas, niveis, activeFiltersCount, onToggleFilter, onReset }: EstoqueFilterSheetProps) {
+export function EstoqueFilterSheet({
+  open,
+  onOpenChange,
+  filters,
+  ruas,
+  niveis,
+  activeFiltersCount,
+  onToggleFilter,
+  onReset,
+}: EstoqueFilterSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="gap-2 relative">
+        <Button variant="outline" className="relative gap-2">
           <Filter className="h-4 w-4" />
           <span className="hidden sm:inline">Filtros</span>
           {activeFiltersCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">{activeFiltersCount}</Badge>
+            <Badge className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center p-0 text-xs">
+              {activeFiltersCount}
+            </Badge>
           )}
         </Button>
       </SheetTrigger>
@@ -49,7 +83,8 @@ export function EstoqueFilterSheet({ open, onOpenChange, filters, ruas, niveis, 
           <SheetTitle className="flex items-center justify-between">
             Filtros
             <Button variant="ghost" size="sm" onClick={onReset} className="text-xs">
-              <RotateCcw className="h-3 w-3 mr-1" />Limpar
+              <RotateCcw className="mr-1 h-3 w-3" />
+              Limpar
             </Button>
           </SheetTitle>
         </SheetHeader>
@@ -57,11 +92,25 @@ export function EstoqueFilterSheet({ open, onOpenChange, filters, ruas, niveis, 
           <div className="space-y-3">
             <Label className="text-sm font-medium">Status</Label>
             <div className="space-y-2">
-              {(["ocupado", "livre", "reservado", "bloqueado"] as StatusPosicao[]).map(status => (
+              {(["ocupado", "livre", "reservado", "bloqueado"] as StatusPosicao[]).map((status) => (
                 <div key={status} className="flex items-center gap-2">
-                  <Checkbox id={`status-${status}`} checked={filters.status.includes(status)} onCheckedChange={() => onToggleFilter("status", status)} />
-                  <Label htmlFor={`status-${status}`} className="flex items-center gap-2 cursor-pointer">
-                    <div className={cn("w-3 h-3 rounded-sm", statusConfig[status].bg, "border", statusConfig[status].border)} />
+                  <Checkbox
+                    id={`status-${status}`}
+                    checked={filters.status.includes(status)}
+                    onCheckedChange={() => onToggleFilter("status", status)}
+                  />
+                  <Label
+                    htmlFor={`status-${status}`}
+                    className="flex cursor-pointer items-center gap-2"
+                  >
+                    <div
+                      className={cn(
+                        "h-3 w-3 rounded-sm",
+                        statusConfig[status].bg,
+                        "border",
+                        statusConfig[status].border
+                      )}
+                    />
                     {statusConfig[status].label}
                   </Label>
                 </div>
@@ -72,8 +121,15 @@ export function EstoqueFilterSheet({ open, onOpenChange, filters, ruas, niveis, 
             <div className="space-y-3">
               <Label className="text-sm font-medium">Porta-Paletes</Label>
               <div className="flex flex-wrap gap-2">
-                {ruas.map(rua => (
-                  <Button key={rua} variant={filters.ruas.includes(rua) ? "default" : "outline"} size="sm" onClick={() => onToggleFilter("ruas", rua)}>{rua}</Button>
+                {ruas.map((rua) => (
+                  <Button
+                    key={rua}
+                    variant={filters.ruas.includes(rua) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onToggleFilter("ruas", rua)}
+                  >
+                    {rua}
+                  </Button>
                 ))}
               </div>
             </div>
@@ -82,8 +138,15 @@ export function EstoqueFilterSheet({ open, onOpenChange, filters, ruas, niveis, 
             <div className="space-y-3">
               <Label className="text-sm font-medium">Níveis</Label>
               <div className="flex flex-wrap gap-2">
-                {niveis.map(nivel => (
-                  <Button key={nivel} variant={filters.niveis.includes(nivel) ? "default" : "outline"} size="sm" onClick={() => onToggleFilter("niveis", nivel)}>N{nivel}</Button>
+                {niveis.map((nivel) => (
+                  <Button
+                    key={nivel}
+                    variant={filters.niveis.includes(nivel) ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onToggleFilter("niveis", nivel)}
+                  >
+                    N{nivel}
+                  </Button>
                 ))}
               </div>
             </div>

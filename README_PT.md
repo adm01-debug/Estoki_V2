@@ -78,7 +78,6 @@ npm run test:e2e
 - [🛡️ Segurança](docs/SECURITY.md) - Políticas RLS e Proteção de Dados
 - [🛤️ Roadmap](docs/ROADMAP.md) - Próximos passos e metas
 
-
 ## 🤝 Contribuindo
 
 Veja [CONTRIBUTING.md](CONTRIBUTING.md)
@@ -86,4 +85,3 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md)
 ## 📄 Licença
 
 Proprietário - ESTOKI © 2025
-

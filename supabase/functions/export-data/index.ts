@@ -10,9 +10,15 @@ const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   });
 
 const ALLOWED_TABLES = [
-  "produtos", "lotes", "posicoes_estoque", "estoque_posicao",
-  "fornecedor_scores", "alertas_config", "metas_kpi",
-  "metricas_operacionais", "inventario_ciclos",
+  "produtos",
+  "lotes",
+  "posicoes_estoque",
+  "estoque_posicao",
+  "fornecedor_scores",
+  "alertas_config",
+  "metas_kpi",
+  "metricas_operacionais",
+  "inventario_ciclos",
 ];
 
 const ExportSchema = z.object({
@@ -30,7 +36,11 @@ Deno.serve(async (req) => {
   try {
     const parsed = ExportSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
+      return jsonResponse(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        400,
+        req
+      );
     }
 
     const { table, columns, filters, format, limit } = parsed.data;
@@ -54,11 +64,15 @@ Deno.serve(async (req) => {
 
     if (format === "csv") {
       if (!data || data.length === 0) {
-        return new Response("", { headers: { ...getCorsHeaders(req), "Content-Type": "text/csv" } });
+        return new Response("", {
+          headers: { ...getCorsHeaders(req), "Content-Type": "text/csv" },
+        });
       }
       const headerRow = Object.keys(data[0]).join(",");
       const rows = data.map((row) =>
-        Object.values(row).map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")
+        Object.values(row)
+          .map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`)
+          .join(",")
       );
       return new Response([headerRow, ...rows].join("\n"), {
         headers: {

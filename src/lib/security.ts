@@ -1,8 +1,8 @@
 export const sanitizeInput = (input: string): string => {
   return input
-    .replace(/[<>]/g, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+=/gi, '')
+    .replace(/[<>]/g, "")
+    .replace(/javascript:/gi, "")
+    .replace(/on\w+=/gi, "")
     .trim();
 };
 
@@ -12,7 +12,7 @@ export const validateEmail = (email: string): boolean => {
 };
 
 export const validateCPF = (cpf: string): boolean => {
-  const cleaned = cpf.replace(/\D/g, '');
+  const cleaned = cpf.replace(/\D/g, "");
   if (cleaned.length !== 11) return false;
   if (/^(\d)\1+$/.test(cleaned)) return false;
   // Validate first check digit
@@ -30,7 +30,7 @@ export const validateCPF = (cpf: string): boolean => {
 };
 
 export const validateCNPJ = (cnpj: string): boolean => {
-  const cleaned = cnpj.replace(/\D/g, '');
+  const cleaned = cnpj.replace(/\D/g, "");
   if (cleaned.length !== 14) return false;
   if (/^(\d)\1+$/.test(cleaned)) return false;
   // Validate first check digit
@@ -50,6 +50,8 @@ export const validateCNPJ = (cnpj: string): boolean => {
 export const hashString = async (str: string): Promise<string> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  const hash = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
 };

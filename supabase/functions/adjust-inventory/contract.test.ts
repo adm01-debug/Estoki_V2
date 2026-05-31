@@ -7,12 +7,12 @@ Deno.test("Contract Test: adjust-inventory - Valid Payload", async () => {
     produto_id: VALID_UUID,
     posicao_id: VALID_UUID,
     quantidade_nova: 50,
-    motivo: "Ajuste de inventário anual"
+    motivo: "Ajuste de inventário anual",
   };
 
   const { InventoryAdjustSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(InventoryAdjustSchema, payload);
-  
+
   assertEquals(validation.success, true);
   if (validation.success) {
     assertEquals(validation.data.quantidade_nova, 50);
@@ -25,12 +25,12 @@ Deno.test("Contract Test: adjust-inventory - Invalid UUIDs", async () => {
     produto_id: "invalid-uuid",
     posicao_id: VALID_UUID,
     quantidade_nova: 10,
-    motivo: "Teste"
+    motivo: "Teste",
   };
 
   const { InventoryAdjustSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(InventoryAdjustSchema, payload);
-  
+
   assertEquals(validation.success, false);
   if (!validation.success) {
     assertNotEquals(validation.details.produto_id, undefined);
@@ -42,12 +42,12 @@ Deno.test("Contract Test: adjust-inventory - Negative Quantity", async () => {
     produto_id: VALID_UUID,
     posicao_id: VALID_UUID,
     quantidade_nova: -5,
-    motivo: "Erro proposital"
+    motivo: "Erro proposital",
   };
 
   const { InventoryAdjustSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(InventoryAdjustSchema, payload);
-  
+
   assertEquals(validation.success, false);
   if (!validation.success) {
     assertNotEquals(validation.details.quantidade_nova, undefined);
@@ -58,12 +58,12 @@ Deno.test("Contract Test: adjust-inventory - Missing Motivo", async () => {
   const payload = {
     produto_id: VALID_UUID,
     posicao_id: VALID_UUID,
-    quantidade_nova: 100
+    quantidade_nova: 100,
   };
 
   const { InventoryAdjustSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(InventoryAdjustSchema, payload);
-  
+
   assertEquals(validation.success, false);
   if (!validation.success) {
     assertNotEquals(validation.details.motivo, undefined);

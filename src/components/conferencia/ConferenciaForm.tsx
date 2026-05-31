@@ -1,7 +1,13 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { VolumeContagem } from "@/features/quality/components/VolumeContagem";
 import { VolumeData, TipoEmbalagem } from "./types";
 import { Button } from "@/components/ui/button";
@@ -20,7 +26,7 @@ interface ConferenciaFormProps {
   quantidadeEsperada: number;
   handleVolumeChange: (id: number, qtd: number) => void;
   handleVolumeConfirm: (id: number) => void;
-  handleVolumeIntegrityChange?: (id: number, integridade: 'ok' | 'avaiado' | 'critico') => void;
+  handleVolumeIntegrityChange?: (id: number, integridade: "ok" | "avaiado" | "critico") => void;
   handleVolumeHandoff?: (id: number) => void;
   balancaConectada: boolean;
   leituraBalanca: { peso: number } | null;
@@ -42,21 +48,21 @@ export function ConferenciaForm({
   handleVolumeIntegrityChange,
   handleVolumeHandoff,
   balancaConectada,
-  leituraBalanca
+  leituraBalanca,
 }: ConferenciaFormProps) {
   return (
     <div className="space-y-4">
       <div>
         <Label htmlFor="quantidade">Quantidade Conferida</Label>
         {volumes.length > 1 && (
-          <VolumeContagem 
-            volumes={volumes} 
-            onVolumeChange={handleVolumeChange} 
+          <VolumeContagem
+            volumes={volumes}
+            onVolumeChange={handleVolumeChange}
             onVolumeConfirm={handleVolumeConfirm}
             onVolumeIntegrityChange={handleVolumeIntegrityChange}
             onVolumeHandoff={handleVolumeHandoff}
-            totalEsperado={quantidadeEsperada} 
-            className="mb-4" 
+            totalEsperado={quantidadeEsperada}
+            className="mb-4"
           />
         )}
         <Input
@@ -70,7 +76,7 @@ export function ConferenciaForm({
 
       <div>
         <Label htmlFor="peso">Peso Conferido (kg)</Label>
-        <div className="flex gap-2 mt-1">
+        <div className="mt-1 flex gap-2">
           <Input
             id="peso"
             type="number"
@@ -79,11 +85,8 @@ export function ConferenciaForm({
             onChange={(e) => setPesoConferido(Number(e.target.value))}
           />
           {balancaConectada && leituraBalanca && (
-            <Button 
-              variant="outline" 
-              onClick={() => setPesoConferido(leituraBalanca.peso)}
-            >
-              <Scale className="h-4 w-4 mr-2" />
+            <Button variant="outline" onClick={() => setPesoConferido(leituraBalanca.peso)}>
+              <Scale className="mr-2 h-4 w-4" />
               Capturar
             </Button>
           )}

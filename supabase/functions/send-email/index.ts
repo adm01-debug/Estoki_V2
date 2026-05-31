@@ -28,12 +28,18 @@ Deno.serve(async (req) => {
   try {
     const parsed = SendEmailSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
+      return jsonResponse(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        400,
+        req
+      );
     }
 
     const { to, subject, body, template } = parsed.data;
 
-    console.log(`Email queued → to: ${Array.isArray(to) ? to.join(", ") : to}, subject: ${subject}`);
+    console.log(
+      `Email queued → to: ${Array.isArray(to) ? to.join(", ") : to}, subject: ${subject}`
+    );
 
     return jsonResponse({ success: true, message: "Email queued" }, 200, req);
   } catch (error) {

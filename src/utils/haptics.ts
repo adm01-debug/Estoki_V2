@@ -7,7 +7,7 @@ export const haptics = {
    * Light tap for navigation or selection
    */
   light: () => {
-    if (typeof window !== 'undefined' && window.navigator.vibrate) {
+    if (typeof window !== "undefined" && window.navigator.vibrate) {
       window.navigator.vibrate(5);
     }
   },
@@ -16,7 +16,7 @@ export const haptics = {
    * Medium impact for primary actions (save, confirm)
    */
   medium: () => {
-    if (typeof window !== 'undefined' && window.navigator.vibrate) {
+    if (typeof window !== "undefined" && window.navigator.vibrate) {
       window.navigator.vibrate(15);
     }
   },
@@ -25,7 +25,7 @@ export const haptics = {
    * Double tap for success confirmation
    */
   success: () => {
-    if (typeof window !== 'undefined' && window.navigator.vibrate) {
+    if (typeof window !== "undefined" && window.navigator.vibrate) {
       window.navigator.vibrate([10, 30, 10]);
     }
   },
@@ -34,8 +34,8 @@ export const haptics = {
    * Distinct pattern for errors or warnings
    */
   error: () => {
-    if (typeof window !== 'undefined' && window.navigator.vibrate) {
+    if (typeof window !== "undefined" && window.navigator.vibrate) {
       window.navigator.vibrate([50, 100, 50]);
     }
-  }
+  },
 };

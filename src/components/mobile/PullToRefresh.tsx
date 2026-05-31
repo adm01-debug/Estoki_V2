@@ -36,7 +36,10 @@ export function PullToRefresh({ onRefresh, children }: PullToRefreshProps) {
     <div onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       {(pullDistance > 0 || refreshing) && (
         <div className="flex justify-center py-4" style={{ height: pullDistance }}>
-          <Loader2 className={refreshing ? "animate-spin" : ""} style={{ opacity: pullDistance / threshold }} />
+          <Loader2
+            className={refreshing ? "animate-spin" : ""}
+            style={{ opacity: pullDistance / threshold }}
+          />
         </div>
       )}
       {children}

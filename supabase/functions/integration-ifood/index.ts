@@ -23,7 +23,7 @@ serve(async (req) => {
     }
 
     const headers = {
-      "Authorization": `Bearer ${credentials.access_token}`,
+      Authorization: `Bearer ${credentials.access_token}`,
       "Content-Type": "application/json",
     };
 
@@ -37,19 +37,15 @@ serve(async (req) => {
 
       case "get_orders":
         if (!data?.merchant_id) throw new Error("merchant_id é obrigatório");
-        const ordersResp = await fetch(
-          `${IFOOD_API_BASE}/order/v1.0/events:polling`,
-          { headers }
-        );
+        const ordersResp = await fetch(`${IFOOD_API_BASE}/order/v1.0/events:polling`, { headers });
         result = await ordersResp.json();
         break;
 
       case "get_order_details":
         if (!data?.order_id) throw new Error("order_id é obrigatório");
-        const orderResp = await fetch(
-          `${IFOOD_API_BASE}/order/v1.0/orders/${data.order_id}`,
-          { headers }
-        );
+        const orderResp = await fetch(`${IFOOD_API_BASE}/order/v1.0/orders/${data.order_id}`, {
+          headers,
+        });
         result = await orderResp.json();
         break;
 
@@ -90,13 +86,16 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "ifood",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "ifood",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

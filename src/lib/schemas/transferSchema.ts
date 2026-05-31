@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const transferItemSchema = z.object({
   id: z.string().uuid(),
@@ -13,11 +13,11 @@ export const transferItemSchema = z.object({
 export const transferSchema = z.object({
   id: z.string().uuid(),
   transfer_number: z.string(),
-  type: z.enum(['internal', 'warehouse', 'location']),
+  type: z.enum(["internal", "warehouse", "location"]),
   source_warehouse_id: z.string().uuid(),
   destination_warehouse_id: z.string().uuid(),
-  status: z.enum(['draft', 'pending', 'in_transit', 'received', 'completed', 'cancelled']),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  status: z.enum(["draft", "pending", "in_transit", "received", "completed", "cancelled"]),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   items: z.array(transferItemSchema).min(1),
   total_items: z.number().int().positive(),
   requested_by: z.string().uuid(),
@@ -32,5 +32,10 @@ export const transferSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const transferCreateSchema = transferSchema.omit({ id: true, created_at: true, updated_at: true, transfer_number: true });
+export const transferCreateSchema = transferSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  transfer_number: true,
+});
 export type Transfer = z.infer<typeof transferSchema>;

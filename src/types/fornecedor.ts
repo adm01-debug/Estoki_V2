@@ -1,5 +1,5 @@
 // Types para Fornecedor
-export type ClassificacaoFornecedor = 'A' | 'B' | 'C' | 'N';
+export type ClassificacaoFornecedor = "A" | "B" | "C" | "N";
 
 export interface Fornecedor {
   id: string;
@@ -24,9 +24,12 @@ export interface MetricasFornecedor {
   valor_total: number;
 }
 
-export const classificacaoConfig: Record<ClassificacaoFornecedor, { label: string; color: string; descricao: string }> = {
-  A: { label: 'A', color: 'bg-green-500', descricao: 'Excelente' },
-  B: { label: 'B', color: 'bg-amber-500', descricao: 'Bom' },
-  C: { label: 'C', color: 'bg-red-500', descricao: 'Regular' },
-  N: { label: 'N', color: 'bg-muted', descricao: 'Não avaliado' },
+export const classificacaoConfig: Record<
+  ClassificacaoFornecedor,
+  { label: string; color: string; descricao: string }
+> = {
+  A: { label: "A", color: "bg-green-500", descricao: "Excelente" },
+  B: { label: "B", color: "bg-amber-500", descricao: "Bom" },
+  C: { label: "C", color: "bg-red-500", descricao: "Regular" },
+  N: { label: "N", color: "bg-muted", descricao: "Não avaliado" },
 };

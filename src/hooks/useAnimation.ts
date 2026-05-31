@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState } from "react";
 export function useAnimation(duration: number = 1000) {
   const [progress, setProgress] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -16,6 +16,9 @@ export function useAnimation(duration: number = 1000) {
     };
     rafRef.current = requestAnimationFrame(animate);
   }, [duration]);
-  const stop = useCallback(() => { if (rafRef.current) cancelAnimationFrame(rafRef.current); setIsAnimating(false); }, []);
+  const stop = useCallback(() => {
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    setIsAnimating(false);
+  }, []);
   return { progress, isAnimating, start, stop };
 }

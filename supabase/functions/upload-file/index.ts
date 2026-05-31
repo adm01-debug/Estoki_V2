@@ -6,14 +6,24 @@ serve(async (req) => {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File;
-    const folder = formData.get("folder") as string || "uploads";
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const folder = (formData.get("folder") as string) || "uploads";
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     const fileName = `${folder}/${Date.now()}-${file.name}`;
-    const { data, error } = await supabase.storage.from("files").upload(fileName, file, { contentType: file.type });
+    const { data, error } = await supabase.storage
+      .from("files")
+      .upload(fileName, file, { contentType: file.type });
     if (error) throw error;
     const { data: urlData } = supabase.storage.from("files").getPublicUrl(fileName);
-    return new Response(JSON.stringify({ path: data.path, url: urlData.publicUrl }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ path: data.path, url: urlData.publicUrl }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

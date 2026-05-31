@@ -15,24 +15,38 @@ interface Props {
 export function LoteInfoCard({ lote, diasParaVencer }: Props) {
   return (
     <Card className={cn(diasParaVencer !== null && diasParaVencer <= 30 && "border-warning")}>
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="space-y-3 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Tag className="h-4 w-4" />
             Informações do Lote
           </div>
           {diasParaVencer !== null && diasParaVencer <= 30 && (
-            <Badge variant="outline" className="border-warning text-warning gap-1">
+            <Badge variant="outline" className="gap-1 border-warning text-warning">
               <AlertTriangle className="h-3 w-3" />
               Vence em {diasParaVencer} dias
             </Badge>
           )}
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div><span className="text-muted-foreground">Número do Lote</span><p className="font-mono font-medium">{lote.numero_lote}</p></div>
-          <div><span className="text-muted-foreground">Status</span><Badge variant="outline" className="capitalize">{lote.status.replace('_', ' ')}</Badge></div>
-          <div><span className="text-muted-foreground">Qtd. Inicial</span><p className="font-medium">{lote.quantidade_inicial}</p></div>
-          <div><span className="text-muted-foreground">Qtd. Atual</span><p className="font-medium">{lote.quantidade_atual}</p></div>
+          <div>
+            <span className="text-muted-foreground">Número do Lote</span>
+            <p className="font-mono font-medium">{lote.numero_lote}</p>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Status</span>
+            <Badge variant="outline" className="capitalize">
+              {lote.status.replace("_", " ")}
+            </Badge>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Qtd. Inicial</span>
+            <p className="font-medium">{lote.quantidade_inicial}</p>
+          </div>
+          <div>
+            <span className="text-muted-foreground">Qtd. Atual</span>
+            <p className="font-medium">{lote.quantidade_atual}</p>
+          </div>
         </div>
         <Separator />
         <div className="grid grid-cols-2 gap-3 text-sm">
@@ -40,7 +54,9 @@ export function LoteInfoCard({ lote, diasParaVencer }: Props) {
             <Calendar className="h-4 w-4 text-muted-foreground" />
             <div>
               <span className="text-muted-foreground">Recebimento</span>
-              <p className="font-medium">{format(new Date(lote.data_recebimento), 'dd/MM/yyyy', { locale: ptBR })}</p>
+              <p className="font-medium">
+                {format(new Date(lote.data_recebimento), "dd/MM/yyyy", { locale: ptBR })}
+              </p>
             </div>
           </div>
           {lote.data_validade && (
@@ -48,8 +64,13 @@ export function LoteInfoCard({ lote, diasParaVencer }: Props) {
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <div>
                 <span className="text-muted-foreground">Validade</span>
-                <p className={cn("font-medium", diasParaVencer !== null && diasParaVencer <= 30 && "text-warning")}>
-                  {format(new Date(lote.data_validade), 'dd/MM/yyyy', { locale: ptBR })}
+                <p
+                  className={cn(
+                    "font-medium",
+                    diasParaVencer !== null && diasParaVencer <= 30 && "text-warning"
+                  )}
+                >
+                  {format(new Date(lote.data_validade), "dd/MM/yyyy", { locale: ptBR })}
                 </p>
               </div>
             </div>
@@ -57,11 +78,16 @@ export function LoteInfoCard({ lote, diasParaVencer }: Props) {
           {lote.data_fabricacao && (
             <div>
               <span className="text-muted-foreground">Fabricação</span>
-              <p className="font-medium">{format(new Date(lote.data_fabricacao), 'dd/MM/yyyy', { locale: ptBR })}</p>
+              <p className="font-medium">
+                {format(new Date(lote.data_fabricacao), "dd/MM/yyyy", { locale: ptBR })}
+              </p>
             </div>
           )}
           {lote.fornecedor && (
-            <div><span className="text-muted-foreground">Fornecedor</span><p className="font-medium">{lote.fornecedor}</p></div>
+            <div>
+              <span className="text-muted-foreground">Fornecedor</span>
+              <p className="font-medium">{lote.fornecedor}</p>
+            </div>
           )}
         </div>
         {(lote.nf_entrada || lote.pedido_compra) && (

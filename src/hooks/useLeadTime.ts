@@ -32,22 +32,22 @@ export function useLeadTime(fornecedorId?: string, produtoId?: string) {
 
       if (filteredData.length === 0) return { lead_time_medio: 0, variancia: 0, total_pedidos: 0 };
 
-      const leadTimes = filteredData.map(l => 
+      const leadTimes = filteredData.map((l) =>
         differenceInDays(new Date(l.data_recebimento!), new Date(l.created_at))
       );
 
       const sum = leadTimes.reduce((acc, curr) => acc + curr, 0);
       const avg = sum / leadTimes.length;
-      
-      const sqDiff = leadTimes.map(lt => Math.pow(lt - avg, 2));
+
+      const sqDiff = leadTimes.map((lt) => Math.pow(lt - avg, 2));
       const variance = sqDiff.reduce((acc, curr) => acc + curr, 0) / sqDiff.length;
 
       return {
         lead_time_medio: Math.round(avg * 10) / 10,
         variancia: Math.round(variance * 10) / 10,
-        total_pedidos: leadTimes.length
+        total_pedidos: leadTimes.length,
       };
     },
-    enabled: true
+    enabled: true,
   });
 }

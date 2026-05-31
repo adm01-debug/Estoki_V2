@@ -1,4 +1,10 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Calendar, Users } from "lucide-react";
 
 interface ProdutividadeFiltersProps {
@@ -20,32 +26,36 @@ export function ProdutividadeFilters({
   onPeriodoChange,
   operadorSelecionado,
   onOperadorChange,
-  operadores
+  operadores,
 }: ProdutividadeFiltersProps) {
   return (
-    <div className="flex flex-wrap gap-3 items-center justify-between">
-      <div className="flex gap-3 flex-wrap">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap gap-3">
         <Select value={periodo} onValueChange={onPeriodoChange}>
           <SelectTrigger className="w-[160px]">
-            <Calendar className="h-4 w-4 mr-2" />
+            <Calendar className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             {periodos.map((p) => (
-              <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+              <SelectItem key={p.value} value={p.value}>
+                {p.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
         <Select value={operadorSelecionado} onValueChange={onOperadorChange}>
           <SelectTrigger className="w-[180px]">
-            <Users className="h-4 w-4 mr-2" />
+            <Users className="mr-2 h-4 w-4" />
             <SelectValue placeholder="Operador" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todos os operadores</SelectItem>
             {operadores.map((op) => (
-              <SelectItem key={op.id} value={op.id}>{op.nome}</SelectItem>
+              <SelectItem key={op.id} value={op.id}>
+                {op.nome}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

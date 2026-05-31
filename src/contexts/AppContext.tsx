@@ -28,18 +28,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
     notifications: [],
   });
 
-  const toggleSidebar = useCallback(() => setState(s => ({ ...s, sidebarOpen: !s.sidebarOpen })), []);
-  const setTheme = useCallback((theme: AppState["theme"]) => setState(s => ({ ...s, theme })), []);
+  const toggleSidebar = useCallback(
+    () => setState((s) => ({ ...s, sidebarOpen: !s.sidebarOpen })),
+    []
+  );
+  const setTheme = useCallback(
+    (theme: AppState["theme"]) => setState((s) => ({ ...s, theme })),
+    []
+  );
   const addNotification = useCallback((notification: Omit<Notification, "id">) => {
     const id = Math.random().toString(36).slice(2);
-    setState(s => ({ ...s, notifications: [...s.notifications, { ...notification, id }] }));
+    setState((s) => ({ ...s, notifications: [...s.notifications, { ...notification, id }] }));
   }, []);
   const removeNotification = useCallback((id: string) => {
-    setState(s => ({ ...s, notifications: s.notifications.filter(n => n.id !== id) }));
+    setState((s) => ({ ...s, notifications: s.notifications.filter((n) => n.id !== id) }));
   }, []);
 
   return (
-    <AppContext.Provider value={{ ...state, toggleSidebar, setTheme, addNotification, removeNotification }}>
+    <AppContext.Provider
+      value={{ ...state, toggleSidebar, setTheme, addNotification, removeNotification }}
+    >
       {children}
     </AppContext.Provider>
   );

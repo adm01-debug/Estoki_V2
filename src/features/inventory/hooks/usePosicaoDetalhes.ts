@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { PosicaoEstoque } from "@/types/inventory";
-import type { EstoquePosicaoDetalhes, ProdutoDetalhes, LoteDetalhes } from "../components/posicao-detalhes/types";
+import type {
+  EstoquePosicaoDetalhes,
+  ProdutoDetalhes,
+  LoteDetalhes,
+} from "../components/posicao-detalhes/types";
 
 export function usePosicaoDetalhes(position: PosicaoEstoque | null) {
   const [detalhes, setDetalhes] = useState<EstoquePosicaoDetalhes | null>(null);
@@ -11,24 +15,26 @@ export function usePosicaoDetalhes(position: PosicaoEstoque | null) {
 
   useEffect(() => {
     async function fetchDetalhes() {
-      if (!position || position.status !== 'ocupado') {
+      if (!position || position.status !== "ocupado") {
         setDetalhes(null);
         return;
       }
       setLoading(true);
       try {
         const { data, error } = await supabase
-          .from('estoque_posicao')
-          .select(`
+          .from("estoque_posicao")
+          .select(
+            `
             id, 
             quantidade, 
             data_entrada, 
             produtos (id, sku, nome, descricao, unidade, curva_abc, peso_unitario, fornecedor_principal), 
             lotes (id, numero_lote, quantidade_inicial, quantidade_atual, data_recebimento, data_validade, data_fabricacao, fornecedor, nf_entrada, pedido_compra, status)
-          `)
-          .eq('posicao_id', position.id)
+          `
+          )
+          .eq("posicao_id", position.id)
           .single();
-        
+
         if (error) throw error;
         if (data) {
           setDetalhes({
@@ -40,7 +46,7 @@ export function usePosicaoDetalhes(position: PosicaoEstoque | null) {
           });
         }
       } catch (err) {
-        if (import.meta.env.DEV) console.error('Erro ao buscar detalhes:', err);
+        if (import.meta.env.DEV) console.error("Erro ao buscar detalhes:", err);
         setDetalhes(null);
       } finally {
         setLoading(false);
@@ -55,16 +61,16 @@ export function usePosicaoDetalhes(position: PosicaoEstoque | null) {
       setLoadingHistory(true);
       try {
         const { data, error } = await supabase
-          .from('posicao_status_log')
+          .from("posicao_status_log")
           .select(`*, profiles:operador_id(nome)`)
-          .eq('posicao_id', position.id)
-          .order('created_at', { ascending: false })
+          .eq("posicao_id", position.id)
+          .order("created_at", { ascending: false })
           .limit(5);
-        
+
         if (error) throw error;
         setHistory(data || []);
       } catch (err) {
-        console.error('Erro ao buscar histórico:', err);
+        console.error("Erro ao buscar histórico:", err);
       } finally {
         setLoadingHistory(false);
       }

@@ -1,9 +1,18 @@
- import { logger } from "@/utils/logger";
+import { logger } from "@/utils/logger";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { 
-  Settings, Play, Pause, CheckCircle2, XCircle, Clock, 
-  AlertTriangle, Shield, Loader2, RefreshCw, Zap
+import {
+  Settings,
+  Play,
+  Pause,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  Shield,
+  Loader2,
+  RefreshCw,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +30,7 @@ interface Workflow {
   tipo: "auto_block_vencido" | "alerta_estoque_baixo" | "aprovacao_movimentacao" | "resumo_diario";
   ativo: boolean;
   ultimaExecucao: string | null;
-   config: Record<string, string | number | boolean | null>;
+  config: Record<string, string | number | boolean | null>;
 }
 
 const defaultWorkflows: Workflow[] = [
@@ -69,19 +78,17 @@ export default function Automacoes() {
   const [executing, setExecuting] = useState<string | null>(null);
 
   const toggleWorkflow = (id: string) => {
-    setWorkflows(prev => prev.map(w => 
-      w.id === id ? { ...w, ativo: !w.ativo } : w
-    ));
-    const wf = workflows.find(w => w.id === id);
+    setWorkflows((prev) => prev.map((w) => (w.id === id ? { ...w, ativo: !w.ativo } : w)));
+    const wf = workflows.find((w) => w.id === id);
     toast.success(`${wf?.nome} ${wf?.ativo ? "desativado" : "ativado"}`);
   };
 
   const executeWorkflow = async (id: string) => {
-    const wf = workflows.find(w => w.id === id);
+    const wf = workflows.find((w) => w.id === id);
     if (!wf) return;
 
     setExecuting(id);
-    
+
     try {
       switch (wf.tipo) {
         case "auto_block_vencido": {
@@ -98,9 +105,9 @@ export default function Automacoes() {
           for (const lote of lotesVencidos || []) {
             const { error: updateError } = await supabase
               .from("lotes")
-                .update({ status: "quarentena" as "quarentena" })
+              .update({ status: "quarentena" as const })
               .eq("id", lote.id);
-            
+
             if (!updateError) {
               blocked++;
               if (user?.id) {
@@ -131,7 +138,7 @@ export default function Automacoes() {
             .select("produto_id, quantidade");
 
           const estoqueMap: Record<string, number> = {};
-          estoque?.forEach(e => {
+          estoque?.forEach((e) => {
             estoqueMap[e.produto_id] = (estoqueMap[e.produto_id] || 0) + e.quantidade;
           });
 
@@ -161,11 +168,11 @@ export default function Automacoes() {
           toast.info("Workflow configurado. Será executado conforme programado.");
       }
 
-      setWorkflows(prev => prev.map(w => 
-        w.id === id ? { ...w, ultimaExecucao: new Date().toISOString() } : w
-      ));
+      setWorkflows((prev) =>
+        prev.map((w) => (w.id === id ? { ...w, ultimaExecucao: new Date().toISOString() } : w))
+      );
     } catch (err: unknown) {
-      toast.error(`Erro: ${(err instanceof Error ? err.message : String(err))}`);
+      toast.error(`Erro: ${err instanceof Error ? err.message : String(err)}`);
     } finally {
       setExecuting(null);
     }
@@ -179,18 +186,23 @@ export default function Automacoes() {
 
   const getTypeIcon = (tipo: string) => {
     switch (tipo) {
-      case "auto_block_vencido": return AlertTriangle;
-      case "alerta_estoque_baixo": return Zap;
-      case "aprovacao_movimentacao": return Shield;
-      case "resumo_diario": return Clock;
-      default: return Settings;
+      case "auto_block_vencido":
+        return AlertTriangle;
+      case "alerta_estoque_baixo":
+        return Zap;
+      case "aprovacao_movimentacao":
+        return Shield;
+      case "resumo_diario":
+        return Clock;
+      default:
+        return Settings;
     }
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-[1200px] mx-auto">
-      <PageHeader 
-        title="Automações & Workflows" 
+    <div className="mx-auto max-w-[1200px] p-4 md:p-6">
+      <PageHeader
+        title="Automações & Workflows"
         description="Configure regras automáticas para seu armazém"
       />
 
@@ -207,25 +219,33 @@ export default function Automacoes() {
               <Card className="glass-card border-border/30">
                 <CardContent className="p-4 md:p-6">
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                      wf.ativo ? "bg-primary/10" : "bg-muted"
-                    }`}>
-                      <TypeIcon className={`h-6 w-6 ${wf.ativo ? "text-primary" : "text-muted-foreground"}`} />
+                    <div
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${
+                        wf.ativo ? "bg-primary/10" : "bg-muted"
+                      }`}
+                    >
+                      <TypeIcon
+                        className={`h-6 w-6 ${wf.ativo ? "text-primary" : "text-muted-foreground"}`}
+                      />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
                         <h3 className="font-bold text-foreground">{wf.nome}</h3>
                         {getStatusIcon(wf)}
-                        <Badge variant="outline" className={wf.ativo 
-                          ? "bg-success/10 text-success border-success/30" 
-                          : "bg-muted text-muted-foreground"
-                        }>
+                        <Badge
+                          variant="outline"
+                          className={
+                            wf.ativo
+                              ? "border-success/30 bg-success/10 text-success"
+                              : "bg-muted text-muted-foreground"
+                          }
+                        >
                           {wf.ativo ? "Ativo" : "Inativo"}
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3">{wf.descricao}</p>
-                      
+                      <p className="mb-3 text-sm text-muted-foreground">{wf.descricao}</p>
+
                       {wf.ultimaExecucao && (
                         <p className="text-xs text-muted-foreground/60">
                           Última execução: {new Date(wf.ultimaExecucao).toLocaleString("pt-BR")}
@@ -233,7 +253,7 @@ export default function Automacoes() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex shrink-0 items-center gap-3">
                       <Button
                         variant="outline"
                         size="sm"
@@ -248,10 +268,7 @@ export default function Automacoes() {
                         )}
                         Executar
                       </Button>
-                      <Switch 
-                        checked={wf.ativo} 
-                        onCheckedChange={() => toggleWorkflow(wf.id)} 
-                      />
+                      <Switch checked={wf.ativo} onCheckedChange={() => toggleWorkflow(wf.id)} />
                     </div>
                   </div>
                 </CardContent>

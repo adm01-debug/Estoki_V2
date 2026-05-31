@@ -6,17 +6,31 @@ serve(async (req) => {
   try {
     const formData = await req.formData();
     const files = formData.getAll("files") as File[];
-    const bucket = formData.get("bucket") as string || "uploads";
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const bucket = (formData.get("bucket") as string) || "uploads";
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     const results = [];
     for (const file of files) {
       const path = `${Date.now()}-${file.name}`;
-      const { data, error } = await supabase.storage.from(bucket).upload(path, file, { contentType: file.type });
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .upload(path, file, { contentType: file.type });
       if (!error) {
-        const { data: { publicUrl } } = supabase.storage.from(bucket).getPublicUrl(path);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from(bucket).getPublicUrl(path);
         results.push({ path: data.path, url: publicUrl, name: file.name });
       }
     }
-    return new Response(JSON.stringify({ uploaded: results.length, files: results }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ uploaded: results.length, files: results }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

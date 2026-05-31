@@ -1,5 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
-import { Ciclo, TipoCiclo, StatusCiclo, Contagem, StatusContagem } from './types';
+import { supabase } from "@/integrations/supabase/client";
+import { Ciclo, TipoCiclo, StatusCiclo, Contagem, StatusContagem } from "./types";
 
 export const mapCiclo = (data: any): Ciclo => ({
   id: data.id,
@@ -47,27 +47,27 @@ export const mapContagem = (c: any): Contagem => ({
 export const updateCicloProgress = async (cicloId: string): Promise<void> => {
   try {
     const { data: contagens } = await supabase
-      .from('inventario_contagens')
-      .select('*')
-      .eq('ciclo_id', cicloId);
+      .from("inventario_contagens")
+      .select("*")
+      .eq("ciclo_id", cicloId);
 
     if (!contagens) return;
 
     const total = contagens.length;
-    const contados = contagens.filter(c => c.status !== 'pendente').length;
-    const divergentes = contagens.filter(c => c.recontagem_necessaria).length;
+    const contados = contagens.filter((c) => c.status !== "pendente").length;
+    const divergentes = contagens.filter((c) => c.recontagem_necessaria).length;
     const acuracidade = contados > 0 ? ((contados - divergentes) / contados) * 100 : 0;
 
     await supabase
-      .from('inventario_ciclos')
+      .from("inventario_ciclos")
       .update({
         total_posicoes: total,
         posicoes_contadas: contados,
         divergencias_encontradas: divergentes,
         acuracidade: Math.round(acuracidade * 100) / 100,
       })
-      .eq('id', cicloId);
+      .eq("id", cicloId);
   } catch (err) {
-    if (import.meta.env.DEV) console.error('Erro ao atualizar progresso:', err);
+    if (import.meta.env.DEV) console.error("Erro ao atualizar progresso:", err);
   }
 };

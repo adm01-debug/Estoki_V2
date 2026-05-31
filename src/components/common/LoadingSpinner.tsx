@@ -30,7 +30,7 @@ export function LoadingSpinner({
 
   if (fullScreen) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
         {spinner}
       </div>
     );
@@ -42,7 +42,7 @@ export function LoadingSpinner({
 // Componente para loading de página inteira
 export function PageLoading() {
   return (
-    <div className="flex items-center justify-center min-h-[400px]">
+    <div className="flex min-h-[400px] items-center justify-center">
       <LoadingSpinner size="lg" text="Carregando..." />
     </div>
   );

@@ -30,7 +30,7 @@ interface UseExportResult {
   error: Error | null;
 }
 
-export function useExport<T extends Record<string, any>>(
+export function useTableExport<T extends Record<string, any>>(
   options: ExportOptions<T>
 ): UseExportResult {
   const {
@@ -63,8 +63,7 @@ export function useExport<T extends Record<string, any>>(
       let hasMore = true;
 
       while (hasMore) {
-        let query = (supabase
-          .from(table as any) as any)
+        let query = (supabase.from(table as any) as any)
           .select("*")
           .order(orderBy.column, { ascending: orderBy.ascending })
           .range(page * pageSize, (page + 1) * pageSize - 1);
@@ -109,9 +108,7 @@ export function useExport<T extends Record<string, any>>(
         const transformed: Record<string, any> = {};
         columns.forEach((col) => {
           const value = row[col.key];
-          transformed[col.header] = col.transform
-            ? col.transform(value, row)
-            : value;
+          transformed[col.header] = col.transform ? col.transform(value, row) : value;
         });
         return transformed;
       });
@@ -147,15 +144,15 @@ export function useExport<T extends Record<string, any>>(
         case "pdf": {
           const doc = new jsPDF();
           doc.text(filename, 14, 15);
-          const body = data.map(row => 
-            (headers || Object.keys(row)).map(h => String(row[h] || ''))
+          const body = data.map((row) =>
+            (headers || Object.keys(row)).map((h) => String(row[h] || ""))
           );
           autoTable(doc, {
             head: [headers || Object.keys(data[0] || {})],
             body: body,
             startY: 20,
             styles: { fontSize: 8 },
-            headStyles: { fillColor: [66, 66, 66] }
+            headStyles: { fillColor: [66, 66, 66] },
           });
           doc.save(`${filename}.pdf`);
           break;

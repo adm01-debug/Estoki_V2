@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 export function useSpeechSynthesis() {
-  const speak = useCallback((text: string, lang = 'pt-BR') => {
+  const speak = useCallback((text: string, lang = "pt-BR") => {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang;
     speechSynthesis.speak(utterance);

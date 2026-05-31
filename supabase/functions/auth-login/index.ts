@@ -9,17 +9,26 @@ serve(async (req) => {
 
   try {
     if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers,
+      });
     }
 
     const body = await req.json();
     const validation = validateInput(LoginSchema, body);
     if (!validation.success) {
-      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { status: 400, headers });
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers }
+      );
     }
 
     const { email, password } = validation.data;
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!
+    );
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
 

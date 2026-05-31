@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, X, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useDebouncedCallback } from '@/hooks/useDebounce';
+import React, { useState, useCallback } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, X, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useDebouncedCallback } from "@/hooks/useDebounce";
 
 interface SearchInputProps {
   value?: string;
@@ -20,35 +20,38 @@ export function SearchInput({
   value: controlledValue,
   onChange,
   onSearch,
-  placeholder = 'Buscar...',
+  placeholder = "Buscar...",
   debounceMs = 300,
   isLoading = false,
   className,
   autoFocus = false,
 }: SearchInputProps) {
-  const [internalValue, setInternalValue] = useState('');
+  const [internalValue, setInternalValue] = useState("");
   const value = controlledValue !== undefined ? controlledValue : internalValue;
 
   const debouncedSearch = useDebouncedCallback((val: string) => {
     onSearch?.(val);
   }, debounceMs);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (controlledValue === undefined) setInternalValue(newValue);
-    onChange?.(newValue);
-    debouncedSearch(newValue);
-  }, [controlledValue, onChange, debouncedSearch]);
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;
+      if (controlledValue === undefined) setInternalValue(newValue);
+      onChange?.(newValue);
+      debouncedSearch(newValue);
+    },
+    [controlledValue, onChange, debouncedSearch]
+  );
 
   const handleClear = useCallback(() => {
-    if (controlledValue === undefined) setInternalValue('');
-    onChange?.('');
-    onSearch?.('');
+    if (controlledValue === undefined) setInternalValue("");
+    onChange?.("");
+    onSearch?.("");
   }, [controlledValue, onChange, onSearch]);
 
   return (
-    <div className={cn('relative', className)}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className={cn("relative", className)}>
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
         onChange={handleChange}
@@ -57,12 +60,12 @@ export function SearchInput({
         autoFocus={autoFocus}
       />
       {isLoading ? (
-        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
+        <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
       ) : value ? (
         <Button
           variant="ghost"
           size="sm"
-          className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0"
+          className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
           onClick={handleClear}
         >
           <X className="h-4 w-4" />

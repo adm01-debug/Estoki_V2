@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LockoutState {
   isLocked: boolean;
@@ -21,7 +21,7 @@ export function useLoginLockout() {
     if (!lockoutState.isLocked || lockoutState.secondsRemaining <= 0) return;
 
     const interval = setInterval(() => {
-      setLockoutState(prev => {
+      setLockoutState((prev) => {
         const newSeconds = prev.secondsRemaining - 1;
         if (newSeconds <= 0) {
           return { ...prev, isLocked: false, secondsRemaining: 0, lockedUntil: null };
@@ -35,12 +35,12 @@ export function useLoginLockout() {
 
   const checkLockout = useCallback(async (email: string) => {
     try {
-      const { data, error } = await supabase.rpc('check_login_lockout', {
+      const { data, error } = await supabase.rpc("check_login_lockout", {
         p_email: email.toLowerCase().trim(),
       });
 
       if (error) {
-        if (import.meta.env.DEV) console.error('Erro ao verificar bloqueio:', error);
+        if (import.meta.env.DEV) console.error("Erro ao verificar bloqueio:", error);
         return false;
       }
 
@@ -57,19 +57,19 @@ export function useLoginLockout() {
 
       return false;
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Erro ao verificar bloqueio:', err);
+      if (import.meta.env.DEV) console.error("Erro ao verificar bloqueio:", err);
       return false;
     }
   }, []);
 
   const recordFailedAttempt = useCallback(async (email: string) => {
     try {
-      const { data, error } = await supabase.rpc('record_failed_login', {
+      const { data, error } = await supabase.rpc("record_failed_login", {
         p_email: email.toLowerCase().trim(),
       });
 
       if (error) {
-        if (import.meta.env.DEV) console.error('Erro ao registrar tentativa:', error);
+        if (import.meta.env.DEV) console.error("Erro ao registrar tentativa:", error);
         return;
       }
 
@@ -83,13 +83,13 @@ export function useLoginLockout() {
         });
       }
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Erro ao registrar tentativa:', err);
+      if (import.meta.env.DEV) console.error("Erro ao registrar tentativa:", err);
     }
   }, []);
 
   const resetLockout = useCallback(async (email: string) => {
     try {
-      await supabase.rpc('reset_login_attempts', {
+      await supabase.rpc("reset_login_attempts", {
         p_email: email.toLowerCase().trim(),
       });
 
@@ -100,16 +100,16 @@ export function useLoginLockout() {
         secondsRemaining: 0,
       });
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Erro ao resetar bloqueio:', err);
+      if (import.meta.env.DEV) console.error("Erro ao resetar bloqueio:", err);
     }
   }, []);
 
   const formatTimeRemaining = useCallback((seconds: number): string => {
-    if (seconds <= 0) return '';
-    
+    if (seconds <= 0) return "";
+
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    
+
     if (minutes > 0) {
       return `${minutes}m ${secs}s`;
     }

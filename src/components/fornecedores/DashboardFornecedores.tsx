@@ -1,35 +1,51 @@
-import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { useFornecedores } from '@/hooks/useFornecedores';
-import { 
-  Building2, 
-  TrendingUp, 
-  TrendingDown, 
+import { useMemo } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useFornecedores } from "@/hooks/useFornecedores";
+import {
+  Building2,
+  TrendingUp,
+  TrendingDown,
   Minus,
   AlertTriangle,
   CheckCircle,
   Package,
   Clock,
-  Star
-} from 'lucide-react';
+  Star,
+} from "lucide-react";
 
 export function DashboardFornecedores() {
-  const { fornecedores, loading, getEstatisticasGerais, getTopFornecedores, getFornecedoresCriticos } = useFornecedores();
+  const {
+    fornecedores,
+    loading,
+    getEstatisticasGerais,
+    getTopFornecedores,
+    getFornecedoresCriticos,
+  } = useFornecedores();
 
   const estatisticas = useMemo(() => getEstatisticasGerais(), [fornecedores]);
   const topFornecedores = useMemo(() => getTopFornecedores(5), [fornecedores]);
   const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [fornecedores]);
 
   const getClassificacaoBadge = (classificacao: string) => {
-    const configs: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
-      A: { variant: 'default', label: 'A - Excelente' },
-      B: { variant: 'secondary', label: 'B - Bom' },
-      C: { variant: 'outline', label: 'C - Regular' },
-      D: { variant: 'destructive', label: 'D - Crítico' },
+    const configs: Record<
+      string,
+      { variant: "default" | "secondary" | "destructive" | "outline"; label: string }
+    > = {
+      A: { variant: "default", label: "A - Excelente" },
+      B: { variant: "secondary", label: "B - Bom" },
+      C: { variant: "outline", label: "C - Regular" },
+      D: { variant: "destructive", label: "D - Crítico" },
     };
     const config = configs[classificacao] || configs.C;
     return <Badge variant={config.variant}>{config.label}</Badge>;
@@ -37,9 +53,9 @@ export function DashboardFornecedores() {
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
-      case 'up':
+      case "up":
         return <TrendingUp className="h-4 w-4 text-green-500" />;
-      case 'down':
+      case "down":
         return <TrendingDown className="h-4 w-4 text-red-500" />;
       default:
         return <Minus className="h-4 w-4 text-yellow-500" />;
@@ -49,10 +65,10 @@ export function DashboardFornecedores() {
   if (loading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardContent className="pt-6">
-              <div className="h-20 bg-muted rounded" />
+              <div className="h-20 rounded bg-muted" />
             </CardContent>
           </Card>
         ))}
@@ -81,7 +97,9 @@ export function DashboardFornecedores() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Pontualidade Média</p>
-                <p className="text-3xl font-bold">{estatisticas.pontualidadeMedia?.toFixed(1) || 0}%</p>
+                <p className="text-3xl font-bold">
+                  {estatisticas.pontualidadeMedia?.toFixed(1) || 0}%
+                </p>
               </div>
               <Clock className="h-8 w-8 text-blue-500" />
             </div>
@@ -94,7 +112,9 @@ export function DashboardFornecedores() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Qualidade Média</p>
-                <p className="text-3xl font-bold">{estatisticas.qualidadeMedia?.toFixed(1) || 0}%</p>
+                <p className="text-3xl font-bold">
+                  {estatisticas.qualidadeMedia?.toFixed(1) || 0}%
+                </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
@@ -142,7 +162,7 @@ export function DashboardFornecedores() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="font-bold">{f.pontuacao?.toFixed(0) || 0}</span>
-                          <Progress value={f.pontuacao || 0} className="w-16 h-2" />
+                          <Progress value={f.pontuacao || 0} className="h-2 w-16" />
                         </div>
                       </TableCell>
                       <TableCell>{getClassificacaoBadge(f.classificacao)}</TableCell>
@@ -166,8 +186,8 @@ export function DashboardFornecedores() {
           <CardContent>
             <ScrollArea className="h-[300px]">
               {fornecedoresCriticos.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-                  <CheckCircle className="h-12 w-12 mb-2 text-green-500" />
+                <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+                  <CheckCircle className="mb-2 h-12 w-12 text-green-500" />
                   <p>Nenhum fornecedor crítico</p>
                 </div>
               ) : (
@@ -185,15 +205,21 @@ export function DashboardFornecedores() {
                         <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                           <div>
                             <p className="text-muted-foreground">Pontualidade</p>
-                            <p className="font-medium">{f.percentual_pontualidade?.toFixed(1) || 0}%</p>
+                            <p className="font-medium">
+                              {f.percentual_pontualidade?.toFixed(1) || 0}%
+                            </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Qualidade</p>
-                            <p className="font-medium">{f.percentual_qualidade?.toFixed(1) || 0}%</p>
+                            <p className="font-medium">
+                              {f.percentual_qualidade?.toFixed(1) || 0}%
+                            </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Taxa Problemas</p>
-                            <p className="font-medium text-destructive">{f.taxa_problemas?.toFixed(1) || 0}%</p>
+                            <p className="font-medium text-destructive">
+                              {f.taxa_problemas?.toFixed(1) || 0}%
+                            </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Total Lotes</p>
@@ -220,10 +246,10 @@ export function DashboardFornecedores() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-4 gap-4">
-            {['A', 'B', 'C', 'D'].map(classificacao => {
-              const count = fornecedores.filter(f => f.classificacao === classificacao).length;
+            {["A", "B", "C", "D"].map((classificacao) => {
+              const count = fornecedores.filter((f) => f.classificacao === classificacao).length;
               const percent = fornecedores.length > 0 ? (count / fornecedores.length) * 100 : 0;
-              
+
               return (
                 <div key={classificacao} className="text-center">
                   <div className="mb-2">{getClassificacaoBadge(classificacao)}</div>

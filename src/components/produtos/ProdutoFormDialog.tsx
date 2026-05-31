@@ -1,12 +1,31 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { produtoSchema, type ProdutoFormData } from "./produtoSchema";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { useEffect } from "react";
 
 interface Props {
@@ -30,8 +49,8 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
       ponto_pedido: 0,
       peso_unitario: 0,
       fornecedor_principal: "",
-      ...initialData
-    }
+      ...initialData,
+    },
   });
 
   useEffect(() => {
@@ -46,7 +65,7 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
         ponto_pedido: 0,
         peso_unitario: 0,
         fornecedor_principal: "",
-        ...initialData
+        ...initialData,
       });
     }
   }, [open, initialData, form]);
@@ -58,7 +77,9 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md">
-        <DialogHeader><DialogTitle>{initialData?.sku ? 'Editar Produto' : 'Novo Produto'}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>{initialData?.sku ? "Editar Produto" : "Novo Produto"}</DialogTitle>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -83,10 +104,16 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                     <FormLabel>Unidade</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {["UN", "KG", "L", "M", "CX", "PC", "PAR"].map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                        {["UN", "KG", "L", "M", "CX", "PC", "PAR"].map((u) => (
+                          <SelectItem key={u} value={u}>
+                            {u}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -116,7 +143,12 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                 <FormItem>
                   <FormLabel>Descrição</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} maxLength={500} placeholder="Breve descrição..." />
+                    <Input
+                      {...field}
+                      value={field.value || ""}
+                      maxLength={500}
+                      placeholder="Breve descrição..."
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -131,7 +163,11 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                   <FormItem>
                     <FormLabel>Est. Mínimo</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(+e.target.value)} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -144,7 +180,11 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                   <FormItem>
                     <FormLabel>Est. Máximo</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(+e.target.value)} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,7 +197,11 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                   <FormItem>
                     <FormLabel>Ponto Pedido</FormLabel>
                     <FormControl>
-                      <Input type="number" {...field} onChange={e => field.onChange(+e.target.value)} />
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -173,7 +217,12 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
                   <FormItem>
                     <FormLabel>Peso (kg)</FormLabel>
                     <FormControl>
-                      <Input type="number" step="0.01" {...field} onChange={e => field.onChange(+e.target.value)} />
+                      <Input
+                        type="number"
+                        step="0.01"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,9 +244,11 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
             </div>
 
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                Cancelar
+              </Button>
               <Button type="submit" disabled={saving}>
-                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Salvar
               </Button>
             </DialogFooter>

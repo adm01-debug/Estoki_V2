@@ -8,7 +8,6 @@ import { setupGlobalErrorHandler } from "./config/error-handler";
 // 0) Setup global monitoring
 setupGlobalErrorHandler();
 
-
 // Suppress noisy errors
 window.addEventListener("unhandledrejection", (event) => {
   console.error("[Unhandled Promise]", event.reason);
@@ -40,15 +39,25 @@ requestAnimationFrame(() => {
 });
 
 // 3) Background: clean up stale service workers in preview/dev (fire-and-forget, never reload)
-if ("serviceWorker" in navigator && (import.meta.env.DEV || /lovable/.test(window.location.hostname))) {
-  navigator.serviceWorker.getRegistrations().then((regs) => {
-    regs.forEach((r) => r.unregister());
-  }).catch(() => {});
-  
+if (
+  "serviceWorker" in navigator &&
+  (import.meta.env.DEV || /lovable/.test(window.location.hostname))
+) {
+  navigator.serviceWorker
+    .getRegistrations()
+    .then((regs) => {
+      regs.forEach((r) => r.unregister());
+    })
+    .catch(() => {});
+
   if ("caches" in window) {
-    caches.keys().then((keys) => {
-      keys.filter((k) => k.startsWith("estoki-") || k.includes("workbox"))
-        .forEach((k) => caches.delete(k));
-    }).catch(() => {});
+    caches
+      .keys()
+      .then((keys) => {
+        keys
+          .filter((k) => k.startsWith("estoki-") || k.includes("workbox"))
+          .forEach((k) => caches.delete(k));
+      })
+      .catch(() => {});
   }
 }

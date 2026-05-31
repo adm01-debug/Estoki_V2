@@ -63,17 +63,17 @@ export interface NFeParsed {
   serie: string;
   dataEmissao: Date;
   naturezaOperacao: string;
-  
+
   // Partes
   emitente: NFeEmitente;
   destinatario: NFeDestinatario;
-  
+
   // Produtos
   produtos: NFeProduto[];
-  
+
   // Transporte
   transporte: NFeTransporte;
-  
+
   // Totais
   totais: {
     valorProdutos: number;
@@ -86,14 +86,14 @@ export interface NFeParsed {
     pesoLiquido: number;
     pesoBruto: number;
   };
-  
+
   // Informações adicionais
   informacoesComplementares?: string;
 }
 
 function getElementText(parent: Element | Document, tagName: string): string {
   const element = parent.getElementsByTagName(tagName)[0];
-  return element?.textContent?.trim() || '';
+  return element?.textContent?.trim() || "";
 }
 
 function getElementNumber(parent: Element | Document, tagName: string): number {
@@ -102,89 +102,93 @@ function getElementNumber(parent: Element | Document, tagName: string): number {
 }
 
 function parseEmitente(emit: Element): NFeEmitente {
-  const enderEmit = emit.getElementsByTagName('enderEmit')[0];
-  
+  const enderEmit = emit.getElementsByTagName("enderEmit")[0];
+
   return {
-    cnpj: getElementText(emit, 'CNPJ'),
-    razaoSocial: getElementText(emit, 'xNome'),
-    nomeFantasia: getElementText(emit, 'xFant'),
+    cnpj: getElementText(emit, "CNPJ"),
+    razaoSocial: getElementText(emit, "xNome"),
+    nomeFantasia: getElementText(emit, "xFant"),
     endereco: {
-      logradouro: enderEmit ? getElementText(enderEmit, 'xLgr') : '',
-      numero: enderEmit ? getElementText(enderEmit, 'nro') : '',
-      bairro: enderEmit ? getElementText(enderEmit, 'xBairro') : '',
-      cidade: enderEmit ? getElementText(enderEmit, 'xMun') : '',
-      uf: enderEmit ? getElementText(enderEmit, 'UF') : '',
-      cep: enderEmit ? getElementText(enderEmit, 'CEP') : '',
-    }
+      logradouro: enderEmit ? getElementText(enderEmit, "xLgr") : "",
+      numero: enderEmit ? getElementText(enderEmit, "nro") : "",
+      bairro: enderEmit ? getElementText(enderEmit, "xBairro") : "",
+      cidade: enderEmit ? getElementText(enderEmit, "xMun") : "",
+      uf: enderEmit ? getElementText(enderEmit, "UF") : "",
+      cep: enderEmit ? getElementText(enderEmit, "CEP") : "",
+    },
   };
 }
 
 function parseDestinatario(dest: Element): NFeDestinatario {
-  const enderDest = dest.getElementsByTagName('enderDest')[0];
-  
+  const enderDest = dest.getElementsByTagName("enderDest")[0];
+
   return {
-    cnpj: getElementText(dest, 'CNPJ') || getElementText(dest, 'CPF'),
-    razaoSocial: getElementText(dest, 'xNome'),
+    cnpj: getElementText(dest, "CNPJ") || getElementText(dest, "CPF"),
+    razaoSocial: getElementText(dest, "xNome"),
     endereco: {
-      logradouro: enderDest ? getElementText(enderDest, 'xLgr') : '',
-      numero: enderDest ? getElementText(enderDest, 'nro') : '',
-      bairro: enderDest ? getElementText(enderDest, 'xBairro') : '',
-      cidade: enderDest ? getElementText(enderDest, 'xMun') : '',
-      uf: enderDest ? getElementText(enderDest, 'UF') : '',
-      cep: enderDest ? getElementText(enderDest, 'CEP') : '',
-    }
+      logradouro: enderDest ? getElementText(enderDest, "xLgr") : "",
+      numero: enderDest ? getElementText(enderDest, "nro") : "",
+      bairro: enderDest ? getElementText(enderDest, "xBairro") : "",
+      cidade: enderDest ? getElementText(enderDest, "xMun") : "",
+      uf: enderDest ? getElementText(enderDest, "UF") : "",
+      cep: enderDest ? getElementText(enderDest, "CEP") : "",
+    },
   };
 }
 
 function parseProdutos(dets: HTMLCollectionOf<Element>): NFeProduto[] {
   const produtos: NFeProduto[] = [];
-  
+
   for (let i = 0; i < dets.length; i++) {
     const det = dets[i];
-    const prod = det.getElementsByTagName('prod')[0];
-    
+    const prod = det.getElementsByTagName("prod")[0];
+
     if (prod) {
       produtos.push({
-        codigo: getElementText(prod, 'cProd'),
-        ean: getElementText(prod, 'cEAN') || getElementText(prod, 'cEANTrib'),
-        descricao: getElementText(prod, 'xProd'),
-        ncm: getElementText(prod, 'NCM'),
-        cfop: getElementText(prod, 'CFOP'),
-        unidade: getElementText(prod, 'uCom'),
-        quantidade: getElementNumber(prod, 'qCom'),
-        valorUnitario: getElementNumber(prod, 'vUnCom'),
-        valorTotal: getElementNumber(prod, 'vProd'),
+        codigo: getElementText(prod, "cProd"),
+        ean: getElementText(prod, "cEAN") || getElementText(prod, "cEANTrib"),
+        descricao: getElementText(prod, "xProd"),
+        ncm: getElementText(prod, "NCM"),
+        cfop: getElementText(prod, "CFOP"),
+        unidade: getElementText(prod, "uCom"),
+        quantidade: getElementNumber(prod, "qCom"),
+        valorUnitario: getElementNumber(prod, "vUnCom"),
+        valorTotal: getElementNumber(prod, "vProd"),
       });
     }
   }
-  
+
   return produtos;
 }
 
 function parseTransporte(transp: Element | undefined): NFeTransporte {
   if (!transp) {
-    return { modalidade: '9' }; // Sem frete
+    return { modalidade: "9" }; // Sem frete
   }
-  
-  const transporta = transp.getElementsByTagName('transporta')[0];
-  const vol = transp.getElementsByTagName('vol')[0];
-  
+
+  const transporta = transp.getElementsByTagName("transporta")[0];
+  const vol = transp.getElementsByTagName("vol")[0];
+
   return {
-    modalidade: getElementText(transp, 'modFrete'),
-    transportadora: transporta ? {
-      cnpj: getElementText(transporta, 'CNPJ'),
-      razaoSocial: getElementText(transporta, 'xNome'),
-    } : undefined,
-    volumes: vol ? {
-      quantidade: getElementNumber(vol, 'qVol'),
-      especie: getElementText(vol, 'esp'),
-      pesoLiquido: getElementNumber(vol, 'pesoL'),
-      pesoBruto: getElementNumber(vol, 'pesoB'),
-    } : undefined,
+    modalidade: getElementText(transp, "modFrete"),
+    transportadora: transporta
+      ? {
+          cnpj: getElementText(transporta, "CNPJ"),
+          razaoSocial: getElementText(transporta, "xNome"),
+        }
+      : undefined,
+    volumes: vol
+      ? {
+          quantidade: getElementNumber(vol, "qVol"),
+          especie: getElementText(vol, "esp"),
+          pesoLiquido: getElementNumber(vol, "pesoL"),
+          pesoBruto: getElementNumber(vol, "pesoB"),
+        }
+      : undefined,
   };
 }
 
-function parseTotais(total: Element | undefined): NFeParsed['totais'] {
+function parseTotais(total: Element | undefined): NFeParsed["totais"] {
   if (!total) {
     return {
       valorProdutos: 0,
@@ -198,17 +202,17 @@ function parseTotais(total: Element | undefined): NFeParsed['totais'] {
       pesoBruto: 0,
     };
   }
-  
-  const icmsTot = total.getElementsByTagName('ICMSTot')[0];
-  
+
+  const icmsTot = total.getElementsByTagName("ICMSTot")[0];
+
   return {
-    valorProdutos: icmsTot ? getElementNumber(icmsTot, 'vProd') : 0,
-    valorFrete: icmsTot ? getElementNumber(icmsTot, 'vFrete') : 0,
-    valorSeguro: icmsTot ? getElementNumber(icmsTot, 'vSeg') : 0,
-    valorDesconto: icmsTot ? getElementNumber(icmsTot, 'vDesc') : 0,
-    valorIPI: icmsTot ? getElementNumber(icmsTot, 'vIPI') : 0,
-    valorICMS: icmsTot ? getElementNumber(icmsTot, 'vICMS') : 0,
-    valorTotal: icmsTot ? getElementNumber(icmsTot, 'vNF') : 0,
+    valorProdutos: icmsTot ? getElementNumber(icmsTot, "vProd") : 0,
+    valorFrete: icmsTot ? getElementNumber(icmsTot, "vFrete") : 0,
+    valorSeguro: icmsTot ? getElementNumber(icmsTot, "vSeg") : 0,
+    valorDesconto: icmsTot ? getElementNumber(icmsTot, "vDesc") : 0,
+    valorIPI: icmsTot ? getElementNumber(icmsTot, "vIPI") : 0,
+    valorICMS: icmsTot ? getElementNumber(icmsTot, "vICMS") : 0,
+    valorTotal: icmsTot ? getElementNumber(icmsTot, "vNF") : 0,
     pesoLiquido: 0, // Calculado dos volumes
     pesoBruto: 0,
   };
@@ -219,72 +223,72 @@ function parseTotais(total: Element | undefined): NFeParsed['totais'] {
  */
 export function parseNFeXML(xmlString: string): NFeParsed {
   const parser = new DOMParser();
-  const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-  
+  const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+
   // Verificar erros de parsing
-  const parseError = xmlDoc.getElementsByTagName('parsererror');
+  const parseError = xmlDoc.getElementsByTagName("parsererror");
   if (parseError.length > 0) {
-    throw new Error('XML inválido: ' + parseError[0].textContent);
+    throw new Error("XML inválido: " + parseError[0].textContent);
   }
-  
+
   // Encontrar o nó principal da NF-e
-  const nfe = xmlDoc.getElementsByTagName('NFe')[0] || xmlDoc.getElementsByTagName('nfeProc')[0];
+  const nfe = xmlDoc.getElementsByTagName("NFe")[0] || xmlDoc.getElementsByTagName("nfeProc")[0];
   if (!nfe) {
-    throw new Error('XML não contém uma NF-e válida');
+    throw new Error("XML não contém uma NF-e válida");
   }
-  
-  const infNFe = nfe.getElementsByTagName('infNFe')[0];
+
+  const infNFe = nfe.getElementsByTagName("infNFe")[0];
   if (!infNFe) {
-    throw new Error('XML não contém informações da NF-e (infNFe)');
+    throw new Error("XML não contém informações da NF-e (infNFe)");
   }
-  
+
   // Extrair chave de acesso
-  const chaveAcesso = infNFe.getAttribute('Id')?.replace('NFe', '') || '';
-  
+  const chaveAcesso = infNFe.getAttribute("Id")?.replace("NFe", "") || "";
+
   // Identificação
-  const ide = infNFe.getElementsByTagName('ide')[0];
-  const dataEmissaoStr = ide ? getElementText(ide, 'dhEmi') || getElementText(ide, 'dEmi') : '';
-  
+  const ide = infNFe.getElementsByTagName("ide")[0];
+  const dataEmissaoStr = ide ? getElementText(ide, "dhEmi") || getElementText(ide, "dEmi") : "";
+
   // Emitente
-  const emit = infNFe.getElementsByTagName('emit')[0];
+  const emit = infNFe.getElementsByTagName("emit")[0];
   if (!emit) {
-    throw new Error('XML não contém dados do emitente');
+    throw new Error("XML não contém dados do emitente");
   }
-  
+
   // Destinatário
-  const dest = infNFe.getElementsByTagName('dest')[0];
+  const dest = infNFe.getElementsByTagName("dest")[0];
   if (!dest) {
-    throw new Error('XML não contém dados do destinatário');
+    throw new Error("XML não contém dados do destinatário");
   }
-  
+
   // Produtos
-  const dets = infNFe.getElementsByTagName('det');
-  
+  const dets = infNFe.getElementsByTagName("det");
+
   // Transporte
-  const transp = infNFe.getElementsByTagName('transp')[0];
-  
+  const transp = infNFe.getElementsByTagName("transp")[0];
+
   // Totais
-  const total = infNFe.getElementsByTagName('total')[0];
-  
+  const total = infNFe.getElementsByTagName("total")[0];
+
   // Informações complementares
-  const infAdic = infNFe.getElementsByTagName('infAdic')[0];
-  const infCpl = infAdic ? getElementText(infAdic, 'infCpl') : '';
-  
+  const infAdic = infNFe.getElementsByTagName("infAdic")[0];
+  const infCpl = infAdic ? getElementText(infAdic, "infCpl") : "";
+
   const transporte = parseTransporte(transp);
   const totais = parseTotais(total);
-  
+
   // Atualizar peso dos volumes se disponível
   if (transporte.volumes) {
     totais.pesoLiquido = transporte.volumes.pesoLiquido;
     totais.pesoBruto = transporte.volumes.pesoBruto;
   }
-  
+
   return {
     chaveAcesso,
-    numero: ide ? getElementText(ide, 'nNF') : '',
-    serie: ide ? getElementText(ide, 'serie') : '',
+    numero: ide ? getElementText(ide, "nNF") : "",
+    serie: ide ? getElementText(ide, "serie") : "",
     dataEmissao: dataEmissaoStr ? new Date(dataEmissaoStr) : new Date(),
-    naturezaOperacao: ide ? getElementText(ide, 'natOp') : '',
+    naturezaOperacao: ide ? getElementText(ide, "natOp") : "",
     emitente: parseEmitente(emit),
     destinatario: parseDestinatario(dest),
     produtos: parseProdutos(dets),
@@ -302,9 +306,9 @@ export function validateNFeXML(xmlString: string): { valid: boolean; error?: str
     parseNFeXML(xmlString);
     return { valid: true };
   } catch (error) {
-    return { 
-      valid: false, 
-      error: error instanceof Error ? error.message : 'Erro desconhecido' 
+    return {
+      valid: false,
+      error: error instanceof Error ? error.message : "Erro desconhecido",
     };
   }
 }
@@ -329,7 +333,7 @@ export function nfeToRecebimento(nfe: NFeParsed) {
     dataEmissao: nfe.dataEmissao,
     valorTotal: nfe.totais.valorTotal,
     pesoTotal: nfe.totais.pesoBruto,
-    itens: nfe.produtos.map(p => ({
+    itens: nfe.produtos.map((p) => ({
       codigo: p.codigo,
       ean: p.ean,
       descricao: p.descricao,

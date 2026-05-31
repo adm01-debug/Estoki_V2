@@ -12,11 +12,14 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { shipment_ids, carrier_id, vehicle_plate, driver_name, manifest_date } = await req.json();
+    const { shipment_ids, carrier_id, vehicle_plate, driver_name, manifest_date } =
+      await req.json();
 
     if (!shipment_ids?.length) {
-      return new Response(JSON.stringify({ error: "shipment_ids are required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "shipment_ids are required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Buscar envios
@@ -26,8 +29,10 @@ serve(async (req) => {
       .in("id", shipment_ids);
 
     if (!shipments?.length) {
-      return new Response(JSON.stringify({ error: "No shipments found" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "No shipments found" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Gerar número do manifesto
@@ -78,7 +83,12 @@ serve(async (req) => {
         weight: s.total_weight,
         volume: s.total_volume,
       })),
-      totals: { weight: totalWeight, volume: totalVolume, value: totalValue, count: shipments.length },
+      totals: {
+        weight: totalWeight,
+        volume: totalVolume,
+        value: totalValue,
+        count: shipments.length,
+      },
     };
 
     return new Response(
@@ -86,7 +96,9 @@ serve(async (req) => {
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

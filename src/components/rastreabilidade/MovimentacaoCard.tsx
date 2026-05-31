@@ -16,7 +16,7 @@ export function MovimentacaoCard({ mov }: MovimentacaoCardProps) {
   return (
     <div className="relative pl-14">
       {/* Ícone do evento */}
-      <div className="absolute left-3 w-7 h-7 rounded-full bg-background border-2 border-border flex items-center justify-center">
+      <div className="absolute left-3 flex h-7 w-7 items-center justify-center rounded-full border-2 border-border bg-background">
         {Icon && <Icon className="h-4 w-4" style={{ color: "currentColor" }} />}
       </div>
 
@@ -24,7 +24,7 @@ export function MovimentacaoCard({ mov }: MovimentacaoCardProps) {
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="mb-1 flex items-center gap-2">
                 <Badge variant="outline" className={tipoColors[mov.tipo]}>
                   {tipoLabels[mov.tipo]}
                 </Badge>
@@ -33,8 +33,8 @@ export function MovimentacaoCard({ mov }: MovimentacaoCardProps) {
                 )}
               </div>
               <p className="font-medium">{mov.descricao || mov.produto_nome || "Movimentação"}</p>
-              
-              <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
+
+              <div className="mt-2 flex flex-wrap gap-3 text-sm text-muted-foreground">
                 {mov.localizacao && (
                   <span className="flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
@@ -49,12 +49,8 @@ export function MovimentacaoCard({ mov }: MovimentacaoCardProps) {
                 <Clock className="h-3 w-3" />
                 {formatDistanceToNow(new Date(mov.created_at), { locale: ptBR, addSuffix: true })}
               </div>
-              <p className="text-xs mt-1">
-                {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm")}
-              </p>
-              {mov.operador_nome && (
-                <p className="text-xs mt-1">{mov.operador_nome}</p>
-              )}
+              <p className="mt-1 text-xs">{format(new Date(mov.created_at), "dd/MM/yyyy HH:mm")}</p>
+              {mov.operador_nome && <p className="mt-1 text-xs">{mov.operador_nome}</p>}
             </div>
           </div>
         </CardContent>

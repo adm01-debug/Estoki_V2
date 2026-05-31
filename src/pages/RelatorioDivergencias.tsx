@@ -16,11 +16,21 @@ export default function RelatorioDivergenciasPage() {
   const [fornecedorFiltro, setFornecedorFiltro] = useState("todos");
   const [tipoFiltro, setTipoFiltro] = useState<"todos" | "falta" | "sobra">("todos");
 
-  const { divergencias, metricasFornecedor, kpis, loading, error, refetch, getEvolucaoDiaria, getTopFornecedoresCriticos } = useDivergencias(parseInt(periodoFiltro));
+  const {
+    divergencias,
+    metricasFornecedor,
+    kpis,
+    loading,
+    error,
+    refetch,
+    getEvolucaoDiaria,
+    getTopFornecedoresCriticos,
+  } = useDivergencias(parseInt(periodoFiltro));
 
   const divergenciasFiltradas = useMemo(() => {
-    return divergencias.filter(d => {
-      const matchSearch = searchTerm === "" ||
+    return divergencias.filter((d) => {
+      const matchSearch =
+        searchTerm === "" ||
         d.numero_lote.toLowerCase().includes(searchTerm.toLowerCase()) ||
         d.produto_nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
         d.fornecedor.toLowerCase().includes(searchTerm.toLowerCase());
@@ -30,14 +40,23 @@ export default function RelatorioDivergenciasPage() {
     });
   }, [divergencias, searchTerm, fornecedorFiltro, tipoFiltro]);
 
-  const fornecedoresUnicos = useMemo(() => [...new Set(divergencias.map(d => d.fornecedor))].sort(), [divergencias]);
+  const fornecedoresUnicos = useMemo(
+    () => [...new Set(divergencias.map((d) => d.fornecedor))].sort(),
+    [divergencias]
+  );
   const evolucaoDiaria = useMemo(() => getEvolucaoDiaria(), [getEvolucaoDiaria]);
-  const topFornecedores = useMemo(() => getTopFornecedoresCriticos(5), [getTopFornecedoresCriticos]);
+  const topFornecedores = useMemo(
+    () => getTopFornecedoresCriticos(5),
+    [getTopFornecedoresCriticos]
+  );
 
-  const dadosPizza = useMemo(() => [
-    { name: 'Faltas', value: kpis.totalFaltas, color: 'hsl(var(--destructive))' },
-    { name: 'Sobras', value: kpis.totalSobras, color: 'hsl(var(--success))' },
-  ], [kpis]);
+  const dadosPizza = useMemo(
+    () => [
+      { name: "Faltas", value: kpis.totalFaltas, color: "hsl(var(--destructive))" },
+      { name: "Sobras", value: kpis.totalSobras, color: "hsl(var(--success))" },
+    ],
+    [kpis]
+  );
 
   const handlePeriodoChange = (value: string) => {
     setPeriodoFiltro(value);
@@ -47,7 +66,7 @@ export default function RelatorioDivergenciasPage() {
   if (loading) {
     return (
       <AppLayout title="Relatório de Divergências" showBack>
-        <div className="flex items-center justify-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
@@ -58,10 +77,11 @@ export default function RelatorioDivergenciasPage() {
     return (
       <AppLayout title="Relatório de Divergências" showBack>
         <div className="p-4 text-center text-destructive">
-          <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
+          <AlertTriangle className="mx-auto mb-4 h-12 w-12" />
           <p>Erro ao carregar dados: {error}</p>
           <Button onClick={() => refetch()} className="mt-4">
-            <RefreshCw className="h-4 w-4 mr-2" />Tentar novamente
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Tentar novamente
           </Button>
         </div>
       </AppLayout>
@@ -70,7 +90,7 @@ export default function RelatorioDivergenciasPage() {
 
   return (
     <AppLayout title="Relatório de Divergências" showBack>
-      <div className="p-4 space-y-6">
+      <div className="space-y-6 p-4">
         <DivergenciasFiltros
           periodoFiltro={periodoFiltro}
           searchTerm={searchTerm}
@@ -83,7 +103,12 @@ export default function RelatorioDivergenciasPage() {
           onTipoChange={setTipoFiltro}
         />
 
-        <DivergenciasKPIs totalDivergencias={kpis.totalDivergencias} totalFaltas={kpis.totalFaltas} totalSobras={kpis.totalSobras} valorTotalDiferenca={kpis.valorTotalDiferenca} />
+        <DivergenciasKPIs
+          totalDivergencias={kpis.totalDivergencias}
+          totalFaltas={kpis.totalFaltas}
+          totalSobras={kpis.totalSobras}
+          valorTotalDiferenca={kpis.valorTotalDiferenca}
+        />
 
         <Tabs defaultValue="visao-geral" className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
@@ -95,7 +120,10 @@ export default function RelatorioDivergenciasPage() {
             <DivergenciasVisaoGeral evolucaoDiaria={evolucaoDiaria} dadosPizza={dadosPizza} />
           </TabsContent>
           <TabsContent value="fornecedores" className="space-y-4">
-            <DivergenciasFornecedores topFornecedores={topFornecedores} metricasFornecedor={metricasFornecedor} />
+            <DivergenciasFornecedores
+              topFornecedores={topFornecedores}
+              metricasFornecedor={metricasFornecedor}
+            />
           </TabsContent>
           <TabsContent value="detalhes" className="space-y-4">
             <DivergenciasDetalhes divergenciasFiltradas={divergenciasFiltradas} />

@@ -1,5 +1,5 @@
 export const generatePDF = async (title: string, content: string) => {
-  const { jsPDF } = await import('jspdf');
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text(title, 20, 20);
@@ -8,28 +8,34 @@ export const generatePDF = async (title: string, content: string) => {
   return doc;
 };
 
-export const downloadPDF = async (doc: { save: (filename: string) => Promise<void> }, filename: string): Promise<void> => {
+export const downloadPDF = async (
+  doc: { save: (filename: string) => Promise<void> },
+  filename: string
+): Promise<void> => {
   doc.save(`${filename}.pdf`);
 };
 
 export const generateTablePDF = async (title: string, headers: string[], data: string[][]) => {
-  const { jsPDF } = await import('jspdf');
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF();
   doc.setFontSize(16);
   doc.text(title, 20, 20);
-  
+
   let y = 40;
   const cellWidth = 180 / headers.length;
-  
+
   doc.setFontSize(10);
   headers.forEach((h, i) => doc.text(h, 20 + i * cellWidth, y));
   y += 10;
-  
-  data.forEach(row => {
+
+  data.forEach((row) => {
     row.forEach((cell, i) => doc.text(String(cell).slice(0, 20), 20 + i * cellWidth, y));
     y += 8;
-    if (y > 280) { doc.addPage(); y = 20; }
+    if (y > 280) {
+      doc.addPage();
+      y = 20;
+    }
   });
-  
+
   return doc;
 };

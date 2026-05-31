@@ -21,7 +21,7 @@ serve(async (req) => {
     }
 
     const headers = {
-      "Authorization": `Bearer ${config.token}`,
+      Authorization: `Bearer ${config.token}`,
       "Content-Type": "application/json",
     };
 
@@ -39,10 +39,9 @@ serve(async (req) => {
 
       case "get_product":
         if (!data?.product_id) throw new Error("product_id é obrigatório");
-        const productResp = await fetch(
-          `${baseUrl}/api/v1/products/${data.product_id}`,
-          { headers }
-        );
+        const productResp = await fetch(`${baseUrl}/api/v1/products/${data.product_id}`, {
+          headers,
+        });
         result = await productResp.json();
         break;
 
@@ -129,13 +128,16 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "totvs_protheus",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "totvs_protheus",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

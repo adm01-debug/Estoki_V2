@@ -1,12 +1,12 @@
-import { Decimal } from 'decimal.js';
+import { Decimal } from "decimal.js";
 
 export const toDecimal = (val: number | string): Decimal => new Decimal(val);
 
 export const formatMoney = (val: number | Decimal): string => {
   const num = Decimal.isDecimal(val) ? val.toNumber() : val;
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(num);
 };
 

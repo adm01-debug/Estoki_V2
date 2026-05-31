@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const shipmentSchema = z.object({
   id: z.string().uuid(),
@@ -6,7 +6,16 @@ export const shipmentSchema = z.object({
   order_id: z.string().uuid(),
   carrier_id: z.string().uuid(),
   warehouse_id: z.string().uuid(),
-  status: z.enum(['pending', 'picked', 'packed', 'labeled', 'dispatched', 'in_transit', 'delivered', 'returned']),
+  status: z.enum([
+    "pending",
+    "picked",
+    "packed",
+    "labeled",
+    "dispatched",
+    "in_transit",
+    "delivered",
+    "returned",
+  ]),
   tracking_code: z.string().nullable().optional(),
   service_type: z.string().nullable().optional(),
   weight_kg: z.number().positive().nullable().optional(),
@@ -24,5 +33,10 @@ export const shipmentSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const shipmentCreateSchema = shipmentSchema.omit({ id: true, created_at: true, updated_at: true, shipment_number: true });
+export const shipmentCreateSchema = shipmentSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  shipment_number: true,
+});
 export type Shipment = z.infer<typeof shipmentSchema>;

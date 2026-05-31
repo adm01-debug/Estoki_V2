@@ -8,7 +8,10 @@ interface NotificacoesGlobaisProps {
   enablePush?: boolean;
 }
 
-export function NotificacoesGlobais({ enabled = true, enablePush = true }: NotificacoesGlobaisProps) {
+export function NotificacoesGlobais({
+  enabled = true,
+  enablePush = true,
+}: NotificacoesGlobaisProps) {
   const { notificacoes, marcarComoLida } = useNotificacoes();
   const { permission, isSupported, requestPermission, showNotification } = usePushNotifications();
   const notificadasRef = useRef<Set<string>>(new Set());
@@ -16,7 +19,7 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
 
   // Solicitar permissão de push notification ao montar
   useEffect(() => {
-    if (enablePush && isSupported && permission === 'default') {
+    if (enablePush && isSupported && permission === "default") {
       requestPermission();
     }
   }, [enablePush, isSupported, permission, requestPermission]);
@@ -24,36 +27,36 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
   // Mostrar toast e push notification para novas notificações não lidas
   useEffect(() => {
     if (!enabled) return;
-    
+
     const notificacoesRecentes = notificacoes
-      .filter(n => !n.lida)
-      .filter(n => !notificadasRef.current.has(n.id))
-      .filter(n => {
+      .filter((n) => !n.lida)
+      .filter((n) => !notificadasRef.current.has(n.id))
+      .filter((n) => {
         const criada = new Date(n.created_at);
         const agora = new Date();
         const diffMinutos = (agora.getTime() - criada.getTime()) / (1000 * 60);
         return diffMinutos < 5;
       });
 
-    notificacoesRecentes.forEach(notif => {
+    notificacoesRecentes.forEach((notif) => {
       notificadasRef.current.add(notif.id);
-      
+
       // Push notification nativa (se habilitado e permitido)
-      if (enablePush && permission === 'granted' && !pushNotificadasRef.current.has(notif.id)) {
+      if (enablePush && permission === "granted" && !pushNotificadasRef.current.has(notif.id)) {
         pushNotificadasRef.current.add(notif.id);
         showNotification({
           title: notif.titulo,
           body: notif.mensagem,
-          icon: '/icon-192.png',
+          icon: "/icon-192.png",
           tag: notif.id,
-          data: { notificationId: notif.id, tipo: notif.tipo }
+          data: { notificationId: notif.id, tipo: notif.tipo },
         });
       }
-      
+
       // Toast notification (sempre)
       const tipo = getTipoToast(notif.severidade);
-      
-      if (tipo === 'error') {
+
+      if (tipo === "error") {
         toast.error(notif.titulo, {
           description: notif.mensagem,
           duration: 8000,
@@ -62,7 +65,7 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
             onClick: () => marcarComoLida(notif.id),
           },
         });
-      } else if (tipo === 'warning') {
+      } else if (tipo === "warning") {
         toast.warning(notif.titulo, {
           description: notif.mensagem,
           duration: 6000,
@@ -71,7 +74,7 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
             onClick: () => marcarComoLida(notif.id),
           },
         });
-      } else if (tipo === 'success') {
+      } else if (tipo === "success") {
         toast.success(notif.titulo, {
           description: notif.mensagem,
           duration: 4000,
@@ -92,14 +95,16 @@ export function NotificacoesGlobais({ enabled = true, enablePush = true }: Notif
   return null;
 }
 
-function getTipoToast(severidade?: 'info' | 'warning' | 'critical'): 'info' | 'warning' | 'error' | 'success' {
+function getTipoToast(
+  severidade?: "info" | "warning" | "critical"
+): "info" | "warning" | "error" | "success" {
   switch (severidade) {
-    case 'critical':
-      return 'error';
-    case 'warning':
-      return 'warning';
+    case "critical":
+      return "error";
+    case "warning":
+      return "warning";
     default:
-      return 'info';
+      return "info";
   }
 }
 

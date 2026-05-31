@@ -18,21 +18,13 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     }
 
     subscriptionRef.current = supabase
-      .channel('romaneios-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'romaneios' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["romaneios"] });
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'romaneio_itens' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ["romaneios"] });
-        }
-      )
+      .channel("romaneios-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "romaneios" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "romaneio_itens" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      })
       .subscribe();
 
     return () => {
@@ -42,9 +34,14 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     };
   }, [options?.enableRealtime, queryClient]);
 
-  const { data: romaneios = [], isLoading, error, refetch } = useQuery({
+  const {
+    data: romaneios = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["romaneios"],
-    queryFn: shippingService.getRomaneios
+    queryFn: shippingService.getRomaneios,
   });
 
   const createRomaneioMutation = useMutation({
@@ -55,17 +52,17 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     },
     onError: (err: Error) => {
       toast.error(`Erro ao criar romaneio: ${err.message}`);
-    }
+    },
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: StatusRomaneio }) => {
+    mutationFn: async ({ id, status }: { id: string; status: StatusRomaneio }) => {
       return shippingService.atualizarStatus(id, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       toast.success("Status atualizado!");
-    }
+    },
   });
 
   return {
@@ -76,11 +73,13 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     refetch,
     createRomaneio: createRomaneioMutation.mutate,
     criarRomaneio: createRomaneioMutation.mutate,
-    updateStatus: (id: string, status: StatusRomaneio) => updateStatusMutation.mutate({ id, status }),
-    atualizarStatus: (id: string, status: StatusRomaneio) => updateStatusMutation.mutate({ id, status }),
+    updateStatus: (id: string, status: StatusRomaneio) =>
+      updateStatusMutation.mutate({ id, status }),
+    atualizarStatus: (id: string, status: StatusRomaneio) =>
+      updateStatusMutation.mutate({ id, status }),
     registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
-        // Implementación real o placeholder
-        toast.info("Registro de entrega en desarrollo");
-    }
+      // Implementación real o placeholder
+      toast.info("Registro de entrega en desarrollo");
+    },
   };
 }

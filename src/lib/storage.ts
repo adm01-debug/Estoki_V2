@@ -19,7 +19,7 @@ export async function deleteFile(bucket: string, path: string): Promise<void> {
 export async function listFiles(bucket: string, folder: string): Promise<string[]> {
   const { data, error } = await supabase.storage.from(bucket).list(folder);
   if (error) throw error;
-  return data.map(f => f.name);
+  return data.map((f) => f.name);
 }
 
 export function generateFileName(originalName: string): string {

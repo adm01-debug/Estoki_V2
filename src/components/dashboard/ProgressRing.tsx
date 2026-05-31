@@ -17,7 +17,7 @@ export function ProgressRing({
   className,
   label,
   sublabel,
-  variant = "default"
+  variant = "default",
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -46,7 +46,7 @@ export function ProgressRing({
 
   return (
     <div className={cn("relative inline-flex items-center justify-center", className)}>
-      <svg width={size} height={size} className="transform -rotate-90">
+      <svg width={size} height={size} className="-rotate-90 transform">
         {/* Background circle */}
         <circle
           cx={size / 2}
@@ -69,17 +69,11 @@ export function ProgressRing({
           className={cn(variantColors[variant], "transition-all duration-500 ease-out")}
         />
       </svg>
-      
+
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={cn("text-2xl font-bold", textColors[variant])}>
-          {value}%
-        </span>
-        {label && (
-          <span className="text-xs text-muted-foreground font-medium">{label}</span>
-        )}
-        {sublabel && (
-          <span className="text-[10px] text-muted-foreground">{sublabel}</span>
-        )}
+        <span className={cn("text-2xl font-bold", textColors[variant])}>{value}%</span>
+        {label && <span className="text-xs font-medium text-muted-foreground">{label}</span>}
+        {sublabel && <span className="text-[10px] text-muted-foreground">{sublabel}</span>}
       </div>
     </div>
   );

@@ -6,7 +6,20 @@ serve(async (req) => {
   try {
     const { customerId, priceId, successUrl, cancelUrl } = await req.json();
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
-    const session = await stripe.checkout.sessions.create({ customer: customerId, mode: "subscription", line_items: [{ price: priceId, quantity: 1 }], success_url: successUrl, cancel_url: cancelUrl });
-    return new Response(JSON.stringify({ sessionId: session.id, url: session.url }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+    });
+    return new Response(JSON.stringify({ sessionId: session.id, url: session.url }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

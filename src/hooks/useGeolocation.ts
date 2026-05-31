@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface Position {
   latitude: number;
@@ -13,7 +13,7 @@ export function useGeolocation() {
 
   const getPosition = useCallback(() => {
     if (!navigator.geolocation) {
-      setError('Geolocation not supported');
+      setError("Geolocation not supported");
       return;
     }
 

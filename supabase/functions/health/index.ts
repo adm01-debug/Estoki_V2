@@ -11,11 +11,11 @@ serve(async (req) => {
     status: "healthy",
     timestamp: new Date().toISOString(),
     version: "1.0.0",
-    uptime: Deno.osUptime ? Deno.osUptime() : "unknown"
+    uptime: Deno.osUptime ? Deno.osUptime() : "unknown",
   };
 
   return new Response(JSON.stringify(health), {
     headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    status: 200
+    status: 200,
   });
 });

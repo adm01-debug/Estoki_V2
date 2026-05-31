@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface Column<T> {
   key: keyof T | string;
@@ -6,7 +6,7 @@ export interface Column<T> {
   sortable?: boolean;
   filterable?: boolean;
   width?: string | number;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   render?: (value: unknown, row: T, index: number) => React.ReactNode;
   exportFormat?: (value: unknown, row: Record<string, unknown>) => string;
 }
@@ -27,8 +27,8 @@ export interface DataTableProps<T> {
   // Selection
   onSelectionChange?: (selectedRows: T[]) => void;
   // Sorting
-  defaultSort?: { key: string; direction: 'asc' | 'desc' };
-  onSort?: (key: string, direction: 'asc' | 'desc') => void;
+  defaultSort?: { key: string; direction: "asc" | "desc" };
+  onSort?: (key: string, direction: "asc" | "desc") => void;
   // Styling
   className?: string;
   rowClassName?: (row: T, index: number) => string;
@@ -44,5 +44,5 @@ export interface DataTableProps<T> {
 
 export interface SortConfig {
   key: string;
-  direction: 'asc' | 'desc';
+  direction: "asc" | "desc";
 }

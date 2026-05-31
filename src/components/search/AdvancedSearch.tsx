@@ -56,26 +56,18 @@ export function AdvancedSearch({
           placeholder={placeholder}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className={cn(
-            "pl-10 pr-20 transition-all",
-            isFocused && "ring-2 ring-primary/20"
-          )}
+          className={cn("pl-10 pr-20 transition-all", isFocused && "ring-2 ring-primary/20")}
         />
 
-        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {showResultBadge && (
-            <Badge variant="secondary" className="text-xs h-5">
+            <Badge variant="secondary" className="h-5 text-xs">
               {totalResults} resultado{totalResults !== 1 ? "s" : ""}
             </Badge>
           )}
 
           {showClearButton && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={handleClear}
-            >
+            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClear}>
               <X className="h-3 w-3" />
             </Button>
           )}
@@ -83,7 +75,7 @@ export function AdvancedSearch({
       </div>
 
       {value.length > 0 && value.length < minChars && (
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="mt-1 text-xs text-muted-foreground">
           Digite pelo menos {minChars} caracteres para buscar
         </p>
       )}
@@ -109,7 +101,7 @@ export function SearchHighlight({ text, searchTerm, className }: SearchHighlight
     <span className={className}>
       {parts.map((part, i) =>
         regex.test(part) ? (
-          <mark key={i} className="bg-yellow-200 dark:bg-yellow-800 px-0.5 rounded">
+          <mark key={i} className="rounded bg-yellow-200 px-0.5 dark:bg-yellow-800">
             {part}
           </mark>
         ) : (

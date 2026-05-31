@@ -5,9 +5,29 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { type, payload, scheduledFor, priority = "normal" } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data, error } = await supabase.from("job_queue").insert({ type, payload, scheduled_for: scheduledFor || new Date().toISOString(), priority, status: "pending" }).select().single();
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const { data, error } = await supabase
+      .from("job_queue")
+      .insert({
+        type,
+        payload,
+        scheduled_for: scheduledFor || new Date().toISOString(),
+        priority,
+        status: "pending",
+      })
+      .select()
+      .single();
     if (error) throw error;
-    return new Response(JSON.stringify({ jobId: data.id, status: data.status }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ jobId: data.id, status: data.status }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

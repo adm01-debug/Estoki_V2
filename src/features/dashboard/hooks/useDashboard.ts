@@ -1,7 +1,7 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { logger } from '@/utils/logger';
-import { performanceService } from '@/utils/performance';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
+import { performanceService } from "@/utils/performance";
 
 export interface DashboardKPIs {
   totalPosicoes: number;
@@ -54,12 +54,12 @@ async function getCount(query: PromiseLike<PostgrestCountResponse>): Promise<num
   try {
     const { count, error } = await query;
     if (error) {
-      logger.error('Error in getCount', error);
+      logger.error("Error in getCount", error);
       return 0;
     }
     return count ?? 0;
   } catch (error) {
-    logger.error('Unexpected error in getCount', error);
+    logger.error("Unexpected error in getCount", error);
     return 0;
   }
 }
@@ -67,12 +67,17 @@ async function getCount(query: PromiseLike<PostgrestCountResponse>): Promise<num
 export const useDashboard = () => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error: queryError, refetch } = useQuery({
-    queryKey: ['dashboard-stats'],
+  const {
+    data,
+    isLoading,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey: ["dashboard-stats"],
     queryFn: async () => {
       const startTime = performance.now();
       try {
-        const hoje = new Date().toISOString().split('T')[0];
+        const hoje = new Date().toISOString().split("T")[0];
 
         const [
           totalPosicoes,
@@ -83,43 +88,70 @@ export const useDashboard = () => {
           saidasHoje,
           posicoesData,
           itensParadosData,
-          giroData
+          giroData,
         ] = await Promise.all([
-          getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true })),
-          getCount(supabase.from('posicoes_estoque').select('id', { count: 'exact', head: true }).eq('status', 'ocupado')),
-          getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true })),
-          getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
-          getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
-          getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
-          supabase.from('posicoes_estoque').select('porta_palete, status').limit(2000),
-          supabase.from('estoque_posicao')
-            .select('id, quantidade, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
-            .order('data_entrada', { ascending: true })
+          getCount(supabase.from("posicoes_estoque").select("id", { count: "exact", head: true })),
+          getCount(
+            supabase
+              .from("posicoes_estoque")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "ocupado")
+          ),
+          getCount(supabase.from("eventos_triagem").select("id", { count: "exact", head: true })),
+          getCount(
+            supabase
+              .from("eventos_triagem")
+              .select("id", { count: "exact", head: true })
+              .is("resultado", null)
+          ),
+          getCount(
+            supabase
+              .from("lotes")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "recebido")
+          ),
+          getCount(
+            supabase
+              .from("lotes")
+              .select("id", { count: "exact", head: true })
+              .eq("status", "conferido")
+          ),
+          supabase.from("posicoes_estoque").select("porta_palete, status").limit(2000),
+          supabase
+            .from("estoque_posicao")
+            .select(
+              "id, quantidade, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)"
+            )
+            .order("data_entrada", { ascending: true })
             .limit(50),
-          supabase.from('rastreamento_historico')
-            .select('id')
-            .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
-            .limit(1)
+          supabase
+            .from("rastreamento_historico")
+            .select("id")
+            .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+            .limit(1),
         ]);
 
-        const taxaOcupacao = totalPosicoes > 0 ? Math.round((posicoesOcupadas / totalPosicoes) * 100) : 0;
+        const taxaOcupacao =
+          totalPosicoes > 0 ? Math.round((posicoesOcupadas / totalPosicoes) * 100) : 0;
 
         const ppMap = new Map<string, { total: number; ocupado: number }>();
         if (posicoesData.data) {
           for (const pos of posicoesData.data) {
-            const pp = pos.porta_palete || 'Sem PP';
+            const pp = pos.porta_palete || "Sem PP";
             if (!ppMap.has(pp)) ppMap.set(pp, { total: 0, ocupado: 0 });
             const entry = ppMap.get(pp)!;
             entry.total++;
-            if (pos.status === 'ocupado') entry.ocupado++;
+            if (pos.status === "ocupado") entry.ocupado++;
           }
         }
-        const ocupacaoPP: OcupacaoPP[] = Array.from(ppMap.entries()).map(([nome, { total, ocupado }]) => ({
-          nome,
-          total,
-          ocupado,
-          percentual: total > 0 ? Math.round((ocupado / total) * 100) : 0,
-        }));
+        const ocupacaoPP: OcupacaoPP[] = Array.from(ppMap.entries()).map(
+          ([nome, { total, ocupado }]) => ({
+            nome,
+            total,
+            ocupado,
+            percentual: total > 0 ? Math.round((ocupado / total) * 100) : 0,
+          })
+        );
 
         const statusCount: Record<string, number> = {};
         if (posicoesData.data) {
@@ -128,34 +160,42 @@ export const useDashboard = () => {
           }
         }
         const statusColors: Record<string, string> = {
-          livre: '#22c55e',
-          ocupado: '#3b82f6',
-          bloqueado: '#ef4444',
-          reservado: '#f59e0b',
-          manutencao: '#8b5cf6',
+          livre: "#22c55e",
+          ocupado: "#3b82f6",
+          bloqueado: "#ef4444",
+          reservado: "#f59e0b",
+          manutencao: "#8b5cf6",
         };
-        const distribuicaoStatus: DistribuicaoStatus[] = Object.entries(statusCount).map(([name, value]) => ({
-          name: name.charAt(0).toUpperCase() + name.slice(1),
-          value,
-          color: statusColors[name] || '#6b7280',
-        }));
+        const distribuicaoStatus: DistribuicaoStatus[] = Object.entries(statusCount).map(
+          ([name, value]) => ({
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            value,
+            color: statusColors[name] || "#6b7280",
+          })
+        );
 
         const seteDiasAtras = new Date();
         seteDiasAtras.setDate(seteDiasAtras.getDate() - 7);
         const { data: metricasData } = await supabase
-          .from('metricas_dashboard')
-          .select('data, tipo, valor')
-          .gte('data', seteDiasAtras.toISOString().split('T')[0])
-          .order('data', { ascending: true });
+          .from("metricas_dashboard")
+          .select("data, tipo, valor")
+          .gte("data", seteDiasAtras.toISOString().split("T")[0])
+          .order("data", { ascending: true });
 
         const movimentacoes7dias: Movimentacao7Dias[] = [];
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
           d.setDate(d.getDate() - i);
-          const dataStr = d.toISOString().split('T')[0];
-          const diaLabel = d.toLocaleDateString('pt-BR', { weekday: 'short' });
-          const entradas = metricasData?.filter(m => m.data === dataStr && m.tipo === 'entrada').reduce((acc, m) => acc + m.valor, 0) || 0;
-          const saidas = metricasData?.filter(m => m.data === dataStr && m.tipo === 'saida').reduce((acc, m) => acc + m.valor, 0) || 0;
+          const dataStr = d.toISOString().split("T")[0];
+          const diaLabel = d.toLocaleDateString("pt-BR", { weekday: "short" });
+          const entradas =
+            metricasData
+              ?.filter((m) => m.data === dataStr && m.tipo === "entrada")
+              .reduce((acc, m) => acc + m.valor, 0) || 0;
+          const saidas =
+            metricasData
+              ?.filter((m) => m.data === dataStr && m.tipo === "saida")
+              .reduce((acc, m) => acc + m.valor, 0) || 0;
           movimentacoes7dias.push({ dia: diaLabel, entradas, saidas });
         }
 
@@ -166,14 +206,16 @@ export const useDashboard = () => {
           for (const item of itensParadosData.data) {
             const dataEntrada = new Date(item.data_entrada);
             if (dataEntrada < trintaDiasAtras) {
-              const diasParado = Math.floor((Date.now() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24));
+              const diasParado = Math.floor(
+                (Date.now() - dataEntrada.getTime()) / (1000 * 60 * 60 * 24)
+              );
               const prod = item.produtos as Record<string, unknown> | null;
               const pos = item.posicoes_estoque as Record<string, unknown> | null;
               itensParados.push({
                 id: item.id,
-                sku: (prod?.sku as string) || 'N/A',
-                descricao: (prod?.nome as string) || 'Sem descrição',
-                posicao: (pos?.codigo as string) || 'N/A',
+                sku: (prod?.sku as string) || "N/A",
+                descricao: (prod?.nome as string) || "Sem descrição",
+                posicao: (pos?.codigo as string) || "N/A",
                 diasParado,
                 quantidade: item.quantidade,
                 valor: (item.quantidade || 0) * ((prod?.peso_unitario as number) || 0),
@@ -183,7 +225,8 @@ export const useDashboard = () => {
         }
 
         const totalMovimentacoes = giroData.data?.length || 0;
-        const giroMedio = totalPosicoes > 0 ? Number((totalMovimentacoes / totalPosicoes).toFixed(2)) : 0;
+        const giroMedio =
+          totalPosicoes > 0 ? Number((totalMovimentacoes / totalPosicoes).toFixed(2)) : 0;
 
         const kpis: DashboardKPIs = {
           totalPosicoes,
@@ -198,10 +241,10 @@ export const useDashboard = () => {
           triagensPendentes,
         };
 
-        performanceService.track('dashboard-stats', performance.now() - startTime);
+        performanceService.track("dashboard-stats", performance.now() - startTime);
         return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
       } catch (err) {
-        performanceService.track('dashboard-stats', performance.now() - startTime, true);
+        performanceService.track("dashboard-stats", performance.now() - startTime, true);
         throw err;
       }
     },

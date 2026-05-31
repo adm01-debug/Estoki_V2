@@ -26,29 +26,39 @@ export const movimentacaoSchema = z.object({
 export type MovimentacaoFormData = z.infer<typeof movimentacaoSchema>;
 
 // ── Produto ──
-export const produtoSchema = z.object({
-  sku: z.string().trim().min(1, msg.required).max(50, msg.max(50))
-    .regex(/^[A-Za-z0-9\-_.]+$/, msg.invalidSku),
-  nome: z.string().trim().min(2, msg.min(2)).max(200, msg.max(200)),
-  descricao: z.string().trim().max(500, msg.max(500)).optional().or(z.literal("")),
-  unidade: z.string().min(1, msg.required),
-  estoque_minimo: z.number().int().min(0, msg.nonNegative),
-  estoque_maximo: z.number().int().min(0, msg.nonNegative),
-  ponto_pedido: z.number().int().min(0, msg.nonNegative),
-  peso_unitario: z.number().min(0, msg.nonNegative).optional().or(z.literal(0)),
-  fornecedor_principal: z.string().trim().max(200, msg.max(200)).optional().or(z.literal("")),
-}).refine(
-  (data) => data.estoque_maximo === 0 || data.estoque_minimo <= data.estoque_maximo,
-  { message: msg.minGreaterThanMax, path: ["estoque_minimo"] }
-);
+export const produtoSchema = z
+  .object({
+    sku: z
+      .string()
+      .trim()
+      .min(1, msg.required)
+      .max(50, msg.max(50))
+      .regex(/^[A-Za-z0-9\-_.]+$/, msg.invalidSku),
+    nome: z.string().trim().min(2, msg.min(2)).max(200, msg.max(200)),
+    descricao: z.string().trim().max(500, msg.max(500)).optional().or(z.literal("")),
+    unidade: z.string().min(1, msg.required),
+    estoque_minimo: z.number().int().min(0, msg.nonNegative),
+    estoque_maximo: z.number().int().min(0, msg.nonNegative),
+    ponto_pedido: z.number().int().min(0, msg.nonNegative),
+    peso_unitario: z.number().min(0, msg.nonNegative).optional().or(z.literal(0)),
+    fornecedor_principal: z.string().trim().max(200, msg.max(200)).optional().or(z.literal("")),
+  })
+  .refine((data) => data.estoque_maximo === 0 || data.estoque_minimo <= data.estoque_maximo, {
+    message: msg.minGreaterThanMax,
+    path: ["estoque_minimo"],
+  });
 
 export type ProdutoFormData = z.infer<typeof produtoSchema>;
 
 // ── Romaneio ──
 export const romaneioSchema = z.object({
   motorista: z.string().trim().min(2, msg.min(2)).max(100, msg.max(100)),
-  placa_veiculo: z.string().trim().min(7, "Placa deve ter pelo menos 7 caracteres").max(10, msg.max(10))
-    .regex(/^[A-Za-z0-9\-]+$/, msg.invalidPlaca),
+  placa_veiculo: z
+    .string()
+    .trim()
+    .min(7, "Placa deve ter pelo menos 7 caracteres")
+    .max(10, msg.max(10))
+    .regex(/^[A-Za-z0-9-]+$/, msg.invalidPlaca),
   tipo_veiculo: z.string().trim().max(50, msg.max(50)).optional().or(z.literal("")),
   data_prevista_entrega: z.string().min(1, "Selecione a data prevista"),
   rota: z.string().trim().max(200, msg.max(200)).optional().or(z.literal("")),
@@ -69,7 +79,10 @@ export function extractZodErrors(err: z.ZodError): Record<string, string> {
 }
 
 // ── Helper: validate and return errors or null ──
-export function validateForm<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: Record<string, string> } {
+export function validateForm<T>(
+  schema: z.ZodSchema<T>,
+  data: unknown
+): { success: true; data: T } | { success: false; errors: Record<string, string> } {
   const result = schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };

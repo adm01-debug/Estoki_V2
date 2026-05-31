@@ -1,5 +1,5 @@
-import { onCLS, onLCP, onFCP, onTTFB, onINP } from 'web-vitals';
-import { logger } from '@/utils/logger';
+import { onCLS, onLCP, onFCP, onTTFB, onINP } from "web-vitals";
+import { logger } from "@/utils/logger";
 
 /**
  * Service to track and analyze Frontend performance metrics.
@@ -8,11 +8,11 @@ import { logger } from '@/utils/logger';
 export const performanceService = {
   init() {
     if (import.meta.env.PROD) {
-      this.trackMetric('CLS', onCLS);
-      this.trackMetric('LCP', onLCP);
-      this.trackMetric('FCP', onFCP);
-      this.trackMetric('TTFB', onTTFB);
-      this.trackMetric('INP', onINP);
+      this.trackMetric("CLS", onCLS);
+      this.trackMetric("LCP", onLCP);
+      this.trackMetric("FCP", onFCP);
+      this.trackMetric("TTFB", onTTFB);
+      this.trackMetric("INP", onINP);
     }
   },
 
@@ -21,5 +21,5 @@ export const performanceService = {
       logger.info(`[Perf - ${name}]`, { value, delta, id });
       // In a real scenario, this would send data to a monitoring endpoint (Sentry, LogRocket, etc.)
     });
-  }
+  },
 };

@@ -7,7 +7,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     const { action, nfe_data } = await req.json();
 
     let result;
@@ -15,16 +18,21 @@ serve(async (req) => {
       case "validate": {
         const errors = [];
         if (!nfe_data.emitente?.cnpj) errors.push("CNPJ do emitente obrigatório");
-        if (!nfe_data.destinatario?.cnpj && !nfe_data.destinatario?.cpf) errors.push("CPF/CNPJ do destinatário obrigatório");
-        if (!nfe_data.itens || nfe_data.itens.length === 0) errors.push("Pelo menos 1 item obrigatório");
-        
+        if (!nfe_data.destinatario?.cnpj && !nfe_data.destinatario?.cpf)
+          errors.push("CPF/CNPJ do destinatário obrigatório");
+        if (!nfe_data.itens || nfe_data.itens.length === 0)
+          errors.push("Pelo menos 1 item obrigatório");
+
         result = { valid: errors.length === 0, errors };
         break;
       }
 
       case "calculate": {
         const itens = nfe_data.itens || [];
-        let totalProdutos = 0, totalIcms = 0, totalPis = 0, totalCofins = 0;
+        let totalProdutos = 0,
+          totalIcms = 0,
+          totalPis = 0,
+          totalCofins = 0;
 
         itens.forEach((item: any) => {
           const valor = item.quantidade * item.valor_unitario;
@@ -46,13 +54,21 @@ serve(async (req) => {
 
       case "generate": {
         const nfeId = crypto.randomUUID();
-        const chaveAcesso = `35${new Date().toISOString().slice(0,7).replace("-","")}${nfeData.emitente?.cnpj || "00000000000000"}55001${String(nfeId).substring(0,9)}1${String(Math.random()).substring(2,11)}`;
-        
-        const { data: nfe, error } = await supabase.from("nfe").insert({
-          id: nfeId, chave_acesso: chaveAcesso, status: "pending",
-          emitente: nfe_data.emitente, destinatario: nfe_data.destinatario,
-          itens: nfe_data.itens, totais: nfe_data.totais,
-        }).select().single();
+        const chaveAcesso = `35${new Date().toISOString().slice(0, 7).replace("-", "")}${nfeData.emitente?.cnpj || "00000000000000"}55001${String(nfeId).substring(0, 9)}1${String(Math.random()).substring(2, 11)}`;
+
+        const { data: nfe, error } = await supabase
+          .from("nfe")
+          .insert({
+            id: nfeId,
+            chave_acesso: chaveAcesso,
+            status: "pending",
+            emitente: nfe_data.emitente,
+            destinatario: nfe_data.destinatario,
+            itens: nfe_data.itens,
+            totais: nfe_data.totais,
+          })
+          .select()
+          .single();
 
         if (error) throw error;
         result = { nfe_id: nfeId, chave_acesso: chaveAcesso, status: "pending" };
@@ -67,6 +83,9 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 400 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });

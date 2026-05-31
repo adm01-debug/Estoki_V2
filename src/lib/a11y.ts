@@ -5,12 +5,15 @@
 /**
  * Announce a message to screen readers via a live region
  */
-export function announceToScreenReader(message: string, priority: 'polite' | 'assertive' = 'polite'): void {
-  const el = document.createElement('div');
-  el.setAttribute('role', 'status');
-  el.setAttribute('aria-live', priority);
-  el.setAttribute('aria-atomic', 'true');
-  el.className = 'sr-only';
+export function announceToScreenReader(
+  message: string,
+  priority: "polite" | "assertive" = "polite"
+): void {
+  const el = document.createElement("div");
+  el.setAttribute("role", "status");
+  el.setAttribute("aria-live", priority);
+  el.setAttribute("aria-atomic", "true");
+  el.className = "sr-only";
   el.textContent = message;
   document.body.appendChild(el);
 
@@ -23,10 +26,11 @@ export function announceToScreenReader(message: string, priority: 'polite' | 'as
  * Trap focus within a container (useful for modals/dialogs)
  */
 export function trapFocus(container: HTMLElement): () => void {
-  const focusableSelectors = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  const focusableSelectors =
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.key !== 'Tab') return;
+    if (e.key !== "Tab") return;
 
     const focusable = Array.from(container.querySelectorAll<HTMLElement>(focusableSelectors));
     if (focusable.length === 0) return;
@@ -43,8 +47,8 @@ export function trapFocus(container: HTMLElement): () => void {
     }
   };
 
-  container.addEventListener('keydown', handleKeyDown);
-  return () => container.removeEventListener('keydown', handleKeyDown);
+  container.addEventListener("keydown", handleKeyDown);
+  return () => container.removeEventListener("keydown", handleKeyDown);
 }
 
 /**
@@ -57,19 +61,19 @@ export function handleListKeyboard(
   onSelect: (index: number) => void
 ): void {
   switch (e.key) {
-    case 'ArrowDown':
+    case "ArrowDown":
       e.preventDefault();
       onSelect(Math.min(currentIndex + 1, items.length - 1));
       break;
-    case 'ArrowUp':
+    case "ArrowUp":
       e.preventDefault();
       onSelect(Math.max(currentIndex - 1, 0));
       break;
-    case 'Home':
+    case "Home":
       e.preventDefault();
       onSelect(0);
       break;
-    case 'End':
+    case "End":
       e.preventDefault();
       onSelect(items.length - 1);
       break;
@@ -80,7 +84,7 @@ export function handleListKeyboard(
  * Generate unique IDs for ARIA associations
  */
 let idCounter = 0;
-export function generateA11yId(prefix = 'a11y'): string {
+export function generateA11yId(prefix = "a11y"): string {
   return `${prefix}-${++idCounter}`;
 }
 
@@ -88,5 +92,5 @@ export function generateA11yId(prefix = 'a11y'): string {
  * Check if user prefers reduced motion
  */
 export function prefersReducedMotion(): boolean {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }

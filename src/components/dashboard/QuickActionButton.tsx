@@ -10,13 +10,19 @@ interface QuickActionButtonProps {
   className?: string;
 }
 
-export function QuickActionButton({ icon: Icon, label, onClick, variant = "outline", className }: QuickActionButtonProps) {
+export function QuickActionButton({
+  icon: Icon,
+  label,
+  onClick,
+  variant = "outline",
+  className,
+}: QuickActionButtonProps) {
   return (
     <Button
       variant={variant}
       size="lg"
       onClick={onClick}
-      className={cn("flex-col h-auto py-4 px-6 gap-2", className)}
+      className={cn("h-auto flex-col gap-2 px-6 py-4", className)}
     >
       <Icon className="h-6 w-6" />
       <span className="text-xs">{label}</span>

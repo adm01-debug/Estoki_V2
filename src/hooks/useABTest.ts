@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 export function useABTest(testName: string, variants: string[]) {
   const [variant, setVariant] = useState<string>(() => {
     const stored = localStorage.getItem(`ab_${testName}`);

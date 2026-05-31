@@ -27,14 +27,17 @@ export interface EstoquePosicao {
 export type ViewMode = "rack" | "grid" | "heatmap";
 export type SortMode = "codigo" | "status" | "ocupacao";
 
-export const statusConfig: Record<string, {
-  label: string;
-  color: string;
-  bgClass: string;
-  darkBgClass: string;
-  icon: typeof CheckCircle;
-  heatValue: number;
-}> = {
+export const statusConfig: Record<
+  string,
+  {
+    label: string;
+    color: string;
+    bgClass: string;
+    darkBgClass: string;
+    icon: typeof CheckCircle;
+    heatValue: number;
+  }
+> = {
   livre: {
     label: "Livre",
     color: "hsl(var(--success))",

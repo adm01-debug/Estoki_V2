@@ -10,41 +10,62 @@ interface SidebarHeaderProps {
   onCloseMobile: () => void;
 }
 
-export const SidebarHeader = memo(function SidebarHeader({ 
-  isCollapsed, 
-  isMobile, 
-  onCloseMobile 
+export const SidebarHeader = memo(function SidebarHeader({
+  isCollapsed,
+  isMobile,
+  onCloseMobile,
 }: SidebarHeaderProps) {
   return (
-     <div className={cn("px-4 min-h-[100px] flex items-center border-b border-sidebar-border/30", isCollapsed && "px-2 min-h-[64px] h-16")}>
+    <div
+      className={cn(
+        "flex min-h-[100px] items-center border-b border-sidebar-border/30 px-4",
+        isCollapsed && "h-16 min-h-[64px] px-2"
+      )}
+    >
       <div className={cn("flex items-center", isCollapsed ? "justify-center" : "gap-3")}>
-         <div className="flex items-center gap-3">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-3">
-                <motion.div
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-3">
+              <motion.div
+                className={cn(
+                  "flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/50 shadow-glow transition-all duration-300",
+                  isCollapsed ? "h-10 w-10" : "h-[68px] w-[68px]"
+                )}
+                whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Box
                   className={cn(
-                    "rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/50 flex items-center justify-center shadow-glow shrink-0 transition-all duration-300",
-                    isCollapsed ? "w-10 h-10" : "w-[68px] h-[68px]"
+                    "text-primary-foreground transition-all duration-300",
+                    isCollapsed ? "h-5 w-5" : "h-9 w-9"
                   )}
-                  whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Box className={cn("text-primary-foreground transition-all duration-300", isCollapsed ? "h-5 w-5" : "h-9 w-9")} />
-                </motion.div>
-                {!isCollapsed && (
-                <div className="min-w-0 flex flex-col justify-center">
-                   <h1 className="font-black text-sidebar-foreground text-[22px] tracking-tighter leading-[0.8] gradient-text">PROMO</h1>
-                   <p className="text-[13px] text-primary font-black tracking-[0.25em] uppercase mt-1.5 leading-none">BRINDES</p>
+                />
+              </motion.div>
+              {!isCollapsed && (
+                <div className="flex min-w-0 flex-col justify-center">
+                  <h1 className="gradient-text text-[22px] font-black leading-[0.8] tracking-tighter text-sidebar-foreground">
+                    PROMO
+                  </h1>
+                  <p className="mt-1.5 text-[13px] font-black uppercase leading-none tracking-[0.25em] text-primary">
+                    BRINDES
+                  </p>
                 </div>
               )}
             </div>
             {!isCollapsed && (
-              <p className="text-[9px] text-sidebar-foreground/40 font-black tracking-[0.2em] uppercase mt-1 ml-0.5 whitespace-nowrap">INTELLIGENCE WMS</p>
+              <p className="ml-0.5 mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/40">
+                INTELLIGENCE WMS
+              </p>
             )}
-            </div>
-         </div>
+          </div>
+        </div>
         {isMobile && (
-          <Button variant="ghost" size="icon" onClick={onCloseMobile} className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onCloseMobile}
+            className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground"
+          >
             <X className="h-5 w-5" />
           </Button>
         )}

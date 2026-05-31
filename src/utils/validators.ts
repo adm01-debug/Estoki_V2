@@ -11,14 +11,14 @@
  */
 export function validarCPF(cpf: string | null | undefined): boolean {
   if (!cpf) return false;
-  
-  const numeros = cpf.replace(/\D/g, '');
-  
+
+  const numeros = cpf.replace(/\D/g, "");
+
   if (numeros.length !== 11) return false;
-  
+
   // Verifica se todos os dígitos são iguais
   if (/^(\d)\1+$/.test(numeros)) return false;
-  
+
   // Validação do primeiro dígito verificador
   let soma = 0;
   for (let i = 0; i < 9; i++) {
@@ -27,7 +27,7 @@ export function validarCPF(cpf: string | null | undefined): boolean {
   let resto = (soma * 10) % 11;
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(numeros[9])) return false;
-  
+
   // Validação do segundo dígito verificador
   soma = 0;
   for (let i = 0; i < 10; i++) {
@@ -36,7 +36,7 @@ export function validarCPF(cpf: string | null | undefined): boolean {
   resto = (soma * 10) % 11;
   if (resto === 10 || resto === 11) resto = 0;
   if (resto !== parseInt(numeros[10])) return false;
-  
+
   return true;
 }
 
@@ -45,14 +45,14 @@ export function validarCPF(cpf: string | null | undefined): boolean {
  */
 export function validarCNPJ(cnpj: string | null | undefined): boolean {
   if (!cnpj) return false;
-  
-  const numeros = cnpj.replace(/\D/g, '');
-  
+
+  const numeros = cnpj.replace(/\D/g, "");
+
   if (numeros.length !== 14) return false;
-  
+
   // Verifica se todos os dígitos são iguais
   if (/^(\d)\1+$/.test(numeros)) return false;
-  
+
   // Validação do primeiro dígito verificador
   const pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   let soma = 0;
@@ -62,7 +62,7 @@ export function validarCNPJ(cnpj: string | null | undefined): boolean {
   let resto = soma % 11;
   const digito1 = resto < 2 ? 0 : 11 - resto;
   if (digito1 !== parseInt(numeros[12])) return false;
-  
+
   // Validação do segundo dígito verificador
   const pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   soma = 0;
@@ -72,7 +72,7 @@ export function validarCNPJ(cnpj: string | null | undefined): boolean {
   resto = soma % 11;
   const digito2 = resto < 2 ? 0 : 11 - resto;
   if (digito2 !== parseInt(numeros[13])) return false;
-  
+
   return true;
 }
 
@@ -94,7 +94,7 @@ export function validarEmail(email: string | null | undefined): boolean {
  */
 export function validarTelefone(telefone: string | null | undefined): boolean {
   if (!telefone) return false;
-  const numeros = telefone.replace(/\D/g, '');
+  const numeros = telefone.replace(/\D/g, "");
   return numeros.length === 10 || numeros.length === 11;
 }
 
@@ -103,7 +103,7 @@ export function validarTelefone(telefone: string | null | undefined): boolean {
  */
 export function validarCEP(cep: string | null | undefined): boolean {
   if (!cep) return false;
-  const numeros = cep.replace(/\D/g, '');
+  const numeros = cep.replace(/\D/g, "");
   return numeros.length === 8;
 }
 
@@ -116,7 +116,7 @@ export function validarCEP(cep: string | null | undefined): boolean {
  */
 export function validarNumeroPositivo(valor: number | string | null | undefined): boolean {
   if (valor === null || valor === undefined) return false;
-  const num = typeof valor === 'string' ? parseFloat(valor) : valor;
+  const num = typeof valor === "string" ? parseFloat(valor) : valor;
   return !isNaN(num) && num > 0;
 }
 
@@ -125,7 +125,7 @@ export function validarNumeroPositivo(valor: number | string | null | undefined)
  */
 export function validarNumeroNaoNegativo(valor: number | string | null | undefined): boolean {
   if (valor === null || valor === undefined) return false;
-  const num = typeof valor === 'string' ? parseFloat(valor) : valor;
+  const num = typeof valor === "string" ? parseFloat(valor) : valor;
   return !isNaN(num) && num >= 0;
 }
 
@@ -134,7 +134,7 @@ export function validarNumeroNaoNegativo(valor: number | string | null | undefin
  */
 export function validarInteiro(valor: number | string | null | undefined): boolean {
   if (valor === null || valor === undefined) return false;
-  const num = typeof valor === 'string' ? parseFloat(valor) : valor;
+  const num = typeof valor === "string" ? parseFloat(valor) : valor;
   return !isNaN(num) && Number.isInteger(num);
 }
 
@@ -190,16 +190,16 @@ export function validarTamanhoMaximo(texto: string | null | undefined, maximo: n
  */
 export function validarEAN13(codigo: string | null | undefined): boolean {
   if (!codigo) return false;
-  const numeros = codigo.replace(/\D/g, '');
+  const numeros = codigo.replace(/\D/g, "");
   if (numeros.length !== 13) return false;
-  
+
   // Cálculo do dígito verificador
   let soma = 0;
   for (let i = 0; i < 12; i++) {
     soma += parseInt(numeros[i]) * (i % 2 === 0 ? 1 : 3);
   }
   const digitoCalculado = (10 - (soma % 10)) % 10;
-  
+
   return digitoCalculado === parseInt(numeros[12]);
 }
 
@@ -212,7 +212,7 @@ export function validarEAN13(codigo: string | null | undefined): boolean {
  */
 export function validarData(data: string | Date | null | undefined): boolean {
   if (!data) return false;
-  const date = typeof data === 'string' ? new Date(data) : data;
+  const date = typeof data === "string" ? new Date(data) : data;
   return !isNaN(date.getTime());
 }
 
@@ -221,7 +221,7 @@ export function validarData(data: string | Date | null | undefined): boolean {
  */
 export function validarDataFutura(data: string | Date | null | undefined): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data!;
+  const date = typeof data === "string" ? new Date(data) : data!;
   return date > new Date();
 }
 
@@ -230,7 +230,7 @@ export function validarDataFutura(data: string | Date | null | undefined): boole
  */
 export function validarDataPassada(data: string | Date | null | undefined): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data!;
+  const date = typeof data === "string" ? new Date(data) : data!;
   return date < new Date();
 }
 
@@ -243,7 +243,7 @@ export function validarDataNoPeriodo(
   fim: Date
 ): boolean {
   if (!validarData(data)) return false;
-  const date = typeof data === 'string' ? new Date(data) : data!;
+  const date = typeof data === "string" ? new Date(data) : data!;
   return date >= inicio && date <= fim;
 }
 
@@ -282,7 +282,7 @@ export function validarQuantidadeTriagem(
   const diferenca = conferida - esperada;
   const percentual = esperada > 0 ? (Math.abs(diferenca) / esperada) * 100 : 0;
   const valido = percentual <= tolerancia;
-  
+
   return { valido, diferenca, percentual };
 }
 
@@ -293,7 +293,7 @@ export function validarChecklistCompleto(
   checklist: Record<string, boolean>,
   itensObrigatorios: string[]
 ): { valido: boolean; faltantes: string[] } {
-  const faltantes = itensObrigatorios.filter(item => !checklist[item]);
+  const faltantes = itensObrigatorios.filter((item) => !checklist[item]);
   return {
     valido: faltantes.length === 0,
     faltantes,
@@ -316,13 +316,13 @@ export function combinarValidacoes(
   ...validacoes: { valido: boolean; erro?: string }[]
 ): ResultadoValidacao {
   const erros: string[] = [];
-  
+
   for (const v of validacoes) {
     if (!v.valido && v.erro) {
       erros.push(v.erro);
     }
   }
-  
+
   return {
     valido: erros.length === 0,
     erros,

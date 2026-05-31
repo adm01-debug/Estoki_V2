@@ -24,7 +24,7 @@ async function runSimulation(count = 10) {
 
   for (let i = 0; i < count; i++) {
     const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    
+
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/webhook-handler`, {
         method: "POST",
@@ -55,23 +55,26 @@ Deno.serve(async (req) => {
   const url = new URL(req.url);
   const countHeader = req.headers.get("X-Simulation-Count");
   const count = parseInt(countHeader || url.searchParams.get("count") || "100");
-  
+
   const report = await runSimulation(count);
-  
+
   // Opcional: Salvar relatório no banco de dados para rastreabilidade
   await supabase.from("alertas_historico").insert({
     tipo: "sistema" as any,
     titulo: "Simulação de Stress Webhook",
     mensagem: `Processados ${count} eventos. Sucesso: ${report.success}, Falhas: ${report.failure}`,
     severidade: report.failure > 0 ? "aviso" : "info",
-    dados_contexto: report
+    dados_contexto: report,
   });
 
-  return new Response(JSON.stringify({
-    message: "Simulação concluída e registrada",
-    report,
-    timestamp: new Date().toISOString()
-  }), {
-    headers: { "Content-Type": "application/json" }
-  });
+  return new Response(
+    JSON.stringify({
+      message: "Simulação concluída e registrada",
+      report,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 });

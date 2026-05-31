@@ -1,34 +1,37 @@
 // Service Worker Registration
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (!('serviceWorker' in navigator)) {
-    if (import.meta.env.DEV) console.log('[SW] Service Workers not supported');
+  if (!("serviceWorker" in navigator)) {
+    if (import.meta.env.DEV) console.log("[SW] Service Workers not supported");
     return null;
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('/sw.js', {
-      scope: '/',
-      updateViaCache: 'none',
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
     });
 
-    if (import.meta.env.DEV) console.log('[SW] Service Worker registered:', registration.scope);
+    if (import.meta.env.DEV) console.log("[SW] Service Worker registered:", registration.scope);
 
     // Check for updates periodically
-    setInterval(() => {
-      registration.update();
-    }, 60 * 60 * 1000); // Every hour
+    setInterval(
+      () => {
+        registration.update();
+      },
+      60 * 60 * 1000
+    ); // Every hour
 
     // Handle updates
-    registration.addEventListener('updatefound', () => {
+    registration.addEventListener("updatefound", () => {
       const newWorker = registration.installing;
       if (!newWorker) return;
 
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+      newWorker.addEventListener("statechange", () => {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
           // New version available
-          if (confirm('Nova versão disponível! Deseja atualizar?')) {
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
+          if (confirm("Nova versão disponível! Deseja atualizar?")) {
+            newWorker.postMessage({ type: "SKIP_WAITING" });
             window.location.reload();
           }
         }
@@ -36,60 +39,64 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     });
 
     // Handle controller change
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (import.meta.env.DEV) console.log('[SW] Controller changed');
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (import.meta.env.DEV) console.log("[SW] Controller changed");
     });
 
     return registration;
   } catch (error) {
-    if (import.meta.env.DEV) console.error('[SW] Registration failed:', error);
+    if (import.meta.env.DEV) console.error("[SW] Registration failed:", error);
     return null;
   }
 }
 
 export async function unregisterServiceWorker(): Promise<boolean> {
-  if (!('serviceWorker' in navigator)) return false;
+  if (!("serviceWorker" in navigator)) return false;
 
   try {
     const registration = await navigator.serviceWorker.ready;
     const success = await registration.unregister();
-    if (import.meta.env.DEV) console.log('[SW] Unregistered:', success);
+    if (import.meta.env.DEV) console.log("[SW] Unregistered:", success);
     return success;
   } catch (error) {
-    if (import.meta.env.DEV) console.error('[SW] Unregister failed:', error);
+    if (import.meta.env.DEV) console.error("[SW] Unregister failed:", error);
     return false;
   }
 }
 
 // Request notification permission
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
-  if (!('Notification' in window)) return 'denied';
-  
-  if (Notification.permission === 'granted') return 'granted';
-  if (Notification.permission === 'denied') return 'denied';
-  
+  if (!("Notification" in window)) return "denied";
+
+  if (Notification.permission === "granted") return "granted";
+  if (Notification.permission === "denied") return "denied";
+
   return await Notification.requestPermission();
 }
 
 // Subscribe to push notifications
-export async function subscribeToPush(registration: ServiceWorkerRegistration): Promise<PushSubscription | null> {
+export async function subscribeToPush(
+  registration: ServiceWorkerRegistration
+): Promise<PushSubscription | null> {
   try {
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_VAPID_PUBLIC_KEY || '') as BufferSource,
+      applicationServerKey: urlBase64ToUint8Array(
+        import.meta.env.VITE_VAPID_PUBLIC_KEY || ""
+      ) as BufferSource,
     });
-    
-    if (import.meta.env.DEV) console.log('[SW] Push subscription:', subscription.endpoint);
+
+    if (import.meta.env.DEV) console.log("[SW] Push subscription:", subscription.endpoint);
     return subscription;
   } catch (error) {
-    if (import.meta.env.DEV) console.error('[SW] Push subscription failed:', error);
+    if (import.meta.env.DEV) console.error("[SW] Push subscription failed:", error);
     return null;
   }
 }
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
   const rawData = window.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {

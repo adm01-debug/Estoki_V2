@@ -181,33 +181,44 @@ export function exportInventarioPDF(
     ],
   });
 
-  addTable(doc, y, [
-    { header: "Posição", key: "posicao", width: 50 },
-    { header: "Produto", key: "produto", width: 70 },
-    { header: "Qtd Sistema", key: "qtd_sistema", width: 30 },
-    { header: "Qtd Contada", key: "qtd_contada", width: 30 },
-    { header: "Diferença", key: "diferenca", width: 30 },
-    { header: "Status", key: "status", width: 30 },
-  ], contagens.map((c) => ({
-    posicao: c.posicao_codigo || c.posicao_id,
-    produto: c.produto_nome || c.produto_id || "-",
-    qtd_sistema: c.quantidade_sistema,
-    qtd_contada: c.quantidade_contada ?? "Pendente",
-    diferenca: c.quantidade_contada !== null ? c.quantidade_contada - c.quantidade_sistema : "-",
-    status: c.status,
-  })));
+  addTable(
+    doc,
+    y,
+    [
+      { header: "Posição", key: "posicao", width: 50 },
+      { header: "Produto", key: "produto", width: 70 },
+      { header: "Qtd Sistema", key: "qtd_sistema", width: 30 },
+      { header: "Qtd Contada", key: "qtd_contada", width: 30 },
+      { header: "Diferença", key: "diferenca", width: 30 },
+      { header: "Status", key: "status", width: 30 },
+    ],
+    contagens.map((c) => ({
+      posicao: c.posicao_codigo || c.posicao_id,
+      produto: c.produto_nome || c.produto_id || "-",
+      qtd_sistema: c.quantidade_sistema,
+      qtd_contada: c.quantidade_contada ?? "Pendente",
+      diferenca: c.quantidade_contada !== null ? c.quantidade_contada - c.quantidade_sistema : "-",
+      status: c.status,
+    }))
+  );
 
   doc.save(`inventario-${format(new Date(), "yyyy-MM-dd")}.pdf`);
 }
 
 export function exportProdutividadePDF(
-  operadores: { nome: string; tarefas_concluidas: number; taxa_acerto: number; tempo_medio: number }[]
+  operadores: {
+    nome: string;
+    tarefas_concluidas: number;
+    taxa_acerto: number;
+    tempo_medio: number;
+  }[]
 ) {
   const doc = new jsPDF();
   const totalTarefas = operadores.reduce((a, o) => a + o.tarefas_concluidas, 0);
-  const mediaAcerto = operadores.length > 0
-    ? operadores.reduce((a, o) => a + o.taxa_acerto, 0) / operadores.length
-    : 0;
+  const mediaAcerto =
+    operadores.length > 0
+      ? operadores.reduce((a, o) => a + o.taxa_acerto, 0) / operadores.length
+      : 0;
 
   const y = addHeader(doc, {
     title: "Relatório de Produtividade",
@@ -218,23 +229,35 @@ export function exportProdutividadePDF(
     ],
   });
 
-  addTable(doc, y, [
-    { header: "Operador", key: "nome", width: 60 },
-    { header: "Tarefas Concluídas", key: "tarefas", width: 40 },
-    { header: "Taxa Acerto", key: "acerto", width: 35 },
-    { header: "Tempo Médio (min)", key: "tempo", width: 40 },
-  ], operadores.map((o) => ({
-    nome: o.nome,
-    tarefas: o.tarefas_concluidas,
-    acerto: `${o.taxa_acerto.toFixed(1)}%`,
-    tempo: o.tempo_medio.toFixed(0),
-  })));
+  addTable(
+    doc,
+    y,
+    [
+      { header: "Operador", key: "nome", width: 60 },
+      { header: "Tarefas Concluídas", key: "tarefas", width: 40 },
+      { header: "Taxa Acerto", key: "acerto", width: 35 },
+      { header: "Tempo Médio (min)", key: "tempo", width: 40 },
+    ],
+    operadores.map((o) => ({
+      nome: o.nome,
+      tarefas: o.tarefas_concluidas,
+      acerto: `${o.taxa_acerto.toFixed(1)}%`,
+      tempo: o.tempo_medio.toFixed(0),
+    }))
+  );
 
   doc.save(`produtividade-${format(new Date(), "yyyy-MM-dd")}.pdf`);
 }
 
 export function exportDivergenciasPDF(
-  divergencias: { fornecedor: string; lote: string; produto: string; pedido: number; recebido: number; diferenca: number }[]
+  divergencias: {
+    fornecedor: string;
+    lote: string;
+    produto: string;
+    pedido: number;
+    recebido: number;
+    diferenca: number;
+  }[]
 ) {
   const doc = new jsPDF();
   const totalDivergencias = divergencias.length;
@@ -245,18 +268,26 @@ export function exportDivergenciasPDF(
     resumo: [
       { label: "Total Divergências", valor: totalDivergencias },
       { label: "Diferença Acumulada", valor: `${totalDiferenca} un` },
-      { label: "Fornecedores Afetados", valor: new Set(divergencias.map((d) => d.fornecedor)).size },
+      {
+        label: "Fornecedores Afetados",
+        valor: new Set(divergencias.map((d) => d.fornecedor)).size,
+      },
     ],
   });
 
-  addTable(doc, y, [
-    { header: "Fornecedor", key: "fornecedor", width: 50 },
-    { header: "Lote", key: "lote", width: 35 },
-    { header: "Produto", key: "produto", width: 50 },
-    { header: "Pedido", key: "pedido", width: 25 },
-    { header: "Recebido", key: "recebido", width: 25 },
-    { header: "Diff", key: "diferenca", width: 25 },
-  ], divergencias);
+  addTable(
+    doc,
+    y,
+    [
+      { header: "Fornecedor", key: "fornecedor", width: 50 },
+      { header: "Lote", key: "lote", width: 35 },
+      { header: "Produto", key: "produto", width: 50 },
+      { header: "Pedido", key: "pedido", width: 25 },
+      { header: "Recebido", key: "recebido", width: 25 },
+      { header: "Diff", key: "diferenca", width: 25 },
+    ],
+    divergencias
+  );
 
   doc.save(`divergencias-${format(new Date(), "yyyy-MM-dd")}.pdf`);
 }

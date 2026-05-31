@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json();
     const validation = validateInput(WebhookEventSchema, body);
-    
+
     if (!validation.success) {
       return jsonResponse({ error: validation.error, details: validation.details }, 400, req);
     }
@@ -54,7 +54,11 @@ Deno.serve(async (req) => {
 
     if (insertError) {
       console.error("Error inserting webhook history:", insertError);
-      return jsonResponse({ success: false, error: "Logging failed", details: insertError.message }, 500, req);
+      return jsonResponse(
+        { success: false, error: "Logging failed", details: insertError.message },
+        500,
+        req
+      );
     }
 
     return jsonResponse({ success: true, event, received: new Date().toISOString() }, 200, req);

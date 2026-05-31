@@ -1,6 +1,13 @@
-export type StatusCiclo = 'agendado' | 'em_andamento' | 'concluido' | 'cancelado';
-export type TipoCiclo = 'completo' | 'amostragem' | 'curva_a' | 'curva_b' | 'curva_c' | 'posicao' | 'zona';
-export type StatusContagem = 'pendente' | 'em_andamento' | 'concluido' | 'divergencia';
+export type StatusCiclo = "agendado" | "em_andamento" | "concluido" | "cancelado";
+export type TipoCiclo =
+  | "completo"
+  | "amostragem"
+  | "curva_a"
+  | "curva_b"
+  | "curva_c"
+  | "posicao"
+  | "zona";
+export type StatusContagem = "pendente" | "em_andamento" | "concluido" | "divergencia";
 
 export interface Ciclo {
   id: string;

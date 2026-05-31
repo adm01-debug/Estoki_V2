@@ -4,7 +4,7 @@
  */
 
 // Tipos de ambiente
-export type Environment = 'development' | 'staging' | 'production';
+export type Environment = "development" | "staging" | "production";
 
 // Configuração base
 interface EnvironmentConfig {
@@ -46,22 +46,22 @@ interface EnvironmentConfig {
 
 // Carregar configuração do ambiente
 function loadEnvConfig(): EnvironmentConfig {
-  const env = (import.meta.env.VITE_APP_ENV || 'development') as Environment;
-  
+  const env = (import.meta.env.VITE_APP_ENV || "development") as Environment;
+
   const baseConfig: EnvironmentConfig = {
     name: env,
-    apiUrl: import.meta.env.VITE_API_URL || '',
-    supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
-    supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+    apiUrl: import.meta.env.VITE_API_URL || "",
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL || "",
+    supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || "",
     sentryDsn: import.meta.env.VITE_SENTRY_DSN,
     gaTrackingId: import.meta.env.VITE_GA_TRACKING_ID,
     features: {
-      gamification: import.meta.env.VITE_ENABLE_GAMIFICATION === 'true',
-      pwa: import.meta.env.VITE_ENABLE_PWA === 'true',
-      offlineMode: import.meta.env.VITE_ENABLE_OFFLINE_MODE === 'true',
+      gamification: import.meta.env.VITE_ENABLE_GAMIFICATION === "true",
+      pwa: import.meta.env.VITE_ENABLE_PWA === "true",
+      offlineMode: import.meta.env.VITE_ENABLE_OFFLINE_MODE === "true",
       analytics: !!import.meta.env.VITE_GA_TRACKING_ID,
       errorTracking: !!import.meta.env.VITE_SENTRY_DSN,
-      debugMode: env === 'development',
+      debugMode: env === "development",
     },
     integrations: {
       bitrix24: {
@@ -86,7 +86,7 @@ function loadEnvConfig(): EnvironmentConfig {
   };
 
   // Ajustes específicos por ambiente
-  if (env === 'production') {
+  if (env === "production") {
     baseConfig.limits.cacheExpiry = 15 * 60 * 1000; // 15 minutos em produção
     baseConfig.features.debugMode = false;
   }
@@ -97,24 +97,24 @@ function loadEnvConfig(): EnvironmentConfig {
 export const envConfig = loadEnvConfig();
 
 // Helpers
-export const isProduction = () => envConfig.name === 'production';
-export const isDevelopment = () => envConfig.name === 'development';
-export const isStaging = () => envConfig.name === 'staging';
+export const isProduction = () => envConfig.name === "production";
+export const isDevelopment = () => envConfig.name === "development";
+export const isStaging = () => envConfig.name === "staging";
 
 // Validar configuração obrigatória
 export function validateConfig(): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (!envConfig.supabaseUrl) {
-    errors.push('VITE_SUPABASE_URL não está configurado');
+    errors.push("VITE_SUPABASE_URL não está configurado");
   }
   if (!envConfig.supabaseAnonKey) {
-    errors.push('VITE_SUPABASE_ANON_KEY não está configurado');
+    errors.push("VITE_SUPABASE_ANON_KEY não está configurado");
   }
 
   if (isProduction()) {
     if (!envConfig.sentryDsn) {
-      errors.push('VITE_SENTRY_DSN recomendado para produção');
+      errors.push("VITE_SENTRY_DSN recomendado para produção");
     }
   }
 

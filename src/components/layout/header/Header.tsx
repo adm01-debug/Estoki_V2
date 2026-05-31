@@ -25,7 +25,7 @@ interface HeaderProps {
   isHome?: boolean;
 }
 
- export const Header = memo(function Header({
+export const Header = memo(function Header({
   mainPadding,
   onOpenMobileMenu,
   shouldShowBack,
@@ -36,56 +36,86 @@ interface HeaderProps {
   userEmail,
   currentRole,
   onLogout,
-  isHome
+  isHome,
 }: HeaderProps) {
   const isOnline = useOnlineStatus();
 
   return (
-      <header className="sticky top-0 z-50 border-b border-border/10">
-        <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60" />
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50" />
-        <div className={cn("relative flex items-center justify-between h-16 px-4 lg:px-6 max-w-[1600px] mx-auto transition-all duration-500 ease-in-out", mainPadding)}>
+    <header className="sticky top-0 z-50 border-b border-border/10">
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60" />
+      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50" />
+      <div
+        className={cn(
+          "relative mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 transition-all duration-500 ease-in-out lg:px-6",
+          mainPadding
+        )}
+      >
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onOpenMobileMenu} className="lg:hidden touch-friendly hover:bg-primary/10" aria-label="Abrir menu">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onOpenMobileMenu}
+            className="touch-friendly hover:bg-primary/10 lg:hidden"
+            aria-label="Abrir menu"
+          >
             <Menu className="h-5 w-5" />
           </Button>
-            <div className={cn("flex items-center transition-all duration-300", shouldShowBack ? "w-11 opacity-100" : "w-0 opacity-0 overflow-hidden")}>
-              {shouldShowBack && (
-                <Tooltip delayDuration={300}>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      onClick={onBack} 
-                      className="touch-friendly hover:bg-primary/10 active:scale-90 transition-transform bg-background/50 border border-border/20 shadow-sm" 
-                      aria-label="Voltar para tela anterior (Atalho: Alt + Seta Esquerda)"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="text-[10px] font-bold uppercase tracking-wider bg-popover/95 backdrop-blur-md border-border/40">
-                    Voltar <kbd className="ml-2 px-1 py-0.5 rounded bg-muted text-[10px] font-mono">Alt+←</kbd>
-                  </TooltipContent>
-                </Tooltip>
-              )}
-            </div>
+          <div
+            className={cn(
+              "flex items-center transition-all duration-300",
+              shouldShowBack ? "w-11 opacity-100" : "w-0 overflow-hidden opacity-0"
+            )}
+          >
+            {shouldShowBack && (
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onBack}
+                    className="touch-friendly border border-border/20 bg-background/50 shadow-sm transition-transform hover:bg-primary/10 active:scale-90"
+                    aria-label="Voltar para tela anterior (Atalho: Alt + Seta Esquerda)"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  className="border-border/40 bg-popover/95 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                >
+                  Voltar{" "}
+                  <kbd className="ml-2 rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
+                    Alt+←
+                  </kbd>
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
           {isHome && (
             <div className="flex items-center gap-2 lg:hidden">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 shadow-glow-sm">
                 <Box className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-extrabold text-foreground gradient-text hidden sm:block">ESTOKI</span>
+              <span className="gradient-text hidden font-extrabold text-foreground sm:block">
+                ESTOKI
+              </span>
             </div>
           )}
-           {title && <h1 className="text-xl font-bold tracking-tight text-foreground hidden sm:block">{title}</h1>}
+          {title && (
+            <h1 className="hidden text-xl font-bold tracking-tight text-foreground sm:block">
+              {title}
+            </h1>
+          )}
         </div>
         <div className="flex items-center gap-0.5">
           {!isOnline && (
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-destructive/10 text-destructive rounded-full border border-destructive/20 mr-2 animate-pulse">
+                <div className="mr-2 flex animate-pulse items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-3 py-1 text-destructive">
                   <WifiOff className="h-3.5 w-3.5" />
-                  <span className="text-[10px] font-black uppercase tracking-wider hidden md:inline">Offline</span>
+                  <span className="hidden text-[10px] font-black uppercase tracking-wider md:inline">
+                    Offline
+                  </span>
                 </div>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="text-xs">
@@ -95,17 +125,17 @@ interface HeaderProps {
           )}
           <GlobalSearch />
           <LanguageSwitcher />
-           <div role="group" aria-label="Ações rápidas" className="flex items-center gap-0.5">
-             <NotificationCenter />
-             <ThemeToggle />
-           </div>
+          <div role="group" aria-label="Ações rápidas" className="flex items-center gap-0.5">
+            <NotificationCenter />
+            <ThemeToggle />
+          </div>
           {rightAction}
-          <div className="ml-1 pl-2 border-l border-border/40">
-            <UserMenu 
-              userName={userName} 
-              userEmail={userEmail} 
-              currentRole={currentRole} 
-              onLogout={onLogout} 
+          <div className="ml-1 border-l border-border/40 pl-2">
+            <UserMenu
+              userName={userName}
+              userEmail={userEmail}
+              currentRole={currentRole}
+              onLogout={onLogout}
             />
           </div>
         </div>

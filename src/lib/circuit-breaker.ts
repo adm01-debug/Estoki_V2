@@ -8,7 +8,7 @@
  * States: CLOSED → OPEN → HALF_OPEN → CLOSED
  */
 
-type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+type CircuitState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
 interface CircuitBreakerOptions {
   /** Max consecutive failures before opening (default: 5) */
@@ -29,7 +29,7 @@ interface CircuitStats {
 }
 
 export class CircuitBreaker {
-  private state: CircuitState = 'CLOSED';
+  private state: CircuitState = "CLOSED";
   private failures = 0;
   private lastFailure: number | null = null;
   private totalCalls = 0;
@@ -49,9 +49,9 @@ export class CircuitBreaker {
   async execute<T>(fn: () => Promise<T>): Promise<T> {
     this.totalCalls++;
 
-    if (this.state === 'OPEN') {
+    if (this.state === "OPEN") {
       if (this.shouldAttemptReset()) {
-        this.state = 'HALF_OPEN';
+        this.state = "HALF_OPEN";
         if (import.meta.env.DEV) {
           console.log(`[CircuitBreaker:${this.name}] HALF_OPEN — testing...`);
         }
@@ -59,7 +59,7 @@ export class CircuitBreaker {
         throw new CircuitBreakerError(
           `Circuit breaker "${this.name}" is OPEN. Retry after ${this.getRemainingCooldown()}ms.`,
           this.name,
-          this.getStats(),
+          this.getStats()
         );
       }
     }
@@ -76,8 +76,8 @@ export class CircuitBreaker {
 
   /** Returns true if safe to call, false if circuit is open */
   isAvailable(): boolean {
-    if (this.state === 'CLOSED') return true;
-    if (this.state === 'HALF_OPEN') return true;
+    if (this.state === "CLOSED") return true;
+    if (this.state === "HALF_OPEN") return true;
     return this.shouldAttemptReset();
   }
 
@@ -94,7 +94,7 @@ export class CircuitBreaker {
 
   /** Force reset to CLOSED (e.g. manual admin action) */
   reset(): void {
-    this.state = 'CLOSED';
+    this.state = "CLOSED";
     this.failures = 0;
     this.lastFailure = null;
     if (import.meta.env.DEV) {
@@ -104,12 +104,12 @@ export class CircuitBreaker {
 
   private onSuccess(): void {
     this.totalSuccesses++;
-    if (this.state === 'HALF_OPEN') {
+    if (this.state === "HALF_OPEN") {
       if (import.meta.env.DEV) {
         console.log(`[CircuitBreaker:${this.name}] HALF_OPEN → CLOSED (success)`);
       }
     }
-    this.state = 'CLOSED';
+    this.state = "CLOSED";
     this.failures = 0;
   }
 
@@ -118,8 +118,8 @@ export class CircuitBreaker {
     this.failures++;
     this.lastFailure = Date.now();
 
-    if (this.state === 'HALF_OPEN') {
-      this.state = 'OPEN';
+    if (this.state === "HALF_OPEN") {
+      this.state = "OPEN";
       if (import.meta.env.DEV) {
         console.log(`[CircuitBreaker:${this.name}] HALF_OPEN → OPEN (failed again)`);
       }
@@ -127,11 +127,9 @@ export class CircuitBreaker {
     }
 
     if (this.failures >= this.failureThreshold) {
-      this.state = 'OPEN';
+      this.state = "OPEN";
       if (import.meta.env.DEV) {
-        console.log(
-          `[CircuitBreaker:${this.name}] CLOSED → OPEN after ${this.failures} failures`,
-        );
+        console.log(`[CircuitBreaker:${this.name}] CLOSED → OPEN after ${this.failures} failures`);
       }
     }
   }
@@ -153,7 +151,7 @@ export class CircuitBreakerError extends Error {
 
   constructor(message: string, circuitName: string, stats: CircuitStats) {
     super(message);
-    this.name = 'CircuitBreakerError';
+    this.name = "CircuitBreakerError";
     this.circuitName = circuitName;
     this.stats = stats;
   }
@@ -161,11 +159,11 @@ export class CircuitBreakerError extends Error {
 
 // ── Pre-configured instances for known integrations ────────
 export const circuits = {
-  bitrix24: new CircuitBreaker({ name: 'Bitrix24', failureThreshold: 5, resetTimeout: 60_000 }),
-  correios: new CircuitBreaker({ name: 'Correios', failureThreshold: 3, resetTimeout: 45_000 }),
-  lalamove: new CircuitBreaker({ name: 'Lalamove', failureThreshold: 5, resetTimeout: 30_000 }),
-  sefaz: new CircuitBreaker({ name: 'SEFAZ', failureThreshold: 3, resetTimeout: 60_000 }),
-  ai: new CircuitBreaker({ name: 'AI/LLM', failureThreshold: 3, resetTimeout: 30_000 }),
+  bitrix24: new CircuitBreaker({ name: "Bitrix24", failureThreshold: 5, resetTimeout: 60_000 }),
+  correios: new CircuitBreaker({ name: "Correios", failureThreshold: 3, resetTimeout: 45_000 }),
+  lalamove: new CircuitBreaker({ name: "Lalamove", failureThreshold: 5, resetTimeout: 30_000 }),
+  sefaz: new CircuitBreaker({ name: "SEFAZ", failureThreshold: 3, resetTimeout: 60_000 }),
+  ai: new CircuitBreaker({ name: "AI/LLM", failureThreshold: 3, resetTimeout: 30_000 }),
 } as const;
 
 /**

@@ -1,6 +1,9 @@
-import { useState, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useCallback, useRef, useLayoutEffect } from "react";
 
-interface Size { width: number; height: number; }
+interface Size {
+  width: number;
+  height: number;
+}
 
 export function useElementSize<T extends HTMLElement = HTMLDivElement>() {
   const ref = useRef<T>(null);

@@ -7,7 +7,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
     // Buscar produtos abaixo do ponto de reposição
     const { data: products } = await supabase
@@ -15,11 +18,11 @@ serve(async (req) => {
       .select("*, supplier:supplier_id(id, name, email, lead_time_days)")
       .lte("current_stock", supabase.raw("reorder_point"));
 
-    const suggestions = (products || []).map(p => {
+    const suggestions = (products || []).map((p) => {
       const safetyStock = p.safety_stock || 10;
       const avgDailySales = p.avg_daily_sales || 5;
       const leadTime = p.supplier?.lead_time_days || 7;
-      const suggestedQty = Math.ceil((avgDailySales * leadTime) + safetyStock - p.current_stock);
+      const suggestedQty = Math.ceil(avgDailySales * leadTime + safetyStock - p.current_stock);
 
       return {
         product_id: p.id,
@@ -30,14 +33,14 @@ serve(async (req) => {
         suggested_quantity: Math.max(suggestedQty, p.min_order_qty || 1),
         supplier_id: p.supplier?.id,
         supplier_name: p.supplier?.name,
-        estimated_delivery: new Date(Date.now() + (leadTime * 86400000)).toISOString().split("T")[0],
+        estimated_delivery: new Date(Date.now() + leadTime * 86400000).toISOString().split("T")[0],
       };
     });
 
     // Salvar sugestões
     if (suggestions.length > 0) {
       await supabase.from("reorder_suggestions").upsert(
-        suggestions.map(s => ({ ...s, status: "pending", created_at: new Date().toISOString() })),
+        suggestions.map((s) => ({ ...s, status: "pending", created_at: new Date().toISOString() })),
         { onConflict: "product_id" }
       );
     }
@@ -47,7 +50,8 @@ serve(async (req) => {
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 400,
     });
   }
 });

@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
 export interface FeatureFlag {
   key: string;
@@ -22,7 +22,7 @@ class FeatureFlagsService {
 
   constructor(config: FeatureFlagsConfig = {}) {
     this.refreshInterval = config.refreshInterval || 5 * 60 * 1000; // 5 minutes default
-    
+
     // Set default flags
     if (config.defaultFlags) {
       Object.entries(config.defaultFlags).forEach(([key, enabled]) => {
@@ -41,31 +41,38 @@ class FeatureFlagsService {
 
   private async loadFromRemote(): Promise<void> {
     try {
-      const { data, error } = await (supabase
-        .from('feature_flags' as any) as any)
-        .select('*')
-        .eq('active', true);
+      const { data, error } = await (supabase.from("feature_flags" as any) as any)
+        .select("*")
+        .eq("active", true);
 
       if (error) {
-        if (import.meta.env.DEV) console.error('Failed to load feature flags:', error);
+        if (import.meta.env.DEV) console.error("Failed to load feature flags:", error);
         return;
       }
 
       if (data) {
-        data.forEach((flag: { key: string; enabled: boolean; value?: unknown; description?: string; updated_at?: string }) => {
-          this.flags.set(flag.key, {
-            key: flag.key,
-            enabled: flag.enabled,
-            value: flag.value,
-            description: flag.description,
-            updatedAt: flag.updated_at,
-          });
-        });
+        data.forEach(
+          (flag: {
+            key: string;
+            enabled: boolean;
+            value?: unknown;
+            description?: string;
+            updated_at?: string;
+          }) => {
+            this.flags.set(flag.key, {
+              key: flag.key,
+              enabled: flag.enabled,
+              value: flag.value,
+              description: flag.description,
+              updatedAt: flag.updated_at,
+            });
+          }
+        );
 
         this.notifyListeners();
       }
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Feature flags load error:', err);
+      if (import.meta.env.DEV) console.error("Feature flags load error:", err);
     }
   }
 
@@ -104,7 +111,7 @@ class FeatureFlagsService {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach(listener => listener(this.getAll()));
+    this.listeners.forEach((listener) => listener(this.getAll()));
   }
 
   // For testing/override purposes
@@ -117,25 +124,25 @@ class FeatureFlagsService {
 // Default feature flags
 const defaultFlags: Record<string, boolean> = {
   // Core features
-  'feature.new_dashboard': true,
-  'feature.ai_assistant': false,
-  'feature.voice_picking': false,
-  'feature.multi_tenant': false,
-  
+  "feature.new_dashboard": true,
+  "feature.ai_assistant": false,
+  "feature.voice_picking": false,
+  "feature.multi_tenant": false,
+
   // UI features
-  'ui.dark_mode': true,
-  'ui.animations': true,
-  'ui.beta_badge': false,
-  
+  "ui.dark_mode": true,
+  "ui.animations": true,
+  "ui.beta_badge": false,
+
   // Integrations
-  'integration.correios': true,
-  'integration.mercado_livre': false,
-  'integration.sap': false,
-  
+  "integration.correios": true,
+  "integration.mercado_livre": false,
+  "integration.sap": false,
+
   // Performance
-  'perf.lazy_loading': true,
-  'perf.virtual_scroll': true,
-  'perf.prefetch': true,
+  "perf.lazy_loading": true,
+  "perf.virtual_scroll": true,
+  "perf.prefetch": true,
 };
 
 export const featureFlags = new FeatureFlagsService({
@@ -144,7 +151,7 @@ export const featureFlags = new FeatureFlagsService({
 });
 
 // Initialize on module load
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   featureFlags.init();
 }
 

@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 export function useSubscription<T>(
   table: string,
   filter?: { column: string; value: string | number }
@@ -9,32 +9,30 @@ export function useSubscription<T>(
   filterRef.current = filter;
 
   useEffect(() => {
-    const filterStr = filterRef.current 
-      ? `${filterRef.current.column}=eq.${filterRef.current.value}` 
+    const filterStr = filterRef.current
+      ? `${filterRef.current.column}=eq.${filterRef.current.value}`
       : undefined;
 
-    const channelId = `${table}-changes-${filterStr || 'all'}`;
-    
+    const channelId = `${table}-changes-${filterStr || "all"}`;
+
     const channel = supabase
       .channel(channelId)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
+          event: "*",
+          schema: "public",
           table,
-          ...(filterStr && { filter: filterStr })
+          ...(filterStr && { filter: filterStr }),
         },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             setData((d) => [...d, payload.new as T]);
-          } else if (payload.eventType === 'UPDATE') {
+          } else if (payload.eventType === "UPDATE") {
             setData((d) =>
-              d.map((item) =>
-                (item as any).id === payload.new.id ? (payload.new as T) : item
-              )
+              d.map((item) => ((item as any).id === payload.new.id ? (payload.new as T) : item))
             );
-          } else if (payload.eventType === 'DELETE') {
+          } else if (payload.eventType === "DELETE") {
             setData((d) => d.filter((item) => (item as any).id !== payload.old.id));
           }
         }

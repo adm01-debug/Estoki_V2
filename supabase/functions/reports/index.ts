@@ -68,12 +68,10 @@ serve(async (req) => {
 // Resumo de inventário
 async function inventorySummary(supabase: any, params: any) {
   const { data } = await supabase.rpc("get_inventory_summary", params);
-  
+
   // Fallback query
   if (!data) {
-    const { data: balances } = await supabase
-      .from("stock_balances")
-      .select(`
+    const { data: balances } = await supabase.from("stock_balances").select(`
         quantity,
         reserved_quantity,
         available_quantity,
@@ -84,8 +82,11 @@ async function inventorySummary(supabase: any, params: any) {
     const summary = {
       total_products: new Set(balances?.map((b: any) => b.product?.id)).size,
       total_quantity: balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0,
-      total_value: balances?.reduce((sum: number, b: any) => 
-        sum + (b.quantity * (b.product?.cost_price || 0)), 0) || 0,
+      total_value:
+        balances?.reduce(
+          (sum: number, b: any) => sum + b.quantity * (b.product?.cost_price || 0),
+          0
+        ) || 0,
       by_category: {},
       by_zone: {},
     };
@@ -102,12 +103,14 @@ async function stockMovementHistory(supabase: any, params: any) {
 
   let query = supabase
     .from("stock_movements")
-    .select(`
+    .select(
+      `
       *,
       product:products(name, sku),
       from_location:locations!from_location_id(name, code),
       to_location:locations!to_location_id(name, code)
-    `)
+    `
+    )
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -133,21 +136,27 @@ async function lowStockReport(supabase: any, params: any) {
 
   const { data } = await supabase
     .from("products")
-    .select(`
+    .select(
+      `
       id, name, sku, min_stock, max_stock,
       stock_balances(quantity, location:locations(name))
-    `)
+    `
+    )
     .gt("min_stock", 0);
 
-  const lowStockProducts = data?.filter((p: any) => {
-    const totalStock = p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0;
-    const threshold = (p.min_stock * threshold_percentage) / 100;
-    return totalStock <= threshold;
-  }).map((p: any) => ({
-    ...p,
-    current_stock: p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0,
-    shortage: p.min_stock - (p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0),
-  }));
+  const lowStockProducts = data
+    ?.filter((p: any) => {
+      const totalStock =
+        p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0;
+      const threshold = (p.min_stock * threshold_percentage) / 100;
+      return totalStock <= threshold;
+    })
+    .map((p: any) => ({
+      ...p,
+      current_stock: p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0,
+      shortage:
+        p.min_stock - (p.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0),
+    }));
 
   return {
     products: lowStockProducts,
@@ -160,9 +169,7 @@ async function lowStockReport(supabase: any, params: any) {
 async function receivingPerformance(supabase: any, params: any) {
   const { start_date, end_date } = params;
 
-  let query = supabase
-    .from("receiving_documents")
-    .select(`
+  let query = supabase.from("receiving_documents").select(`
       id, document_number, status, created_at, completed_at,
       receiving_items(expected_quantity, received_quantity)
     `);
@@ -174,8 +181,8 @@ async function receivingPerformance(supabase: any, params: any) {
 
   const metrics = {
     total_documents: data?.length || 0,
-    completed: data?.filter((d: any) => d.status === 'completed').length || 0,
-    pending: data?.filter((d: any) => d.status === 'pending').length || 0,
+    completed: data?.filter((d: any) => d.status === "completed").length || 0,
+    pending: data?.filter((d: any) => d.status === "pending").length || 0,
     avg_processing_time_hours: 0,
     accuracy_rate: 0,
   };
@@ -198,9 +205,7 @@ async function receivingPerformance(supabase: any, params: any) {
 async function shippingPerformance(supabase: any, params: any) {
   const { start_date, end_date } = params;
 
-  let query = supabase
-    .from("shipments")
-    .select(`
+  let query = supabase.from("shipments").select(`
       id, status, created_at, shipped_at, delivered_at,
       carrier:carriers(name)
     `);
@@ -212,10 +217,10 @@ async function shippingPerformance(supabase: any, params: any) {
 
   return {
     total_shipments: data?.length || 0,
-    shipped: data?.filter((s: any) => s.status === 'shipped').length || 0,
-    delivered: data?.filter((s: any) => s.status === 'delivered').length || 0,
+    shipped: data?.filter((s: any) => s.status === "shipped").length || 0,
+    delivered: data?.filter((s: any) => s.status === "delivered").length || 0,
     by_carrier: data?.reduce((acc: any, s: any) => {
-      const carrier = s.carrier?.name || 'Outros';
+      const carrier = s.carrier?.name || "Outros";
       acc[carrier] = (acc[carrier] || 0) + 1;
       return acc;
     }, {}),
@@ -226,14 +231,17 @@ async function shippingPerformance(supabase: any, params: any) {
 async function locationUtilization(supabase: any, params: any) {
   const { data: locations } = await supabase
     .from("locations")
-    .select(`
+    .select(
+      `
       id, code, name, zone, capacity, type,
       stock_balances(quantity)
-    `)
+    `
+    )
     .eq("is_active", true);
 
   return locations?.map((loc: any) => {
-    const usedCapacity = loc.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0;
+    const usedCapacity =
+      loc.stock_balances?.reduce((sum: number, b: any) => sum + b.quantity, 0) || 0;
     const utilization = loc.capacity ? (usedCapacity / loc.capacity) * 100 : 0;
 
     return {
@@ -254,16 +262,19 @@ async function locationUtilization(supabase: any, params: any) {
 async function productABCAnalysis(supabase: any, params: any) {
   const { data } = await supabase
     .from("stock_movements")
-    .select(`
+    .select(
+      `
       product_id,
       quantity,
       product:products(id, name, sku, sell_price)
-    `)
+    `
+    )
     .eq("type", "out");
 
   // Calcular valor vendido por produto
-  const productValues: Record<string, { id: string; name: string; sku: string; value: number }> = {};
-  
+  const productValues: Record<string, { id: string; name: string; sku: string; value: number }> =
+    {};
+
   data?.forEach((m: any) => {
     if (!m.product) return;
     const key = m.product_id;
@@ -284,22 +295,22 @@ async function productABCAnalysis(supabase: any, params: any) {
 
   // Classificar ABC
   let cumulative = 0;
-  const classified = sorted.map(p => {
+  const classified = sorted.map((p) => {
     cumulative += p.value;
     const percentage = (cumulative / totalValue) * 100;
-    let classification = 'C';
-    if (percentage <= 80) classification = 'A';
-    else if (percentage <= 95) classification = 'B';
-    
+    let classification = "C";
+    if (percentage <= 80) classification = "A";
+    else if (percentage <= 95) classification = "B";
+
     return { ...p, classification, percentage_of_total: (p.value / totalValue) * 100 };
   });
 
   return {
     products: classified,
     summary: {
-      A: classified.filter(p => p.classification === 'A').length,
-      B: classified.filter(p => p.classification === 'B').length,
-      C: classified.filter(p => p.classification === 'C').length,
+      A: classified.filter((p) => p.classification === "A").length,
+      B: classified.filter((p) => p.classification === "B").length,
+      C: classified.filter((p) => p.classification === "C").length,
     },
   };
 }
@@ -312,11 +323,13 @@ async function expiryReport(supabase: any, params: any) {
 
   const { data } = await supabase
     .from("lot_tracking")
-    .select(`
+    .select(
+      `
       id, lot_number, expiry_date, quantity,
       product:products(name, sku),
       location:locations(name, code)
-    `)
+    `
+    )
     .lte("expiry_date", futureDate.toISOString())
     .gt("quantity", 0)
     .order("expiry_date");
@@ -324,10 +337,11 @@ async function expiryReport(supabase: any, params: any) {
   const now = new Date();
   const categorized = {
     expired: data?.filter((l: any) => new Date(l.expiry_date) < now) || [],
-    expiring_soon: data?.filter((l: any) => {
-      const exp = new Date(l.expiry_date);
-      return exp >= now && exp <= futureDate;
-    }) || [],
+    expiring_soon:
+      data?.filter((l: any) => {
+        const exp = new Date(l.expiry_date);
+        return exp >= now && exp <= futureDate;
+      }) || [],
   };
 
   return {
@@ -341,37 +355,43 @@ async function expiryReport(supabase: any, params: any) {
 async function inventoryValuation(supabase: any, params: any) {
   const { data } = await supabase
     .from("stock_balances")
-    .select(`
+    .select(
+      `
       quantity,
       product:products(id, name, sku, cost_price, sell_price, category:categories(name))
-    `)
+    `
+    )
     .gt("quantity", 0);
 
-  const valuation = data?.reduce((acc: any, b: any) => {
-    const costValue = b.quantity * (b.product?.cost_price || 0);
-    const sellValue = b.quantity * (b.product?.sell_price || 0);
-    
-    acc.total_cost += costValue;
-    acc.total_sell += sellValue;
-    acc.total_items += b.quantity;
-    
-    const category = b.product?.category?.name || 'Sem Categoria';
-    if (!acc.by_category[category]) {
-      acc.by_category[category] = { cost: 0, sell: 0, items: 0 };
-    }
-    acc.by_category[category].cost += costValue;
-    acc.by_category[category].sell += sellValue;
-    acc.by_category[category].items += b.quantity;
-    
-    return acc;
-  }, { total_cost: 0, total_sell: 0, total_items: 0, by_category: {} });
+  const valuation = data?.reduce(
+    (acc: any, b: any) => {
+      const costValue = b.quantity * (b.product?.cost_price || 0);
+      const sellValue = b.quantity * (b.product?.sell_price || 0);
+
+      acc.total_cost += costValue;
+      acc.total_sell += sellValue;
+      acc.total_items += b.quantity;
+
+      const category = b.product?.category?.name || "Sem Categoria";
+      if (!acc.by_category[category]) {
+        acc.by_category[category] = { cost: 0, sell: 0, items: 0 };
+      }
+      acc.by_category[category].cost += costValue;
+      acc.by_category[category].sell += sellValue;
+      acc.by_category[category].items += b.quantity;
+
+      return acc;
+    },
+    { total_cost: 0, total_sell: 0, total_items: 0, by_category: {} }
+  );
 
   return {
     ...valuation,
     potential_profit: valuation.total_sell - valuation.total_cost,
-    margin_percent: valuation.total_cost > 0 
-      ? ((valuation.total_sell - valuation.total_cost) / valuation.total_cost) * 100 
-      : 0,
+    margin_percent:
+      valuation.total_cost > 0
+        ? ((valuation.total_sell - valuation.total_cost) / valuation.total_cost) * 100
+        : 0,
   };
 }
 
@@ -383,7 +403,10 @@ async function kpiDashboard(supabase: any, params: any) {
 
   // Buscar dados em paralelo
   const [receivingToday, shippingToday, lowStock, movements] = await Promise.all([
-    supabase.from("receiving_documents").select("id", { count: "exact" }).gte("created_at", startOfDay),
+    supabase
+      .from("receiving_documents")
+      .select("id", { count: "exact" })
+      .gte("created_at", startOfDay),
     supabase.from("shipments").select("id", { count: "exact" }).gte("created_at", startOfDay),
     supabase.from("products").select("id", { count: "exact" }).gt("min_stock", 0),
     supabase.from("stock_movements").select("id, type").gte("created_at", startOfMonth),

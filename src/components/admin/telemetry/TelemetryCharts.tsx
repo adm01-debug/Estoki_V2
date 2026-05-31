@@ -1,8 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  AreaChart, Area, BarChart, Bar,
-  XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
 } from "recharts";
 
 interface TelemetryRow {
@@ -30,11 +39,16 @@ const COLORS = {
 
 function getBucketMs(timeFilter: string): number {
   switch (timeFilter) {
-    case "1h": return 5 * 60 * 1000;      // 5 min
-    case "6h": return 30 * 60 * 1000;     // 30 min
-    case "24h": return 60 * 60 * 1000;    // 1 hour
-    case "7d": return 6 * 60 * 60 * 1000; // 6 hours
-    default: return 60 * 60 * 1000;
+    case "1h":
+      return 5 * 60 * 1000; // 5 min
+    case "6h":
+      return 30 * 60 * 1000; // 30 min
+    case "24h":
+      return 60 * 60 * 1000; // 1 hour
+    case "7d":
+      return 6 * 60 * 60 * 1000; // 6 hours
+    default:
+      return 60 * 60 * 1000;
   }
 }
 
@@ -52,7 +66,10 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
   const bucketMs = getBucketMs(timeFilter);
 
   // === Chart 1: Stacked AreaChart — Alerts over time ===
-  const alertBuckets = new Map<number, { ts: number; muitoLentas: number; lentas: number; erros: number }>();
+  const alertBuckets = new Map<
+    number,
+    { ts: number; muitoLentas: number; lentas: number; erros: number }
+  >();
   for (const r of rows) {
     const ts = Math.floor(new Date(r.created_at).getTime() / bucketMs) * bucketMs;
     const prev = alertBuckets.get(ts) || { ts, muitoLentas: 0, lentas: 0, erros: 0 };
@@ -63,10 +80,13 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
   }
   const alertData = [...alertBuckets.values()]
     .sort((a, b) => a.ts - b.ts)
-    .map(b => ({ ...b, label: formatBucketTime(b.ts, timeFilter) }));
+    .map((b) => ({ ...b, label: formatBucketTime(b.ts, timeFilter) }));
 
   // === Chart 2: AreaChart — Duration avg/max over time ===
-  const durationBuckets = new Map<number, { ts: number; total: number; count: number; maxMs: number }>();
+  const durationBuckets = new Map<
+    number,
+    { ts: number; total: number; count: number; maxMs: number }
+  >();
   for (const r of rows) {
     const ts = Math.floor(new Date(r.created_at).getTime() / bucketMs) * bucketMs;
     const prev = durationBuckets.get(ts) || { ts, total: 0, count: 0, maxMs: 0 };
@@ -79,7 +99,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
   }
   const durationData = [...durationBuckets.values()]
     .sort((a, b) => a.ts - b.ts)
-    .map(b => ({
+    .map((b) => ({
       label: formatBucketTime(b.ts, timeFilter),
       mediaMs: Math.round(b.total / b.count),
       maxMs: b.maxMs,
@@ -94,7 +114,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
     { name: "Lentas", value: severityCounts.slow },
     { name: "Muito Lentas", value: severityCounts.very_slow },
     { name: "Erros", value: severityCounts.error },
-  ].filter(d => d.value > 0);
+  ].filter((d) => d.value > 0);
   const pieColors = [COLORS.slow, COLORS.verySlow, COLORS.error];
 
   // === Chart 4: Bar — Top tables by alert count ===
@@ -109,7 +129,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
     .map(([name, count]) => ({ name, alertas: count }));
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {/* Stacked AreaChart: Alerts over time */}
       <Card className="md:col-span-2">
         <CardHeader className="pb-2">
@@ -121,9 +141,33 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
               <XAxis dataKey="label" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
               <Tooltip />
-              <Area type="monotone" dataKey="muitoLentas" stackId="1" stroke={COLORS.verySlow} fill={COLORS.verySlow} fillOpacity={0.6} name="Muito Lentas" />
-              <Area type="monotone" dataKey="lentas" stackId="1" stroke={COLORS.slow} fill={COLORS.slow} fillOpacity={0.6} name="Lentas" />
-              <Area type="monotone" dataKey="erros" stackId="1" stroke={COLORS.error} fill={COLORS.error} fillOpacity={0.6} name="Erros" />
+              <Area
+                type="monotone"
+                dataKey="muitoLentas"
+                stackId="1"
+                stroke={COLORS.verySlow}
+                fill={COLORS.verySlow}
+                fillOpacity={0.6}
+                name="Muito Lentas"
+              />
+              <Area
+                type="monotone"
+                dataKey="lentas"
+                stackId="1"
+                stroke={COLORS.slow}
+                fill={COLORS.slow}
+                fillOpacity={0.6}
+                name="Lentas"
+              />
+              <Area
+                type="monotone"
+                dataKey="erros"
+                stackId="1"
+                stroke={COLORS.error}
+                fill={COLORS.error}
+                fillOpacity={0.6}
+                name="Erros"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>
@@ -138,7 +182,15 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={80}
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}`}
+                >
                   {pieData.map((_, i) => (
                     <Cell key={i} fill={pieColors[i % pieColors.length]} />
                   ))}
@@ -164,8 +216,22 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
               <XAxis dataKey="label" tick={{ fontSize: 10 }} />
               <YAxis tick={{ fontSize: 10 }} unit="ms" />
               <Tooltip formatter={(v: number) => [`${v}ms`]} />
-              <Area type="monotone" dataKey="maxMs" stroke={COLORS.verySlow} fill={COLORS.verySlow} fillOpacity={0.15} name="Máximo" />
-              <Area type="monotone" dataKey="mediaMs" stroke={COLORS.primary} fill={COLORS.primary} fillOpacity={0.3} name="Média" />
+              <Area
+                type="monotone"
+                dataKey="maxMs"
+                stroke={COLORS.verySlow}
+                fill={COLORS.verySlow}
+                fillOpacity={0.15}
+                name="Máximo"
+              />
+              <Area
+                type="monotone"
+                dataKey="mediaMs"
+                stroke={COLORS.primary}
+                fill={COLORS.primary}
+                fillOpacity={0.3}
+                name="Média"
+              />
             </AreaChart>
           </ResponsiveContainer>
         </CardContent>

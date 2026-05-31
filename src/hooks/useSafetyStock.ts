@@ -17,12 +17,12 @@ export function useSafetyStock(produtoId: string, serviceLevel = 1.65) {
     queryFn: async () => {
       // Simulando demanda média diária de 10 unidades
       const demandaMediaDiaria = 10;
-      
+
       if (!leadTimeData || leadTimeData.lead_time_medio === 0) return 0;
 
       // Desvio padrão é a raiz da variância
       const sigmaLT = Math.sqrt(leadTimeData.variancia);
-      
+
       // Estoque de segurança
       const ss = serviceLevel * sigmaLT * demandaMediaDiaria;
 

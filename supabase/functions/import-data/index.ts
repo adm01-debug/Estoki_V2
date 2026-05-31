@@ -10,8 +10,13 @@ const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   });
 
 const ALLOWED_TABLES = [
-  "produtos", "lotes", "posicoes_estoque", "estoque_posicao",
-  "fornecedor_scores", "alertas_config", "metas_kpi",
+  "produtos",
+  "lotes",
+  "posicoes_estoque",
+  "estoque_posicao",
+  "fornecedor_scores",
+  "alertas_config",
+  "metas_kpi",
 ];
 
 const ImportSchema = z.object({
@@ -28,7 +33,11 @@ Deno.serve(async (req) => {
   try {
     const parsed = ImportSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
+      return jsonResponse(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        400,
+        req
+      );
     }
 
     const { table, data, mode, unique_key } = parsed.data;
@@ -49,13 +58,19 @@ Deno.serve(async (req) => {
       const batch = data.slice(i, i + batchSize);
       try {
         if (mode === "upsert" && unique_key) {
-          const { error } = await supabase.from(table).upsert(batch as any[], { onConflict: unique_key });
-          if (error) { results.errors += batch.length; results.errorDetails.push(error.message); }
-          else results.updated += batch.length;
+          const { error } = await supabase
+            .from(table)
+            .upsert(batch as any[], { onConflict: unique_key });
+          if (error) {
+            results.errors += batch.length;
+            results.errorDetails.push(error.message);
+          } else results.updated += batch.length;
         } else {
           const { error } = await supabase.from(table).insert(batch as any[]);
-          if (error) { results.errors += batch.length; results.errorDetails.push(error.message); }
-          else results.inserted += batch.length;
+          if (error) {
+            results.errors += batch.length;
+            results.errorDetails.push(error.message);
+          } else results.inserted += batch.length;
         }
       } catch (e) {
         results.errors += batch.length;

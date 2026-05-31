@@ -33,19 +33,21 @@ sequenceDiagram
 A estrutura segue o padrão de **Clean Architecture** adaptado para ambientes Serverless/Vite.
 
 ### Frontend (`src/`)
-| Camada | Responsabilidade | Exemplo |
-|--------|------------------|---------|
-| `components/` | Componentes de UI puros e reutilizáveis. | `Button.tsx`, `DataTable.tsx` |
-| `hooks/` | Orquestração de estado e chamadas assíncronas. | `useExternalQuery.ts` |
-| `pages/` | Composição de componentes para formar telas. | `Dashboard.tsx`, `Inventory.tsx` |
-| `services/` | Configuração de clientes (Supabase, API). | `supabase.ts` |
-| `lib/` | Funções utilitárias sem efeitos colaterais. | `logger.ts`, `cn.ts` |
-| `types/` | Contratos de interface e tipos do banco. | `database.types.ts` |
+
+| Camada        | Responsabilidade                               | Exemplo                          |
+| ------------- | ---------------------------------------------- | -------------------------------- |
+| `components/` | Componentes de UI puros e reutilizáveis.       | `Button.tsx`, `DataTable.tsx`    |
+| `hooks/`      | Orquestração de estado e chamadas assíncronas. | `useExternalQuery.ts`            |
+| `pages/`      | Composição de componentes para formar telas.   | `Dashboard.tsx`, `Inventory.tsx` |
+| `services/`   | Configuração de clientes (Supabase, API).      | `supabase.ts`                    |
+| `lib/`        | Funções utilitárias sem efeitos colaterais.    | `logger.ts`, `cn.ts`             |
+| `types/`      | Contratos de interface e tipos do banco.       | `database.types.ts`              |
 
 ### Backend (`supabase/`)
-| Camada | Responsabilidade |
-|--------|------------------|
-| `functions/` | Lógica de servidor segura (Edge Functions). |
+
+| Camada        | Responsabilidade                                |
+| ------------- | ----------------------------------------------- |
+| `functions/`  | Lógica de servidor segura (Edge Functions).     |
 | `migrations/` | Definição de tabelas, triggers e Políticas RLS. |
 
 ---
@@ -57,6 +59,7 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 ### Endpoint: `POST /external-db-bridge`
 
 #### Request Body
+
 ```json
 {
   "query": "string",
@@ -65,6 +68,7 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 ```
 
 #### Response (Sucesso)
+
 ```json
 {
   "data": "array",
@@ -74,11 +78,12 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 ```
 
 #### Erros Padronizados
-| Código | Motivo |
-|--------|--------|
-| `401` | Token JWT inválido ou expirado. |
-| `403` | Violação de Política RLS (Tentativa de acesso proibido). |
-| `400` | Query SQL malformada ou parâmetro inválido. |
+
+| Código | Motivo                                                   |
+| ------ | -------------------------------------------------------- |
+| `401`  | Token JWT inválido ou expirado.                          |
+| `403`  | Violação de Política RLS (Tentativa de acesso proibido). |
+| `400`  | Query SQL malformada ou parâmetro inválido.              |
 
 ---
 

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export function useExperiment(experimentId: string, variants: string[]) {
   const [variant] = useState(() => {
@@ -9,9 +9,12 @@ export function useExperiment(experimentId: string, variants: string[]) {
     return selected;
   });
 
-  const track = useCallback((event: string) => {
-    if (import.meta.env.DEV) console.log('[Experiment]', experimentId, variant, event);
-  }, [experimentId, variant]);
+  const track = useCallback(
+    (event: string) => {
+      if (import.meta.env.DEV) console.log("[Experiment]", experimentId, variant, event);
+    },
+    [experimentId, variant]
+  );
 
   return { variant, track, isVariant: (v: string) => variant === v };
 }

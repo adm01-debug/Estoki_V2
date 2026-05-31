@@ -5,12 +5,12 @@ export interface NFe {
   number: number;
   series: number;
   issue_date: string;
-  operation_type: 'entrada' | 'saida';
+  operation_type: "entrada" | "saida";
   emitter_cnpj: string;
   emitter_name: string;
   total_products: number;
   total_nfe: number;
-  status: 'imported' | 'validated' | 'processed' | 'cancelled';
+  status: "imported" | "validated" | "processed" | "cancelled";
 }
 
 export interface CTe {
@@ -18,7 +18,7 @@ export interface CTe {
   access_key: string;
   number: number;
   series: number;
-  modal: 'rodoviario' | 'aereo' | 'aquaviario' | 'ferroviario';
+  modal: "rodoviario" | "aereo" | "aquaviario" | "ferroviario";
   freight_value: number;
   status: string;
 }

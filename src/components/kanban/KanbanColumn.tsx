@@ -11,11 +11,11 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ column, onLoteClick }: KanbanColumnProps) {
   const Icon = column.icon;
-  
+
   return (
-    <div className="flex-shrink-0 w-72">
-      <Card className={`max-h-[calc(100vh-280px)] flex flex-col ${column.bgClass}`}>
-        <CardHeader className="py-3 px-4 flex-shrink-0">
+    <div className="w-72 flex-shrink-0">
+      <Card className={`flex max-h-[calc(100vh-280px)] flex-col ${column.bgClass}`}>
+        <CardHeader className="flex-shrink-0 px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Icon className="h-4 w-4" style={{ color: column.color }} />
@@ -25,19 +25,15 @@ export function KanbanColumn({ column, onLoteClick }: KanbanColumnProps) {
               {column.items.length}
             </Badge>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-0.5">{column.description}</p>
+          <p className="mt-0.5 text-[10px] text-muted-foreground">{column.description}</p>
         </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto space-y-2 px-3 pb-3">
+        <CardContent className="flex-1 space-y-2 overflow-y-auto px-3 pb-3">
           <AnimatePresence mode="popLayout">
             {column.items.length === 0 ? (
-              <p className="text-xs text-muted-foreground text-center py-6">Nenhum lote</p>
+              <p className="py-6 text-center text-xs text-muted-foreground">Nenhum lote</p>
             ) : (
-              column.items.map(lote => (
-                <LoteCard
-                  key={lote.id}
-                  lote={lote}
-                  onClick={() => onLoteClick(lote)}
-                />
+              column.items.map((lote) => (
+                <LoteCard key={lote.id} lote={lote} onClick={() => onLoteClick(lote)} />
               ))
             )}
           </AnimatePresence>

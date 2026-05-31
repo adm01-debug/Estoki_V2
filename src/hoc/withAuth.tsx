@@ -1,7 +1,7 @@
-import React, { ComponentType } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import { LoadingSpinner } from '@/components/ui/spinner';
+import React, { ComponentType } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { LoadingSpinner } from "@/components/ui/spinner";
 
 export interface WithAuthOptions {
   redirectTo?: string;
@@ -12,7 +12,7 @@ export function withAuth<P extends object>(
   WrappedComponent: ComponentType<P>,
   options: WithAuthOptions = {}
 ) {
-  const { redirectTo = '/auth', LoadingComponent } = options;
+  const { redirectTo = "/auth", LoadingComponent } = options;
 
   const WithAuthComponent: React.FC<P> = (props) => {
     const { user, loading: isLoading } = useAuth();
@@ -23,7 +23,7 @@ export function withAuth<P extends object>(
         return <LoadingComponent />;
       }
       return (
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex min-h-screen items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
       );
@@ -36,7 +36,7 @@ export function withAuth<P extends object>(
     return <WrappedComponent {...props} />;
   };
 
-  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  WithAuthComponent.displayName = `withAuth(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithAuthComponent;
 }

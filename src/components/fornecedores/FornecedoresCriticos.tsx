@@ -10,8 +10,8 @@ interface Props {
 export function FornecedoresCriticos({ fornecedoresCriticos }: Props) {
   if (fornecedoresCriticos.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <CheckCircle className="h-12 w-12 mx-auto mb-4 text-green-500 opacity-50" />
+      <div className="py-12 text-center text-muted-foreground">
+        <CheckCircle className="mx-auto mb-4 h-12 w-12 text-green-500 opacity-50" />
         <p>Nenhum fornecedor crítico</p>
       </div>
     );
@@ -34,7 +34,9 @@ export function FornecedoresCriticos({ fornecedoresCriticos }: Props) {
                   <p>Trocas/Devoluções: {f.trocas_devolucoes}</p>
                 </div>
               </div>
-              <Badge variant="outline" className="bg-red-500/10 text-red-700 border-red-500/30">Classe D</Badge>
+              <Badge variant="outline" className="border-red-500/30 bg-red-500/10 text-red-700">
+                Classe D
+              </Badge>
             </div>
           </CardContent>
         </Card>

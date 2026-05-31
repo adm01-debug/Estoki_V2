@@ -16,18 +16,22 @@ export function AmostragemProgresso({
   itensVerificados,
   tamanhoAmostra,
   defeitosEncontrados,
-  criterios
+  criterios,
 }: AmostragemProgressoProps) {
   const progresso = Math.min((itensVerificados / tamanhoAmostra) * 100, 100);
 
   return (
-    <Card className={`border-2 ${
-      status === "aprovado" ? "border-success/50 bg-success/5" :
-      status === "rejeitado" ? "border-destructive/50 bg-destructive/5" :
-      "border-primary/50"
-    }`}>
+    <Card
+      className={`border-2 ${
+        status === "aprovado"
+          ? "border-success/50 bg-success/5"
+          : status === "rejeitado"
+            ? "border-destructive/50 bg-destructive/5"
+            : "border-primary/50"
+      }`}
+    >
       <CardHeader className="pb-2">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base">
           <Target className="h-4 w-4 text-primary" />
           Amostragem em Andamento
         </CardTitle>
@@ -40,45 +44,63 @@ export function AmostragemProgresso({
               {itensVerificados} / {tamanhoAmostra}
             </p>
           </div>
-          <Badge className={
-            status === "aprovado" ? "bg-success" :
-            status === "rejeitado" ? "bg-destructive" :
-            status === "limite" ? "bg-warning" :
-            "bg-primary"
-          }>
-            {status === "aprovado" ? "Aprovado" :
-             status === "rejeitado" ? "Rejeitado" :
-             status === "limite" ? "No Limite" :
-             `${progresso.toFixed(0)}%`}
+          <Badge
+            className={
+              status === "aprovado"
+                ? "bg-success"
+                : status === "rejeitado"
+                  ? "bg-destructive"
+                  : status === "limite"
+                    ? "bg-warning"
+                    : "bg-primary"
+            }
+          >
+            {status === "aprovado"
+              ? "Aprovado"
+              : status === "rejeitado"
+                ? "Rejeitado"
+                : status === "limite"
+                  ? "No Limite"
+                  : `${progresso.toFixed(0)}%`}
           </Badge>
         </div>
-        
-        <Progress value={progresso} className={
-          status === "aprovado" ? "[&>div]:bg-success" :
-          status === "rejeitado" ? "[&>div]:bg-destructive" : ""
-        } />
+
+        <Progress
+          value={progresso}
+          className={
+            status === "aprovado"
+              ? "[&>div]:bg-success"
+              : status === "rejeitado"
+                ? "[&>div]:bg-destructive"
+                : ""
+          }
+        />
 
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div className="p-2 rounded-lg bg-muted/50">
-            <p className="text-muted-foreground text-xs">Defeitos Encontrados</p>
-            <p className={`font-bold text-lg ${
-              defeitosEncontrados > criterios.rejeite ? "text-destructive" :
-              defeitosEncontrados > criterios.aceite ? "text-warning" :
-              "text-success"
-            }`}>
+          <div className="rounded-lg bg-muted/50 p-2">
+            <p className="text-xs text-muted-foreground">Defeitos Encontrados</p>
+            <p
+              className={`text-lg font-bold ${
+                defeitosEncontrados > criterios.rejeite
+                  ? "text-destructive"
+                  : defeitosEncontrados > criterios.aceite
+                    ? "text-warning"
+                    : "text-success"
+              }`}
+            >
               {defeitosEncontrados}
             </p>
           </div>
-          <div className="p-2 rounded-lg bg-muted/50">
-            <p className="text-muted-foreground text-xs">Critério</p>
-            <p className="font-medium text-sm">
+          <div className="rounded-lg bg-muted/50 p-2">
+            <p className="text-xs text-muted-foreground">Critério</p>
+            <p className="text-sm font-medium">
               Aceite: ≤{criterios.aceite} | Rejeite: ≥{criterios.rejeite}
             </p>
           </div>
         </div>
 
         {status === "aprovado" && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-success/10 text-success">
+          <div className="flex items-center gap-2 rounded-lg bg-success/10 p-3 text-success">
             <CheckCircle className="h-5 w-5" />
             <span className="text-sm font-medium">
               Lote aprovado! Defeitos dentro do limite aceitável.
@@ -87,7 +109,7 @@ export function AmostragemProgresso({
         )}
 
         {status === "rejeitado" && (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 text-destructive">
+          <div className="flex items-center gap-2 rounded-lg bg-destructive/10 p-3 text-destructive">
             <Target className="h-5 w-5" />
             <span className="text-sm font-medium">
               Lote rejeitado. Número de defeitos excede o limite.

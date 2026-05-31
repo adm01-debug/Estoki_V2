@@ -1,22 +1,36 @@
- import { Tarefa } from "@/types/tarefas";
+import { Tarefa } from "@/types/tarefas";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Plus, Search, Filter, Package, Loader2, Target, LayoutGrid, List, BarChart2 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Plus,
+  Search,
+  Filter,
+  Package,
+  Loader2,
+  Target,
+  LayoutGrid,
+  List,
+  BarChart2,
 } from "lucide-react";
 
- import { statusLabels, tipoLabels } from "@/types/tarefas";
- 
- const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
-   baixa: "low",
-   media: "medium",
-   alta: "high",
-   urgente: "critical",
- };
+import { statusLabels, tipoLabels } from "@/types/tarefas";
+
+const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
+  baixa: "low",
+  media: "medium",
+  alta: "high",
+  urgente: "critical",
+};
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
@@ -44,7 +58,7 @@ export default function GestaoTarefasPage() {
     dadosTipo,
     handleCriarTarefa,
     handleIniciar,
-    handleConcluir
+    handleConcluir,
   } = useGestaoTarefasPage();
 
   const [tab, setTab] = useState("kanban");
@@ -52,7 +66,7 @@ export default function GestaoTarefasPage() {
   if (isLoading) {
     return (
       <AppLayout title="Gestão de Tarefas" showBack>
-        <div className="flex items-center justify-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
@@ -61,14 +75,17 @@ export default function GestaoTarefasPage() {
 
   return (
     <AppLayout title="Gestão de Tarefas" showBack>
-      <div className="p-4 space-y-6">
+      <div className="space-y-6 p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold">Gestão de Tarefas</h2>
-            <p className="text-sm text-muted-foreground">Organize e acompanhe as atividades do armazém</p>
+            <p className="text-sm text-muted-foreground">
+              Organize e acompanhe as atividades do armazém
+            </p>
           </div>
           <Button onClick={() => setShowNovaTarefa(true)} className="gap-2">
-            <Plus className="h-4 w-4" />Nova Tarefa
+            <Plus className="h-4 w-4" />
+            Nova Tarefa
           </Button>
         </div>
 
@@ -76,74 +93,96 @@ export default function GestaoTarefasPage() {
 
         <Tabs value={tab} onValueChange={setTab} className="space-y-4">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="kanban" className="gap-2"><LayoutGrid className="h-4 w-4" /> Kanban</TabsTrigger>
-            <TabsTrigger value="tarefas" className="gap-2"><List className="h-4 w-4" /> Lista</TabsTrigger>
-            <TabsTrigger value="dashboard" className="gap-2"><BarChart2 className="h-4 w-4" /> Dashboard</TabsTrigger>
+            <TabsTrigger value="kanban" className="gap-2">
+              <LayoutGrid className="h-4 w-4" /> Kanban
+            </TabsTrigger>
+            <TabsTrigger value="tarefas" className="gap-2">
+              <List className="h-4 w-4" /> Lista
+            </TabsTrigger>
+            <TabsTrigger value="dashboard" className="gap-2">
+              <BarChart2 className="h-4 w-4" /> Dashboard
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="kanban" className="space-y-4">
-            <KanbanBoard 
+            <KanbanBoard
               columns={[
                 { id: "pendente", title: "Pendentes", color: "bg-slate-500" },
                 { id: "em_andamento", title: "Em Andamento", color: "bg-blue-500" },
-                { id: "concluida", title: "Concluídas", color: "bg-success" }
+                { id: "concluida", title: "Concluídas", color: "bg-success" },
               ]}
-               items={tarefasFiltradas.map((t: Tarefa) => ({
-                 id: t.id,
-                 columnId: t.status,
-                 title: t.instrucoes || "Sem descrição",
-                 description: `Qtd: ${t.quantidade}`,
-                 priority: priorityMap[t.prioridade] || "medium",
-                 tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo]
-               }))}
-               renderItem={(item) => {
-                 const t = tarefasFiltradas.find((x: Tarefa) => x.id === item.id);
-                 if (!t) return null;
-                 return (
-                   <TarefaCard 
-                     tarefa={t} 
-                     onIniciar={handleIniciar} 
-                     onConcluir={handleConcluir} 
-                   />
-                 );
-               }}
+              items={tarefasFiltradas.map((t: Tarefa) => ({
+                id: t.id,
+                columnId: t.status,
+                title: t.instrucoes || "Sem descrição",
+                description: `Qtd: ${t.quantidade}`,
+                priority: priorityMap[t.prioridade] || "medium",
+                tags: [tipoLabels[t.tipo as keyof typeof tipoLabels] || t.tipo],
+              }))}
+              renderItem={(item) => {
+                const t = tarefasFiltradas.find((x: Tarefa) => x.id === item.id);
+                if (!t) return null;
+                return (
+                  <TarefaCard tarefa={t} onIniciar={handleIniciar} onConcluir={handleConcluir} />
+                );
+              }}
             />
           </TabsContent>
 
           <TabsContent value="tarefas" className="space-y-4">
             <div className="flex flex-wrap gap-3">
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Buscar tarefas..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-9" />
+              <div className="relative min-w-[200px] flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar tarefas..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
               </div>
               <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                <SelectTrigger className="w-[150px]"><Filter className="h-4 w-4 mr-2" /><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-[150px]">
+                  <Filter className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
-                  {Object.entries(statusLabels).map(([key, val]) => (<SelectItem key={key} value={key}>{val}</SelectItem>))}
+                  {Object.entries(statusLabels).map(([key, val]) => (
+                    <SelectItem key={key} value={key}>
+                      {val}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                <SelectTrigger className="w-[150px]"><Package className="h-4 w-4 mr-2" /><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-[150px]">
+                  <Package className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
-                  {Object.entries(tipoLabels).map(([key, val]) => (<SelectItem key={key} value={key}>{val}</SelectItem>))}
+                  {Object.entries(tipoLabels).map(([key, val]) => (
+                    <SelectItem key={key} value={key}>
+                      {val}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-3">
               {tarefasFiltradas.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Target className="h-12 w-12 mx-auto mb-4 opacity-50" /><p>Nenhuma tarefa encontrada</p>
+                <div className="py-12 text-center text-muted-foreground">
+                  <Target className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                  <p>Nenhuma tarefa encontrada</p>
                 </div>
               ) : (
-               tarefasFiltradas.map((tarefa: Tarefa) => (
-                  <TarefaCard 
-                    key={tarefa.id} 
-                    tarefa={tarefa} 
-                    onIniciar={handleIniciar} 
-                    onConcluir={handleConcluir} 
+                tarefasFiltradas.map((tarefa: Tarefa) => (
+                  <TarefaCard
+                    key={tarefa.id}
+                    tarefa={tarefa}
+                    onIniciar={handleIniciar}
+                    onConcluir={handleConcluir}
                   />
                 ))
               )}
@@ -156,8 +195,8 @@ export default function GestaoTarefasPage() {
         </Tabs>
       </div>
 
-      <NovaTarefaDialog 
-        open={showNovaTarefa} 
+      <NovaTarefaDialog
+        open={showNovaTarefa}
         onOpenChange={setShowNovaTarefa}
         submitting={submitting}
         novaTarefa={novaTarefa}

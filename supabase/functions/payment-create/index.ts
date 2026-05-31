@@ -35,19 +35,23 @@ serve(async (req) => {
     expiresAt.setDate(expiresAt.getDate() + 3);
 
     // Salvar no banco
-    const { data, error } = await supabase.from("payments").insert({
-      id: paymentId,
-      amount: payment.amount,
-      currency: payment.currency || "BRL",
-      method: payment.method,
-      status: "pending",
-      customer_name: payment.customer.name,
-      customer_email: payment.customer.email,
-      customer_document: payment.customer.document,
-      description: payment.description,
-      metadata: payment.metadata,
-      expires_at: expiresAt.toISOString(),
-    }).select().single();
+    const { data, error } = await supabase
+      .from("payments")
+      .insert({
+        id: paymentId,
+        amount: payment.amount,
+        currency: payment.currency || "BRL",
+        method: payment.method,
+        status: "pending",
+        customer_name: payment.customer.name,
+        customer_email: payment.customer.email,
+        customer_document: payment.customer.document,
+        description: payment.description,
+        metadata: payment.metadata,
+        expires_at: expiresAt.toISOString(),
+      })
+      .select()
+      .single();
 
     if (error) throw error;
 
@@ -58,17 +62,20 @@ serve(async (req) => {
       paymentData.pix_key = `00020126580014br.gov.bcb.pix0136${paymentId}`;
       paymentData.qr_code = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${paymentData.pix_key}`;
     } else if (payment.method === "boleto") {
-      paymentData.barcode = `23793.38128 60000.000003 ${paymentId.substring(0,5)} 1 ${Math.floor(payment.amount * 100)}`;
+      paymentData.barcode = `23793.38128 60000.000003 ${paymentId.substring(0, 5)} 1 ${Math.floor(payment.amount * 100)}`;
       paymentData.due_date = expiresAt.toISOString().split("T")[0];
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      payment: data,
-      payment_data: paymentData,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        payment: data,
+        payment_data: paymentData,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

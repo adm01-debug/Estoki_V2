@@ -1,8 +1,17 @@
 import { User, Settings, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-interface UserMenuProps { user: { name: string; email: string; avatar?: string }; onLogout: () => void; }
+interface UserMenuProps {
+  user: { name: string; email: string; avatar?: string };
+  onLogout: () => void;
+}
 
 export function UserMenu({ user, onLogout }: UserMenuProps) {
   return (
@@ -21,10 +30,19 @@ export function UserMenu({ user, onLogout }: UserMenuProps) {
           <p className="text-xs text-muted-foreground">{user.email}</p>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem><User className="mr-2 h-4 w-4" />Perfil</DropdownMenuItem>
-        <DropdownMenuItem><Settings className="mr-2 h-4 w-4" />Configurações</DropdownMenuItem>
+        <DropdownMenuItem>
+          <User className="mr-2 h-4 w-4" />
+          Perfil
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Settings className="mr-2 h-4 w-4" />
+          Configurações
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onLogout} className="text-red-600"><LogOut className="mr-2 h-4 w-4" />Sair</DropdownMenuItem>
+        <DropdownMenuItem onClick={onLogout} className="text-red-600">
+          <LogOut className="mr-2 h-4 w-4" />
+          Sair
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

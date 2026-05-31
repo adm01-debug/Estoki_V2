@@ -1,27 +1,44 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Fingerprint, Plus, Trash2, Smartphone, Laptop, AlertTriangle, Loader2, CheckCircle2 } from 'lucide-react';
-import { useWebAuthn } from '@/hooks/useWebAuthn';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import {
+  Fingerprint,
+  Plus,
+  Trash2,
+  Smartphone,
+  Laptop,
+  AlertTriangle,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
+import { useWebAuthn } from "@/hooks/useWebAuthn";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function PasskeySettings() {
-  const { 
-    loading, 
-    passkeys, 
-    isSupported, 
-    checkSupport, 
-    fetchPasskeys, 
-    registerPasskey, 
-    deletePasskey 
+  const {
+    loading,
+    passkeys,
+    isSupported,
+    checkSupport,
+    fetchPasskeys,
+    registerPasskey,
+    deletePasskey,
   } = useWebAuthn();
 
-  const [deviceName, setDeviceName] = useState('');
+  const [deviceName, setDeviceName] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -33,7 +50,7 @@ export default function PasskeySettings() {
   const handleRegister = async () => {
     const success = await registerPasskey(deviceName || undefined);
     if (success) {
-      setDeviceName('');
+      setDeviceName("");
       setDialogOpen(false);
     }
   };
@@ -45,7 +62,11 @@ export default function PasskeySettings() {
 
   const getDeviceIcon = (name: string) => {
     const lowerName = name.toLowerCase();
-    if (lowerName.includes('phone') || lowerName.includes('mobile') || lowerName.includes('celular')) {
+    if (
+      lowerName.includes("phone") ||
+      lowerName.includes("mobile") ||
+      lowerName.includes("celular")
+    ) {
       return <Smartphone className="h-5 w-5" />;
     }
     return <Laptop className="h-5 w-5" />;
@@ -74,7 +95,7 @@ export default function PasskeySettings() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-3 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+          <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-4">
             <AlertTriangle className="h-5 w-5 text-destructive" />
             <div>
               <p className="font-medium text-destructive">Não suportado</p>
@@ -104,7 +125,7 @@ export default function PasskeySettings() {
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm">
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="mr-2 h-4 w-4" />
                 Adicionar Passkey
               </Button>
             </DialogTrigger>
@@ -128,9 +149,9 @@ export default function PasskeySettings() {
                     Escolha um nome para identificar este dispositivo
                   </p>
                 </div>
-                <div className="bg-muted/50 p-4 rounded-lg space-y-2">
+                <div className="space-y-2 rounded-lg bg-muted/50 p-4">
                   <p className="text-sm font-medium">Como funciona:</p>
-                  <ul className="text-sm text-muted-foreground space-y-1">
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>• Clique em "Registrar" abaixo</li>
                     <li>• Seu navegador solicitará autenticação biométrica</li>
                     <li>• Use sua impressão digital ou Face ID</li>
@@ -145,12 +166,12 @@ export default function PasskeySettings() {
                 <Button onClick={handleRegister} disabled={loading}>
                   {loading ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Registrando...
                     </>
                   ) : (
                     <>
-                      <Fingerprint className="h-4 w-4 mr-2" />
+                      <Fingerprint className="mr-2 h-4 w-4" />
                       Registrar Passkey
                     </>
                   )}
@@ -162,8 +183,8 @@ export default function PasskeySettings() {
       </CardHeader>
       <CardContent>
         {passkeys.length === 0 ? (
-          <div className="text-center py-8">
-            <Fingerprint className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+          <div className="py-8 text-center">
+            <Fingerprint className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
             <p className="text-muted-foreground">
               Nenhuma passkey registrada. Adicione uma para login mais rápido e seguro.
             </p>
@@ -173,23 +194,29 @@ export default function PasskeySettings() {
             {passkeys.map((passkey) => (
               <div
                 key={passkey.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/50"
               >
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    {getDeviceIcon(passkey.device_name ?? '')}
+                  <div className="rounded-lg bg-primary/10 p-2">
+                    {getDeviceIcon(passkey.device_name ?? "")}
                   </div>
                   <div>
                     <p className="font-medium">{passkey.device_name}</p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>
-                        Registrado em {format(new Date(passkey.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                        Registrado em{" "}
+                        {format(new Date(passkey.created_at), "dd 'de' MMMM 'de' yyyy", {
+                          locale: ptBR,
+                        })}
                       </span>
                       {passkey.last_used_at && (
                         <>
                           <span>•</span>
                           <span>
-                            Último uso: {format(new Date(passkey.last_used_at), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                            Último uso:{" "}
+                            {format(new Date(passkey.last_used_at), "dd/MM/yyyy 'às' HH:mm", {
+                              locale: ptBR,
+                            })}
                           </span>
                         </>
                       )}
@@ -210,11 +237,7 @@ export default function PasskeySettings() {
                       >
                         Confirmar
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setDeleteConfirm(null)}
-                      >
+                      <Button size="sm" variant="outline" onClick={() => setDeleteConfirm(null)}>
                         Cancelar
                       </Button>
                     </div>

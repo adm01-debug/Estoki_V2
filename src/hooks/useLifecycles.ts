@@ -1,4 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 export function useLifecycles(mount: () => void, unmount?: () => void): void {
-  useEffect(() => { mount(); return unmount; }, []);
+  useEffect(() => {
+    mount();
+    return unmount;
+  }, []);
 }

@@ -1,5 +1,5 @@
-import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface InfiniteScrollListProps<T> {
   items: T[];
@@ -13,17 +13,32 @@ interface InfiniteScrollListProps<T> {
 }
 
 export function InfiniteScrollList<T>({
-  items, renderItem, isLoading, isFetchingNextPage, hasNextPage, setLoadMoreRef, emptyMessage = 'Nenhum item encontrado', className
+  items,
+  renderItem,
+  isLoading,
+  isFetchingNextPage,
+  hasNextPage,
+  setLoadMoreRef,
+  emptyMessage = "Nenhum item encontrado",
+  className,
 }: InfiniteScrollListProps<T>) {
-  if (isLoading) return <div className="flex justify-center p-8"><Loader2 className="h-6 w-6 animate-spin" /></div>;
-  if (items.length === 0) return <div className="p-8 text-center text-muted-foreground">{emptyMessage}</div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-8">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  if (items.length === 0)
+    return <div className="p-8 text-center text-muted-foreground">{emptyMessage}</div>;
 
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn("space-y-2", className)}>
       {items.map((item, i) => renderItem(item, i))}
-      <div ref={setLoadMoreRef} className="h-10 flex items-center justify-center">
+      <div ref={setLoadMoreRef} className="flex h-10 items-center justify-center">
         {isFetchingNextPage && <Loader2 className="h-4 w-4 animate-spin" />}
-        {!hasNextPage && items.length > 0 && <span className="text-xs text-muted-foreground">Todos os itens carregados</span>}
+        {!hasNextPage && items.length > 0 && (
+          <span className="text-xs text-muted-foreground">Todos os itens carregados</span>
+        )}
       </div>
     </div>
   );

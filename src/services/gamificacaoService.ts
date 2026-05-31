@@ -1,70 +1,69 @@
- import { supabase } from '@/integrations/supabase/client';
- import { logger } from '@/utils/logger';
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 export const gamificacaoService = {
   async addXP(userId: string, amount: number, reason: string): Promise<boolean> {
     try {
       const { data: userData, error: userError } = await supabase
-        .from('gamificacao_usuarios')
-        .select('xp_total, nivel')
-        .eq('user_id', userId)
+        .from("gamificacao_usuarios")
+        .select("xp_total, nivel")
+        .eq("user_id", userId)
         .single();
 
-       if (userError && userError.code !== 'PGRST116') {
-         logger.error('Erro ao buscar usuário para XP', userError, { userId });
-         return false;
-       }
+      if (userError && userError.code !== "PGRST116") {
+        logger.error("Erro ao buscar usuário para XP", userError, { userId });
+        return false;
+      }
 
       const currentXP = userData?.xp_total || 0;
       const newXP = currentXP + amount;
       const newLevel = Math.floor(newXP / 1000) + 1;
 
-      const { error: upsertError } = await supabase
-        .from('gamificacao_usuarios')
-        .upsert({
+      const { error: upsertError } = await supabase.from("gamificacao_usuarios").upsert(
+        {
           user_id: userId,
           xp_total: newXP,
           nivel: newLevel,
           updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id' });
+        },
+        { onConflict: "user_id" }
+      );
 
-       if (upsertError) {
-         logger.error('Erro ao atualizar XP do usuário', upsertError, { userId, amount });
-         return false;
-       }
+      if (upsertError) {
+        logger.error("Erro ao atualizar XP do usuário", upsertError, { userId, amount });
+        return false;
+      }
 
-      await (supabase.from('xp_historico') as any).insert({
+      await (supabase.from("xp_historico") as any).insert({
         user_id: userId,
         quantidade: amount,
         motivo: reason,
-        tipo: 'xp'
+        tipo: "xp",
       });
 
       return true;
-     } catch (error) {
-       logger.error('Erro inesperado ao adicionar XP', error, { userId, amount });
-       return false;
-     }
+    } catch (error) {
+      logger.error("Erro inesperado ao adicionar XP", error, { userId, amount });
+      return false;
+    }
   },
 
   async checkConquistas(userId: string): Promise<string[]> {
     try {
-      const { data: definicoes } = await supabase
-        .from('conquistas_definicoes')
-        .select('*');
+      const { data: definicoes } = await supabase.from("conquistas_definicoes").select("*");
 
       const { data: obtidas } = await supabase
-        .from('conquistas_usuarios')
-        .select('conquista_id')
-        .eq('user_id', userId);
+        .from("conquistas_usuarios")
+        .select("conquista_id")
+        .eq("user_id", userId);
 
-      const conquistasObtidas = new Set(obtidas?.map(c => c.conquista_id) || []);
+      const conquistasObtidas = new Set(obtidas?.map((c) => c.conquista_id) || []);
       const novasConquistas: string[] = [];
 
       const { data: userData } = await supabase
-        .from('gamificacao_usuarios')
-        .select('*')
-        .eq('user_id', userId)
+        .from("gamificacao_usuarios")
+        .select("*")
+        .eq("user_id", userId)
         .single();
 
       for (const def of definicoes || []) {
@@ -72,14 +71,14 @@ export const gamificacaoService = {
 
         let conquistou = false;
         const criterio = def.criterio as string;
-        if (criterio === 'xp' && (userData?.xp_total ?? 0) >= (def.meta ?? 0)) {
+        if (criterio === "xp" && (userData?.xp_total ?? 0) >= (def.meta ?? 0)) {
           conquistou = true;
-        } else if (criterio === 'nivel' && (userData?.nivel ?? 0) >= (def.meta ?? 0)) {
+        } else if (criterio === "nivel" && (userData?.nivel ?? 0) >= (def.meta ?? 0)) {
           conquistou = true;
         }
 
         if (conquistou) {
-          await supabase.from('conquistas_usuarios').insert({
+          await supabase.from("conquistas_usuarios").insert({
             user_id: userId,
             conquista_id: def.id,
           });
@@ -88,48 +87,53 @@ export const gamificacaoService = {
       }
 
       return novasConquistas;
-     } catch (error) {
-       logger.error('Erro ao verificar conquistas', error, { userId });
-       return [];
-     }
+    } catch (error) {
+      logger.error("Erro ao verificar conquistas", error, { userId });
+      return [];
+    }
   },
 
   async getDesafiosDiarios(userId: string) {
-    const today = new Date().toISOString().split('T')[0];
-    
-    const { data, error } = await supabase
-      .from('desafios_diarios')
-      .select('*')
-      .eq('data_ativo', today);
+    const today = new Date().toISOString().split("T")[0];
 
-     if (error) {
-       logger.error('Erro ao buscar desafios diários', error, { userId });
-       return [];
-     }
+    const { data, error } = await supabase
+      .from("desafios_diarios")
+      .select("*")
+      .eq("data_ativo", today);
+
+    if (error) {
+      logger.error("Erro ao buscar desafios diários", error, { userId });
+      return [];
+    }
 
     const { data: progresso } = await supabase
-      .from('desafios_usuarios')
-      .select('*')
-      .eq('user_id', userId)
-      .in('desafio_id', data?.map(d => d.id) || []);
+      .from("desafios_usuarios")
+      .select("*")
+      .eq("user_id", userId)
+      .in("desafio_id", data?.map((d) => d.id) || []);
 
-    return (data || []).map(desafio => ({
+    return (data || []).map((desafio) => ({
       ...desafio,
-      progresso: progresso?.find(p => p.desafio_id === desafio.id),
+      progresso: progresso?.find((p) => p.desafio_id === desafio.id),
     }));
   },
 
-  async updateDesafioProgress(userId: string, desafioId: string, progress: number): Promise<boolean> {
+  async updateDesafioProgress(
+    userId: string,
+    desafioId: string,
+    progress: number
+  ): Promise<boolean> {
     try {
-      const { error } = await supabase
-        .from('desafios_usuarios')
-        .upsert({
+      const { error } = await supabase.from("desafios_usuarios").upsert(
+        {
           user_id: userId,
           desafio_id: desafioId,
           progresso: progress,
           concluido: progress >= 100,
           updated_at: new Date().toISOString(),
-        } as any, { onConflict: 'user_id,desafio_id' } as any);
+        } as any,
+        { onConflict: "user_id,desafio_id" } as any
+      );
 
       return !error;
     } catch {
@@ -139,15 +143,15 @@ export const gamificacaoService = {
 
   async getRanking(limit = 10) {
     const { data, error } = await supabase
-      .from('gamificacao_usuarios')
-      .select('user_id, xp_total, nivel')
-      .order('xp_total', { ascending: false })
+      .from("gamificacao_usuarios")
+      .select("user_id, xp_total, nivel")
+      .order("xp_total", { ascending: false })
       .limit(limit);
 
-     if (error) {
-       logger.error('Erro ao buscar ranking de gamificação', error);
-       return [];
-     }
+    if (error) {
+      logger.error("Erro ao buscar ranking de gamificação", error);
+      return [];
+    }
 
     return data || [];
   },

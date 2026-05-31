@@ -15,8 +15,7 @@ export function useSoftDelete(options: SoftDeleteOptions) {
 
   const softDeleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase
-        .from(table as any) as any)
+      const { error } = await (supabase.from(table as any) as any)
         .update({ deleted_at: new Date().toISOString() })
         .eq("id", id);
 
@@ -35,8 +34,7 @@ export function useSoftDelete(options: SoftDeleteOptions) {
 
   const restoreMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase
-        .from(table as any) as any)
+      const { error } = await (supabase.from(table as any) as any)
         .update({ deleted_at: null })
         .eq("id", id);
 

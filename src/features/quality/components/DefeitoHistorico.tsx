@@ -21,7 +21,10 @@ interface DefeitoHistoricoProps {
 }
 
 // Dados mockados de histórico
-export const mockHistoricoDefeitos: Record<string, { historico: HistoricoDefeito[]; totalTriagens: number }> = {
+export const mockHistoricoDefeitos: Record<
+  string,
+  { historico: HistoricoDefeito[]; totalTriagens: number }
+> = {
   "MOCHILA-EXEC-PRETA": {
     totalTriagens: 12,
     historico: [
@@ -83,17 +86,15 @@ export function DefeitoHistorico({
 }: DefeitoHistoricoProps) {
   if (historico.length === 0) {
     return (
-      <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
-        <div className="flex items-center gap-2 mb-3">
+      <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
+        <div className="mb-3 flex items-center gap-2">
           <History className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            HISTÓRICO DE DEFEITOS
-          </h3>
+          <h3 className="text-sm font-semibold text-muted-foreground">HISTÓRICO DE DEFEITOS</h3>
         </div>
-        <div className="text-center py-6 text-muted-foreground">
-          <History className="h-10 w-10 mx-auto mb-2 opacity-50" />
+        <div className="py-6 text-center text-muted-foreground">
+          <History className="mx-auto mb-2 h-10 w-10 opacity-50" />
           <p className="text-sm">Nenhum defeito registrado anteriormente</p>
-          <p className="text-xs mt-1">Este é o primeiro lote deste produto</p>
+          <p className="mt-1 text-xs">Este é o primeiro lote deste produto</p>
         </div>
       </div>
     );
@@ -105,14 +106,12 @@ export function DefeitoHistorico({
   const temDefeitoRecorrente = defeitoMaisComum.percentualLotes >= 50;
 
   return (
-    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
+    <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <History className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            HISTÓRICO DE DEFEITOS
-          </h3>
+          <h3 className="text-sm font-semibold text-muted-foreground">HISTÓRICO DE DEFEITOS</h3>
         </div>
         <Badge variant="outline" className="text-xs">
           {totalTriagens} triagens anteriores
@@ -121,14 +120,14 @@ export function DefeitoHistorico({
 
       {/* Alerta de defeito recorrente */}
       {temDefeitoRecorrente && (
-        <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 mb-4 flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 text-warning flex-shrink-0 mt-0.5" />
+        <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/30 bg-warning/10 p-3">
+          <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-warning" />
           <div>
-            <div className="font-medium text-warning text-sm">
+            <div className="text-sm font-medium text-warning">
               Atenção: Defeito Recorrente Detectado
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              <span className="text-lg mr-1">{defeitoMaisComum.emoji}</span>
+            <div className="mt-1 text-xs text-muted-foreground">
+              <span className="mr-1 text-lg">{defeitoMaisComum.emoji}</span>
               <strong>{defeitoMaisComum.label}</strong> foi encontrado em{" "}
               <strong>{defeitoMaisComum.percentualLotes.toFixed(0)}%</strong> dos lotes anteriores.
               Verifique com atenção especial.
@@ -147,22 +146,22 @@ export function DefeitoHistorico({
             <div
               key={defeito.tipo}
               className={cn(
-                "rounded-lg p-3 flex items-center justify-between",
+                "flex items-center justify-between rounded-lg p-3",
                 isRecorrente
-                  ? "bg-warning/10 border border-warning/20"
+                  ? "border border-warning/20 bg-warning/10"
                   : isModerado
-                  ? "bg-muted/50"
-                  : "bg-muted/30"
+                    ? "bg-muted/50"
+                    : "bg-muted/30"
               )}
             >
               <div className="flex items-center gap-3">
                 <span className="text-xl">{defeito.emoji}</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-sm">{defeito.label}</span>
+                    <span className="text-sm font-medium">{defeito.label}</span>
                     {isRecorrente && (
-                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
-                        <TrendingUp className="h-3 w-3 mr-1" />
+                      <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
+                        <TrendingUp className="mr-1 h-3 w-3" />
                         Recorrente
                       </Badge>
                     )}
@@ -174,10 +173,12 @@ export function DefeitoHistorico({
               </div>
 
               <div className="text-right">
-                <div className={cn(
-                  "text-lg font-bold",
-                  isRecorrente ? "text-warning" : "text-muted-foreground"
-                )}>
+                <div
+                  className={cn(
+                    "text-lg font-bold",
+                    isRecorrente ? "text-warning" : "text-muted-foreground"
+                  )}
+                >
                   {defeito.percentualLotes.toFixed(0)}%
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -190,9 +191,9 @@ export function DefeitoHistorico({
       </div>
 
       {/* Barra de frequência visual */}
-      <div className="mt-4 pt-3 border-t border-border">
-        <div className="text-xs text-muted-foreground mb-2">Distribuição de defeitos</div>
-        <div className="h-3 bg-muted rounded-full overflow-hidden flex">
+      <div className="mt-4 border-t border-border pt-3">
+        <div className="mb-2 text-xs text-muted-foreground">Distribuição de defeitos</div>
+        <div className="flex h-3 overflow-hidden rounded-full bg-muted">
           {defeitosOrdenados.map((defeito, index) => (
             <div
               key={defeito.tipo}
@@ -200,14 +201,18 @@ export function DefeitoHistorico({
                 "h-full transition-all",
                 index === 0 ? "bg-warning" : index === 1 ? "bg-primary" : "bg-muted-foreground/50"
               )}
-              style={{ width: `${(defeito.ocorrencias / defeitosOrdenados.reduce((a, d) => a + d.ocorrencias, 0)) * 100}%` }}
+              style={{
+                width: `${(defeito.ocorrencias / defeitosOrdenados.reduce((a, d) => a + d.ocorrencias, 0)) * 100}%`,
+              }}
               title={`${defeito.label}: ${defeito.ocorrencias} ocorrências`}
             />
           ))}
         </div>
-        <div className="flex justify-between mt-1 text-[10px] text-muted-foreground">
+        <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
           <span>{defeitosOrdenados[0]?.label}</span>
-          {defeitosOrdenados.length > 1 && <span>{defeitosOrdenados[defeitosOrdenados.length - 1]?.label}</span>}
+          {defeitosOrdenados.length > 1 && (
+            <span>{defeitosOrdenados[defeitosOrdenados.length - 1]?.label}</span>
+          )}
         </div>
       </div>
     </div>

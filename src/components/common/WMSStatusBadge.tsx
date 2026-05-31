@@ -7,14 +7,16 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export function WMSStatusBadge() {
-  const [isOnline, setIsOnline] = useState(typeof navigator !== 'undefined' ? navigator.onLine : true);
+  const [isOnline, setIsOnline] = useState(
+    typeof navigator !== "undefined" ? navigator.onLine : true
+  );
   const [lastSync, setLastSync] = useState<Date>(new Date());
   const [isSyncing, setIsSyncing] = useState(false);
   const queryClient = useQueryClient();
 
   const handleManualSync = useCallback(async () => {
     if (isSyncing) return;
-    
+
     setIsSyncing(true);
     try {
       await queryClient.invalidateQueries();
@@ -31,8 +33,8 @@ export function WMSStatusBadge() {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
     // Simulate occasional sync animations for "excellence" feeling
     const syncInterval = setInterval(() => {
@@ -44,8 +46,8 @@ export function WMSStatusBadge() {
     }, 30000);
 
     return () => {
-      window.removeEventListener('online', handleOnline);
-      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
       clearInterval(syncInterval);
     };
   }, []);
@@ -55,16 +57,16 @@ export function WMSStatusBadge() {
       <div className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={cn(
-                "transition-all duration-300 gap-1.5 py-1 px-2 border-primary/20 bg-background/50 backdrop-blur-sm cursor-help",
-                !isOnline && "border-destructive/30 text-destructive bg-destructive/5"
+                "cursor-help gap-1.5 border-primary/20 bg-background/50 px-2 py-1 backdrop-blur-sm transition-all duration-300",
+                !isOnline && "border-destructive/30 bg-destructive/5 text-destructive"
               )}
             >
               {isOnline ? (
                 <>
-                  <Wifi className="h-3 w-3 text-success animate-pulse" />
+                  <Wifi className="h-3 w-3 animate-pulse text-success" />
                   <span className="text-[10px] font-bold uppercase tracking-tight">Sync On</span>
                 </>
               ) : (
@@ -82,18 +84,18 @@ export function WMSStatusBadge() {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <button 
+            <button
               onClick={handleManualSync}
               disabled={isSyncing}
-              className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium whitespace-nowrap hidden sm:flex hover:text-primary transition-colors disabled:opacity-50 group"
+              className="group flex hidden items-center gap-1.5 whitespace-nowrap text-[10px] font-medium text-muted-foreground transition-colors hover:text-primary disabled:opacity-50 sm:flex"
             >
               {isSyncing ? (
                 <RefreshCw className="h-3 w-3 animate-spin text-primary" />
               ) : (
-                <CheckCircle2 className="h-3 w-3 text-success group-hover:text-primary transition-colors" />
+                <CheckCircle2 className="h-3 w-3 text-success transition-colors group-hover:text-primary" />
               )}
-              <span className="group-hover:underline decoration-primary/30">
-                Ativo: {lastSync.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              <span className="decoration-primary/30 group-hover:underline">
+                Ativo: {lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
             </button>
           </TooltipTrigger>

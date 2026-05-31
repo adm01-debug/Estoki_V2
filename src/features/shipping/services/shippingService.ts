@@ -1,23 +1,25 @@
-import { supabase } from '@/integrations/supabase/client';
-import { logger } from '@/utils/logger';
-import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from '../types';
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
+import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
 
 export const shippingService = {
   async getRomaneios(): Promise<Romaneio[]> {
     const { data, error } = await supabase
-      .from('romaneios')
-      .select(`
+      .from("romaneios")
+      .select(
+        `
         *,
         romaneio_itens (*)
-      `)
-      .order('created_at', { ascending: false });
+      `
+      )
+      .order("created_at", { ascending: false });
 
     if (error) {
-      logger.error('Erro ao buscar romaneios', error);
+      logger.error("Erro ao buscar romaneios", error);
       throw error;
     }
 
-    return (data || []).map(r => ({
+    return (data || []).map((r) => ({
       id: r.id,
       codigo: r.codigo,
       data_criacao: r.data_criacao,
@@ -44,7 +46,7 @@ export const shippingService = {
         ordem_entrega: item.ordem_entrega,
         nf_saida: item.nf_saida,
         observacoes: item.observacoes,
-        status: item.status as StatusEntrega
+        status: item.status as StatusEntrega,
       })),
     }));
   },
@@ -52,7 +54,7 @@ export const shippingService = {
   async criarRomaneio(input: RomaneioInput): Promise<Romaneio> {
     const codigo = `ROM-${Date.now().toString(36).toUpperCase()}`;
     const { data, error } = await supabase
-      .from('romaneios')
+      .from("romaneios")
       .insert({
         codigo,
         motorista: input.motorista,
@@ -61,13 +63,13 @@ export const shippingService = {
         data_prevista_entrega: input.data_prevista_entrega,
         rota: input.rota,
         observacoes: input.observacoes,
-        status: 'rascunho',
+        status: "rascunho",
       })
       .select()
       .single();
 
     if (error) {
-      logger.error('Erro ao criar romaneio', error);
+      logger.error("Erro ao criar romaneio", error);
       throw error;
     }
     return data as any;
@@ -75,19 +77,16 @@ export const shippingService = {
 
   async atualizarStatus(id: string, status: StatusRomaneio): Promise<void> {
     const updates: Record<string, any> = { status };
-    if (status === 'em_transito') {
+    if (status === "em_transito") {
       updates.data_saida = new Date().toISOString();
-    } else if (status === 'entregue' || status === 'parcial') {
+    } else if (status === "entregue" || status === "parcial") {
       updates.data_retorno = new Date().toISOString();
     }
 
-    const { error } = await supabase
-      .from('romaneios')
-      .update(updates)
-      .eq('id', id);
+    const { error } = await supabase.from("romaneios").update(updates).eq("id", id);
 
     if (error) {
-      logger.error('Erro ao atualizar status do romaneio', error, { id, status });
+      logger.error("Erro ao atualizar status do romaneio", error, { id, status });
       throw error;
     }
   },
@@ -98,23 +97,21 @@ export const shippingService = {
     status: StatusEntrega,
     dados?: any
   ): Promise<void> {
-    const { error: comprovanteError } = await supabase
-      .from('comprovantes_entrega')
-      .insert({
-        romaneio_id: romaneioId,
-        romaneio_item_id: itemId,
-        status,
-        data_entrega: status === 'entregue' ? new Date().toISOString() : null,
-        recebedor_nome: dados?.recebedor_nome,
-        recebedor_documento: dados?.recebedor_documento,
-        assinatura_url: dados?.assinatura_url,
-        foto_entrega_url: dados?.foto_entrega_url,
-        observacoes: dados?.observacoes,
-      });
+    const { error: comprovanteError } = await supabase.from("comprovantes_entrega").insert({
+      romaneio_id: romaneioId,
+      romaneio_item_id: itemId,
+      status,
+      data_entrega: status === "entregue" ? new Date().toISOString() : null,
+      recebedor_nome: dados?.recebedor_nome,
+      recebedor_documento: dados?.recebedor_documento,
+      assinatura_url: dados?.assinatura_url,
+      foto_entrega_url: dados?.foto_entrega_url,
+      observacoes: dados?.observacoes,
+    });
 
     if (comprovanteError) {
-      logger.error('Erro ao registrar comprovante de entrega', comprovanteError);
+      logger.error("Erro ao registrar comprovante de entrega", comprovanteError);
       throw comprovanteError;
     }
-  }
+  },
 };

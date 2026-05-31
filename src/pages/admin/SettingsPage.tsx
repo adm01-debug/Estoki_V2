@@ -6,44 +6,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Settings, 
-  Warehouse, 
-  Bell, 
-  ShieldCheck, 
-  Database, 
-  Cpu,
-  Save,
-  Globe
-} from "lucide-react";
+import { Settings, Warehouse, Bell, ShieldCheck, Database, Cpu, Save, Globe } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function AdminSettingsPage() {
   const handleSave = () => {
-    toast({ title: "Configurações salvas", description: "As alterações foram aplicadas com sucesso." });
+    toast({
+      title: "Configurações salvas",
+      description: "As alterações foram aplicadas com sucesso.",
+    });
   };
 
   return (
     <AppLayout title="Configurações do Sistema" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
+        <div className="space-y-6 p-4">
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="grid grid-cols-2 lg:grid-cols-5 mb-8">
-              <TabsTrigger value="geral" className="gap-2"><Settings className="h-4 w-4" /> Geral</TabsTrigger>
-              <TabsTrigger value="wms" className="gap-2"><Warehouse className="h-4 w-4" /> WMS</TabsTrigger>
-              <TabsTrigger value="notificacoes" className="gap-2"><Bell className="h-4 w-4" /> Avisos</TabsTrigger>
-              <TabsTrigger value="seguranca" className="gap-2"><ShieldCheck className="h-4 w-4" /> Segurança</TabsTrigger>
-              <TabsTrigger value="avancado" className="gap-2"><Cpu className="h-4 w-4" /> Avançado</TabsTrigger>
+            <TabsList className="mb-8 grid grid-cols-2 lg:grid-cols-5">
+              <TabsTrigger value="geral" className="gap-2">
+                <Settings className="h-4 w-4" /> Geral
+              </TabsTrigger>
+              <TabsTrigger value="wms" className="gap-2">
+                <Warehouse className="h-4 w-4" /> WMS
+              </TabsTrigger>
+              <TabsTrigger value="notificacoes" className="gap-2">
+                <Bell className="h-4 w-4" /> Avisos
+              </TabsTrigger>
+              <TabsTrigger value="seguranca" className="gap-2">
+                <ShieldCheck className="h-4 w-4" /> Segurança
+              </TabsTrigger>
+              <TabsTrigger value="avancado" className="gap-2">
+                <Cpu className="h-4 w-4" /> Avançado
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="geral" className="space-y-4">
               <Card>
                 <CardHeader>
                   <CardTitle>Identidade do Armazém</CardTitle>
-                  <CardDescription>Configure as informações básicas da sua operação.</CardDescription>
+                  <CardDescription>
+                    Configure as informações básicas da sua operação.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label>Nome da Unidade</Label>
                       <Input defaultValue="ESTOKI - CD Central" />
@@ -68,27 +74,35 @@ export default function AdminSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Regras de Operação</CardTitle>
-                  <CardDescription>Defina como o fluxo de mercadorias deve se comportar.</CardDescription>
+                  <CardDescription>
+                    Defina como o fluxo de mercadorias deve se comportar.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Exigir Scan de QR Code</Label>
-                      <p className="text-xs text-muted-foreground">Obrigatório escanear item e local em todas as movimentações.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Obrigatório escanear item e local em todas as movimentações.
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Validação de Validade (FEFO)</Label>
-                      <p className="text-xs text-muted-foreground">Priorizar saída de itens com vencimento mais próximo.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Priorizar saída de itens com vencimento mais próximo.
+                      </p>
                     </div>
                     <Switch defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
                       <Label>Picking Multi-Ondas</Label>
-                      <p className="text-xs text-muted-foreground">Permitir agrupamento de vários pedidos em uma única rota.</p>
+                      <p className="text-xs text-muted-foreground">
+                        Permitir agrupamento de vários pedidos em uma única rota.
+                      </p>
                     </div>
                     <Switch />
                   </div>
@@ -100,17 +114,29 @@ export default function AdminSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Manutenção de Dados</CardTitle>
-                  <CardDescription>Ferramentas críticas para administração do banco.</CardDescription>
+                  <CardDescription>
+                    Ferramentas críticas para administração do banco.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10 space-y-3">
-                    <h4 className="text-sm font-bold text-red-500 flex items-center gap-2">
+                  <div className="space-y-3 rounded-lg border border-red-500/10 bg-red-500/5 p-4">
+                    <h4 className="flex items-center gap-2 text-sm font-bold text-red-500">
                       <Database className="h-4 w-4" /> Zona de Perigo
                     </h4>
-                    <p className="text-xs text-muted-foreground">Estas ações são irreversíveis e afetam todo o sistema.</p>
+                    <p className="text-xs text-muted-foreground">
+                      Estas ações são irreversíveis e afetam todo o sistema.
+                    </p>
                     <div className="flex gap-2">
-                      <Button variant="destructive" size="sm">Limpar Cache Global</Button>
-                      <Button variant="outline" size="sm" className="text-red-500 border-red-500/20">Resetar Operações</Button>
+                      <Button variant="destructive" size="sm">
+                        Limpar Cache Global
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-500/20 text-red-500"
+                      >
+                        Resetar Operações
+                      </Button>
                     </div>
                   </div>
                 </CardContent>

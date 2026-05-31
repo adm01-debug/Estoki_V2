@@ -5,10 +5,26 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { userId, permission, resource } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data: roles } = await supabase.from("user_roles").select("permissions").eq("user_id", userId);
-    const allPermissions = roles?.flatMap(r => r.permissions || []) || [];
-    const hasPermission = allPermissions.includes(permission) || allPermissions.includes(`${resource}:*`) || allPermissions.includes("*");
-    return new Response(JSON.stringify({ allowed: hasPermission, permission, resource }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("permissions")
+      .eq("user_id", userId);
+    const allPermissions = roles?.flatMap((r) => r.permissions || []) || [];
+    const hasPermission =
+      allPermissions.includes(permission) ||
+      allPermissions.includes(`${resource}:*`) ||
+      allPermissions.includes("*");
+    return new Response(JSON.stringify({ allowed: hasPermission, permission, resource }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

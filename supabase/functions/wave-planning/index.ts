@@ -20,7 +20,13 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { warehouse_id, order_ids, priority, max_orders_per_wave = 50, strategy = "zone" }: WavePlanningRequest = await req.json();
+    const {
+      warehouse_id,
+      order_ids,
+      priority,
+      max_orders_per_wave = 50,
+      strategy = "zone",
+    }: WavePlanningRequest = await req.json();
 
     // Buscar pedidos pendentes
     let query = supabase
@@ -53,9 +59,9 @@ serve(async (req) => {
     let currentWave: any = { orders: [], zones: new Set(), total_items: 0 };
 
     for (const order of orders) {
-      const orderZones = new Set(order.items?.flatMap((i: any) => 
-        i.product?.locations?.map((l: any) => l.zone_id) || []
-      ));
+      const orderZones = new Set(
+        order.items?.flatMap((i: any) => i.product?.locations?.map((l: any) => l.zone_id) || [])
+      );
 
       currentWave.orders.push(order.id);
       orderZones.forEach((z) => currentWave.zones.add(z));
@@ -102,14 +108,13 @@ serve(async (req) => {
       }
     }
 
-    return new Response(
-      JSON.stringify({ success: true, waves_created: waves.length, waves }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, waves_created: waves.length, waves }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

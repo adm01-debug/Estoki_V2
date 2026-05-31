@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 export function useErrorBoundaryState() {
   const [error, setError] = useState<Error | null>(null);
   const resetError = useCallback(() => setError(null), []);

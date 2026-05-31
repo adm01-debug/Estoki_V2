@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-import { logger } from '@/utils/logger';
+import { useEffect, useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
 
 interface Metric {
   path: string;
@@ -26,7 +26,7 @@ class PerformanceService {
     const metric = { path, duration, timestamp: Date.now(), error };
     this.metrics.push(metric);
     if (this.metrics.length > 100) this.metrics.shift();
-    
+
     if (duration > 1000) {
       logger.warn(`Slow response detected at ${path}: ${duration}ms`);
     }
@@ -40,12 +40,12 @@ class PerformanceService {
   subscribe(listener: (metrics: Metric[]) => void) {
     this.listeners.push(listener);
     return () => {
-      this.listeners = this.listeners.filter(l => l !== listener);
+      this.listeners = this.listeners.filter((l) => l !== listener);
     };
   }
 
   private notify() {
-    this.listeners.forEach(l => l([...this.metrics]));
+    this.listeners.forEach((l) => l([...this.metrics]));
   }
 
   getMetrics() {
@@ -60,7 +60,7 @@ class PerformanceService {
 
   getErrorRate() {
     if (this.metrics.length === 0) return 0;
-    const errors = this.metrics.filter(m => m.error).length;
+    const errors = this.metrics.filter((m) => m.error).length;
     return Math.round((errors / this.metrics.length) * 100);
   }
 }

@@ -1,19 +1,19 @@
 /**
  * Componente de Dropdown para Filtros Salvos
- * 
+ *
  * @module components/SavedFiltersDropdown
  */
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -21,11 +21,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Filter, Star, Trash2, Plus, Loader2 } from 'lucide-react';
-import { useSavedFilters } from '@/hooks/useSavedFilters';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Filter, Star, Trash2, Plus, Loader2 } from "lucide-react";
+import { useSavedFilters } from "@/hooks/useSavedFilters";
 
 interface SavedFiltersDropdownProps {
   entityType: string;
@@ -40,22 +40,22 @@ export function SavedFiltersDropdown({
 }: SavedFiltersDropdownProps) {
   const { filters, isLoading, saveFilter, deleteFilter, setDefault, isSaving } =
     useSavedFilters(entityType);
-  
+
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [filterName, setFilterName] = useState('');
+  const [filterName, setFilterName] = useState("");
   const [isDefault, setIsDefault] = useState(false);
 
   const handleSave = () => {
     if (!filterName.trim()) return;
-    
+
     saveFilter({
       name: filterName.trim(),
       filters: currentFilters,
       is_default: isDefault,
     });
-    
+
     setShowSaveDialog(false);
-    setFilterName('');
+    setFilterName("");
     setIsDefault(false);
   };
 
@@ -121,7 +121,7 @@ export function SavedFiltersDropdown({
                     }}
                     title="Definir como padrão"
                   >
-                    <Star className={`h-3 w-3 ${filter.is_default ? 'fill-yellow-400' : ''}`} />
+                    <Star className={`h-3 w-3 ${filter.is_default ? "fill-yellow-400" : ""}`} />
                   </Button>
                   <Button
                     variant="ghost"
@@ -183,7 +183,7 @@ export function SavedFiltersDropdown({
                   Salvando...
                 </>
               ) : (
-                'Salvar Filtro'
+                "Salvar Filtro"
               )}
             </Button>
           </DialogFooter>

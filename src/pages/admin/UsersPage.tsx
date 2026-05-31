@@ -13,24 +13,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Search, 
-  UserPlus, 
-  Shield, 
-  Mail, 
-  CheckCircle2, 
+import {
+  Search,
+  UserPlus,
+  Shield,
+  Mail,
+  CheckCircle2,
   XCircle,
   MoreVertical,
   Edit,
   Trash2,
-  UserCheck
+  UserCheck,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,10 +53,8 @@ export default function UsersPage() {
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const { data: profiles, error: pError } = await supabase
-        .from("profiles")
-        .select("*");
-      
+      const { data: profiles, error: pError } = await supabase.from("profiles").select("*");
+
       if (pError) throw pError;
 
       const { data: roles, error: rError } = await supabase
@@ -65,10 +63,10 @@ export default function UsersPage() {
 
       if (rError) throw rError;
 
-      const usersWithRoles = profiles.map(p => ({
+      const usersWithRoles = profiles.map((p) => ({
         ...p,
-        role: roles.find(r => r.user_id === p.id)?.role || "operador",
-        status: "ativo" as const // Mock status
+        role: roles.find((r) => r.user_id === p.id)?.role || "operador",
+        status: "ativo" as const, // Mock status
       }));
 
       setUsers(usersWithRoles);
@@ -84,24 +82,32 @@ export default function UsersPage() {
     fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(u => 
-    u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (u) =>
+      u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getRoleBadge = (role?: string) => {
     switch (role) {
-      case "admin": return <Badge className="bg-red-500/10 text-red-500 border-red-500/20">Administrador</Badge>;
-      case "supervisor": return <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20">Supervisor</Badge>;
-      default: return <Badge variant="secondary">Operador</Badge>;
+      case "admin":
+        return (
+          <Badge className="border-red-500/20 bg-red-500/10 text-red-500">Administrador</Badge>
+        );
+      case "supervisor":
+        return (
+          <Badge className="border-blue-500/20 bg-blue-500/10 text-blue-500">Supervisor</Badge>
+        );
+      default:
+        return <Badge variant="secondary">Operador</Badge>;
     }
   };
 
   return (
     <AppLayout title="Gerenciamento de Usuários" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="space-y-6 p-4">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -111,7 +117,7 @@ export default function UsersPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Button className="w-full md:w-auto gap-2">
+            <Button className="w-full gap-2 md:w-auto">
               <UserPlus className="h-4 w-4" />
               Convidar Usuário
             </Button>
@@ -124,8 +130,10 @@ export default function UsersPage() {
             </CardHeader>
             <CardContent className="p-0">
               {loading ? (
-                <div className="p-8 space-y-4">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-16 w-full" />)}
+                <div className="space-y-4 p-8">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
                 </div>
               ) : (
                 <Table>
@@ -142,12 +150,12 @@ export default function UsersPage() {
                       <TableRow key={user.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
                               {user.nome?.charAt(0) || user.email?.charAt(0)}
                             </div>
                             <div className="flex flex-col">
                               <span className="font-medium">{user.nome || "Sem nome"}</span>
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                 <Mail className="h-3 w-3" /> {user.email}
                               </span>
                             </div>

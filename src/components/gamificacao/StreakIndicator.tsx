@@ -13,11 +13,20 @@ export function StreakIndicator({ streak, maxStreak, className }: StreakIndicato
 
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <div className={cn("p-2 rounded-full", isOnFire ? "bg-orange-500 text-white animate-pulse" : isHot ? "bg-orange-400 text-white" : "bg-orange-100 text-orange-600")}>
+      <div
+        className={cn(
+          "rounded-full p-2",
+          isOnFire
+            ? "animate-pulse bg-orange-500 text-white"
+            : isHot
+              ? "bg-orange-400 text-white"
+              : "bg-orange-100 text-orange-600"
+        )}
+      >
         <Flame className="h-5 w-5" />
       </div>
       <div>
-        <p className="font-bold text-lg">{streak} dias</p>
+        <p className="text-lg font-bold">{streak} dias</p>
         {maxStreak && <p className="text-xs text-muted-foreground">Recorde: {maxStreak}</p>}
       </div>
     </div>

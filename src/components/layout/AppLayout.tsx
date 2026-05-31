@@ -17,7 +17,6 @@ import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
 import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
 import { PerformanceHUD } from "../telemetry/PerformanceHUD";
 
-
 const AppLayoutContext = createContext(false);
 
 interface AppLayoutProps {
@@ -30,7 +29,7 @@ interface AppLayoutProps {
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const isNested = useContext(AppLayoutContext);
   const { user, profile, role, loading } = useAuth();
-  
+
   const {
     location,
     sidebarCollapsed,
@@ -42,35 +41,42 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     isHome,
     handleBack,
     handleLogout,
-    handleNavigate
+    handleNavigate,
   } = useAppLayoutState();
 
-   const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
-   useSwipeBack(!isHome && location.pathname !== "/dashboard");
+  const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
+  useSwipeBack(!isHome && location.pathname !== "/dashboard");
 
   if (isNested) return <>{children}</>;
   if (loading) return <AuthLoading />;
   if (!user) return <Navigate to="/auth" replace />;
 
-  const userName = profile?.nome || user?.email?.split('@')[0] || 'Usuário';
-  const userEmail = profile?.email || user?.email || '';
-  const currentRole = role || 'operador';
+  const userName = profile?.nome || user?.email?.split("@")[0] || "Usuário";
+  const userEmail = profile?.email || user?.email || "";
+  const currentRole = role || "operador";
 
-   const sidebarWidth = sidebarCollapsed ? "w-[70px]" : "w-[280px]";
-   const mainPadding = sidebarCollapsed ? "lg:pl-[70px]" : "lg:pl-[280px]";
+  const sidebarWidth = sidebarCollapsed ? "w-[70px]" : "w-[280px]";
+  const mainPadding = sidebarCollapsed ? "lg:pl-[70px]" : "lg:pl-[280px]";
 
   return (
     <AppLayoutContext.Provider value={true}>
       <TooltipProvider>
-        <div className="min-h-screen bg-background flex flex-col" role="application" aria-label="Promo Brindes Intel WMS">
+        <div
+          className="flex min-h-screen flex-col bg-background"
+          role="application"
+          aria-label="Promo Brindes Intel WMS"
+        >
           <GlobalLoadingBar />
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
             Pular para conteúdo principal
           </a>
-          
-          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div className="absolute -top-[40%] -right-[20%] w-[60%] h-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
-            <div className="absolute -bottom-[30%] -left-[10%] w-[40%] h-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
+
+          <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+            <div className="absolute -right-[20%] -top-[40%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
+            <div className="absolute -bottom-[30%] -left-[10%] h-[40%] w-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
           </div>
 
           <Header
@@ -87,46 +93,51 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             avatarUrl={profile?.avatar_url}
           />
 
-           <main 
-             id="main-content" 
-             className={cn(
-               "flex-1 overflow-x-hidden transition-all duration-300 ease-in-out relative z-10",
-               mainPadding
-             )} 
-             aria-label="Conteúdo principal"
-           >
-             <div className="max-w-[1600px] mx-auto min-h-full flex flex-col">
-               <Breadcrumbs className="lg:px-8 pt-4 pb-2" />
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={location.pathname}
-                      initial={{ opacity: 0, y: 8, scale: 0.995 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 1.005 }}
-                       transition={{
-                         type: "spring",
-                         stiffness: 380,
-                         damping: 35,
-                         mass: 1,
-                         opacity: { duration: 0.2 }
-                       }}
-                       className="px-4 md:px-6 lg:px-8 pb-10 flex-1 flex flex-col relative will-change-transform"
-                    >
-                      {children || <Outlet />}
-                    </motion.div>
-                  </AnimatePresence>
+          <main
+            id="main-content"
+            className={cn(
+              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out",
+              mainPadding
+            )}
+            aria-label="Conteúdo principal"
+          >
+            <div className="mx-auto flex min-h-full max-w-[1600px] flex-col">
+              <Breadcrumbs className="pb-2 pt-4 lg:px-8" />
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0, y: 8, scale: 0.995 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 1.005 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 380,
+                    damping: 35,
+                    mass: 1,
+                    opacity: { duration: 0.2 },
+                  }}
+                  className="relative flex flex-1 flex-col px-4 pb-10 will-change-transform md:px-6 lg:px-8"
+                >
+                  {children || <Outlet />}
+                </motion.div>
+              </AnimatePresence>
             </div>
           </main>
 
-           <MobileNavigation 
-             fabOpen={fabOpen}
-             setFabOpen={setFabOpen}
-             pathname={location.pathname}
-             onNavigate={handleNavigate}
-             onBack={handleBack}
-           />
+          <MobileNavigation
+            fabOpen={fabOpen}
+            setFabOpen={setFabOpen}
+            pathname={location.pathname}
+            onNavigate={handleNavigate}
+            onBack={handleBack}
+          />
 
-           <aside className={cn("fixed top-0 left-0 h-full z-40 hidden lg:flex flex-col bg-sidebar border-r border-sidebar-border/30 transition-all duration-300 ease-in-out", sidebarWidth)}>
+          <aside
+            className={cn(
+              "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-sidebar-border/30 bg-sidebar transition-all duration-300 ease-in-out lg:flex",
+              sidebarWidth
+            )}
+          >
             <Sidebar
               sidebarCollapsed={sidebarCollapsed}
               userName={userName}
@@ -136,29 +147,33 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               onLogout={handleLogout}
               onCloseMobile={() => setMobileMenuOpen(false)}
             />
-            <button 
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)} 
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               aria-label={sidebarCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
-              className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-sidebar border border-sidebar-border/50 flex items-center justify-center text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-all shadow-sm"
+              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/50 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              {sidebarCollapsed ? <ChevronLeft className="h-3 w-3 rotate-180" /> : <ChevronLeft className="h-3 w-3" />}
+              {sidebarCollapsed ? (
+                <ChevronLeft className="h-3 w-3 rotate-180" />
+              ) : (
+                <ChevronLeft className="h-3 w-3" />
+              )}
             </button>
           </aside>
 
           <AnimatePresence>
             {mobileMenuOpen && (
               <>
-                <motion.div 
-                  className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
+                <motion.div
+                  className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  onClick={() => setMobileMenuOpen(false)} 
+                  onClick={() => setMobileMenuOpen(false)}
                 />
-                <motion.aside 
-                  className="fixed top-0 left-0 h-full w-[280px] bg-sidebar z-50 flex flex-col lg:hidden shadow-2xl"
-                  initial={{ x: "-100%" }} 
-                  animate={{ x: 0 }} 
+                <motion.aside
+                  className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col bg-sidebar shadow-2xl lg:hidden"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
                   exit={{ x: "-100%" }}
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 >
@@ -181,7 +196,6 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           <ShortcutsHUD />
           <PerformanceHUD />
         </div>
-
       </TooltipProvider>
     </AppLayoutContext.Provider>
   );

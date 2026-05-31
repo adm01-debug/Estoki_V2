@@ -16,6 +16,12 @@ export function InfoItem({ label, value, className, horizontal }: InfoItemProps)
   );
 }
 
-export function InfoList({ children, className }: { children: React.ReactNode; className?: string }) {
+export function InfoList({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return <dl className={cn("space-y-3", className)}>{children}</dl>;
 }

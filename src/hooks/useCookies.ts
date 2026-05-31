@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 export function useCookies() {
   const getCookie = useCallback((name: string): string | null => {
-    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
     return match ? decodeURIComponent(match[2]) : null;
   }, []);
   const setCookie = useCallback((name: string, value: string, days = 7) => {
@@ -12,11 +12,14 @@ export function useCookies() {
     document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
   }, []);
   const getAllCookies = useCallback(() => {
-    return document.cookie.split(';').reduce((acc, cookie) => {
-      const [key, value] = cookie.trim().split('=');
-      if (key) acc[key] = decodeURIComponent(value || '');
-      return acc;
-    }, {} as Record<string, string>);
+    return document.cookie.split(";").reduce(
+      (acc, cookie) => {
+        const [key, value] = cookie.trim().split("=");
+        if (key) acc[key] = decodeURIComponent(value || "");
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }, []);
   return { getCookie, setCookie, deleteCookie, getAllCookies };
 }

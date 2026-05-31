@@ -22,9 +22,9 @@ export default function SimulationPage() {
     setLoading(true);
     setReport(null);
     try {
-      const { data, error } = await supabase.functions.invoke('simulation-test', {
-        method: 'GET',
-        headers: { 'X-Simulation-Count': count.toString() }
+      const { data, error } = await supabase.functions.invoke("simulation-test", {
+        method: "GET",
+        headers: { "X-Simulation-Count": count.toString() },
       });
 
       if (error) throw error;
@@ -40,11 +40,11 @@ export default function SimulationPage() {
 
   return (
     <AppLayout showBack>
-      <BasePageTemplate 
-        title="Simulador de Stress" 
+      <BasePageTemplate
+        title="Simulador de Stress"
         description="Execute milhares de cenários de webhooks e edge functions para validar a resiliência do sistema."
       >
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-1">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -56,22 +56,24 @@ export default function SimulationPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="count">Quantidade de Eventos</Label>
-                <Input 
-                  id="count" 
-                  type="number" 
-                  value={count} 
+                <Input
+                  id="count"
+                  type="number"
+                  value={count}
                   onChange={(e) => setCount(parseInt(e.target.value))}
                   min={1}
                   max={5000}
                 />
-                <p className="text-[10px] text-muted-foreground">Recomendado para stress-test: {'>'} 500 eventos.</p>
+                <p className="text-[10px] text-muted-foreground">
+                  Recomendado para stress-test: {">"} 500 eventos.
+                </p>
               </div>
-              <Button 
-                className="w-full gap-2" 
-                onClick={runSimulation} 
-                disabled={loading}
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              <Button className="w-full gap-2" onClick={runSimulation} disabled={loading}>
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4" />
+                )}
                 Iniciar Simulação
               </Button>
             </CardContent>
@@ -85,41 +87,52 @@ export default function SimulationPage() {
             <CardContent>
               <AnimatePresence mode="wait">
                 {loading ? (
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    className="flex flex-col items-center justify-center py-12 space-y-4"
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex flex-col items-center justify-center space-y-4 py-12"
                   >
                     <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                    <p className="text-sm font-medium animate-pulse">Processando cenários...</p>
+                    <p className="animate-pulse text-sm font-medium">Processando cenários...</p>
                   </motion.div>
                 ) : report ? (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }} 
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="space-y-6"
                   >
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-4 rounded-xl bg-success/10 border border-success/20 flex flex-col items-center">
+                      <div className="flex flex-col items-center rounded-xl border border-success/20 bg-success/10 p-4">
                         <span className="text-2xl font-bold text-success">{report.success}</span>
-                        <span className="text-[10px] uppercase font-bold text-success/70">Sucessos</span>
+                        <span className="text-[10px] font-bold uppercase text-success/70">
+                          Sucessos
+                        </span>
                       </div>
-                      <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 flex flex-col items-center">
-                        <span className="text-2xl font-bold text-destructive">{report.failure}</span>
-                        <span className="text-[10px] uppercase font-bold text-destructive/70">Falhas</span>
+                      <div className="flex flex-col items-center rounded-xl border border-destructive/20 bg-destructive/10 p-4">
+                        <span className="text-2xl font-bold text-destructive">
+                          {report.failure}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase text-destructive/70">
+                          Falhas
+                        </span>
                       </div>
                     </div>
 
                     {report.errors?.length > 0 && (
                       <div className="space-y-2">
-                        <Label className="text-destructive flex items-center gap-2">
+                        <Label className="flex items-center gap-2 text-destructive">
                           <AlertCircle className="h-4 w-4" />
                           Detalhes das Falhas
                         </Label>
                         <ScrollArea className="h-[200px] rounded-lg border bg-muted/30 p-4">
                           {report.errors.map((err: any, idx: number) => (
-                            <div key={idx} className="mb-4 last:mb-0 text-[11px] font-mono border-b pb-2 last:border-0 border-border/50">
-                              <p className="text-destructive font-bold mb-1">Cenário {err.i}: {err.scenario.event}</p>
+                            <div
+                              key={idx}
+                              className="mb-4 border-b border-border/50 pb-2 font-mono text-[11px] last:mb-0 last:border-0"
+                            >
+                              <p className="mb-1 font-bold text-destructive">
+                                Cenário {err.i}: {err.scenario.event}
+                              </p>
                               <p className="text-muted-foreground">{err.error}</p>
                             </div>
                           ))}
@@ -128,15 +141,25 @@ export default function SimulationPage() {
                     )}
 
                     <div className="flex justify-center">
-                      <Badge variant={report.failure === 0 ? "outline" : "destructive"} className={cn("gap-1 px-4 py-1", report.failure === 0 && "bg-success/10 text-success border-success/20")}>
-                        {report.failure === 0 ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+                      <Badge
+                        variant={report.failure === 0 ? "outline" : "destructive"}
+                        className={cn(
+                          "gap-1 px-4 py-1",
+                          report.failure === 0 && "border-success/20 bg-success/10 text-success"
+                        )}
+                      >
+                        {report.failure === 0 ? (
+                          <CheckCircle2 className="h-3 w-3" />
+                        ) : (
+                          <AlertCircle className="h-3 w-3" />
+                        )}
                         {report.failure === 0 ? "Sistema Resiliente (10/10)" : "Gaps Identificados"}
                       </Badge>
                     </div>
                   </motion.div>
                 ) : (
                   <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                    <Zap className="h-12 w-12 opacity-10 mb-4" />
+                    <Zap className="mb-4 h-12 w-12 opacity-10" />
                     <p className="text-sm">Aguardando início do teste...</p>
                   </div>
                 )}

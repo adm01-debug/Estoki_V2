@@ -22,15 +22,19 @@ export function FornecedoresRanking({ topFornecedores }: Props) {
           <Card key={f.id}>
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
                   #{index + 1}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{f.nome}</h3>
-                    <Badge variant="outline" className={cls.color}>Classe {f.classificacao}</Badge>
+                    <Badge variant="outline" className={cls.color}>
+                      Classe {f.classificacao}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">{f.entregas_totais} entregas • {f.itens_recebidos} itens</p>
+                  <p className="text-sm text-muted-foreground">
+                    {f.entregas_totais} entregas • {f.itens_recebidos} itens
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-2xl font-bold text-primary">{f.pontuacao.toFixed(0)}</p>

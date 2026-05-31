@@ -1,11 +1,11 @@
 export const API_ENDPOINTS = {
-  AUTH: '/auth',
-  ESTOQUE: '/estoque',
-  TRIAGEM: '/triagem',
-  RECEBIMENTO: '/recebimento',
-  RELATORIOS: '/relatorios',
-  GAMIFICACAO: '/gamificacao',
-  HEALTH: '/health',
+  AUTH: "/auth",
+  ESTOQUE: "/estoque",
+  TRIAGEM: "/triagem",
+  RECEBIMENTO: "/recebimento",
+  RELATORIOS: "/relatorios",
+  GAMIFICACAO: "/gamificacao",
+  HEALTH: "/health",
 } as const;
 
 export const API_TIMEOUT = 30000;

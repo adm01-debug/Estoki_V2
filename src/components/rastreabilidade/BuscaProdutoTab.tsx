@@ -19,7 +19,7 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
 
   const handleBuscarProduto = async () => {
     if (!produtoBusca.trim()) return;
-    
+
     setBuscando(true);
     const historico = await onSearch(produtoBusca);
     setHistoricoProduto(historico);
@@ -31,7 +31,7 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
             <Search className="h-4 w-4" />
             Buscar Histórico de Produto
           </CardTitle>
@@ -46,7 +46,11 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
               className="flex-1"
             />
             <Button onClick={handleBuscarProduto} disabled={buscando}>
-              {buscando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+              {buscando ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
             </Button>
           </div>
         </CardContent>
@@ -65,7 +69,10 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
               {historicoProduto.map((mov) => {
                 const Icon = tipoIcons[mov.tipo];
                 return (
-                  <div key={mov.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div
+                    key={mov.id}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
                     <div className="flex items-center gap-3">
                       {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
                       <div>
@@ -90,8 +97,8 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
       )}
 
       {historicoProduto.length === 0 && hasSearched && !buscando && (
-        <div className="text-center py-8 text-muted-foreground">
-          <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+        <div className="py-8 text-center text-muted-foreground">
+          <Package className="mx-auto mb-4 h-12 w-12 opacity-50" />
           <p>Nenhum histórico encontrado para "{produtoBusca}"</p>
         </div>
       )}

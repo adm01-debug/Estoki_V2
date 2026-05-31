@@ -16,29 +16,32 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization header required" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Authorization header required" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const { credential, deviceName } = await req.json();
 
     if (!credential || !credential.id || !credential.response) {
-      return new Response(
-        JSON.stringify({ error: "Invalid credential data" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid credential data" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Get the challenge from database
@@ -52,24 +55,21 @@ serve(async (req) => {
       .single();
 
     if (challengeError || !challengeData) {
-      return new Response(
-        JSON.stringify({ error: "Challenge not found or expired" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Challenge not found or expired" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Delete used challenge
-    await supabase
-      .from("webauthn_challenges")
-      .delete()
-      .eq("id", challengeData.id);
+    await supabase.from("webauthn_challenges").delete().eq("id", challengeData.id);
 
     // Verify challenge expiration
     if (new Date(challengeData.expires_at) < new Date()) {
-      return new Response(
-        JSON.stringify({ error: "Challenge expired" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Challenge expired" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // In a production environment, you would verify the attestation here
@@ -77,24 +77,22 @@ serve(async (req) => {
     // The client-side already verified the credential with the browser
 
     // Store the credential
-    const { error: insertError } = await supabase
-      .from("passkey_credentials")
-      .insert({
-        user_id: user.id,
-        credential_id: credential.id,
-        public_key: credential.response.publicKey || credential.id,
-        counter: 0,
-        device_name: deviceName || "Unknown Device",
-        transports: credential.response.transports || ["internal"],
-      });
+    const { error: insertError } = await supabase.from("passkey_credentials").insert({
+      user_id: user.id,
+      credential_id: credential.id,
+      public_key: credential.response.publicKey || credential.id,
+      counter: 0,
+      device_name: deviceName || "Unknown Device",
+      transports: credential.response.transports || ["internal"],
+    });
 
     if (insertError) {
       console.error("Error storing credential:", insertError);
       if (insertError.code === "23505") {
-        return new Response(
-          JSON.stringify({ error: "This passkey is already registered" }),
-          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-        );
+        return new Response(JSON.stringify({ error: "This passkey is already registered" }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
       }
       throw insertError;
     }
@@ -108,9 +106,9 @@ serve(async (req) => {
   } catch (error: unknown) {
     console.error("Error verifying registration:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

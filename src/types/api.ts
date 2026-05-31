@@ -30,7 +30,7 @@ export interface MutationResponse {
   error?: ApiError;
 }
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export interface RequestConfig {
   method: HttpMethod;

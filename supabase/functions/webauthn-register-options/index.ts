@@ -26,20 +26,23 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization header required" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Authorization header required" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const { deviceName } = await req.json().catch(() => ({}));
@@ -77,7 +80,7 @@ serve(async (req) => {
         displayName: user.email?.split("@")[0] || "User",
       },
       pubKeyCredParams: [
-        { alg: -7, type: "public-key" },   // ES256
+        { alg: -7, type: "public-key" }, // ES256
         { alg: -257, type: "public-key" }, // RS256
       ],
       timeout: 60000,
@@ -88,25 +91,25 @@ serve(async (req) => {
         residentKey: "preferred",
         userVerification: "preferred",
       },
-      excludeCredentials: existingCredentials?.map((cred) => ({
-        id: cred.credential_id,
-        type: "public-key",
-        transports: cred.transports || ["internal"],
-      })) || [],
+      excludeCredentials:
+        existingCredentials?.map((cred) => ({
+          id: cred.credential_id,
+          type: "public-key",
+          transports: cred.transports || ["internal"],
+        })) || [],
     };
 
     console.log("Generated registration options for user:", user.id);
 
-    return new Response(
-      JSON.stringify({ options: registrationOptions, deviceName }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ options: registrationOptions, deviceName }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error: unknown) {
     console.error("Error generating registration options:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

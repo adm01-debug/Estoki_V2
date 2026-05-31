@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import React, { useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   Table,
   TableBody,
@@ -29,7 +29,7 @@ export function VirtualizedTable<T>({
   rowHeight = 64,
   height = "600px",
   onRowClick,
-  className
+  className,
 }: VirtualizedTableProps<T>) {
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -41,9 +41,9 @@ export function VirtualizedTable<T>({
   });
 
   return (
-    <div className={cn("rounded-md border overflow-hidden", className)}>
+    <div className={cn("overflow-hidden rounded-md border", className)}>
       <Table>
-        <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
+        <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
           <TableRow>
             {columns.map((col, i) => (
               <TableHead key={i} className={col.className}>
@@ -53,17 +53,13 @@ export function VirtualizedTable<T>({
           </TableRow>
         </TableHeader>
       </Table>
-      
-      <div 
-        ref={parentRef} 
-        className="overflow-auto" 
-        style={{ height }}
-      >
+
+      <div ref={parentRef} className="overflow-auto" style={{ height }}>
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
+            width: "100%",
+            position: "relative",
           }}
         >
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
@@ -72,7 +68,7 @@ export function VirtualizedTable<T>({
               <div
                 key={virtualRow.key}
                 className={cn(
-                  "absolute top-0 left-0 w-full flex items-center border-b transition-colors hover:bg-muted/50",
+                  "absolute left-0 top-0 flex w-full items-center border-b transition-colors hover:bg-muted/50",
                   onRowClick && "cursor-pointer"
                 )}
                 style={{
@@ -81,12 +77,12 @@ export function VirtualizedTable<T>({
                 }}
                 onClick={() => onRowClick?.(item)}
               >
-                <div className="flex w-full px-4 h-full items-center">
+                <div className="flex h-full w-full items-center px-4">
                   {columns.map((col, i) => (
-                    <div 
-                      key={i} 
+                    <div
+                      key={i}
                       className={cn(
-                        "flex-1 overflow-hidden", 
+                        "flex-1 overflow-hidden",
                         col.className,
                         // If it's the last column, we might want text-right alignment support
                         i === columns.length - 1 && "text-right"

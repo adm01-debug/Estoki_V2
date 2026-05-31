@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 interface ScrollState {
   x: number;
   y: number;
-  direction: 'up' | 'down' | 'left' | 'right' | null;
+  direction: "up" | "down" | "left" | "right" | null;
   isScrolling: boolean;
   progress: number;
 }
@@ -22,7 +22,7 @@ export function useScroll(options: UseScrollOptions = {}) {
     isScrolling: false,
     progress: 0,
   });
-  
+
   const lastY = useRef(0);
   const lastX = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout>();
@@ -36,15 +36,15 @@ export function useScroll(options: UseScrollOptions = {}) {
     const element = target?.current || document.documentElement;
     const scrollY = target?.current ? element.scrollTop : window.scrollY;
     const scrollX = target?.current ? element.scrollLeft : window.scrollX;
-    
+
     const scrollHeight = element.scrollHeight - element.clientHeight;
     const progress = scrollHeight > 0 ? (scrollY / scrollHeight) * 100 : 0;
 
-    let direction: ScrollState['direction'] = null;
-    if (scrollY > lastY.current) direction = 'down';
-    else if (scrollY < lastY.current) direction = 'up';
-    else if (scrollX > lastX.current) direction = 'right';
-    else if (scrollX < lastX.current) direction = 'left';
+    let direction: ScrollState["direction"] = null;
+    if (scrollY > lastY.current) direction = "down";
+    else if (scrollY < lastY.current) direction = "up";
+    else if (scrollX > lastX.current) direction = "right";
+    else if (scrollX < lastX.current) direction = "left";
 
     lastY.current = scrollY;
     lastX.current = scrollX;
@@ -63,22 +63,25 @@ export function useScroll(options: UseScrollOptions = {}) {
     }, 150);
   }, [target, throttle]);
 
-  const scrollTo = useCallback((options: ScrollToOptions) => {
-    const element = target?.current || window;
-    element.scrollTo(options);
-  }, [target]);
+  const scrollTo = useCallback(
+    (options: ScrollToOptions) => {
+      const element = target?.current || window;
+      element.scrollTo(options);
+    },
+    [target]
+  );
 
-  const scrollToTop = useCallback(() => scrollTo({ top: 0, behavior: 'smooth' }), [scrollTo]);
+  const scrollToTop = useCallback(() => scrollTo({ top: 0, behavior: "smooth" }), [scrollTo]);
   const scrollToBottom = useCallback(() => {
     const element = target?.current || document.documentElement;
-    scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+    scrollTo({ top: element.scrollHeight, behavior: "smooth" });
   }, [scrollTo, target]);
 
   useEffect(() => {
     const element = target?.current || window;
-    element.addEventListener('scroll', handleScroll, { passive: true });
+    element.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => element.removeEventListener('scroll', handleScroll);
+    return () => element.removeEventListener("scroll", handleScroll);
   }, [handleScroll, target]);
 
   return { ...state, scrollTo, scrollToTop, scrollToBottom };

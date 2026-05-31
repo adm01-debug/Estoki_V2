@@ -24,15 +24,14 @@ export const BasePageTemplate = ({
   headerActions,
   className,
   showBreadcrumbs = true,
-  maxWidth = "xl"
+  maxWidth = "xl",
 }: BasePageTemplateProps) => {
-  
   const maxWidthClass = {
     sm: "max-w-4xl",
     md: "max-w-5xl",
     lg: "max-w-6xl",
     xl: "max-w-7xl",
-    full: "max-w-none"
+    full: "max-w-none",
   }[maxWidth];
 
   return (
@@ -48,24 +47,24 @@ export const BasePageTemplate = ({
       )}
 
       {(title || headerActions) && (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
             {title && (
-              <h1 className="text-3xl font-black tracking-tight text-foreground gradient-text">
+              <h1 className="gradient-text text-3xl font-black tracking-tight text-foreground">
                 {title}
               </h1>
             )}
             {description && (
-              <p className="text-muted-foreground text-sm mt-1 max-w-2xl font-medium">
+              <p className="mt-1 max-w-2xl text-sm font-medium text-muted-foreground">
                 {description}
               </p>
             )}
           </motion.div>
-          
+
           {headerActions && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
@@ -83,7 +82,7 @@ export const BasePageTemplate = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className={cn("w-full mx-auto", maxWidthClass)}
+        className={cn("mx-auto w-full", maxWidthClass)}
       >
         {children}
       </motion.div>

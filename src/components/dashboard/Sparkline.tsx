@@ -59,11 +59,7 @@ export const Sparkline = memo(function Sparkline({
       aria-hidden="true"
     >
       {/* Area fill */}
-      <path
-        d={areaPath}
-        fill={color}
-        fillOpacity={0.1}
-      />
+      <path d={areaPath} fill={color} fillOpacity={0.1} />
       {/* Line */}
       <path
         d={path}

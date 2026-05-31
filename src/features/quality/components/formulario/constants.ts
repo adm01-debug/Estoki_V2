@@ -8,4 +8,4 @@ export const checklistItems = [
   { id: "funcionalidadeOk", label: "Funcionalidade OK" },
 ];
 
-export type StatusTriagem = 'em_andamento' | 'aprovado' | 'ressalva' | 'reprovado';
+export type StatusTriagem = "em_andamento" | "aprovado" | "ressalva" | "reprovado";

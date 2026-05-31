@@ -2,10 +2,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Search, Star, TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from "recharts";
 import { Fornecedor, ClassificacaoFornecedor } from "@/hooks/useFornecedores";
 
 const classificacaoConfig: Record<ClassificacaoFornecedor, { label: string; color: string }> = {
@@ -15,7 +40,12 @@ const classificacaoConfig: Record<ClassificacaoFornecedor, { label: string; colo
   D: { label: "Crítico", color: "text-red-600" },
 };
 
-const COLORS = ['hsl(142, 76%, 36%)', 'hsl(221, 83%, 53%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)'];
+const COLORS = [
+  "hsl(142, 76%, 36%)",
+  "hsl(221, 83%, 53%)",
+  "hsl(38, 92%, 50%)",
+  "hsl(0, 84%, 60%)",
+];
 
 interface Props {
   fornecedoresFiltrados: Fornecedor[];
@@ -33,27 +63,50 @@ const getTendenciaIcon = (tendencia?: string) => {
   return <Minus className="h-4 w-4 text-gray-400" />;
 };
 
-export function FornecedoresVisaoGeral({ fornecedoresFiltrados, dadosClassificacao, dadosQualidade, searchTerm, classificacaoFilter, onSearchChange, onClassificacaoChange }: Props) {
+export function FornecedoresVisaoGeral({
+  fornecedoresFiltrados,
+  dadosClassificacao,
+  dadosQualidade,
+  searchTerm,
+  classificacaoFilter,
+  onSearchChange,
+  onClassificacaoChange,
+}: Props) {
   return (
     <div className="space-y-4">
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card>
-          <CardHeader><CardTitle className="text-base">Por Classificação</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">Por Classificação</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={dadosClassificacao} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                    {dadosClassificacao.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  <Pie
+                    data={dadosClassificacao}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                  >
+                    {dadosClassificacao.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
                   </Pie>
-                  <Tooltip /><Legend />
+                  <Tooltip />
+                  <Legend />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader><CardTitle className="text-base">Top Fornecedores</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">Top Fornecedores</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
@@ -61,7 +114,8 @@ export function FornecedoresVisaoGeral({ fornecedoresFiltrados, dadosClassificac
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="nome" type="category" width={80} />
-                  <Tooltip /><Legend />
+                  <Tooltip />
+                  <Legend />
                   <Bar dataKey="qualidade" name="Qualidade" fill={COLORS[0]} radius={4} />
                   <Bar dataKey="pontualidade" name="Pontualidade" fill={COLORS[1]} radius={4} />
                 </BarChart>
@@ -72,12 +126,20 @@ export function FornecedoresVisaoGeral({ fornecedoresFiltrados, dadosClassificac
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Buscar fornecedor..." value={searchTerm} onChange={(e) => onSearchChange(e.target.value)} className="pl-9" />
+        <div className="relative min-w-[200px] flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar fornecedor..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9"
+          />
         </div>
         <Select value={classificacaoFilter} onValueChange={onClassificacaoChange}>
-          <SelectTrigger className="w-[150px]"><Star className="h-4 w-4 mr-2" /><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-[150px]">
+            <Star className="mr-2 h-4 w-4" />
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="todos">Todas</SelectItem>
             <SelectItem value="A">Classe A</SelectItem>
@@ -89,11 +151,12 @@ export function FornecedoresVisaoGeral({ fornecedoresFiltrados, dadosClassificac
       </div>
 
       <Card>
-        <CardContent className="p-0 overflow-x-auto">
+        <CardContent className="overflow-x-auto p-0">
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Fornecedor</TableHead><TableHead>Classe</TableHead>
+                <TableHead>Fornecedor</TableHead>
+                <TableHead>Classe</TableHead>
                 <TableHead className="text-right">Qualidade</TableHead>
                 <TableHead className="text-right">Pontualidade</TableHead>
                 <TableHead className="text-center">Tendência</TableHead>
@@ -101,23 +164,31 @@ export function FornecedoresVisaoGeral({ fornecedoresFiltrados, dadosClassificac
             </TableHeader>
             <TableBody>
               {fornecedoresFiltrados.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Nenhum fornecedor encontrado</TableCell></TableRow>
+                <TableRow>
+                  <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                    Nenhum fornecedor encontrado
+                  </TableCell>
+                </TableRow>
               ) : (
                 fornecedoresFiltrados.map((f) => {
                   const cls = classificacaoConfig[f.classificacao];
                   return (
                     <TableRow key={f.id}>
                       <TableCell className="font-medium">{f.nome}</TableCell>
-                      <TableCell><Badge variant="outline" className={cls.color}>{f.classificacao} - {cls.label}</Badge></TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={cls.color}>
+                          {f.classificacao} - {cls.label}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Progress value={f.percentual_qualidade} className="w-20 h-2" />
+                          <Progress value={f.percentual_qualidade} className="h-2 w-20" />
                           <span className="text-sm">{f.percentual_qualidade.toFixed(1)}%</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Progress value={f.percentual_pontualidade} className="w-20 h-2" />
+                          <Progress value={f.percentual_pontualidade} className="h-2 w-20" />
                           <span className="text-sm">{f.percentual_pontualidade.toFixed(1)}%</span>
                         </div>
                       </TableCell>
