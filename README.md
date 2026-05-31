@@ -73,11 +73,11 @@ src/
 
 ## 📚 Documentação
 
-- [Guia de Desenvolvimento](docs/DEVELOPMENT.md)
-- [Guia do Administrador](docs/ADMIN_GUIDE.md)
-- [Integrações](docs/INTEGRATIONS.md)
-- [Schema do Banco](docs/DATABASE_SCHEMA.md)
-- [CI/CD Setup](docs/CI_CD_SETUP.md)
+- [📖 Arquitetura do Sistema](docs/ARCHITECTURE.md) - Fluxo de dados e infraestrutura
+- [🛤️ Roadmap](docs/ROADMAP.md) - Próximos passos e metas
+- [🛡️ Segurança](docs/SECURITY.md) - Políticas RLS e Proteção de Dados
+- [🧪 Auditoria](docs/audit/audit_report.md) - Últimos relatórios técnicos
+
 
 ## 🤝 Contribuindo
 
