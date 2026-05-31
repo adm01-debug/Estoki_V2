@@ -17,7 +17,6 @@ export async function apiGet<T>(table: string, query?: Record<string, unknown>):
 }
 
 export async function apiGetById<T>(table: string, id: string): Promise<T | null> {
-   
   const { data, error } = await supabase
     .from(table as any)
     .select("*")
@@ -28,7 +27,6 @@ export async function apiGetById<T>(table: string, id: string): Promise<T | null
 }
 
 export async function apiCreate<T>(table: string, payload: Partial<T>): Promise<T> {
-   
   const { data: result, error } = await supabase
     .from(table as any)
     .insert(payload as any)
@@ -39,7 +37,6 @@ export async function apiCreate<T>(table: string, payload: Partial<T>): Promise<
 }
 
 export async function apiUpdate<T>(table: string, id: string, payload: Partial<T>): Promise<T> {
-   
   const { data: result, error } = await supabase
     .from(table as any)
     .update(payload as any)
@@ -51,7 +48,6 @@ export async function apiUpdate<T>(table: string, id: string, payload: Partial<T
 }
 
 export async function apiDelete(table: string, id: string): Promise<void> {
-   
   const { error } = await supabase
     .from(table as any)
     .delete()
