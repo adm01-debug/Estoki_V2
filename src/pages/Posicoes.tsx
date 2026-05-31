@@ -76,7 +76,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
   const [selectedPosicao, setSelectedPosicao] = useState<PosicaoEstoque | null>(null);
 
   const filtered = useMemo(() => {
-    return posicoes.filter((p: any) => {
+    return (Array.isArray(posicoes) ? posicoes : []).filter((p: any) => {
       const matchSearch = !search || p.codigo.toLowerCase().includes(search.toLowerCase());
       const matchStatus = statusFilter === "todos" || p.status === statusFilter;
       const matchTipo = tipoFilter === "todos" || p.tipo === tipoFilter;
@@ -84,7 +84,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
     });
   }, [posicoes, search, statusFilter, tipoFilter]);
 
-  const stats = useMemo(() => getEstatisticas(), [posicoes, getEstatisticas]);
+  const stats = useMemo(() => getEstatisticas(), [getEstatisticas]);
 
   if (loading) {
     return (

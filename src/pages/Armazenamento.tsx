@@ -155,7 +155,7 @@ const ArmazenamentoPage = () => {
     checkCrossDocking();
   }, [item.sku]);
 
-  const sugestoes = useMemo(() => calcularSugestoes(posicoes || [], item), [posicoes, item]);
+  const sugestoes = useMemo(() => calcularSugestoes(Array.isArray(posicoes) ? posicoes : [], item), [posicoes, item]);
   const top3 = sugestoes.slice(0, 3);
   const melhorSugestao = top3[0];
 
