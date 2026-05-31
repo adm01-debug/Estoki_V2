@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,7 +8,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
-
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
 import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
@@ -16,6 +15,8 @@ import { Sidebar } from "@/components/organisms/layout/Sidebar";
 import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
 import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
 import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
+import { PerformanceHUD } from "../telemetry/PerformanceHUD";
+
 
 const AppLayoutContext = createContext(false);
 
@@ -178,7 +179,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
           <OnboardingTour />
           <ShortcutsHUD />
+          <PerformanceHUD />
         </div>
+
       </TooltipProvider>
     </AppLayoutContext.Provider>
   );

@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
 import { logger } from '@/utils/logger';
+import { performanceService } from '@/utils/performance';
+
 import { performanceService } from '@/utils/performance';
 
  
