@@ -1,7 +1,9 @@
- import { useQuery, useQueryClient } from '@tanstack/react-query';
- import { supabase } from '@/integrations/supabase/client';
- import { useEffect } from 'react';
- import { logger } from '@/utils/logger';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
+import { logger } from '@/utils/logger';
+import { performanceService } from '@/utils/performance';
+
  
 export interface DashboardKPIs {
   totalPosicoes: number;
@@ -70,7 +72,10 @@ export const useDashboard = () => {
   const { data, isLoading, error: queryError, refetch } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const hoje = new Date().toISOString().split('T')[0];
+      const startTime = performance.now();
+      try {
+        const hoje = new Date().toISOString().split('T')[0];
+
 
       // Optimizing: Using specific count queries and only fetching necessary data
       const [
@@ -210,8 +215,14 @@ export const useDashboard = () => {
         triagensPendentes,
       };
 
-       return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
-     },
+      performanceService.track('dashboard-stats', performance.now() - startTime);
+      return { kpis, ocupacaoPP, distribuicaoStatus, movimentacoes7dias, itensParados };
+    } catch (err) {
+      performanceService.track('dashboard-stats', performance.now() - startTime, true);
+      throw err;
+    }
+    },
+
      staleTime: 2 * 60 * 1000,
      gcTime: 5 * 60 * 1000,
      retry: 2,
