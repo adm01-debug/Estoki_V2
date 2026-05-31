@@ -72,7 +72,7 @@ export const useDashboard = () => {
     queryFn: async () => {
       const hoje = new Date().toISOString().split('T')[0];
 
-      // Parallel fetches
+      // Optimizing: Using specific count queries and only fetching necessary data
       const [
         totalPosicoes,
         posicoesOcupadas,
@@ -80,7 +80,10 @@ export const useDashboard = () => {
         triagensPendentes,
         entradasHoje,
         saidasHoje,
+        // We only fetch summary data for statuses and porta-paletes if possible,
+        // but since we need a map, fetching just the necessary columns is better than everything.
         posicoesData,
+        // Limit results for items parados and giro for dashboard view
         itensParadosData,
         giroData
       ] = await Promise.all([
@@ -90,14 +93,15 @@ export const useDashboard = () => {
         getCount(supabase.from('eventos_triagem').select('id', { count: 'exact', head: true }).is('resultado', null)),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'recebido')),
         getCount(supabase.from('lotes').select('id', { count: 'exact', head: true }).eq('status', 'conferido')),
-        supabase.from('posicoes_estoque').select('porta_palete, status, secao, nivel').limit(5000),
+        supabase.from('posicoes_estoque').select('porta_palete, status').limit(2000),
         supabase.from('estoque_posicao')
-          .select('id, quantidade, posicao_id, produto_id, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
+          .select('id, quantidade, data_entrada, posicoes_estoque(codigo), produtos(sku, nome, peso_unitario)')
           .order('data_entrada', { ascending: true })
-          .limit(100),
+          .limit(50),
         supabase.from('rastreamento_historico')
-          .select('id, tipo_evento, created_at')
+          .select('id')
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString())
+          .limit(1) // Just to get count via length if not using head
       ]);
 
       const taxaOcupacao = totalPosicoes > 0 ? Math.round((posicoesOcupadas / totalPosicoes) * 100) : 0;
