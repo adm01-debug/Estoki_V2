@@ -1,5 +1,5 @@
 import { forwardRef, memo } from 'react';
-  import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton, SkeletonPulse } from './PageSkeleton';
+import { DashboardSkeleton, TableSkeleton, FormSkeleton, ListSkeleton, CardSkeleton, EstoqueSkeleton, SkeletonPulse } from './PageSkeleton';
 import { LoadingFallback } from './LoadingFallback';
 
   type PageType = 'dashboard' | 'estoque' | 'hub' | 'table' | 'form' | 'list' | 'card' | 'default';
@@ -12,9 +12,9 @@ import { LoadingFallback } from './LoadingFallback';
  * Route-specific loading fallback that shows contextual skeletons
  * based on the type of page being loaded.
  */
-  import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
  
- export const RouteLoadingFallback = memo(
+export const RouteLoadingFallback = memo(
    forwardRef<HTMLDivElement, RouteLoadingFallbackProps>(
      function RouteLoadingFallback({ type = 'default' }, ref) {
        const content = (() => {

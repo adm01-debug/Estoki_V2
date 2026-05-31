@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 
 // ── Skeleton Base ────────────────────────────────────────
 
- export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className }: { className?: string }) {
    return (
      <div 
        className={cn(

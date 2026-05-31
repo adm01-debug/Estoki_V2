@@ -6,7 +6,7 @@ export const features = [
   { icon: Users, title: "Gestão de Equipe", desc: "Gamificação e performance dos operadores" },
 ];
 
- export const BrandingContent = () => (
+export const BrandingContent = () => (
    <div className="hidden lg:flex flex-col justify-between relative z-10 w-1/2 p-10 xl:p-16 overflow-hidden">
      {/* Professional Background Pattern */}
      <div className="absolute inset-0 z-[-1] opacity-5">

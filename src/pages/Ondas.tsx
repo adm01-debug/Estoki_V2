@@ -1,6 +1,6 @@
- import { OndasCharts } from "@/components/charts/WMSModuleCharts";
- import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
- import { Download } from "lucide-react";
+import { OndasCharts } from "@/components/charts/WMSModuleCharts";
+import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
+import { Download } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";

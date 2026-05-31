@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { useToast } from './use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 interface Notification {
   id: string;
@@ -17,7 +16,7 @@ export function useNotifications() {
   const { toast } = useToast();
 
   const markAsRead = useCallback(async (id: string) => {
-    setNotifications(prev => 
+    setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
     setUnreadCount(prev => Math.max(0, prev - 1));

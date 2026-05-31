@@ -1,6 +1,6 @@
- import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
- import { memo } from "react";
- import { tooltipStyle } from "./chartStyles";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { memo } from "react";
+import { tooltipStyle } from "./chartStyles";
 
 interface DataPoint { name: string; value: number; }
 

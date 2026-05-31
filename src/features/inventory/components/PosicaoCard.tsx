@@ -1,18 +1,18 @@
- import { memo, useState } from "react";
- import { Card, CardContent } from "@/components/ui/card";
- import { StatusBadge, getStatusVariant } from "@/components/ui/status-badge";
- import { Package, Info, MapPin, Layers } from "lucide-react";
- import { cn } from "@/lib/utils";
- import { motion, useReducedMotion } from "framer-motion";
- import {
+import { memo, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { StatusBadge, getStatusVariant } from "@/components/ui/status-badge";
+import { Package, Info, MapPin, Layers } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { motion, useReducedMotion } from "framer-motion";
+import {
    Dialog,
    DialogContent,
    DialogHeader,
    DialogTitle,
  } from "@/components/ui/dialog";
- import { Progress } from "@/components/ui/progress";
- import { Separator } from "@/components/ui/separator";
- import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
  
  interface Posicao {
    id?: string;
@@ -30,7 +30,7 @@
    onClick?: () => void;
  }
  
- export const PosicaoCard = memo(function PosicaoCard({ codigo, status, tipo, ocupacao = 0, onClick }: PosicaoCardProps) {
+export const PosicaoCard = memo(function PosicaoCard({ codigo, status, tipo, ocupacao = 0, onClick }: PosicaoCardProps) {
    const [showDetails, setShowDetails] = useState(false);
    const shouldReduceMotion = useReducedMotion();
  

@@ -1,5 +1,5 @@
- import { useState, useEffect, useMemo } from "react";
- import { useParams, useNavigate } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Check, AlertTriangle, Package, Loader2, QrCode, TrendingUp, History, BarChart3, Filter, Download, Info, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,10 +11,10 @@ import { useRecebimentos } from "../hooks/useRecebimentos";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { BalancaCard } from "@/components/conferencia/BalancaCard";
- import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
- import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
-  import { PersistentStepper } from "@/components/molecules/navigation/PersistentStepper";
- import { LeaveGuard } from "@/components/common/LeaveGuard";
+import { ConferenciaForm } from "@/components/conferencia/ConferenciaForm";
+import { statusConfig } from "@/components/conferencia/conferenciaHelpers";
+import { PersistentStepper } from "@/components/molecules/navigation/PersistentStepper";
+import { LeaveGuard } from "@/components/common/LeaveGuard";
 import { Recebimento, TipoEmbalagem, VolumeData } from "@/components/conferencia/types";
 import { Mic, MicOff, Printer } from "lucide-react";
 

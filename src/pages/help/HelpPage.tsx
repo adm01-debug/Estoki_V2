@@ -1,12 +1,12 @@
- import { AppLayout } from "@/components/layout/AppLayout";
- import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
- import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
- import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
- import { Button } from "@/components/ui/button";
- import { BookOpen, LifeBuoy, MessageSquare, Video, Search } from "lucide-react";
- import { Input } from "@/components/ui/input";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { BookOpen, LifeBuoy, MessageSquare, Video, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
- export default function HelpPage() {
+export default function HelpPage() {
    const faqs = [
      { q: "Como realizar um inventário cíclico?", a: "Vá em Estoque > Inventário Cíclico, selecione as posições e siga o passo a passo de conferência cega." },
      { q: "O que fazer em caso de divergência no recebimento?", a: "Abra a triagem do lote, registre as fotos do produto e marque como 'Divergente' para que o supervisor possa validar." },

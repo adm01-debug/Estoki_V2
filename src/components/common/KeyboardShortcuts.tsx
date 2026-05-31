@@ -1,8 +1,8 @@
- import React, { useState } from 'react';
- import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcuts';
- import { KeyboardShortcutsHelp } from '@/components/ui/keyboard-shortcuts-help';
+import React, { useState } from 'react';
+import { useKeyboardShortcut } from '@/hooks/use-keyboard-shortcuts';
+import { KeyboardShortcutsHelp } from '@/components/ui/keyboard-shortcuts-help';
  
- export function KeyboardShortcuts() {
+export function KeyboardShortcuts() {
    const [showHelp, setShowHelp] = useState(false);
  
    useKeyboardShortcut('?', () => {

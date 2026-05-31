@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { memo } from "react";
 import { motion } from "framer-motion";
 
- export const EstoqueSkeleton = memo(function EstoqueSkeleton() {
+export const EstoqueSkeleton = memo(function EstoqueSkeleton() {
    return (
      <div className="p-4 md:p-6 lg:p-8 space-y-6">
        {/* Header Actions */}
@@ -51,7 +51,7 @@ import { motion } from "framer-motion";
    );
  });
  
-  export function SkeletonPulse({ className, delay = 0 }: { className?: string; delay?: number }) {
+export function SkeletonPulse({ className, delay = 0 }: { className?: string; delay?: number }) {
     return (
     <motion.div 
       initial={{ opacity: 0.3 }}
@@ -70,7 +70,7 @@ import { motion } from "framer-motion";
     );
   }
 
- export const DashboardSkeleton = memo(function DashboardSkeleton() {
+export const DashboardSkeleton = memo(function DashboardSkeleton() {
    return (
      <div className="p-4 md:p-6 lg:p-8 space-y-6">
        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
@@ -119,7 +119,7 @@ import { motion } from "framer-motion";
    );
  });
  
- export const ListSkeleton = memo(function ListSkeleton() {
+export const ListSkeleton = memo(function ListSkeleton() {
    return (
      <div className="space-y-4">
        {Array.from({ length: 5 }).map((_, i) => (
@@ -135,7 +135,7 @@ import { motion } from "framer-motion";
    );
  });
  
- export const CardSkeleton = memo(function CardSkeleton() {
+export const CardSkeleton = memo(function CardSkeleton() {
    return (
      <div className="p-4 rounded-xl bg-card border border-border space-y-3">
        <SkeletonPulse className="h-4 w-1/3" />

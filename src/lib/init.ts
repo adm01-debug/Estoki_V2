@@ -1,9 +1,9 @@
  // App Initialization
- import { initializeApp as initConfig } from '@/config';
- import { registerServiceWorker, requestNotificationPermission } from '@/lib/register-sw';
- import { setupGlobalErrorHandler } from '@/config/error-handler';
- import { initPerformanceTracking } from '@/config/analytics';
- import { logger } from '@/utils/logger';
+import { initializeApp as initConfig } from '@/config';
+import { registerServiceWorker, requestNotificationPermission } from '@/lib/register-sw';
+import { setupGlobalErrorHandler } from '@/config/error-handler';
+import { initPerformanceTracking } from '@/config/analytics';
+import { logger } from '@/utils/logger';
  
 interface InitOptions {
   enablePWA?: boolean;
@@ -61,7 +61,7 @@ export async function initializeApp(options: InitOptions = {}): Promise<void> {
 }
 
  // Check if app is running as PWA
- export function isRunningAsPWA(): boolean {
+export function isRunningAsPWA(): boolean {
    return window.matchMedia('(display-mode: standalone)').matches ||
           ('standalone' in window.navigator && (window.navigator as Navigator & { standalone?: boolean }).standalone === true);
  }

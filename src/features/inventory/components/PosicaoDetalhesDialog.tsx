@@ -1,6 +1,6 @@
 import { useMemo } from "react";
- import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
- import { X, MapPin, Package, AlertTriangle, Clock, Loader2, History, User } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { X, MapPin, Package, AlertTriangle, Clock, Loader2, History, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";

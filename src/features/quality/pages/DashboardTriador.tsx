@@ -24,8 +24,8 @@ import {
   History,
   ShieldCheck,
 } from "lucide-react";
- import { Button } from "@/components/ui/button";
- import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   AreaChart,
   Area,

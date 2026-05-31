@@ -30,7 +30,7 @@ interface UseExportResult {
   error: Error | null;
 }
 
-export function useExport<T extends Record<string, any>>(
+export function useTableExport<T extends Record<string, any>>(
   options: ExportOptions<T>
 ): UseExportResult {
   const {

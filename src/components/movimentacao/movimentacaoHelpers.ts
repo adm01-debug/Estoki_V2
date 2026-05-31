@@ -1,7 +1,7 @@
- import { ArrowRight, Package, Truck, RotateCcw, ClipboardEdit, RefreshCw } from "lucide-react";
+import { ArrowRight, Package, Truck, RotateCcw, ClipboardEdit, RefreshCw } from "lucide-react";
 import type { TipoMovimentacao } from "@/types/movimentacao";
 
- export const tiposMovimento: Array<{ value: TipoMovimentacao; label: string; icon: any }> = [
+export const tiposMovimento: Array<{ value: TipoMovimentacao; label: string; icon: any }> = [
    { value: "armazenamento", label: "Alocação", icon: Package },
    { value: "transferencia", label: "Remanejamento", icon: RefreshCw },
    { value: "separacao", label: "Separação", icon: ArrowRight },
@@ -10,7 +10,7 @@ import type { TipoMovimentacao } from "@/types/movimentacao";
    { value: "ajuste_estoque", label: "Ajuste", icon: ClipboardEdit },
  ];
 
- export const tipoIcons: Record<string, string> = {
+export const tipoIcons: Record<string, string> = {
    recebimento_nf: "📥",
    conferencia: "✅",
    triagem_inicio: "🔍",
@@ -27,7 +27,7 @@ import type { TipoMovimentacao } from "@/types/movimentacao";
    ajuste_estoque: "⚖️",
  };
 
- export const tipoLabels: Record<string, string> = {
+export const tipoLabels: Record<string, string> = {
    recebimento_nf: "Entrada (NF)",
    conferencia: "Conferência",
    triagem_inicio: "Triagem",

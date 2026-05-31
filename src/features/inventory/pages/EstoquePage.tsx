@@ -5,7 +5,7 @@ import { useAuditLog } from "@/hooks/useAuditLog";
 import { GeradorEtiquetas } from "@/components/etiquetas/GeradorEtiquetas";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
- import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle, MapPin } from "lucide-react";
+import { QrCode, Warehouse, Search, X, Layers, Package, Box, Plus, Lock, Unlock, CheckSquare, AlertTriangle, MapPin } from "lucide-react";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,18 +18,18 @@ import { EstoqueVirtualList } from "../components/estoque-page/EstoqueVirtualLis
 import { toast } from "sonner";
 import { NovaPosicaoDialog } from "../components/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "../components/PosicaoDetalhesDialog";
- import { EstoqueStatsCards } from "../components/EstoqueStatsCards";
- import { EstoqueFilterSheet } from "../components/EstoqueFilterSheet";
- import { EstoqueMapaTab } from "../components/EstoqueMapaTab";
- import { AlertaPerdaLogistica } from "../components/AlertaPerdaLogistica";
- import { MapaCalorOcupacao } from "../components/MapaCalorOcupacao";
+import { EstoqueStatsCards } from "../components/EstoqueStatsCards";
+import { EstoqueFilterSheet } from "../components/EstoqueFilterSheet";
+import { EstoqueMapaTab } from "../components/EstoqueMapaTab";
+import { AlertaPerdaLogistica } from "../components/AlertaPerdaLogistica";
+import { MapaCalorOcupacao } from "../components/MapaCalorOcupacao";
 import { differenceInDays } from "date-fns";
 import { ArrowRight, History } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef } from "react";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
- import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
- import { EmptyState, emptyStates } from "@/components/common/EmptyState";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { EmptyState, emptyStates } from "@/components/common/EmptyState";
 import { haptics } from "@/utils/haptics";
 
 interface Filters { status: StatusPosicao[]; ruas: string[]; niveis: string[]; search: string; }

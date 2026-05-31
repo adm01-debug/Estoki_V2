@@ -1,4 +1,4 @@
- import { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -41,7 +41,7 @@ const statusLabels: Record<StatusPosicao, { label: string; variant: "default" | 
   bloqueado: { label: "Bloqueado", variant: "destructive" },
 };
 
- export default function PosicoesPage() {
+export default function PosicoesPage() {
    const { posicoes: rawPosicoes, loading, updatePosicao, getEstatisticas, refetch } = useEstoque();
    const [selectedIds, setSelectedIds] = useState<string[]>([]);
    const toggleSelection = (id: string) => {

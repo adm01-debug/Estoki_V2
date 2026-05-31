@@ -1,4 +1,4 @@
- import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart, History, X, Shield, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +15,7 @@ import {
   CommandSeparator,
    CommandShortcut,
  } from "@/components/ui/command";
- import { SkeletonPulse } from "./PageSkeleton";
+import { SkeletonPulse } from "./PageSkeleton";
 
 interface SearchResult {
   id: string;
@@ -31,7 +31,7 @@ const typeConfig = {
   pedido: { icon: FileText, label: "Pedido", color: "text-purple-500", route: "/pedidos" },
 };
 
- export function GlobalSearch() {
+export function GlobalSearch() {
    const [open, setOpen] = useState(false);
    const [query, setQuery] = useState("");
    const [results, setResults] = useState<SearchResult[]>([]);

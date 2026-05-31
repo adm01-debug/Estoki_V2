@@ -1,14 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, getStatusVariant } from "@/components/ui/status-badge";
 import { formatRelativeTime } from "@/utils/date";
- import { FileSearch, Clock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
- import { motion, useReducedMotion } from "framer-motion";
- import { cn } from "@/lib/utils";
- import { Progress } from "@/components/ui/progress";
+import { FileSearch, Clock, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { Progress } from "@/components/ui/progress";
 
 interface TriagemCardProps { triagem: any; onClick?: () => void; }
 
- export function TriagemCard({ triagem, onClick }: TriagemCardProps) {
+export function TriagemCard({ triagem, onClick }: TriagemCardProps) {
    const shouldReduceMotion = useReducedMotion();
    const progresso = (triagem.quantidade_aprovada || 0) / triagem.quantidade_total * 100;
  

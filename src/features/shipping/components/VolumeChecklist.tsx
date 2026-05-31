@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-  import { Package, ClipboardCheck, AlertTriangle, QrCode, ShieldCheck, MapPin, Search } from "lucide-react";
-  import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-  import { Input } from "@/components/ui/input";
+import { Package, ClipboardCheck, AlertTriangle, QrCode, ShieldCheck, MapPin, Search } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
- import { Button } from "@/components/ui/button";
- import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface VolumeItem {
   id: string;

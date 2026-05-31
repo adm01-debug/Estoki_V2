@@ -1,18 +1,18 @@
- import { useState } from 'react';
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
- import { Button } from '@/components/ui/button';
- import { useAuth } from '@/contexts/AuthContext';
- import { AppLayout } from '@/components/layout/AppLayout';
- import { PageTransition } from '@/components/layout/PageTransition';
- import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
- import { Badge } from '@/components/ui/badge';
- import { Input } from '@/components/ui/input';
- import { Label } from '@/components/ui/label';
- import { User, Mail, Shield, Save, Key, Clock, LogOut, Settings, Laptop, Globe, Calendar } from 'lucide-react';
- import { toast } from 'sonner';
- import { cn } from '@/lib/utils';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { PageTransition } from '@/components/layout/PageTransition';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { User, Mail, Shield, Save, Key, Clock, LogOut, Settings, Laptop, Globe, Calendar } from 'lucide-react';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
  
- export default function ProfilePage() {
+export default function ProfilePage() {
    const { profile, role, user, signOut } = useAuth();
    const [isEditing, setIsEditing] = useState(false);
    const [nome, setNome] = useState(profile?.nome || '');

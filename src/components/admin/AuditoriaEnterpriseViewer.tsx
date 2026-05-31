@@ -1,9 +1,9 @@
- import { useState } from "react";
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
- import { Button } from "@/components/ui/button";
- import { ScrollArea } from "@/components/ui/scroll-area";
- import { FileText, Download, ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
- import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { FileText, Download, ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
  
  const AUDITORIA_CONTENT = `# RELATÓRIO DE AUDITORIA ENTERPRISE - INVENTÁRIO DE SISTEMA
  
@@ -82,7 +82,7 @@
  ---
  *Documento gerado automaticamente via Auditoria Enterprise - v3.0*`;
  
- export function AuditoriaEnterpriseViewer() {
+export function AuditoriaEnterpriseViewer() {
    const downloadRelatorio = () => {
      const element = document.createElement("a");
      const file = new Blob([AUDITORIA_CONTENT], { type: 'text/markdown' });

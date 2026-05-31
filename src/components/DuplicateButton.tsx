@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Copy, Loader2 } from 'lucide-react';
- import { useDuplicate, type TableName } from '@/hooks/useDuplicate';
+import { useDuplicate, type TableName } from '@/hooks/useDuplicate';
  
  interface DuplicateButtonProps<T extends Record<string, unknown> & { id: string }> {
    item: T;
@@ -11,7 +11,7 @@ import { Copy, Loader2 } from 'lucide-react';
   size?: 'default' | 'sm' | 'icon';
 }
 
- export function DuplicateButton<T extends Record<string, unknown> & { id: string }>({
+export function DuplicateButton<T extends Record<string, unknown> & { id: string }>({
    item, tableName, queryKey, onSuccess, variant = 'ghost', size = 'icon'
  }: DuplicateButtonProps<T>) {
    const { duplicate, isDuplicating: isPending } = useDuplicate<T>({ table: tableName, queryKey });

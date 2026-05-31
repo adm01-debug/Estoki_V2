@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
- import { logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
  
- export function useAnalytics() {
+export function useAnalytics() {
   const track = useCallback((event: string, data?: Record<string, unknown>) => {
      if (typeof window !== 'undefined' && window.gtag) {
        window.gtag('event', event, data);

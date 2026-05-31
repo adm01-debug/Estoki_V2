@@ -1,13 +1,13 @@
- import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
- import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
- import { ScrollArea } from "@/components/ui/scroll-area";
- import { useQuery } from "@tanstack/react-query";
- import { supabase } from "@/integrations/supabase/client";
- import { format } from "date-fns";
- import { ptBR } from "date-fns/locale";
- import { History, Info, Package, ArrowUpRight, ArrowDownLeft, RefreshCcw, Loader2 } from "lucide-react";
- import type { ReactNode } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { History, Info, Package, ArrowUpRight, ArrowDownLeft, RefreshCcw, Loader2 } from "lucide-react";
+import type { ReactNode } from "react";
 
 import type { Produto } from "@/types/product";
 

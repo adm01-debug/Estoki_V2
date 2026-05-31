@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
- import { toast } from 'sonner';
- import type { SerialPort } from '@/types/web-serial';
- import { logger } from '@/utils/logger';
+import { toast } from 'sonner';
+import type { SerialPort } from '@/types/web-serial';
+import { logger } from '@/utils/logger';
 
 export interface BalancaConfig {
   baudRate: number;

@@ -1,7 +1,7 @@
- import { useEffect, useRef, useCallback, useState } from 'react';
- import { RealtimeChannel } from '@supabase/supabase-js';
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
- export function useChannel<T = unknown>(channelName: string) {
+export function useChannel<T = unknown>(channelName: string) {
    const [messages, setMessages] = useState<T[]>([]);
    const channelRef = useRef<RealtimeChannel | null>(null);
   useEffect(() => {

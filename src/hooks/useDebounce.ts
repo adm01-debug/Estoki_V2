@@ -16,7 +16,7 @@ export function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
- export function useDebouncedCallback<Args extends unknown[], R>(
+export function useDebouncedCallback<Args extends unknown[], R>(
    callback: (...args: Args) => R,
    delay: number
  ): (...args: Args) => void {

@@ -14,7 +14,7 @@ interface MovimentacaoDetalhesFormProps {
   setFormErrors: (fn: (prev: any) => any) => void;
 }
 
- export function MovimentacaoDetalhesForm({ formData, setFormData, formErrors, setFormErrors, tipoMovimento }: MovimentacaoDetalhesFormProps & { tipoMovimento?: string }) {
+export function MovimentacaoDetalhesForm({ formData, setFormData, formErrors, setFormErrors, tipoMovimento }: MovimentacaoDetalhesFormProps & { tipoMovimento?: string }) {
    const isTransfer = tipoMovimento === "transferencia" || tipoMovimento === "armazenamento";
 
   return (

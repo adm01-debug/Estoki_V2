@@ -1,8 +1,8 @@
- import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Package, Search, Warehouse, FileText, ClipboardList, ArrowRight, type LucideIcon } from "lucide-react";
- import { motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface EmptyStateProps {
   icon: LucideIcon;

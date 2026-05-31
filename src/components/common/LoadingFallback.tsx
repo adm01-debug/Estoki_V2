@@ -1,8 +1,8 @@
- import { forwardRef } from 'react';
- import { Loader2 } from 'lucide-react';
- import { motion } from 'framer-motion';
+import { forwardRef } from 'react';
+import { Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
  
- export const LoadingFallback = forwardRef<HTMLDivElement>(function LoadingFallback(_props, ref) {
+export const LoadingFallback = forwardRef<HTMLDivElement>(function LoadingFallback(_props, ref) {
    return (
      <div ref={ref} className="min-h-[60vh] flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm rounded-xl border border-border/10 p-12">
        <motion.div 

@@ -1,9 +1,9 @@
- import { motion } from "framer-motion";
- import { Activity, ShieldCheck, Database, Wifi, Clock } from "lucide-react";
- import { useEffect, useState } from "react";
- import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Activity, ShieldCheck, Database, Wifi, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
  
-  export function SystemHealthMonitor() {
+export function SystemHealthMonitor() {
     const [latency, setLatency] = useState<number>(18);
     const [lastSync, setLastSync] = useState(new Date());
   

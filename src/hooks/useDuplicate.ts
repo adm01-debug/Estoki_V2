@@ -1,9 +1,9 @@
- import { useMutation, useQueryClient } from "@tanstack/react-query";
- import { supabase } from "@/integrations/supabase/client";
- import { toast } from "sonner";
- import { Database } from "@/integrations/supabase/types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
  
- export type TableName = keyof Database['public']['Tables'];
+export type TableName = keyof Database['public']['Tables'];
  
  interface DuplicateOptions<T extends Record<string, unknown>> {
    table: TableName;
@@ -23,7 +23,7 @@ const DEFAULT_EXCLUDE_FIELDS = [
   "deleted_at",
 ];
 
- export function useDuplicate<T extends Record<string, unknown>>(
+export function useDuplicate<T extends Record<string, unknown>>(
   options: DuplicateOptions<T>
 ) {
   const {

@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-  import { CheckCircle2, Clock, Truck, Package, MapPin, AlertCircle, FileText, Camera, MoreHorizontal } from "lucide-react";
-  import { motion, useReducedMotion } from "framer-motion";
-  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-  import { Button } from "@/components/ui/button";
+import { CheckCircle2, Clock, Truck, Package, MapPin, AlertCircle, FileText, Camera, MoreHorizontal } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -16,7 +16,7 @@ interface TimelineEvent {
   icon: any;
 }
 
- export function ExpedicaoTimeline() {
+export function ExpedicaoTimeline() {
    const shouldReduceMotion = useReducedMotion();
  
   const events: TimelineEvent[] = [

@@ -1,14 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
 
- import { Database } from "@/integrations/supabase/types";
+import { Database } from "@/integrations/supabase/types";
  
  type Lote = Database['public']['Tables']['lotes']['Row'];
  type LoteInsert = Database['public']['Tables']['lotes']['Insert'];
  type LoteUpdate = Database['public']['Tables']['lotes']['Update'];
  
- export type BatchStatus = Database['public']['Enums']['status_recebimento'] | 'ativo' | 'vencido' | 'esgotado';
+export type BatchStatus = Database['public']['Enums']['status_recebimento'] | 'ativo' | 'vencido' | 'esgotado';
  
- export interface Batch {
+export interface Batch {
    id: string;
    codigo: string;
    produto_id: string;

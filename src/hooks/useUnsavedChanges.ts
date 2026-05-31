@@ -1,7 +1,7 @@
- import { useEffect } from 'react';
- import { useBlocker } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useBlocker } from 'react-router-dom';
  
- export function useUnsavedChanges(hasChanges: boolean, message = "Você tem alterações não salvas. Tem certeza que deseja sair?") {
+export function useUnsavedChanges(hasChanges: boolean, message = "Você tem alterações não salvas. Tem certeza que deseja sair?") {
    // Handle browser refresh/close
    useEffect(() => {
      const handleBeforeUnload = (e: BeforeUnloadEvent) => {

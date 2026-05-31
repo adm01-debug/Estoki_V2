@@ -1,10 +1,10 @@
- import { memo, useCallback } from "react";
+import { memo, useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
 import type { NavItem } from "./sidebarNavData";
- import { useSound } from "@/hooks/useSound";
- import { useHaptics } from "@/hooks/useHaptics";
+import { useSound } from "@/hooks/useSound";
+import { useHaptics } from "@/hooks/useHaptics";
 
 interface SidebarNavButtonProps {
   item: NavItem;
@@ -14,7 +14,7 @@ interface SidebarNavButtonProps {
   onHover?: (path: string) => void;
 }
 
- export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: SidebarNavButtonProps) {
+export const SidebarNavButton = memo(function SidebarNavButton({ item, isActive, onClick, collapsed, onHover }: SidebarNavButtonProps) {
    const { play } = useSound();
    const haptics = useHaptics();
  

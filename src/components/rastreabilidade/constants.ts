@@ -1,4 +1,4 @@
-  import { 
+import { 
     Package, 
     CheckCircle2, 
     History, 
@@ -16,7 +16,7 @@
   } from "lucide-react";
 import type { TipoMovimentacao } from "@/types/movimentacao";
 
- export const tipoLabels: Record<TipoMovimentacao, string> = {
+export const tipoLabels: Record<TipoMovimentacao, string> = {
    recebimento_nf: "Recebimento NF",
    conferencia: "Conferência",
    triagem_inicio: "Triagem Início",
@@ -46,7 +46,7 @@ import type { TipoMovimentacao } from "@/types/movimentacao";
    perda_confirmada: "Perda/Extravio"
  };
 
- export const tipoColors: Record<TipoMovimentacao, string> = {
+export const tipoColors: Record<TipoMovimentacao, string> = {
    recebimento_nf: "bg-blue-500/10 text-blue-600 border-blue-500/30",
    conferencia: "bg-purple-500/10 text-purple-600 border-purple-500/30",
    triagem_inicio: "bg-amber-500/10 text-amber-600 border-amber-500/30",
@@ -76,7 +76,7 @@ import type { TipoMovimentacao } from "@/types/movimentacao";
    perda_confirmada: "bg-black/10 text-black border-black/30"
  };
 
- export const tipoIcons: Record<TipoMovimentacao, any> = {
+export const tipoIcons: Record<TipoMovimentacao, any> = {
    recebimento_nf: Package,
    conferencia: CheckCircle2,
    triagem_inicio: History,

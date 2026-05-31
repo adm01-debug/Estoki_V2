@@ -1,8 +1,8 @@
- import React from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
 import { LucideIcon, Package, Search, FileX, Inbox } from 'lucide-react';
 import { Button } from '@/components/ui/button';
- import { motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface EmptyStateProps {
   icon?: LucideIcon;
@@ -15,7 +15,7 @@ interface EmptyStateProps {
 
 const variantIcons = { default: Inbox, search: Search, error: FileX, 'no-data': Package };
 
- export function EmptyState({ icon, title, description, action, variant = 'default', className }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, variant = 'default', className }: EmptyStateProps) {
    const Icon = icon || variantIcons[variant];
    return (
      <motion.div 

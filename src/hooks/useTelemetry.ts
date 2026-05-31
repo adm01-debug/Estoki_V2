@@ -1,12 +1,12 @@
- import { useEffect, useRef } from 'react';
- import { supabase } from '@/integrations/supabase/client';
- import { logger } from '@/utils/logger';
+import { useEffect, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
  
  /**
   * Hook para monitoramento de métricas de performance e estabilidade (DORA-lite).
   * Rastreia tempo de sessão, erros e tempo de carregamento inicial.
   */
- export function useTelemetry() {
+export function useTelemetry() {
    const startTime = useRef(performance.now());
  
    useEffect(() => {

@@ -1,15 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
- import { Badge } from "@/components/ui/badge";
- import { Button } from "@/components/ui/button";
- import { BarChart3, Wifi, Zap, Plus, Search, FileText } from "lucide-react";
- import {
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { BarChart3, Wifi, Zap, Plus, Search, FileText } from "lucide-react";
+import {
    DropdownMenu,
    DropdownMenuContent,
    DropdownMenuItem,
    DropdownMenuTrigger,
    DropdownMenuSeparator,
  } from "@/components/ui/dropdown-menu";
- import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -29,7 +29,7 @@ interface Props {
   onDashboardClick: () => void;
 }
 
- export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
+export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
    const navigate = useNavigate();
  
   return (

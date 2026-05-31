@@ -1,6 +1,6 @@
- import { useEffect, useState } from 'react';
- import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
- import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
+import { useEffect, useState } from 'react';
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
  
  interface LeaveGuardProps {
    hasChanges: boolean;
@@ -8,7 +8,7 @@
    description?: string;
  }
  
- export function LeaveGuard({ 
+export function LeaveGuard({ 
    hasChanges, 
    title = "Sair sem salvar?", 
    description = "Você tem alterações que não foram salvas. Se sair agora, essas alterações serão perdidas." 

@@ -1,4 +1,4 @@
- import { envConfig, isProduction } from '../config/environment';
+import { envConfig, isProduction } from '../config/environment';
  
  type LogLevel = 'info' | 'warn' | 'error' | 'debug';
  
@@ -53,5 +53,5 @@
    }
  }
  
- export const logger = new Logger();
- export default logger;
+export const logger = new Logger();
+export default logger;

@@ -1,4 +1,4 @@
- import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,13 @@ import { useOfflineCache } from '@/hooks/useOfflineCache';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
- import { Wifi, WifiOff, RefreshCw, Database, CloudOff, Cloud, Download, Upload, CheckCircle2, AlertTriangle, Smartphone, ShieldCheck, Clock } from 'lucide-react';
+import { Wifi, WifiOff, RefreshCw, Database, CloudOff, Cloud, Download, Upload, CheckCircle2, AlertTriangle, Smartphone, ShieldCheck, Clock } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
- import AppLayout from "@/components/layout/AppLayout";
- import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
- import { haptics } from "@/utils/haptics";
- import { SEO } from "@/components/common/SEO";
- import { cn } from "@/lib/utils";
+import AppLayout from "@/components/layout/AppLayout";
+import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
+import { haptics } from "@/utils/haptics";
+import { SEO } from "@/components/common/SEO";
+import { cn } from "@/lib/utils";
 
 interface CachedTable {
   key: string;

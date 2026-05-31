@@ -24,7 +24,7 @@ import {
    Eye,
    Copy,
  } from "lucide-react";
- import { CopyButton } from "@/components/ui/copy-button";
+import { CopyButton } from "@/components/ui/copy-button";
 import { cn } from "@/lib/utils";
 import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";

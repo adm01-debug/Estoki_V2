@@ -1,8 +1,8 @@
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
- import { Package, Timer, Truck, CheckCircle2, PauseCircle, PlayCircle, Layers, Zap, Clock } from "lucide-react";
- import { cn } from "@/lib/utils";
+import { Package, Timer, Truck, CheckCircle2, PauseCircle, PlayCircle, Layers, Zap, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TriagemHeaderCardProps {
   id?: string;

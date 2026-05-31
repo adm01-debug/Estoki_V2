@@ -1,4 +1,4 @@
- import React, { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { AlertCircle } from 'lucide-react';
@@ -24,7 +24,7 @@ export function getStatusVariant(status: string): string {
   return config?.variant || 'bg-gray-100 text-gray-800';
 }
 
- export function StatusBadge({ 
+export function StatusBadge({ 
    status, 
    variant, 
    label, 

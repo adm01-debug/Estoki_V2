@@ -23,7 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAuditLog } from "@/hooks/useAuditLog";
 import type { AuditAction, AuditLogEntry } from "@/services/auditService";
-import { useExport } from "@/hooks/useExport";
+import { useTableExport } from "@/hooks/useExport";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { 
@@ -57,7 +57,7 @@ export default function AuditLogPage() {
   const [filters, setFilters] = useState({ page: 1, pageSize: 100 });
   const { logs, isLoading, getStats } = useAuditLog(filters);
   
-  const { exportData, isExporting } = useExport<AuditLogEntry>({
+  const { exportData, isExporting } = useTableExport<AuditLogEntry>({
     table: "audit_log",
     filename: `audit_log_${format(new Date(), "yyyy-MM-dd")}`,
     columns: [

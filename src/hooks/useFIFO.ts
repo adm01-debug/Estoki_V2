@@ -8,7 +8,7 @@ import { useMemo, useCallback } from 'react';
    lote_numero?: string;
  }
  
- export function useFIFO(inventory: FIFOItem[]) {
+export function useFIFO(inventory: FIFOItem[]) {
    const sorted = useMemo(() => 
      [...inventory].sort((a, b) => new Date(a.receivedAt).getTime() - new Date(b.receivedAt).getTime()), 
      [inventory]

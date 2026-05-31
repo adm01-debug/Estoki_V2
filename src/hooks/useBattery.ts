@@ -1,4 +1,4 @@
- import { logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
 import { useState, useEffect } from 'react';
 
 interface BatteryState {
@@ -21,7 +21,7 @@ interface BatteryState {
    getBattery?: () => Promise<BatteryManager>;
  }
  
- export function useBattery() {
+export function useBattery() {
    const [battery, setBattery] = useState<BatteryState | null>(null);
  
    useEffect(() => {

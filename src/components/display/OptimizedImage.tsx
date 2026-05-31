@@ -1,13 +1,13 @@
- import React, { useState } from 'react';
- import { cn } from '@/lib/utils';
- import { Skeleton } from '@/components/ui/skeleton';
- import { ImageOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
+import { ImageOff } from 'lucide-react';
  
  interface OptimizedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
    fallback?: React.ReactNode;
  }
  
- export const OptimizedImage: React.FC<OptimizedImageProps> = ({ 
+export const OptimizedImage: React.FC<OptimizedImageProps> = ({ 
    src, 
    alt, 
    className, 

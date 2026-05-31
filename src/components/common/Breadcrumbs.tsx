@@ -1,5 +1,5 @@
- import { ChevronRight, Home } from 'lucide-react';
- import { useMemo } from 'react';
+import { ChevronRight, Home } from 'lucide-react';
+import { useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -79,7 +79,7 @@ interface BreadcrumbsProps {
   className?: string;
 }
 
- export function Breadcrumbs({ className }: BreadcrumbsProps) {
+export function Breadcrumbs({ className }: BreadcrumbsProps) {
    const location = useLocation();
    const pathname = location.pathname;
  

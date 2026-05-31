@@ -1,4 +1,4 @@
- import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -15,19 +15,15 @@ import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { haptics } from "@/utils/haptics";
-
-
-// Modularized Components
- import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
- import { ChecklistCard } from "../components/formulario/ChecklistCard";
- import { ResultadoInspecaoCard } from "../components/formulario/ResultadoInspecaoCard";
- import { checklistItems } from "../components/formulario/constants";
- import { VolumeContagem, VolumeData } from "../components/VolumeContagem";
-  import { StepProgress } from "@/components/common/StepProgress";
-  import { LeaveGuard } from "@/components/common/LeaveGuard";
-  import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
-  import { RepairControlWorkflow } from "../components/formulario/RepairControlWorkflow";
-
+import { TriagemHeaderCard } from "../components/formulario/TriagemHeaderCard";
+import { ChecklistCard } from "../components/formulario/ChecklistCard";
+import { ResultadoInspecaoCard } from "../components/formulario/ResultadoInspecaoCard";
+import { checklistItems } from "../components/formulario/constants";
+import { VolumeContagem, VolumeData } from "../components/VolumeContagem";
+import { StepProgress } from "@/components/common/StepProgress";
+import { LeaveGuard } from "@/components/common/LeaveGuard";
+import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
+import { RepairControlWorkflow } from "../components/formulario/RepairControlWorkflow";
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();

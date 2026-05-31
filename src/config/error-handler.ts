@@ -5,7 +5,7 @@
 
 import { envConfig, isProduction } from './environment';
 
- import { logger } from '../utils/logger';
+import { logger } from '../utils/logger';
  
 // Tipos de erro
 export enum ErrorCode {
@@ -57,7 +57,7 @@ const userMessages: Record<ErrorCode, string> = {
  }
 
 // Criar AppError a partir de qualquer erro
- export function createAppError(error: unknown, context?: Record<string, unknown>): AppError {
+export function createAppError(error: unknown, context?: Record<string, unknown>): AppError {
   const timestamp = new Date().toISOString();
 
   // Já é um AppError
@@ -187,7 +187,7 @@ export function setupGlobalErrorHandler(): void {
   });
 }
 
- export function useErrorHandler() {
+export function useErrorHandler() {
    const handleError = (error: unknown, context?: Record<string, unknown>) => {
      const appError = createAppError(error, context);
      logError(appError);

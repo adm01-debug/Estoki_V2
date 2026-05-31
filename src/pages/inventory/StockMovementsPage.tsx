@@ -1,6 +1,6 @@
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import { 
    History, 
@@ -17,15 +17,15 @@ import {
    ArrowRight,
    Clock
 } from "lucide-react";
- import { Badge } from "@/components/ui/badge";
- import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
- import { Skeleton } from "@/components/ui/skeleton";
- import { motion, AnimatePresence } from "framer-motion";
- import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function StockMovementsPage() {
   const { movimentacoes, loading } = useMovimentacoes();

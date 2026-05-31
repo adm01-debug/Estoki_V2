@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
  * Hook para rotação de estoque FEFO (First Expired, First Out).
  * Prioriza a saída de itens com data de validade mais próxima.
  */
- export function useFEFO(produtoId?: string, sku?: string) {
+export function useFEFO(produtoId?: string, sku?: string) {
   return useQuery({
     queryKey: ["fefo", produtoId],
     queryFn: async () => {

@@ -5,9 +5,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
- import { Toaster as Sonner } from "@/components/ui/sonner";
-  import { KeyboardShortcuts } from "./KeyboardShortcuts";
-  import { PerformanceMonitor } from "@/features/analytics/components/PerformanceMonitor";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { KeyboardShortcuts } from "./KeyboardShortcuts";
+import { PerformanceMonitor } from "@/features/analytics/components/PerformanceMonitor";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
 

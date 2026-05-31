@@ -39,8 +39,8 @@ import {
    DropdownMenuItem,
    DropdownMenuTrigger,
  } from "@/components/ui/dropdown-menu";
- import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
- import { VolumeChecklist } from "../components/VolumeChecklist";
+import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
+import { VolumeChecklist } from "../components/VolumeChecklist";
 
 export default function ShippingPage() {
   const { romaneios, loading, atualizarStatus } = useRomaneios();

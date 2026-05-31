@@ -1,6 +1,6 @@
- import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
- import { logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
 
 export interface AtividadeRecente {
   id: string;

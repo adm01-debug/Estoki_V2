@@ -1,13 +1,13 @@
- import { AppLayout } from "@/components/layout/AppLayout";
- import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
- import { Button } from "@/components/ui/button";
- import { Badge } from "@/components/ui/badge";
-  import { Globe, RefreshCw, Link2, ShieldCheck, Database, Server, AlertTriangle } from "lucide-react";
-  import { useState, useEffect } from "react";
-  import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
- import { toast } from "sonner";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Globe, RefreshCw, Link2, ShieldCheck, Database, Server, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
+import { toast } from "sonner";
  
-  export default function HubPage() {
+export default function HubPage() {
     const [syncing, setSyncing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

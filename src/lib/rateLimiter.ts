@@ -30,6 +30,10 @@ class RateLimiter {
     if (timestamps.length === 0) return 0;
     return timestamps[0] + windowMs - Date.now();
   }
+
+  clear(key: string): void {
+    this.timestamps.delete(key);
+  }
 }
 
 export const rateLimiter = new RateLimiter();

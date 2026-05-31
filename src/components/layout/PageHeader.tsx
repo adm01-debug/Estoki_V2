@@ -1,7 +1,7 @@
- import { Breadcrumbs } from "@/components/common/Breadcrumbs";
- import { Button } from "@/components/ui/button";
- import { ChevronLeft } from "lucide-react";
- import { useNavigate } from "react-router-dom";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
  interface PageHeaderProps {
    title: string;
@@ -12,7 +12,7 @@
    onBack?: () => void;
  }
  
- export function PageHeader({ 
+export function PageHeader({ 
    title, 
    description, 
    actions, 

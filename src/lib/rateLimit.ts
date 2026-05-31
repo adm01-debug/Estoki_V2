@@ -1,24 +1,8 @@
-type RateLimitStore = Map<string, { count: number; resetTime: number }>;
+import { rateLimiter as _rateLimiter } from './rateLimiter';
 
-const store: RateLimitStore = new Map();
+export { rateLimiter } from './rateLimiter';
 
-export const rateLimit = (key: string, limit: number, windowMs: number): boolean => {
-  const now = Date.now();
-  const record = store.get(key);
+export const rateLimit = (key: string, limit: number, windowMs: number): boolean =>
+  _rateLimiter.canProceed(key, limit, windowMs);
 
-  if (!record || now > record.resetTime) {
-    store.set(key, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (record.count >= limit) {
-    return false;
-  }
-
-  record.count++;
-  return true;
-};
-
-export const clearRateLimit = (key: string) => {
-  store.delete(key);
-};
+export const clearRateLimit = (key: string): void => _rateLimiter.clear(key);

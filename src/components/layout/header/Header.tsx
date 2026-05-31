@@ -25,7 +25,7 @@ interface HeaderProps {
   isHome?: boolean;
 }
 
- export const Header = memo(function Header({
+export const Header = memo(function Header({
   mainPadding,
   onOpenMobileMenu,
   shouldShowBack,

@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-  import { Box, X, ArrowLeft, Home } from "lucide-react";
+import { Box, X, ArrowLeft, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { mobileNavItems, fabActions } from "./sidebar";
 
@@ -12,7 +12,7 @@ import { mobileNavItems, fabActions } from "./sidebar";
    onBack?: () => void;
  }
  
- export const MobileNavigation = memo(function MobileNavigation({
+export const MobileNavigation = memo(function MobileNavigation({
    fabOpen,
    setFabOpen,
    pathname,

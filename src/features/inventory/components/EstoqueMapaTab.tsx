@@ -1,10 +1,10 @@
- import { useState } from "react";
+import { useState } from "react";
 import { memo, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-  import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info, CheckCircle2, XCircle, Clock } from "lucide-react";
+import { ZoomIn, ZoomOut, Maximize2, MapPin, Flame, Info, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PosicaoEstoque, StatusPosicao } from "../hooks/useEstoque";
 import { differenceInDays } from "date-fns";

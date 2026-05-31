@@ -1,12 +1,5 @@
- import { logger } from '@/utils/logger';
- 
-/**
- * Hook de Exportação e Impressão
- * Suporta PDF, Excel, CSV, impressão
- * Bibliotecas pesadas carregadas via dynamic import
- */
-
 import { useCallback, useState } from 'react';
+import { logger } from '@/utils/logger';
 import { trackEvent, EventCategory, EventAction } from '@/config/analytics';
 
 export type ExportFormat = 'pdf' | 'excel' | 'csv' | 'json' | 'print';
@@ -98,7 +91,7 @@ export function useExport(): UseExportReturn {
       doc.save(`${filename}.pdf`);
       trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_pdf', value: data.length });
     } catch (error) {
-       logger.error('[Export] Erro ao exportar para PDF', error, { options });
+      logger.error('[Export] Erro ao exportar para PDF', error, { options });
       throw error;
     } finally { setIsExporting(false); }
   }, []);
@@ -142,7 +135,7 @@ export function useExport(): UseExportReturn {
 
       trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, { label: 'export_excel', value: data.length });
     } catch (error) {
-       logger.error('[Export] Erro ao exportar para Excel', error, { options });
+      logger.error('[Export] Erro ao exportar para Excel', error, { options });
       throw error;
     } finally { setIsExporting(false); }
   }, []);
@@ -157,7 +150,7 @@ export function useExport(): UseExportReturn {
       return formatted;
     }).join(','));
     const csv = [headers.join(','), ...rows].join('\n');
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a'); link.href = url; link.download = `${filename}.csv`; link.click();
     URL.revokeObjectURL(url);

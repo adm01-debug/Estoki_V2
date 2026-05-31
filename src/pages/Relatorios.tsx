@@ -3,8 +3,8 @@ import { useState, useMemo, useCallback } from "react";
 import { format, subDays, startOfDay, endOfDay, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { exportToExcel } from "@/utils/exportExcel";
- import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, Line } from "recharts";
- import { useAuditLog } from "@/hooks/useAuditLog";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, Line } from "recharts";
+import { useAuditLog } from "@/hooks/useAuditLog";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +22,7 @@ const CHART_COLORS: Record<string, string> = {
   separacao: "#f59e0b", saida_transporte: "#ef4444", entrega: "#22c55e", ajuste_estoque: "#6b7280",
 };
 
- export default function RelatoriosPage() {
+export default function RelatoriosPage() {
    const { movimentacoes, loading } = useMovimentacoes();
    const { log } = useAuditLog();
    const [operadorFiltro, setOperadorFiltro] = useState<string>("todos");

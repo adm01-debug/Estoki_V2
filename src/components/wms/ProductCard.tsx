@@ -1,9 +1,9 @@
 import React from 'react';
- import { Card, CardContent } from '@/components/ui/card';
- import { Badge } from '@/components/ui/badge';
- import { Package, Calendar, MapPin } from 'lucide-react';
- import { cn } from '@/lib/utils';
- import { OptimizedImage } from '@/components/display/OptimizedImage';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Package, Calendar, MapPin } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { OptimizedImage } from '@/components/display/OptimizedImage';
  
 interface ProductCardProps { name: string; sku: string; barcode?: string; category?: string; imageUrl?: string; quantity: number; unit?: string; location?: string; expirationDate?: Date; status?: 'active' | 'inactive' | 'discontinued'; onClick?: () => void; className?: string; }
 

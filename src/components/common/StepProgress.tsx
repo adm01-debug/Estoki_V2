@@ -1,6 +1,6 @@
- import { cn } from "@/lib/utils";
- import { Check } from "lucide-react";
- import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
+import { motion } from "framer-motion";
  
  interface Step {
    id: string | number;
@@ -14,7 +14,7 @@
    className?: string;
  }
  
- export function StepProgress({ steps, currentStep, className }: StepProgressProps) {
+export function StepProgress({ steps, currentStep, className }: StepProgressProps) {
    return (
      <div className={cn("w-full py-4", className)}>
        <div className="relative flex justify-between">

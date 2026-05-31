@@ -1,7 +1,7 @@
- import { cn } from "@/lib/utils";
- import { Check, Circle } from "lucide-react";
- import { motion } from "framer-motion";
- import { haptics } from "@/utils/haptics";
+import { cn } from "@/lib/utils";
+import { Check, Circle } from "lucide-react";
+import { motion } from "framer-motion";
+import { haptics } from "@/utils/haptics";
  
  interface Step {
    id: string | number;
@@ -16,7 +16,7 @@
    sticky?: boolean;
  }
  
- export function PersistentStepper({ steps, currentStep, className, sticky = true }: PersistentStepperProps) {
+export function PersistentStepper({ steps, currentStep, className, sticky = true }: PersistentStepperProps) {
    return (
      <motion.div 
        initial={{ opacity: 0, y: -20 }}
