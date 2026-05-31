@@ -7,7 +7,7 @@ type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
 type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 export const inventoryService = {
-  async getAll(): Promise<PosicaoEstoque[]> {
+  async getAll(limit = 1000): Promise<PosicaoEstoque[]> {
     const { data, error } = await supabase
       .from('posicoes_estoque')
       .select(`
@@ -22,7 +22,8 @@ export const inventoryService = {
           lote:lotes(numero_lote, data_validade)
         )
       `)
-      .order('codigo');
+      .order('codigo')
+      .limit(limit);
 
     if (error) {
       logger.error('Erro ao buscar posições de estoque', error);

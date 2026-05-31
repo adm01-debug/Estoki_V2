@@ -34,39 +34,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { profile: userProfile, role: userRole } = await authService.getUserData(userId);
       if (userProfile) setProfile(userProfile);
       if (userRole) setRole(userRole);
+      return { profile: userProfile, role: userRole };
     } catch (error) {
       logger.error("Erro ao sincronizar dados do usuário:", error);
+      return { profile: null, role: null };
     }
   }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    // 1) Listen to auth changes — but only finish loading after hydration
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, currentSession) => {
+      async (event, currentSession) => {
         if (!mounted) return;
 
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
         if (currentSession?.user) {
-          fetchUserData(currentSession.user.id);
+          // If event is SIGNED_IN or INITIAL_SESSION, we might want to ensure data is fresh
+          if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+            await fetchUserData(currentSession.user.id);
+          }
         } else if (event === 'SIGNED_OUT') {
           setProfile(null);
           setRole(null);
         }
 
-        // Only set loading=false from the listener AFTER initial hydration is done
-        // This prevents INITIAL_SESSION with null from prematurely ending loading
         if (hydrated.current) {
           setLoading(false);
         }
       }
     );
 
-    // 2) Hydrate: get the persisted session
     const hydrate = async () => {
+      if (hydrated.current) return;
+      
       logger.info("Iniciando hidratação de sessão...");
       try {
         const { data, error } = await Promise.race([
@@ -83,17 +86,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!mounted) return;
 
         const sess = data?.session ?? null;
-        logger.info("Sessão recuperada:", { hasSession: !!sess, userId: sess?.user?.id });
-        
         setSession(sess);
         setUser(sess?.user ?? null);
 
         if (sess?.user) {
           await fetchUserData(sess.user.id);
         }
-       } catch (err) {
-         logger.warn("Auth hydration failed or timed out:", { error: err });
-       } finally {
+      } catch (err) {
+        logger.warn("Auth hydration failed or timed out:", { error: err });
+      } finally {
         if (mounted) {
           hydrated.current = true;
           setLoading(false);
@@ -104,13 +105,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     hydrate();
 
-    // 3) Safety net — never stay loading for more than 4 seconds
     const safety = setTimeout(() => {
-      if (mounted) {
+      if (mounted && !hydrated.current) {
         hydrated.current = true;
         setLoading(false);
+        logger.warn("Safety net triggered: Auth loading forced to false");
       }
-    }, 4000);
+    }, 6000);
 
     return () => {
       mounted = false;

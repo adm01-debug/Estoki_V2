@@ -43,6 +43,9 @@ export const useRecebimentos = (options?: { enableRealtime?: boolean }) => {
 
   const createRecebimento = useMutation({
     mutationFn: (novo: any) => {
+      if (!novo.produto_id) throw new Error("ID do produto é obrigatório");
+      if ((novo.quantidade || novo.quantidade_inicial) <= 0) throw new Error("Quantidade deve ser maior que zero");
+      
       const payload = {
         ...novo,
         quantidade_inicial: novo.quantidade || novo.quantidade_inicial,

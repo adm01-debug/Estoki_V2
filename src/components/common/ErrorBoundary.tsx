@@ -113,7 +113,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     Ocorreu um erro inesperado que impediu a renderização desta parte do sistema.
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Não se preocupe, seus dados locais foram preservados. Você pode tentar reparar o componente ou reiniciar a navegação.
+                    Não se preocupe, seus dados locais foram preservados. Você pode tentar reparar o componente, reiniciar a navegação ou entrar em contato com o suporte se o erro persistir.
                   </p>
                 </div>
 
