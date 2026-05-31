@@ -20,10 +20,10 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     }
 
     subscriptionRef.current = supabase
-      .channel('picking-tasks-changes')
+      .channel("picking-tasks-changes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'tarefas', filter: 'tipo=eq.separacao' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tarefas", filter: "tipo=eq.separacao" },
         () => {
           queryClient.invalidateQueries({ queryKey: ["picking-tasks"] });
         }
@@ -37,13 +37,26 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     };
   }, [options?.enableRealtime, queryClient]);
 
-  const { data: tasks = [], isLoading, error, refetch } = useQuery({
+  const {
+    data: tasks = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["picking-tasks"],
-    queryFn: pickingService.getTasks
+    queryFn: pickingService.getTasks,
   });
 
   const updateTaskStatus = useMutation({
-    mutationFn: async ({ taskId, status, qty }: { taskId: string, status: string, qty?: number }) => {
+    mutationFn: async ({
+      taskId,
+      status,
+      qty,
+    }: {
+      taskId: string;
+      status: string;
+      qty?: number;
+    }) => {
       return pickingService.updateTaskStatus(taskId, status, user?.id, qty);
     },
     onSuccess: () => {
@@ -52,7 +65,7 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     },
     onError: (err: Error) => {
       toast.error(`Erro ao atualizar tarefa: ${err.message}`);
-    }
+    },
   });
 
   return {
@@ -61,7 +74,8 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     error,
     refetch,
     startTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "em_andamento" }),
-    finishTask: (taskId: string, qty: number) => updateTaskStatus.mutate({ taskId, status: "concluido", qty }),
-    cancelTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "cancelado" })
+    finishTask: (taskId: string, qty: number) =>
+      updateTaskStatus.mutate({ taskId, status: "concluido", qty }),
+    cancelTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "cancelado" }),
   };
 }

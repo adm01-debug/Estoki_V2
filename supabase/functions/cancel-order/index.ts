@@ -5,14 +5,45 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { orderId, reason, userId } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data: order } = await supabase.from("sales_orders").select("*").eq("id", orderId).single();
-    if (order?.status === "shipped" || order?.status === "delivered") throw new Error("Pedido já enviado");
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const { data: order } = await supabase
+      .from("sales_orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (order?.status === "shipped" || order?.status === "delivered")
+      throw new Error("Pedido já enviado");
     for (const item of order?.items || []) {
-      const { data: product } = await supabase.from("products").select("reserved_quantity").eq("id", item.productId).single();
-      if (product) await supabase.from("products").update({ reserved_quantity: Math.max(0, product.reserved_quantity - item.quantity) }).eq("id", item.productId);
+      const { data: product } = await supabase
+        .from("products")
+        .select("reserved_quantity")
+        .eq("id", item.productId)
+        .single();
+      if (product)
+        await supabase
+          .from("products")
+          .update({ reserved_quantity: Math.max(0, product.reserved_quantity - item.quantity) })
+          .eq("id", item.productId);
     }
-    await supabase.from("sales_orders").update({ status: "cancelled", cancelled_at: new Date().toISOString(), cancelled_by: userId, cancel_reason: reason }).eq("id", orderId);
-    return new Response(JSON.stringify({ cancelled: true, orderId }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    await supabase
+      .from("sales_orders")
+      .update({
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+        cancelled_by: userId,
+        cancel_reason: reason,
+      })
+      .eq("id", orderId);
+    return new Response(JSON.stringify({ cancelled: true, orderId }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

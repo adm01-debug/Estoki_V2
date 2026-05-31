@@ -1,33 +1,33 @@
-import { useToast } from '@/hooks/use-toast';
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-export type ClassificacaoFornecedor = 'A' | 'B' | 'C' | 'D';
+export type ClassificacaoFornecedor = "A" | "B" | "C" | "D";
 
 export interface Fornecedor {
   id: string;
   nome: string;
   categoria: string;
-  
+
   // Métricas de qualidade
   entregas_totais: number;
   entregas_no_prazo: number;
   percentual_pontualidade: number;
-  
+
   itens_recebidos: number;
   itens_aprovados: number;
   percentual_qualidade: number;
-  
+
   trocas_devolucoes: number;
   taxa_problemas: number;
-  
+
   // Classificação
   classificacao: ClassificacaoFornecedor;
   pontuacao: number;
-  
+
   // Tendência
-  tendencia: 'subindo' | 'estavel' | 'descendo';
-  
+  tendencia: "subindo" | "estavel" | "descendo";
+
   created_at: string;
   updated_at: string;
 }
@@ -53,30 +53,33 @@ export function useFornecedores() {
 
       // Buscar lotes agrupados por fornecedor (usando lotes em vez de recebimentos)
       const { data: lotes, error: lotesError } = await supabase
-        .from('lotes')
-        .select('id, fornecedor, quantidade_inicial, quantidade_atual, created_at, data_recebimento');
+        .from("lotes")
+        .select(
+          "id, fornecedor, quantidade_inicial, quantidade_atual, created_at, data_recebimento"
+        );
 
       if (lotesError) throw lotesError;
 
       // Buscar eventos de triagem para qualidade
       const { data: triagens, error: triagError } = await supabase
-        .from('eventos_triagem')
-        .select('id, resultado, lote_id');
+        .from("eventos_triagem")
+        .select("id, resultado, lote_id");
 
-      if (triagError) if (import.meta.env.DEV) console.error('Erro ao buscar triagens:', triagError);
+      if (triagError)
+        if (import.meta.env.DEV) console.error("Erro ao buscar triagens:", triagError);
 
       // Agrupar por fornecedor
       const fornecedoresMap: Record<string, Fornecedor> = {};
 
       // Processar lotes
-      (lotes || []).forEach(lote => {
+      (lotes || []).forEach((lote) => {
         if (!lote.fornecedor) return;
 
         if (!fornecedoresMap[lote.fornecedor]) {
           fornecedoresMap[lote.fornecedor] = {
             id: lote.fornecedor,
             nome: lote.fornecedor,
-            categoria: 'Geral',
+            categoria: "Geral",
             entregas_totais: 0,
             entregas_no_prazo: 0,
             percentual_pontualidade: 0,
@@ -85,9 +88,9 @@ export function useFornecedores() {
             percentual_qualidade: 0,
             trocas_devolucoes: 0,
             taxa_problemas: 0,
-            classificacao: 'B',
+            classificacao: "B",
             pontuacao: 0,
-            tendencia: 'estavel',
+            tendencia: "estavel",
             created_at: lote.created_at,
             updated_at: lote.created_at,
           };
@@ -100,54 +103,55 @@ export function useFornecedores() {
       });
 
       // Calcular qualidade baseado em triagens
-      const triagensAprovadas = (triagens || []).filter(t => t.resultado === 'aprovado').length;
+      const triagensAprovadas = (triagens || []).filter((t) => t.resultado === "aprovado").length;
       const totalTriagens = (triagens || []).length;
       const taxaAprovacao = totalTriagens > 0 ? (triagensAprovadas / totalTriagens) * 100 : 95;
 
       // Calcular métricas finais
-      Object.values(fornecedoresMap).forEach(f => {
+      Object.values(fornecedoresMap).forEach((f) => {
         // Pontualidade
-        f.percentual_pontualidade = f.entregas_totais > 0
-          ? Math.round((f.entregas_no_prazo / f.entregas_totais) * 100)
-          : 0;
+        f.percentual_pontualidade =
+          f.entregas_totais > 0 ? Math.round((f.entregas_no_prazo / f.entregas_totais) * 100) : 0;
 
         // Qualidade
         f.percentual_qualidade = Math.round(taxaAprovacao);
 
         // Taxa de problemas
-        f.taxa_problemas = f.entregas_totais > 0
-          ? Math.round((f.trocas_devolucoes / f.entregas_totais) * 100 * 10) / 10
-          : 0;
+        f.taxa_problemas =
+          f.entregas_totais > 0
+            ? Math.round((f.trocas_devolucoes / f.entregas_totais) * 100 * 10) / 10
+            : 0;
 
         // Aproximar itens aprovados
         f.itens_aprovados = Math.round(f.itens_recebidos * (f.percentual_qualidade / 100));
 
         // Calcular pontuação (0-100)
         f.pontuacao = Math.round(
-          (f.percentual_pontualidade * 0.4) +
-          (f.percentual_qualidade * 0.4) +
-          ((100 - f.taxa_problemas * 10) * 0.2)
+          f.percentual_pontualidade * 0.4 +
+            f.percentual_qualidade * 0.4 +
+            (100 - f.taxa_problemas * 10) * 0.2
         );
 
         // Classificação
-        if (f.pontuacao >= 90) f.classificacao = 'A';
-        else if (f.pontuacao >= 75) f.classificacao = 'B';
-        else if (f.pontuacao >= 60) f.classificacao = 'C';
-        else f.classificacao = 'D';
+        if (f.pontuacao >= 90) f.classificacao = "A";
+        else if (f.pontuacao >= 75) f.classificacao = "B";
+        else if (f.pontuacao >= 60) f.classificacao = "C";
+        else f.classificacao = "D";
 
         // Tendência (simplificado - baseado em entregas recentes)
-        f.tendencia = 'estavel';
+        f.tendencia = "estavel";
       });
 
       // Converter para array e ordenar por pontuação
-      const fornecedoresArray = Object.values(fornecedoresMap)
-        .sort((a, b) => b.pontuacao - a.pontuacao);
+      const fornecedoresArray = Object.values(fornecedoresMap).sort(
+        (a, b) => b.pontuacao - a.pontuacao
+      );
 
       setFornecedores(fornecedoresArray);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao calcular métricas';
+      const message = err instanceof Error ? err.message : "Erro ao calcular métricas";
       setError(message);
-      if (import.meta.env.DEV) console.error('Erro ao calcular métricas de fornecedores:', err);
+      if (import.meta.env.DEV) console.error("Erro ao calcular métricas de fornecedores:", err);
     } finally {
       setLoading(false);
     }
@@ -159,18 +163,20 @@ export function useFornecedores() {
 
   const getEstatisticasGerais = useCallback(() => {
     const total = fornecedores.length;
-    const classificacaoA = fornecedores.filter(f => f.classificacao === 'A').length;
-    const classificacaoB = fornecedores.filter(f => f.classificacao === 'B').length;
-    const classificacaoC = fornecedores.filter(f => f.classificacao === 'C').length;
-    const classificacaoD = fornecedores.filter(f => f.classificacao === 'D').length;
+    const classificacaoA = fornecedores.filter((f) => f.classificacao === "A").length;
+    const classificacaoB = fornecedores.filter((f) => f.classificacao === "B").length;
+    const classificacaoC = fornecedores.filter((f) => f.classificacao === "C").length;
+    const classificacaoD = fornecedores.filter((f) => f.classificacao === "D").length;
 
-    const pontualidadeMedia = fornecedores.length > 0
-      ? fornecedores.reduce((acc, f) => acc + f.percentual_pontualidade, 0) / fornecedores.length
-      : 0;
+    const pontualidadeMedia =
+      fornecedores.length > 0
+        ? fornecedores.reduce((acc, f) => acc + f.percentual_pontualidade, 0) / fornecedores.length
+        : 0;
 
-    const qualidadeMedia = fornecedores.length > 0
-      ? fornecedores.reduce((acc, f) => acc + f.percentual_qualidade, 0) / fornecedores.length
-      : 0;
+    const qualidadeMedia =
+      fornecedores.length > 0
+        ? fornecedores.reduce((acc, f) => acc + f.percentual_qualidade, 0) / fornecedores.length
+        : 0;
 
     const totalTrocas = fornecedores.reduce((acc, f) => acc + f.trocas_devolucoes, 0);
 
@@ -186,18 +192,22 @@ export function useFornecedores() {
     };
   }, [fornecedores]);
 
-  const getFornecedorById = useCallback((id: string): Fornecedor | undefined => {
-    return fornecedores.find(f => f.id === id || f.nome === id);
-  }, [fornecedores]);
+  const getFornecedorById = useCallback(
+    (id: string): Fornecedor | undefined => {
+      return fornecedores.find((f) => f.id === id || f.nome === id);
+    },
+    [fornecedores]
+  );
 
-  const getTopFornecedores = useCallback((limit = 5): Fornecedor[] => {
-    return [...fornecedores]
-      .sort((a, b) => b.pontuacao - a.pontuacao)
-      .slice(0, limit);
-  }, [fornecedores]);
+  const getTopFornecedores = useCallback(
+    (limit = 5): Fornecedor[] => {
+      return [...fornecedores].sort((a, b) => b.pontuacao - a.pontuacao).slice(0, limit);
+    },
+    [fornecedores]
+  );
 
   const getFornecedoresCriticos = useCallback((): Fornecedor[] => {
-    return fornecedores.filter(f => f.classificacao === 'D' || f.taxa_problemas > 10);
+    return fornecedores.filter((f) => f.classificacao === "D" || f.taxa_problemas > 10);
   }, [fornecedores]);
 
   return {

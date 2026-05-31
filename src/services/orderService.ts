@@ -2,12 +2,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import { Database } from "@/integrations/supabase/types";
 
-type Order = Database['public']['Tables']['orders']['Row'];
-type OrderInsert = Database['public']['Tables']['orders']['Insert'];
-type OrderItemInsert = Database['public']['Tables']['order_items']['Insert'];
+type Order = Database["public"]["Tables"]["orders"]["Row"];
+type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
+type OrderItemInsert = Database["public"]["Tables"]["order_items"]["Insert"];
 
 interface OrderFilters extends Record<string, unknown> {
-  status?: Database['public']['Tables']['orders']['Row']['status'];
+  status?: Database["public"]["Tables"]["orders"]["Row"]["status"];
 }
 
 export const orderService = {
@@ -16,13 +16,15 @@ export const orderService = {
     try {
       let query = supabase
         .from("orders")
-        .select(`
+        .select(
+          `
           *,
           itens:order_items(
             *,
             produto:produtos(nome, sku)
           )
-        `)
+        `
+        )
         .order("created_at", { ascending: false });
 
       if (filters?.status) query = query.eq("status", filters.status);
@@ -50,13 +52,15 @@ export const orderService = {
     try {
       const { data, error } = await supabase
         .from("orders")
-        .select(`
+        .select(
+          `
           *,
           itens:order_items(
             *,
             produto:produtos(*)
           )
-        `)
+        `
+        )
         .eq("id", id)
         .single();
       if (error) throw error;
@@ -67,7 +71,7 @@ export const orderService = {
     }
   },
 
-  async create(order: OrderInsert, items: Omit<OrderItemInsert, 'order_id'>[]) {
+  async create(order: OrderInsert, items: Omit<OrderItemInsert, "order_id">[]) {
     try {
       const { data: newOrder, error: orderError } = await supabase
         .from("orders")
@@ -77,14 +81,12 @@ export const orderService = {
 
       if (orderError) throw orderError;
 
-      const itemsToInsert: OrderItemInsert[] = items.map(item => ({
+      const itemsToInsert: OrderItemInsert[] = items.map((item) => ({
         ...item,
         order_id: newOrder.id,
       }));
 
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(itemsToInsert);
+      const { error: itemsError } = await supabase.from("order_items").insert(itemsToInsert);
 
       if (itemsError) throw itemsError;
 

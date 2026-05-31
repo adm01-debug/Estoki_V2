@@ -81,13 +81,16 @@ serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({
-      processed: results.length,
-      results,
-      worker_id,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        processed: results.length,
+        results,
+        worker_id,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

@@ -20,7 +20,7 @@ serve(async (req) => {
     const { pick_list_id, items, picker_id } = validation.data;
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!, 
+      Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
@@ -89,18 +89,18 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        items_confirmed: items.length, 
+      JSON.stringify({
+        success: true,
+        items_confirmed: items.length,
         completed: allPicked,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: "Erro interno", message: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Erro interno", message: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

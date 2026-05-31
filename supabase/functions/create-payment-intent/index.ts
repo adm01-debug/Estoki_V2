@@ -6,7 +6,22 @@ serve(async (req) => {
   try {
     const { amount, currency = "brl", customerId, description, metadata } = await req.json();
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
-    const paymentIntent = await stripe.paymentIntents.create({ amount: Math.round(amount * 100), currency, customer: customerId, description, metadata, automatic_payment_methods: { enabled: true } });
-    return new Response(JSON.stringify({ clientSecret: paymentIntent.client_secret, id: paymentIntent.id }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency,
+      customer: customerId,
+      description,
+      metadata,
+      automatic_payment_methods: { enabled: true },
+    });
+    return new Response(
+      JSON.stringify({ clientSecret: paymentIntent.client_secret, id: paymentIntent.id }),
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

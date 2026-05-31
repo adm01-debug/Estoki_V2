@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 export function usePreferredLanguage(): string {
-  const [language, setLanguage] = useState(() => navigator.language || 'en');
+  const [language, setLanguage] = useState(() => navigator.language || "en");
   useEffect(() => {
-    const handler = () => setLanguage(navigator.language || 'en');
-    window.addEventListener('languagechange', handler);
-    return () => window.removeEventListener('languagechange', handler);
+    const handler = () => setLanguage(navigator.language || "en");
+    window.addEventListener("languagechange", handler);
+    return () => window.removeEventListener("languagechange", handler);
   }, []);
   return language;
 }

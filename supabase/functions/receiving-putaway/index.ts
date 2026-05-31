@@ -29,10 +29,10 @@ serve(async (req) => {
     const { receiving_id, items, putaway_by }: ReceivingPutawayRequest = await req.json();
 
     if (!receiving_id || !items?.length) {
-      return new Response(
-        JSON.stringify({ error: "receiving_id and items are required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "receiving_id and items are required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const results = [];
@@ -105,7 +105,11 @@ serve(async (req) => {
         .update({ status: "putaway", putaway_location_id: item.location_id })
         .eq("id", item.receiving_item_id);
 
-      results.push({ item_id: item.receiving_item_id, location_id: item.location_id, quantity: item.quantity });
+      results.push({
+        item_id: item.receiving_item_id,
+        location_id: item.location_id,
+        quantity: item.quantity,
+      });
     }
 
     // Atualizar status do recebimento
@@ -123,14 +127,13 @@ serve(async (req) => {
       details: { items_putaway: results.length },
     });
 
-    return new Response(
-      JSON.stringify({ success: true, items_putaway: results }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, items_putaway: results }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

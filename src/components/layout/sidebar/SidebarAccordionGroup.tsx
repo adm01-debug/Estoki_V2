@@ -15,9 +15,15 @@ interface SidebarAccordionGroupProps {
 }
 
 export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
-  group, collapsed, pathname, onNavigate, onHover,
+  group,
+  collapsed,
+  pathname,
+  onNavigate,
+  onHover,
 }: SidebarAccordionGroupProps) {
-  const hasActiveChild = group.items.some((item) => pathname === item.path || pathname.startsWith(item.path + "/"));
+  const hasActiveChild = group.items.some(
+    (item) => pathname === item.path || pathname.startsWith(item.path + "/")
+  );
   const [open, setOpen] = useState(hasActiveChild);
 
   useEffect(() => {
@@ -30,13 +36,18 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <div className="mx-3 my-1 flex items-center justify-center">
-              <group.icon className={cn(
-                "h-4 w-4 transition-colors",
-                hasActiveChild ? "text-primary" : "text-sidebar-foreground/30"
-              )} />
+              <group.icon
+                className={cn(
+                  "h-4 w-4 transition-colors",
+                  hasActiveChild ? "text-primary" : "text-sidebar-foreground/30"
+                )}
+              />
             </div>
           </TooltipTrigger>
-          <TooltipContent side="right" className="bg-popover text-popover-foreground border-border font-medium">
+          <TooltipContent
+            side="right"
+            className="border-border bg-popover font-medium text-popover-foreground"
+          >
             {group.label}
           </TooltipContent>
         </Tooltip>
@@ -60,32 +71,40 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
         <button
           type="button"
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2 rounded-xl transition-all duration-200 group/trigger mt-1",
+            "group/trigger mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
             hasActiveChild
               ? "text-primary"
-              : "text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+              : "text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
           )}
         >
-          <group.icon className={cn(
-            "h-4 w-4 shrink-0 transition-colors",
-            hasActiveChild ? "text-primary" : "text-sidebar-foreground/30 group-hover/trigger:text-sidebar-foreground/60"
-          )} />
-          <span className={cn(
-            "text-xs font-bold uppercase tracking-wider flex-1 text-left",
-            hasActiveChild ? "text-primary/80" : ""
-          )}>
+          <group.icon
+            className={cn(
+              "h-4 w-4 shrink-0 transition-colors",
+              hasActiveChild
+                ? "text-primary"
+                : "text-sidebar-foreground/30 group-hover/trigger:text-sidebar-foreground/60"
+            )}
+          />
+          <span
+            className={cn(
+              "flex-1 text-left text-xs font-bold uppercase tracking-wider",
+              hasActiveChild ? "text-primary/80" : ""
+            )}
+          >
             {group.label}
           </span>
           {hasActiveChild && (
-            <span className="inline-flex items-center justify-center w-2 h-2 rounded-full bg-primary" />
+            <span className="inline-flex h-2 w-2 items-center justify-center rounded-full bg-primary" />
           )}
-          <ChevronRight className={cn(
-            "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
-            open && "rotate-90"
-          )} />
+          <ChevronRight
+            className={cn(
+              "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+              open && "rotate-90"
+            )}
+          />
         </button>
       </CollapsibleTrigger>
-      <CollapsibleContent className="pl-1 space-y-0.5 overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+      <CollapsibleContent className="space-y-0.5 overflow-hidden pl-1 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
         {group.items.map((item) => (
           <SidebarNavButton
             key={item.path}

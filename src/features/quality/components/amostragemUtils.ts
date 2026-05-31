@@ -2,7 +2,10 @@ export type MetodoAmostragem = "raiz_quadrada" | "aql_normal" | "aql_rigoroso" |
 
 // Tabela AQL simplificada (baseada em MIL-STD-105E / ISO 2859-1)
 // Nível de inspeção II, AQL 2.5%
-export const tabelaAQL: Record<string, { letra: string; normal: number; rigoroso: number; reduzido: number }> = {
+export const tabelaAQL: Record<
+  string,
+  { letra: string; normal: number; rigoroso: number; reduzido: number }
+> = {
   "2-8": { letra: "A", normal: 2, rigoroso: 3, reduzido: 2 },
   "9-15": { letra: "B", normal: 3, rigoroso: 5, reduzido: 2 },
   "16-25": { letra: "C", normal: 5, rigoroso: 8, reduzido: 2 },
@@ -62,7 +65,10 @@ export function calcularAmostraRaizQuadrada(tamanhoLote: number): number {
   return Math.max(minimo, Math.min(raiz, maximo));
 }
 
-export function calcularAmostraAQL(tamanhoLote: number, tipo: "normal" | "rigoroso" | "reduzido"): number {
+export function calcularAmostraAQL(
+  tamanhoLote: number,
+  tipo: "normal" | "rigoroso" | "reduzido"
+): number {
   const faixa = getFaixaLote(tamanhoLote);
   const dados = tabelaAQL[faixa];
   if (!dados) return calcularAmostraRaizQuadrada(tamanhoLote);
@@ -70,8 +76,10 @@ export function calcularAmostraAQL(tamanhoLote: number, tipo: "normal" | "rigoro
 }
 
 export function getCriteriosAceite(tamanhoAmostra: number): { aceite: number; rejeite: number } {
-  const tamanhos = Object.keys(criteriosAceite).map(Number).sort((a, b) => a - b);
-  const tamanhoProximo = tamanhos.reduce((prev, curr) => 
+  const tamanhos = Object.keys(criteriosAceite)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const tamanhoProximo = tamanhos.reduce((prev, curr) =>
     Math.abs(curr - tamanhoAmostra) < Math.abs(prev - tamanhoAmostra) ? curr : prev
   );
   return criteriosAceite[tamanhoProximo] || { aceite: 0, rejeite: 1 };

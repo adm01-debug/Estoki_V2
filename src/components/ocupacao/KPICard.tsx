@@ -22,15 +22,13 @@ export function KPICard({ label, value, icon: Icon, color, subtitle }: KPICardPr
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                 {label}
               </p>
-              <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
-              {subtitle && (
-                <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>
-              )}
+              <p className="mt-1 text-2xl font-bold text-foreground">{value}</p>
+              {subtitle && <p className="mt-0.5 text-[10px] text-muted-foreground">{subtitle}</p>}
             </div>
-            <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", color)}>
+            <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg", color)}>
               <Icon className="h-4 w-4" />
             </div>
           </div>

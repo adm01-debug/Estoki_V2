@@ -1,10 +1,23 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from "react";
 export function useWakeLock() {
   const [wakeLock, setWakeLock] = useState<any>(null);
   const request = useCallback(async () => {
-    try { const lock = await (navigator as any).wakeLock.request('screen'); setWakeLock(lock); } catch {}
+    try {
+      const lock = await (navigator as any).wakeLock.request("screen");
+      setWakeLock(lock);
+    } catch {
+      // Wake lock not supported or denied
+    }
   }, []);
-  const release = useCallback(async () => { await wakeLock?.release(); setWakeLock(null); }, [wakeLock]);
-  useEffect(() => () => { wakeLock?.release(); }, [wakeLock]);
+  const release = useCallback(async () => {
+    await wakeLock?.release();
+    setWakeLock(null);
+  }, [wakeLock]);
+  useEffect(
+    () => () => {
+      wakeLock?.release();
+    },
+    [wakeLock]
+  );
   return { isLocked: !!wakeLock, request, release };
 }

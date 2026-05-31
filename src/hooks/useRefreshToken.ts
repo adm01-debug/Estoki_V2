@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export function useRefreshToken(refreshFn: () => Promise<string>, expiresIn = 3600000) {
   const [token, setToken] = useState<string | null>(null);

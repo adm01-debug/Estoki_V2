@@ -1,7 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ScannerOCR } from "@/components/scanner/ScannerOCR";
-import { Package, FileText, MapPin, ArrowRight, RotateCcw, AlertCircle, Loader2, History } from "lucide-react";
+import {
+  Package,
+  FileText,
+  MapPin,
+  ArrowRight,
+  RotateCcw,
+  AlertCircle,
+  Loader2,
+  History,
+} from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { QRScanner } from "@/components/scanner/QRScanner";
@@ -14,7 +23,10 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 // Mapeamento de status para badges
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const statusConfig: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
   pendente: { label: "Pendente", variant: "secondary" },
   em_triagem: { label: "Em Triagem", variant: "default" },
   aprovado: { label: "Aprovado", variant: "default" },
@@ -51,7 +63,7 @@ export default function ScannerPage() {
 
   const handleScanSuccess = async (decodedText: string) => {
     const result = await processQRCode(decodedText);
-    
+
     if (result) {
       toast({
         title: "QR Code lido com sucesso!",
@@ -68,14 +80,14 @@ export default function ScannerPage() {
 
   const handleNavigate = (result: ScanResult) => {
     switch (result.tipo) {
-      case 'recebimento':
+      case "recebimento":
         navigate(`/recebimento/${result.id}`);
         break;
-      case 'triagem':
-      case 'lote':
+      case "triagem":
+      case "lote":
         navigate(`/triagem/${result.id}`);
         break;
-      case 'posicao':
+      case "posicao":
         navigate(`/estoque?posicao=${result.localizacao}`);
         break;
       default:
@@ -92,36 +104,40 @@ export default function ScannerPage() {
     setScanning(true);
   };
 
-   return (
-     <AppLayout title="Centro de Captura" showBack>
-       <div className="p-4 md:p-8 space-y-8 max-w-[1200px] mx-auto">
-         {/* Seletor de Modo */}
-         <div className="flex items-center justify-between bg-muted/30 p-1.5 rounded-2xl border border-border/20 max-w-sm mx-auto">
-           <Button
-             variant={mode === "qr" ? "default" : "ghost"}
-             size="sm"
-             onClick={() => setMode("qr")}
-             className={cn(
-               "flex-1 gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all",
-               mode === "qr" ? "glow-button" : "text-muted-foreground hover:bg-transparent hover:text-primary"
-             )}
-           >
-             <Package className="h-4 w-4" />
-             QR Code
-           </Button>
-           <Button
-             variant={mode === "ocr" ? "default" : "ghost"}
-             size="sm"
-             onClick={() => setMode("ocr")}
-             className={cn(
-               "flex-1 gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider transition-all",
-               mode === "ocr" ? "glow-button" : "text-muted-foreground hover:bg-transparent hover:text-primary"
-             )}
-           >
-             <FileText className="h-4 w-4" />
-             OCR
-           </Button>
-         </div>
+  return (
+    <AppLayout title="Centro de Captura" showBack>
+      <div className="mx-auto max-w-[1200px] space-y-8 p-4 md:p-8">
+        {/* Seletor de Modo */}
+        <div className="mx-auto flex max-w-sm items-center justify-between rounded-2xl border border-border/20 bg-muted/30 p-1.5">
+          <Button
+            variant={mode === "qr" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setMode("qr")}
+            className={cn(
+              "h-10 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+              mode === "qr"
+                ? "glow-button"
+                : "text-muted-foreground hover:bg-transparent hover:text-primary"
+            )}
+          >
+            <Package className="h-4 w-4" />
+            QR Code
+          </Button>
+          <Button
+            variant={mode === "ocr" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setMode("ocr")}
+            className={cn(
+              "h-10 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+              mode === "ocr"
+                ? "glow-button"
+                : "text-muted-foreground hover:bg-transparent hover:text-primary"
+            )}
+          >
+            <FileText className="h-4 w-4" />
+            OCR
+          </Button>
+        </div>
 
         {mode === "ocr" && <ScannerOCR />}
 
@@ -137,7 +153,7 @@ export default function ScannerPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="max-w-md mx-auto">
+                  <div className="mx-auto max-w-md">
                     <QRScanner
                       onScan={handleScanSuccess}
                       onError={(err) => {
@@ -148,7 +164,7 @@ export default function ScannerPage() {
                         });
                       }}
                     />
-                    <p className="text-center text-sm text-muted-foreground mt-4">
+                    <p className="mt-4 text-center text-sm text-muted-foreground">
                       Aponte a câmera para o QR Code do produto, lote ou posição
                     </p>
                   </div>
@@ -166,102 +182,155 @@ export default function ScannerPage() {
               </Card>
             )}
 
-             {/* Resultado do scan */}
-             {lastResult && !isLoading && (
-               <Card className="glass-card border-primary/20 bg-primary/5 overflow-hidden animate-in fade-in zoom-in-95">
-                 <div className="absolute top-0 left-0 w-1 h-full bg-primary/40" />
-                 <CardHeader className="pb-6 border-b border-primary/10">
-                   <div className="flex items-center justify-between">
-                     <div className="flex items-center gap-3">
-                       <div className={cn("w-10 h-10 rounded-xl bg-background flex items-center justify-center border shadow-sm", tipoConfig[lastResult.tipo].color)}>
-                         <Package className="h-5 w-5" />
-                       </div>
-                       <div>
-                         <p className="text-[10px] font-bold text-primary/60 uppercase tracking-widest leading-none mb-1">Tipo de Captura</p>
-                         <CardTitle className="text-lg font-black tracking-tight">{tipoConfig[lastResult.tipo].label}</CardTitle>
-                       </div>
-                     </div>
-                     <Badge className={cn(
-                       "text-[10px] font-black uppercase tracking-widest px-2.5 rounded-full",
-                       statusConfig[lastResult.status]?.variant === "destructive" ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground"
-                     )}>
-                       {statusConfig[lastResult.status]?.label || lastResult.status}
-                     </Badge>
-                   </div>
-                 </CardHeader>
-                 <CardContent className="p-8 space-y-6">
-                   {/* Informações principais */}
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                     <div className="space-y-1">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Produto / SKU</p>
-                       <p className="text-base font-black text-foreground tracking-tight">{lastResult.produto}</p>
-                     </div>
-                     <div className="space-y-1">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Documento / Pedido</p>
-                       <p className="text-base font-black text-foreground tracking-tight">{lastResult.pedido}</p>
-                     </div>
-                     {lastResult.lote && (
-                       <div className="space-y-1">
-                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Lote de Origem</p>
-                         <p className="text-base font-black text-foreground tracking-tight">{lastResult.lote}</p>
-                       </div>
-                     )}
-                     <div className="space-y-1">
-                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Quantidade Capturada</p>
-                       <p className="text-2xl font-black text-primary tracking-tighter">{lastResult.quantidade} <span className="text-xs text-muted-foreground uppercase ml-1">unidades</span></p>
-                     </div>
-                     {lastResult.localizacao && (
-                       <div className="col-span-full p-4 rounded-2xl bg-background/50 border border-border/40 flex items-center gap-4">
-                         <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                           <MapPin className="h-5 w-5" />
-                         </div>
-                         <div>
-                           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Localização no Armazém</p>
-                           <p className="text-base font-black text-foreground tracking-tight">{lastResult.localizacao}</p>
-                         </div>
-                       </div>
-                     )}
-                   </div>
+            {/* Resultado do scan */}
+            {lastResult && !isLoading && (
+              <Card className="glass-card overflow-hidden border-primary/20 bg-primary/5 animate-in fade-in zoom-in-95">
+                <div className="absolute left-0 top-0 h-full w-1 bg-primary/40" />
+                <CardHeader className="border-b border-primary/10 pb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={cn(
+                          "flex h-10 w-10 items-center justify-center rounded-xl border bg-background shadow-sm",
+                          tipoConfig[lastResult.tipo].color
+                        )}
+                      >
+                        <Package className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-widest text-primary/60">
+                          Tipo de Captura
+                        </p>
+                        <CardTitle className="text-lg font-black tracking-tight">
+                          {tipoConfig[lastResult.tipo].label}
+                        </CardTitle>
+                      </div>
+                    </div>
+                    <Badge
+                      className={cn(
+                        "rounded-full px-2.5 text-[10px] font-black uppercase tracking-widest",
+                        statusConfig[lastResult.status]?.variant === "destructive"
+                          ? "bg-destructive text-destructive-foreground"
+                          : "bg-primary text-primary-foreground"
+                      )}
+                    >
+                      {statusConfig[lastResult.status]?.label || lastResult.status}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6 p-8">
+                  {/* Informações principais */}
+                  <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Produto / SKU
+                      </p>
+                      <p className="text-base font-black tracking-tight text-foreground">
+                        {lastResult.produto}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Documento / Pedido
+                      </p>
+                      <p className="text-base font-black tracking-tight text-foreground">
+                        {lastResult.pedido}
+                      </p>
+                    </div>
+                    {lastResult.lote && (
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          Lote de Origem
+                        </p>
+                        <p className="text-base font-black tracking-tight text-foreground">
+                          {lastResult.lote}
+                        </p>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Quantidade Capturada
+                      </p>
+                      <p className="text-2xl font-black tracking-tighter text-primary">
+                        {lastResult.quantidade}{" "}
+                        <span className="ml-1 text-xs uppercase text-muted-foreground">
+                          unidades
+                        </span>
+                      </p>
+                    </div>
+                    {lastResult.localizacao && (
+                      <div className="col-span-full flex items-center gap-4 rounded-2xl border border-border/40 bg-background/50 p-4">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                          <MapPin className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground">
+                            Localização no Armazém
+                          </p>
+                          <p className="text-base font-black tracking-tight text-foreground">
+                            {lastResult.localizacao}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Datas */}
-                  {(lastResult.dataRecebimento || lastResult.dataTriagem || lastResult.dataArmazenamento) && (
+                  {(lastResult.dataRecebimento ||
+                    lastResult.dataTriagem ||
+                    lastResult.dataArmazenamento) && (
                     <div className="border-t pt-4">
-                      <p className="text-sm text-muted-foreground mb-2">Histórico</p>
+                      <p className="mb-2 text-sm text-muted-foreground">Histórico</p>
                       <div className="space-y-1 text-sm">
                         {lastResult.dataRecebimento && (
-                          <p>Recebido: {format(new Date(lastResult.dataRecebimento), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                          <p>
+                            Recebido:{" "}
+                            {format(new Date(lastResult.dataRecebimento), "dd/MM/yyyy HH:mm", {
+                              locale: ptBR,
+                            })}
+                          </p>
                         )}
                         {lastResult.dataTriagem && (
-                          <p>Triado: {format(new Date(lastResult.dataTriagem), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                          <p>
+                            Triado:{" "}
+                            {format(new Date(lastResult.dataTriagem), "dd/MM/yyyy HH:mm", {
+                              locale: ptBR,
+                            })}
+                          </p>
                         )}
                         {lastResult.dataArmazenamento && (
-                          <p>Armazenado: {format(new Date(lastResult.dataArmazenamento), "dd/MM/yyyy HH:mm", { locale: ptBR })}</p>
+                          <p>
+                            Armazenado:{" "}
+                            {format(new Date(lastResult.dataArmazenamento), "dd/MM/yyyy HH:mm", {
+                              locale: ptBR,
+                            })}
+                          </p>
                         )}
                       </div>
                     </div>
                   )}
 
-                   {/* Ações */}
-                   <div className="flex gap-3 pt-6 border-t border-border/20">
-                     <Button 
-                       variant="outline" 
-                       onClick={handleNewScan} 
-                       className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-wider gap-2 hover:bg-primary/5 transition-all"
-                     >
-                       <RotateCcw className="h-4 w-4" /> Novo Scan
-                     </Button>
-                     {lastResult.tipo !== 'desconhecido' && (
-                       <Button 
-                         onClick={() => handleNavigate(lastResult)} 
-                         className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-wider gap-2 glow-button"
-                       >
-                         Ver Detalhes <ArrowRight className="h-4 w-4" />
-                       </Button>
-                     )}
-                   </div>
-                 </CardContent>
-               </Card>
-             )}
+                  {/* Ações */}
+                  <div className="flex gap-3 border-t border-border/20 pt-6">
+                    <Button
+                      variant="outline"
+                      onClick={handleNewScan}
+                      className="h-12 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:bg-primary/5"
+                    >
+                      <RotateCcw className="h-4 w-4" /> Novo Scan
+                    </Button>
+                    {lastResult.tipo !== "desconhecido" && (
+                      <Button
+                        onClick={() => handleNavigate(lastResult)}
+                        className="glow-button h-12 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+                      >
+                        Ver Detalhes <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Erro */}
             {error && !lastResult && !isLoading && (
@@ -293,17 +362,19 @@ export default function ScannerPage() {
                     {scanHistory.slice(0, 5).map((item, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer transition-colors"
+                        className="flex cursor-pointer items-center justify-between rounded-lg bg-muted/50 p-3 transition-colors hover:bg-muted"
                         onClick={() => item.result && handleNavigate(item.result)}
                       >
                         <div className="flex items-center gap-3">
-                          <Package className={cn(
-                            "h-4 w-4",
-                            item.result ? tipoConfig[item.result.tipo].color : "text-gray-500"
-                          )} />
+                          <Package
+                            className={cn(
+                              "h-4 w-4",
+                              item.result ? tipoConfig[item.result.tipo].color : "text-gray-500"
+                            )}
+                          />
                           <div>
-                            <p className="font-medium text-sm">
-                              {item.result?.produto || 'Não encontrado'}
+                            <p className="text-sm font-medium">
+                              {item.result?.produto || "Não encontrado"}
                             </p>
                             <p className="text-xs text-muted-foreground">
                               {format(item.timestamp, "HH:mm:ss", { locale: ptBR })}
@@ -311,7 +382,10 @@ export default function ScannerPage() {
                           </div>
                         </div>
                         {item.result && (
-                          <Badge variant={statusConfig[item.result.status]?.variant || "secondary"} className="text-xs">
+                          <Badge
+                            variant={statusConfig[item.result.status]?.variant || "secondary"}
+                            className="text-xs"
+                          >
                             {statusConfig[item.result.status]?.label || item.result.status}
                           </Badge>
                         )}

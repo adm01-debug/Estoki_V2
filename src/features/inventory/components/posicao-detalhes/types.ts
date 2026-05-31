@@ -33,9 +33,36 @@ export interface EstoquePosicaoDetalhes {
 
 import type { StatusPosicao } from "../../hooks/useEstoque";
 
-export const statusConfig: Record<StatusPosicao, { color: string; bg: string; border: string; label: string; icon: string }> = {
-  livre: { color: "text-muted-foreground", bg: "bg-muted/50", border: "border-dashed border-border", label: "Livre", icon: "⬜" },
-  ocupado: { color: "text-success", bg: "bg-success/20", border: "border-success", label: "Ocupado", icon: "🟢" },
-  reservado: { color: "text-warning", bg: "bg-warning/20", border: "border-warning", label: "Reservado", icon: "🟡" },
-  bloqueado: { color: "text-destructive", bg: "bg-destructive/20", border: "border-destructive", label: "Bloqueado", icon: "🔴" },
+export const statusConfig: Record<
+  StatusPosicao,
+  { color: string; bg: string; border: string; label: string; icon: string }
+> = {
+  livre: {
+    color: "text-muted-foreground",
+    bg: "bg-muted/50",
+    border: "border-dashed border-border",
+    label: "Livre",
+    icon: "⬜",
+  },
+  ocupado: {
+    color: "text-success",
+    bg: "bg-success/20",
+    border: "border-success",
+    label: "Ocupado",
+    icon: "🟢",
+  },
+  reservado: {
+    color: "text-warning",
+    bg: "bg-warning/20",
+    border: "border-warning",
+    label: "Reservado",
+    icon: "🟡",
+  },
+  bloqueado: {
+    color: "text-destructive",
+    bg: "bg-destructive/20",
+    border: "border-destructive",
+    label: "Bloqueado",
+    icon: "🔴",
+  },
 };

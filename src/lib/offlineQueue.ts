@@ -28,7 +28,7 @@ class OfflineQueue<T> {
   }
 
   remove(id: string): void {
-    const queue = this.getQueue().filter(item => item.id !== id);
+    const queue = this.getQueue().filter((item) => item.id !== id);
     this.saveQueue(queue);
   }
 
@@ -42,7 +42,7 @@ class OfflineQueue<T> {
 
   incrementRetry(id: string): void {
     const queue = this.getQueue();
-    const item = queue.find(i => i.id === id);
+    const item = queue.find((i) => i.id === id);
     if (item) item.retries++;
     this.saveQueue(queue);
   }

@@ -1,16 +1,14 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react";
 
 export function usePrint() {
   const printRef = useRef<HTMLElement | null>(null);
 
   const print = useCallback((elementId?: string) => {
-    const element = elementId 
-      ? document.getElementById(elementId) 
-      : printRef.current;
-    
+    const element = elementId ? document.getElementById(elementId) : printRef.current;
+
     if (!element) return;
 
-    const printWindow = window.open('', '_blank');
+    const printWindow = window.open("", "_blank");
     if (!printWindow) return;
 
     printWindow.document.write(`

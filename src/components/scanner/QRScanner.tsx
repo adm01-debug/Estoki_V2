@@ -33,7 +33,8 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
         setCameras(devices);
         // Prefer back camera
         const backCamera = devices.find(
-          (d) => d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("traseira")
+          (d) =>
+            d.label.toLowerCase().includes("back") || d.label.toLowerCase().includes("traseira")
         );
         setCurrentCamera(backCamera?.id || devices[0].id);
         setHasPermission(true);
@@ -57,7 +58,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
 
     try {
       setError(null);
-      
+
       // Get cameras if not already loaded
       let cameraId = currentCamera;
       if (!cameraId) {
@@ -140,32 +141,26 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
   return (
     <div className={cn("relative", className)}>
       {/* Scanner Container */}
-      <div 
-        className="relative bg-black rounded-2xl overflow-hidden aspect-square"
-      >
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-black">
         {/* QR Reader Element */}
-        <div 
-          id="qr-reader" 
-          ref={containerRef}
-          className="w-full h-full"
-        />
+        <div id="qr-reader" ref={containerRef} className="h-full w-full" />
 
         {/* Overlay when not scanning */}
         {!isScanning && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80">
             {error ? (
-              <div className="text-center p-4">
-                <CameraOff className="h-16 w-16 text-destructive mx-auto mb-4" />
-                <p className="text-white mb-2">{error}</p>
+              <div className="p-4 text-center">
+                <CameraOff className="mx-auto mb-4 h-16 w-16 text-destructive" />
+                <p className="mb-2 text-white">{error}</p>
                 <Button onClick={handleStartClick} variant="outline" className="mt-4">
-                  <RotateCcw className="h-4 w-4 mr-2" />
+                  <RotateCcw className="mr-2 h-4 w-4" />
                   Tentar Novamente
                 </Button>
               </div>
             ) : (
-              <div className="text-center p-4">
-                <Camera className="h-16 w-16 text-white/50 mx-auto mb-4" />
-                <p className="text-white/70 mb-4">Clique para iniciar a câmera</p>
+              <div className="p-4 text-center">
+                <Camera className="mx-auto mb-4 h-16 w-16 text-white/50" />
+                <p className="mb-4 text-white/70">Clique para iniciar a câmera</p>
                 <Button onClick={handleStartClick} size="lg" className="gap-2">
                   <Camera className="h-5 w-5" />
                   Iniciar Scanner
@@ -177,16 +172,19 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
 
         {/* Scanning overlay with frame */}
         {isScanning && (
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="pointer-events-none absolute inset-0">
             {/* Corner markers */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64">
-              <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-lg" />
-              <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-lg" />
-              <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-lg" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-lg" />
-              
+            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-4 border-t-4 border-primary" />
+              <div className="absolute right-0 top-0 h-8 w-8 rounded-tr-lg border-r-4 border-t-4 border-primary" />
+              <div className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-lg border-b-4 border-l-4 border-primary" />
+              <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-4 border-r-4 border-primary" />
+
               {/* Scanning line animation */}
-              <div className="absolute left-4 right-4 h-0.5 bg-primary animate-pulse" style={{ top: '50%' }} />
+              <div
+                className="absolute left-4 right-4 h-0.5 animate-pulse bg-primary"
+                style={{ top: "50%" }}
+              />
             </div>
           </div>
         )}
@@ -194,7 +192,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
 
       {/* Controls */}
       {isScanning && (
-        <div className="flex justify-center gap-3 mt-4">
+        <div className="mt-4 flex justify-center gap-3">
           {cameras.length > 1 && (
             <Button variant="outline" size="icon" onClick={switchCamera}>
               <RotateCcw className="h-5 w-5" />
@@ -208,9 +206,9 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
       )}
 
       {/* Instructions */}
-      <p className="text-center text-sm text-muted-foreground mt-4">
-        {isScanning 
-          ? "Aponte a câmera para o QR Code da etiqueta" 
+      <p className="mt-4 text-center text-sm text-muted-foreground">
+        {isScanning
+          ? "Aponte a câmera para o QR Code da etiqueta"
           : "Toque para ativar a câmera e escanear"}
       </p>
     </div>

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const receivingItemSchema = z.object({
   id: z.string().uuid(),
@@ -22,7 +22,7 @@ export const receivingSchema = z.object({
   purchase_order_id: z.string().uuid().nullable().optional(),
   invoice_number: z.string().nullable().optional(),
   invoice_key: z.string().length(44).nullable().optional(),
-  status: z.enum(['pending', 'in_progress', 'inspection', 'putaway', 'completed', 'cancelled']),
+  status: z.enum(["pending", "in_progress", "inspection", "putaway", "completed", "cancelled"]),
   expected_date: z.string().datetime().nullable().optional(),
   received_at: z.string().datetime().nullable().optional(),
   items: z.array(receivingItemSchema).min(1),
@@ -34,5 +34,10 @@ export const receivingSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const receivingCreateSchema = receivingSchema.omit({ id: true, created_at: true, updated_at: true, receiving_number: true });
+export const receivingCreateSchema = receivingSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  receiving_number: true,
+});
 export type Receiving = z.infer<typeof receivingSchema>;

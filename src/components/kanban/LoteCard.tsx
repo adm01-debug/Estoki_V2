@@ -15,7 +15,7 @@ interface LoteCardProps {
 export function LoteCard({ lote, onClick }: LoteCardProps) {
   const isOverdue = lote.data_validade && new Date(lote.data_validade) < new Date();
   const isDivergent = lote.quantidade_atual !== lote.quantidade_inicial;
-  
+
   return (
     <motion.div
       layout
@@ -24,41 +24,45 @@ export function LoteCard({ lote, onClick }: LoteCardProps) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
     >
-      <Card 
-        className="cursor-pointer hover:shadow-md hover:border-primary/30 transition-all group"
+      <Card
+        className="group cursor-pointer transition-all hover:border-primary/30 hover:shadow-md"
         onClick={onClick}
       >
-        <CardContent className="p-3 space-y-2">
+        <CardContent className="space-y-2 p-3">
           <div className="flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold truncate">{lote.numero_lote}</p>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="truncate text-sm font-semibold">{lote.numero_lote}</p>
+              <p className="truncate text-xs text-muted-foreground">
                 {lote.produto?.nome || "Produto não vinculado"}
               </p>
             </div>
-            <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6 opacity-0 group-hover:opacity-100"
+            >
               <Eye className="h-3 w-3" />
             </Button>
           </div>
 
           <div className="flex flex-wrap gap-1">
             {lote.fornecedor && (
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+              <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                 {lote.fornecedor}
               </Badge>
             )}
             {lote.nf_entrada && (
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+              <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
                 NF {lote.nf_entrada}
               </Badge>
             )}
             {isOverdue && (
-              <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+              <Badge variant="destructive" className="px-1.5 py-0 text-[10px]">
                 Vencido
               </Badge>
             )}
             {isDivergent && (
-              <Badge className="text-[10px] px-1.5 py-0 bg-warning/20 text-warning border-warning/30">
+              <Badge className="border-warning/30 bg-warning/20 px-1.5 py-0 text-[10px] text-warning">
                 Divergente
               </Badge>
             )}
@@ -66,7 +70,9 @@ export function LoteCard({ lote, onClick }: LoteCardProps) {
 
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{lote.quantidade_atual} un</span>
-            <span>{formatDistanceToNow(new Date(lote.updated_at), { addSuffix: true, locale: ptBR })}</span>
+            <span>
+              {formatDistanceToNow(new Date(lote.updated_at), { addSuffix: true, locale: ptBR })}
+            </span>
           </div>
         </CardContent>
       </Card>

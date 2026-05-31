@@ -11,7 +11,7 @@ class WebSocketManager {
     this.socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       const handlers = this.callbacks.get(data.type) || [];
-      handlers.forEach(cb => cb(data.payload));
+      handlers.forEach((cb) => cb(data.payload));
     };
     this.socket.onclose = () => this.reconnect(url);
   }

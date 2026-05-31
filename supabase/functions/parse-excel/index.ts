@@ -22,19 +22,19 @@ serve(async (req) => {
 
     // Para XLSX, precisamos descompactar o ZIP e ler os XMLs
     // Este é um parser simplificado para arquivos CSV disfarçados ou XLS antigos
-    
+
     const decoder = new TextDecoder("utf-8");
     let content = decoder.decode(bytes);
 
     // Tentar detectar se é CSV
-    const isCSV = file.name.endsWith(".csv") || content.includes(",") && content.includes("\n");
+    const isCSV = file.name.endsWith(".csv") || (content.includes(",") && content.includes("\n"));
 
     let rows: string[][] = [];
     let headers: string[] = [];
 
     if (isCSV) {
-      const lines = content.split("\n").filter(l => l.trim());
-      rows = lines.map(line => {
+      const lines = content.split("\n").filter((l) => l.trim());
+      rows = lines.map((line) => {
         // Parser simples de CSV (não lida com todos os casos)
         const values: string[] = [];
         let current = "";
@@ -58,15 +58,18 @@ serve(async (req) => {
     } else {
       // Para XLSX real, seria necessário biblioteca especializada
       // Retornamos indicação de que precisa de processamento especial
-      return new Response(JSON.stringify({
-        error: "XLSX requires specialized parsing",
-        suggestion: "Use CSV format or process on client-side with xlsx library",
-        filename: file.name,
-        size_bytes: bytes.length,
-      }), {
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        status: 400,
-      });
+      return new Response(
+        JSON.stringify({
+          error: "XLSX requires specialized parsing",
+          suggestion: "Use CSV format or process on client-side with xlsx library",
+          filename: file.name,
+          size_bytes: bytes.length,
+        }),
+        {
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          status: 400,
+        }
+      );
     }
 
     // Converter para objetos
@@ -78,17 +81,20 @@ serve(async (req) => {
       return obj;
     });
 
-    return new Response(JSON.stringify({
-      filename: file.name,
-      size_bytes: bytes.length,
-      headers,
-      total_rows: rows.length,
-      data_rows: data.length,
-      preview: data.slice(0, 10),
-      data,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        filename: file.name,
+        size_bytes: bytes.length,
+        headers,
+        total_rows: rows.length,
+        data_rows: data.length,
+        preview: data.slice(0, 10),
+        data,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

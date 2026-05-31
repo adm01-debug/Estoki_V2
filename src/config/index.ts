@@ -2,7 +2,7 @@
  * Config Module - Barrel Export
  */
 
-import { logger } from '@/utils/logger';
+import { logger } from "@/utils/logger";
 
 // Environment
 export {
@@ -12,7 +12,7 @@ export {
   isStaging,
   validateConfig,
   type Environment,
-} from './environment';
+} from "./environment";
 
 // API Client
 export {
@@ -21,7 +21,7 @@ export {
   type RequestConfig,
   type ApiResponse,
   type ApiError,
-} from './api-client';
+} from "./api-client";
 
 // Error Handler
 export {
@@ -32,7 +32,7 @@ export {
   useErrorHandler,
   ErrorCode,
   type AppError,
-} from './error-handler';
+} from "./error-handler";
 
 // Analytics
 export {
@@ -41,16 +41,10 @@ export {
   initPerformanceTracking,
   EventCategory,
   EventAction,
-} from './analytics';
+} from "./analytics";
 
 // Bitrix24
-export {
-  bitrix24,
-  Bitrix24Client,
-  lalamove,
-  expedicao,
-  SPA_CONFIG,
-} from './bitrix24-client';
+export { bitrix24, Bitrix24Client, lalamove, expedicao, SPA_CONFIG } from "./bitrix24-client";
 
 // Feature Flags
 export {
@@ -61,35 +55,37 @@ export {
   withFeatureFlag,
   debugFeatureFlags,
   type FeatureFlags,
-} from './feature-flags';
+} from "./feature-flags";
 
 // App Config
 export const APP_CONFIG = {
-  name: 'ESTOKI',
-  version: '1.0.0',
-  company: 'ESTOKI',
+  name: "ESTOKI",
+  version: "1.0.0",
+  company: "ESTOKI",
 };
 
 // Inicialização global (ESM — no require())
 export function initializeApp(): void {
-  import('./environment').then(({ validateConfig: validate, isProduction: isProd, envConfig: env }) => {
-    import('./error-handler').then(({ setupGlobalErrorHandler: setupErrors }) => {
-      import('./analytics').then(({ initPerformanceTracking: initPerf }) => {
-        import('./feature-flags').then(({ debugFeatureFlags: debugFlags }) => {
-          const { valid, errors } = validate();
-           if (!valid) {
-             logger.warn('[CONFIG] Validation warnings', { errors });
-           }
+  import("./environment").then(
+    ({ validateConfig: validate, isProduction: isProd, envConfig: env }) => {
+      import("./error-handler").then(({ setupGlobalErrorHandler: setupErrors }) => {
+        import("./analytics").then(({ initPerformanceTracking: initPerf }) => {
+          import("./feature-flags").then(({ debugFeatureFlags: debugFlags }) => {
+            const { valid, errors } = validate();
+            if (!valid) {
+              logger.warn("[CONFIG] Validation warnings", { errors });
+            }
 
-          setupErrors();
-          initPerf();
+            setupErrors();
+            initPerf();
 
-           if (!isProd()) {
-             logger.info('[APP] Initialized', { mode: env.name });
-             debugFlags();
-           }
+            if (!isProd()) {
+              logger.info("[APP] Initialized", { mode: env.name });
+              debugFlags();
+            }
+          });
         });
       });
-    });
-  });
+    }
+  );
 }

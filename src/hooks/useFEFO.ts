@@ -11,7 +11,8 @@ export function useFEFO(produtoId?: string, sku?: string) {
     queryFn: async () => {
       let query = supabase
         .from("lotes")
-         .select(`
+        .select(
+          `
            id,
            numero_lote,
            data_validade,
@@ -20,27 +21,26 @@ export function useFEFO(produtoId?: string, sku?: string) {
            estoque_posicao(
              posicao:posicoes_estoque(codigo)
            )
-         `)
+         `
+        )
         .gt("quantidade_atual", 0)
         .not("data_validade", "is", null)
         .order("data_validade", { ascending: true });
 
-       if (produtoId) query = query.eq("produto_id", produtoId);
-        // Fix SKU filtering for joined tables in Supabase
-        if (sku) query = query.eq("produto.sku", sku);
+      if (produtoId) query = query.eq("produto_id", produtoId);
+      // Fix SKU filtering for joined tables in Supabase
+      if (sku) query = query.eq("produto.sku", sku);
 
       const { data, error } = await query;
 
       if (error) throw error;
 
       const now = new Date();
-      return (data as any[]).map(item => {
+      return (data as any[]).map((item) => {
         const validade = new Date(item.data_validade);
         return {
           ...item,
-          dias_para_vencer: Math.ceil(
-            (validade.getTime() - now.getTime()) / (1000 * 3600 * 24)
-          )
+          dias_para_vencer: Math.ceil((validade.getTime() - now.getTime()) / (1000 * 3600 * 24)),
         };
       });
     },

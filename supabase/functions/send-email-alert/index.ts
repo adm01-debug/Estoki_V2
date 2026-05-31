@@ -22,7 +22,11 @@ Deno.serve(async (req) => {
   try {
     const parsed = EmailAlertSchema.safeParse(await req.json());
     if (!parsed.success) {
-      return jsonResponse({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, 400, req);
+      return jsonResponse(
+        { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+        400,
+        req
+      );
     }
 
     const { to, subject, html, tipo } = parsed.data;

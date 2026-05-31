@@ -1,11 +1,11 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { Produto, RecebimentoFormData } from "./types";
@@ -28,7 +28,7 @@ export function FormFields({
   loadingProdutos,
 }: FormFieldsProps) {
   const handleProdutoChange = (produtoId: string) => {
-    const produto = produtos.find(p => p.id === produtoId);
+    const produto = produtos.find((p) => p.id === produtoId);
     setFormData({
       ...formData,
       produto_id: produtoId,
@@ -44,7 +44,7 @@ export function FormFields({
         <Label htmlFor="produto">Produto *</Label>
         <div className="relative">
           {loadingProdutos ? (
-            <div className="flex items-center gap-2 text-muted-foreground py-2 px-3 border rounded-md">
+            <div className="flex items-center gap-2 rounded-md border px-3 py-2 text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
               Carregando produtos...
             </div>
@@ -55,13 +55,17 @@ export function FormFields({
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
                 {produtos.length === 0 ? (
-                  <div className="p-2 text-sm text-center text-muted-foreground">Nenhum produto encontrado</div>
+                  <div className="p-2 text-center text-sm text-muted-foreground">
+                    Nenhum produto encontrado
+                  </div>
                 ) : (
-                  produtos.map(produto => (
+                  produtos.map((produto) => (
                     <SelectItem key={produto.id} value={produto.id}>
                       <div className="flex flex-col">
                         <span className="font-medium">{produto.nome}</span>
-                        <span className="text-[10px] text-muted-foreground">SKU: {produto.sku}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          SKU: {produto.sku}
+                        </span>
                       </div>
                     </SelectItem>
                   ))
@@ -137,16 +141,18 @@ export function FormFields({
             value={formData.quantidade_pedida || ""}
             onChange={(e) => {
               const val = parseInt(e.target.value) || 0;
-              setFormData({ 
-                ...formData, 
+              setFormData({
+                ...formData,
                 quantidade_pedida: val,
-                quantidade: formData.quantidade || val 
+                quantidade: formData.quantidade || val,
               });
               setErrors({ ...errors, quantidade_pedida: "" });
             }}
             className={errors.quantidade_pedida ? "border-destructive" : ""}
           />
-          {errors.quantidade_pedida && <p className="text-xs text-destructive">{errors.quantidade_pedida}</p>}
+          {errors.quantidade_pedida && (
+            <p className="text-xs text-destructive">{errors.quantidade_pedida}</p>
+          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="quantidade">Quantidade Inicial *</Label>
@@ -200,8 +206,8 @@ export function FormFields({
         </div>
         <div className="space-y-2">
           <Label htmlFor="status">Status Inicial</Label>
-          <Select 
-            value={formData.status} 
+          <Select
+            value={formData.status}
             onValueChange={(value) => setFormData({ ...formData, status: value as any })}
           >
             <SelectTrigger>

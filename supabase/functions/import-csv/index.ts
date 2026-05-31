@@ -5,8 +5,24 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const body = await req.json().catch(() => ({}));
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     // import-csv implementation
-    return new Response(JSON.stringify({ success: true, function: "import-csv", timestamp: new Date().toISOString(), ...body }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(
+      JSON.stringify({
+        success: true,
+        function: "import-csv",
+        timestamp: new Date().toISOString(),
+        ...body,
+      }),
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

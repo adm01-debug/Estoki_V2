@@ -27,13 +27,49 @@ const App = () => (
         {publicRoutes}
 
         <Route path="/" element={<AppLayout />}>
-          <Route index element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Index /></Suspense></RouteErrorBoundary>} />
-          <Route path="dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Dashboard /></Suspense></RouteErrorBoundary>} />
-          <Route path="monitor" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><DashboardOperacional /></Suspense></RouteErrorBoundary>} />
+          <Route
+            index
+            element={
+              <RouteErrorBoundary>
+                <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+                  <Index />
+                </Suspense>
+              </RouteErrorBoundary>
+            }
+          />
+          <Route
+            path="dashboard"
+            element={
+              <RouteErrorBoundary>
+                <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+                  <Dashboard />
+                </Suspense>
+              </RouteErrorBoundary>
+            }
+          />
+          <Route
+            path="monitor"
+            element={
+              <RouteErrorBoundary>
+                <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+                  <DashboardOperacional />
+                </Suspense>
+              </RouteErrorBoundary>
+            }
+          />
 
           {wmsRoutes}
           {analyticsRoutes}
-          <Route path="hub" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><Hub /></Suspense></RouteErrorBoundary>} />
+          <Route
+            path="hub"
+            element={
+              <RouteErrorBoundary>
+                <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+                  <Hub />
+                </Suspense>
+              </RouteErrorBoundary>
+            }
+          />
           {adminRoutes}
           {featureRoutes}
         </Route>

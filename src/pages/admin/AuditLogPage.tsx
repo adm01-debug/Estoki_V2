@@ -26,13 +26,13 @@ import type { AuditAction, AuditLogEntry } from "@/services/auditService";
 import { useTableExport } from "@/hooks/useExport";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { 
-  Search, 
-  Download, 
-  RefreshCw, 
-  History, 
-  Shield, 
-  Activity, 
+import {
+  Search,
+  Download,
+  RefreshCw,
+  History,
+  Shield,
+  Activity,
   FileJson,
   Eye,
 } from "lucide-react";
@@ -56,58 +56,78 @@ import { VirtualizedTable } from "@/components/data/VirtualizedTable";
 export default function AuditLogPage() {
   const [filters, setFilters] = useState({ page: 1, pageSize: 100 });
   const { logs, isLoading, getStats } = useAuditLog(filters);
-  
+
   const { exportData, isExporting } = useTableExport<AuditLogEntry>({
     table: "audit_log",
     filename: `audit_log_${format(new Date(), "yyyy-MM-dd")}`,
     columns: [
-      { key: "created_at", header: "Data/Hora", transform: (v) => format(new Date(v as string), "dd/MM/yyyy HH:mm:ss") },
+      {
+        key: "created_at",
+        header: "Data/Hora",
+        transform: (v) => format(new Date(v as string), "dd/MM/yyyy HH:mm:ss"),
+      },
       { key: "user_email", header: "Usuário" },
       { key: "action", header: "Ação" },
       { key: "entity_type", header: "Entidade" },
       { key: "entity_label", header: "Detalhes" },
-      { key: "ip_address", header: "IP" }
-    ]
+      { key: "ip_address", header: "IP" },
+    ],
   });
 
   const [searchTerm, setSearchTerm] = useState("");
   const stats = getStats();
 
-  const filteredLogs = Array.isArray(logs) ? logs.filter((log: AuditLogEntry) => {
-    const matchesSearch = 
-      log.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.entity_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.entity_id?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    return matchesSearch;
-  }) : [];
+  const filteredLogs = Array.isArray(logs)
+    ? logs.filter((log: AuditLogEntry) => {
+        const matchesSearch =
+          log.user_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          log.entity_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          log.entity_id?.toLowerCase().includes(searchTerm.toLowerCase());
+
+        return matchesSearch;
+      })
+    : [];
 
   const getActionBadge = (action: AuditAction) => {
     switch (action) {
-      case "create": return <Badge className="bg-success hover:bg-success/80">Criação</Badge>;
-      case "update": return <Badge className="bg-blue-500 hover:bg-blue-600">Atualização</Badge>;
-      case "delete": return <Badge variant="destructive">Exclusão</Badge>;
-      case "login": return <Badge variant="outline" className="border-primary text-primary">Login</Badge>;
-      case "logout": return <Badge variant="outline">Logout</Badge>;
-      case "approve": return <Badge className="bg-emerald-500">Aprovação</Badge>;
-      case "reject": return <Badge variant="destructive">Rejeição</Badge>;
-      default: return <Badge variant="secondary">{action}</Badge>;
+      case "create":
+        return <Badge className="bg-success hover:bg-success/80">Criação</Badge>;
+      case "update":
+        return <Badge className="bg-blue-500 hover:bg-blue-600">Atualização</Badge>;
+      case "delete":
+        return <Badge variant="destructive">Exclusão</Badge>;
+      case "login":
+        return (
+          <Badge variant="outline" className="border-primary text-primary">
+            Login
+          </Badge>
+        );
+      case "logout":
+        return <Badge variant="outline">Logout</Badge>;
+      case "approve":
+        return <Badge className="bg-emerald-500">Aprovação</Badge>;
+      case "reject":
+        return <Badge variant="destructive">Rejeição</Badge>;
+      default:
+        return <Badge variant="secondary">{action}</Badge>;
     }
   };
 
-  const uniqueEntities = Array.from(new Set(Array.isArray(logs) ? logs.map((l: AuditLogEntry) => l.entity_type) : []));
+  const uniqueEntities = Array.from(
+    new Set(Array.isArray(logs) ? logs.map((l: AuditLogEntry) => l.entity_type) : [])
+  );
 
   return (
     <AppLayout title="Logs de Auditoria" showBack>
       <PageTransition>
-        <div className="p-4 space-y-8">
+        <div className="space-y-8 p-4">
           <AuditoriaEnterpriseViewer />
- 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-sm font-medium">
                   <Activity className="h-4 w-4 text-primary" />
                   Total de Eventos
                 </CardTitle>
@@ -119,7 +139,7 @@ export default function AuditLogPage() {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-sm font-medium">
                   <History className="h-4 w-4 text-orange-500" />
                   Eventos Hoje
                 </CardTitle>
@@ -131,13 +151,13 @@ export default function AuditLogPage() {
             </Card>
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-sm font-medium">
                   <Shield className="h-4 w-4 text-success" />
                   Segurança
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.porAcao['login'] || 0}</div>
+                <div className="text-2xl font-bold">{stats.porAcao["login"] || 0}</div>
                 <p className="text-xs text-muted-foreground">Logins registrados</p>
               </CardContent>
             </Card>
@@ -145,7 +165,7 @@ export default function AuditLogPage() {
 
           <Card>
             <CardContent className="p-4">
-              <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex flex-col gap-4 md:flex-row">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -160,15 +180,25 @@ export default function AuditLogPage() {
                 </Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="flex items-center gap-2" disabled={isExporting}>
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2"
+                      disabled={isExporting}
+                    >
                       <Download className="h-4 w-4" />
                       {isExporting ? "Exportando..." : "Exportar"}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => exportData("csv")}>Exportar CSV</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportData("xlsx")}>Exportar Excel</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportData("pdf")}>Exportar PDF</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportData("csv")}>
+                      Exportar CSV
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportData("xlsx")}>
+                      Exportar Excel
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => exportData("pdf")}>
+                      Exportar PDF
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -178,21 +208,26 @@ export default function AuditLogPage() {
           <Card>
             <CardHeader className="pb-0">
               <CardTitle>Histórico Detalhado</CardTitle>
-              <CardDescription>Rastreabilidade completa de todas as mudanças no sistema</CardDescription>
+              <CardDescription>
+                Rastreabilidade completa de todas as mudanças no sistema
+              </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
               {isLoading ? (
                 <div className="space-y-4">
-                  {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-12 w-full" />)}
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Skeleton key={i} className="h-12 w-full" />
+                  ))}
                 </div>
               ) : (
-                <VirtualizedTable 
+                <VirtualizedTable
                   data={filteredLogs}
                   columns={[
                     {
                       header: "Data/Hora",
                       className: "w-[180px] font-mono text-xs",
-                      cell: (log: AuditLogEntry) => format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })
+                      cell: (log: AuditLogEntry) =>
+                        format(new Date(log.created_at), "dd/MM/yyyy HH:mm:ss", { locale: ptBR }),
                     },
                     {
                       header: "Usuário",
@@ -200,14 +235,16 @@ export default function AuditLogPage() {
                       cell: (log: AuditLogEntry) => (
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{log.user_nome || "Sistema"}</span>
-                          <span className="text-xs text-muted-foreground truncate">{log.user_email}</span>
+                          <span className="truncate text-xs text-muted-foreground">
+                            {log.user_email}
+                          </span>
                         </div>
-                      )
+                      ),
                     },
                     {
                       header: "Ação",
                       className: "w-[120px]",
-                      cell: (log: AuditLogEntry) => getActionBadge(log.action)
+                      cell: (log: AuditLogEntry) => getActionBadge(log.action),
                     },
                     {
                       header: "Entidade",
@@ -215,14 +252,18 @@ export default function AuditLogPage() {
                       cell: (log: AuditLogEntry) => (
                         <div className="flex flex-col">
                           <span className="text-xs font-semibold uppercase">{log.entity_type}</span>
-                          <span className="text-[10px] text-muted-foreground font-mono">{log.entity_id?.slice(0, 8)}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">
+                            {log.entity_id?.slice(0, 8)}
+                          </span>
                         </div>
-                      )
+                      ),
                     },
                     {
                       header: "Detalhes",
                       className: "flex-[2]",
-                      cell: (log: AuditLogEntry) => <span className="text-sm truncate block">{log.entity_label || "-"}</span>
+                      cell: (log: AuditLogEntry) => (
+                        <span className="block truncate text-sm">{log.entity_label || "-"}</span>
+                      ),
                     },
                     {
                       header: "Ver",
@@ -241,47 +282,70 @@ export default function AuditLogPage() {
                                 Detalhes do Evento
                               </DialogTitle>
                             </DialogHeader>
-                            <ScrollArea className="max-h-[60vh] p-4 bg-muted rounded-md">
+                            <ScrollArea className="max-h-[60vh] rounded-md bg-muted p-4">
                               <div className="space-y-4">
                                 <div>
-                                  <h4 className="text-xs font-bold uppercase text-muted-foreground mb-2">Informações Gerais</h4>
-                                  <pre className="text-xs">{JSON.stringify({
-                                    id: log.id,
-                                    created_at: log.created_at,
-                                    ip: log.ip_address,
-                                    agent: log.user_agent
-                                  }, null, 2)}</pre>
+                                  <h4 className="mb-2 text-xs font-bold uppercase text-muted-foreground">
+                                    Informações Gerais
+                                  </h4>
+                                  <pre className="text-xs">
+                                    {JSON.stringify(
+                                      {
+                                        id: log.id,
+                                        created_at: log.created_at,
+                                        ip: log.ip_address,
+                                        agent: log.user_agent,
+                                      },
+                                      null,
+                                      2
+                                    )}
+                                  </pre>
                                 </div>
                                 {log.old_values && (
                                   <div>
-                                    <h4 className="text-xs font-bold uppercase text-red-500 mb-2">Valores Anteriores</h4>
-                                    <pre className="text-xs bg-red-500/5 p-2 rounded">{JSON.stringify(log.old_values, null, 2)}</pre>
+                                    <h4 className="mb-2 text-xs font-bold uppercase text-red-500">
+                                      Valores Anteriores
+                                    </h4>
+                                    <pre className="rounded bg-red-500/5 p-2 text-xs">
+                                      {JSON.stringify(log.old_values, null, 2)}
+                                    </pre>
                                   </div>
                                 )}
                                 {log.new_values && (
                                   <div>
-                                    <h4 className="text-xs font-bold uppercase text-success mb-2">Novos Valores</h4>
-                                    <pre className="text-xs bg-success/5 p-2 rounded">{JSON.stringify(log.new_values, null, 2)}</pre>
+                                    <h4 className="mb-2 text-xs font-bold uppercase text-success">
+                                      Novos Valores
+                                    </h4>
+                                    <pre className="rounded bg-success/5 p-2 text-xs">
+                                      {JSON.stringify(log.new_values, null, 2)}
+                                    </pre>
                                   </div>
                                 )}
-                                {log.metadata && typeof log.metadata === 'object' && log.metadata !== null && Object.keys(log.metadata).length > 0 && (
-                                  <div>
-                                    <h4 className="text-xs font-bold uppercase text-primary mb-2">Metadados Adicionais</h4>
-                                    <pre className="text-xs">{JSON.stringify(log.metadata, null, 2)}</pre>
-                                  </div>
-                                )}
+                                {log.metadata &&
+                                  typeof log.metadata === "object" &&
+                                  log.metadata !== null &&
+                                  Object.keys(log.metadata).length > 0 && (
+                                    <div>
+                                      <h4 className="mb-2 text-xs font-bold uppercase text-primary">
+                                        Metadados Adicionais
+                                      </h4>
+                                      <pre className="text-xs">
+                                        {JSON.stringify(log.metadata, null, 2)}
+                                      </pre>
+                                    </div>
+                                  )}
                               </div>
                             </ScrollArea>
                           </DialogContent>
                         </Dialog>
-                      )
-                    }
+                      ),
+                    },
                   ]}
                   height="500px"
                 />
               )}
               {filteredLogs.length === 0 && !isLoading && (
-                <div className="h-32 flex flex-col items-center justify-center text-muted-foreground">
+                <div className="flex h-32 flex-col items-center justify-center text-muted-foreground">
                   <p>Nenhum registro encontrado com os filtros atuais.</p>
                 </div>
               )}
@@ -292,4 +356,3 @@ export default function AuditLogPage() {
     </AppLayout>
   );
 }
-

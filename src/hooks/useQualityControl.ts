@@ -21,10 +21,12 @@ export function useQualityControl() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("inspecoes_qualidade")
-        .select(`
+        .select(
+          `
           *,
           lote:lotes(numero_lote, produto:produtos(nome))
-        `)
+        `
+        )
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -37,7 +39,7 @@ export function useQualityControl() {
       const { error } = await supabase.from("inspecoes_qualidade").insert([inspection]);
 
       if (error) throw error;
-      
+
       // Se rejeitado, atualiza o status do lote
       if (inspection.resultado === "rejeitado") {
         await supabase.from("lotes").update({ status: "divergencia" }).eq("id", inspection.lote_id);
@@ -45,7 +47,10 @@ export function useQualityControl() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quality-inspections"] });
-      toast({ title: "Inspeção registrada", description: "Os dados de qualidade foram salvos com sucesso." });
+      toast({
+        title: "Inspeção registrada",
+        description: "Os dados de qualidade foram salvos com sucesso.",
+      });
     },
   });
 

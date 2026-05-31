@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 
 export function useProfiler(id: string, onRender?: (duration: number) => void) {
   const startTime = useRef(performance.now());

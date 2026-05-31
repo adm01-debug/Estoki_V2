@@ -1,23 +1,23 @@
- // Types para Gestão de Tarefas
+// Types para Gestão de Tarefas
 export const tipoLabels: Record<string, string> = {
-  separacao: "Separação", 
-  armazenagem: "Armazenagem", 
+  separacao: "Separação",
+  armazenagem: "Armazenagem",
   transferencia: "Transferência",
-  inventario: "Inventário", 
+  inventario: "Inventário",
   expedicao: "Expedição",
   recebimento: "Recebimento",
   triagem: "Triagem",
-  manutencao: "Manutenção"
+  manutencao: "Manutenção",
 };
 
 export const statusLabels: Record<string, string> = {
-  pendente: "Pendente", 
-  atribuida: "Atribuída", 
+  pendente: "Pendente",
+  atribuida: "Atribuída",
   em_andamento: "Em Andamento",
-  concluida: "Concluída", 
+  concluida: "Concluída",
   bloqueado: "Bloqueada",
   cancelada: "Cancelada",
-  atrasada: "Atrasada"
+  atrasada: "Atrasada",
 };
 
 export const statusColors: Record<string, string> = {
@@ -31,38 +31,41 @@ export const statusColors: Record<string, string> = {
 };
 
 export const prioridadeLabels: Record<string, string> = {
-  baixa: "Baixa", media: "Média", alta: "Alta", urgente: "Urgente",
+  baixa: "Baixa",
+  media: "Média",
+  alta: "Alta",
+  urgente: "Urgente",
 };
 
 export const prioridadeColors: Record<string, string> = {
-  baixa: "bg-gray-500/10 text-gray-600", 
+  baixa: "bg-gray-500/10 text-gray-600",
   media: "bg-blue-500/10 text-blue-600",
-  alta: "bg-amber-500/10 text-amber-600", 
+  alta: "bg-amber-500/10 text-amber-600",
   urgente: "bg-red-500/10 text-red-600",
 };
 
 import { Database } from "@/integrations/supabase/types";
- 
-export type StatusTarefa = Database['public']['Enums']['status_tarefa'];
-export type PrioridadeTarefa = Database['public']['Enums']['prioridade_tarefa'];
-export type TipoTarefa = Database['public']['Enums']['tipo_tarefa'];
- 
+
+export type StatusTarefa = Database["public"]["Enums"]["status_tarefa"];
+export type PrioridadeTarefa = Database["public"]["Enums"]["prioridade_tarefa"];
+export type TipoTarefa = Database["public"]["Enums"]["tipo_tarefa"];
+
 export interface Tarefa {
-   id: string;
-   instrucoes: string | null;
-   tipo: TipoTarefa;
-   status: StatusTarefa;
-   prioridade: PrioridadeTarefa;
-   operador_id?: string | null;
-   created_at: string;
-   data_inicio?: string | null;
-   data_conclusao?: string | null;
-   lote_id?: string | null;
-   posicao_origem_id?: string | null;
-   posicao_destino_id?: string | null;
-   quantidade: number;
-   zona?: string | null;
- }
+  id: string;
+  instrucoes: string | null;
+  tipo: TipoTarefa;
+  status: StatusTarefa;
+  prioridade: PrioridadeTarefa;
+  operador_id?: string | null;
+  created_at: string;
+  data_inicio?: string | null;
+  data_conclusao?: string | null;
+  lote_id?: string | null;
+  posicao_origem_id?: string | null;
+  posicao_destino_id?: string | null;
+  quantidade: number;
+  zona?: string | null;
+}
 
 export interface TarefaInput {
   titulo: string;
@@ -72,4 +75,3 @@ export interface TarefaInput {
   responsavel_id?: string;
   data_limite?: string;
 }
-

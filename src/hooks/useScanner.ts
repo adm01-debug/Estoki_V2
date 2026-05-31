@@ -14,7 +14,7 @@ export interface ScanResult {
   dataRecebimento?: string;
   dataTriagem?: string;
   dataArmazenamento?: string;
-  tipo: 'recebimento' | 'triagem' | 'lote' | 'posicao' | 'desconhecido';
+  tipo: "recebimento" | "triagem" | "lote" | "posicao" | "desconhecido";
 }
 
 export interface OCRResult {
@@ -32,7 +32,7 @@ export interface ScanHistoryItem {
   qrData: string;
   result: ScanResult | null;
   timestamp: Date;
-  source?: 'qr' | 'ocr';
+  source?: "qr" | "ocr";
 }
 
 export interface UseScannerReturn {
@@ -43,7 +43,7 @@ export interface UseScannerReturn {
   scanHistory: ScanHistoryItem[];
   error: string | null;
   ocrResult: OCRResult | null;
-  
+
   // Ações
   processQRCode: (qrData: string) => Promise<ScanResult | null>;
   processImageOCR: (imageBase64: string) => Promise<OCRResult | null>;
@@ -54,8 +54,9 @@ export interface UseScannerReturn {
 
 async function buscarPorLote(parsed: any): Promise<ScanResult | null> {
   const { data: lote } = await supabase
-    .from('lotes')
-    .select(`
+    .from("lotes")
+    .select(
+      `
       *,
       produtos (nome, sku),
       estoque_posicao (
@@ -63,36 +64,42 @@ async function buscarPorLote(parsed: any): Promise<ScanResult | null> {
         quantidade,
         posicoes_estoque (codigo)
       )
-    `)
-    .eq('id', (parsed.lote_id || parsed.loteId) as string)
+    `
+    )
+    .eq("id", (parsed.lote_id || parsed.loteId) as string)
     .maybeSingle();
 
   if (!lote) return null;
 
   const posicoes = lote.estoque_posicao || [];
-  const localizacao = posicoes.length > 0 
-    ? posicoes.map((p: any) => p.posicoes_estoque?.codigo).filter(Boolean).join(', ')
-    : undefined;
+  const localizacao =
+    posicoes.length > 0
+      ? posicoes
+          .map((p: any) => p.posicoes_estoque?.codigo)
+          .filter(Boolean)
+          .join(", ")
+      : undefined;
 
   return {
     id: lote.id,
-    pedido: lote.pedido_compra || 'N/A',
-    produto: lote.produtos?.nome || 'Produto desconhecido',
+    pedido: lote.pedido_compra || "N/A",
+    produto: lote.produtos?.nome || "Produto desconhecido",
     lote: lote.numero_lote,
     quantidade: lote.quantidade_atual || 0,
     localizacao,
-    status: lote.status || 'pendente',
+    status: lote.status || "pendente",
     dataRecebimento: lote.data_recebimento,
     dataTriagem: lote.data_conferencia ?? undefined,
-    tipo: 'lote',
+    tipo: "lote",
   };
 }
 
 async function buscarPorPosicao(parsed: any): Promise<ScanResult | null> {
   const codigoPosicao = (parsed.posicao || parsed.codigo_posicao) as string;
   const { data: posicao } = await supabase
-    .from('posicoes_estoque')
-    .select(`
+    .from("posicoes_estoque")
+    .select(
+      `
       *,
       estoque_posicao (
         quantidade,
@@ -102,8 +109,9 @@ async function buscarPorPosicao(parsed: any): Promise<ScanResult | null> {
           produtos (nome)
         )
       )
-    `)
-    .eq('codigo', codigoPosicao)
+    `
+    )
+    .eq("codigo", codigoPosicao)
     .maybeSingle();
 
   if (!posicao) return null;
@@ -114,23 +122,25 @@ async function buscarPorPosicao(parsed: any): Promise<ScanResult | null> {
 
   return {
     id: posicao.id,
-    pedido: 'Posição',
-    produto: produtos.length > 0 ? produtos.join(', ') : 'Vazia',
+    pedido: "Posição",
+    produto: produtos.length > 0 ? produtos.join(", ") : "Vazia",
     localizacao: posicao.codigo,
     quantidade: qtdTotal,
-    status: posicao.status || 'livre',
-    tipo: 'posicao',
+    status: posicao.status || "livre",
+    tipo: "posicao",
   };
 }
 
 async function buscarPorPedido(parsed: any): Promise<ScanResult | null> {
   const { data: recebimentos } = await supabase
-    .from('lotes')
-    .select(`
+    .from("lotes")
+    .select(
+      `
       *,
       produtos (nome, sku)
-    `)
-    .eq('pedido_compra', parsed.pedido as string)
+    `
+    )
+    .eq("pedido_compra", parsed.pedido as string)
     .limit(5);
 
   if (!recebimentos || recebimentos.length === 0) return null;
@@ -138,15 +148,15 @@ async function buscarPorPedido(parsed: any): Promise<ScanResult | null> {
   const primeiro = recebimentos[0];
   return {
     id: primeiro.id,
-    pedido: primeiro.pedido_compra || 'N/A',
-    produto: primeiro.produtos?.nome || 'Produto desconhecido',
+    pedido: primeiro.pedido_compra || "N/A",
+    produto: primeiro.produtos?.nome || "Produto desconhecido",
     lote: primeiro.numero_lote,
     volume: 1,
     totalVolumes: recebimentos.length,
     quantidade: recebimentos.reduce((acc, r) => acc + (r.quantidade_atual || 0), 0),
-    status: primeiro.status || 'pendente',
+    status: primeiro.status || "pendente",
     dataRecebimento: primeiro.data_recebimento,
-    tipo: 'recebimento',
+    tipo: "recebimento",
   };
 }
 
@@ -164,25 +174,25 @@ export function useScanner(): UseScannerReturn {
     setError(null);
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke('scanner-ocr', {
-        body: { 
+      const { data, error: fnError } = await supabase.functions.invoke("scanner-ocr", {
+        body: {
           image: imageBase64,
-          extractData: true 
-        }
+          extractData: true,
+        },
       });
 
       if (fnError) {
-        throw new Error(fnError.message || 'Erro ao processar OCR');
+        throw new Error(fnError.message || "Erro ao processar OCR");
       }
 
       if (!data) {
-        throw new Error('Nenhum resultado do OCR');
+        throw new Error("Nenhum resultado do OCR");
       }
 
       const result: OCRResult = {
-        text: data.text || '',
+        text: data.text || "",
         confidence: data.confidence || 0,
-        extractedData: data.extractedData || {}
+        extractedData: data.extractedData || {},
       };
 
       setOcrResult(result);
@@ -191,18 +201,18 @@ export function useScanner(): UseScannerReturn {
       if (result.extractedData?.pedido || result.extractedData?.lote) {
         const qrData = JSON.stringify(result.extractedData);
         const scanResult = await processQRCode(qrData);
-        
+
         if (scanResult) {
-          setScanHistory(prev => [
-            { qrData, result: scanResult, timestamp: new Date(), source: 'ocr' },
-            ...prev.slice(0, 9)
+          setScanHistory((prev) => [
+            { qrData, result: scanResult, timestamp: new Date(), source: "ocr" },
+            ...prev.slice(0, 9),
           ]);
         }
       }
 
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao processar OCR';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao processar OCR";
       setError(errorMessage);
       return null;
     } finally {
@@ -248,24 +258,24 @@ export function useScanner(): UseScannerReturn {
 
       if (!result) {
         result = {
-          id: 'unknown',
+          id: "unknown",
           pedido: qrData,
-          produto: 'Não encontrado no sistema',
+          produto: "Não encontrado no sistema",
           quantidade: 0,
-          status: 'desconhecido',
-          tipo: 'desconhecido',
+          status: "desconhecido",
+          tipo: "desconhecido",
         };
       }
 
       setLastResult(result);
-      setScanHistory(prev => [
-        { qrData, result, timestamp: new Date(), source: 'qr' },
-        ...prev.slice(0, 9) // Manter últimos 10
+      setScanHistory((prev) => [
+        { qrData, result, timestamp: new Date(), source: "qr" },
+        ...prev.slice(0, 9), // Manter últimos 10
       ]);
 
       return result;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao processar QR Code';
+      const errorMessage = err instanceof Error ? err.message : "Erro ao processar QR Code";
       setError(errorMessage);
       return null;
     } finally {

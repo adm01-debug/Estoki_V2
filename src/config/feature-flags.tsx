@@ -3,8 +3,8 @@
  * Controle granular de funcionalidades por ambiente/usuário
  */
 
-import { envConfig, isProduction } from './environment';
-import { logger } from '../utils/logger';
+import { envConfig, isProduction } from "./environment";
+import { logger } from "../utils/logger";
 
 // Definição das flags
 export interface FeatureFlags {
@@ -13,7 +13,7 @@ export interface FeatureFlags {
   pwa: boolean;
   offlineMode: boolean;
   darkMode: boolean;
-  
+
   // Modules
   receiving: boolean;
   shipping: boolean;
@@ -21,20 +21,20 @@ export interface FeatureFlags {
   picking: boolean;
   packing: boolean;
   waving: boolean;
-  
+
   // Integrations
   bitrix24Integration: boolean;
   correiosIntegration: boolean;
   nfeIntegration: boolean;
   lalamoveIntegration: boolean;
-  
+
   // Advanced
   aiClassification: boolean;
   barcodeScanner: boolean;
   voiceCommands: boolean;
   realTimeSync: boolean;
   advancedReports: boolean;
-  
+
   // Beta features
   betaUI: boolean;
   experimentalFeatures: boolean;
@@ -127,13 +127,13 @@ interface FlagOverride {
 const flagOverrides: FlagOverride[] = [
   // Exemplo: Beta UI para admins
   {
-    flag: 'betaUI',
+    flag: "betaUI",
     value: true,
-    condition: { roles: ['admin', 'developer'] },
+    condition: { roles: ["admin", "developer"] },
   },
   // Exemplo: AI Classification para 10% dos usuários
   {
-    flag: 'aiClassification',
+    flag: "aiClassification",
     value: true,
     condition: { percentage: 10 },
   },
@@ -174,7 +174,7 @@ function checkOverride(override: FlagOverride): boolean {
   // Check percentage (deterministic based on userId)
   if (condition.percentage !== undefined && currentUserContext.userId) {
     const hash = currentUserContext.userId
-      .split('')
+      .split("")
       .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const bucket = hash % 100;
     if (bucket < condition.percentage) {
@@ -188,7 +188,7 @@ function checkOverride(override: FlagOverride): boolean {
 // Obter todas as flags para o ambiente atual
 export function getFeatureFlags(): FeatureFlags {
   const env = envConfig.name;
-  const baseFlags = { ...defaultFlags[env] || defaultFlags.production };
+  const baseFlags = { ...(defaultFlags[env] || defaultFlags.production) };
 
   // Aplicar overrides
   for (const override of flagOverrides) {
@@ -200,7 +200,7 @@ export function getFeatureFlags(): FeatureFlags {
   // Aplicar flags de env vars (override final)
   if (envConfig.features) {
     Object.entries(envConfig.features).forEach(([key, value]) => {
-      if (key in baseFlags && typeof value === 'boolean') {
+      if (key in baseFlags && typeof value === "boolean") {
         (baseFlags as Record<string, boolean>)[key] = value;
       }
     });
@@ -238,10 +238,10 @@ export function withFeatureFlag<P extends object>(
 }
 
 export function debugFeatureFlags(): void {
-   if (!isProduction()) {
-     const flags = getFeatureFlags();
-     logger.info('Feature Flags atuais', flags as unknown as Record<string, unknown>);
-   }
- }
+  if (!isProduction()) {
+    const flags = getFeatureFlags();
+    logger.info("Feature Flags atuais", flags as unknown as Record<string, unknown>);
+  }
+}
 
 export default { getFeatureFlags, isFeatureEnabled, setUserContext };

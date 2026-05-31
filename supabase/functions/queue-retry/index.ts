@@ -16,10 +16,7 @@ serve(async (req) => {
 
     const { job_id, max_retries = 3, backoff_minutes = 5 } = await req.json();
 
-    let query = supabase
-      .from("job_queue")
-      .select("*")
-      .eq("status", "failed");
+    let query = supabase.from("job_queue").select("*").eq("status", "failed");
 
     if (job_id) {
       query = query.eq("id", job_id);
@@ -35,7 +32,9 @@ serve(async (req) => {
     for (const job of failedJobs || []) {
       if (job.attempts >= max_retries) continue;
 
-      const nextAttempt = new Date(Date.now() + backoff_minutes * 60 * 1000 * Math.pow(2, job.attempts));
+      const nextAttempt = new Date(
+        Date.now() + backoff_minutes * 60 * 1000 * Math.pow(2, job.attempts)
+      );
 
       const { error: updateError } = await supabase
         .from("job_queue")
@@ -56,13 +55,16 @@ serve(async (req) => {
       }
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      retried_count: retried.length,
-      jobs: retried,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        retried_count: retried.length,
+        jobs: retried,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

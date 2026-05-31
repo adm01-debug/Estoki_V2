@@ -8,7 +8,8 @@ export function measurePerformance() {
         if (import.meta.env.DEV) console.log("LCP:", entry.startTime);
       }
       if (entry.entryType === "first-input") {
-        if (import.meta.env.DEV) console.log("FID:", (entry as PerformanceEventTiming).processingStart - entry.startTime);
+        if (import.meta.env.DEV)
+          console.log("FID:", (entry as PerformanceEventTiming).processingStart - entry.startTime);
       }
     }
   });

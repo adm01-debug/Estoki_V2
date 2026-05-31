@@ -11,13 +11,15 @@ export function useLIFO(produtoId?: string) {
     queryFn: async () => {
       let query = supabase
         .from("lotes")
-        .select(`
+        .select(
+          `
           id,
           numero_lote,
           data_recebimento,
           quantidade_atual,
           produto:produtos(nome, sku)
-        `)
+        `
+        )
         .gt("quantidade_atual", 0)
         .order("data_recebimento", { ascending: false });
 

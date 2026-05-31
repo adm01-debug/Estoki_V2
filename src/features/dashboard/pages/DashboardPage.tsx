@@ -17,8 +17,12 @@ import { IndexOcupacaoCard } from "../components/IndexOcupacaoCard";
 import { IndexQuickStats } from "../components/IndexQuickStats";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 
- const IndexOperations = lazy(() => import("../components/IndexOperations").then(m => ({ default: m.IndexOperations })));
- const IndexAtividade = lazy(() => import("../components/IndexAtividade").then(m => ({ default: m.IndexAtividade })));
+const IndexOperations = lazy(() =>
+  import("../components/IndexOperations").then((m) => ({ default: m.IndexOperations }))
+);
+const IndexAtividade = lazy(() =>
+  import("../components/IndexAtividade").then((m) => ({ default: m.IndexAtividade }))
+);
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -41,87 +45,119 @@ export default function Dashboard() {
 
   const estatisticas = useMemo(() => getEstatisticas(), [getEstatisticas]);
 
-   const { aguardandoRecebimento, divergencias, triagemPendente, itensEstoque, ocupacaoPP, ocupacaoBoxes } = useMemo(() => {
-     const recebimentosList = recebimentos || [];
-     const aguardando = recebimentosList.filter(r => r.status === 'aguardando' || r.status === 'em_transito').length;
-     const div = recebimentosList.filter(r => r.status === 'divergencia').length;
-     const triagem = stats?.triagensPendentes || 0;
-     const itens = estatisticas.posicoesOcupadas;
-      const pp = Math.round(estatisticas.taxaOcupacao);
-      // Simulação de ocupação de boxes com base na taxa global para maior precisão visual
-      const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.82) : 0;
-      return { aguardandoRecebimento: aguardando, divergencias: div, triagemPendente: triagem, itensEstoque: itens, ocupacaoPP: pp, ocupacaoBoxes: boxes };
-   }, [recebimentos, stats, estatisticas]);
+  const {
+    aguardandoRecebimento,
+    divergencias,
+    triagemPendente,
+    itensEstoque,
+    ocupacaoPP,
+    ocupacaoBoxes,
+  } = useMemo(() => {
+    const recebimentosList = recebimentos || [];
+    const aguardando = recebimentosList.filter(
+      (r) => r.status === "aguardando" || r.status === "em_transito"
+    ).length;
+    const div = recebimentosList.filter((r) => r.status === "divergencia").length;
+    const triagem = stats?.triagensPendentes || 0;
+    const itens = estatisticas.posicoesOcupadas;
+    const pp = Math.round(estatisticas.taxaOcupacao);
+    // Simulação de ocupação de boxes com base na taxa global para maior precisão visual
+    const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.82) : 0;
+    return {
+      aguardandoRecebimento: aguardando,
+      divergencias: div,
+      triagemPendente: triagem,
+      itensEstoque: itens,
+      ocupacaoPP: pp,
+      ocupacaoBoxes: boxes,
+    };
+  }, [recebimentos, stats, estatisticas]);
 
-  const userName = profile?.nome?.split(' ')[0] || user?.email?.split('@')[0] || 'Usuário';
+  const userName = profile?.nome?.split(" ")[0] || user?.email?.split("@")[0] || "Usuário";
 
-    // Partial loading is handled by individual components for a smoother 10/10 experience
-    // Only block the entire page if something critical fails, but let the skeletons do their work.
-    const isInitialLoad = loadingKpis && loadingEstoque && !stats;
-    
-    if (isInitialLoad) {
-      return <RouteLoadingFallback type="dashboard" />;
-    }
+  // Partial loading is handled by individual components for a smoother 10/10 experience
+  // Only block the entire page if something critical fails, but let the skeletons do their work.
+  const isInitialLoad = loadingKpis && loadingEstoque && !stats;
 
-   const kpiItems = [
-      { 
-        icon: Package, 
-        value: aguardandoRecebimento, 
-        label: "Aguardando", 
-        sublabel: "Recebimento", 
-        variant: "warning" as const, 
-        path: "/recebimento",
-        trend: { value: 12, isUp: true, label: "vs ontem" },
-        excellence: true
-      },
-      { 
-        icon: Search, 
-        value: triagemPendente, 
-        label: "Triagem", 
-        sublabel: "Pendente", 
-        variant: "default" as const, 
-        path: "/triagem",
-        trend: { value: 5, isUp: false, label: "vs ontem" },
-        excellence: true
-      },
-      { 
-        icon: Warehouse, 
-        value: itensEstoque.toLocaleString(), 
-        label: "Posições", 
-        sublabel: "Ocupadas", 
-        variant: "success" as const, 
-        path: "/estoque",
-        trend: { value: 2, isUp: true, label: "vs ontem" },
-        excellence: true
-      },
-      { 
-        icon: AlertTriangle, 
-        value: divergencias, 
-        label: "Divergências", 
-        sublabel: "Pendentes", 
-        variant: "danger" as const, 
-        path: "/divergencias",
-        trend: { value: 0, isUp: true, label: "vs ontem" },
-        excellence: true
-      },
-   ];
+  if (isInitialLoad) {
+    return <RouteLoadingFallback type="dashboard" />;
+  }
 
-   const totalRecebimentos = stats?.entradasHoje || 0;
-   const totalTriagens = stats?.triagensHoje || 0;
+  const kpiItems = [
+    {
+      icon: Package,
+      value: aguardandoRecebimento,
+      label: "Aguardando",
+      sublabel: "Recebimento",
+      variant: "warning" as const,
+      path: "/recebimento",
+      trend: { value: 12, isUp: true, label: "vs ontem" },
+      excellence: true,
+    },
+    {
+      icon: Search,
+      value: triagemPendente,
+      label: "Triagem",
+      sublabel: "Pendente",
+      variant: "default" as const,
+      path: "/triagem",
+      trend: { value: 5, isUp: false, label: "vs ontem" },
+      excellence: true,
+    },
+    {
+      icon: Warehouse,
+      value: itensEstoque.toLocaleString(),
+      label: "Posições",
+      sublabel: "Ocupadas",
+      variant: "success" as const,
+      path: "/estoque",
+      trend: { value: 2, isUp: true, label: "vs ontem" },
+      excellence: true,
+    },
+    {
+      icon: AlertTriangle,
+      value: divergencias,
+      label: "Divergências",
+      sublabel: "Pendentes",
+      variant: "danger" as const,
+      path: "/divergencias",
+      trend: { value: 0, isUp: true, label: "vs ontem" },
+      excellence: true,
+    },
+  ];
+
+  const totalRecebimentos = stats?.entradasHoje || 0;
+  const totalTriagens = stats?.triagensHoje || 0;
 
   return (
     <PageTransition>
-      <SEO title="Painel Principal" description="Visão geral do armazém com KPIs em tempo real, alertas e atividades recentes." path="/" />
-       <motion.div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto" variants={containerVariants} initial="hidden" animate="visible">
-         <div className="space-y-4">
-           <SystemHealthMonitor />
-           <IndexHero userName={userName} isConnected={realtimeStatus.isConnected} onDashboardClick={() => navigate("/dashboard")} />
-         </div>
-         <motion.section variants={itemVariants} className="content-visibility-auto">
+      <SEO
+        title="Painel Principal"
+        description="Visão geral do armazém com KPIs em tempo real, alertas e atividades recentes."
+        path="/"
+      />
+      <motion.div
+        className="mx-auto max-w-[1400px] space-y-6 p-4 md:p-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="space-y-4">
+          <SystemHealthMonitor />
+          <IndexHero
+            userName={userName}
+            isConnected={realtimeStatus.isConnected}
+            onDashboardClick={() => navigate("/dashboard")}
+          />
+        </div>
+        <motion.section variants={itemVariants} className="content-visibility-auto">
           <IndexKPIs items={kpiItems} loading={loadingKpis} onNavigate={navigate} />
         </motion.section>
 
-         <motion.section className="grid grid-cols-1 lg:grid-cols-3 gap-4 content-visibility-auto" variants={itemVariants}>
+        <motion.section
+          className="content-visibility-auto grid grid-cols-1 gap-4 lg:grid-cols-3"
+          variants={itemVariants}
+        >
           <IndexOcupacaoCard
             loading={loadingEstoque}
             ocupacaoPP={ocupacaoPP}
@@ -129,15 +165,28 @@ export default function Dashboard() {
             posicoesOcupadas={estatisticas.posicoesOcupadas}
             posicoesLivres={estatisticas.posicoesLivres}
           />
-          <IndexQuickStats loading={loadingKpis} totalRecebimentos={totalRecebimentos} totalTriagens={totalTriagens} divergencias={divergencias} />
+          <IndexQuickStats
+            loading={loadingKpis}
+            totalRecebimentos={totalRecebimentos}
+            totalTriagens={totalTriagens}
+            divergencias={divergencias}
+          />
         </motion.section>
 
-          <Suspense fallback={<RouteLoadingFallback type="list" />}>
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 content-visibility-auto">
-             <IndexOperations aguardandoRecebimento={aguardandoRecebimento} triagemPendente={triagemPendente} onNavigate={navigate} />
-             <IndexAtividade atividades={atividades} loading={loadingAtividades} onSeeAll={() => navigate("/rastreabilidade")} />
-           </div>
-         </Suspense>
+        <Suspense fallback={<RouteLoadingFallback type="list" />}>
+          <div className="content-visibility-auto grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <IndexOperations
+              aguardandoRecebimento={aguardandoRecebimento}
+              triagemPendente={triagemPendente}
+              onNavigate={navigate}
+            />
+            <IndexAtividade
+              atividades={atividades}
+              loading={loadingAtividades}
+              onSeeAll={() => navigate("/rastreabilidade")}
+            />
+          </div>
+        </Suspense>
       </motion.div>
     </PageTransition>
   );

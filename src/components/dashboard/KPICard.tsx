@@ -43,16 +43,16 @@ const sparklineColors = {
   danger: "hsl(var(--destructive))",
 };
 
-export const KPICard = memo(function KPICard({ 
-  icon: Icon, 
-  value, 
-  label, 
+export const KPICard = memo(function KPICard({
+  icon: Icon,
+  value,
+  label,
   sublabel,
   variant = "default",
   trend,
   sparklineData,
   onClick,
-  size = "md"
+  size = "md",
 }: KPICardProps) {
   const sizeClasses = {
     sm: "p-3",
@@ -72,46 +72,54 @@ export const KPICard = memo(function KPICard({
     lg: "text-4xl",
   };
 
-   return (
-     <button
-       onClick={onClick}
-       aria-label={`${label}${sublabel ? ` - ${sublabel}` : ''}: ${value}`}
-       className={cn(
-         "kpi-card w-full text-left cursor-pointer group relative overflow-hidden",
-         "bg-card/40 backdrop-blur-md border border-border/50",
-         "shadow-sm hover:shadow-glow hover:border-primary/30 transition-all duration-300 ease-out",
-         sizeClasses[size]
-       )}
-     >
-       {/* Shine effect */}
-       <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 z-0" />
- 
-       {/* Gradient overlay */}
-       <div className={cn(
-         "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-         gradientStyles[variant]
-       )} />
-       
-       <div className="relative z-10">
-        <div className="flex items-start justify-between mb-3">
-          <div className={cn(
-            "rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110",
-            iconBgStyles[variant],
-            iconSizes[size]
-          )}>
-            <Icon className={cn(
-              "h-6 w-6 transition-all duration-200",
-              variantStyles[variant],
-              size === "lg" && "h-7 w-7"
-            )} />
+  return (
+    <button
+      onClick={onClick}
+      aria-label={`${label}${sublabel ? ` - ${sublabel}` : ""}: ${value}`}
+      className={cn(
+        "kpi-card group relative w-full cursor-pointer overflow-hidden text-left",
+        "border border-border/50 bg-card/40 backdrop-blur-md",
+        "shadow-sm transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-glow",
+        sizeClasses[size]
+      )}
+    >
+      {/* Shine effect */}
+      <div className="absolute inset-0 z-0 translate-x-[-100%] skew-x-12 bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+
+      {/* Gradient overlay */}
+      <div
+        className={cn(
+          "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
+          gradientStyles[variant]
+        )}
+      />
+
+      <div className="relative z-10">
+        <div className="mb-3 flex items-start justify-between">
+          <div
+            className={cn(
+              "flex items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110",
+              iconBgStyles[variant],
+              iconSizes[size]
+            )}
+          >
+            <Icon
+              className={cn(
+                "h-6 w-6 transition-all duration-200",
+                variantStyles[variant],
+                size === "lg" && "h-7 w-7"
+              )}
+            />
           </div>
-          
+
           <div className="flex flex-col items-end gap-1">
             {trend && (
-              <div className={cn(
-                "flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full",
-                trend.isUp ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
-              )}>
+              <div
+                className={cn(
+                  "flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
+                  trend.isUp ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+                )}
+              >
                 <span>{trend.isUp ? "↑" : "↓"}</span>
                 <span>{trend.value}%</span>
               </div>
@@ -126,19 +134,19 @@ export const KPICard = memo(function KPICard({
             )}
           </div>
         </div>
-        
-        <div className={cn(
-          "font-bold mb-1 transition-transform duration-200 group-hover:translate-x-1",
-          variantStyles[variant],
-          valueSizes[size]
-        )}>
+
+        <div
+          className={cn(
+            "mb-1 font-bold transition-transform duration-200 group-hover:translate-x-1",
+            variantStyles[variant],
+            valueSizes[size]
+          )}
+        >
           {value}
         </div>
-        
+
         <div className="text-sm font-medium text-foreground">{label}</div>
-        {sublabel && (
-          <div className="text-xs text-muted-foreground mt-0.5">{sublabel}</div>
-        )}
+        {sublabel && <div className="mt-0.5 text-xs text-muted-foreground">{sublabel}</div>}
       </div>
     </button>
   );

@@ -1,5 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
-import { logger } from '@/utils/logger';
+import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 export type AppRole = "operador" | "supervisor" | "admin";
 
@@ -62,10 +62,7 @@ export const authService = {
   },
 
   async getUserData(userId: string) {
-    const [profile, role] = await Promise.all([
-      this.getProfile(userId),
-      this.getRole(userId)
-    ]);
+    const [profile, role] = await Promise.all([this.getProfile(userId), this.getRole(userId)]);
     return { profile, role };
-  }
+  },
 };

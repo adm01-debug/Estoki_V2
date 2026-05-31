@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
+import React, { useRef, useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface MasonryProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export function Masonry({ children, columns = 3, gap = 16, className }: MasonryP
   return (
     <div
       ref={containerRef}
-      className={cn('grid', className)}
+      className={cn("grid", className)}
       style={{
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
         gap: `${gap}px`,

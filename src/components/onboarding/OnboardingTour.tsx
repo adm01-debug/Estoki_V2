@@ -51,7 +51,14 @@ const tourSteps: TourStep[] = [
   },
 ];
 
-function TourOverlay({ step, currentStep, totalSteps, onNext, onPrev, onClose }: {
+function TourOverlay({
+  step,
+  currentStep,
+  totalSteps,
+  onNext,
+  onPrev,
+  onClose,
+}: {
   step: TourStep;
   currentStep: number;
   totalSteps: number;
@@ -60,40 +67,43 @@ function TourOverlay({ step, currentStep, totalSteps, onNext, onPrev, onClose }:
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-[100] pointer-events-none">
+    <div className="pointer-events-none fixed inset-0 z-[100]">
       {/* Overlay */}
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
-      
+      <div
+        className="pointer-events-auto absolute inset-0 bg-background/80 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
       {/* Tour Card */}
-      <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-md pointer-events-auto z-[101]">
-        <div className="bg-card border border-border rounded-xl shadow-2xl p-5 animate-fade-in">
-          <div className="flex items-start justify-between mb-3">
+      <div className="pointer-events-auto fixed bottom-24 left-1/2 z-[101] w-[90%] max-w-md -translate-x-1/2">
+        <div className="animate-fade-in rounded-xl border border-border bg-card p-5 shadow-2xl">
+          <div className="mb-3 flex items-start justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-sm font-bold">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
                 {currentStep}
               </div>
-              <h3 className="font-semibold text-lg text-foreground">{step.title}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{step.title}</h3>
             </div>
             <Button variant="ghost" size="icon" onClick={onClose} aria-label="Fechar tour">
               <X className="h-4 w-4" />
             </Button>
           </div>
-          
-          <p className="text-muted-foreground mb-4">{step.content}</p>
-          
+
+          <p className="mb-4 text-muted-foreground">{step.content}</p>
+
           {/* Progress dots */}
-          <div className="flex items-center justify-center gap-1.5 mb-4">
+          <div className="mb-4 flex items-center justify-center gap-1.5">
             {Array.from({ length: totalSteps }).map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "w-2 h-2 rounded-full transition-colors",
+                  "h-2 w-2 rounded-full transition-colors",
                   i + 1 === currentStep ? "bg-primary" : "bg-muted"
                 )}
               />
             ))}
           </div>
-          
+
           {/* Actions */}
           <div className="flex items-center justify-between">
             <Button
@@ -106,7 +116,7 @@ function TourOverlay({ step, currentStep, totalSteps, onNext, onPrev, onClose }:
               <ChevronLeft className="h-4 w-4" />
               Anterior
             </Button>
-            
+
             {currentStep === totalSteps ? (
               <Button size="sm" onClick={onClose} className="gap-1">
                 <Check className="h-4 w-4" />
@@ -155,13 +165,13 @@ export function OnboardingTourProvider({ children }: { children: ReactNode }) {
 
   const handleNext = () => {
     if (currentStep < tourSteps.length) {
-      setCurrentStep(prev => prev + 1);
+      setCurrentStep((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
     if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 

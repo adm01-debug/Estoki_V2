@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const locationSchema = z.object({
   id: z.string().uuid(),
@@ -8,8 +8,10 @@ export const locationSchema = z.object({
   rack: z.string().nullable().optional(),
   shelf: z.string().nullable().optional(),
   bin: z.string().nullable().optional(),
-  zone: z.enum(['receiving', 'storage', 'picking', 'packing', 'shipping', 'quarantine', 'returns']).default('storage'),
-  type: z.enum(['floor', 'shelf', 'pallet', 'bulk', 'rack', 'mezzanine']).default('shelf'),
+  zone: z
+    .enum(["receiving", "storage", "picking", "packing", "shipping", "quarantine", "returns"])
+    .default("storage"),
+  type: z.enum(["floor", "shelf", "pallet", "bulk", "rack", "mezzanine"]).default("shelf"),
   is_pickable: z.boolean().default(true),
   is_storable: z.boolean().default(true),
   is_active: z.boolean().default(true),
@@ -21,13 +23,17 @@ export const locationSchema = z.object({
   temperature_controlled: z.boolean().default(false),
   min_temperature: z.number().nullable().optional(),
   max_temperature: z.number().nullable().optional(),
-  abc_class: z.enum(['A', 'B', 'C']).nullable().optional(),
+  abc_class: z.enum(["A", "B", "C"]).nullable().optional(),
   picking_sequence: z.number().int().nonnegative().default(0),
   created_at: z.string().datetime(),
   updated_at: z.string().datetime(),
 });
 
-export const locationCreateSchema = locationSchema.omit({ id: true, created_at: true, updated_at: true });
+export const locationCreateSchema = locationSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+});
 export const locationUpdateSchema = locationCreateSchema.partial();
 
 export type Location = z.infer<typeof locationSchema>;

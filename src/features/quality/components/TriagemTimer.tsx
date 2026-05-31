@@ -37,9 +37,9 @@ export function TriagemTimer({
   };
 
   return (
-    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+    <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
           <Timer className="h-4 w-4" />
           TEMPO DE TRIAGEM
         </h3>
@@ -51,26 +51,34 @@ export function TriagemTimer({
       </div>
 
       {/* Display do Timer */}
-      <div className={cn(
-        "rounded-lg p-4 border flex items-center justify-center transition-colors",
-        getTimerBg()
-      )}>
+      <div
+        className={cn(
+          "flex items-center justify-center rounded-lg border p-4 transition-colors",
+          getTimerBg()
+        )}
+      >
         <div className="text-center">
-          <div className={cn(
-            "font-mono text-4xl font-bold tracking-wider transition-colors",
-            getTimerColor(),
-            isRunning && "animate-pulse"
-          )}>
+          <div
+            className={cn(
+              "font-mono text-4xl font-bold tracking-wider transition-colors",
+              getTimerColor(),
+              isRunning && "animate-pulse"
+            )}
+          >
             {formattedTime}
           </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            {isRunning ? "⏱️ Em andamento" : elapsedSeconds > 0 ? "⏸️ Pausado" : "⏹️ Aguardando início"}
+          <div className="mt-1 text-xs text-muted-foreground">
+            {isRunning
+              ? "⏱️ Em andamento"
+              : elapsedSeconds > 0
+                ? "⏸️ Pausado"
+                : "⏹️ Aguardando início"}
           </div>
         </div>
       </div>
 
       {/* Controles */}
-      <div className="flex gap-2 mt-3">
+      <div className="mt-3 flex gap-2">
         {!isRunning ? (
           <Button
             variant="outline"
@@ -92,37 +100,42 @@ export function TriagemTimer({
             Pausar
           </Button>
         )}
-        
+
         {elapsedSeconds > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-2"
-            onClick={onReset}
-          >
+          <Button variant="outline" size="sm" className="gap-2" onClick={onReset}>
             <RotateCcw className="h-4 w-4" />
           </Button>
         )}
       </div>
 
       {/* Indicadores de Tempo */}
-      <div className="grid grid-cols-3 gap-2 mt-3 text-center text-xs">
-        <div className={cn(
-          "rounded-lg py-1 px-2",
-          elapsedSeconds < 300 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"
-        )}>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+        <div
+          className={cn(
+            "rounded-lg px-2 py-1",
+            elapsedSeconds < 300 ? "bg-success/20 text-success" : "bg-muted text-muted-foreground"
+          )}
+        >
           &lt; 5 min
         </div>
-        <div className={cn(
-          "rounded-lg py-1 px-2",
-          elapsedSeconds >= 300 && elapsedSeconds < 600 ? "bg-warning/20 text-warning" : "bg-muted text-muted-foreground"
-        )}>
+        <div
+          className={cn(
+            "rounded-lg px-2 py-1",
+            elapsedSeconds >= 300 && elapsedSeconds < 600
+              ? "bg-warning/20 text-warning"
+              : "bg-muted text-muted-foreground"
+          )}
+        >
           5-10 min
         </div>
-        <div className={cn(
-          "rounded-lg py-1 px-2",
-          elapsedSeconds >= 600 ? "bg-destructive/20 text-destructive" : "bg-muted text-muted-foreground"
-        )}>
+        <div
+          className={cn(
+            "rounded-lg px-2 py-1",
+            elapsedSeconds >= 600
+              ? "bg-destructive/20 text-destructive"
+              : "bg-muted text-muted-foreground"
+          )}
+        >
           &gt; 10 min
         </div>
       </div>

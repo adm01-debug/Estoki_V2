@@ -28,7 +28,7 @@ serve(async (req) => {
       throw new Error("type e content são obrigatórios");
     }
 
-    const lines = edi.content.split("\n").filter(l => l.trim());
+    const lines = edi.content.split("\n").filter((l) => l.trim());
     const parsedData: any = { type: edi.type, segments: [], items: [] };
 
     // Parser básico de EDI
@@ -76,15 +76,18 @@ serve(async (req) => {
 
     if (error) throw error;
 
-    return new Response(JSON.stringify({
-      success: true,
-      document_id: data.id,
-      parsed: parsedData,
-      segments_count: parsedData.segments.length,
-      items_count: parsedData.items.length,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        document_id: data.id,
+        parsed: parsedData,
+        segments_count: parsedData.segments.length,
+        items_count: parsedData.items.length,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

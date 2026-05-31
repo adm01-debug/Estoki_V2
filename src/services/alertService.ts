@@ -14,8 +14,8 @@ export interface Alert {
   user_id: string | null;
 }
 
-type NotificacaoInsert = Database['public']['Tables']['notificacoes']['Insert'];
-type NotificacaoUpdate = Database['public']['Tables']['notificacoes']['Update'];
+type NotificacaoInsert = Database["public"]["Tables"]["notificacoes"]["Insert"];
+type NotificacaoUpdate = Database["public"]["Tables"]["notificacoes"]["Update"];
 
 export const alertService = {
   async getAlerts(limit = 50): Promise<Alert[]> {
@@ -49,7 +49,7 @@ export const alertService = {
     }
   },
 
-  async createAlert(alert: Omit<Alert, 'id' | 'created_at' | 'lida'>): Promise<Alert> {
+  async createAlert(alert: Omit<Alert, "id" | "created_at" | "lida">): Promise<Alert> {
     try {
       const { data, error } = await supabase
         .from("notificacoes")

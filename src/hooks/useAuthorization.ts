@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useState, useCallback, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export function useAuthorization(requiredRoles: string[] = []) {
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -9,7 +9,9 @@ export function useAuthorization(requiredRoles: string[] = []) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (!session?.user) {
           setUserRoles([]);
           setIsAuthorized(requiredRoles.length === 0);
@@ -17,15 +19,13 @@ export function useAuthorization(requiredRoles: string[] = []) {
         }
 
         const { data } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', session.user.id);
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id);
 
-        const roles = data?.map(r => r.role as string) || [];
+        const roles = data?.map((r) => r.role as string) || [];
         setUserRoles(roles);
-        setIsAuthorized(
-          requiredRoles.length === 0 || requiredRoles.some(r => roles.includes(r))
-        );
+        setIsAuthorized(requiredRoles.length === 0 || requiredRoles.some((r) => roles.includes(r)));
       } finally {
         setLoading(false);
       }
@@ -35,7 +35,10 @@ export function useAuthorization(requiredRoles: string[] = []) {
   }, [requiredRoles]);
 
   const hasRole = useCallback((role: string) => userRoles.includes(role), [userRoles]);
-  const hasAnyRole = useCallback((roles: string[]) => roles.some(r => userRoles.includes(r)), [userRoles]);
+  const hasAnyRole = useCallback(
+    (roles: string[]) => roles.some((r) => userRoles.includes(r)),
+    [userRoles]
+  );
 
   return { isAuthorized, userRoles, hasRole, hasAnyRole, loading };
 }

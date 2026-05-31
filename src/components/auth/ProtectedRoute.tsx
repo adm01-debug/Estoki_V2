@@ -15,7 +15,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -27,12 +27,10 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   if (allowedRoles && !canAccess(allowedRoles)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <div className="text-center space-y-4">
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="space-y-4 text-center">
           <h1 className="text-2xl font-bold text-destructive">Acesso Negado</h1>
-          <p className="text-muted-foreground">
-            Você não tem permissão para acessar esta página.
-          </p>
+          <p className="text-muted-foreground">Você não tem permissão para acessar esta página.</p>
           <p className="text-sm text-muted-foreground">
             Seu perfil atual: <strong className="capitalize">{role || "Não definido"}</strong>
           </p>

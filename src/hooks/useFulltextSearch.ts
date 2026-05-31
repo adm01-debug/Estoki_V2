@@ -28,9 +28,7 @@ interface SearchResult<T> {
   totalResults: number;
 }
 
-export function useFulltextSearch<T = unknown>(
-  options: FulltextSearchOptions<T>
-): SearchResult<T> {
+export function useFulltextSearch<T = unknown>(options: FulltextSearchOptions<T>): SearchResult<T> {
   const {
     table,
     searchColumns,
@@ -60,7 +58,7 @@ export function useFulltextSearch<T = unknown>(
     queryKey,
     queryFn: async () => {
       let query = supabase
-        .from(table as keyof Database['public']['Tables'])
+        .from(table as keyof Database["public"]["Tables"])
         .select(selectColumns.join(","), { count: "exact" }) as any;
 
       if (debouncedSearchTerm.length >= minChars) {

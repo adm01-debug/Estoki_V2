@@ -1,11 +1,22 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Truck, User, MapPin, Package } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { Romaneio, StatusRomaneio, StatusEntrega } from "@/features/shipping/hooks/useRomaneios";
+import type {
+  Romaneio,
+  StatusRomaneio,
+  StatusEntrega,
+} from "@/features/shipping/hooks/useRomaneios";
 
 const statusConfig: Record<StatusRomaneio, { label: string; color: string }> = {
   rascunho: { label: "Rascunho", color: "bg-muted" },
@@ -16,7 +27,10 @@ const statusConfig: Record<StatusRomaneio, { label: string; color: string }> = {
   cancelado: { label: "Cancelado", color: "bg-red-500" },
 };
 
-const statusEntregaConfig: Record<StatusEntrega, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const statusEntregaConfig: Record<
+  StatusEntrega,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
   pendente: { label: "Pendente", variant: "secondary" },
   em_rota: { label: "Em Rota", variant: "default" },
   entregue: { label: "Entregue", variant: "default" },
@@ -31,14 +45,18 @@ interface RomaneioDetalhesDialogProps {
   onFinalizarEntrega: (romaneioId: string, itemId: string, status: StatusEntrega) => void;
 }
 
-export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }: RomaneioDetalhesDialogProps) {
+export function RomaneioDetalhesDialog({
+  romaneio,
+  onClose,
+  onFinalizarEntrega,
+}: RomaneioDetalhesDialogProps) {
   if (!romaneio) return null;
 
   const config = statusConfig[romaneio.status as StatusRomaneio];
 
   return (
     <Dialog open={!!romaneio} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-h-[80vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Truck className="h-5 w-5" />
@@ -46,11 +64,27 @@ export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted/50 rounded-lg">
-            <div><p className="text-sm text-muted-foreground">Motorista</p><p className="font-medium">{romaneio.motorista || "-"}</p></div>
-            <div><p className="text-sm text-muted-foreground">Placa</p><p className="font-medium">{romaneio.placa_veiculo || "-"}</p></div>
-            <div><p className="text-sm text-muted-foreground">Status</p><Badge className={config.color}>{config.label}</Badge></div>
-            <div><p className="text-sm text-muted-foreground">Previsão</p><p className="font-medium">{romaneio.data_prevista_entrega ? format(new Date(romaneio.data_prevista_entrega), "dd/MM/yyyy", { locale: ptBR }) : "-"}</p></div>
+          <div className="grid grid-cols-2 gap-4 rounded-lg bg-muted/50 p-4 md:grid-cols-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Motorista</p>
+              <p className="font-medium">{romaneio.motorista || "-"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Placa</p>
+              <p className="font-medium">{romaneio.placa_veiculo || "-"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Status</p>
+              <Badge className={config.color}>{config.label}</Badge>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Previsão</p>
+              <p className="font-medium">
+                {romaneio.data_prevista_entrega
+                  ? format(new Date(romaneio.data_prevista_entrega), "dd/MM/yyyy", { locale: ptBR })
+                  : "-"}
+              </p>
+            </div>
           </div>
 
           {romaneio.itens && romaneio.itens.length > 0 ? (
@@ -72,14 +106,30 @@ export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }
                     return (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.cliente}</TableCell>
-                        <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">{item.endereco_entrega}</TableCell>
+                        <TableCell className="max-w-[200px] truncate text-sm text-muted-foreground">
+                          {item.endereco_entrega}
+                        </TableCell>
                         <TableCell>{item.quantidade}</TableCell>
-                        <TableCell><Badge variant={entregaConfig.variant}>{entregaConfig.label}</Badge></TableCell>
+                        <TableCell>
+                          <Badge variant={entregaConfig.variant}>{entregaConfig.label}</Badge>
+                        </TableCell>
                         <TableCell>
                           {romaneio.status === "em_transito" && itemStatus === "pendente" && (
                             <div className="flex gap-1">
-                              <Button size="sm" variant="default" onClick={() => onFinalizarEntrega(romaneio.id, item.id, "entregue")}>Entregue</Button>
-                              <Button size="sm" variant="destructive" onClick={() => onFinalizarEntrega(romaneio.id, item.id, "recusado")}>Recusado</Button>
+                              <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => onFinalizarEntrega(romaneio.id, item.id, "entregue")}
+                              >
+                                Entregue
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="destructive"
+                                onClick={() => onFinalizarEntrega(romaneio.id, item.id, "recusado")}
+                              >
+                                Recusado
+                              </Button>
                             </div>
                           )}
                         </TableCell>
@@ -90,8 +140,8 @@ export function RomaneioDetalhesDialog({ romaneio, onClose, onFinalizarEntrega }
               </Table>
             </div>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <Package className="h-8 w-8 mx-auto mb-2" />
+            <div className="py-8 text-center text-muted-foreground">
+              <Package className="mx-auto mb-2 h-8 w-8" />
               <p>Nenhum item neste romaneio</p>
             </div>
           )}

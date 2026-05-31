@@ -18,12 +18,12 @@ const queryClient = new QueryClient({
       gcTime: 10 * 60 * 1000,
       retry: 1,
       refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      networkMode: 'offlineFirst',
+      refetchOnReconnect: "always",
+      networkMode: "offlineFirst",
     },
     mutations: {
       retry: 0,
-      networkMode: 'online',
+      networkMode: "online",
     },
   },
 });
@@ -36,12 +36,12 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           <ThemeProvider>
             <AuthProvider>
               <AppProvider>
-               <NotificationProvider>
-                   <KeyboardShortcuts />
-                   <Sonner />
-                   <InstallPrompt />
-                   <UpdatePrompt />
-                   <PerformanceMonitor />
+                <NotificationProvider>
+                  <KeyboardShortcuts />
+                  <Sonner />
+                  <InstallPrompt />
+                  <UpdatePrompt />
+                  <PerformanceMonitor />
                   {children}
                 </NotificationProvider>
               </AppProvider>

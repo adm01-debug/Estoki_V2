@@ -2,7 +2,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,22 +42,37 @@ export function BoxForm({ onSuccess }: Props) {
     try {
       setLoading(true);
       const codigo = `BOX-${data.box.trim().padStart(2, "0")}`;
-      const { data: existing } = await supabase.from("posicoes_estoque").select("id").eq("codigo", codigo).maybeSingle();
+      const { data: existing } = await supabase
+        .from("posicoes_estoque")
+        .select("id")
+        .eq("codigo", codigo)
+        .maybeSingle();
       if (existing) {
-        toast({ title: "Posição já existe", description: `O ${codigo} já está cadastrado`, variant: "destructive" });
+        toast({
+          title: "Posição já existe",
+          description: `O ${codigo} já está cadastrado`,
+          variant: "destructive",
+        });
         return;
       }
       const { error } = await supabase.from("posicoes_estoque").insert({
-        codigo, tipo: "box", box: data.box.trim(),
+        codigo,
+        tipo: "box",
+        box: data.box.trim(),
         zona: data.zona?.trim() || null,
-        capacidade_kg: data.capacidade_kg || 500, status: "livre",
+        capacidade_kg: data.capacidade_kg || 500,
+        status: "livre",
       });
       if (error) throw error;
       toast({ title: "Posição criada", description: `${codigo} cadastrado` });
       form.reset();
       onSuccess();
     } catch (err) {
-      toast({ title: "Erro", description: err instanceof Error ? err.message : "Erro", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: err instanceof Error ? err.message : "Erro",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -71,13 +94,19 @@ export function BoxForm({ onSuccess }: Props) {
           status: "livre" as const,
         });
       }
-      const { error } = await supabase.from("posicoes_estoque").upsert(positions, { onConflict: "codigo", ignoreDuplicates: true });
+      const { error } = await supabase
+        .from("posicoes_estoque")
+        .upsert(positions, { onConflict: "codigo", ignoreDuplicates: true });
       if (error) throw error;
       toast({ title: "Boxes criados", description: `${positions.length} boxes criados` });
       form.reset();
       onSuccess();
     } catch (err) {
-      toast({ title: "Erro", description: err instanceof Error ? err.message : "Erro", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: err instanceof Error ? err.message : "Erro",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -86,31 +115,65 @@ export function BoxForm({ onSuccess }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleCreate)} className="space-y-4">
-        <FormField control={form.control} name="box" render={({ field }) => (
-          <FormItem>
-            <FormLabel>Número do Box</FormLabel>
-            <FormControl><Input placeholder="01" maxLength={10} {...field} /></FormControl>
-            <FormDescription>Será formatado como BOX-XX</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )} />
+        <FormField
+          control={form.control}
+          name="box"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Número do Box</FormLabel>
+              <FormControl>
+                <Input placeholder="01" maxLength={10} {...field} />
+              </FormControl>
+              <FormDescription>Será formatado como BOX-XX</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="grid grid-cols-2 gap-3">
-          <FormField control={form.control} name="zona" render={({ field }) => (
-            <FormItem><FormLabel>Zona (opcional)</FormLabel><FormControl><Input placeholder="Picking" maxLength={20} {...field} /></FormControl><FormMessage /></FormItem>
-          )} />
-          <FormField control={form.control} name="capacidade_kg" render={({ field }) => (
-            <FormItem><FormLabel>Capacidade (kg)</FormLabel><FormControl><Input type="number" min={0} max={10000} {...field} /></FormControl><FormMessage /></FormItem>
-          )} />
+          <FormField
+            control={form.control}
+            name="zona"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Zona (opcional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Picking" maxLength={20} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="capacidade_kg"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Capacidade (kg)</FormLabel>
+                <FormControl>
+                  <Input type="number" min={0} max={10000} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="flex gap-2 pt-2">
           <Button type="submit" disabled={loading} className="flex-1">
-            {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar Box
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Criar Box
           </Button>
-          <Button type="button" variant="outline" disabled={loading} onClick={handleCreateMultiple} className="flex-1">
-            {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Criar 24 Boxes
+          <Button
+            type="button"
+            variant="outline"
+            disabled={loading}
+            onClick={handleCreateMultiple}
+            className="flex-1"
+          >
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}Criar 24 Boxes
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground text-center">"Criar 24 Boxes" gera BOX-01 até BOX-24</p>
+        <p className="text-center text-xs text-muted-foreground">
+          "Criar 24 Boxes" gera BOX-01 até BOX-24
+        </p>
       </form>
     </Form>
   );

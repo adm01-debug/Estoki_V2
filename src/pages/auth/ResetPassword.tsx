@@ -32,32 +32,64 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex relative overflow-hidden">
+    <div className="relative flex min-h-screen overflow-hidden">
       <div className="absolute inset-0 bg-sidebar" />
       <BrandingContent />
-      <div className="relative z-10 w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
+      <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">
         <div className="w-full max-w-md space-y-6">
-          <div className="lg:hidden text-center mb-4">
-            <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow mb-3">
+          <div className="mb-4 text-center lg:hidden">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
               <Box className="h-7 w-7 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-bold text-sidebar-foreground">ESTOKI</h1>
           </div>
           <div>
-            <h2 className="text-2xl xl:text-3xl font-bold text-sidebar-foreground">Nova senha</h2>
-            <p className="text-sidebar-foreground/40 text-sm mt-1">Defina sua nova senha de acesso</p>
+            <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">Nova senha</h2>
+            <p className="mt-1 text-sm text-sidebar-foreground/40">
+              Defina sua nova senha de acesso
+            </p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-sidebar-foreground/70 text-sm font-medium">Nova Senha</Label>
-              <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-sidebar-accent/60 border-sidebar-border" />
+              <Label htmlFor="password" className="text-sm font-medium text-sidebar-foreground/70">
+                Nova Senha
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="border-sidebar-border bg-sidebar-accent/60"
+              />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="confirm" className="text-sidebar-foreground/70 text-sm font-medium">Confirmar Nova Senha</Label>
-              <Input id="confirm" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="bg-sidebar-accent/60 border-sidebar-border" />
+              <Label htmlFor="confirm" className="text-sm font-medium text-sidebar-foreground/70">
+                Confirmar Nova Senha
+              </Label>
+              <Input
+                id="confirm"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="border-sidebar-border bg-sidebar-accent/60"
+              />
             </div>
-            <Button type="submit" className="w-full h-11 bg-primary shadow-glow text-primary-foreground font-semibold" disabled={isSubmitting}>
-              {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Atualizando...</> : <><Lock className="mr-2 h-4 w-4" />Redefinir senha</>}
+            <Button
+              type="submit"
+              className="h-11 w-full bg-primary font-semibold text-primary-foreground shadow-glow"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Atualizando...
+                </>
+              ) : (
+                <>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Redefinir senha
+                </>
+              )}
             </Button>
           </form>
         </div>

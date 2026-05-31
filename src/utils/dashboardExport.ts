@@ -27,15 +27,18 @@ export async function exportDashboardToPDF(
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-   const kpiData = [
-     [`Taxa de Ocupação: ${kpis.taxaOcupacao}%`, `Posições Ocupadas: ${kpis.posicoesOcupadas}/${kpis.totalPosicoes}`],
-     [`Giro Médio: ${kpis.giroMedio} dias`, `Itens Parados (+30d): ${kpis.itensParados30dias}`],
-     [`Entradas Hoje: ${kpis.entradasHoje}`, `Saídas Hoje: ${kpis.saidasHoje}`],
-     [`Triagens Hoje: ${kpis.triagensHoje}`, `Triagens Pendentes: ${kpis.triagensPendentes}`],
-   ];
+  const kpiData = [
+    [
+      `Taxa de Ocupação: ${kpis.taxaOcupacao}%`,
+      `Posições Ocupadas: ${kpis.posicoesOcupadas}/${kpis.totalPosicoes}`,
+    ],
+    [`Giro Médio: ${kpis.giroMedio} dias`, `Itens Parados (+30d): ${kpis.itensParados30dias}`],
+    [`Entradas Hoje: ${kpis.entradasHoje}`, `Saídas Hoje: ${kpis.saidasHoje}`],
+    [`Triagens Hoje: ${kpis.triagensHoje}`, `Triagens Pendentes: ${kpis.triagensPendentes}`],
+  ];
 
   let yPos = 50;
-  kpiData.forEach(row => {
+  kpiData.forEach((row) => {
     doc.text(row[0], 20, yPos);
     doc.text(row[1], 110, yPos);
     yPos += 8;
@@ -49,7 +52,7 @@ export async function exportDashboardToPDF(
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    ocupacaoPP.slice(0, 10).forEach(pp => {
+    ocupacaoPP.slice(0, 10).forEach((pp) => {
       doc.text(`${pp.nome}: ${pp.ocupado}/${pp.total} posições (${pp.percentual}%)`, 20, yPos);
       yPos += 7;
     });
@@ -60,7 +63,7 @@ export async function exportDashboardToPDF(
       doc.addPage();
       yPos = 20;
     }
-    
+
     doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
     doc.text("Itens Parados há mais de 30 dias", 20, yPos + 10);
@@ -76,7 +79,7 @@ export async function exportDashboardToPDF(
     yPos += 6;
 
     doc.setFont("helvetica", "normal");
-    itensParados.slice(0, 15).forEach(item => {
+    itensParados.slice(0, 15).forEach((item) => {
       if (yPos > 280) {
         doc.addPage();
         yPos = 20;
@@ -96,14 +99,20 @@ export async function exportDashboardToPDF(
     yPos = 20;
   }
   doc.setFont("helvetica", "bold");
-  doc.text(`Valor Total de Itens Parados: R$ ${(kpis.valorParado || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 20, yPos);
+  doc.text(
+    `Valor Total de Itens Parados: R$ ${(kpis.valorParado || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`,
+    20,
+    yPos
+  );
 
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setFont("helvetica", "italic");
-    doc.text(`ESTOKI - Sistema de Gestão de Estoque - Página ${i} de ${pageCount}`, 105, 285, { align: "center" });
+    doc.text(`ESTOKI - Sistema de Gestão de Estoque - Página ${i} de ${pageCount}`, 105, 285, {
+      align: "center",
+    });
   }
 
   doc.save(`relatorio-inventario-dashboard-${dataAtual.replace(/\//g, "-")}.pdf`);

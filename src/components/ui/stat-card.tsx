@@ -17,8 +17,8 @@ export function StatCard({ title, value, icon: Icon, trend, className, loading }
       <Card className={className}>
         <CardContent className="pt-6">
           <div className="animate-pulse space-y-2">
-            <div className="h-4 bg-muted rounded w-1/2" />
-            <div className="h-8 bg-muted rounded w-1/3" />
+            <div className="h-4 w-1/2 rounded bg-muted" />
+            <div className="h-8 w-1/3 rounded bg-muted" />
           </div>
         </CardContent>
       </Card>
@@ -33,12 +33,27 @@ export function StatCard({ title, value, icon: Icon, trend, className, loading }
             <p className="text-sm text-muted-foreground">{title}</p>
             <p className="text-2xl font-bold">{value}</p>
           </div>
-          {Icon && <div className="p-2 bg-primary/10 rounded-full"><Icon className="h-5 w-5 text-primary" /></div>}
+          {Icon && (
+            <div className="rounded-full bg-primary/10 p-2">
+              <Icon className="h-5 w-5 text-primary" />
+            </div>
+          )}
         </div>
         {trend && (
-          <div className={cn("flex items-center gap-1 mt-2 text-xs", trend.value >= 0 ? "text-green-600" : "text-red-600")}>
-            {trend.value >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-            <span>{Math.abs(trend.value)}% {trend.label || "vs período anterior"}</span>
+          <div
+            className={cn(
+              "mt-2 flex items-center gap-1 text-xs",
+              trend.value >= 0 ? "text-green-600" : "text-red-600"
+            )}
+          >
+            {trend.value >= 0 ? (
+              <TrendingUp className="h-3 w-3" />
+            ) : (
+              <TrendingDown className="h-3 w-3" />
+            )}
+            <span>
+              {Math.abs(trend.value)}% {trend.label || "vs período anterior"}
+            </span>
           </div>
         )}
       </CardContent>

@@ -21,18 +21,21 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const parsed = CustomerSchema.safeParse(body);
-    
+
     if (!parsed.success) {
-      return new Response(JSON.stringify({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }), {
-        status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }),
+        {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        }
+      );
     }
 
     const { email, name, metadata } = parsed.data;
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, { apiVersion: "2023-10-16" });
     const customer = await stripe.customers.create({ email, name, metadata });
-    
+
     return new Response(JSON.stringify({ customerId: customer.id }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

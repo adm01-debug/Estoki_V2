@@ -1,5 +1,5 @@
-import React, { ComponentType, Component, ErrorInfo } from 'react';
-import { ErrorState } from '@/components/feedback/ErrorState';
+import React, { ComponentType, Component, ErrorInfo } from "react";
+import { ErrorState } from "@/components/feedback/ErrorState";
 export interface WithErrorHandlerOptions {
   FallbackComponent?: React.FC<{ error: Error; resetError: () => void }>;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
@@ -27,7 +27,7 @@ export function withErrorHandler<P extends object>(
     }
 
     componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-      if (import.meta.env.DEV) console.error('Error caught by withErrorHandler:', error, errorInfo);
+      if (import.meta.env.DEV) console.error("Error caught by withErrorHandler:", error, errorInfo);
       onError?.(error, errorInfo);
     }
 
@@ -53,7 +53,9 @@ export function withErrorHandler<P extends object>(
     }
   }
 
-  Object.defineProperty(ErrorBoundaryWrapper, 'displayName', { value: `withErrorHandler(${(WrappedComponent as React.FC).displayName || WrappedComponent.name || 'Component'})` });
+  Object.defineProperty(ErrorBoundaryWrapper, "displayName", {
+    value: `withErrorHandler(${(WrappedComponent as React.FC).displayName || WrappedComponent.name || "Component"})`,
+  });
 
   return ErrorBoundaryWrapper;
 }

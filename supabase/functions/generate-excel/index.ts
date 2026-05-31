@@ -7,6 +7,17 @@ serve(async (req) => {
     const header = columns.join("\t");
     const rows = data.map((row: any) => columns.map((col: string) => row[col] ?? "").join("\t"));
     const tsv = [header, ...rows].join("\n");
-    return new Response(tsv, { headers: { ...getCorsHeaders(req), "Content-Type": "application/vnd.ms-excel", "Content-Disposition": `attachment; filename="${filename}"` } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(tsv, {
+      headers: {
+        ...getCorsHeaders(req),
+        "Content-Type": "application/vnd.ms-excel",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

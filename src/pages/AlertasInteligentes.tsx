@@ -18,19 +18,45 @@ export default function AlertasInteligentesPage() {
   const [filtroSeveridade, setFiltroSeveridade] = useState<string>("todos");
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
 
-  const { criticalAlerts, hasCriticalAlerts } = useKPIAlerts({ enabled: alertsEnabled, soundEnabled });
+  const { criticalAlerts, hasCriticalAlerts } = useKPIAlerts({
+    enabled: alertsEnabled,
+    soundEnabled,
+  });
 
-  const { data: historico = [], isLoading: loadingHistorico, refetch } = useQuery({
+  const {
+    data: historico = [],
+    isLoading: loadingHistorico,
+    refetch,
+  } = useQuery({
     queryKey: ["alertas_historico", filtroSeveridade, filtroStatus],
     queryFn: async () => {
-      let query = supabase.from("alertas_historico").select("*").order("created_at", { ascending: false }).limit(50);
-      if (filtroSeveridade !== "todos") query = query.eq("severidade", filtroSeveridade as 'aviso' | 'critico' | 'info' | 'urgente');
-      if (filtroStatus !== "todos") query = query.eq("status", filtroStatus as 'ativo' | 'ignorado' | 'reconhecido' | 'resolvido');
+      let query = supabase
+        .from("alertas_historico")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (filtroSeveridade !== "todos")
+        query = query.eq(
+          "severidade",
+          filtroSeveridade as "aviso" | "critico" | "info" | "urgente"
+        );
+      if (filtroStatus !== "todos")
+        query = query.eq(
+          "status",
+          filtroStatus as "ativo" | "ignorado" | "reconhecido" | "resolvido"
+        );
       const { data, error } = await query;
       if (error) throw error;
-      return (data || []).map(item => ({
-        id: item.id, titulo: item.titulo, mensagem: item.mensagem,
-        severidade: item.severidade === 'critico' ? 'critical' : item.severidade === 'aviso' ? 'warning' : 'info',
+      return (data || []).map((item) => ({
+        id: item.id,
+        titulo: item.titulo,
+        mensagem: item.mensagem,
+        severidade:
+          item.severidade === "critico"
+            ? "critical"
+            : item.severidade === "aviso"
+              ? "warning"
+              : "info",
         status: item.status,
         dados_contexto: item.dados_contexto as Record<string, unknown> | undefined,
         created_at: item.created_at,
@@ -59,21 +85,30 @@ export default function AlertasInteligentesPage() {
 
   return (
     <AppLayout title="Alertas Inteligentes" showBack>
-      <div className="p-4 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="space-y-6 p-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Bell className="h-6 w-6 text-primary" />Central de Alertas
+            <h1 className="flex items-center gap-2 text-2xl font-bold">
+              <Bell className="h-6 w-6 text-primary" />
+              Central de Alertas
             </h1>
             <p className="text-muted-foreground">Monitoramento inteligente de KPIs e operações</p>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <Switch id="alerts-enabled" checked={alertsEnabled} onCheckedChange={setAlertsEnabled} />
+              <Switch
+                id="alerts-enabled"
+                checked={alertsEnabled}
+                onCheckedChange={setAlertsEnabled}
+              />
               <Label htmlFor="alerts-enabled">Alertas ativos</Label>
             </div>
             <div className="flex items-center gap-2">
-              {soundEnabled ? <Volume2 className="h-4 w-4 text-muted-foreground" /> : <VolumeX className="h-4 w-4 text-muted-foreground" />}
+              {soundEnabled ? (
+                <Volume2 className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <VolumeX className="h-4 w-4 text-muted-foreground" />
+              )}
               <Switch id="sound-enabled" checked={soundEnabled} onCheckedChange={setSoundEnabled} />
               <Label htmlFor="sound-enabled">Som</Label>
             </div>
@@ -83,8 +118,8 @@ export default function AlertasInteligentesPage() {
         <AlertasResumoCards
           criticosCount={criticalAlerts.length}
           avisosCount={0}
-          reconhecidosCount={historico.filter(a => a.status === 'reconhecido').length}
-          resolvidosCount={historico.filter(a => a.status === 'resolvido').length}
+          reconhecidosCount={historico.filter((a) => a.status === "reconhecido").length}
+          resolvidosCount={historico.filter((a) => a.status === "resolvido").length}
           hasCriticalAlerts={hasCriticalAlerts}
         />
 
@@ -92,8 +127,14 @@ export default function AlertasInteligentesPage() {
 
         <Tabs defaultValue="historico" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="historico"><History className="h-4 w-4 mr-2" />Histórico</TabsTrigger>
-            <TabsTrigger value="config"><Settings className="h-4 w-4 mr-2" />Configurações</TabsTrigger>
+            <TabsTrigger value="historico">
+              <History className="mr-2 h-4 w-4" />
+              Histórico
+            </TabsTrigger>
+            <TabsTrigger value="config">
+              <Settings className="mr-2 h-4 w-4" />
+              Configurações
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="historico">
             <AlertasHistoricoTable

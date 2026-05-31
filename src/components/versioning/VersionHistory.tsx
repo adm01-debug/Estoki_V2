@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import {
   Dialog,
   DialogContent,
@@ -27,22 +21,15 @@ interface VersionHistoryProps {
   onRestore?: (data: Record<string, any>) => void;
 }
 
-export function VersionHistory({
-  entityType,
-  entityId,
-  onRestore,
-}: VersionHistoryProps) {
+export function VersionHistory({ entityType, entityId, onRestore }: VersionHistoryProps) {
   const [showPreview, setShowPreview] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<EntityVersion | null>(null);
   const [showConfirmRestore, setShowConfirmRestore] = useState(false);
 
-  const {
-    versions,
-    isLoading,
-    restoreVersion,
-    isRestoring,
-    getVersionData,
-  } = useEntityVersions({ entityType, entityId });
+  const { versions, isLoading, restoreVersion, isRestoring, getVersionData } = useEntityVersions({
+    entityType,
+    entityId,
+  });
 
   const handlePreview = (version: EntityVersion) => {
     setSelectedVersion(version);
@@ -79,7 +66,7 @@ export function VersionHistory({
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="sm">
-            <History className="h-4 w-4 mr-2" />
+            <History className="mr-2 h-4 w-4" />
             Histórico
             {versions.length > 0 && (
               <Badge variant="secondary" className="ml-2">
@@ -97,25 +84,25 @@ export function VersionHistory({
           </SheetHeader>
 
           {isLoading ? (
-            <div className="flex items-center justify-center h-40">
+            <div className="flex h-40 items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : versions.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-              <History className="h-10 w-10 mb-2 opacity-50" />
+            <div className="flex h-40 flex-col items-center justify-center text-muted-foreground">
+              <History className="mb-2 h-10 w-10 opacity-50" />
               <p>Nenhuma versão registrada</p>
             </div>
           ) : (
-            <ScrollArea className="h-[calc(100vh-120px)] mt-4">
+            <ScrollArea className="mt-4 h-[calc(100vh-120px)]">
               <div className="space-y-3">
                 {versions.map((version, index) => (
                   <div
                     key={version.id}
-                    className={`p-3 border rounded-lg ${
+                    className={`rounded-lg border p-3 ${
                       index === 0 ? "border-primary bg-primary/5" : ""
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="mb-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm font-medium">
                           v{version.version_number}
@@ -170,9 +157,7 @@ export function VersionHistory({
                     )}
 
                     {version.change_summary && (
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {version.change_summary}
-                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">{version.change_summary}</p>
                     )}
                   </div>
                 ))}
@@ -183,14 +168,13 @@ export function VersionHistory({
       </Sheet>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
           <DialogHeader>
             <DialogTitle>
-              Versão {selectedVersion?.version_number} -{" "}
-              {selectedVersion?.change_type}
+              Versão {selectedVersion?.version_number} - {selectedVersion?.change_type}
             </DialogTitle>
           </DialogHeader>
-          <pre className="p-4 bg-muted rounded-lg overflow-auto text-xs">
+          <pre className="overflow-auto rounded-lg bg-muted p-4 text-xs">
             {JSON.stringify(selectedVersion?.data, null, 2)}
           </pre>
         </DialogContent>
@@ -203,15 +187,14 @@ export function VersionHistory({
           </DialogHeader>
           <p className="text-muted-foreground">
             Esta ação irá restaurar o registro para o estado da versão{" "}
-            {selectedVersion?.version_number}. A versão atual será salva no
-            histórico.
+            {selectedVersion?.version_number}. A versão atual será salva no histórico.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowConfirmRestore(false)}>
               Cancelar
             </Button>
             <Button onClick={handleRestore} disabled={isRestoring}>
-              {isRestoring && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {isRestoring && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Restaurar
             </Button>
           </DialogFooter>

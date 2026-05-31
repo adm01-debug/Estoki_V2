@@ -1,10 +1,10 @@
 /**
  * Componente de Barra de Ações em Massa
- * 
+ *
  * @module components/BulkActionsBar
  */
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,10 +15,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { X, Loader2 } from 'lucide-react';
-import { BulkAction } from '@/hooks/useBulkActions';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/alert-dialog";
+import { X, Loader2 } from "lucide-react";
+import { BulkAction } from "@/hooks/useBulkActions";
+import { cn } from "@/lib/utils";
 
 interface BulkActionsBarProps<T> {
   selectionCount: number;
@@ -42,13 +42,13 @@ export function BulkActionsBar<T>({
   return (
     <div
       className={cn(
-        'fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-lg border bg-background p-2 shadow-lg',
+        "fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-lg border bg-background p-2 shadow-lg",
         className
       )}
     >
       <div className="flex items-center gap-2 px-2">
         <span className="text-sm font-medium">
-          {selectionCount} selecionado{selectionCount > 1 ? 's' : ''}
+          {selectionCount} selecionado{selectionCount > 1 ? "s" : ""}
         </span>
         <Button
           variant="ghost"
@@ -69,7 +69,7 @@ export function BulkActionsBar<T>({
           const ActionButton = (
             <Button
               key={action.id}
-              variant={action.variant ?? 'outline'}
+              variant={action.variant ?? "outline"}
               size="sm"
               disabled={isExecuting}
               onClick={action.confirm ? undefined : () => onAction(action.id)}
@@ -91,18 +91,16 @@ export function BulkActionsBar<T>({
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>{action.confirm.title}</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      {action.confirm.description}
-                    </AlertDialogDescription>
+                    <AlertDialogDescription>{action.confirm.description}</AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => onAction(action.id)}
                       className={
-                        action.variant === 'destructive'
-                          ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                          : ''
+                        action.variant === "destructive"
+                          ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          : ""
                       }
                     >
                       Confirmar

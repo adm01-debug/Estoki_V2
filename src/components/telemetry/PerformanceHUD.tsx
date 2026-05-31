@@ -19,10 +19,12 @@ export const PerformanceHUD = () => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className={cn(
-          "flex items-center gap-3 px-3 py-1.5 rounded-full border backdrop-blur-md shadow-lg cursor-pointer transition-all",
-          isCritical ? "bg-red-500/10 border-red-500/30 text-red-600" :
-          isDegraded ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-600" :
-          "bg-background/50 border-border/20 text-muted-foreground"
+          "flex cursor-pointer items-center gap-3 rounded-full border px-3 py-1.5 shadow-lg backdrop-blur-md transition-all",
+          isCritical
+            ? "border-red-500/30 bg-red-500/10 text-red-600"
+            : isDegraded
+              ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-600"
+              : "border-border/20 bg-background/50 text-muted-foreground"
         )}
         onClick={() => setShowDetails(!showDetails)}
       >
@@ -30,9 +32,9 @@ export const PerformanceHUD = () => {
         <span className="text-[10px] font-black uppercase tracking-widest">
           {avgLatency}ms / {errorRate}% ER
         </span>
-        
+
         {(isDegraded || isCritical) && (
-          <Badge variant="destructive" className="h-4 px-1.5 text-[8px] animate-pulse">
+          <Badge variant="destructive" className="h-4 animate-pulse px-1.5 text-[8px]">
             ALERTA
           </Badge>
         )}
@@ -44,20 +46,28 @@ export const PerformanceHUD = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-full mb-2 left-0 w-64 bg-card border border-border/50 rounded-2xl p-4 shadow-2xl backdrop-blur-xl"
+            className="absolute bottom-full left-0 mb-2 w-64 rounded-2xl border border-border/50 bg-card p-4 shadow-2xl backdrop-blur-xl"
           >
-            <h4 className="text-xs font-black uppercase tracking-widest mb-3 flex items-center gap-2">
+            <h4 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-widest">
               <Zap className="h-3 w-3 text-primary" />
               Métricas de Performance
             </h4>
             <div className="space-y-3">
-              <MetricItem label="Latência Média" value={`${avgLatency}ms`} status={avgLatency < 500 ? 'ok' : avgLatency < 1000 ? 'warn' : 'error'} />
-              <MetricItem label="Taxa de Erro" value={`${errorRate}%`} status={errorRate < 5 ? 'ok' : errorRate < 10 ? 'warn' : 'error'} />
+              <MetricItem
+                label="Latência Média"
+                value={`${avgLatency}ms`}
+                status={avgLatency < 500 ? "ok" : avgLatency < 1000 ? "warn" : "error"}
+              />
+              <MetricItem
+                label="Taxa de Erro"
+                value={`${errorRate}%`}
+                status={errorRate < 5 ? "ok" : errorRate < 10 ? "warn" : "error"}
+              />
             </div>
             {isCritical && (
-              <div className="mt-4 p-2 rounded-lg bg-red-500/10 border border-red-500/20 flex items-start gap-2">
-                <AlertTriangle className="h-3 w-3 text-red-600 shrink-0 mt-0.5" />
-                <p className="text-[9px] text-red-600 font-bold leading-tight">
+              <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-2">
+                <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-red-600" />
+                <p className="text-[9px] font-bold leading-tight text-red-600">
                   Sistema operando em condições críticas. Latência elevada detectada.
                 </p>
               </div>
@@ -69,13 +79,25 @@ export const PerformanceHUD = () => {
   );
 };
 
-const MetricItem = ({ label, value, status }: { label: string, value: string, status: 'ok' | 'warn' | 'error' }) => (
+const MetricItem = ({
+  label,
+  value,
+  status,
+}: {
+  label: string;
+  value: string;
+  status: "ok" | "warn" | "error";
+}) => (
   <div className="flex items-center justify-between">
-    <span className="text-[10px] font-medium text-muted-foreground uppercase">{label}</span>
-    <span className={cn(
-      "text-[10px] font-black",
-      status === 'ok' ? "text-success" : status === 'warn' ? "text-yellow-600" : "text-red-600"
-    )}>{value}</span>
+    <span className="text-[10px] font-medium uppercase text-muted-foreground">{label}</span>
+    <span
+      className={cn(
+        "text-[10px] font-black",
+        status === "ok" ? "text-success" : status === "warn" ? "text-yellow-600" : "text-red-600"
+      )}
+    >
+      {value}
+    </span>
   </div>
 );
 

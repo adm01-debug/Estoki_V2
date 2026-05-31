@@ -1,33 +1,38 @@
-import React from 'react';
-import { Helmet } from 'react-helmet-async';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Monitor, Key, Bell, Lock, AlertTriangle } from 'lucide-react';
-import { SecurityOverview } from '@/components/security/SecurityOverview';
-import { ActiveSessions } from '@/components/security/ActiveSessions';
-import { DeviceManagement } from '@/components/security/DeviceManagement';
-import { SecurityAlerts } from '@/components/security/SecurityAlerts';
-import { MFASettings } from '@/components/security/MFASettings';
-import { AccessControl } from '@/components/security/AccessControl';
+import React from "react";
+import { Helmet } from "react-helmet-async";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield, Monitor, Key, Bell, Lock, AlertTriangle } from "lucide-react";
+import { SecurityOverview } from "@/components/security/SecurityOverview";
+import { ActiveSessions } from "@/components/security/ActiveSessions";
+import { DeviceManagement } from "@/components/security/DeviceManagement";
+import { SecurityAlerts } from "@/components/security/SecurityAlerts";
+import { MFASettings } from "@/components/security/MFASettings";
+import { AccessControl } from "@/components/security/AccessControl";
 
 const Seguranca: React.FC = () => {
   return (
     <>
       <Helmet>
         <title>Segurança | WMS</title>
-        <meta name="description" content="Painel de segurança unificado - gerencie sessões, dispositivos, MFA e alertas" />
+        <meta
+          name="description"
+          content="Painel de segurança unificado - gerencie sessões, dispositivos, MFA e alertas"
+        />
       </Helmet>
 
-      <div className="container mx-auto p-6 space-y-6">
+      <div className="container mx-auto space-y-6 p-6">
         <div className="flex items-center gap-3">
           <Shield className="h-8 w-8 text-primary" />
           <div>
             <h1 className="text-3xl font-bold text-foreground">Central de Segurança</h1>
-            <p className="text-muted-foreground">Gerencie todas as configurações de segurança da sua conta</p>
+            <p className="text-muted-foreground">
+              Gerencie todas as configurações de segurança da sua conta
+            </p>
           </div>
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-6 lg:inline-grid lg:w-auto">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               <span className="hidden sm:inline">Visão Geral</span>

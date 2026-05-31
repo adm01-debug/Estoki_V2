@@ -2,7 +2,7 @@ export const backupToLocalStorage = (key: string, data: unknown): void => {
   try {
     localStorage.setItem(`backup_${key}`, JSON.stringify({ data, timestamp: Date.now() }));
   } catch (e) {
-    if (import.meta.env.DEV) console.error('Backup failed:', e);
+    if (import.meta.env.DEV) console.error("Backup failed:", e);
   }
 };
 
@@ -17,9 +17,9 @@ export const restoreFromLocalStorage = <T>(key: string): T | null => {
 };
 
 export const exportToJSON = (data: unknown, filename: string): void => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = `${filename}.json`;
   a.click();

@@ -17,16 +17,42 @@ const colors = {
   danger: "bg-red-500",
 };
 
-export function ProgressBar({ value, max = 100, showLabel, size = "md", color = "default", className }: ProgressBarProps) {
+export function ProgressBar({
+  value,
+  max = 100,
+  showLabel,
+  size = "md",
+  color = "default",
+  className,
+}: ProgressBarProps) {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
-  const autoColor = percentage >= 90 ? "danger" : percentage >= 70 ? "warning" : percentage >= 50 ? "default" : "success";
+  const autoColor =
+    percentage >= 90
+      ? "danger"
+      : percentage >= 70
+        ? "warning"
+        : percentage >= 50
+          ? "default"
+          : "success";
   const finalColor = color === "default" ? autoColor : color;
 
   return (
     <div className={cn("w-full", className)}>
-      {showLabel && <div className="flex justify-between mb-1 text-sm"><span>{value}</span><span>{max}</span></div>}
-      <div className={cn("w-full bg-secondary rounded-full overflow-hidden", sizes[size])}>
-        <div className={cn("h-full transition-all duration-300", colors[finalColor])} style={{ width: `${percentage}%` }} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={max} />
+      {showLabel && (
+        <div className="mb-1 flex justify-between text-sm">
+          <span>{value}</span>
+          <span>{max}</span>
+        </div>
+      )}
+      <div className={cn("w-full overflow-hidden rounded-full bg-secondary", sizes[size])}>
+        <div
+          className={cn("h-full transition-all duration-300", colors[finalColor])}
+          style={{ width: `${percentage}%` }}
+          role="progressbar"
+          aria-valuenow={value}
+          aria-valuemin={0}
+          aria-valuemax={max}
+        />
       </div>
     </div>
   );

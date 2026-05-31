@@ -9,7 +9,7 @@ export interface BulkAction<T> {
   id: string;
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   confirm?: {
     title: string;
     description: string;
@@ -52,10 +52,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
     setSelectedIds(new Set());
   }, []);
 
-  const isSelected = useCallback(
-    (id: string) => selectedIds.has(id),
-    [selectedIds]
-  );
+  const isSelected = useCallback((id: string) => selectedIds.has(id), [selectedIds]);
 
   const bulkDeleteMutation = useMutation({
     mutationFn: async (ids: string[]) => {
@@ -67,10 +64,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await (supabase
-          .from(table as any) as any)
-          .delete()
-          .in("id", batch);
+        const { error } = await (supabase.from(table as any) as any).delete().in("id", batch);
 
         if (error) throw error;
         setProgress(((i + 1) / batches) * 100);
@@ -95,13 +89,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
   });
 
   const bulkUpdateMutation = useMutation({
-    mutationFn: async ({
-      ids,
-      updates,
-    }: {
-      ids: string[];
-      updates: Partial<T>;
-    }) => {
+    mutationFn: async ({ ids, updates }: { ids: string[]; updates: Partial<T> }) => {
       setIsProcessing(true);
       setProgress(0);
 
@@ -110,8 +98,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await (supabase
-          .from(table as any) as any)
+        const { error } = await (supabase.from(table as any) as any)
           .update(updates)
           .in("id", batch);
 
@@ -142,8 +129,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
       setIsProcessing(true);
       setProgress(0);
 
-      const { data: records, error: fetchError } = await (supabase
-        .from(table as any) as any)
+      const { data: records, error: fetchError } = await (supabase.from(table as any) as any)
         .select("*")
         .in("id", ids);
 
@@ -196,8 +182,7 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
 
       for (let i = 0; i < batches; i++) {
         const batch = ids.slice(i * batchSize, (i + 1) * batchSize);
-        const { error } = await (supabase
-          .from(table as any) as any)
+        const { error } = await (supabase.from(table as any) as any)
           .update({ deleted_at: null })
           .in("id", batch);
 
@@ -232,17 +217,14 @@ export function useBulkActions<T extends { id: string }>(options: BulkActionOpti
     selectAll,
     clearSelection,
     isSelected,
-    bulkDelete: (ids?: string[]) =>
-      bulkDeleteMutation.mutate(ids || Array.from(selectedIds)),
+    bulkDelete: (ids?: string[]) => bulkDeleteMutation.mutate(ids || Array.from(selectedIds)),
     bulkUpdate: (updates: Partial<T>, ids?: string[]) =>
       bulkUpdateMutation.mutate({
         ids: ids || Array.from(selectedIds),
         updates,
       }),
-    bulkDuplicate: (ids?: string[]) =>
-      bulkDuplicateMutation.mutate(ids || Array.from(selectedIds)),
-    bulkRestore: (ids?: string[]) =>
-      bulkRestoreMutation.mutate(ids || Array.from(selectedIds)),
+    bulkDuplicate: (ids?: string[]) => bulkDuplicateMutation.mutate(ids || Array.from(selectedIds)),
+    bulkRestore: (ids?: string[]) => bulkRestoreMutation.mutate(ids || Array.from(selectedIds)),
     isDeleting: bulkDeleteMutation.isPending,
     isUpdating: bulkUpdateMutation.isPending,
     isDuplicating: bulkDuplicateMutation.isPending,

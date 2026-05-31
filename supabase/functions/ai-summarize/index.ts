@@ -7,10 +7,24 @@ serve(async (req) => {
     const prompt = `Resuma o seguinte texto em no máximo ${maxLength} palavras:\n\n"${text}"\n\nResponda apenas com o resumo.`;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      headers: { "Authorization": `Bearer ${Deno.env.get("OPENAI_API_KEY")}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ model: "gpt-3.5-turbo", messages: [{ role: "user", content: prompt }], max_tokens: 500 })
+      headers: {
+        Authorization: `Bearer ${Deno.env.get("OPENAI_API_KEY")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 500,
+      }),
     });
     const data = await response.json();
-    return new Response(JSON.stringify({ summary: data.choices?.[0]?.message?.content?.trim() }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ summary: data.choices?.[0]?.message?.content?.trim() }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

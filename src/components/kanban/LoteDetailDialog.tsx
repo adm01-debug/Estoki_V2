@@ -55,11 +55,17 @@ export function LoteDetailDialog({ lote, open, onClose }: LoteDetailDialogProps)
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Recebimento</p>
-              <p className="text-sm font-medium">{format(new Date(lote.data_recebimento), "dd/MM/yyyy", { locale: ptBR })}</p>
+              <p className="text-sm font-medium">
+                {format(new Date(lote.data_recebimento), "dd/MM/yyyy", { locale: ptBR })}
+              </p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Validade</p>
-              <p className="text-sm font-medium">{lote.data_validade ? format(new Date(lote.data_validade), "dd/MM/yyyy", { locale: ptBR }) : "—"}</p>
+              <p className="text-sm font-medium">
+                {lote.data_validade
+                  ? format(new Date(lote.data_validade), "dd/MM/yyyy", { locale: ptBR })
+                  : "—"}
+              </p>
             </div>
           </div>
           <Separator />

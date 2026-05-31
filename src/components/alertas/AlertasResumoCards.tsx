@@ -9,9 +9,15 @@ interface Props {
   hasCriticalAlerts: boolean;
 }
 
-export function AlertasResumoCards({ criticosCount, avisosCount, reconhecidosCount, resolvidosCount, hasCriticalAlerts }: Props) {
+export function AlertasResumoCards({
+  criticosCount,
+  avisosCount,
+  reconhecidosCount,
+  resolvidosCount,
+  hasCriticalAlerts,
+}: Props) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
       <Card className={hasCriticalAlerts ? "border-red-500" : ""}>
         <CardContent className="pt-6">
           <div className="flex items-center justify-between">

@@ -16,7 +16,7 @@ serve(async (req) => {
 
     const formData = await req.formData();
     const files: File[] = [];
-    
+
     // Coletar todos os arquivos PDF
     for (const [key, value] of formData.entries()) {
       if (key.startsWith("file") && value instanceof File) {
@@ -28,7 +28,7 @@ serve(async (req) => {
       throw new Error("Pelo menos 2 arquivos PDF são necessários");
     }
 
-    const outputFilename = formData.get("output_name") as string || `merged_${Date.now()}.pdf`;
+    const outputFilename = (formData.get("output_name") as string) || `merged_${Date.now()}.pdf`;
 
     // Coletar bytes de todos os PDFs
     const pdfBuffers: Uint8Array[] = [];
@@ -54,30 +54,33 @@ serve(async (req) => {
 
     // Salvar referência no storage
     const mergeId = crypto.randomUUID();
-    
+
     await supabase.from("merged_documents").insert({
       id: mergeId,
       filename: outputFilename,
-      source_files: files.map(f => f.name),
+      source_files: files.map((f) => f.name),
       total_pages: totalPages,
       size_bytes: mergedSize,
       status: "pending",
       created_at: new Date().toISOString(),
     });
 
-    return new Response(JSON.stringify({
-      success: true,
-      merge_id: mergeId,
-      output_filename: outputFilename,
-      source_files: files.map(f => ({ name: f.name, size: f.size })),
-      total_pages: totalPages,
-      estimated_size: mergedSize,
-      status: "pending",
-      message: "Merge queued. Use merge_id to check status.",
-      download_url: `https://storage.example.com/merged/${mergeId}/${outputFilename}`,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        merge_id: mergeId,
+        output_filename: outputFilename,
+        source_files: files.map((f) => ({ name: f.name, size: f.size })),
+        total_pages: totalPages,
+        estimated_size: mergedSize,
+        status: "pending",
+        message: "Merge queued. Use merge_id to check status.",
+        download_url: `https://storage.example.com/merged/${mergeId}/${outputFilename}`,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

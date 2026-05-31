@@ -95,14 +95,14 @@ serve(async (req) => {
   }
 
   // Determine overall status
-  const hasFailure = Object.values(checks).some(c => c.status === "fail");
-  const hasWarning = Object.values(checks).some(c => c.status === "warn");
+  const hasFailure = Object.values(checks).some((c) => c.status === "fail");
+  const hasWarning = Object.values(checks).some((c) => c.status === "warn");
 
   const overallStatus: HealthStatus["status"] = hasFailure
     ? "unhealthy"
     : hasWarning
-    ? "degraded"
-    : "healthy";
+      ? "degraded"
+      : "healthy";
 
   const health: HealthStatus = {
     status: overallStatus,

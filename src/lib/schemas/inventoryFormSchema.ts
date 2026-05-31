@@ -1,20 +1,20 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const inventoryAdjustmentItemSchema = z.object({
-  productId: z.string().min(1, 'Produto é obrigatório'),
-  productSku: z.string().min(1, 'SKU é obrigatório'),
-  locationId: z.string().min(1, 'Localização é obrigatória'),
+  productId: z.string().min(1, "Produto é obrigatório"),
+  productSku: z.string().min(1, "SKU é obrigatório"),
+  locationId: z.string().min(1, "Localização é obrigatória"),
   currentQuantity: z.number().min(0),
-  newQuantity: z.number().min(0, 'Quantidade não pode ser negativa'),
+  newQuantity: z.number().min(0, "Quantidade não pode ser negativa"),
   adjustmentQuantity: z.number(),
   lotNumber: z.string().optional(),
   serialNumber: z.string().optional(),
-  reason: z.string().min(1, 'Motivo é obrigatório'),
+  reason: z.string().min(1, "Motivo é obrigatório"),
 });
 
 export const inventoryFormSchema = z.object({
-  adjustmentType: z.enum(['add', 'remove', 'transfer', 'correction', 'damage', 'expiry']),
-  items: z.array(inventoryAdjustmentItemSchema).min(1, 'Pelo menos um item é obrigatório'),
+  adjustmentType: z.enum(["add", "remove", "transfer", "correction", "damage", "expiry"]),
+  items: z.array(inventoryAdjustmentItemSchema).min(1, "Pelo menos um item é obrigatório"),
   referenceNumber: z.string().optional(),
   notes: z.string().optional(),
   approvedBy: z.string().optional(),
@@ -22,16 +22,20 @@ export const inventoryFormSchema = z.object({
 });
 
 export const inventoryTransferFormSchema = z.object({
-  sourceLocationId: z.string().min(1, 'Localização de origem é obrigatória'),
-  destinationLocationId: z.string().min(1, 'Localização de destino é obrigatória'),
-  items: z.array(z.object({
-    productId: z.string().min(1),
-    quantity: z.number().min(1, 'Quantidade deve ser maior que 0'),
-    lotNumber: z.string().optional(),
-    serialNumber: z.string().optional(),
-  })).min(1, 'Pelo menos um item é obrigatório'),
+  sourceLocationId: z.string().min(1, "Localização de origem é obrigatória"),
+  destinationLocationId: z.string().min(1, "Localização de destino é obrigatória"),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().min(1),
+        quantity: z.number().min(1, "Quantidade deve ser maior que 0"),
+        lotNumber: z.string().optional(),
+        serialNumber: z.string().optional(),
+      })
+    )
+    .min(1, "Pelo menos um item é obrigatório"),
   reason: z.string().optional(),
-  priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  priority: z.enum(["low", "normal", "high"]).default("normal"),
 });
 
 export type InventoryAdjustmentItem = z.infer<typeof inventoryAdjustmentItemSchema>;

@@ -1,17 +1,19 @@
-import { logger } from '@/utils/logger';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { logger } from "@/utils/logger";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 declare global {
   interface Window {
     BarcodeDetector?: new (options?: { formats: string[] }) => {
-      detect(source: HTMLVideoElement | ImageBitmap | HTMLCanvasElement): Promise<Array<{ rawValue: string; format: string }>>;
+      detect(
+        source: HTMLVideoElement | ImageBitmap | HTMLCanvasElement
+      ): Promise<Array<{ rawValue: string; format: string }>>;
     };
   }
 }
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Camera, X, Flashlight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Camera, X, Flashlight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface BarcodeScannerProps {
   onScan: (code: string, format?: string) => void;
@@ -22,12 +24,12 @@ export interface BarcodeScannerProps {
 }
 
 // BarcodeDetector API polyfill check
-const hasBarcodeDetector = typeof window !== 'undefined' && 'BarcodeDetector' in window;
+const hasBarcodeDetector = typeof window !== "undefined" && "BarcodeDetector" in window;
 
 export function BarcodeScanner({
   onScan,
   onError,
-  formats = ['ean_13', 'ean_8', 'code_128', 'code_39', 'qr_code'],
+  formats = ["ean_13", "ean_8", "code_128", "code_39", "qr_code"],
   className,
   autoStart = false,
 }: BarcodeScannerProps) {
@@ -47,15 +49,15 @@ export function BarcodeScanner({
         detectorRef.current = new window.BarcodeDetector!({ formats });
       } catch (err) {
         logger.warn("BarcodeDetector not supported");
-        setError('Scanner não suportado neste dispositivo');
+        setError("Scanner não suportado neste dispositivo");
       }
     } else {
       // Fallback: use ZXing library or manual input
       try {
-        const { BrowserMultiFormatReader } = await import('@zxing/library');
+        const { BrowserMultiFormatReader } = await import("@zxing/library");
         detectorRef.current = new BrowserMultiFormatReader();
       } catch {
-        setError('Biblioteca de scanner não disponível');
+        setError("Biblioteca de scanner não disponível");
       }
     }
   }, [formats]);
@@ -64,7 +66,7 @@ export function BarcodeScanner({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment',
+          facingMode: "environment",
           width: { ideal: 1280 },
           height: { ideal: 720 },
         },
@@ -86,14 +88,14 @@ export function BarcodeScanner({
       setError(null);
     } catch (err) {
       const error = err as Error;
-      setError('Não foi possível acessar a câmera');
+      setError("Não foi possível acessar a câmera");
       onError?.(error);
     }
   }, [onError]);
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
     if (animationRef.current) {
@@ -132,7 +134,7 @@ export function BarcodeScanner({
       } else if (canvasRef.current) {
         // ZXing fallback
         const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         if (ctx) {
           canvas.width = videoRef.current.videoWidth;
           canvas.height = videoRef.current.videoHeight;
@@ -176,35 +178,26 @@ export function BarcodeScanner({
   }, [autoStart, startCamera]);
 
   return (
-    <Card className={cn('relative overflow-hidden', className)}>
+    <Card className={cn("relative overflow-hidden", className)}>
       {error ? (
         <div className="flex flex-col items-center justify-center p-8 text-center">
-          <p className="text-destructive mb-4">{error}</p>
+          <p className="mb-4 text-destructive">{error}</p>
           <Button onClick={startCamera}>Tentar novamente</Button>
         </div>
       ) : isScanning ? (
         <div className="relative">
-          <video
-            ref={videoRef}
-            className="w-full h-auto"
-            playsInline
-            muted
-          />
+          <video ref={videoRef} className="h-auto w-full" playsInline muted />
           <canvas ref={canvasRef} className="hidden" />
-          
+
           {/* Scan overlay */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-64 h-64 border-2 border-primary rounded-lg animate-pulse" />
+            <div className="h-64 w-64 animate-pulse rounded-lg border-2 border-primary" />
           </div>
 
           {/* Controls */}
-          <div className="absolute top-2 right-2 flex gap-2">
+          <div className="absolute right-2 top-2 flex gap-2">
             {hasFlash && (
-              <Button
-                size="icon"
-                variant={flashOn ? 'default' : 'secondary'}
-                onClick={toggleFlash}
-              >
+              <Button size="icon" variant={flashOn ? "default" : "secondary"} onClick={toggleFlash}>
                 <Flashlight className="h-4 w-4" />
               </Button>
             )}
@@ -215,7 +208,7 @@ export function BarcodeScanner({
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center p-8">
-          <Camera className="h-12 w-12 text-muted-foreground mb-4" />
+          <Camera className="mb-4 h-12 w-12 text-muted-foreground" />
           <Button onClick={startCamera}>Iniciar Scanner</Button>
         </div>
       )}

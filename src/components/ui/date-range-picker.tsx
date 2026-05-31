@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface DateRange { from: Date | undefined; to: Date | undefined; }
+interface DateRange {
+  from: Date | undefined;
+  to: Date | undefined;
+}
 
 interface DateRangePickerProps {
   value?: DateRange;
@@ -21,13 +24,30 @@ export function DateRangePicker({ value, onChange, className }: DateRangePickerP
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !value?.from && "text-muted-foreground", className)}>
+        <Button
+          variant="outline"
+          className={cn(
+            "w-full justify-start text-left font-normal",
+            !value?.from && "text-muted-foreground",
+            className
+          )}
+        >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {value?.from ? (value.to ? `${format(value.from, "dd/MM/yyyy")} - ${format(value.to, "dd/MM/yyyy")}` : format(value.from, "dd/MM/yyyy")) : "Selecione período"}
+          {value?.from
+            ? value.to
+              ? `${format(value.from, "dd/MM/yyyy")} - ${format(value.to, "dd/MM/yyyy")}`
+              : format(value.from, "dd/MM/yyyy")
+            : "Selecione período"}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar mode="range" selected={value} onSelect={onChange as any} numberOfMonths={2} locale={ptBR} />
+        <Calendar
+          mode="range"
+          selected={value}
+          onSelect={onChange as any}
+          numberOfMonths={2}
+          locale={ptBR}
+        />
       </PopoverContent>
     </Popover>
   );

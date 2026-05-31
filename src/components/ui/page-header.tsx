@@ -1,8 +1,8 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PageHeaderProps {
   title: string;
@@ -14,10 +14,18 @@ interface PageHeaderProps {
   children?: React.ReactNode;
 }
 
-export function PageHeader({ title, description, backUrl, actions, primaryAction, className, children }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  description,
+  backUrl,
+  actions,
+  primaryAction,
+  className,
+  children,
+}: PageHeaderProps) {
   const navigate = useNavigate();
   return (
-    <div className={cn('flex flex-col gap-4 pb-6', className)}>
+    <div className={cn("flex flex-col gap-4 pb-6", className)}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {backUrl && (
@@ -34,7 +42,11 @@ export function PageHeader({ title, description, backUrl, actions, primaryAction
           {actions}
           {primaryAction && (
             <Button onClick={primaryAction.onClick}>
-              {primaryAction.icon ? <primaryAction.icon className="h-4 w-4 mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
+              {primaryAction.icon ? (
+                <primaryAction.icon className="mr-2 h-4 w-4" />
+              ) : (
+                <Plus className="mr-2 h-4 w-4" />
+              )}
               {primaryAction.label}
             </Button>
           )}

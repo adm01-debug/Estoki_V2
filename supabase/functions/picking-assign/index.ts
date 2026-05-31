@@ -25,8 +25,10 @@ serve(async (req) => {
         .limit(1);
 
       if (!availablePickers?.length) {
-        return new Response(JSON.stringify({ error: "No available pickers" }),
-          { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ error: "No available pickers" }), {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
       }
 
       const assignedPicker = availablePickers[0];
@@ -40,25 +42,39 @@ serve(async (req) => {
         .limit(5);
 
       if (!pendingLists?.length) {
-        return new Response(JSON.stringify({ success: true, message: "No pending pick lists" }),
-          { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+        return new Response(JSON.stringify({ success: true, message: "No pending pick lists" }), {
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        });
       }
 
       // Atribuir ao picker
       await supabase
         .from("pick_lists")
-        .update({ assigned_to: assignedPicker.id, status: "assigned", assigned_at: new Date().toISOString() })
-        .in("id", pendingLists.map((p: any) => p.id));
+        .update({
+          assigned_to: assignedPicker.id,
+          status: "assigned",
+          assigned_at: new Date().toISOString(),
+        })
+        .in(
+          "id",
+          pendingLists.map((p: any) => p.id)
+        );
 
       return new Response(
-        JSON.stringify({ success: true, assigned_to: assignedPicker.id, lists_assigned: pendingLists.length }),
+        JSON.stringify({
+          success: true,
+          assigned_to: assignedPicker.id,
+          lists_assigned: pendingLists.length,
+        }),
         { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
       );
     }
 
     if (!pick_list_id || !picker_id) {
-      return new Response(JSON.stringify({ error: "pick_list_id and picker_id are required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "pick_list_id and picker_id are required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     await supabase
@@ -66,12 +82,13 @@ serve(async (req) => {
       .update({ assigned_to: picker_id, status: "assigned", assigned_at: new Date().toISOString() })
       .eq("id", pick_list_id);
 
-    return new Response(
-      JSON.stringify({ success: true, pick_list_id, assigned_to: picker_id }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, pick_list_id, assigned_to: picker_id }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

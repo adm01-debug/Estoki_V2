@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 export function useIdle(timeout = 60000) {
   const [isIdle, setIsIdle] = useState(false);
@@ -16,14 +16,14 @@ export function useIdle(timeout = 60000) {
       timeoutId = window.setTimeout(() => setIsIdle(true), timeout);
     };
 
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    events.forEach(event => window.addEventListener(event, resetTimer));
+    const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
+    events.forEach((event) => window.addEventListener(event, resetTimer));
 
     resetTimer();
 
     return () => {
       clearTimeout(timeoutId);
-      events.forEach(event => window.removeEventListener(event, resetTimer));
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
     };
   }, [timeout, handleActivity]);
 

@@ -8,11 +8,11 @@ import { logger } from "@/utils/logger";
 export const handleReceivingError = (error: any, context: string) => {
   const message = error?.message || "Ocorreu um erro inesperado";
   logger.error(`[Receiving - ${context}]`, error);
-  
+
   toast.error("Erro na Operação", {
     description: `${context}: ${message}`,
   });
-  
+
   return error;
 };
 

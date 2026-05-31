@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export interface Version {
   id: string;
@@ -15,17 +15,16 @@ export interface Version {
 
 export function useVersions(entityType: string, entityId: string) {
   const queryClient = useQueryClient();
-  const queryKey = ['versions', entityType, entityId];
+  const queryKey = ["versions", entityType, entityId];
 
   const { data: versions = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await (supabase
-        .from('entity_versions' as any) as any)
-        .select('*')
-        .eq('entity_type', entityType)
-        .eq('entity_id', entityId)
-        .order('version_number', { ascending: false });
+      const { data, error } = await (supabase.from("entity_versions" as any) as any)
+        .select("*")
+        .eq("entity_type", entityType)
+        .eq("entity_id", entityId)
+        .order("version_number", { ascending: false });
       if (error) throw error;
       return data as Version[];
     },
@@ -34,19 +33,23 @@ export function useVersions(entityType: string, entityId: string) {
 
   const restoreMutation = useMutation({
     mutationFn: async (versionId: string) => {
-      const version = versions.find(v => v.id === versionId);
-      if (!version) throw new Error('Versão não encontrada');
-      const { error } = await (supabase
-        .from(entityType as any) as any)
+      const version = versions.find((v) => v.id === versionId);
+      if (!version) throw new Error("Versão não encontrada");
+      const { error } = await (supabase.from(entityType as any) as any)
         .update(version.data)
-        .eq('id', entityId);
+        .eq("id", entityId);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
-      toast.success('Versão restaurada!');
+      toast.success("Versão restaurada!");
     },
   });
 
-  return { versions, isLoading, restoreVersion: restoreMutation.mutate, currentVersion: versions[0] };
+  return {
+    versions,
+    isLoading,
+    restoreVersion: restoreMutation.mutate,
+    currentVersion: versions[0],
+  };
 }

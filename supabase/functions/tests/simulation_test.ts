@@ -24,7 +24,7 @@ async function runSimulation(count = 10) {
 
   for (let i = 0; i < count; i++) {
     const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    
+
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/webhook-handler`, {
         method: "POST",
@@ -46,7 +46,7 @@ async function runSimulation(count = 10) {
       results.failure++;
       results.errors.push({ i, scenario, error: e.message });
     }
-    
+
     if (i % 50 === 0 && i > 0) console.log(`Processed ${i}/${count}...`);
   }
 
@@ -56,14 +56,17 @@ async function runSimulation(count = 10) {
 Deno.serve(async (req) => {
   const url = new URL(req.url);
   const count = parseInt(url.searchParams.get("count") || "100");
-  
+
   const report = await runSimulation(count);
-  
-  return new Response(JSON.stringify({
-    message: "Simulação concluída",
-    report,
-    timestamp: new Date().toISOString()
-  }), {
-    headers: { "Content-Type": "application/json" }
-  });
+
+  return new Response(
+    JSON.stringify({
+      message: "Simulação concluída",
+      report,
+      timestamp: new Date().toISOString(),
+    }),
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 });

@@ -2,16 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, Bell, BellOff, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -53,7 +45,9 @@ export function AlertIndicator({
                 >
                   <AlertTriangle className="h-4 w-4" />
                 </motion.div>
-                <span>{criticalCount} Alerta{criticalCount > 1 ? "s" : ""}</span>
+                <span>
+                  {criticalCount} Alerta{criticalCount > 1 ? "s" : ""}
+                </span>
               </motion.div>
             ) : (
               <motion.div
@@ -83,8 +77,8 @@ export function AlertIndicator({
       <PopoverContent className="w-72" align="end">
         <div className="space-y-4">
           <div>
-            <h4 className="font-medium text-sm">Configurações de Alertas</h4>
-            <p className="text-xs text-muted-foreground mt-1">
+            <h4 className="text-sm font-medium">Configurações de Alertas</h4>
+            <p className="mt-1 text-xs text-muted-foreground">
               Gerencie notificações visuais e sonoras
             </p>
           </div>
@@ -101,11 +95,7 @@ export function AlertIndicator({
                   Alertas Visuais
                 </Label>
               </div>
-              <Switch
-                id="alerts-toggle"
-                checked={alertsEnabled}
-                onCheckedChange={onAlertsToggle}
-              />
+              <Switch id="alerts-toggle" checked={alertsEnabled} onCheckedChange={onAlertsToggle} />
             </div>
 
             <div className="flex items-center justify-between">
@@ -119,23 +109,20 @@ export function AlertIndicator({
                   Alertas Sonoros
                 </Label>
               </div>
-              <Switch
-                id="sound-toggle"
-                checked={soundEnabled}
-                onCheckedChange={onSoundToggle}
-              />
+              <Switch id="sound-toggle" checked={soundEnabled} onCheckedChange={onSoundToggle} />
             </div>
           </div>
 
           {criticalCount > 0 && (
             <div className="rounded-md bg-destructive/10 p-3">
               <div className="flex items-start gap-2">
-                <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
                 <div>
                   <p className="text-sm font-medium text-destructive">
-                    {criticalCount} KPI{criticalCount > 1 ? "s" : ""} crítico{criticalCount > 1 ? "s" : ""}
+                    {criticalCount} KPI{criticalCount > 1 ? "s" : ""} crítico
+                    {criticalCount > 1 ? "s" : ""}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="mt-1 text-xs text-muted-foreground">
                     Verifique os indicadores abaixo da meta
                   </p>
                 </div>

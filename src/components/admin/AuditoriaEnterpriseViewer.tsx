@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileText, Download, ShieldCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
- 
- const AUDITORIA_CONTENT = `# RELATÓRIO DE AUDITORIA ENTERPRISE - INVENTÁRIO DE SISTEMA
+
+const AUDITORIA_CONTENT = `# RELATÓRIO DE AUDITORIA ENTERPRISE - INVENTÁRIO DE SISTEMA
  
  ## 1. RESUMO EXECUTIVO
  
@@ -81,68 +81,68 @@ import { Badge } from "@/components/ui/badge";
  
  ---
  *Documento gerado automaticamente via Auditoria Enterprise - v3.0*`;
- 
+
 export function AuditoriaEnterpriseViewer() {
-   const downloadRelatorio = () => {
-     const element = document.createElement("a");
-     const file = new Blob([AUDITORIA_CONTENT], { type: 'text/markdown' });
-     element.href = URL.createObjectURL(file);
-     element.download = "REPORTE_AUDITORIA_ENTERPRISE.md";
-     document.body.appendChild(element);
-     element.click();
-     document.body.removeChild(element);
-   };
- 
-   return (
-     <Card className="border-primary/20 bg-primary/5">
-       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-         <div className="space-y-1">
-           <CardTitle className="text-xl font-bold flex items-center gap-2">
-             <ShieldCheck className="h-6 w-6 text-primary" />
-             Relatório de Auditoria Enterprise
-           </CardTitle>
-           <CardDescription>
-             Inventário técnico completo e análise de riscos do sistema
-           </CardDescription>
-         </div>
-         <Button onClick={downloadRelatorio} variant="outline" size="sm" className="gap-2">
-           <Download className="h-4 w-4" />
-           Baixar .md
-         </Button>
-       </CardHeader>
-       <CardContent>
-         <ScrollArea className="h-[400px] w-full rounded-md border p-4 bg-background">
-           <div className="prose prose-sm dark:prose-invert max-w-none">
-             <pre className="text-[10px] leading-tight font-mono whitespace-pre-wrap">
-               {AUDITORIA_CONTENT}
-             </pre>
-           </div>
-         </ScrollArea>
-         
-         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-           <div className="flex items-center gap-2 p-3 rounded-lg border bg-background">
-             <CheckCircle2 className="h-5 w-5 text-success" />
-             <div>
-               <p className="text-xs font-bold">Integridade</p>
-               <p className="text-[10px] text-muted-foreground">Verificada v3.0</p>
-             </div>
-           </div>
-           <div className="flex items-center gap-2 p-3 rounded-lg border bg-background">
-             <AlertTriangle className="h-5 w-5 text-warning" />
-             <div>
-               <p className="text-xs font-bold">Gaps de Teste</p>
-               <p className="text-[10px] text-muted-foreground">Em mitigação (src/lib)</p>
-             </div>
-           </div>
-           <div className="flex items-center gap-2 p-3 rounded-lg border bg-background">
-             <FileText className="h-5 w-5 text-primary" />
-             <div>
-               <p className="text-xs font-bold">Documentação</p>
-               <p className="text-[10px] text-muted-foreground">Atualizada em tempo real</p>
-             </div>
-           </div>
-         </div>
-       </CardContent>
-     </Card>
-   );
- }
+  const downloadRelatorio = () => {
+    const element = document.createElement("a");
+    const file = new Blob([AUDITORIA_CONTENT], { type: "text/markdown" });
+    element.href = URL.createObjectURL(file);
+    element.download = "REPORTE_AUDITORIA_ENTERPRISE.md";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  return (
+    <Card className="border-primary/20 bg-primary/5">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="space-y-1">
+          <CardTitle className="flex items-center gap-2 text-xl font-bold">
+            <ShieldCheck className="h-6 w-6 text-primary" />
+            Relatório de Auditoria Enterprise
+          </CardTitle>
+          <CardDescription>
+            Inventário técnico completo e análise de riscos do sistema
+          </CardDescription>
+        </div>
+        <Button onClick={downloadRelatorio} variant="outline" size="sm" className="gap-2">
+          <Download className="h-4 w-4" />
+          Baixar .md
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <ScrollArea className="h-[400px] w-full rounded-md border bg-background p-4">
+          <div className="prose prose-sm dark:prose-invert max-w-none">
+            <pre className="whitespace-pre-wrap font-mono text-[10px] leading-tight">
+              {AUDITORIA_CONTENT}
+            </pre>
+          </div>
+        </ScrollArea>
+
+        <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="flex items-center gap-2 rounded-lg border bg-background p-3">
+            <CheckCircle2 className="h-5 w-5 text-success" />
+            <div>
+              <p className="text-xs font-bold">Integridade</p>
+              <p className="text-[10px] text-muted-foreground">Verificada v3.0</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg border bg-background p-3">
+            <AlertTriangle className="h-5 w-5 text-warning" />
+            <div>
+              <p className="text-xs font-bold">Gaps de Teste</p>
+              <p className="text-[10px] text-muted-foreground">Em mitigação (src/lib)</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg border bg-background p-3">
+            <FileText className="h-5 w-5 text-primary" />
+            <div>
+              <p className="text-xs font-bold">Documentação</p>
+              <p className="text-[10px] text-muted-foreground">Atualizada em tempo real</p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

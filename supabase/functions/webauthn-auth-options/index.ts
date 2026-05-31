@@ -26,26 +26,26 @@ serve(async (req) => {
     const { email } = await req.json();
 
     if (!email) {
-      return new Response(
-        JSON.stringify({ error: "Email is required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Email is required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Find user by email
     const { data: users, error: userError } = await supabase.auth.admin.listUsers();
-    
+
     if (userError) {
       throw userError;
     }
 
     const user = users.users.find((u) => u.email === email);
-    
+
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: "User not found" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Get user's passkeys
@@ -59,10 +59,10 @@ serve(async (req) => {
     }
 
     if (!credentials || credentials.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No passkeys registered for this user" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "No passkeys registered for this user" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Generate challenge
@@ -99,19 +99,19 @@ serve(async (req) => {
     console.log("Generated authentication options for email:", email);
 
     return new Response(
-      JSON.stringify({ 
-        options: authenticationOptions, 
+      JSON.stringify({
+        options: authenticationOptions,
         challengeId: challengeRow?.id,
-        userId: user.id 
+        userId: user.id,
       }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     console.error("Error generating authentication options:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

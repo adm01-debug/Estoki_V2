@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useTimeAgo(date: Date | string | number) {
-  const [timeAgo, setTimeAgo] = useState('');
+  const [timeAgo, setTimeAgo] = useState("");
 
   useEffect(() => {
     const calculate = () => {
@@ -17,7 +17,7 @@ export function useTimeAgo(date: Date | string | number) {
       if (days > 0) return `${days}d atrás`;
       if (hours > 0) return `${hours}h atrás`;
       if (minutes > 0) return `${minutes}min atrás`;
-      return 'agora';
+      return "agora";
     };
 
     setTimeAgo(calculate());

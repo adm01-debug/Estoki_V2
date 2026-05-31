@@ -18,13 +18,13 @@ serve(async (req) => {
     }
 
     const { produto_id, posicao_id, quantidade_nova, motivo, lote_id } = validation.data;
-    
+
     // Auth check (optional but recommended in real scenarios)
     // const authHeader = req.headers.get("Authorization");
     // ... logic to verify user ...
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!, 
+      Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
@@ -51,14 +51,12 @@ serve(async (req) => {
         .eq("posicao_id", posicao_id);
       upsertError = error;
     } else {
-      const { error } = await supabase
-        .from("estoque_posicao")
-        .insert({ 
-          produto_id, 
-          posicao_id, 
-          quantidade: quantidade_nova, 
-          lote_id 
-        });
+      const { error } = await supabase.from("estoque_posicao").insert({
+        produto_id,
+        posicao_id,
+        quantidade: quantidade_nova,
+        lote_id,
+      });
       upsertError = error;
     }
 
@@ -67,14 +65,14 @@ serve(async (req) => {
     // Registrar o ajuste no log de auditoria/ajustes
     const { data: adjustment, error: logError } = await supabase
       .from("ajustes_inventario")
-      .insert({ 
-        produto_id, 
-        posicao_id, 
-        quantidade_anterior: previousQty, 
-        quantidade_nova, 
-        diferenca: difference, 
+      .insert({
+        produto_id,
+        posicao_id,
+        quantidade_anterior: previousQty,
+        quantidade_nova,
+        diferenca: difference,
         motivo,
-        lote_id
+        lote_id,
       })
       .select()
       .single();
@@ -82,16 +80,16 @@ serve(async (req) => {
     if (logError) throw logError;
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         adjustment,
-        message: "Ajuste de estoque realizado com sucesso" 
-      }), 
+        message: "Ajuste de estoque realizado com sucesso",
+      }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Erro ao processar ajuste", message: error.message }), 
+      JSON.stringify({ error: "Erro ao processar ajuste", message: error.message }),
       { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }

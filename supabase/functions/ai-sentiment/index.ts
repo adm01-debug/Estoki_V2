@@ -9,8 +9,44 @@ interface SentimentResult {
   keywords: string[];
 }
 
-const positiveWords = ["bom", "ótimo", "excelente", "perfeito", "maravilhoso", "incrível", "satisfeito", "recomendo", "rápido", "eficiente", "adorei", "amei", "parabéns", "top", "melhor", "qualidade", "profissional"];
-const negativeWords = ["ruim", "péssimo", "horrível", "terrível", "insatisfeito", "lento", "demora", "problema", "defeito", "quebrado", "errado", "nunca", "pior", "decepção", "fraude", "golpe", "reclamar"];
+const positiveWords = [
+  "bom",
+  "ótimo",
+  "excelente",
+  "perfeito",
+  "maravilhoso",
+  "incrível",
+  "satisfeito",
+  "recomendo",
+  "rápido",
+  "eficiente",
+  "adorei",
+  "amei",
+  "parabéns",
+  "top",
+  "melhor",
+  "qualidade",
+  "profissional",
+];
+const negativeWords = [
+  "ruim",
+  "péssimo",
+  "horrível",
+  "terrível",
+  "insatisfeito",
+  "lento",
+  "demora",
+  "problema",
+  "defeito",
+  "quebrado",
+  "errado",
+  "nunca",
+  "pior",
+  "decepção",
+  "fraude",
+  "golpe",
+  "reclamar",
+];
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -33,7 +69,7 @@ serve(async (req) => {
 
     words.forEach((word) => {
       const cleanWord = word.replace(/[.,!?;:]/g, "");
-      
+
       if (positiveWords.some((pw) => cleanWord.includes(pw))) {
         positiveScore++;
         foundKeywords.push(cleanWord);

@@ -14,7 +14,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { max_age_hours = 24, dry_run = false } = await req.json() || {};
+    const { max_age_hours = 24, dry_run = false } = (await req.json()) || {};
 
     const cutoffDate = new Date(Date.now() - max_age_hours * 60 * 60 * 1000).toISOString();
     const results: any = { cleaned: {} };
@@ -70,17 +70,23 @@ serve(async (req) => {
       });
     }
 
-    const totalCleaned = Object.values(results.cleaned).reduce((a: number, b: any) => a + (b || 0), 0);
+    const totalCleaned = Object.values(results.cleaned).reduce(
+      (a: number, b: any) => a + (b || 0),
+      0
+    );
 
-    return new Response(JSON.stringify({
-      success: true,
-      dry_run,
-      cutoff_date: cutoffDate,
-      total_cleaned: totalCleaned,
-      details: results.cleaned,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        dry_run,
+        cutoff_date: cutoffDate,
+        total_cleaned: totalCleaned,
+        details: results.cleaned,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

@@ -1,6 +1,16 @@
 export interface Notification {
   id: string;
-  type: "estoque_baixo" | "triagem_pendente" | "recebimento" | "recebimento_chegou" | "recebimento_divergencia" | "recebimento_conferido" | "alerta" | "info" | "success" | "warning";
+  type:
+    | "estoque_baixo"
+    | "triagem_pendente"
+    | "recebimento"
+    | "recebimento_chegou"
+    | "recebimento_divergencia"
+    | "recebimento_conferido"
+    | "alerta"
+    | "info"
+    | "success"
+    | "warning";
   title: string;
   message: string;
   read: boolean;

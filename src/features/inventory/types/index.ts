@@ -1,10 +1,10 @@
-import type { Database } from '@/integrations/supabase/types';
+import type { Database } from "@/integrations/supabase/types";
 
-export type PosicaoInsert = Database['public']['Tables']['posicoes_estoque']['Insert'];
-export type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
+export type PosicaoInsert = Database["public"]["Tables"]["posicoes_estoque"]["Insert"];
+export type PosicaoUpdate = Database["public"]["Tables"]["posicoes_estoque"]["Update"];
 
-export type StatusPosicao = 'livre' | 'ocupado' | 'reservado' | 'bloqueado';
-export type TipoPosicao = 'porta_palete' | 'box';
+export type StatusPosicao = "livre" | "ocupado" | "reservado" | "bloqueado";
+export type TipoPosicao = "porta_palete" | "box";
 
 export interface SaldoPosicao {
   id: string;

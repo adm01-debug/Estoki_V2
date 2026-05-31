@@ -43,11 +43,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 }
 
 // Enviar notificação push do navegador
-export function sendBrowserNotification(
-  title: string,
-  body: string,
-  icon?: string
-) {
+export function sendBrowserNotification(title: string, body: string, icon?: string) {
   if (Notification.permission === "granted") {
     const notification = new Notification(title, {
       body,
@@ -69,11 +65,14 @@ export function sendBrowserNotification(
 }
 
 // Configuração visual por raridade
-const raridadeNotificacao: Record<BadgeRarity, { 
-  emoji: string; 
-  bgClass: string;
-  sound?: string;
-}> = {
+const raridadeNotificacao: Record<
+  BadgeRarity,
+  {
+    emoji: string;
+    bgClass: string;
+    sound?: string;
+  }
+> = {
   comum: { emoji: "🎖️", bgClass: "bg-muted" },
   raro: { emoji: "💎", bgClass: "bg-blue-500/20" },
   epico: { emoji: "🏆", bgClass: "bg-purple-500/20" },
@@ -110,51 +109,52 @@ export function useConquistaNotificacoes(
   }, [showBrowserNotification, enabled]);
 
   // Notificar novas conquistas
-  const notifyAchievement = useCallback((conquista: ConquistaCompleta) => {
-    const config = raridadeNotificacao[conquista.raridade];
+  const notifyAchievement = useCallback(
+    (conquista: ConquistaCompleta) => {
+      const config = raridadeNotificacao[conquista.raridade];
 
-    // Toast notification
-    if (showToast) {
-      toast({
-        title: `${config.emoji} Nova Conquista Desbloqueado!`,
-        description: (
-          <div className="flex flex-col gap-1">
-            <span className="font-semibold">{conquista.nome}</span>
-            <span className="text-sm text-muted-foreground">{conquista.descricao}</span>
-            <span className="text-xs text-warning font-medium mt-1">
-              +{conquista.pontos} XP
-            </span>
-          </div>
-        ),
-        duration: 6000,
-      });
-    }
+      // Toast notification
+      if (showToast) {
+        toast({
+          title: `${config.emoji} Nova Conquista Desbloqueado!`,
+          description: (
+            <div className="flex flex-col gap-1">
+              <span className="font-semibold">{conquista.nome}</span>
+              <span className="text-sm text-muted-foreground">{conquista.descricao}</span>
+              <span className="mt-1 text-xs font-medium text-warning">+{conquista.pontos} XP</span>
+            </div>
+          ),
+          duration: 6000,
+        });
+      }
 
-    // Browser push notification
-    if (showBrowserNotification && hasPermission) {
-      sendBrowserNotification(
-        `${config.emoji} Conquista: ${conquista.nome}`,
-        `${conquista.descricao}\n+${conquista.pontos} XP`
-      );
-    }
+      // Browser push notification
+      if (showBrowserNotification && hasPermission) {
+        sendBrowserNotification(
+          `${config.emoji} Conquista: ${conquista.nome}`,
+          `${conquista.descricao}\n+${conquista.pontos} XP`
+        );
+      }
 
-    // Callback personalizado
-    onNewAchievement?.(conquista);
+      // Callback personalizado
+      onNewAchievement?.(conquista);
 
-    // Marcar como notificada
-    markAsNotified(conquista.id);
-  }, [showToast, showBrowserNotification, hasPermission, toast, onNewAchievement]);
+      // Marcar como notificada
+      markAsNotified(conquista.id);
+    },
+    [showToast, showBrowserNotification, hasPermission, toast, onNewAchievement]
+  );
 
   // Verificar conquistas não notificadas
   useEffect(() => {
     if (!enabled) return;
 
     const notifiedIds = getNotifiedAchievements();
-    const desbloqueados = conquistas.filter(c => c.desbloqueado);
-    
+    const desbloqueados = conquistas.filter((c) => c.desbloqueado);
+
     // Encontrar conquistas desbloqueados mas não notificadas
     const novasConquistas = desbloqueados.filter(
-      c => !notifiedIds.includes(c.id) && !lastNotified.includes(c.id)
+      (c) => !notifiedIds.includes(c.id) && !lastNotified.includes(c.id)
     );
 
     if (novasConquistas.length > 0) {
@@ -165,17 +165,20 @@ export function useConquistaNotificacoes(
         }, index * 1500); // 1.5s entre cada notificação
       });
 
-      setLastNotified(prev => [...prev, ...novasConquistas.map(c => c.id)]);
+      setLastNotified((prev) => [...prev, ...novasConquistas.map((c) => c.id)]);
     }
   }, [conquistas, enabled, notifyAchievement, lastNotified]);
 
   // Função para notificar manualmente (útil para testes)
-  const notifyManually = useCallback((conquistaId: string) => {
-    const conquista = conquistas.find(c => c.id === conquistaId);
-    if (conquista) {
-      notifyAchievement(conquista);
-    }
-  }, [conquistas, notifyAchievement]);
+  const notifyManually = useCallback(
+    (conquistaId: string) => {
+      const conquista = conquistas.find((c) => c.id === conquistaId);
+      if (conquista) {
+        notifyAchievement(conquista);
+      }
+    },
+    [conquistas, notifyAchievement]
+  );
 
   // Resetar notificações (útil para testes)
   const resetNotifications = useCallback(() => {
@@ -208,16 +211,12 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
   }, [onClose]);
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-300"
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm duration-300 animate-in fade-in"
       onClick={onClose}
     >
-      <div 
-        className={`
-          relative p-8 rounded-2xl border-2 shadow-2xl
-          ${config.bgClass} border-primary/30
-          animate-in zoom-in-95 duration-500
-        `}
+      <div
+        className={`relative rounded-2xl border-2 p-8 shadow-2xl ${config.bgClass} border-primary/30 duration-500 animate-in zoom-in-95`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Partículas de celebração */}
@@ -225,7 +224,7 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
           {[...Array(20)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-2 h-2 rounded-full bg-warning animate-ping"
+              className="absolute h-2 w-2 animate-ping rounded-full bg-warning"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -236,31 +235,30 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
           ))}
         </div>
 
-        <div className="relative text-center space-y-4">
+        <div className="relative space-y-4 text-center">
           {/* Ícone grande */}
-          <div className="mx-auto w-20 h-20 rounded-full bg-warning/20 flex items-center justify-center animate-bounce">
+          <div className="mx-auto flex h-20 w-20 animate-bounce items-center justify-center rounded-full bg-warning/20">
             <IconComponent className="h-10 w-10 text-warning" />
           </div>
 
           {/* Texto */}
           <div>
-            <p className="text-sm text-muted-foreground uppercase tracking-wider">
+            <p className="text-sm uppercase tracking-wider text-muted-foreground">
               Conquista Desbloqueado!
             </p>
-            <h2 className="text-2xl font-bold mt-1">{conquista.nome}</h2>
-            <p className="text-muted-foreground mt-2">{conquista.descricao}</p>
+            <h2 className="mt-1 text-2xl font-bold">{conquista.nome}</h2>
+            <p className="mt-2 text-muted-foreground">{conquista.descricao}</p>
           </div>
 
           {/* XP ganho */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/20 text-warning font-bold">
-            <Trophy className="h-5 w-5" />
-            +{conquista.pontos} XP
+          <div className="inline-flex items-center gap-2 rounded-full bg-warning/20 px-4 py-2 font-bold text-warning">
+            <Trophy className="h-5 w-5" />+{conquista.pontos} XP
           </div>
 
           {/* Botão fechar */}
           <button
             onClick={onClose}
-            className="block mx-auto text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="mx-auto block text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             Clique para continuar
           </button>

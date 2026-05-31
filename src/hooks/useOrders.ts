@@ -1,4 +1,4 @@
-import { useCRUD } from './useCRUD';
+import { useCRUD } from "./useCRUD";
 
 export interface Order {
   id: string;
@@ -11,8 +11,8 @@ export interface Order {
 
 export function useOrders() {
   const crud = useCRUD<Order>({
-    tableName: 'orders',
-    orderBy: { column: 'created_at', ascending: false },
+    tableName: "orders",
+    orderBy: { column: "created_at", ascending: false },
   });
 
   return {

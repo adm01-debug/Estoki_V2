@@ -20,7 +20,9 @@ export function ChecklistCard({ checklist, onChecklistChange }: ChecklistCardPro
         <div className="space-y-1">
           <div className="flex justify-between text-sm">
             <span>Progresso</span>
-            <span>{checkedCount}/{checklistItems.length}</span>
+            <span>
+              {checkedCount}/{checklistItems.length}
+            </span>
           </div>
           <Progress value={progresso} />
         </div>
@@ -28,21 +30,16 @@ export function ChecklistCard({ checklist, onChecklistChange }: ChecklistCardPro
       <CardContent>
         <div className="space-y-3">
           {checklistItems.map((item) => (
-            <div key={item.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded">
+            <div key={item.id} className="flex items-center gap-3 rounded p-2 hover:bg-muted/50">
               <Checkbox
                 id={item.id}
                 checked={checklist[item.id] || false}
                 onCheckedChange={(checked) => onChecklistChange(item.id, checked as boolean)}
               />
-              <label
-                htmlFor={item.id}
-                className="text-sm cursor-pointer flex-1"
-              >
+              <label htmlFor={item.id} className="flex-1 cursor-pointer text-sm">
                 {item.label}
               </label>
-              {checklist[item.id] && (
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-              )}
+              {checklist[item.id] && <CheckCircle2 className="h-4 w-4 text-green-500" />}
             </div>
           ))}
         </div>

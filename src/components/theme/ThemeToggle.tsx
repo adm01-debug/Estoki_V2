@@ -20,17 +20,20 @@ export function ThemeToggle() {
           <span className="sr-only">Alternar tema</span>
         </Button>
       </DropdownMenuTrigger>
-       <DropdownMenuContent align="end" className="w-40 p-2 bg-popover/95 backdrop-blur-2xl border-border/40 shadow-2xl rounded-2xl animate-in fade-in-0 zoom-in-95">
+      <DropdownMenuContent
+        align="end"
+        className="w-40 rounded-2xl border-border/40 bg-popover/95 p-2 shadow-2xl backdrop-blur-2xl animate-in fade-in-0 zoom-in-95"
+      >
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          <Sun className="h-4 w-4 mr-2" />
+          <Sun className="mr-2 h-4 w-4" />
           Claro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <Moon className="h-4 w-4 mr-2" />
+          <Moon className="mr-2 h-4 w-4" />
           Escuro
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <span className="h-4 w-4 mr-2 flex items-center justify-center text-xs">💻</span>
+          <span className="mr-2 flex h-4 w-4 items-center justify-center text-xs">💻</span>
           Sistema
         </DropdownMenuItem>
       </DropdownMenuContent>

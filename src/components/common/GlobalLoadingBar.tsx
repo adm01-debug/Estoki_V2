@@ -14,7 +14,7 @@ export function GlobalLoadingBar() {
           animate={{ width: "100%", opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "circIn" }}
-          className="fixed top-0 left-0 h-0.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50 z-[9999] shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
+          className="fixed left-0 top-0 z-[9999] h-0.5 bg-gradient-to-r from-primary/50 via-primary to-primary/50 shadow-[0_0_12px_hsl(var(--primary)/0.5)]"
         />
       )}
     </AnimatePresence>

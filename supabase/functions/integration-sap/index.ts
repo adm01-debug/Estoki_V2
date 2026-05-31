@@ -21,7 +21,7 @@ serve(async (req) => {
     }
 
     const headers = {
-      "Cookie": `B1SESSION=${config.session_id}`,
+      Cookie: `B1SESSION=${config.session_id}`,
       "Content-Type": "application/json",
     };
 
@@ -52,10 +52,7 @@ serve(async (req) => {
 
       case "get_item":
         if (!data?.item_code) throw new Error("item_code é obrigatório");
-        const itemResp = await fetch(
-          `${baseUrl}/b1s/v1/Items('${data.item_code}')`,
-          { headers }
-        );
+        const itemResp = await fetch(`${baseUrl}/b1s/v1/Items('${data.item_code}')`, { headers });
         result = await itemResp.json();
         break;
 
@@ -68,11 +65,13 @@ serve(async (req) => {
           method: "POST",
           headers,
           body: JSON.stringify({
-            DocumentLines: [{
-              ItemCode: data.item_code,
-              WarehouseCode: data.warehouse,
-              Quantity: data.quantity,
-            }],
+            DocumentLines: [
+              {
+                ItemCode: data.item_code,
+                WarehouseCode: data.warehouse,
+                Quantity: data.quantity,
+              },
+            ],
           }),
         });
         result = await stockResp.json();
@@ -113,13 +112,16 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "sap_b1",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "sap_b1",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

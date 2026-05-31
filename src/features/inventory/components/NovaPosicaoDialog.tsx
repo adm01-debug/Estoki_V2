@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Plus, Warehouse, Box } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PortaPaleteForm } from "./PortaPaleteForm";
@@ -40,16 +47,18 @@ export function NovaPosicaoDialog({ onSuccess, children }: NovaPosicaoDialogProp
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="porta_palete" className="gap-2">
-              <Warehouse className="h-4 w-4" />Porta-Palete
+              <Warehouse className="h-4 w-4" />
+              Porta-Palete
             </TabsTrigger>
             <TabsTrigger value="box" className="gap-2">
-              <Box className="h-4 w-4" />Box
+              <Box className="h-4 w-4" />
+              Box
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="porta_palete" className="space-y-4 mt-4">
+          <TabsContent value="porta_palete" className="mt-4 space-y-4">
             <PortaPaleteForm onSuccess={handleSuccess} />
           </TabsContent>
-          <TabsContent value="box" className="space-y-4 mt-4">
+          <TabsContent value="box" className="mt-4 space-y-4">
             <BoxForm onSuccess={handleSuccess} />
           </TabsContent>
         </Tabs>

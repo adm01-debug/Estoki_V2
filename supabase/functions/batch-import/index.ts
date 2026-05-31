@@ -186,7 +186,12 @@ async function importReceiving(
   receiving: ReceivingImport,
   options: { skip_errors: boolean }
 ): Promise<ImportResult> {
-  const result: ImportResult = { total: receiving.items.length, success: 0, errors: 0, errorDetails: [] };
+  const result: ImportResult = {
+    total: receiving.items.length,
+    success: 0,
+    errors: 0,
+    errorDetails: [],
+  };
 
   // Buscar fornecedor
   const { data: supplier } = await supabase
@@ -322,7 +327,12 @@ async function importStockAdjustment(
   adjustments: any[],
   options: { skip_errors: boolean }
 ): Promise<ImportResult> {
-  const result: ImportResult = { total: adjustments.length, success: 0, errors: 0, errorDetails: [] };
+  const result: ImportResult = {
+    total: adjustments.length,
+    success: 0,
+    errors: 0,
+    errorDetails: [],
+  };
 
   for (let i = 0; i < adjustments.length; i++) {
     const adj = adjustments[i];

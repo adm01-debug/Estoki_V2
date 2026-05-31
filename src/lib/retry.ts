@@ -6,10 +6,7 @@ interface RetryOptions {
   shouldRetry?: (error: Error) => boolean;
 }
 
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
   const {
     maxRetries = 3,
     baseDelayMs = 1000,
@@ -24,13 +21,13 @@ export async function withRetry<T>(
       return await fn();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      
+
       if (attempt === maxRetries || !shouldRetry(lastError)) {
         throw lastError;
       }
 
       const delay = Math.min(baseDelayMs * Math.pow(2, attempt), maxDelayMs);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 

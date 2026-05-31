@@ -46,45 +46,38 @@ serve(async (req) => {
 
       case "get_order":
         if (!data?.order_id) throw new Error("order_id é obrigatório");
-        const orderResp = await fetch(
-          `${RAPPI_API_BASE}/api/v1/orders/${data.order_id}`,
-          { headers }
-        );
+        const orderResp = await fetch(`${RAPPI_API_BASE}/api/v1/orders/${data.order_id}`, {
+          headers,
+        });
         result = await orderResp.json();
         break;
 
       case "accept_order":
         if (!data?.order_id) throw new Error("order_id é obrigatório");
-        const acceptResp = await fetch(
-          `${RAPPI_API_BASE}/api/v1/orders/${data.order_id}/accept`,
-          { method: "POST", headers }
-        );
+        const acceptResp = await fetch(`${RAPPI_API_BASE}/api/v1/orders/${data.order_id}/accept`, {
+          method: "POST",
+          headers,
+        });
         result = { accepted: acceptResp.ok };
         break;
 
       case "reject_order":
         if (!data?.order_id || !data?.reason) throw new Error("order_id e reason são obrigatórios");
-        const rejectResp = await fetch(
-          `${RAPPI_API_BASE}/api/v1/orders/${data.order_id}/reject`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({ reason: data.reason }),
-          }
-        );
+        const rejectResp = await fetch(`${RAPPI_API_BASE}/api/v1/orders/${data.order_id}/reject`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ reason: data.reason }),
+        });
         result = { rejected: rejectResp.ok };
         break;
 
       case "update_menu":
         if (!data?.store_id || !data?.items) throw new Error("store_id e items são obrigatórios");
-        const menuResp = await fetch(
-          `${RAPPI_API_BASE}/api/v1/stores/${data.store_id}/menu`,
-          {
-            method: "PUT",
-            headers,
-            body: JSON.stringify({ items: data.items }),
-          }
-        );
+        const menuResp = await fetch(`${RAPPI_API_BASE}/api/v1/stores/${data.store_id}/menu`, {
+          method: "PUT",
+          headers,
+          body: JSON.stringify({ items: data.items }),
+        });
         result = await menuResp.json();
         break;
 
@@ -107,13 +100,16 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "rappi",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "rappi",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

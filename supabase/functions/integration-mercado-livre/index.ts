@@ -29,7 +29,7 @@ serve(async (req) => {
     }
 
     const headers = {
-      "Authorization": `Bearer ${credentials.access_token}`,
+      Authorization: `Bearer ${credentials.access_token}`,
       "Content-Type": "application/json",
     };
 
@@ -56,10 +56,9 @@ serve(async (req) => {
         break;
 
       case "list_items":
-        const itemsResp = await fetch(
-          `${ML_API_BASE}/users/${credentials.user_id}/items/search`,
-          { headers }
-        );
+        const itemsResp = await fetch(`${ML_API_BASE}/users/${credentials.user_id}/items/search`, {
+          headers,
+        });
         result = await itemsResp.json();
         break;
 
@@ -111,13 +110,16 @@ serve(async (req) => {
     }
 
     // Log da integração
-    await supabase.from("integration_logs").insert({
-      integration: "mercado_livre",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "mercado_livre",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

@@ -5,12 +5,27 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
     const { jobId, status, result, error: jobError } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     const updateData: any = { status, completed_at: new Date().toISOString() };
     if (result) updateData.result = result;
     if (jobError) updateData.error = jobError;
-    const { data, error } = await supabase.from("job_queue").update(updateData).eq("id", jobId).select().single();
+    const { data, error } = await supabase
+      .from("job_queue")
+      .update(updateData)
+      .eq("id", jobId)
+      .select()
+      .single();
     if (error) throw error;
-    return new Response(JSON.stringify({ job: data }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) { return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }); }
+    return new Response(JSON.stringify({ job: data }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
 });

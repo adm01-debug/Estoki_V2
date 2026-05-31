@@ -33,11 +33,14 @@ export function useSavedFilters(entityType: string) {
   const queryClient = useQueryClient();
   const queryKey = ["saved-filters", entityType];
 
-  const { data: filters = [], isLoading, error } = useQuery({
+  const {
+    data: filters = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await (supabase
-        .from("saved_filters" as any) as any)
+      const { data, error } = await (supabase.from("saved_filters" as any) as any)
         .select("*")
         .eq("entity_type", entityType)
         .order("usage_count", { ascending: false });
@@ -51,11 +54,12 @@ export function useSavedFilters(entityType: string) {
 
   const saveMutation = useMutation({
     mutationFn: async (input: CreateFilterInput) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const { data, error } = await (supabase
-        .from("saved_filters" as any) as any)
+      const { data, error } = await (supabase.from("saved_filters" as any) as any)
         .insert({
           user_id: user.id,
           entity_type: entityType,
@@ -83,8 +87,7 @@ export function useSavedFilters(entityType: string) {
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, ...updates }: Partial<SavedFilter> & { id: string }) => {
-      const { data, error } = await (supabase
-        .from("saved_filters" as any) as any)
+      const { data, error } = await (supabase.from("saved_filters" as any) as any)
         .update(updates)
         .eq("id", id)
         .select()
@@ -101,10 +104,7 @@ export function useSavedFilters(entityType: string) {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase
-        .from("saved_filters" as any) as any)
-        .delete()
-        .eq("id", id);
+      const { error } = await (supabase.from("saved_filters" as any) as any).delete().eq("id", id);
 
       if (error) throw error;
     },
@@ -116,17 +116,17 @@ export function useSavedFilters(entityType: string) {
 
   const setDefaultMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      await (supabase
-        .from("saved_filters" as any) as any)
+      await (supabase.from("saved_filters" as any) as any)
         .update({ is_default: false })
         .eq("entity_type", entityType)
         .eq("user_id", user.id);
 
-      const { error } = await (supabase
-        .from("saved_filters" as any) as any)
+      const { error } = await (supabase.from("saved_filters" as any) as any)
         .update({ is_default: true })
         .eq("id", id);
 
@@ -145,11 +145,12 @@ export function useSavedFilters(entityType: string) {
 
   const duplicateMutation = useMutation({
     mutationFn: async (filter: SavedFilter) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const { data, error } = await (supabase
-        .from("saved_filters" as any) as any)
+      const { data, error } = await (supabase.from("saved_filters" as any) as any)
         .insert({
           user_id: user.id,
           entity_type: entityType,

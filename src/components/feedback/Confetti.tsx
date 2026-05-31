@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface ConfettiProps {
   active: boolean;
@@ -12,18 +12,23 @@ export function Confetti({ active, duration = 3000, particleCount = 100 }: Confe
   useEffect(() => {
     if (!active || !canvasRef.current) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const particles: Array<{
-      x: number; y: number; vx: number; vy: number;
-      color: string; size: number; rotation: number;
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      color: string;
+      size: number;
+      rotation: number;
     }> = [];
 
-    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    const colors = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
@@ -71,10 +76,5 @@ export function Confetti({ active, duration = 3000, particleCount = 100 }: Confe
 
   if (!active) return null;
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-50"
-    />
-  );
+  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50" />;
 }

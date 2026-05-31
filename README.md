@@ -19,10 +19,10 @@ Sistema WMS (Warehouse Management System) completo para gestão de estoque e ope
 ## 📜 Audit & Compliance
 
 The system undergoes regular integrity and functionality audits.
+
 - [Technical Architecture](docs/ARCHITECTURE.md)
 - [Security Policies](docs/SECURITY.md)
 
- 
 ## 🚀 Quick Start
 
 ```bash
@@ -43,13 +43,13 @@ npm run dev
 
 ## 📋 Scripts
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Desenvolvimento |
-| `npm run build` | Build produção |
-| `npm run test` | Testes unitários |
-| `npm run test:e2e` | Testes E2E |
-| `npm run lint` | Lint código |
+| Comando            | Descrição        |
+| ------------------ | ---------------- |
+| `npm run dev`      | Desenvolvimento  |
+| `npm run build`    | Build produção   |
+| `npm run test`     | Testes unitários |
+| `npm run test:e2e` | Testes E2E       |
+| `npm run lint`     | Lint código      |
 
 ## 🛠️ Tech Stack
 
@@ -78,7 +78,6 @@ src/
 - [🛤️ Roadmap](docs/ROADMAP.md) - Próximos passos e metas
 - [🛡️ Segurança](docs/SECURITY.md) - Políticas RLS e Proteção de Dados
 - [🧪 Auditoria](docs/audit/audit_report.md) - Últimos relatórios técnicos
-
 
 ## 🤝 Contribuindo
 

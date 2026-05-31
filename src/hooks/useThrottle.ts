@@ -4,7 +4,7 @@ import { useCallback, useRef, useEffect } from "react";
  * Hook para throttle de funções
  * Limita a execução a no máximo uma vez por intervalo
  * Útil para scroll handlers e resize events
- * 
+ *
  * @example
  * const throttledScroll = useThrottle(handleScroll, 100);
  * window.addEventListener("scroll", throttledScroll);
@@ -29,10 +29,13 @@ export function useThrottle<T extends (...args: any[]) => any>(
           clearTimeout(timeoutRef.current);
         }
 
-        timeoutRef.current = setTimeout(() => {
-          lastRunRef.current = Date.now();
-          callback(...args);
-        }, delay - (now - lastRunRef.current));
+        timeoutRef.current = setTimeout(
+          () => {
+            lastRunRef.current = Date.now();
+            callback(...args);
+          },
+          delay - (now - lastRunRef.current)
+        );
       }
     },
     [callback, delay]
@@ -66,10 +69,13 @@ export function useThrottledValue<T>(value: T, delay: number = 100): T {
       lastUpdateRef.current = now;
       setThrottledValue(value);
     } else {
-      const timeoutId = setTimeout(() => {
-        lastUpdateRef.current = Date.now();
-        setThrottledValue(value);
-      }, delay - (now - lastUpdateRef.current));
+      const timeoutId = setTimeout(
+        () => {
+          lastUpdateRef.current = Date.now();
+          setThrottledValue(value);
+        },
+        delay - (now - lastUpdateRef.current)
+      );
 
       return () => clearTimeout(timeoutId);
     }

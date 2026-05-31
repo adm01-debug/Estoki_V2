@@ -1,10 +1,10 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Zap, Award } from 'lucide-react';
-import { RankingEntry } from '@/hooks/useRanking';
-import { getPosicaoIcon, getPodiumColor, getInitials, getTendenciaIcon } from './placarHelpers';
+import React from "react";
+import { motion } from "framer-motion";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Zap, Award } from "lucide-react";
+import { RankingEntry } from "@/hooks/useRanking";
+import { getPosicaoIcon, getPodiumColor, getInitials, getTendenciaIcon } from "./placarHelpers";
 
 interface RankingItemProps {
   entry: RankingEntry;
@@ -16,23 +16,21 @@ export const RankingItem: React.FC<RankingItemProps> = ({ entry }) => {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: entry.posicao * 0.05 }}
-      className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
-        entry.posicao <= 3 ? 'bg-accent/50' : 'hover:bg-accent/30'
+      className={`flex items-center gap-4 rounded-lg p-3 transition-colors ${
+        entry.posicao <= 3 ? "bg-accent/50" : "hover:bg-accent/30"
       }`}
     >
-      <div className="w-10 flex justify-center">
-        {getPosicaoIcon(entry.posicao)}
-      </div>
+      <div className="flex w-10 justify-center">{getPosicaoIcon(entry.posicao)}</div>
 
-      <Avatar className={`h-10 w-10 ${entry.posicao <= 3 ? getPodiumColor(entry.posicao) : ''}`}>
-        <AvatarFallback className={entry.posicao <= 3 ? 'bg-transparent' : ''}>
+      <Avatar className={`h-10 w-10 ${entry.posicao <= 3 ? getPodiumColor(entry.posicao) : ""}`}>
+        <AvatarFallback className={entry.posicao <= 3 ? "bg-transparent" : ""}>
           {getInitials(entry.nome)}
         </AvatarFallback>
       </Avatar>
 
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="font-medium truncate">{entry.nome}</span>
+          <span className="truncate font-medium">{entry.nome}</span>
           <Badge variant="secondary" className="text-xs">
             Nv. {entry.nivel}
           </Badge>

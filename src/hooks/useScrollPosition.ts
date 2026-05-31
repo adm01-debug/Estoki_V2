@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
-interface ScrollPosition { x: number; y: number; }
+interface ScrollPosition {
+  x: number;
+  y: number;
+}
 
 export function useScrollPosition(): ScrollPosition {
   const [position, setPosition] = useState<ScrollPosition>({ x: 0, y: 0 });

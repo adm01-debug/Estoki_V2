@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import DOMPurify from 'dompurify';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Edit } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Eye, Edit } from "lucide-react";
 
 interface MarkdownEditorProps {
   value?: string;
@@ -11,21 +11,21 @@ interface MarkdownEditorProps {
 
 const parseMarkdown = (md: string): string => {
   const raw = md
-    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`(.*?)`/g, '<code>$1</code>')
-    .replace(/\n/g, '<br/>');
+    .replace(/^### (.*$)/gm, "<h3>$1</h3>")
+    .replace(/^## (.*$)/gm, "<h2>$1</h2>")
+    .replace(/^# (.*$)/gm, "<h1>$1</h1>")
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    .replace(/`(.*?)`/g, "<code>$1</code>")
+    .replace(/\n/g, "<br/>");
 
   return DOMPurify.sanitize(raw, {
-    ALLOWED_TAGS: ['h1', 'h2', 'h3', 'strong', 'em', 'code', 'br', 'p', 'ul', 'ol', 'li', 'a'],
-    ALLOWED_ATTR: ['href', 'target', 'rel'],
+    ALLOWED_TAGS: ["h1", "h2", "h3", "strong", "em", "code", "br", "p", "ul", "ol", "li", "a"],
+    ALLOWED_ATTR: ["href", "target", "rel"],
   });
 };
 
-export function MarkdownEditor({ value = '', onChange }: MarkdownEditorProps) {
+export function MarkdownEditor({ value = "", onChange }: MarkdownEditorProps) {
   const [content, setContent] = useState(value);
 
   const handleChange = (v: string) => {
@@ -39,11 +39,11 @@ export function MarkdownEditor({ value = '', onChange }: MarkdownEditorProps) {
     <Tabs defaultValue="edit" className="w-full">
       <TabsList>
         <TabsTrigger value="edit">
-          <Edit className="w-4 h-4 mr-1" />
+          <Edit className="mr-1 h-4 w-4" />
           Editar
         </TabsTrigger>
         <TabsTrigger value="preview">
-          <Eye className="w-4 h-4 mr-1" />
+          <Eye className="mr-1 h-4 w-4" />
           Preview
         </TabsTrigger>
       </TabsList>
@@ -56,7 +56,7 @@ export function MarkdownEditor({ value = '', onChange }: MarkdownEditorProps) {
       </TabsContent>
       <TabsContent value="preview">
         <div
-          className="p-4 border rounded-md min-h-[200px] prose max-w-none"
+          className="prose min-h-[200px] max-w-none rounded-md border p-4"
           dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         />
       </TabsContent>

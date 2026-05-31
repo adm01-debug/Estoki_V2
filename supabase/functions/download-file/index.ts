@@ -5,11 +5,23 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
   try {
     const { path } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     const { data, error } = await supabase.storage.from("files").download(path);
     if (error) throw error;
-    return new Response(data, { headers: { ...getCorsHeaders(req), "Content-Type": "application/octet-stream", "Content-Disposition": `attachment; filename="${path.split("/").pop()}"` } });
+    return new Response(data, {
+      headers: {
+        ...getCorsHeaders(req),
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": `attachment; filename="${path.split("/").pop()}"`,
+      },
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

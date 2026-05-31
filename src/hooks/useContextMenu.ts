@@ -1,6 +1,9 @@
-import { useState, useCallback, useEffect, RefObject } from 'react';
+import { useState, useCallback, useEffect, RefObject } from "react";
 
-interface Position { x: number; y: number; }
+interface Position {
+  x: number;
+  y: number;
+}
 
 export function useContextMenu<T extends HTMLElement>(ref: RefObject<T>) {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,11 +20,11 @@ export function useContextMenu<T extends HTMLElement>(ref: RefObject<T>) {
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
-    element.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('click', close);
+    element.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("click", close);
     return () => {
-      element.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('click', close);
+      element.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("click", close);
     };
   }, [ref, handleContextMenu, close]);
 

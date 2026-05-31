@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface FireworksProps {
   active: boolean;
@@ -11,7 +11,7 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
   useEffect(() => {
     if (!active || !canvasRef.current) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = window.innerWidth;
@@ -19,7 +19,7 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
 
     const fireworks: any[] = [];
     const particles: any[] = [];
-    const colors = ['#ff0', '#f0f', '#0ff', '#f00', '#0f0', '#00f'];
+    const colors = ["#ff0", "#f0f", "#0ff", "#f00", "#0f0", "#00f"];
 
     const createFirework = () => {
       fireworks.push({
@@ -36,7 +36,8 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
         const angle = (Math.PI * 2 * i) / 50;
         const speed = 2 + Math.random() * 4;
         particles.push({
-          x, y,
+          x,
+          y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           color,
@@ -56,7 +57,7 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
         return;
       }
 
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (now - lastFirework > 300) {
@@ -94,5 +95,5 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
   }, [active, duration]);
 
   if (!active) return null;
-  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50" />;
+  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-50" />;
 }

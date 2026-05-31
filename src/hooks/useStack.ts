@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export function useStack<T>(initialValue: T[] = []) {
   const [stack, setStack] = useState<T[]>(initialValue);
 
   const push = useCallback((item: T) => {
-    setStack(prev => [...prev, item]);
+    setStack((prev) => [...prev, item]);
   }, []);
 
   const pop = useCallback(() => {
     let removed: T | undefined;
-    setStack(prev => {
+    setStack((prev) => {
       removed = prev[prev.length - 1];
       return prev.slice(0, -1);
     });

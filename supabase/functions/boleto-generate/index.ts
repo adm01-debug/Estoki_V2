@@ -14,7 +14,9 @@ interface BoletoRequest {
 function generateBarcode(amount: number, dueDate: string): string {
   const bank = "237"; // Bradesco
   const currency = "9";
-  const dueFactor = Math.floor((new Date(dueDate).getTime() - new Date("1997-10-07").getTime()) / 86400000);
+  const dueFactor = Math.floor(
+    (new Date(dueDate).getTime() - new Date("1997-10-07").getTime()) / 86400000
+  );
   const value = String(Math.floor(amount * 100)).padStart(10, "0");
   return `${bank}${currency}${dueFactor}${value}${Date.now().toString().slice(-15)}`;
 }
@@ -51,31 +53,38 @@ serve(async (req) => {
     const barcode = generateBarcode(data.amount, data.due_date);
     const digitableLine = generateDigitableLine(barcode);
 
-    const { data: boleto, error } = await supabase.from("boletos").insert({
-      id: boletoId,
-      amount: data.amount,
-      due_date: data.due_date,
-      barcode,
-      digitable_line: digitableLine,
-      payer_name: data.payer.name,
-      payer_document: data.payer.document,
-      payer_address: data.payer.address,
-      description: data.description,
-      instructions: data.instructions || [],
-      status: "pending",
-    }).select().single();
+    const { data: boleto, error } = await supabase
+      .from("boletos")
+      .insert({
+        id: boletoId,
+        amount: data.amount,
+        due_date: data.due_date,
+        barcode,
+        digitable_line: digitableLine,
+        payer_name: data.payer.name,
+        payer_document: data.payer.document,
+        payer_address: data.payer.address,
+        description: data.description,
+        instructions: data.instructions || [],
+        status: "pending",
+      })
+      .select()
+      .single();
 
     if (error) throw error;
 
-    return new Response(JSON.stringify({
-      success: true,
-      boleto: {
-        ...boleto,
-        pdf_url: `/api/boleto/${boletoId}/pdf`,
-      },
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        boleto: {
+          ...boleto,
+          pdf_url: `/api/boleto/${boletoId}/pdf`,
+        },
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

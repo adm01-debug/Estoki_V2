@@ -21,18 +21,24 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const parsed = BroadcastSchema.safeParse(body);
-    
+
     if (!parsed.success) {
-      return new Response(JSON.stringify({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }), {
-        status: 400,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }),
+        {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        }
+      );
     }
 
     const { channel, event, payload } = parsed.data;
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     await supabase.channel(channel).send({ type: "broadcast", event, payload });
-    
+
     return new Response(JSON.stringify({ sent: true, channel, event }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });

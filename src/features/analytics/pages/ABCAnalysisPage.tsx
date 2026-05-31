@@ -26,20 +26,26 @@ export default function CurvaABCPage() {
   return (
     <AppLayout title="Curva ABC" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
+        <div className="space-y-6 p-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold">Análise Curva ABC</h2>
-              <p className="text-sm text-muted-foreground">Classificação de produtos por valor e giro</p>
+              <p className="text-sm text-muted-foreground">
+                Classificação de produtos por valor e giro
+              </p>
             </div>
             <Button onClick={handleRecalcular} disabled={recalculando} className="gap-2">
-              {recalculando ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              {recalculando ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
               Recalcular
             </Button>
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex h-64 items-center justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (

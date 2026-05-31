@@ -1,13 +1,13 @@
-import { useCallback, useLayoutEffect, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from "react";
 
 export function useScrollLock(initialLocked: boolean = false) {
   const isLocked = useRef(initialLocked);
-  const originalStyle = useRef<string>('');
+  const originalStyle = useRef<string>("");
 
   const lock = useCallback(() => {
     if (isLocked.current) return;
     originalStyle.current = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
     isLocked.current = true;
   }, []);
 

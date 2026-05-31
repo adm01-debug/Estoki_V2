@@ -37,12 +37,12 @@ export function ExportDropdown({
         <Button variant="outline" size="sm" disabled={disabled || isExporting}>
           {isExporting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               {Math.round(progress)}%
             </>
           ) : (
             <>
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               Exportar
             </>
           )}
@@ -51,23 +51,23 @@ export function ExportDropdown({
       <DropdownMenuContent align="end" className="w-48">
         {isExporting ? (
           <div className="p-3">
-            <p className="text-sm text-muted-foreground mb-2">Exportando...</p>
+            <p className="mb-2 text-sm text-muted-foreground">Exportando...</p>
             <Progress value={progress} />
           </div>
         ) : (
           <>
             <DropdownMenuLabel>Exportar Todos</DropdownMenuLabel>
             <DropdownMenuItem onClick={onExportCSV}>
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="mr-2 h-4 w-4" />
               CSV (.csv)
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onExportExcel}>
-              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              <FileSpreadsheet className="mr-2 h-4 w-4" />
               Excel (.xlsx)
             </DropdownMenuItem>
             {onExportJSON && (
               <DropdownMenuItem onClick={onExportJSON}>
-                <FileJson className="h-4 w-4 mr-2" />
+                <FileJson className="mr-2 h-4 w-4" />
                 JSON (.json)
               </DropdownMenuItem>
             )}
@@ -75,11 +75,9 @@ export function ExportDropdown({
             {selectedCount > 0 && onExportSelected && (
               <>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel>
-                  Exportar Selecionados ({selectedCount})
-                </DropdownMenuLabel>
+                <DropdownMenuLabel>Exportar Selecionados ({selectedCount})</DropdownMenuLabel>
                 <DropdownMenuItem onClick={onExportSelected}>
-                  <Download className="h-4 w-4 mr-2" />
+                  <Download className="mr-2 h-4 w-4" />
                   Exportar {selectedCount} registro{selectedCount > 1 ? "s" : ""}
                 </DropdownMenuItem>
               </>

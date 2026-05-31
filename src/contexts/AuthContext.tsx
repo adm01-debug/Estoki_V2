@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  ReactNode,
+} from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
@@ -25,7 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Track whether the initial session hydration is complete
   const hydrated = useRef(false);
 
@@ -44,32 +52,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        if (!mounted) return;
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      if (!mounted) return;
 
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
 
-        if (currentSession?.user) {
-          // If event is SIGNED_IN or INITIAL_SESSION, we might want to ensure data is fresh
-          if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
-            await fetchUserData(currentSession.user.id);
-          }
-        } else if (event === 'SIGNED_OUT') {
-          setProfile(null);
-          setRole(null);
+      if (currentSession?.user) {
+        // If event is SIGNED_IN or INITIAL_SESSION, we might want to ensure data is fresh
+        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+          await fetchUserData(currentSession.user.id);
         }
-
-        if (hydrated.current) {
-          setLoading(false);
-        }
+      } else if (event === "SIGNED_OUT") {
+        setProfile(null);
+        setRole(null);
       }
-    );
+
+      if (hydrated.current) {
+        setLoading(false);
+      }
+    });
 
     const hydrate = async () => {
       if (hydrated.current) return;
-      
+
       logger.info("Iniciando hidratação de sessão...");
       try {
         const { data, error } = await Promise.race([

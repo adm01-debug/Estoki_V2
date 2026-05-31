@@ -1,7 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Bell, AlertTriangle, XCircle, Filter, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -10,8 +17,8 @@ export interface AlertaHistorico {
   id: string;
   titulo: string;
   mensagem: string;
-  severidade: 'info' | 'warning' | 'critical';
-  status: 'ativo' | 'reconhecido' | 'resolvido';
+  severidade: "info" | "warning" | "critical";
+  status: "ativo" | "reconhecido" | "resolvido";
   dados_contexto?: Record<string, unknown>;
   created_at: string;
 }
@@ -39,20 +46,37 @@ interface Props {
   onResolver: (id: string) => void;
 }
 
-export function AlertasHistoricoTable({ historico, loading, filtroSeveridade, filtroStatus, onChangeSeveridade, onChangeStatus, onReconhecer, onResolver }: Props) {
+export function AlertasHistoricoTable({
+  historico,
+  loading,
+  filtroSeveridade,
+  filtroStatus,
+  onChangeSeveridade,
+  onChangeStatus,
+  onReconhecer,
+  onResolver,
+}: Props) {
   return (
     <div className="space-y-4">
       <div className="flex gap-4">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <select className="border rounded px-3 py-1.5 text-sm" value={filtroSeveridade} onChange={(e) => onChangeSeveridade(e.target.value)}>
+          <select
+            className="rounded border px-3 py-1.5 text-sm"
+            value={filtroSeveridade}
+            onChange={(e) => onChangeSeveridade(e.target.value)}
+          >
             <option value="todos">Todas severidades</option>
             <option value="critico">Crítico</option>
             <option value="aviso">Aviso</option>
             <option value="info">Info</option>
           </select>
         </div>
-        <select className="border rounded px-3 py-1.5 text-sm" value={filtroStatus} onChange={(e) => onChangeStatus(e.target.value)}>
+        <select
+          className="rounded border px-3 py-1.5 text-sm"
+          value={filtroStatus}
+          onChange={(e) => onChangeStatus(e.target.value)}
+        >
           <option value="todos">Todos status</option>
           <option value="ativo">Ativo</option>
           <option value="reconhecido">Reconhecido</option>
@@ -62,10 +86,12 @@ export function AlertasHistoricoTable({ historico, loading, filtroSeveridade, fi
       <Card>
         <CardContent className="pt-6">
           {loading ? (
-            <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin" /></div>
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
           ) : historico.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <div className="py-8 text-center text-muted-foreground">
+              <Bell className="mx-auto mb-2 h-12 w-12 opacity-50" />
               <p>Nenhum alerta encontrado</p>
             </div>
           ) : (
@@ -89,7 +115,7 @@ export function AlertasHistoricoTable({ historico, loading, filtroSeveridade, fi
                       <TableRow key={alerta.id}>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            <div className={`p-1 rounded ${sevConfig.color}`}>
+                            <div className={`rounded p-1 ${sevConfig.color}`}>
                               <SevIcon className="h-3 w-3 text-white" />
                             </div>
                             <span className="text-sm">{sevConfig.label}</span>
@@ -98,20 +124,43 @@ export function AlertasHistoricoTable({ historico, loading, filtroSeveridade, fi
                         <TableCell className="font-medium">{alerta.titulo}</TableCell>
                         <TableCell className="max-w-xs truncate">{alerta.mensagem}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {formatDistanceToNow(new Date(alerta.created_at), { addSuffix: true, locale: ptBR })}
+                          {formatDistanceToNow(new Date(alerta.created_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={statusConfig[alerta.status].variant}>{statusConfig[alerta.status].label}</Badge>
+                          <Badge variant={statusConfig[alerta.status].variant}>
+                            {statusConfig[alerta.status].label}
+                          </Badge>
                         </TableCell>
                         <TableCell>
-                          {alerta.status === 'ativo' && (
+                          {alerta.status === "ativo" && (
                             <div className="flex gap-1">
-                              <Button size="sm" variant="outline" onClick={() => onReconhecer(alerta.id)}>Reconhecer</Button>
-                              <Button size="sm" variant="default" onClick={() => onResolver(alerta.id)}>Resolver</Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => onReconhecer(alerta.id)}
+                              >
+                                Reconhecer
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => onResolver(alerta.id)}
+                              >
+                                Resolver
+                              </Button>
                             </div>
                           )}
-                          {alerta.status === 'reconhecido' && (
-                            <Button size="sm" variant="default" onClick={() => onResolver(alerta.id)}>Resolver</Button>
+                          {alerta.status === "reconhecido" && (
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() => onResolver(alerta.id)}
+                            >
+                              Resolver
+                            </Button>
                           )}
                         </TableCell>
                       </TableRow>

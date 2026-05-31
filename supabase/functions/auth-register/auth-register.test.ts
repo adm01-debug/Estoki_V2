@@ -5,12 +5,12 @@ Deno.test("RegisterSchema validation - Valid inputs", () => {
   const valid = {
     email: "test@example.com",
     password: "password123",
-    nome: "Test User"
+    nome: "Test User",
   };
 
   const validNoName = {
     email: "test@example.com",
-    password: "password123"
+    password: "password123",
   };
 
   assertEquals(validateInput(RegisterSchema, valid).success, true);
@@ -20,12 +20,12 @@ Deno.test("RegisterSchema validation - Valid inputs", () => {
 Deno.test("RegisterSchema validation - Invalid inputs", () => {
   const invalidEmail = {
     email: "invalid-email",
-    password: "password123"
+    password: "password123",
   };
-  
+
   const shortPassword = {
     email: "test@example.com",
-    password: "1234567" // Schema requires 8
+    password: "1234567", // Schema requires 8
   };
 
   assertEquals(validateInput(RegisterSchema, invalidEmail).success, false);

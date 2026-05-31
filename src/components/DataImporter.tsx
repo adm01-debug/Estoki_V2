@@ -1,15 +1,15 @@
 /**
  * Componente de Importação de Dados
- * 
+ *
  * @module components/DataImporter
  */
 
-import { useCallback } from 'react';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useCallback } from "react";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -26,7 +26,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Upload,
   FileSpreadsheet,
@@ -34,8 +34,8 @@ import {
   CheckCircle2,
   Download,
   Loader2,
-} from 'lucide-react';
-import { useImportData } from '@/hooks/useImportData';
+} from "lucide-react";
+import { useImportData } from "@/hooks/useImportData";
 
 interface DataImporterProps<T> {
   schema: z.ZodSchema<T>;
@@ -52,15 +52,8 @@ export function DataImporter<T>({
   entityName,
   trigger,
 }: DataImporterProps<T>) {
-  const {
-    status,
-    progress,
-    result,
-    processFile,
-    confirmImport,
-    reset,
-    isProcessing,
-  } = useImportData({ schema, onImport });
+  const { status, progress, result, processFile, confirmImport, reset, isProcessing } =
+    useImportData({ schema, onImport });
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +62,7 @@ export function DataImporter<T>({
         processFile(file);
       }
       // Reset input para permitir mesmo arquivo
-      e.target.value = '';
+      e.target.value = "";
     },
     [processFile]
   );
@@ -119,9 +112,9 @@ export function DataImporter<T>({
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                {status === 'parsing' && 'Lendo arquivo...'}
-                {status === 'validating' && 'Validando dados...'}
-                {status === 'importing' && 'Importando...'}
+                {status === "parsing" && "Lendo arquivo..."}
+                {status === "validating" && "Validando dados..."}
+                {status === "importing" && "Importando..."}
               </div>
               <Progress value={progress} />
             </div>
@@ -130,7 +123,7 @@ export function DataImporter<T>({
           {/* Results */}
           {result && (
             <>
-              <Alert variant={result.errors.length > 0 ? 'destructive' : 'default'}>
+              <Alert variant={result.errors.length > 0 ? "destructive" : "default"}>
                 {result.errors.length === 0 ? (
                   <CheckCircle2 className="h-4 w-4" />
                 ) : (
@@ -142,7 +135,7 @@ export function DataImporter<T>({
                 <AlertDescription>
                   {result.errors.length > 0
                     ? `${result.errors.length} erro(s) encontrado(s). Corrija-os para importar todos os dados.`
-                    : 'Todos os registros estão prontos para importação.'}
+                    : "Todos os registros estão prontos para importação."}
                 </AlertDescription>
               </Alert>
 
@@ -164,8 +157,8 @@ export function DataImporter<T>({
                           <TableCell className="font-medium">{error.row}</TableCell>
                           <TableCell>{error.field}</TableCell>
                           <TableCell className="text-destructive">{error.message}</TableCell>
-                          <TableCell className="truncate max-w-[100px]">
-                            {String(error.value ?? '-')}
+                          <TableCell className="max-w-[100px] truncate">
+                            {String(error.value ?? "-")}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -187,11 +180,7 @@ export function DataImporter<T>({
             Cancelar
           </Button>
           {result && result.success.length > 0 && (
-            <Button
-              onClick={confirmImport}
-              disabled={isProcessing}
-              className="gap-2"
-            >
+            <Button onClick={confirmImport} disabled={isProcessing} className="gap-2">
               {isProcessing ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (

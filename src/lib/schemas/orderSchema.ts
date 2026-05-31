@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const orderItemSchema = z.object({
   id: z.string().uuid(),
   product_id: z.string().uuid(),
-  quantity: z.number().int().positive('Quantidade deve ser positiva'),
+  quantity: z.number().int().positive("Quantidade deve ser positiva"),
   unit_price: z.number().nonnegative(),
   discount: z.number().nonnegative().default(0),
   total: z.number().nonnegative(),
@@ -19,9 +19,18 @@ export const orderSchema = z.object({
   external_id: z.string().nullable().optional(),
   customer_id: z.string().uuid(),
   warehouse_id: z.string().uuid(),
-  status: z.enum(['pending', 'approved', 'picking', 'packing', 'shipped', 'delivered', 'cancelled', 'returned']),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
-  channel: z.enum(['ecommerce', 'marketplace', 'b2b', 'pos', 'manual']).default('manual'),
+  status: z.enum([
+    "pending",
+    "approved",
+    "picking",
+    "packing",
+    "shipped",
+    "delivered",
+    "cancelled",
+    "returned",
+  ]),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
+  channel: z.enum(["ecommerce", "marketplace", "b2b", "pos", "manual"]).default("manual"),
   shipping_method: z.string().nullable().optional(),
   carrier_id: z.string().uuid().nullable().optional(),
   tracking_code: z.string().nullable().optional(),
@@ -32,10 +41,10 @@ export const orderSchema = z.object({
     neighborhood: z.string(),
     city: z.string(),
     state: z.string().length(2),
-    zip_code: z.string().regex(/^\d{5}-?\d{3}$/, 'CEP inválido'),
-    country: z.string().default('BR'),
+    zip_code: z.string().regex(/^\d{5}-?\d{3}$/, "CEP inválido"),
+    country: z.string().default("BR"),
   }),
-  items: z.array(orderItemSchema).min(1, 'Pedido deve ter pelo menos 1 item'),
+  items: z.array(orderItemSchema).min(1, "Pedido deve ter pelo menos 1 item"),
   subtotal: z.number().nonnegative(),
   discount: z.number().nonnegative().default(0),
   shipping_cost: z.number().nonnegative().default(0),
@@ -48,7 +57,12 @@ export const orderSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const orderCreateSchema = orderSchema.omit({ id: true, created_at: true, updated_at: true, order_number: true });
+export const orderCreateSchema = orderSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  order_number: true,
+});
 export const orderUpdateSchema = orderCreateSchema.partial();
 
 export type OrderItem = z.infer<typeof orderItemSchema>;

@@ -2,8 +2,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 import { logger } from "@/utils/logger";
 
-type Produto = Database['public']['Tables']['produtos']['Row'];
-type ProdutoUpdate = Database['public']['Tables']['produtos']['Update'];
+type Produto = Database["public"]["Tables"]["produtos"]["Row"];
+type ProdutoUpdate = Database["public"]["Tables"]["produtos"]["Update"];
 
 export const barcodeService = {
   async findByBarcode(barcode: string): Promise<Produto | null> {
@@ -37,9 +37,11 @@ export const barcodeService = {
     }
   },
 
-  async generateBarcode(type: 'EAN13' | 'CODE128'): Promise<string> {
-    const prefix = type === 'EAN13' ? '789' : 'EST';
-    const random = Math.floor(Math.random() * 1000000000).toString().padStart(9, '0');
+  async generateBarcode(type: "EAN13" | "CODE128"): Promise<string> {
+    const prefix = type === "EAN13" ? "789" : "EST";
+    const random = Math.floor(Math.random() * 1000000000)
+      .toString()
+      .padStart(9, "0");
     return `${prefix}${random}`;
   },
 };

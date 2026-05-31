@@ -12,7 +12,10 @@ export function getDaysSince(date: string | Date | null | undefined): number {
 /**
  * Formata uma data para o padrão brasileiro com horário opcional.
  */
-export function formatFriendlyDate(date: string | Date | null | undefined, includeTime = true): string {
+export function formatFriendlyDate(
+  date: string | Date | null | undefined,
+  includeTime = true
+): string {
   if (!date) return "N/A";
   const pattern = includeTime ? "dd/MM/yyyy HH:mm" : "dd/MM/yyyy";
   return format(new Date(date), pattern, { locale: ptBR });

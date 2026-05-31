@@ -14,11 +14,33 @@ interface TextareaFieldProps {
   className?: string;
 }
 
-export function TextareaField({ name, label, placeholder, error, required, value, onChange, rows = 3, className }: TextareaFieldProps) {
+export function TextareaField({
+  name,
+  label,
+  placeholder,
+  error,
+  required,
+  value,
+  onChange,
+  rows = 3,
+  className,
+}: TextareaFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor={name}>{label}{required && <span className="text-destructive ml-1">*</span>}</Label>
-      <Textarea id={name} name={name} placeholder={placeholder} value={value} onChange={onChange} rows={rows} className={cn(error && "border-destructive")} aria-invalid={!!error} />
+      <Label htmlFor={name}>
+        {label}
+        {required && <span className="ml-1 text-destructive">*</span>}
+      </Label>
+      <Textarea
+        id={name}
+        name={name}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        rows={rows}
+        className={cn(error && "border-destructive")}
+        aria-invalid={!!error}
+      />
       {error && <p className="text-sm text-destructive">{error}</p>}
     </div>
   );

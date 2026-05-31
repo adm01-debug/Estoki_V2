@@ -4,16 +4,14 @@ import { Json } from "@/integrations/supabase/types";
 
 export const analyticsService = {
   async trackEvent(event: string, metadata: Record<string, unknown> = {}): Promise<void> {
-    const { error } = await supabase
-      .from("analytics_events" as "audit_log")
-      .insert({
-        action: event,
-        metadata: metadata as Json,
-        entity_type: 'analytics',
-      } as any);
+    const { error } = await supabase.from("analytics_events" as "audit_log").insert({
+      action: event,
+      metadata: metadata as Json,
+      entity_type: "analytics",
+    } as any);
 
     if (error) {
-      logger.error('Falha ao registrar evento de analytics', error, { event, metadata });
+      logger.error("Falha ao registrar evento de analytics", error, { event, metadata });
     }
   },
 

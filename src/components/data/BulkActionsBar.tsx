@@ -65,8 +65,8 @@ export function BulkActionsBar({
   return (
     <div
       className={cn(
-        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50",
-        "bg-background border rounded-lg shadow-lg p-3",
+        "fixed bottom-4 left-1/2 z-50 -translate-x-1/2",
+        "rounded-lg border bg-background p-3 shadow-lg",
         "flex items-center gap-3 animate-in slide-in-from-bottom-4",
         className
       )}
@@ -81,7 +81,7 @@ export function BulkActionsBar({
       </div>
 
       {isProcessing ? (
-        <div className="flex items-center gap-3 min-w-[200px]">
+        <div className="flex min-w-[200px] items-center gap-3">
           <Loader2 className="h-4 w-4 animate-spin" />
           <Progress value={progress} className="w-32" />
           <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
@@ -90,21 +90,21 @@ export function BulkActionsBar({
         <div className="flex items-center gap-2">
           {showDuplicate && onDuplicate && (
             <Button variant="outline" size="sm" onClick={onDuplicate}>
-              <Copy className="h-4 w-4 mr-1" />
+              <Copy className="mr-1 h-4 w-4" />
               Duplicar
             </Button>
           )}
 
           {showUpdate && onUpdate && (
             <Button variant="outline" size="sm" onClick={onUpdate}>
-              <Edit className="h-4 w-4 mr-1" />
+              <Edit className="mr-1 h-4 w-4" />
               Editar
             </Button>
           )}
 
           {showRestore && onRestore && (
             <Button variant="outline" size="sm" onClick={onRestore}>
-              <RotateCcw className="h-4 w-4 mr-1" />
+              <RotateCcw className="mr-1 h-4 w-4" />
               Restaurar
             </Button>
           )}
@@ -135,7 +135,7 @@ export function BulkActionsBar({
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" size="sm">
-                  <Trash2 className="h-4 w-4 mr-1" />
+                  <Trash2 className="mr-1 h-4 w-4" />
                   Excluir
                 </Button>
               </AlertDialogTrigger>
@@ -149,7 +149,10 @@ export function BulkActionsBar({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground">
+                  <AlertDialogAction
+                    onClick={onDelete}
+                    className="bg-destructive text-destructive-foreground"
+                  >
                     Excluir {selectedCount} registro{selectedCount > 1 ? "s" : ""}
                   </AlertDialogAction>
                 </AlertDialogFooter>

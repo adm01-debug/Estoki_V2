@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { Camera, Upload, FileText, Loader2, Copy, Check, RotateCcw } from 'lucide-react';
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Camera, Upload, FileText, Loader2, Copy, Check, RotateCcw } from "lucide-react";
 
 interface OCRResult {
   tipo_documento: string;
@@ -41,9 +41,9 @@ export function ScannerOCR() {
 
       // Enviar para OCR
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append("image", file);
 
-      const { data, error } = await supabase.functions.invoke('scanner-ocr', {
+      const { data, error } = await supabase.functions.invoke("scanner-ocr", {
         body: formData,
       });
 
@@ -51,13 +51,13 @@ export function ScannerOCR() {
 
       if (data.success) {
         setResult(data);
-        toast.success('Imagem processada com sucesso!');
+        toast.success("Imagem processada com sucesso!");
       } else {
-        throw new Error(data.error || 'Erro ao processar imagem');
+        throw new Error(data.error || "Erro ao processar imagem");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro desconhecido';
-      toast.error('Erro no OCR: ' + message);
+      const message = err instanceof Error ? err.message : "Erro desconhecido";
+      toast.error("Erro no OCR: " + message);
     } finally {
       setLoading(false);
     }
@@ -74,30 +74,31 @@ export function ScannerOCR() {
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-    toast.success('Copiado!');
+    toast.success("Copiado!");
   };
 
   const reset = () => {
     setResult(null);
     setImagePreview(null);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-    if (cameraInputRef.current) cameraInputRef.current.value = '';
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
   };
 
   const getTipoDocumentoBadge = (tipo: string) => {
-    const configs: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
-      nf: { label: 'Nota Fiscal', variant: 'default' },
-      etiqueta: { label: 'Etiqueta', variant: 'secondary' },
-      codigo_barras: { label: 'Código de Barras', variant: 'outline' },
-      outro: { label: 'Documento', variant: 'outline' },
-    };
+    const configs: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> =
+      {
+        nf: { label: "Nota Fiscal", variant: "default" },
+        etiqueta: { label: "Etiqueta", variant: "secondary" },
+        codigo_barras: { label: "Código de Barras", variant: "outline" },
+        outro: { label: "Documento", variant: "outline" },
+      };
     const config = configs[tipo] || configs.outro;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   return (
     <Card className="w-full">
-      <CardContent className="pt-6 space-y-4">
+      <CardContent className="space-y-4 pt-6">
         {!result && !loading && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -137,7 +138,7 @@ export function ScannerOCR() {
               />
             </div>
 
-            <p className="text-sm text-center text-muted-foreground">
+            <p className="text-center text-sm text-muted-foreground">
               Tire uma foto ou selecione uma imagem de nota fiscal, etiqueta ou código de barras
             </p>
           </div>
@@ -145,7 +146,7 @@ export function ScannerOCR() {
 
         {loading && (
           <div className="flex flex-col items-center justify-center py-8">
-            <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
+            <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
             <p className="text-muted-foreground">Processando imagem com IA...</p>
             {imagePreview && (
               <img
@@ -166,7 +167,7 @@ export function ScannerOCR() {
                 <Badge variant="outline">{result.confianca}% confiança</Badge>
               </div>
               <Button variant="ghost" size="sm" onClick={reset}>
-                <RotateCcw className="h-4 w-4 mr-2" />
+                <RotateCcw className="mr-2 h-4 w-4" />
                 Nova leitura
               </Button>
             </div>
@@ -175,18 +176,18 @@ export function ScannerOCR() {
               <img
                 src={imagePreview}
                 alt="Imagem processada"
-                className="w-full max-h-48 object-contain rounded-lg bg-muted"
+                className="max-h-48 w-full rounded-lg bg-muted object-contain"
               />
             )}
 
             {/* Dados Estruturados */}
             {result.dados_estruturados && Object.keys(result.dados_estruturados).length > 0 && (
               <Card className="bg-muted/50">
-                <CardContent className="pt-4 space-y-2">
+                <CardContent className="space-y-2 pt-4">
                   <p className="text-sm font-medium">Dados Identificados:</p>
-                  
+
                   {result.dados_estruturados.numero_documento && (
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Nº Documento:</span>
                       <Button
                         variant="ghost"
@@ -194,40 +195,47 @@ export function ScannerOCR() {
                         onClick={() => copyToClipboard(result.dados_estruturados.numero_documento!)}
                       >
                         {result.dados_estruturados.numero_documento}
-                        {copied ? <Check className="h-3 w-3 ml-2" /> : <Copy className="h-3 w-3 ml-2" />}
+                        {copied ? (
+                          <Check className="ml-2 h-3 w-3" />
+                        ) : (
+                          <Copy className="ml-2 h-3 w-3" />
+                        )}
                       </Button>
                     </div>
                   )}
 
                   {result.dados_estruturados.cnpj && (
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">CNPJ:</span>
                       <span className="font-mono text-sm">{result.dados_estruturados.cnpj}</span>
                     </div>
                   )}
 
                   {result.dados_estruturados.valor_total && (
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Valor Total:</span>
                       <span className="font-medium">
-                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
-                          .format(result.dados_estruturados.valor_total)}
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(result.dados_estruturados.valor_total)}
                       </span>
                     </div>
                   )}
 
-                  {result.dados_estruturados.codigos && result.dados_estruturados.codigos.length > 0 && (
-                    <div>
-                      <span className="text-sm text-muted-foreground">Códigos:</span>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {result.dados_estruturados.codigos.map((codigo, i) => (
-                          <Badge key={i} variant="secondary" className="font-mono">
-                            {codigo}
-                          </Badge>
-                        ))}
+                  {result.dados_estruturados.codigos &&
+                    result.dados_estruturados.codigos.length > 0 && (
+                      <div>
+                        <span className="text-sm text-muted-foreground">Códigos:</span>
+                        <div className="mt-1 flex flex-wrap gap-2">
+                          {result.dados_estruturados.codigos.map((codigo, i) => (
+                            <Badge key={i} variant="secondary" className="font-mono">
+                              {codigo}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </CardContent>
               </Card>
             )}
@@ -235,10 +243,10 @@ export function ScannerOCR() {
             {/* Textos Extraídos */}
             {result.textos_extraidos.length > 0 && (
               <div>
-                <p className="text-sm font-medium mb-2">Textos Extraídos:</p>
+                <p className="mb-2 text-sm font-medium">Textos Extraídos:</p>
                 <ScrollArea className="h-32 rounded-lg border p-2">
                   {result.textos_extraidos.map((texto, i) => (
-                    <p key={i} className="text-sm py-1 border-b last:border-0">
+                    <p key={i} className="border-b py-1 text-sm last:border-0">
                       {texto}
                     </p>
                   ))}

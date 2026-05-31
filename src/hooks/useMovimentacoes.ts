@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
-import { movimentacaoService } from '@/services/movimentacaoService';
-import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from '@/types/movimentacao';
+import { useState, useEffect, useCallback, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { movimentacaoService } from "@/services/movimentacaoService";
+import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from "@/types/movimentacao";
 
 export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>([]);
@@ -27,8 +27,8 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
       const result = await movimentacaoService.getAll({ page, pageSize });
       setMovimentacoes(result.data);
     } catch (err) {
-      if ((err as any).name === 'AbortError') return;
-      const message = err instanceof Error ? err.message : 'Erro ao buscar movimentações';
+      if ((err as any).name === "AbortError") return;
+      const message = err instanceof Error ? err.message : "Erro ao buscar movimentações";
       setError(message);
     } finally {
       setLoading(false);
@@ -47,10 +47,10 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     }
 
     subscriptionRef.current = supabase
-      .channel('movements-changes')
+      .channel("movements-changes")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'rastreamento_historico' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "rastreamento_historico" },
         () => {
           fetchMovimentacoes();
         }
@@ -67,21 +67,21 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const registrarMovimentacao = async (input: MovimentacaoInput): Promise<boolean> => {
     try {
       if (!user?.id) {
-        toast({ title: 'Erro', description: 'Usuário não autenticado', variant: 'destructive' });
+        toast({ title: "Erro", description: "Usuário não autenticado", variant: "destructive" });
         return false;
       }
 
       await movimentacaoService.registrar({ ...input, operador_id: user.id });
 
       toast({
-        title: 'Movimentação registrada',
+        title: "Movimentação registrada",
         description: `${input.tipo}: ${input.quantidade} unidades`,
       });
 
       return true;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao registrar movimentação';
-      toast({ title: 'Erro', description: message, variant: 'destructive' });
+      const message = err instanceof Error ? err.message : "Erro ao registrar movimentação";
+      toast({ title: "Erro", description: message, variant: "destructive" });
       return false;
     }
   };
@@ -94,12 +94,12 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'transferencia',
+      tipo: "transferencia",
       lote_id: loteId,
       from_posicao_id: fromPosicaoId,
       to_posicao_id: toPosicaoId,
       quantidade,
-      descricao: descricao || 'Transferência interna de estoque',
+      descricao: descricao || "Transferência interna de estoque",
     });
   };
 
@@ -111,12 +111,12 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     descricao?: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'recebimento_nf',
+      tipo: "recebimento_nf",
       produto_id: produtoId,
       lote_id: loteId,
       quantidade,
       localizacao,
-      descricao: descricao || 'Entrada de material',
+      descricao: descricao || "Entrada de material",
     });
   };
 
@@ -124,7 +124,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     produtoId: string,
     quantidade: number,
     localizacao: string,
-    tipo: 'saida_transporte' | 'separacao' = 'saida_transporte',
+    tipo: "saida_transporte" | "separacao" = "saida_transporte",
     loteId?: string,
     descricao?: string
   ): Promise<boolean> => {
@@ -134,7 +134,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
       lote_id: loteId,
       quantidade,
       localizacao,
-      descricao: descricao || 'Saída de material',
+      descricao: descricao || "Saída de material",
     });
   };
 
@@ -145,7 +145,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     descricao: string
   ): Promise<boolean> => {
     return registrarMovimentacao({
-      tipo: 'ajuste_estoque',
+      tipo: "ajuste_estoque",
       produto_id: produtoId,
       quantidade,
       localizacao,

@@ -1,6 +1,6 @@
-import React, { ComponentType, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useAnalytics } from '@/hooks/useAnalytics';
+import React, { ComponentType, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 export interface WithAnalyticsOptions {
   trackPageView?: boolean;
@@ -12,11 +12,7 @@ export function withAnalytics<P extends object>(
   WrappedComponent: ComponentType<P>,
   options: WithAnalyticsOptions = {}
 ) {
-  const { 
-    trackPageView = true, 
-    trackEvents = true,
-    componentName 
-  } = options;
+  const { trackPageView = true, trackEvents = true, componentName } = options;
 
   const WithAnalyticsComponent: React.FC<P> = (props) => {
     const location = useLocation();
@@ -35,15 +31,15 @@ export function withAnalytics<P extends object>(
     useEffect(() => {
       if (trackEvents) {
         trackEvent({
-          category: 'Component',
-          action: 'Mount',
+          category: "Component",
+          action: "Mount",
           label: componentName || WrappedComponent.displayName || WrappedComponent.name,
         });
 
         return () => {
           trackEvent({
-            category: 'Component',
-            action: 'Unmount',
+            category: "Component",
+            action: "Unmount",
             label: componentName || WrappedComponent.displayName || WrappedComponent.name,
           });
         };
@@ -53,7 +49,7 @@ export function withAnalytics<P extends object>(
     return <WrappedComponent {...props} />;
   };
 
-  WithAnalyticsComponent.displayName = `withAnalytics(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  WithAnalyticsComponent.displayName = `withAnalytics(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithAnalyticsComponent;
 }
