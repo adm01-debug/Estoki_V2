@@ -66,9 +66,9 @@ export default function EstoquePage() {
   const etiquetaData = selectedPosition ? { pedido: selectedPosition.codigo || "N/A", produto: "Posição de Estoque", lote: selectedPosition.id || "", fornecedor: "ESTOKI", totalVolumes: 1, qtdPorVolume: 1, dataRecebimento: new Date() } : null;
 
   const { ruas, niveis } = useMemo(() => {
-    const ppPositions = safePositions.filter(p => p.tipo === 'porta_palete');
+    const ppPositions = safePositions.filter((p: PosicaoEstoque) => p.tipo === 'porta_palete');
     const ruasSet = new Set<string>(); const niveisSet = new Set<string>();
-    ppPositions.forEach(p => { if (p.porta_palete) ruasSet.add(p.porta_palete); if (p.nivel) niveisSet.add(p.nivel); });
+    ppPositions.forEach((p: PosicaoEstoque) => { if (p.porta_palete) ruasSet.add(p.porta_palete); if (p.nivel) niveisSet.add(p.nivel); });
     return { ruas: Array.from(ruasSet).sort(), niveis: Array.from(niveisSet).sort() };
   }, [safePositions]);
 
@@ -92,20 +92,20 @@ export default function EstoquePage() {
     }
   }, [ruas, niveis, initialized]);
 
-  const ppPositions = useMemo(() => safePositions.filter(p => p.tipo === 'porta_palete'), [safePositions]);
-  const boxPositions = useMemo(() => safePositions.filter(p => p.tipo === 'box'), [safePositions]);
+  const ppPositions = useMemo(() => safePositions.filter((p: PosicaoEstoque) => p.tipo === 'porta_palete'), [safePositions]);
+  const boxPositions = useMemo(() => safePositions.filter((p: PosicaoEstoque) => p.tipo === 'box'), [safePositions]);
 
   const stats = useMemo(() => ({
     ppStats: { 
-      ocupados: ppPositions.filter(p => p.status === 'ocupado').length, 
-      livres: ppPositions.filter(p => p.status === 'livre').length, 
-      reservados: ppPositions.filter(p => p.status === 'reservado').length, 
-      bloqueados: ppPositions.filter(p => p.status === 'bloqueado').length, 
+      ocupados: ppPositions.filter((p: PosicaoEstoque) => p.status === 'ocupado').length, 
+      livres: ppPositions.filter((p: PosicaoEstoque) => p.status === 'livre').length, 
+      reservados: ppPositions.filter((p: PosicaoEstoque) => p.status === 'reservado').length, 
+      bloqueados: ppPositions.filter((p: PosicaoEstoque) => p.status === 'bloqueado').length, 
       total: ppPositions.length 
     },
     boxStats: { 
-      ocupados: boxPositions.filter(p => p.status === 'ocupado').length, 
-      livres: boxPositions.filter(p => p.status === 'livre').length, 
+      ocupados: boxPositions.filter((p: PosicaoEstoque) => p.status === 'ocupado').length, 
+      livres: boxPositions.filter((p: PosicaoEstoque) => p.status === 'livre').length, 
       total: boxPositions.length 
     },
     ocupacaoTotal: Math.round(getEstatisticas().taxaOcupacao),
@@ -113,8 +113,8 @@ export default function EstoquePage() {
 
   const filteredPositions = useMemo(() => {
     const search = filters.search.trim().toLowerCase();
-    return ppPositions.filter(p => {
-      if (filters.status.length > 0 && !filters.status.includes(p.status)) return false;
+    return ppPositions.filter((p: PosicaoEstoque) => {
+      if (filters.status.length > 0 && !filters.status.includes(p.status as StatusPosicao)) return false;
       if (p.porta_palete && filters.ruas.length > 0 && !filters.ruas.includes(p.porta_palete)) return false;
       if (p.nivel && filters.niveis.length > 0 && !filters.niveis.includes(p.nivel)) return false;
       
@@ -123,7 +123,7 @@ export default function EstoquePage() {
         const matchRua = p.porta_palete?.toLowerCase().includes(search);
         const matchNivel = p.nivel?.toLowerCase().includes(search);
         const matchZona = p.zona?.toLowerCase().includes(search);
-        const matchProduto = p.saldos?.some(s => 
+        const matchProduto = p.saldos?.some((s: any) => 
           s.produto?.nome?.toLowerCase().includes(search) || 
           s.produto?.sku?.toLowerCase().includes(search)
         );
@@ -332,14 +332,14 @@ export default function EstoquePage() {
                    />
                  ) : (
                    <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-3">
-                    {boxPositions.map((box) => (
+                    {boxPositions.map((box: PosicaoEstoque) => (
                       <button 
                         key={box.id} 
                         onClick={() => { haptics.light(); setSelectedPosition(box); }} 
                         className={cn(
                           "aspect-square rounded-2xl flex flex-col items-center justify-center border-2 transition-all hover:scale-105 active:scale-95 shadow-sm", 
-                          statusConfig[box.status].bg, 
-                          statusConfig[box.status].border, 
+                          statusConfig[box.status as StatusPosicao].bg, 
+                          statusConfig[box.status as StatusPosicao].border, 
                           "hover:ring-4 hover:ring-primary/20"
                         )}
                       >
@@ -351,7 +351,7 @@ export default function EstoquePage() {
               </TabsContent>
 
                 <TabsContent value="lista" className="flex-1 min-h-0 focus-visible:outline-none">
-                  {filteredPositions.filter(p => p.status === "ocupado").length === 0 ? (
+                  {filteredPositions.filter((p: PosicaoEstoque) => p.status === "ocupado").length === 0 ? (
                     <EmptyState
                       variant="compact"
                       icon={Package}
@@ -361,7 +361,7 @@ export default function EstoquePage() {
                     />
                  ) : (
                    <EstoqueVirtualList 
-                     positions={filteredPositions.filter(p => p.status === "ocupado")} 
+                     positions={filteredPositions.filter((p: PosicaoEstoque) => p.status === "ocupado")} 
                      className="min-h-[400px]"
                      onSelect={(p) => { haptics.light(); setSelectedPosition(p); }} 
                    />

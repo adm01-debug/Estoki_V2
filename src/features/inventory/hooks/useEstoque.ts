@@ -50,12 +50,12 @@ type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
      };
    }, [options?.enableRealtime, queryClient]);
 
-   const { data: posicoes, isLoading, error, refetch } = useQuery({
-     queryKey: ['estoque-posicoes'],
-     queryFn: inventoryService.getAll,
-     staleTime: 1000 * 60 * 2, // 2 minutes
-     gcTime: 1000 * 60 * 10, // 10 minutes
-   });
+    const { data: posicoes, isLoading, error, refetch } = useQuery<PosicaoEstoque[], Error>({
+      queryKey: ['estoque-posicoes'],
+      queryFn: () => inventoryService.getAll(),
+      staleTime: 1000 * 60 * 2, // 2 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes
+    });
 
   const createPosicao = useMutation({
     mutationFn: inventoryService.create,
@@ -103,12 +103,12 @@ type PosicaoUpdate = Database['public']['Tables']['posicoes_estoque']['Update'];
 
 
   const estatisticas = useMemo(() => {
-    const lista = posicoes || [];
+    const lista = Array.isArray(posicoes) ? posicoes : [];
     const total = lista.length;
-    const ocupados = lista.filter((p) => p.status === 'ocupado').length;
-    const livres = lista.filter((p) => p.status === 'livre').length;
-    const bloqueados = lista.filter((p) => p.status === 'bloqueado').length;
-    const reservados = lista.filter((p) => p.status === 'reservado').length;
+    const ocupados = lista.filter((p: PosicaoEstoque) => p.status === 'ocupado').length;
+    const livres = lista.filter((p: PosicaoEstoque) => p.status === 'livre').length;
+    const bloqueados = lista.filter((p: PosicaoEstoque) => p.status === 'bloqueado').length;
+    const reservados = lista.filter((p: PosicaoEstoque) => p.status === 'reservado').length;
     const taxaOcupacao = total > 0 ? (ocupados / total) * 100 : 0;
 
     return {
