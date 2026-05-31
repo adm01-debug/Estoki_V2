@@ -16,11 +16,12 @@ Sistema WMS (Warehouse Management System) completo para gestão de estoque e ope
 - 📊 **KPIs** - Métricas operacionais
 - 🔔 **Notificações** - Push e tempo real
 
- ## 📜 Auditoria & Compliance
- 
- O sistema passa por auditorias regulares de integridade e funcionalidades.
- - [Relatório de Auditoria (Markdown)](docs/audit/audit_report.md)
- - [Relatório de Auditoria (PDF)](docs/audit/audit_report.pdf)
+## 📜 Audit & Compliance
+
+The system undergoes regular integrity and functionality audits.
+- [Technical Architecture](docs/ARCHITECTURE.md)
+- [Security Policies](docs/SECURITY.md)
+
  
 ## 🚀 Quick Start
 

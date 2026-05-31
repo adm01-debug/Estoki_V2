@@ -74,11 +74,10 @@ npm run test:e2e
 
 ## 📚 Documentação
 
-- [Arquitetura](docs/ARCHITECTURE.md)
-- [Componentes](docs/COMPONENTS.md)
-- [Database](docs/DATABASE.md)
-- [API](docs/API.md)
-- [Testes](docs/TESTING.md)
+- [📖 Arquitetura do Sistema](docs/ARCHITECTURE.md) - Fluxo de dados e infraestrutura
+- [🛡️ Segurança](docs/SECURITY.md) - Políticas RLS e Proteção de Dados
+- [🛤️ Roadmap](docs/ROADMAP.md) - Próximos passos e metas
+
 
 ## 🤝 Contribuindo
 
