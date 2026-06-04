@@ -1,3 +1,4 @@
+import { initWebVitals } from "./web-vitals";
 export { initWebVitals, getPerformanceSummary } from "./web-vitals";
 
 export const reportWebVitals = initWebVitals;

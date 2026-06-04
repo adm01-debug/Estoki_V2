@@ -92,3 +92,29 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 1.  **Segurança (RLS):** Nunca confie no frontend. Todas as tabelas possuem RLS habilitado.
 2.  **Performance:** Uso agressivo de `React Query` para cache de consultas.
 3.  **Auditabilidade:** Toda operação via `external-db-bridge` gera um log na tabela `audit_log`.
+4.  **Testabilidade:** Cobertura de testes unitários com Vitest e testes E2E com Playwright para fluxos críticos.
+
+---
+
+## 🧪 Estratégia de Testes
+
+### Testes End-to-End (E2E)
+Localizados em `tests/e2e/`, utilizam Playwright para validar os fluxos mais importantes do usuário.
+
+**Fluxos Cobertos:**
+- **Autenticação:** Login, redirecionamento de rotas protegidas e logout.
+- **Navegação:** Persistência de sessão após refresh e navegação via Sidebar.
+- **Operações Críticas:** Busca no inventário, simulação de recebimento e consulta de expedição.
+
+**Como executar:**
+```bash
+npm run test:e2e
+```
+
+### Testes Unitários e de Integração
+Localizados junto aos componentes ou em pastas `__tests__`, focam na lógica de negócio e renderização de componentes isolados.
+
+**Como executar:**
+```bash
+npm run test
+```
