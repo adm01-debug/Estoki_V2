@@ -107,12 +107,20 @@ Localizados em `tests/e2e/`, utilizam Playwright para validar os fluxos mais imp
 - **Operações Críticas:** Busca no inventário, simulação de recebimento e consulta de expedição.
 
 **CI/CD:**
-Os testes E2E são executados automaticamente no GitHub Actions em cada Pull Request para as branches `main`, `master` e `develop`. O build falhará se qualquer teste não passar.
+Os testes E2E são executados automaticamente no GitHub Actions em cada Pull Request. O build falhará se qualquer teste não passar.
+
+**Artefatos de CI:** Em caso de falha, o GitHub Actions gera um relatório HTML completo, capturas de tela e vídeos dos testes, disponíveis na aba "Artifacts" do workflow.
 
 **Como executar localmente:**
 ```bash
 npm run test:e2e
 ```
+
+**Como inspecionar falhas do CI:**
+1. Vá para a aba "Actions" no GitHub.
+2. Selecione a execução do workflow que falhou.
+3. Role até "Artifacts" e baixe o `playwright-test-results`.
+4. Abra o `index.html` para ver o relatório com evidências visuais (incluindo vídeos e traces).
 
 ### Testes Unitários e de Integração
 Localizados junto aos componentes ou em pastas `__tests__`, focam na lógica de negócio e renderização de componentes isolados.
