@@ -106,7 +106,10 @@ Localizados em `tests/e2e/`, utilizam Playwright para validar os fluxos mais imp
 - **Navegação:** Persistência de sessão após refresh e navegação via Sidebar.
 - **Operações Críticas:** Busca no inventário, simulação de recebimento e consulta de expedição.
 
-**Como executar:**
+**CI/CD:**
+Os testes E2E são executados automaticamente no GitHub Actions em cada Pull Request para as branches `main`, `master` e `develop`. O build falhará se qualquer teste não passar.
+
+**Como executar localmente:**
 ```bash
 npm run test:e2e
 ```
