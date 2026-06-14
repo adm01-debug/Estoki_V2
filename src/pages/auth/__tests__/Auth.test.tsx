@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Auth from "@/pages/Auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,14 +22,18 @@ describe("Authentication Flow", () => {
     vi.clearAllMocks();
   });
 
-  it("should render login form", () => {
+  it("should render login form", async () => {
     render(
-      <AuthProvider>
-        <Auth />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Auth />
+        </AuthProvider>
+      </MemoryRouter>
     );
-    expect(screen.getByPlaceholderText(/email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/senha/i)).toBeInTheDocument();
+    // AuthProvider resolves its initial getSession asynchronously, so the page
+    // shows a loading spinner first and the form mounts on the next tick.
+    expect(await screen.findByPlaceholderText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Senha")).toBeInTheDocument();
   });
 
   it("should call supabase signInWithPassword on form submit", async () => {
@@ -36,16 +41,18 @@ describe("Authentication Flow", () => {
     mockSignIn.mockResolvedValueOnce({ data: { user: { id: "123" } } as any, error: null });
 
     render(
-      <AuthProvider>
-        <Auth />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Auth />
+        </AuthProvider>
+      </MemoryRouter>
     );
 
-    fireEvent.change(screen.getByPlaceholderText(/email/i), {
+    fireEvent.change(await screen.findByPlaceholderText(/email/i), {
       target: { value: "test@example.com" },
     });
-    fireEvent.change(screen.getByPlaceholderText(/senha/i), { target: { value: "password123" } });
-    fireEvent.click(screen.getByRole("button", { name: /entrar/i }));
+    fireEvent.change(screen.getByLabelText("Senha"), { target: { value: "password123" } });
+    fireEvent.click(screen.getByRole("button", { name: /^entrar$/i }));
 
     await waitFor(() => {
       expect(mockSignIn).toHaveBeenCalledWith({

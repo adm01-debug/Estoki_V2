@@ -27,7 +27,7 @@ export default function TwoFactorAuth() {
       }
     } catch (err) {
       if (import.meta.env.DEV) console.error("Error checking MFA status:", err);
-      navigate("/login", { replace: true });
+      navigate("/auth/login", { replace: true });
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,7 @@ export default function TwoFactorAuth() {
   };
 
   const handleCancel = () => {
-    navigate("/login", { replace: true });
+    navigate("/auth/login", { replace: true });
   };
 
   if (loading) {

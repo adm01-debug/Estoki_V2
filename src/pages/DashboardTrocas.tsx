@@ -101,7 +101,7 @@ export default function DashboardTrocasPage() {
             <h2 className="text-lg font-semibold">Trocas e Devoluções</h2>
             <p className="text-sm text-muted-foreground">Acompanhamento de solicitações</p>
           </div>
-          <Button onClick={() => navigate("/trocas-devolucoes")} className="gap-2">
+          <Button onClick={() => navigate("/trocas")} className="gap-2">
             <ArrowLeftRight className="h-4 w-4" />
             Ver Todas
           </Button>

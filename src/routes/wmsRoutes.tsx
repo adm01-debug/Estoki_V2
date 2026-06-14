@@ -40,7 +40,6 @@ const KanbanPipeline = lazy(() => import("@/pages/KanbanPipeline"));
 const DashboardTriador = lazy(() => import("@/features/quality/pages/DashboardTriador"));
 const FormularioTriagem = lazy(() => import("@/features/quality/pages/FormularioTriagem"));
 const QualityPage = lazy(() => import("@/pages/quality/QualityPage"));
-const OrdersPage = lazy(() => import("@/pages/orders/OrdersPage"));
 const InventoryPage = lazy(() => import("@/pages/inventory/InventoryPage"));
 const StockMovementsPage = lazy(() => import("@/pages/inventory/StockMovementsPage"));
 
@@ -299,16 +298,6 @@ export const wmsRoutes = (
         <RouteErrorBoundary>
           <Suspense fallback={<RouteLoadingFallback type="table" />}>
             <QualityPage />
-          </Suspense>
-        </RouteErrorBoundary>
-      }
-    />
-    <Route
-      path="pedidos"
-      element={
-        <RouteErrorBoundary>
-          <Suspense fallback={<RouteLoadingFallback type="table" />}>
-            <OrdersPage />
           </Suspense>
         </RouteErrorBoundary>
       }

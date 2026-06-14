@@ -23,6 +23,7 @@ interface TriagemHeaderCardProps {
   isRunning: boolean;
   onPausar: () => void;
   onIniciar: () => void;
+  onValidarParcial?: () => void;
   taktTime?: string;
   tempoEstimado?: string;
 }
@@ -36,6 +37,7 @@ export function TriagemHeaderCard({
   isRunning,
   onPausar,
   onIniciar,
+  onValidarParcial,
   taktTime = "00:45",
   tempoEstimado = "12:30",
 }: TriagemHeaderCardProps) {
@@ -176,14 +178,13 @@ export function TriagemHeaderCard({
             >
               Salvar Rascunho
             </Button>
-            <Button className="glow-button h-11 flex-1 gap-2 rounded-xl bg-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/90 md:flex-none">
-              <Button
-                variant="default"
-                className="glow-button h-11 flex-1 gap-2 rounded-xl bg-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/90 md:flex-none"
-                onClick={() => {}}
-              >
-                <CheckCircle2 className="h-4 w-4" /> Validar Parcial
-              </Button>
+            <Button
+              variant="default"
+              className="glow-button h-11 flex-1 gap-2 rounded-xl bg-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/90 md:flex-none"
+              onClick={onValidarParcial}
+              disabled={!onValidarParcial}
+            >
+              <CheckCircle2 className="h-4 w-4" /> Validar Parcial
             </Button>
           </div>
         </div>
