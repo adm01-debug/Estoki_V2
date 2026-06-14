@@ -159,7 +159,7 @@ export default function TrocasDevolucoes() {
       title="Trocas e Devoluções"
       rightAction={
         <div className="flex items-center gap-2">
-          <Button variant="outline" onClick={() => navigate("/dashboard-trocas")}>
+          <Button variant="outline" onClick={() => navigate("/trocas-dashboard")}>
             <BarChart3 className="mr-2 h-4 w-4" />
             Dashboard
           </Button>

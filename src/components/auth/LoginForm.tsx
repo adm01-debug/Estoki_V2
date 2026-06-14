@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Zap, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSubmit: (e: React.FormEvent) => void;
@@ -26,6 +27,7 @@ export const LoginForm = ({
   inputClasses,
 }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -58,6 +60,7 @@ export const LoginForm = ({
           </Label>
           <button
             type="button"
+            onClick={() => navigate("/auth/forgot-password")}
             className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
           >
             Esqueceu a senha?

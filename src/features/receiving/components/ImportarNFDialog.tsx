@@ -288,7 +288,7 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
                       </TableHeader>
                       <TableBody>
                         {nfeData.produtos.map((produto, index) => (
-                          <TableRow key={index}>
+                          <TableRow key={`${produto.codigo ?? "item"}-${index}`}>
                             <TableCell className="font-mono text-xs">{produto.codigo}</TableCell>
                             <TableCell className="max-w-[200px] truncate" title={produto.descricao}>
                               {produto.descricao}

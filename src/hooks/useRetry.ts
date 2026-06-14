@@ -4,6 +4,7 @@ export function useRetry<T>(asyncFn: () => Promise<T>, maxRetries = 3, delay = 1
   const [error, setError] = useState<Error | null>(null);
   const [isRetrying, setIsRetrying] = useState(false);
   const execute = useCallback(async () => {
+    let lastError: Error | null = null;
     for (let i = 0; i <= maxRetries; i++) {
       try {
         setAttempts(i);
@@ -11,7 +12,8 @@ export function useRetry<T>(asyncFn: () => Promise<T>, maxRetries = 3, delay = 1
         setError(null);
         return result;
       } catch (e) {
-        setError(e as Error);
+        lastError = e as Error;
+        setError(lastError);
         if (i < maxRetries) {
           setIsRetrying(true);
           await new Promise((r) => setTimeout(r, delay * Math.pow(2, i)));
@@ -19,7 +21,7 @@ export function useRetry<T>(asyncFn: () => Promise<T>, maxRetries = 3, delay = 1
         }
       }
     }
-    throw error;
+    throw lastError ?? new Error("Operação falhou após múltiplas tentativas");
   }, [asyncFn, maxRetries, delay]);
   return { execute, attempts, error, isRetrying };
 }
