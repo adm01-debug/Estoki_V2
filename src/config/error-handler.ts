@@ -179,11 +179,11 @@ export function setupGlobalErrorHandler(): void {
 
   // Monitorar status online/offline
   window.addEventListener("online", () => {
-    if (!isProduction()) console.log("[NETWORK] Back online");
+    if (!isProduction()) logger.debug("Conexão restaurada");
   });
 
   window.addEventListener("offline", () => {
-    if (!isProduction()) console.log("[NETWORK] Went offline");
+    if (!isProduction()) logger.debug("Conexão perdida");
     const appError = createAppError(new Error("Connection lost"), {
       type: "offline",
     });

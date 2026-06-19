@@ -1,12 +1,16 @@
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
+import type { ComponentProps, ReactNode } from "react";
+
+type MotionDivProps = ComponentProps<"div"> & { children?: ReactNode };
+type ChildrenOnlyProps = { children?: ReactNode };
 
 // Mock framer-motion to avoid issues with animations in tests
 vi.mock("framer-motion", () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: MotionDivProps) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: ChildrenOnlyProps) => <>{children}</>,
 }));
 
 // Use the real lucide-react icons in tests. They are lightweight SVG components
@@ -17,8 +21,7 @@ vi.mock("framer-motion", () => ({
 // enumerate a Proxy's named exports (no `ownKeys` trap), so named imports failed
 // once the hang was removed. Importing the real module avoids both problems.
 vi.mock("lucide-react", async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const actual: any = await (vi as any).importActual("lucide-react");
+  const actual = await vi.importActual<typeof import("lucide-react")>("lucide-react");
   return actual;
 });
 
