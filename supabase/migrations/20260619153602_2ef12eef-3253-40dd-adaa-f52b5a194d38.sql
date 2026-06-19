@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Authenticated users can view role permissions" ON public.role_permissions;
