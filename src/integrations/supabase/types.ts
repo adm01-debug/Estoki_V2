@@ -3824,10 +3824,6 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      calculate_lockout_duration: {
-        Args: { attempt_count: number }
-        Returns: string
-      }
       check_login_lockout: {
         Args: { p_email: string }
         Returns: {
@@ -3930,7 +3926,6 @@ export type Database = {
         }
         Returns: Json
       }
-      validate_ean13: { Args: { ean: string }; Returns: boolean }
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"
