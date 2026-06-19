@@ -21,11 +21,12 @@ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: bool
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
-    subscriptionRef.current = supabase
-      .channel("inventory-changes")
+    const channel = supabase
+      .channel(`inventory-changes-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "posicoes_estoque" }, () => {
         queryClient.invalidateQueries({ queryKey: ["estoque-posicoes"] });
       })
@@ -34,10 +35,12 @@ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: bool
         queryClient.invalidateQueries({ queryKey: ["estoque-posicoes"] });
       })
       .subscribe();
+    subscriptionRef.current = channel;
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, queryClient]);

@@ -5,8 +5,6 @@ import { AppProviders } from "@/components/common/AppProviders";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import AppLayout from "./components/layout/AppLayout";
 import { RouteErrorBoundary } from "@/components/common/RouteErrorBoundary";
-import { InstallPrompt } from "./components/pwa/InstallPrompt";
-import { UpdatePrompt } from "./components/pwa/UpdatePrompt";
 
 import { publicRoutes } from "@/routes/publicRoutes";
 import { adminRoutes } from "@/routes/adminRoutes";

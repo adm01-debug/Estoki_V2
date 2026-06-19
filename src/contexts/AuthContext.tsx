@@ -3,7 +3,6 @@ import {
   useContext,
   useEffect,
   useState,
-  useRef,
   useCallback,
   ReactNode,
 } from "react";
@@ -34,9 +33,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Track whether the initial session hydration is complete
-  const hydrated = useRef(false);
-
   const fetchUserData = useCallback(async (userId: string) => {
     try {
       const { profile: userProfile, role: userRole } = await authService.getUserData(userId);
@@ -52,72 +48,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    // 1) Subscribe BEFORE calling getSession (recommended Supabase pattern).
+    //    INITIAL_SESSION fires on subscribe with the current session.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
       if (!mounted) return;
 
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
 
       if (currentSession?.user) {
-        // If event is SIGNED_IN or INITIAL_SESSION, we might want to ensure data is fresh
-        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
-          await fetchUserData(currentSession.user.id);
-        }
-      } else if (event === "SIGNED_OUT") {
+        // Defer Supabase calls to avoid the known deadlock when invoked
+        // synchronously inside the auth state change callback.
+        setTimeout(() => {
+          if (mounted) {
+            void fetchUserData(currentSession.user.id);
+          }
+        }, 0);
+      } else {
         setProfile(null);
         setRole(null);
       }
 
-      if (hydrated.current) {
-        setLoading(false);
-      }
+      // Any auth event (including INITIAL_SESSION) means hydration is done.
+      setLoading(false);
     });
 
-    const hydrate = async () => {
-      if (hydrated.current) return;
-
-      logger.info("Iniciando hidratação de sessão...");
-      try {
-        const { data, error } = await Promise.race([
-          supabase.auth.getSession(),
-          new Promise<any>((_, reject) =>
-            setTimeout(() => reject(new Error("getSession timeout")), 5000)
-          ),
-        ]);
-
-        if (error) {
-          logger.error("Erro ao obter sessão:", error);
-        }
-
-        if (!mounted) return;
-
-        const sess = data?.session ?? null;
-        setSession(sess);
-        setUser(sess?.user ?? null);
-
-        if (sess?.user) {
-          await fetchUserData(sess.user.id);
-        }
-      } catch (err) {
-        logger.warn("Auth hydration failed or timed out:", { error: err });
-      } finally {
-        if (mounted) {
-          hydrated.current = true;
-          setLoading(false);
-          logger.info("Hidratação concluída.");
-        }
-      }
-    };
-
-    hydrate();
-
+    // 2) Safety net: if onAuthStateChange never fires (network failure, etc.),
+    //    force loading=false after 6s so the app does not hang on a spinner.
     const safety = setTimeout(() => {
-      if (mounted && !hydrated.current) {
-        hydrated.current = true;
-        setLoading(false);
-        logger.warn("Safety net triggered: Auth loading forced to false");
+      if (mounted) {
+        setLoading((prev) => {
+          if (prev) logger.warn("Auth safety net triggered: forcing loading=false");
+          return false;
+        });
       }
     }, 6000);
 

@@ -16,8 +16,9 @@ vi.mock("framer-motion", () => ({
 // forever and froze every test importing lucide-react. Vitest also cannot
 // enumerate a Proxy's named exports (no `ownKeys` trap), so named imports failed
 // once the hang was removed. Importing the real module avoids both problems.
-vi.mock("lucide-react", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("lucide-react")>();
+vi.mock("lucide-react", async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const actual: any = await (vi as any).importActual("lucide-react");
   return actual;
 });
 
