@@ -29,14 +29,15 @@ serve(async (req) => {
       .single();
     if (error) throw error;
     for (const item of receivedItems) {
+      const { data: prod, error: prodErr } = await supabase
+        .from("products")
+        .select("stock_quantity")
+        .eq("id", item.productId)
+        .single();
+      if (prodErr) throw prodErr;
       await supabase
         .from("products")
-        .update({
-          stock_quantity: supabase.rpc("increment_stock", {
-            pid: item.productId,
-            qty: item.quantity,
-          }),
-        })
+        .update({ stock_quantity: (prod?.stock_quantity ?? 0) + item.quantity })
         .eq("id", item.productId);
     }
     const allReceived = receivedItems.every(
