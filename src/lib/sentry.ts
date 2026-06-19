@@ -1,4 +1,5 @@
 // Sentry configuration for error monitoring (stub - install @sentry/react for full functionality)
+import { logger } from "@/utils/logger";
 
 // Stub types to avoid import errors
 interface SentryUser {
@@ -8,8 +9,7 @@ interface SentryUser {
 
 export function initSentry() {
   // Sentry is optional - will work when @sentry/react is installed
-  if (import.meta.env.DEV)
-    console.log("[Sentry] Monitoring disabled - @sentry/react not installed");
+  if (import.meta.env.DEV) logger.debug("Monitoramento Sentry desabilitado");
 }
 
 export function captureException(error: Error, context?: Record<string, unknown>) {
@@ -17,9 +17,9 @@ export function captureException(error: Error, context?: Record<string, unknown>
 }
 
 export function setUser(user: SentryUser) {
-  if (import.meta.env.DEV) console.log("[Sentry] User set:", user.id);
+  if (import.meta.env.DEV) logger.debug("Usuário Sentry definido", { userId: user.id });
 }
 
 export function clearUser() {
-  if (import.meta.env.DEV) console.log("[Sentry] User cleared");
+  if (import.meta.env.DEV) logger.debug("Usuário Sentry limpo");
 }
