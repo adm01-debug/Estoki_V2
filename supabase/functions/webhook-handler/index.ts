@@ -62,8 +62,6 @@ Deno.serve(async (req) => {
     }
 
     return jsonResponse({ success: true, event, received: new Date().toISOString() }, 200, req);
-
-    return jsonResponse({ success: true, event, received: new Date().toISOString() }, 200, req);
   } catch (error) {
     console.error("webhook-handler error:", error);
     return jsonResponse({ error: "Internal server error" }, 500, req);
