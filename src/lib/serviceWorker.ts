@@ -15,7 +15,6 @@ const CACHE_STRATEGIES = {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      if (import.meta.env.DEV) console.log("[SW] Caching static assets");
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -131,7 +130,6 @@ self.addEventListener("sync", ((event: SyncEvent) => {
 
 async function syncOfflineData(): Promise<void> {
   // Implement offline data sync logic
-  if (import.meta.env.DEV) console.log("[SW] Syncing offline data...");
 }
 
 export {};
