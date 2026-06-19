@@ -14,7 +14,7 @@ export function useTelemetry() {
 
     // Log boot time em desenvolvimento
     if (import.meta.env.DEV) {
-      console.log(`[Telemetry] App Boot Time: ${loadTime.toFixed(2)}ms`);
+      logger.debug("Tempo de inicialização da aplicação", { loadTimeMs: loadTime.toFixed(2) });
     }
 
     // Handler para erros não tratados para métrica de MTTR/Estabilidade
