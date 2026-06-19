@@ -13,18 +13,6 @@ vi.mock("framer-motion", () => ({
   AnimatePresence: ({ children }: ChildrenOnlyProps) => <>{children}</>,
 }));
 
-// Use the real lucide-react icons in tests. They are lightweight SVG components
-// that render fine under jsdom. A previous catch-all Proxy mock returned a
-// component for *every* property access — including `then`, which made the mocked
-// module namespace look like a never-resolving thenable, so `await import()` hung
-// forever and froze every test importing lucide-react. Vitest also cannot
-// enumerate a Proxy's named exports (no `ownKeys` trap), so named imports failed
-// once the hang was removed. Importing the real module avoids both problems.
-vi.mock("lucide-react", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("lucide-react")>();
-  return actual;
-});
-
 // Mock browser APIs not available in JSDOM
 Object.defineProperty(window, "matchMedia", {
   writable: true,
