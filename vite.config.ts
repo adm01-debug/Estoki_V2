@@ -95,6 +95,19 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
+            // Keep React in the same chunk as the UI libs that consume
+            // React.forwardRef at module-evaluation time (radix, lucide).
+            // Splitting them produced a runtime "Cannot read properties of
+            // undefined (reading 'forwardRef')" because the UI chunk was
+            // evaluated before React's namespace was initialized.
+            if (
+              id.includes("/react/") ||
+              id.includes("/react-dom/") ||
+              id.includes("/scheduler/") ||
+              id.includes("/react/jsx-runtime") ||
+              id.includes("/react/jsx-dev-runtime")
+            )
+              return "vendor-react";
             if (id.includes("lucide-react")) return "vendor-ui";
             if (id.includes("@radix-ui")) return "vendor-ui";
             if (id.includes("framer-motion") || id.includes("recharts")) return "vendor-visuals";
