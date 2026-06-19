@@ -21,7 +21,7 @@ export function useAuditLog(filters: AuditFilter = { pageSize: 200 }) {
     mutationFn: async (entry: Omit<AuditLogEntry, "id" | "created_at" | "user_id">) => {
       if (!user) return;
 
-      const newEntry = {
+      const newEntry: Omit<AuditLogEntry, "id" | "created_at"> = {
         ...entry,
         user_id: user.id,
         user_email: user.email || undefined,
@@ -29,7 +29,7 @@ export function useAuditLog(filters: AuditFilter = { pageSize: 200 }) {
         ip_address: "client-side",
       };
 
-      return auditService.log(newEntry as any);
+      return auditService.log(newEntry);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
