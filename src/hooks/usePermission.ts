@@ -1,5 +1,7 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export type Permission =
   | "read:products"
@@ -12,36 +14,43 @@ export type Permission =
   | "approve:movements"
   | "admin:all";
 
+const legacyPermissionMap: Record<Permission, string> = {
+  "read:products": "products.read",
+  "write:products": "products.write",
+  "delete:products": "products.delete",
+  "read:inventory": "inventory.read",
+  "write:inventory": "inventory.write",
+  "read:users": "users.read",
+  "write:users": "users.write",
+  "approve:movements": "inventory.adjust",
+  "admin:all": "settings.write",
+};
+
 export function usePermission() {
-  const { user, role } = useAuth();
+  const { user } = useAuth();
+
+  const { data: permissions = [] } = useQuery({
+    queryKey: ["user-permissions", user?.id],
+    enabled: Boolean(user?.id),
+    staleTime: 5 * 60 * 1000,
+    retry: (failureCount, error) => {
+      const status = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+      if (status === 401 || status === 403) return false;
+      return failureCount < 2;
+    },
+    queryFn: async (): Promise<string[]> => {
+      const { data, error } = await supabase.rpc("get_current_user_permissions");
+      if (error) throw error;
+      return (data || []).map((row) => row.permission);
+    },
+  });
 
   const hasPermission = useCallback(
     (permission: Permission) => {
-      if (!user || !role) return false;
-
-      if (role === "admin") return true;
-
-      switch (permission) {
-        case "read:products":
-        case "read:inventory":
-          return ["admin", "supervisor", "operador"].includes(role);
-
-        case "write:products":
-        case "write:inventory":
-          return ["admin", "supervisor"].includes(role);
-
-        case "approve:movements":
-          return ["admin", "supervisor"].includes(role);
-
-        case "write:users":
-        case "delete:products":
-          return false; // Já coberto pelo check de admin no início
-
-        default:
-          return false;
-      }
+      if (!user) return false;
+      return permissions.includes(legacyPermissionMap[permission]);
     },
-    [role, user]
+    [permissions, user]
   );
 
   return { hasPermission };
