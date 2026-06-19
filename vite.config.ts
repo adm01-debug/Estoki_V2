@@ -94,32 +94,17 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks(id) {
+          // Only split heavy, side-effect-free optional libs into their own
+          // chunks. Everything else (React, Radix, Lucide, Supabase, Router)
+          // stays in the default vendor chunk so Rollup controls evaluation
+          // order and avoids circular cross-chunk imports that produced the
+          // "Cannot read properties of undefined (reading 'forwardRef')"
+          // crash in production.
           if (id.includes("node_modules")) {
-            // Keep React in the same chunk as the UI libs that consume
-            // React.forwardRef at module-evaluation time (radix, lucide).
-            // Splitting them produced a runtime "Cannot read properties of
-            // undefined (reading 'forwardRef')" because the UI chunk was
-            // evaluated before React's namespace was initialized.
-            if (
-              id.includes("/react/") ||
-              id.includes("/react-dom/") ||
-              id.includes("/scheduler/") ||
-              id.includes("/react/jsx-runtime") ||
-              id.includes("/react/jsx-dev-runtime")
-            )
-              return "vendor-react";
-            if (id.includes("lucide-react")) return "vendor-ui";
-            if (id.includes("@radix-ui")) return "vendor-ui";
-            if (id.includes("framer-motion") || id.includes("recharts")) return "vendor-visuals";
+            if (id.includes("recharts") || id.includes("framer-motion"))
+              return "vendor-visuals";
             if (id.includes("jspdf") || id.includes("exceljs") || id.includes("papaparse"))
               return "vendor-utils";
-            if (
-              id.includes("@supabase") ||
-              id.includes("@tanstack") ||
-              id.includes("react-router-dom")
-            )
-              return "vendor-core";
-            return "vendor-libs";
           }
         },
       },
