@@ -8,12 +8,6 @@ import { logger } from "@/utils/logger";
 
 type AnalyticsMetadata = Record<string, unknown>;
 
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
-}
-
 // Tipos de eventos
 export enum EventCategory {
   USER = "user",
