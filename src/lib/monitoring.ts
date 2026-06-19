@@ -18,17 +18,12 @@ export const logError = (error: Error, context?: Record<string, unknown>): void 
   if (import.meta.env.DEV) logger.error("Erro monitorado", error, context);
   Sentry.captureException(error, { extra: context });
 
-  // Also log to Supabase for internal tracking if needed
   supabase
-    .from("audit_log")
-    .insert([
-      {
-        action: "error",
-        entity_type: "system",
-        metadata: { message: error.message, ...context },
-        created_at: new Date().toISOString(),
-      },
-    ])
+    .rpc("log_audit_event", {
+      p_action: "error",
+      p_entity_type: "system",
+      p_metadata: { message: error.message, ...context },
+    })
     .then(({ error: pgError }) => {
       if (pgError) logger.error("Falha ao registrar erro no banco", pgError);
     });
