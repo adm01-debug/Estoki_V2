@@ -21,7 +21,7 @@ vi.mock("framer-motion", () => ({
 // enumerate a Proxy's named exports (no `ownKeys` trap), so named imports failed
 // once the hang was removed. Importing the real module avoids both problems.
 vi.mock("lucide-react", async () => {
-  const actual = await vi.importActual<typeof import("lucide-react")>("lucide-react");
+  const actual = await import("lucide-react");
   return actual;
 });
 

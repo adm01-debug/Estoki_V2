@@ -10,7 +10,7 @@ type AnalyticsMetadata = Record<string, unknown>;
 
 declare global {
   interface Window {
-    gtag?: (command: "event", action: string, params: AnalyticsMetadata) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
