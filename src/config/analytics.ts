@@ -4,6 +4,9 @@
  */
 
 import { envConfig, isProduction } from "./environment";
+import { logger } from "@/utils/logger";
+
+type AnalyticsMetadata = Record<string, unknown>;
 
 // Tipos de eventos
 export enum EventCategory {
@@ -47,14 +50,14 @@ interface AnalyticsEvent {
   action: EventAction;
   label?: string;
   value?: number;
-  metadata?: Record<string, any>;
+  metadata?: AnalyticsMetadata;
   timestamp: string;
   userId?: string;
   sessionId?: string;
 }
 
 // Session ID único por sessão
-const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
 // Fila de eventos para batch processing
 let eventQueue: AnalyticsEvent[] = [];
@@ -69,9 +72,9 @@ async function flushEvents(): Promise<void> {
 
   try {
     // Google Analytics 4
-    if (envConfig.gaTrackingId && typeof window !== "undefined" && (window as any).gtag) {
+    if (envConfig.gaTrackingId && typeof window !== "undefined" && window.gtag) {
       eventsToSend.forEach((event) => {
-        (window as any).gtag("event", event.action, {
+        window.gtag?.("event", event.action, {
           event_category: event.category,
           event_label: event.label,
           value: event.value,
@@ -110,7 +113,7 @@ export function trackEvent(
   options?: {
     label?: string;
     value?: number;
-    metadata?: Record<string, any>;
+    metadata?: AnalyticsMetadata;
     userId?: string;
   }
 ): void {
@@ -127,7 +130,7 @@ export function trackEvent(
 
   // Em dev, apenas logar no console
   if (!isProduction()) {
-    console.log("[ANALYTICS]", event);
+    logger.debug("Evento de analytics capturado", { event });
     return;
   }
 

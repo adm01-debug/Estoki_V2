@@ -80,7 +80,15 @@ export const auditService = {
   },
 
   async log(entry: Omit<AuditLogEntry, "id" | "created_at">): Promise<void> {
-    const { error } = await supabase.from("audit_log").insert([entry]);
+    const { error } = await supabase.rpc("log_audit_event", {
+      p_action: entry.action,
+      p_entity_type: entry.entity_type,
+      p_entity_id: entry.entity_id,
+      p_entity_label: entry.entity_label,
+      p_old_values: entry.old_values,
+      p_new_values: entry.new_values,
+      p_metadata: entry.metadata,
+    });
 
     if (error) {
       logger.error("Erro ao registrar ação de auditoria", error, { entry });

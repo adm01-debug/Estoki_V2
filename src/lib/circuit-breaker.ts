@@ -7,6 +7,8 @@
  *
  * States: CLOSED → OPEN → HALF_OPEN → CLOSED
  */
+import { logger } from "@/utils/logger";
+
 
 type CircuitState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
@@ -53,7 +55,7 @@ export class CircuitBreaker {
       if (this.shouldAttemptReset()) {
         this.state = "HALF_OPEN";
         if (import.meta.env.DEV) {
-          console.log(`[CircuitBreaker:${this.name}] HALF_OPEN — testing...`);
+          logger.debug("Circuit breaker em teste", { name: this.name, state: "HALF_OPEN" });
         }
       } else {
         throw new CircuitBreakerError(
@@ -98,7 +100,7 @@ export class CircuitBreaker {
     this.failures = 0;
     this.lastFailure = null;
     if (import.meta.env.DEV) {
-      console.log(`[CircuitBreaker:${this.name}] manually RESET to CLOSED`);
+      logger.debug("Circuit breaker reiniciado", { name: this.name, state: "CLOSED" });
     }
   }
 
@@ -106,7 +108,7 @@ export class CircuitBreaker {
     this.totalSuccesses++;
     if (this.state === "HALF_OPEN") {
       if (import.meta.env.DEV) {
-        console.log(`[CircuitBreaker:${this.name}] HALF_OPEN → CLOSED (success)`);
+        logger.debug("Circuit breaker fechado após sucesso", { name: this.name });
       }
     }
     this.state = "CLOSED";
@@ -121,7 +123,7 @@ export class CircuitBreaker {
     if (this.state === "HALF_OPEN") {
       this.state = "OPEN";
       if (import.meta.env.DEV) {
-        console.log(`[CircuitBreaker:${this.name}] HALF_OPEN → OPEN (failed again)`);
+        logger.debug("Circuit breaker reaberto após falha", { name: this.name });
       }
       return;
     }
@@ -129,7 +131,10 @@ export class CircuitBreaker {
     if (this.failures >= this.failureThreshold) {
       this.state = "OPEN";
       if (import.meta.env.DEV) {
-        console.log(`[CircuitBreaker:${this.name}] CLOSED → OPEN after ${this.failures} failures`);
+        logger.debug("Circuit breaker aberto após falhas consecutivas", {
+          name: this.name,
+          failures: this.failures,
+        });
       }
     }
   }

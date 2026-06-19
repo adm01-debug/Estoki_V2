@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
+import { logger } from "@/utils/logger";
 
 interface PushNotificationOptions {
   title: string;
@@ -58,8 +59,7 @@ export function usePushNotifications() {
   const showNotification = useCallback(
     (options: PushNotificationOptions): Notification | null => {
       if (!isSupported || permission !== "granted") {
-        if (import.meta.env.DEV)
-          console.log("Cannot show notification: not supported or not permitted");
+        if (import.meta.env.DEV) logger.debug("Notificação não exibida", { isSupported, permission });
         return null;
       }
 

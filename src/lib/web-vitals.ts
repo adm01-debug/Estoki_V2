@@ -2,6 +2,7 @@
  * Web Vitals Performance Monitoring
  * Tracks Core Web Vitals (LCP, FID, CLS, TTFB, INP) and reports them
  */
+import { logger } from "@/utils/logger";
 
 interface WebVitalMetric {
   name: string;
@@ -165,20 +166,7 @@ export function initWebVitals(): void {
   if (typeof window === "undefined") return;
 
   const reportMetric: ReportHandler = (metric) => {
-    // Log in development
-    if (import.meta.env.DEV) {
-      const color =
-        metric.rating === "good"
-          ? "#0cce6b"
-          : metric.rating === "needs-improvement"
-            ? "#ffa400"
-            : "#ff4e42";
-      if (import.meta.env.DEV)
-        console.log(
-          `%c[Web Vital] ${metric.name}: ${metric.value.toFixed(metric.name === "CLS" ? 3 : 0)}${metric.name === "CLS" ? "" : "ms"} (${metric.rating})`,
-          `color: ${color}; font-weight: bold;`
-        );
-    }
+    if (import.meta.env.DEV) logger.debug("Web Vital capturado", { metric });
 
     // Send to analytics in production (if available)
     if (!import.meta.env.DEV && "sendBeacon" in navigator) {

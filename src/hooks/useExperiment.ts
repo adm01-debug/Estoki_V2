@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { logger } from "@/utils/logger";
 
 export function useExperiment(experimentId: string, variants: string[]) {
   const [variant] = useState(() => {
@@ -11,7 +12,7 @@ export function useExperiment(experimentId: string, variants: string[]) {
 
   const track = useCallback(
     (event: string) => {
-      if (import.meta.env.DEV) console.log("[Experiment]", experimentId, variant, event);
+      if (import.meta.env.DEV) logger.debug("Evento de experimento", { experimentId, variant, event });
     },
     [experimentId, variant]
   );

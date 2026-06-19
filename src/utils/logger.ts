@@ -6,6 +6,17 @@ interface LogMetadata {
   [key: string]: unknown;
 }
 
+declare global {
+  interface Window {
+    Sentry?: {
+      captureException: (
+        error: unknown,
+        context?: { extra?: LogMetadata; tags?: Record<string, string> }
+      ) => void;
+    };
+  }
+}
+
 class Logger {
   private isDev = !isProduction();
 
@@ -36,10 +47,9 @@ class Logger {
 
     console.error(this.formatMessage("error", message, errorMeta));
 
-    if (isProduction() && envConfig.sentryDsn) {
-      const Sentry = (window as any).Sentry;
-      if (Sentry) {
-        Sentry.captureException(error || new Error(message), {
+    if (isProduction() && envConfig.sentryDsn && typeof window !== "undefined") {
+      if (window.Sentry) {
+        window.Sentry.captureException(error || new Error(message), {
           extra: metadata,
           tags: { level: "error" },
         });

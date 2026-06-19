@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Trophy } from "lucide-react";
 import { ConquistaCompleta, BadgeRarity } from "@/hooks/useConquistas";
+import { logger } from "@/utils/logger";
 
 // Simula storage de conquistas já notificadas
 const NOTIFIED_KEY = "notified_achievements";
@@ -26,7 +27,7 @@ function markAsNotified(achievementId: string) {
 // Solicitar permissão para notificações push
 export async function requestNotificationPermission(): Promise<boolean> {
   if (!("Notification" in window)) {
-    if (import.meta.env.DEV) console.log("Este navegador não suporta notificações");
+    if (import.meta.env.DEV) logger.debug("Navegador sem suporte a notificações");
     return false;
   }
 

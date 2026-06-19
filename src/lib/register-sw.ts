@@ -1,8 +1,9 @@
 // Service Worker Registration
+import { logger } from "@/utils/logger";
 
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
   if (!("serviceWorker" in navigator)) {
-    if (import.meta.env.DEV) console.log("[SW] Service Workers not supported");
+    if (import.meta.env.DEV) logger.debug("Service Worker não suportado");
     return null;
   }
 
@@ -12,7 +13,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
       updateViaCache: "none",
     });
 
-    if (import.meta.env.DEV) console.log("[SW] Service Worker registered:", registration.scope);
+    if (import.meta.env.DEV) logger.debug("Service Worker registrado", { scope: registration.scope });
 
     // Check for updates periodically
     setInterval(
@@ -40,7 +41,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     // Handle controller change
     navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (import.meta.env.DEV) console.log("[SW] Controller changed");
+      if (import.meta.env.DEV) logger.debug("Service Worker controller alterado");
     });
 
     return registration;
@@ -56,7 +57,7 @@ export async function unregisterServiceWorker(): Promise<boolean> {
   try {
     const registration = await navigator.serviceWorker.ready;
     const success = await registration.unregister();
-    if (import.meta.env.DEV) console.log("[SW] Unregistered:", success);
+    if (import.meta.env.DEV) logger.debug("Service Worker removido", { success });
     return success;
   } catch (error) {
     if (import.meta.env.DEV) console.error("[SW] Unregister failed:", error);
@@ -86,7 +87,7 @@ export async function subscribeToPush(
       ) as BufferSource,
     });
 
-    if (import.meta.env.DEV) console.log("[SW] Push subscription:", subscription.endpoint);
+    if (import.meta.env.DEV) logger.debug("Push subscription criada", { endpoint: subscription.endpoint });
     return subscription;
   } catch (error) {
     if (import.meta.env.DEV) console.error("[SW] Push subscription failed:", error);

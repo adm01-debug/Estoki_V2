@@ -1,9 +1,21 @@
 import { useState, useCallback, useEffect } from "react";
+
+type WakeLockSentinel = {
+  release: () => Promise<void>;
+};
+
+type WakeLockNavigator = Navigator & {
+  wakeLock?: {
+    request: (type: "screen") => Promise<WakeLockSentinel>;
+  };
+};
+
 export function useWakeLock() {
-  const [wakeLock, setWakeLock] = useState<any>(null);
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
   const request = useCallback(async () => {
     try {
-      const lock = await (navigator as any).wakeLock.request("screen");
+      const lock = await (navigator as WakeLockNavigator).wakeLock?.request("screen");
+      if (!lock) return;
       setWakeLock(lock);
     } catch {
       // Wake lock not supported or denied

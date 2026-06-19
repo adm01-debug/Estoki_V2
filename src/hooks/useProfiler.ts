@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { logger } from "@/utils/logger";
 
 export function useProfiler(id: string, onRender?: (duration: number) => void) {
   const startTime = useRef(performance.now());
@@ -9,7 +10,11 @@ export function useProfiler(id: string, onRender?: (duration: number) => void) {
     const duration = performance.now() - startTime.current;
     if (onRender) onRender(duration);
     if (import.meta.env.DEV) {
-      console.log(`[Profiler ${id}] Render #${renderCount.current}: ${duration.toFixed(2)}ms`);
+      logger.debug("Render monitorado", {
+        id,
+        renderCount: renderCount.current,
+        durationMs: duration.toFixed(2),
+      });
     }
     startTime.current = performance.now();
   });
