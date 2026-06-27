@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AppProvider } from "@/contexts/AppContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { TransitionProvider } from "@/contexts/TransitionContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { KeyboardShortcuts } from "./KeyboardShortcuts";
@@ -42,7 +43,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
                   <InstallPrompt />
                   <UpdatePrompt />
                   <PerformanceMonitor />
-                  {children}
+                  <TransitionProvider>{children}</TransitionProvider>
                 </NotificationProvider>
               </AppProvider>
             </AuthProvider>

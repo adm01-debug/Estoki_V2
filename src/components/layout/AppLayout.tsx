@@ -16,6 +16,7 @@ import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation
 import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
 import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
 import { PerformanceHUD } from "../telemetry/PerformanceHUD";
+import { usePageTransition } from "@/hooks/usePageTransition";
 
 const AppLayoutContext = createContext(false);
 
@@ -29,6 +30,7 @@ interface AppLayoutProps {
 export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
   const isNested = useContext(AppLayoutContext);
   const { user, profile, role, loading } = useAuth();
+  const pageTransition = usePageTransition();
 
   const {
     location,
@@ -106,16 +108,10 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={location.pathname}
-                  initial={{ opacity: 0, y: 8, scale: 0.995 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 1.005 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 380,
-                    damping: 35,
-                    mass: 1,
-                    opacity: { duration: 0.2 },
-                  }}
+                  initial={pageTransition.initial}
+                  animate={pageTransition.animate}
+                  exit={pageTransition.exit}
+                  transition={pageTransition.transition}
                   className="relative flex flex-1 flex-col px-4 pb-10 will-change-transform md:px-6 lg:px-8"
                 >
                   {children || <Outlet />}

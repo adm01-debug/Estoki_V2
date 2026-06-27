@@ -1,28 +1,21 @@
 import { ReactNode, forwardRef } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
+import { usePageTransition } from "@/hooks/usePageTransition";
+import type { TransitionName, TransitionPreset } from "@/lib/transitions/types";
 
-interface PageTransitionProps extends HTMLMotionProps<"div"> {
+interface PageTransitionProps extends Omit<HTMLMotionProps<"div">, "initial" | "animate" | "exit" | "transition"> {
   children: ReactNode;
+  name?: TransitionName;
+  config?: Partial<TransitionPreset>;
 }
 
 export const PageTransition = forwardRef<HTMLDivElement, PageTransitionProps>(
-  (
-    {
-      children,
-      initial = { opacity: 0, y: 8, scale: 0.99 },
-      animate = { opacity: 1, y: 0, scale: 1 },
-      exit = { opacity: 0, y: -8, scale: 1.01 },
-      transition = {
-        type: "spring",
-        damping: 30,
-        stiffness: 300,
-        mass: 0.8,
-        opacity: { duration: 0.2 },
-      },
-      ...props
-    },
-    ref
-  ) => {
+  ({ children, name, config, ...props }, ref) => {
+    const resolved = usePageTransition(name);
+    const initial = config?.initial ?? resolved.initial;
+    const animate = config?.animate ?? resolved.animate;
+    const exit = config?.exit ?? resolved.exit;
+    const transition = config?.transition ?? resolved.transition;
     return (
       <motion.div
         ref={ref}
