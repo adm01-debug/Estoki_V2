@@ -1,46 +1,189 @@
 # Arquitetura Técnica - ESTOKI
 
-Este documento descreve a arquitetura do sistema WMS ESTOKI, detalhando o fluxo de dados, a organização de pastas e os contratos de integração.
+Este documento descreve a arquitetura do sistema WMS ESTOKI: fluxo de dados ponta a ponta, organização de pastas e contratos de integração.
 
-## 🔄 Fluxo de Dados (Diagrama de Sequência)
+## 🔄 Fluxo de Dados Completo
 
-O sistema utiliza uma ponte segura entre o frontend e fontes de dados externas ou protegidas via Supabase Edge Functions.
+### Visão em Camadas (UI → Hook → Supabase → RLS → Cache)
+
+```mermaid
+flowchart LR
+    subgraph UI["Camada UI"]
+        C[Componente React]
+        S[Skeleton / Suspense]
+        E[ErrorBoundary]
+    end
+
+    subgraph HOOKS["Camada de Hooks"]
+        UQ[useQuery / useMutation]
+        CH[Custom Hook<br/>useEstoque, useRecebimentos...]
+        RT[useRealtime<br/>invalidateQueries]
+    end
+
+    subgraph CACHE["TanStack Query Cache"]
+        QC[(QueryClient<br/>staleTime 5min<br/>gcTime 10min)]
+    end
+
+    subgraph SDK["Supabase Client"]
+        SB[supabase-js<br/>JWT + anon key]
+    end
+
+    subgraph BACKEND["Lovable Cloud / Postgres"]
+        PR[PostgREST /rest/v1]
+        EF[Edge Function<br/>external-db-bridge]
+        RLS{RLS Policies<br/>has_role / auth.uid}
+        DB[(Tabelas + Views)]
+        AUD[(audit_log<br/>query_telemetry)]
+    end
+
+    C --> CH
+    CH --> UQ
+    UQ -->|cache hit| QC
+    UQ -->|cache miss| SB
+    SB --> PR
+    SB --> EF
+    PR --> RLS
+    EF --> RLS
+    RLS -->|allow| DB
+    RLS -->|deny 403| SB
+    DB --> AUD
+    DB --> PR
+    PR --> SB
+    SB --> UQ
+    UQ --> QC
+    QC --> CH
+    CH --> C
+    C -.fallback.-> S
+    C -.throw.-> E
+    RT -.invalida.-> QC
+    DB -.postgres_changes.-> RT
+```
+
+### Sequência de uma Leitura Autenticada
 
 ```mermaid
 sequenceDiagram
-    participant UI as Componente React
-    participant Hook as Custom Hook (useExternalQuery)
-    participant Supabase as Supabase Client
-    participant Edge as Edge Function (external-db-bridge)
-    participant DB as Banco de Dados Externo/Cache
+    autonumber
+    participant UI as Componente
+    participant H as Custom Hook
+    participant Q as TanStack Query
+    participant SB as supabase-js
+    participant PG as PostgREST
+    participant RLS as RLS Policy
+    participant DB as Postgres
 
-    UI->>Hook: Chama função com query SQL
-    Hook->>Supabase: invoke('external-db-bridge', { body: { query } })
-    Supabase->>Edge: Request HTTP POST
-    Edge->>Edge: Valida Token & RLS
-    Edge->>DB: Executa Query
-    DB-->>Edge: Retorna Dados
-    Edge-->>Supabase: Response JSON
-    Supabase-->>Hook: Retorna Dados/Erro
-    Hook-->>UI: Atualiza Estado (React Query)
-    UI-->>UI: Renderiza Dados na Tela
+    UI->>H: mount / props change
+    H->>Q: useQuery(['estoque', filtros])
+    alt Cache fresh (menor que staleTime)
+        Q-->>H: data em memória
+        H-->>UI: render imediato
+    else Cache stale ou vazio
+        Q->>SB: from('estoque').select().limit(500)
+        SB->>PG: GET /rest/v1/estoque + JWT
+        PG->>RLS: USING (has_role(uid,'admin') OR owner=uid)
+        alt Autorizado
+            RLS->>DB: SELECT ...
+            DB-->>PG: rows
+            PG-->>SB: 200 JSON
+            SB-->>Q: data
+            Q->>Q: set cache + schedule gc
+            Q-->>H: data
+            H-->>UI: render com dados
+        else Negado
+            RLS-->>PG: 0 rows / 403
+            PG-->>SB: erro
+            SB-->>Q: sem retry em 401/403
+            Q-->>H: error
+            H-->>UI: ErrorBoundary / toast
+        end
+    end
+```
+
+### Sequência de uma Mutação com Invalidação + Realtime
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UI as Form
+    participant M as useMutation
+    participant SB as supabase-js
+    participant DB as Postgres
+    participant RT as Realtime Channel
+    participant Q as QueryClient
+    participant OTHER as Outras Abas/Usuários
+
+    UI->>M: mutate(payload)
+    M->>SB: insert/update + RLS WITH CHECK
+    SB->>DB: SQL + audit trigger
+    DB-->>SB: row retornada
+    SB-->>M: success
+    M->>Q: invalidateQueries(['estoque'])
+    Q->>UI: refetch automático
+    DB-->>RT: postgres_changes (broadcast)
+    RT-->>OTHER: evento INSERT/UPDATE
+    OTHER->>Q: invalidateQueries(['estoque'])
+```
+
+### Fluxo via Edge Function (`external-db-bridge`)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant UI as Componente
+    participant H as Hook
+    participant SB as supabase.functions
+    participant EF as Edge Function
+    participant SR as service_role client
+    participant DB as Postgres
+    participant T as query_telemetry
+
+    UI->>H: ação (telemetria / query complexa)
+    H->>SB: invoke('external-db-bridge', { action, payload })
+    SB->>EF: POST + JWT do usuário
+    EF->>EF: validateTelemetryPayload()
+    EF->>SR: createClient(SERVICE_ROLE)
+    SR->>DB: SELECT / INSERT
+    DB-->>SR: resultado
+    SR-->>EF: data
+    EF->>T: fire-and-forget insert (slow/error)
+    EF-->>SB: JSON { success, data, severity }
+    SB-->>H: resposta
+    H-->>UI: atualiza estado
+```
+
+### Avaliação de RLS (detalhe)
+
+```mermaid
+flowchart TD
+    REQ[Request com JWT] --> JWT{JWT válido?}
+    JWT -->|não| R401[401 Unauthorized]
+    JWT -->|sim| ROLE[Extrai auth.uid + role]
+    ROLE --> POL{Policy USING<br/>retorna true?}
+    POL -->|não| R403[403 / 0 rows]
+    POL -->|sim, é write| CHK{WITH CHECK<br/>retorna true?}
+    POL -->|sim, é read| OK
+    CHK -->|não| R403
+    CHK -->|sim| OK[Executa SQL]
+    OK --> TRG[Triggers: audit_log,<br/>updated_at, telemetry]
+    TRG --> RESP[Resposta ao cliente]
 ```
 
 ---
 
 ## 📁 Mapa do Projeto e Responsabilidades
 
-A estrutura segue o padrão de **Clean Architecture** adaptado para ambientes Serverless/Vite.
+Estrutura inspirada em Clean Architecture adaptada para Vite + Serverless.
 
 ### Frontend (`src/`)
 
 | Camada        | Responsabilidade                               | Exemplo                          |
 | ------------- | ---------------------------------------------- | -------------------------------- |
 | `components/` | Componentes de UI puros e reutilizáveis.       | `Button.tsx`, `DataTable.tsx`    |
-| `hooks/`      | Orquestração de estado e chamadas assíncronas. | `useExternalQuery.ts`            |
-| `pages/`      | Composição de componentes para formar telas.   | `Dashboard.tsx`, `Inventory.tsx` |
-| `services/`   | Configuração de clientes (Supabase, API).      | `supabase.ts`                    |
-| `lib/`        | Funções utilitárias sem efeitos colaterais.    | `logger.ts`, `cn.ts`             |
+| `hooks/`      | Orquestração de estado e chamadas assíncronas. | `useRealtime.ts`, `useCRUD.ts`   |
+| `features/`   | Domínios verticais (hooks + pages + services). | `features/inventory`, `shipping` |
+| `pages/`      | Composição de componentes para formar telas.   | `Dashboard.tsx`, `Estoque.tsx`   |
+| `services/`   | Acesso a dados e regras de domínio.            | `authService.ts`                 |
+| `lib/`        | Utilitários puros sem efeitos colaterais.      | `logger.ts`, `cn.ts`             |
 | `types/`      | Contratos de interface e tipos do banco.       | `database.types.ts`              |
 
 ### Backend (`supabase/`)
@@ -54,7 +197,7 @@ A estrutura segue o padrão de **Clean Architecture** adaptado para ambientes Se
 
 ## 🌉 Contratos da Edge Function: `external-db-bridge`
 
-A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
+Proxy seguro para telemetria e consultas auditadas.
 
 ### Endpoint: `POST /external-db-bridge`
 
@@ -62,8 +205,8 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 
 ```json
 {
-  "query": "string",
-  "params": "array (opcional)"
+  "action": "emit_telemetry | query_telemetry | cleanup_telemetry",
+  "payload": { "operation": "string", "duration_ms": 0 }
 }
 ```
 
@@ -71,9 +214,9 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 
 ```json
 {
-  "data": "array",
-  "execution_time_ms": "number",
-  "error": null
+  "success": true,
+  "severity": "normal | slow | very_slow | error",
+  "persisted": true
 }
 ```
 
@@ -81,57 +224,31 @@ A Edge Function atua como um Proxy seguro para consultas complexas e auditoria.
 
 | Código | Motivo                                                   |
 | ------ | -------------------------------------------------------- |
+| `400`  | Payload inválido ou ação não reconhecida.                |
 | `401`  | Token JWT inválido ou expirado.                          |
-| `403`  | Violação de Política RLS (Tentativa de acesso proibido). |
-| `400`  | Query SQL malformada ou parâmetro inválido.              |
+| `403`  | Violação de Política RLS.                                |
+| `500`  | Falha interna na execução.                               |
 
 ---
 
 ## 🛠️ Padrões de Desenvolvimento
 
-1.  **Segurança (RLS):** Nunca confie no frontend. Todas as tabelas possuem RLS habilitado.
-2.  **Performance:** Uso agressivo de `React Query` para cache de consultas.
-3.  **Auditabilidade:** Toda operação via `external-db-bridge` gera um log na tabela `audit_log`.
-4.  **Testabilidade:** Cobertura de testes unitários com Vitest e testes E2E com Playwright para fluxos críticos.
+1. **Segurança (RLS):** todas as tabelas públicas com RLS habilitado e GRANT explícito.
+2. **Performance:** cache agressivo com TanStack Query, `limit(500)` em queries genéricas.
+3. **Auditabilidade:** triggers para `audit_log` e telemetria slow/error em `query_telemetry`.
+4. **Testabilidade:** Vitest (unit) + Playwright (E2E) bloqueando merges no CI.
 
 ---
 
 ## 🧪 Estratégia de Testes
 
-### Testes End-to-End (E2E)
+### E2E (`tests/e2e/`)
+Playwright cobre login/logout, rotas protegidas, persistência de sessão e fluxos críticos. Relatórios HTML + traces publicados como artifacts no GitHub Actions.
 
-Localizados em `tests/e2e/`, utilizam Playwright para validar os fluxos mais importantes do usuário.
-
-**Fluxos Cobertos:**
-
-- **Autenticação:** Login, redirecionamento de rotas protegidas e logout.
-- **Navegação:** Persistência de sessão após refresh e navegação via Sidebar.
-- **Operações Críticas:** Busca no inventário, simulação de recebimento e consulta de expedição.
-
-**CI/CD:**
-Os testes E2E são executados automaticamente no GitHub Actions em cada Pull Request. O build falhará se qualquer teste não passar.
-
-**Artefatos de CI:** Em caso de falha, o GitHub Actions gera um relatório HTML completo, capturas de tela e vídeos dos testes, disponíveis na aba "Artifacts" do workflow.
-
-**Como executar localmente:**
+### Unitários e Integração
+Vitest + React Testing Library próximos aos componentes (`__tests__/`).
 
 ```bash
-npm run test:e2e
-```
-
-**Como inspecionar falhas do CI:**
-
-1. Vá para a aba "Actions" no GitHub.
-2. Selecione a execução do workflow que falhou.
-3. Role até "Artifacts" e baixe o `playwright-test-results`.
-4. Abra o `index.html` para ver o relatório com evidências visuais (incluindo vídeos e traces).
-
-### Testes Unitários e de Integração
-
-Localizados junto aos componentes ou em pastas `__tests__`, focam na lógica de negócio e renderização de componentes isolados.
-
-**Como executar:**
-
-```bash
-npm run test
+npm run test       # unitários
+npm run test:e2e   # ponta a ponta
 ```
