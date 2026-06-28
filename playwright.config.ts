@@ -64,11 +64,22 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: {
-    command: "npm run dev",
-    url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+  /* Run a local server before tests.
+   * PW_TARGET=build  -> serve production bundle via `vite preview` (porta 4173)
+   * default          -> dev server (porta 5173)
+   */
+  webServer:
+    process.env.PW_TARGET === "build"
+      ? {
+          command: "npm run build && npm run preview -- --port 4173 --strictPort",
+          url: "http://localhost:4173",
+          reuseExistingServer: !process.env.CI,
+          timeout: 180 * 1000,
+        }
+      : {
+          command: "npm run dev",
+          url: "http://localhost:5173",
+          reuseExistingServer: !process.env.CI,
+          timeout: 120 * 1000,
+        },
 });
