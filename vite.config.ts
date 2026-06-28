@@ -55,7 +55,14 @@ export default defineConfig(({ mode }) => ({
       }),
   ].filter(Boolean),
   resolve: {
-    dedupe: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "react-router",
+      "react-router-dom",
+    ],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
@@ -65,6 +72,7 @@ export default defineConfig(({ mode }) => ({
       "react",
       "react-dom",
       "react-router-dom",
+      "react-router",
       "react/jsx-runtime",
       "react/jsx-dev-runtime",
       "@tanstack/react-query",
