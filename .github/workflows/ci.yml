@@ -40,9 +40,13 @@ jobs:
         run: npm run build
 
   e2e-tests:
-    name: Playwright E2E Tests
+    name: Playwright E2E (${{ matrix.target }})
     runs-on: ubuntu-latest
     needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [preview, build]
 
     steps:
       - name: Checkout repository
@@ -60,17 +64,27 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
+      - name: Run Playwright tests (preview / dev server)
+        if: matrix.target == 'preview'
         run: npm run test:e2e
         env:
+          CI: "true"
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
-      - name: Upload Playwright artifacts (Report, Screenshots, Videos)
+      - name: Run Playwright tests (production build)
+        if: matrix.target == 'build'
+        run: npm run test:e2e:build
+        env:
+          CI: "true"
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Upload Playwright artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results
+          name: playwright-report-${{ matrix.target }}
           path: |
             playwright-report/
             test-results/
