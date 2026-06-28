@@ -14,7 +14,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:build": "cross-env PW_TARGET=build VITE_APP_URL=http://localhost:4173 playwright test",
+    "test:e2e:build": "PW_TARGET=build VITE_APP_URL=http://localhost:4173 playwright test",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
