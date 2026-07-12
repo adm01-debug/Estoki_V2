@@ -12,17 +12,18 @@ interface SentryUser {
  */
 function scrubPII<T>(value: T): T {
   if (value == null || typeof value !== "object") return value;
-  const clone: Record<string, unknown> = Array.isArray(value)
-    ? [...(value as unknown[])]
-    : { ...(value as Record<string, unknown>) };
+  if (Array.isArray(value)) {
+    return value.map((item) => scrubPII(item)) as unknown as T;
+  }
+  const clone: Record<string, unknown> = { ...(value as Record<string, unknown>) };
   for (const key of Object.keys(clone)) {
     if (/token|password|secret|authorization|email|cpf|cnpj/i.test(key)) {
       clone[key] = "[redacted]";
-    } else if (typeof clone[key] === "object") {
+    } else if (clone[key] && typeof clone[key] === "object") {
       clone[key] = scrubPII(clone[key]);
     }
   }
-  return clone as T;
+  return clone as unknown as T;
 }
 
 let initialized = false;
