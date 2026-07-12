@@ -36,12 +36,7 @@ import {
   FileJson,
   Eye,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ExportButton } from "@/components/ImportExport/ExportButton";
 import {
   Dialog,
   DialogContent,
@@ -178,29 +173,10 @@ export default function AuditLogPage() {
                 <Button variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="flex items-center gap-2"
-                      disabled={isExporting}
-                    >
-                      <Download className="h-4 w-4" />
-                      {isExporting ? "Exportando..." : "Exportar"}
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => exportData("csv")}>
-                      Exportar CSV
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportData("xlsx")}>
-                      Exportar Excel
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => exportData("pdf")}>
-                      Exportar PDF
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <ExportButton
+                  onExport={(format) => exportData(format)}
+                  isExporting={isExporting}
+                />
               </div>
             </CardContent>
           </Card>
