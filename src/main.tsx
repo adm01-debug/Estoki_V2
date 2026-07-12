@@ -5,8 +5,10 @@ import "./i18n";
 import { prefetchCriticalRoutes } from "./lib/prefetch";
 import { initWebVitals } from "./lib/web-vitals";
 import { setupGlobalErrorHandler } from "./config/error-handler";
+import { initSentry } from "./lib/sentry";
 // 0) Setup global monitoring
 setupGlobalErrorHandler();
+initSentry();
 
 // Suppress noisy errors
 window.addEventListener("unhandledrejection", (event) => {

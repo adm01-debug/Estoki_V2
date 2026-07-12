@@ -1,20 +1,49 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 import { visualizer } from "rollup-plugin-visualizer";
 
+/**
+ * Carrega o plugin do Sentry só quando SENTRY_AUTH_TOKEN + org/project
+ * estão presentes no ambiente de build (produção/CI). Isso mantém o dev
+ * local rápido e evita erro em builds sem credenciais.
+ */
+async function loadSentryPlugin(): Promise<PluginOption | null> {
+  const { SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT } = process.env;
+  if (!SENTRY_AUTH_TOKEN || !SENTRY_ORG || !SENTRY_PROJECT) return null;
+  try {
+    const pkg = "@sentry/vite-plugin";
+    const mod = (await import(/* @vite-ignore */ pkg)) as {
+      sentryVitePlugin: (opts: Record<string, unknown>) => PluginOption;
+    };
+    return mod.sentryVitePlugin({
+      authToken: SENTRY_AUTH_TOKEN,
+      org: SENTRY_ORG,
+      project: SENTRY_PROJECT,
+      sourcemaps: { assets: "./dist/**" },
+      telemetry: false,
+    });
+  } catch {
+    // Plugin não instalado — segue sem upload de sourcemaps.
+    return null;
+  }
+}
+
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [
-    react(),
-    mode === "development" && componentTagger(),
-    process.env.ANALYZE === "true" &&
+export default defineConfig(async ({ mode }) => {
+  const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
+  const config: UserConfig = {
+    server: {
+      host: "::",
+      port: 8080,
+    },
+    plugins: [
+      react(),
+      mode === "development" && componentTagger(),
+      sentryPlugin,
+      process.env.ANALYZE === "true" &&
       visualizer({
         filename: "dist/stats.html",
         template: "treemap",
@@ -62,8 +91,8 @@ export default defineConfig(({ mode }) => ({
           ],
         },
       }),
-  ].filter(Boolean),
-  resolve: {
+    ].filter(Boolean) as PluginOption[],
+    resolve: {
     dedupe: [
       "react",
       "react-dom",
@@ -96,7 +125,8 @@ export default defineConfig(({ mode }) => ({
       polyfill: false, // Modern browsers support modulepreload natively
     },
     cssCodeSplit: true,
-    sourcemap: false,
+    // 'hidden' gera sourcemaps para upload ao Sentry mas não referencia no bundle.
+    sourcemap: (mode === "production" ? "hidden" : false) as "hidden" | false,
     minify: "terser",
     terserOptions: {
       compress: {
@@ -110,7 +140,7 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks(id) {
+        manualChunks(id: string) {
           // Only split heavy, side-effect-free optional libs into their own
           // chunks. Everything else (React, Radix, Lucide, Supabase, Router)
           // stays in the default vendor chunk so Rollup controls evaluation
@@ -130,4 +160,6 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}));
+  };
+  return config;
+});

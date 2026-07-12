@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { addBreadcrumb, captureException } from "@/lib/sentry";
 
 type ExportFormat = "csv" | "xlsx" | "json" | "pdf";
 
@@ -68,8 +69,21 @@ export function ExportButton({
   const handleSelect = useCallback(
     async (format: ExportFormat) => {
       setPreparing(format);
+      const startedAt = performance.now();
+      addBreadcrumb("export", `export:start:${format}`, { format });
       try {
         await onExport(format);
+        addBreadcrumb("export", `export:success:${format}`, {
+          format,
+          durationMs: Math.round(performance.now() - startedAt),
+        });
+      } catch (err) {
+        captureException(err, {
+          format,
+          durationMs: Math.round(performance.now() - startedAt),
+          source: "ExportButton",
+        });
+        throw err;
       } finally {
         setPreparing(null);
       }
