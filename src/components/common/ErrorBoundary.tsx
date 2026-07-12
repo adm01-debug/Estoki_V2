@@ -3,6 +3,7 @@ import { AlertTriangle, RefreshCw, Home, Copy, Check, MessageSquare } from "luci
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { createAppError, logError } from "@/config/error-handler";
+import { captureException } from "@/lib/sentry";
 import { haptics } from "@/utils/haptics";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -43,6 +44,9 @@ export class ErrorBoundary extends Component<Props, State> {
     // Log error using global handler
     const appError = createAppError(error);
     logError(appError);
+
+    // Rastreio em produção (Sentry) com o componentStack como contexto extra
+    captureException(error, { componentStack: errorInfo.componentStack });
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
