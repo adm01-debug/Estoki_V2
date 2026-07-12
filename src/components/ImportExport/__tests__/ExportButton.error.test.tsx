@@ -23,9 +23,17 @@ describe("ExportButton — telemetria de erro", () => {
   });
 
   it("chama captureException quando onExport lança", async () => {
-    const onExport = vi.fn().mockRejectedValue(new Error("PDF boom"));
-    // Silencia a rejeição não-tratada que o handler re-lança propositalmente.
-    const suppress = () => {};
+    // Envolvemos o onExport para que a rejeição seja consumida pelo próprio
+    // teste — o handler do ExportButton propositalmente re-lança o erro para
+    // que o caller possa reagir (toast, etc.), mas em ambiente de teste isso
+    // gera um unhandledrejection cosmético que polui o output.
+    const boom = new Error("PDF boom");
+    const onExport = vi.fn().mockImplementation(async () => {
+      throw boom;
+    });
+    const suppress = (e: PromiseRejectionEvent) => {
+      if (e.reason === boom) e.preventDefault();
+    };
     window.addEventListener("unhandledrejection", suppress);
     const user = userEvent.setup();
     render(<ExportButton onExport={onExport} formats={["pdf"]} />);
@@ -35,7 +43,7 @@ describe("ExportButton — telemetria de erro", () => {
     const [err, ctx] = (sentry.captureException as unknown as {
       mock: { calls: [unknown, Record<string, unknown>][] };
     }).mock.calls[0];
-    expect(err).toBeInstanceOf(Error);
+    expect(err).toBe(boom);
     expect(ctx).toMatchObject({ format: "pdf", source: "ExportButton" });
     window.removeEventListener("unhandledrejection", suppress);
   });
