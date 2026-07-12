@@ -83,7 +83,9 @@ export function ExportButton({
           durationMs: Math.round(performance.now() - startedAt),
           source: "ExportButton",
         });
-        throw err;
+        // Não re-lançamos: o Sentry já registrou o erro e o spinner é
+        // resetado no finally. O caller pode observar via prop `isExporting`
+        // ou registrar seu próprio try/catch no `onExport`.
       } finally {
         setPreparing(null);
       }
