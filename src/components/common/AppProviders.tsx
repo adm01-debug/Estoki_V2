@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Suspense, lazy } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -8,9 +9,20 @@ import { TransitionProvider } from "@/contexts/TransitionContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { KeyboardShortcuts } from "./KeyboardShortcuts";
-import { PerformanceMonitor } from "@/features/analytics/components/PerformanceMonitor";
-import { InstallPrompt } from "@/components/pwa/InstallPrompt";
-import { UpdatePrompt } from "@/components/pwa/UpdatePrompt";
+
+// Widgets não críticos para o primeiro paint — carregados sob demanda para
+// tirar o peso do bundle inicial (PWA prompts, telemetria).
+const PerformanceMonitor = lazy(() =>
+  import("@/features/analytics/components/PerformanceMonitor").then((m) => ({
+    default: m.PerformanceMonitor,
+  }))
+);
+const InstallPrompt = lazy(() =>
+  import("@/components/pwa/InstallPrompt").then((m) => ({ default: m.InstallPrompt }))
+);
+const UpdatePrompt = lazy(() =>
+  import("@/components/pwa/UpdatePrompt").then((m) => ({ default: m.UpdatePrompt }))
+);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,9 +52,11 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
                 <NotificationProvider>
                   <KeyboardShortcuts />
                   <Sonner />
-                  <InstallPrompt />
-                  <UpdatePrompt />
-                  <PerformanceMonitor />
+                  <Suspense fallback={null}>
+                    <InstallPrompt />
+                    <UpdatePrompt />
+                    <PerformanceMonitor />
+                  </Suspense>
                   <TransitionProvider>{children}</TransitionProvider>
                 </NotificationProvider>
               </AppProvider>
