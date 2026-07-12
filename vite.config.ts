@@ -109,8 +109,10 @@ export default defineConfig(({ mode }) => ({
           // "Cannot read properties of undefined (reading 'forwardRef')"
           // crash in production.
           if (id.includes("node_modules")) {
-            if (id.includes("recharts") || id.includes("framer-motion"))
-              return "vendor-visuals";
+            if (id.includes("recharts") || id.includes("d3-"))
+              return "vendor-recharts";
+            if (id.includes("framer-motion"))
+              return "vendor-motion";
             // jspdf/exceljs/papaparse are all consumed via dynamic import().
             // Let Rollup auto-code-split so each ends up in its own async chunk
             // that's only fetched when the feature is used.
