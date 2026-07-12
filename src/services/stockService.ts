@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
-const from = (table: string) => (supabase.from as any)(table);
+type SupabaseFrom = (table: string) => ReturnType<typeof supabase.from>;
+const from = (table: string) => (supabase.from as unknown as SupabaseFrom)(table);
 export interface StockMovement {
   id: string;
   product_id: string;
