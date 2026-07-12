@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -10,13 +10,13 @@ import { visualizer } from "rollup-plugin-visualizer";
  * estão presentes no ambiente de build (produção/CI). Isso mantém o dev
  * local rápido e evita erro em builds sem credenciais.
  */
-async function loadSentryPlugin(): Promise<unknown> {
+async function loadSentryPlugin(): Promise<PluginOption | null> {
   const { SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT } = process.env;
   if (!SENTRY_AUTH_TOKEN || !SENTRY_ORG || !SENTRY_PROJECT) return null;
   try {
     const pkg = "@sentry/vite-plugin";
     const mod = (await import(/* @vite-ignore */ pkg)) as {
-      sentryVitePlugin: (opts: Record<string, unknown>) => unknown;
+      sentryVitePlugin: (opts: Record<string, unknown>) => PluginOption;
     };
     return mod.sentryVitePlugin({
       authToken: SENTRY_AUTH_TOKEN,
@@ -32,15 +32,17 @@ async function loadSentryPlugin(): Promise<unknown> {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => ({
-  server: {
+export default defineConfig(async ({ mode }) => {
+  const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
+  return {
+    server: {
     host: "::",
     port: 8080,
   },
-  plugins: [
+  plugins: ([
     react(),
     mode === "development" && componentTagger(),
-    mode === "production" && (await loadSentryPlugin()),
+    sentryPlugin,
     process.env.ANALYZE === "true" &&
       visualizer({
         filename: "dist/stats.html",
