@@ -23,18 +23,8 @@ describe("ExportButton — telemetria de erro", () => {
   });
 
   it("chama captureException quando onExport lança", async () => {
-    // Envolvemos o onExport para que a rejeição seja consumida pelo próprio
-    // teste — o handler do ExportButton propositalmente re-lança o erro para
-    // que o caller possa reagir (toast, etc.), mas em ambiente de teste isso
-    // gera um unhandledrejection cosmético que polui o output.
     const boom = new Error("PDF boom");
-    const onExport = vi.fn().mockImplementation(async () => {
-      throw boom;
-    });
-    const suppress = (e: PromiseRejectionEvent) => {
-      if (e.reason === boom) e.preventDefault();
-    };
-    window.addEventListener("unhandledrejection", suppress);
+    const onExport = vi.fn().mockRejectedValue(boom);
     const user = userEvent.setup();
     render(<ExportButton onExport={onExport} formats={["pdf"]} />);
     await user.click(screen.getByRole("button", { name: /exportar/i }));
@@ -45,6 +35,16 @@ describe("ExportButton — telemetria de erro", () => {
     }).mock.calls[0];
     expect(err).toBe(boom);
     expect(ctx).toMatchObject({ format: "pdf", source: "ExportButton" });
-    window.removeEventListener("unhandledrejection", suppress);
+  });
+
+  it("reseta o spinner mesmo após onExport falhar", async () => {
+    const onExport = vi.fn().mockRejectedValue(new Error("XLSX boom"));
+    const user = userEvent.setup();
+    render(<ExportButton onExport={onExport} formats={["xlsx"]} />);
+    await user.click(screen.getByRole("button", { name: /exportar/i }));
+    await user.click(await screen.findByText(/Exportar Excel/i));
+    await waitFor(() =>
+      expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false")
+    );
   });
 });
