@@ -10,11 +10,14 @@ import { visualizer } from "rollup-plugin-visualizer";
  * estão presentes no ambiente de build (produção/CI). Isso mantém o dev
  * local rápido e evita erro em builds sem credenciais.
  */
-async function loadSentryPlugin() {
+async function loadSentryPlugin(): Promise<unknown> {
   const { SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT } = process.env;
   if (!SENTRY_AUTH_TOKEN || !SENTRY_ORG || !SENTRY_PROJECT) return null;
   try {
-    const mod = await import("@sentry/vite-plugin");
+    const pkg = "@sentry/vite-plugin";
+    const mod = (await import(/* @vite-ignore */ pkg)) as {
+      sentryVitePlugin: (opts: Record<string, unknown>) => unknown;
+    };
     return mod.sentryVitePlugin({
       authToken: SENTRY_AUTH_TOKEN,
       org: SENTRY_ORG,
@@ -121,7 +124,7 @@ export default defineConfig(async ({ mode }) => ({
     },
     cssCodeSplit: true,
     // 'hidden' gera sourcemaps para upload ao Sentry mas não referencia no bundle.
-    sourcemap: mode === "production" ? "hidden" : false,
+    sourcemap: (mode === "production" ? "hidden" : false) as "hidden" | false,
     minify: "terser",
     terserOptions: {
       compress: {
@@ -135,7 +138,7 @@ export default defineConfig(async ({ mode }) => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks(id) {
+        manualChunks(id: string) {
           // Only split heavy, side-effect-free optional libs into their own
           // chunks. Everything else (React, Radix, Lucide, Supabase, Router)
           // stays in the default vendor chunk so Rollup controls evaluation
