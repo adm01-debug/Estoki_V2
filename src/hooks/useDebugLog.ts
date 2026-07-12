@@ -6,7 +6,7 @@ export function useDebugLog(prefix: string) {
     (level: LogLevel, message: string) => {
       const entry = { level, message, timestamp: new Date() };
       logs.current.push(entry);
-      if (process.env.NODE_ENV === "development") console[level](`[${prefix}]`, message);
+      if (import.meta.env.DEV) console[level](`[${prefix}]`, message);
     },
     [prefix]
   );
