@@ -11,7 +11,11 @@ vi.mock("@/integrations/supabase/client", () => ({
     auth: {
       signInWithPassword: vi.fn(),
       signOut: vi.fn(),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+      onAuthStateChange: vi.fn((cb: (event: string, session: unknown) => void) => {
+        // Fire INITIAL_SESSION synchronously so AuthProvider exits its loading state.
+        cb("INITIAL_SESSION", null);
+        return { data: { subscription: { unsubscribe: vi.fn() } } };
+      }),
       getSession: vi.fn(() => Promise.resolve({ data: { session: null }, error: null })),
     },
   },
