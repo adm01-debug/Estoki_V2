@@ -5,7 +5,7 @@ export const relatorioService = {
     const { data, error } = await supabase.from("posicoes_estoque").select("status");
     if (error) throw error;
     const total = data?.length || 0;
-    const ocupados = data?.filter((p: any) => p.status === "ocupado").length || 0;
+    const ocupados = data?.filter((p: { status?: string }) => p.status === "ocupado").length || 0;
     return {
       total,
       ocupados,
@@ -37,7 +37,7 @@ export const relatorioService = {
     if (error) throw error;
 
     const grouped = (data || []).reduce(
-      (acc: Record<string, number>, m: any) => {
+      (acc: Record<string, number>, m: { tipo_evento: string }) => {
         acc[m.tipo_evento] = (acc[m.tipo_evento] || 0) + 1;
         return acc;
       },
@@ -56,7 +56,7 @@ export const relatorioService = {
     if (error) throw error;
 
     const grouped = (data || []).reduce(
-      (acc: Record<string, number>, t: any) => {
+      (acc: Record<string, number>, t: { operador_id: string | null }) => {
         if (t.operador_id) {
           acc[t.operador_id] = (acc[t.operador_id] || 0) + 1;
         }
