@@ -1,7 +1,11 @@
 # RLS Audit
 
-- Tabelas ativas em `public`: **75**
-- Sem RLS habilitado: **0**
-- Sem policy: **0**
+- Tabelas ativas em `public`: **76**
+- Sem RLS habilitado: **1**
+- Sem policy: **1**
 
-✅ Todas as tabelas públicas têm RLS habilitado e ao menos uma policy.
+## ❌ Tabelas sem `ENABLE ROW LEVEL SECURITY`
+- `public.tabela_insegura_teste`
+
+## ⚠️ Tabelas sem `CREATE POLICY`
+- `public.tabela_insegura_teste`
