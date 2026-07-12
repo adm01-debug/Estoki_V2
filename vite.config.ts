@@ -1,4 +1,4 @@
-import { defineConfig, type PluginOption } from "vite";
+import { defineConfig, type PluginOption, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -34,7 +34,7 @@ async function loadSentryPlugin(): Promise<PluginOption | null> {
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
   const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
-  return {
+  const config: UserConfig = {
     server: {
       host: "::",
       port: 8080,
@@ -161,4 +161,5 @@ export default defineConfig(async ({ mode }) => {
     },
   },
   };
+  return config;
 });
