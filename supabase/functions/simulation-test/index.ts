@@ -1,5 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-simulation-count",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 /**
  * Script de simulação e teste de estresse para Edge Functions e Webhooks.
  * Executa múltiplos cenários para validar consistência e resiliência.
@@ -52,6 +58,11 @@ async function runSimulation(count = 10) {
 }
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
+  try {
   const url = new URL(req.url);
   const countHeader = req.headers.get("X-Simulation-Count");
   const count = parseInt(countHeader || url.searchParams.get("count") || "100");
@@ -74,7 +85,13 @@ Deno.serve(async (req) => {
       timestamp: new Date().toISOString(),
     }),
     {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     }
   );
+  } catch (e) {
+    return new Response(
+      JSON.stringify({ error: e instanceof Error ? e.message : String(e) }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
 });
