@@ -15,7 +15,7 @@ export const receivingService = {
       if (error) throw error;
       performanceService.track("getRecebimentos", performance.now() - startTime);
       return data as unknown as RecebimentoItem[];
-    } catch (error: any) {
+    } catch (error: unknown) {
       performanceService.track("getRecebimentos", performance.now() - startTime, true);
       throw handleReceivingError(error, "Busca de Recebimentos");
     }
@@ -44,7 +44,7 @@ export const receivingService = {
       if (error) throw error;
       performanceService.track("createRecebimento", performance.now() - startTime);
       return data as unknown as RecebimentoItem;
-    } catch (error: any) {
+    } catch (error: unknown) {
       performanceService.track("createRecebimento", performance.now() - startTime, true);
       throw handleReceivingError(error, "Criação de Recebimento");
     }
@@ -63,7 +63,7 @@ export const receivingService = {
       if (error) throw error;
       performanceService.track("updateRecebimento", performance.now() - startTime);
       return data as unknown as RecebimentoItem;
-    } catch (error: any) {
+    } catch (error: unknown) {
       performanceService.track("updateRecebimento", performance.now() - startTime, true);
       throw handleReceivingError(error, "Atualização de Recebimento");
     }
