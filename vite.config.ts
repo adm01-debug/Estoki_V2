@@ -5,8 +5,31 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 import { visualizer } from "rollup-plugin-visualizer";
 
+/**
+ * Carrega o plugin do Sentry só quando SENTRY_AUTH_TOKEN + org/project
+ * estão presentes no ambiente de build (produção/CI). Isso mantém o dev
+ * local rápido e evita erro em builds sem credenciais.
+ */
+async function loadSentryPlugin() {
+  const { SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT } = process.env;
+  if (!SENTRY_AUTH_TOKEN || !SENTRY_ORG || !SENTRY_PROJECT) return null;
+  try {
+    const mod = await import("@sentry/vite-plugin");
+    return mod.sentryVitePlugin({
+      authToken: SENTRY_AUTH_TOKEN,
+      org: SENTRY_ORG,
+      project: SENTRY_PROJECT,
+      sourcemaps: { assets: "./dist/**" },
+      telemetry: false,
+    });
+  } catch {
+    // Plugin não instalado — segue sem upload de sourcemaps.
+    return null;
+  }
+}
+
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(async ({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -14,6 +37,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
+    mode === "production" && (await loadSentryPlugin()),
     process.env.ANALYZE === "true" &&
       visualizer({
         filename: "dist/stats.html",
@@ -96,7 +120,8 @@ export default defineConfig(({ mode }) => ({
       polyfill: false, // Modern browsers support modulepreload natively
     },
     cssCodeSplit: true,
-    sourcemap: false,
+    // 'hidden' gera sourcemaps para upload ao Sentry mas não referencia no bundle.
+    sourcemap: mode === "production" ? "hidden" : false,
     minify: "terser",
     terserOptions: {
       compress: {
