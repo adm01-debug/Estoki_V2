@@ -1,9 +1,12 @@
-import { ReactNode, createContext, useContext, useState, useEffect } from "react";
+import { ReactNode, Suspense, createContext, lazy, useContext, useState, useEffect } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
-import { OnboardingTour } from "@/components/common/OnboardingTour";
+// Tour interativo — não crítico para o primeiro render.
+const OnboardingTour = lazy(() =>
+  import("@/components/common/OnboardingTour").then((m) => ({ default: m.OnboardingTour }))
+);
 import { useAuth } from "@/contexts/AuthContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
@@ -188,7 +191,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             )}
           </AnimatePresence>
 
-          <OnboardingTour />
+          <Suspense fallback={null}>
+            <OnboardingTour />
+          </Suspense>
           <ShortcutsHUD />
           <PerformanceHUD />
         </div>
