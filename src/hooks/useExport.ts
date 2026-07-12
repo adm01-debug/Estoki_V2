@@ -2,8 +2,6 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { downloadCSV } from "@/lib/csvImporter";
 import { downloadExcel } from "@/lib/excelImporter";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 
 type ExportFormat = "csv" | "xlsx" | "json" | "pdf";
@@ -142,6 +140,10 @@ export function useTableExport<T extends Record<string, any>>(
           break;
         }
         case "pdf": {
+          const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+            import("jspdf"),
+            import("jspdf-autotable"),
+          ]);
           const doc = new jsPDF();
           doc.text(filename, 14, 15);
           const body = data.map((row) =>
