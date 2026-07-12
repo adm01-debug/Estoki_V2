@@ -36,14 +36,14 @@ export default defineConfig(async ({ mode }) => {
   const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
   return {
     server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: ([
-    react(),
-    mode === "development" && componentTagger(),
-    sentryPlugin,
-    process.env.ANALYZE === "true" &&
+      host: "::",
+      port: 8080,
+    },
+    plugins: [
+      react(),
+      mode === "development" && componentTagger(),
+      sentryPlugin,
+      process.env.ANALYZE === "true" &&
       visualizer({
         filename: "dist/stats.html",
         template: "treemap",
@@ -91,8 +91,8 @@ export default defineConfig(async ({ mode }) => {
           ],
         },
       }),
-  ].filter(Boolean),
-  resolve: {
+    ].filter(Boolean) as PluginOption[],
+    resolve: {
     dedupe: [
       "react",
       "react-dom",
@@ -160,4 +160,5 @@ export default defineConfig(async ({ mode }) => {
       },
     },
   },
-}));
+  };
+});
