@@ -13,7 +13,11 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET") || "test-secret";
+const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET");
+
+if (!WEBHOOK_SECRET) {
+  console.warn("[simulation-test] WEBHOOK_SECRET not configured — endpoint disabled");
+}
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
@@ -63,6 +67,13 @@ Deno.serve(async (req) => {
   }
 
   try {
+  if (!WEBHOOK_SECRET) {
+    return new Response(
+      JSON.stringify({ error: "WEBHOOK_SECRET is not configured on the server" }),
+      { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+
   const url = new URL(req.url);
   const countHeader = req.headers.get("X-Simulation-Count");
   const count = parseInt(countHeader || url.searchParams.get("count") || "100");
