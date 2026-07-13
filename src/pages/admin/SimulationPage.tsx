@@ -118,6 +118,43 @@ export default function SimulationPage() {
                       </div>
                     </div>
 
+                    {report.latency && (
+                      <div className="grid grid-cols-4 gap-2">
+                        {(["avgMs", "p50Ms", "p95Ms", "p99Ms"] as const).map((k) => (
+                          <div
+                            key={k}
+                            className="flex flex-col items-center rounded-lg border bg-muted/30 p-2"
+                          >
+                            <span className="text-lg font-bold">{report.latency[k]}ms</span>
+                            <span className="text-[9px] font-bold uppercase text-muted-foreground">
+                              {k.replace("Ms", "")}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {report.byScenario && (
+                      <div className="space-y-2">
+                        <Label>Latência por Endpoint</Label>
+                        <ScrollArea className="h-[200px] rounded-lg border bg-muted/30 p-3">
+                          {Object.entries(report.byScenario).map(
+                            ([name, s]: [string, any]) => (
+                              <div
+                                key={name}
+                                className="mb-2 flex items-center justify-between border-b border-border/40 pb-1 text-[11px] last:border-0"
+                              >
+                                <span className="font-mono">{name}</span>
+                                <span className="text-muted-foreground">
+                                  {s.ok}/{s.total} · avg {s.avgMs}ms · p95 {s.p95Ms}ms
+                                </span>
+                              </div>
+                            )
+                          )}
+                        </ScrollArea>
+                      </div>
+                    )}
+
                     {report.errors?.length > 0 && (
                       <div className="space-y-2">
                         <Label className="flex items-center gap-2 text-destructive">
