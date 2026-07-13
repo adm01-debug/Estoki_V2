@@ -76,7 +76,8 @@ function useProfileMap(userIds: (string | null | undefined)[]) {
   });
 }
 
-function formatDate(value: string) {
+function formatDate(value: string | null | undefined) {
+  if (!value) return "—";
   return format(new Date(value), "dd/MM/yyyy HH:mm:ss", { locale: ptBR });
 }
 
