@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageHeader } from "@/components/ui/page-header";
 import { toast } from "sonner";
+import { aiInvoke } from "@/lib/ai-invoke";
 
 interface Message {
   id: string;
