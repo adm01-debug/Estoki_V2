@@ -219,7 +219,7 @@ function StockChangesTab({ search }: { search: string }) {
           .limit(200),
         supabase
           .from("stock_movements")
-          .select("id, product_id, type, quantity, reference, reason, user_id, created_at")
+          .select("id, product_id, type, quantity, from_location, to_location, user_id, created_at")
           .order("created_at", { ascending: false })
           .limit(200),
       ]);
@@ -253,8 +253,6 @@ function StockChangesTab({ search }: { search: string }) {
     const p = m.user_id ? profiles[m.user_id] : undefined;
     return (
       m.type?.toLowerCase().includes(s) ||
-      m.reason?.toLowerCase().includes(s) ||
-      m.reference?.toLowerCase().includes(s) ||
       p?.nome?.toLowerCase().includes(s) ||
       p?.email?.toLowerCase().includes(s)
     );
@@ -340,16 +338,15 @@ function StockChangesTab({ search }: { search: string }) {
               <TableHead>Usuário</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Qtd</TableHead>
-              <TableHead>Referência</TableHead>
-              <TableHead>Motivo</TableHead>
+              <TableHead>Origem → Destino</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {query.isLoading ? (
-              <LoadingRows cols={6} />
+              <LoadingRows cols={5} />
             ) : filteredMovs.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-sm text-muted-foreground">
                   Nenhuma movimentação encontrada.
                 </TableCell>
               </TableRow>
@@ -368,11 +365,8 @@ function StockChangesTab({ search }: { search: string }) {
                     </Badge>
                   </TableCell>
                   <TableCell className="font-mono text-sm">{m.quantity}</TableCell>
-                  <TableCell className="max-w-xs truncate font-mono text-xs">
-                    {m.reference ?? "-"}
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate text-sm">
-                    {m.reason ?? "-"}
+                  <TableCell className="max-w-xs truncate font-mono text-[10px] text-muted-foreground">
+                    {(m.from_location ?? "—").slice(0, 8)} → {(m.to_location ?? "—").slice(0, 8)}
                   </TableCell>
                 </TableRow>
               ))
