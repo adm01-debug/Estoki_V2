@@ -3901,6 +3901,7 @@ export type Database = {
         Args: { p_user_id: string; p_valor: number }
         Returns: undefined
       }
+      get_backend_health: { Args: never; Returns: Json }
       get_current_user_permissions: {
         Args: never
         Returns: {
