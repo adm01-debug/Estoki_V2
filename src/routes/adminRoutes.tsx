@@ -14,6 +14,7 @@ const Seguranca = lazy(() => import("@/pages/Seguranca"));
 const Governanca = lazy(() => import("@/pages/Governanca"));
 const SimulationPage = lazy(() => import("@/pages/admin/SimulationPage"));
 const BackendHealthPage = lazy(() => import("@/pages/admin/BackendHealthPage"));
+const AuditoriaCriticaPage = lazy(() => import("@/pages/admin/AuditoriaCriticaPage"));
 
 export const adminRoutes = (
   <>
@@ -84,6 +85,18 @@ export const adminRoutes = (
           <Suspense fallback={<RouteLoadingFallback type="table" />}>
             <ProtectedRoute allowedRoles={["admin"]}>
               <AuditLogPage />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="admin/auditoria-critica"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AuditoriaCriticaPage />
             </ProtectedRoute>
           </Suspense>
         </RouteErrorBoundary>
