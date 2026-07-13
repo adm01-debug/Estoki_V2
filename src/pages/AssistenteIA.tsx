@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { PageHeader } from "@/components/ui/page-header";
 import { toast } from "sonner";
+import { aiInvoke } from "@/lib/ai-invoke";
 
 interface Message {
   id: string;
@@ -135,11 +136,12 @@ export default function AssistenteIA() {
     try {
       const context = await getContext();
 
-      const { data, error } = await supabase.functions.invoke("ai-assistant", {
-        body: { message: text, context },
-      });
+      const { data, error, circuitOpen } = await aiInvoke<{ reply: string }>(
+        "ai-assistant",
+        { message: text, context }
+      );
 
-      if (error) throw error;
+      if (error || !data) throw error ?? new Error("Sem resposta da IA");
 
       const assistantMsg: Message = {
         id: crypto.randomUUID(),
@@ -149,6 +151,7 @@ export default function AssistenteIA() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
+      if (circuitOpen) toast.warning("IA em modo degradado.");
     } catch (err: unknown) {
       toast.error("Erro ao consultar o assistente IA");
       const errorMsg: Message = {

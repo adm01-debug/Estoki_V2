@@ -1,6 +1,6 @@
-import { useMemo, useCallback, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { aiInvoke } from "@/lib/ai-invoke";
 
 interface DemandData {
   sku: string;
@@ -57,19 +57,28 @@ export function useDemandForecast(data: DemandData[] = []) {
   const gerarPrevisaoIA = async (produtoId?: string) => {
     setLoading(true);
     try {
-      const { data: response, error } = await supabase.functions.invoke("previsao-demanda", {
-        body: { produto_id: produtoId },
-      });
+      const { data: response, error, circuitOpen } = await aiInvoke<{
+        success: boolean;
+        previsoes: PrevisaoDemanda[];
+        fallback?: boolean;
+      }>("previsao-demanda", { produto_id: produtoId });
 
-      if (error) throw error;
+      if (error) {
+        toast.error(
+          circuitOpen
+            ? "IA indisponível no momento. Aguarde alguns segundos e tente novamente."
+            : "Não foi possível gerar a previsão com IA."
+        );
+        return;
+      }
 
-      if (response.success) {
+      if (response?.success) {
         setPrevisoesIA(response.previsoes);
+        if (response.fallback) {
+          toast.info("Previsão gerada por heurística (IA indisponível).");
+        }
         return response;
       }
-    } catch (error) {
-      console.error("Erro ao gerar previsão:", error);
-      toast.error("Não foi possível gerar a previsão com IA.");
     } finally {
       setLoading(false);
     }
