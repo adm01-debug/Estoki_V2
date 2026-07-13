@@ -1,0 +1,23 @@
+CREATE INDEX IF NOT EXISTS idx_tarefas_pendentes ON public.tarefas(operador_id, prioridade, created_at DESC) WHERE status IN ('pendente','em_andamento');
+CREATE INDEX IF NOT EXISTS idx_alertas_ativos ON public.alertas_historico(severidade, created_at DESC) WHERE status = 'ativo'::status_alerta;
+CREATE INDEX IF NOT EXISTS idx_notificacoes_nao_lidas ON public.notificacoes(user_id, created_at DESC) WHERE lida = false;
+CREATE INDEX IF NOT EXISTS idx_lotes_com_saldo ON public.lotes(produto_id, data_validade) WHERE quantidade_atual > 0;
+CREATE INDEX IF NOT EXISTS idx_posicoes_livres ON public.posicoes_estoque(zona, codigo) WHERE status = 'livre';
+CREATE INDEX IF NOT EXISTS idx_ondas_ativas ON public.ondas_separacao(status, data_criacao DESC) WHERE status IN ('pendente'::status_onda,'em_andamento'::status_onda);
+CREATE INDEX IF NOT EXISTS idx_audit_log_entity ON public.audit_log(entity_type, entity_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_login_logs_user_success ON public.login_logs(user_id, success, login_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rastreamento_produto_data ON public.rastreamento_historico(produto_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_gamificacao_leaderboard ON public.gamificacao_usuarios(xp_total DESC, nivel DESC);
+CREATE INDEX IF NOT EXISTS idx_streaks_ranking ON public.streaks_usuarios(streak_atual DESC);
+CREATE INDEX IF NOT EXISTS idx_eventos_triagem_operador_data ON public.eventos_triagem(operador_id, data_fim DESC) WHERE data_fim IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_inspecoes_inspetor_data ON public.inspecoes_qualidade(inspecionado_por, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_stock_movements_product_date ON public.stock_movements(product_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_ajustes_pendentes ON public.ajustes_estoque(created_at DESC) WHERE status = 'pendente';
+
+ANALYZE public.tarefas;
+ANALYZE public.alertas_historico;
+ANALYZE public.notificacoes;
+ANALYZE public.lotes;
+ANALYZE public.posicoes_estoque;
+ANALYZE public.ondas_separacao;
+ANALYZE public.gamificacao_usuarios;
