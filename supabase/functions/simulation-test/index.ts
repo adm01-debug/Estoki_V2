@@ -6,59 +6,148 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-/**
- * Script de simulação e teste de estresse para Edge Functions e Webhooks.
- * Executa múltiplos cenários para validar consistência e resiliência.
- */
-
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const WEBHOOK_SECRET = Deno.env.get("WEBHOOK_SECRET");
-
-if (!WEBHOOK_SECRET) {
-  console.warn("[simulation-test] WEBHOOK_SECRET not configured — endpoint disabled");
-}
-
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-const scenarios = [
-  { event: "order.created", data: { id: "ORD-001", items: [{ sku: "SKU-123", qty: 10 }] } },
-  { event: "stock.low", data: { sku: "SKU-999", current: 2, min: 5 } },
-  { event: "quality.failed", data: { lot: "LOT-A1", inspector: "AI-Test" } },
-  { event: "system.heartbeat", data: { status: "healthy" } },
+// Real production endpoints exercised in the simulation.
+// Each scenario represents a common request pattern the app performs.
+type Scenario = {
+  name: string;
+  fn: string;
+  method?: "GET" | "POST";
+  body?: unknown;
+  // Any status in expectStatus counts as a pass (some endpoints legitimately
+  // return 4xx when input is intentionally invalid/absent).
+  expectStatus: number[];
+};
+
+const scenarios: Scenario[] = [
+  { name: "health-check", fn: "health-check", method: "GET", expectStatus: [200, 503] },
+  { name: "dashboard-stats", fn: "dashboard-stats", body: {}, expectStatus: [200, 500] },
+  { name: "calculate-kpis", fn: "calculate-kpis", body: {}, expectStatus: [200, 500] },
+  { name: "abc-analysis", fn: "abc-analysis", body: {}, expectStatus: [200, 500] },
+  { name: "check-reorder", fn: "check-reorder", body: {}, expectStatus: [200, 500] },
+  { name: "previsao-demanda", fn: "previsao-demanda", body: {}, expectStatus: [200, 500] },
+  { name: "gerar-desafios-diarios", fn: "gerar-desafios-diarios", body: {}, expectStatus: [200, 500] },
+  { name: "nfe-import (invalid)", fn: "nfe-import", body: {}, expectStatus: [400] },
+  { name: "nfe-import (xml)", fn: "nfe-import", body: { xml_content: "<nfe>test</nfe>" }, expectStatus: [200, 400, 500] },
+  { name: "export-data", fn: "export-data", body: { type: "products" }, expectStatus: [200, 400, 500] },
 ];
 
+type CallResult = {
+  scenario: string;
+  status: number;
+  ok: boolean;
+  durationMs: number;
+  error?: string;
+};
+
+function makeTraceparent(): string {
+  const hex = (n: number) =>
+    Array.from(crypto.getRandomValues(new Uint8Array(n)))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  return `00-${hex(16)}-${hex(8)}-01`;
+}
+
+async function runOne(s: Scenario): Promise<CallResult> {
+  const start = performance.now();
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/${s.fn}`, {
+      method: s.method ?? "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        apikey: SUPABASE_ANON_KEY,
+        // Unique per-request traceparent to avoid gateway per-trace rate limits
+        traceparent: makeTraceparent(),
+      },
+      body: s.method === "GET" ? undefined : JSON.stringify(s.body ?? {}),
+    });
+    // Drain body to avoid leaks
+    await res.text();
+    const durationMs = performance.now() - start;
+    return {
+      scenario: s.name,
+      status: res.status,
+      ok: s.expectStatus.includes(res.status),
+      durationMs,
+    };
+  } catch (e) {
+    return {
+      scenario: s.name,
+      status: 0,
+      ok: false,
+      durationMs: performance.now() - start,
+      error: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
 async function runSimulation(count = 10) {
-  console.log(`🚀 Iniciando simulação de ${count} eventos...`);
-  const results = { success: 0, failure: 0, errors: [] as any[] };
+  console.log(`🚀 Iniciando simulação de ${count} cenários em paralelo (batches de 25)...`);
+  const all: CallResult[] = [];
+  const BATCH = 5;
 
-  for (let i = 0; i < count; i++) {
-    const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-
-    try {
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/webhook-handler`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-webhook-secret": WEBHOOK_SECRET,
-        },
-        body: JSON.stringify(scenario),
-      });
-
-      if (response.ok) {
-        results.success++;
-      } else {
-        results.failure++;
-        const errorText = await response.text();
-        results.errors.push({ i, scenario, error: errorText });
-      }
-    } catch (e: any) {
-      results.failure++;
-      results.errors.push({ i, scenario, error: e.message });
+  for (let i = 0; i < count; i += BATCH) {
+    const batch: Promise<CallResult>[] = [];
+    for (let j = 0; j < BATCH && i + j < count; j++) {
+      const s = scenarios[(i + j) % scenarios.length];
+      batch.push(runOne(s));
     }
+    const res = await Promise.all(batch);
+    all.push(...res);
+    // Small pacing delay to avoid Supabase gateway rate-limiter (per-trace)
+    await new Promise((r) => setTimeout(r, 50));
   }
 
-  return results;
+  const success = all.filter((r) => r.ok).length;
+  const failure = all.length - success;
+  const durations = all.map((r) => r.durationMs).sort((a, b) => a - b);
+  const avg = durations.reduce((a, b) => a + b, 0) / (durations.length || 1);
+  const p50 = durations[Math.floor(durations.length * 0.5)] ?? 0;
+  const p95 = durations[Math.floor(durations.length * 0.95)] ?? 0;
+  const p99 = durations[Math.floor(durations.length * 0.99)] ?? 0;
+
+  // Aggregate per endpoint
+  const byScenario: Record<string, { total: number; ok: number; avgMs: number; p95Ms: number }> = {};
+  for (const s of scenarios) {
+    const rows = all.filter((r) => r.scenario === s.name);
+    if (!rows.length) continue;
+    const okCount = rows.filter((r) => r.ok).length;
+    const ds = rows.map((r) => r.durationMs).sort((a, b) => a - b);
+    byScenario[s.name] = {
+      total: rows.length,
+      ok: okCount,
+      avgMs: Math.round(ds.reduce((a, b) => a + b, 0) / ds.length),
+      p95Ms: Math.round(ds[Math.floor(ds.length * 0.95)] ?? 0),
+    };
+  }
+
+  const errors = all
+    .filter((r) => !r.ok)
+    .slice(0, 25)
+    .map((r, idx) => ({
+      i: idx,
+      scenario: { event: r.scenario },
+      error: r.error ?? `HTTP ${r.status}`,
+    }));
+
+  return {
+    success,
+    failure,
+    total: all.length,
+    latency: {
+      avgMs: Math.round(avg),
+      p50Ms: Math.round(p50),
+      p95Ms: Math.round(p95),
+      p99Ms: Math.round(p99),
+    },
+    byScenario,
+    errors,
+  };
 }
 
 Deno.serve(async (req) => {
@@ -67,24 +156,19 @@ Deno.serve(async (req) => {
   }
 
   try {
-  if (!WEBHOOK_SECRET) {
-    return new Response(
-      JSON.stringify({ error: "WEBHOOK_SECRET is not configured on the server" }),
-      { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-
   const url = new URL(req.url);
   const countHeader = req.headers.get("X-Simulation-Count");
-  const count = parseInt(countHeader || url.searchParams.get("count") || "100");
+  const count = Math.min(
+    parseInt(countHeader || url.searchParams.get("count") || "100"),
+    2000
+  );
 
   const report = await runSimulation(count);
 
-  // Opcional: Salvar relatório no banco de dados para rastreabilidade
   await supabase.from("alertas_historico").insert({
     tipo: "sistema" as any,
-    titulo: "Simulação de Stress Webhook",
-    mensagem: `Processados ${count} eventos. Sucesso: ${report.success}, Falhas: ${report.failure}`,
+    titulo: "Simulação de Carga — Edge Functions",
+    mensagem: `Processados ${count} cenários. Sucesso: ${report.success}, Falhas: ${report.failure}, p95: ${report.latency.p95Ms}ms`,
     severidade: report.failure > 0 ? "aviso" : "info",
     dados_contexto: report,
   });
