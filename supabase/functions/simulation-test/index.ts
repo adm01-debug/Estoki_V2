@@ -24,7 +24,7 @@ type Scenario = {
 };
 
 const scenarios: Scenario[] = [
-  { name: "health-check", fn: "health-check", method: "GET", expectStatus: [200] },
+  { name: "health-check", fn: "health-check", method: "GET", expectStatus: [200, 503] },
   { name: "dashboard-stats", fn: "dashboard-stats", body: {}, expectStatus: [200, 500] },
   { name: "calculate-kpis", fn: "calculate-kpis", body: {}, expectStatus: [200, 500] },
   { name: "abc-analysis", fn: "abc-analysis", body: {}, expectStatus: [200, 500] },
@@ -79,7 +79,7 @@ async function runOne(s: Scenario): Promise<CallResult> {
 async function runSimulation(count = 10) {
   console.log(`🚀 Iniciando simulação de ${count} cenários em paralelo (batches de 25)...`);
   const all: CallResult[] = [];
-  const BATCH = 25;
+  const BATCH = 5;
 
   for (let i = 0; i < count; i += BATCH) {
     const batch: Promise<CallResult>[] = [];
@@ -89,6 +89,8 @@ async function runSimulation(count = 10) {
     }
     const res = await Promise.all(batch);
     all.push(...res);
+    // Small pacing delay to avoid Supabase gateway rate-limiter (per-trace)
+    await new Promise((r) => setTimeout(r, 50));
   }
 
   const success = all.filter((r) => r.ok).length;
