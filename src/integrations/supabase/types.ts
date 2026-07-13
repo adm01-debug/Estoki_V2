@@ -1471,6 +1471,66 @@ export type Database = {
         }
         Relationships: []
       }
+      job_queue: {
+        Row: {
+          attempts: number
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          job_type: string
+          max_attempts: number
+          payload: Json
+          priority: number
+          queue_name: string
+          result: Json | null
+          scheduled_at: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          job_type: string
+          max_attempts?: number
+          payload?: Json
+          priority?: number
+          queue_name?: string
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          job_type?: string
+          max_attempts?: number
+          payload?: Json
+          priority?: number
+          queue_name?: string
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           aisle: string | null
