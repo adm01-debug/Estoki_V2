@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.get_backend_health() FROM authenticated;
