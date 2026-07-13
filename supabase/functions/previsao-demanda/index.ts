@@ -87,6 +87,31 @@ serve(async (req) => {
         : 0,
     }));
 
+    // Fallback heurístico determinístico — usado quando IA falha (403, 429, timeout).
+    const heuristicFallback = () => ({
+      previsoes: produtos.map((p) => {
+        const mov = metricas[p.id]?.total || 0;
+        const giro = p.giro_mensal || 0;
+        const base = mov > 0 ? Math.round(mov / 3) : giro;
+        const tendencia: "alta" | "estavel" | "baixa" =
+          p.curva_abc === "A" ? "alta" : p.curva_abc === "C" ? "baixa" : "estavel";
+        return {
+          produto_id: p.id,
+          produto_nome: p.nome,
+          demanda_prevista: base,
+          tendencia,
+          confianca: mov > 0 ? 70 : 45,
+          recomendacao:
+            base > giro * 1.2
+              ? "Aumentar estoque de segurança"
+              : base < giro * 0.8
+              ? "Reduzir compras no próximo ciclo"
+              : "Manter níveis atuais",
+        } as PrevisaoDemanda;
+      }),
+      resumo: "Previsão heurística baseada em histórico e curva ABC (IA indisponível).",
+    });
+
     // Chamar Lovable AI para análise
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -136,8 +161,19 @@ Forneça previsões e recomendações práticas.`,
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
-      console.error("Erro AI Gateway:", errorText);
-      throw new Error(`Erro na API de IA: ${aiResponse.status}`);
+      console.error("Erro AI Gateway:", aiResponse.status, errorText.slice(0, 200));
+      const fb = heuristicFallback();
+      return new Response(
+        JSON.stringify({
+          success: true,
+          fallback: true,
+          motivo_fallback: `AI Gateway ${aiResponse.status}`,
+          previsoes: fb.previsoes,
+          resumo: fb.resumo,
+          periodo: { inicio: dataInicio.toISOString(), fim: new Date().toISOString() },
+        }),
+        { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
     }
 
     const aiData = await aiResponse.json();

@@ -87,20 +87,16 @@ async function runOne(s: Scenario): Promise<CallResult> {
 }
 
 async function runSimulation(count = 10) {
-  console.log(`🚀 Iniciando simulação de ${count} cenários em paralelo (batches de 25)...`);
+  console.log(`🚀 Iniciando simulação sequencial de ${count} cenários (pacing anti rate-limit)...`);
   const all: CallResult[] = [];
-  const BATCH = 5;
-
-  for (let i = 0; i < count; i += BATCH) {
-    const batch: Promise<CallResult>[] = [];
-    for (let j = 0; j < BATCH && i + j < count; j++) {
-      const s = scenarios[(i + j) % scenarios.length];
-      batch.push(runOne(s));
-    }
-    const res = await Promise.all(batch);
-    all.push(...res);
-    // Small pacing delay to avoid Supabase gateway rate-limiter (per-trace)
-    await new Promise((r) => setTimeout(r, 50));
+  // Sequential with jitter — the Supabase gateway rate-limits per-trace, and
+  // edge→edge fetches share the parent trace. Serializing + jitter avoids the
+  // 429 wall while still exercising real endpoints under sustained load.
+  for (let i = 0; i < count; i++) {
+    const s = scenarios[i % scenarios.length];
+    all.push(await runOne(s));
+    // 120ms ± 60ms jitter → ~7 req/s sustained
+    await new Promise((r) => setTimeout(r, 90 + Math.floor(Math.random() * 60)));
   }
 
   const success = all.filter((r) => r.ok).length;
