@@ -13,9 +13,22 @@ const AdminTelemetriaPage = lazy(() => import("@/pages/admin/AdminTelemetriaPage
 const Seguranca = lazy(() => import("@/pages/Seguranca"));
 const Governanca = lazy(() => import("@/pages/Governanca"));
 const SimulationPage = lazy(() => import("@/pages/admin/SimulationPage"));
+const BackendHealthPage = lazy(() => import("@/pages/admin/BackendHealthPage"));
 
 export const adminRoutes = (
   <>
+    <Route
+      path="admin/saude-backend"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <BackendHealthPage />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
     <Route
       path="admin/simulacao"
       element={
