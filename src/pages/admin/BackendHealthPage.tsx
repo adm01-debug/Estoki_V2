@@ -140,7 +140,7 @@ export default function BackendHealthPage() {
       <BasePageTemplate
         title="Saúde do Backend"
         description="Métricas em tempo real do banco, latência de queries, erros e auditoria (últimas 24h)."
-        actions={
+        headerActions={
           <Button
             size="sm"
             variant="outline"
