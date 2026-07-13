@@ -44,6 +44,14 @@ type CallResult = {
   error?: string;
 };
 
+function makeTraceparent(): string {
+  const hex = (n: number) =>
+    Array.from(crypto.getRandomValues(new Uint8Array(n)))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  return `00-${hex(16)}-${hex(8)}-01`;
+}
+
 async function runOne(s: Scenario): Promise<CallResult> {
   const start = performance.now();
   try {
@@ -53,6 +61,8 @@ async function runOne(s: Scenario): Promise<CallResult> {
         "Content-Type": "application/json",
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
         apikey: SUPABASE_ANON_KEY,
+        // Unique per-request traceparent to avoid gateway per-trace rate limits
+        traceparent: makeTraceparent(),
       },
       body: s.method === "GET" ? undefined : JSON.stringify(s.body ?? {}),
     });
