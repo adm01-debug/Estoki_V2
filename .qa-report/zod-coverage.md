@@ -2,15 +2,13 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **7**
-- **Faltando Zod: 201**
+- Com Zod: **19**
+- **Faltando Zod: 189**
 
 ## Functions sem validação Zod (top 30)
 
 - `abc-analysis`
-- `adjust-inventory`
 - `ai-assistant`
-- `ai-classification`
 - `ai-classify`
 - `ai-completion`
 - `ai-embedding`
@@ -29,13 +27,15 @@
 - `auth-2fa-setup`
 - `auth-2fa-verify`
 - `auth-change-password`
-- `auth-login`
 - `auth-refresh-token`
-- `auth-register`
 - `auth-reset-password`
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
 - `auth-verify-email`
+- `batch-import`
+- `batch-processor`
+- `boleto-generate`
+- `bulk-delete`
 
-_...e mais 171._
+_...e mais 159._

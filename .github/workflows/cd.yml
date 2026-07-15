@@ -1,0 +1,88 @@
+name: CD — Staging & Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & artifact
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: "npm" }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test -- --run
+      - run: npm run build
+      - run: npx size-limit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 30
+
+  deploy_staging:
+    name: Deploy → Staging
+    needs: build
+    if: github.event_name == 'push' || github.event.inputs.environment == 'staging'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.estoki.lovable.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: dist-${{ needs.build.outputs.sha }}, path: dist }
+      - name: Publish
+        run: echo "Staging publish handled by Lovable hosting on push to main."
+      - name: Smoke test staging
+        run: |
+          curl -fsSL https://staging.estoki.lovable.app/ > /dev/null
+          echo "✅ Staging up"
+
+  deploy_production:
+    name: Deploy → Production (manual gate)
+    needs: [build, deploy_staging]
+    if: github.event.inputs.environment == 'production'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://estoki.lovable.app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: dist-${{ needs.build.outputs.sha }}, path: dist }
+      - name: Publish
+        run: echo "Production publish handled by Lovable hosting after manual approval."
+      - name: Smoke test production
+        run: |
+          curl -fsSL https://estoki.lovable.app/ > /dev/null
+          echo "✅ Production up"
+      - name: Tag release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="release-$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}"
+          gh release create "$TAG" --generate-notes --target "$GITHUB_SHA" || true
+
+  # Rollback playbook (documented; triggered manually via workflow_dispatch on a previous release):
+  # 1. Actions → CD → Run workflow → environment=production, ref=<previous good tag>
+  # 2. Lovable hosting republishes the older bundle from that tag.
+  # 3. Post-mortem entry required in CHANGELOG.md under Unreleased/Corrigido.
