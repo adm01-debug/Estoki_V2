@@ -33,7 +33,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 ## 🟡 P2 — Médio
 
-- [ ] **22. Scripts `package.json`** — `coverage:check`, `i18n:check`, `audit:zod`.
+- [x] **22. Scripts `package.json`** — ✅ `qa:all`, `coverage:check`, `i18n:check`, `audit:zod` + scripts em `scripts/` (2026-07-15).
 - [ ] **23. Materialized Views** (dashboards) + particionamento (`audit_log`, `alertas_historico`, `notificacoes`).
 - [ ] **24. Limpeza de TODOs residuais** em migrations.
 - [ ] **25. Consolidação de Edge Functions** (`bulk-*` → 1 parametrizada; redução ≥20%).
@@ -41,12 +41,12 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **27. Alerta automatizado** WAL > 500MB + rollbacks.
 - [ ] **28. Suprimir formalmente** 4 WARNs falsos-positivos do linter.
 - [ ] **29. `npm audit` limpo** + auditoria de deps.
-- [ ] **30. Dependabot/Renovate** (`.github/dependabot.yml`).
+- [x] **30. Dependabot/Renovate** — ✅ `.github/dependabot.yml` com agrupamento Radix/testing/types + workflow actions (2026-07-15).
 
 ## 🟢 P3 — Baixo
 
 - [ ] **31. README/README_PT** atualizados.
-- [ ] **32. `CHANGELOG.md` unificado** consolidando `docs/history/*`.
+- [x] **32. `CHANGELOG.md` unificado** — ✅ criado seguindo Keep a Changelog + SemVer (2026-07-15).
 - [ ] **33. E2E smoke** no `qa.yml`.
 - [ ] **34. `eslint-plugin-i18next`** bloqueando strings hardcoded.
 - [ ] **35. Externalizar prompt IA** de `scanner-ocr`.
