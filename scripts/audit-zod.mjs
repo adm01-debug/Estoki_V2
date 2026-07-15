@@ -36,7 +36,11 @@ for (const name of dirs) {
   const hasBody = /req\.json\(\)|await\s+req\.text\(\)/.test(src);
   if (!hasBody) continue;
   withBody++;
-  const hasZod = /from\s+["']https?:\/\/[^"']*zod[^"']*["']|import\s+.*zod/.test(src);
+  // Direct zod import OR use of shared validator that internally uses zod.
+  const hasZod =
+    /from\s+["']https?:\/\/[^"']*zod[^"']*["']/i.test(src) ||
+    /from\s+["'][^"']*_shared\/(schemas|validation)[^"']*["']/i.test(src) ||
+    /validateInput\s*\(/.test(src);
   if (hasZod) withZod++;
   else missing.push(name);
 }
