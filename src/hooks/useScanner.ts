@@ -175,15 +175,17 @@ export function useScanner(): UseScannerReturn {
     setError(null);
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke("scanner-ocr", {
-        body: {
-          image: imageBase64,
-          extractData: true,
-        },
+      const { data, error: fnError, circuitOpen } = await aiInvoke<any>("scanner-ocr", {
+        image: imageBase64,
+        extractData: true,
       });
 
       if (fnError) {
-        throw new Error(fnError.message || "Erro ao processar OCR");
+        throw new Error(
+          circuitOpen
+            ? "OCR temporariamente indisponível (circuito aberto). Tente novamente em instantes."
+            : fnError.message || "Erro ao processar OCR"
+        );
       }
 
       if (!data) {
