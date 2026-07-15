@@ -1,4 +1,5 @@
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import "./i18n";
@@ -32,7 +33,11 @@ if (!rootElement) {
 
 // 1) Mount the app IMMEDIATELY — never delay rendering
 const root = createRoot(rootElement);
-root.render(<App />);
+root.render(
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
+);
 
 // 2) Post-mount: prefetch routes & web vitals
 requestAnimationFrame(() => {
