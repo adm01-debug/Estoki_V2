@@ -1,0 +1,2 @@
+-- transferir_estoque is only called from edge function (service_role); no need for authenticated
+REVOKE EXECUTE ON FUNCTION public.transferir_estoque(uuid, uuid, uuid, integer, uuid) FROM authenticated;
