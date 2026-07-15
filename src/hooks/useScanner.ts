@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { aiInvoke } from "@/lib/ai-invoke";
 
 export interface ScanResult {
   id: string;
