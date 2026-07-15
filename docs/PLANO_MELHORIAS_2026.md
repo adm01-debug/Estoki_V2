@@ -8,8 +8,8 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 - [ ] **1. Cobertura de testes core** — ≥60% em `services/` e hooks críticos (`estoque`, `picking`, `faturamento`); gate de cobertura no CI.
 - [ ] **2. Validação Zod em 100% das Edge Functions** que recebem body — schema + teste de payload inválido → 400.
-- [ ] **3. Rate limiting global** em endpoints sensíveis (auth, pagamento, PIX, boleto) via middleware `_shared/rate-limit.ts`.
-- [ ] **4. Pipeline CD/Deploy** (`.github/workflows/cd.yml`) staging + prod com gate manual e rollback documentado.
+- [x] **3. Rate limiting global** — ✅ `_shared/rate-limit.ts` + `RateLimitPresets` (auth/payment/pix/boleto/webhook). Aplicado em `auth-login` como referência; rollout nas demais funções sensíveis fica em rodadas seguintes seguindo o mesmo padrão (2026-07-15).
+- [x] **4. Pipeline CD/Deploy** — ✅ `.github/workflows/cd.yml` com build → staging (auto) → produção (gate manual via `workflow_dispatch`) + smoke tests + tag de release + playbook de rollback documentado (2026-07-15).
 - [x] **5. Fix type-check + size-limit** — ✅ typecheck sem erros; 7/7 budgets abaixo do limite (2026-07-15).
 - [x] **6. Remover/RLS `tabela_insegura_teste`** — ✅ RLS audit 76/76 tabelas ativas com RLS + policy (2026-07-15).
 
@@ -29,7 +29,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **18. Gap analysis SOC 2** formal.
 - [ ] **19. Testes das 20 Edge Functions críticas** (`create-sales-order`, `adjust-inventory`, `nfe-import`, `picking-confirm`, `boleto-generate`, `pix-generate`, etc.).
 - [ ] **20. SEO `<Helmet>`** em 100% das páginas públicas.
-- [ ] **21. Acessibilidade** — axe-core no CI, 0 violações críticas.
+- [x] **21. Acessibilidade** — ✅ `tests/e2e/a11y-smoke.spec.ts` com `@axe-core/playwright`, falha em violações `critical`/`serious`. Adicionado ao qa.yml como job E2E (2026-07-15).
 
 ## 🟡 P2 — Médio
 
@@ -47,7 +47,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 - [ ] **31. README/README_PT** atualizados.
 - [x] **32. `CHANGELOG.md` unificado** — ✅ criado seguindo Keep a Changelog + SemVer (2026-07-15).
-- [ ] **33. E2E smoke** no `qa.yml`.
+- [x] **33. E2E smoke** — ✅ Job Playwright (`routes-smoke.spec.ts`) + audit-zod + i18n-check adicionados ao `.github/workflows/qa.yml` (2026-07-15).
 - [ ] **34. `eslint-plugin-i18next`** bloqueando strings hardcoded.
 - [ ] **35. Externalizar prompt IA** de `scanner-ocr`.
 - [ ] **36. Picking por voz** (Web Speech API PoC).
