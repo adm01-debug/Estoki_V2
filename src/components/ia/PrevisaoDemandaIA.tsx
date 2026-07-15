@@ -47,17 +47,21 @@ export function PrevisaoDemandaIA() {
     setError(null);
 
     try {
-      const { data, error: fnError } = await supabase.functions.invoke("previsao-demanda", {
-        body: {},
-      });
+      const { data, error: fnError, circuitOpen } = await aiInvoke<any>("previsao-demanda", {});
 
-      if (fnError) throw fnError;
+      if (fnError) {
+        throw new Error(
+          circuitOpen
+            ? "IA temporariamente indisponível. Tente novamente em instantes."
+            : fnError.message
+        );
+      }
 
-      if (data.success) {
+      if (data?.success) {
         setResult(data);
         toast.success("Previsão gerada com sucesso!");
       } else {
-        throw new Error(data.error || "Erro ao gerar previsão");
+        throw new Error(data?.error || "Erro ao gerar previsão");
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Erro desconhecido";
