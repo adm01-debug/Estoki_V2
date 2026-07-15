@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.audit_sensitive_row_change() FROM PUBLIC, anon, authenticated;
