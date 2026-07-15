@@ -59,6 +59,23 @@ jobs:
         run: node scripts/rls-audit.mjs
         continue-on-error: true
 
+      - name: Zod coverage (Edge Functions)
+        id: zod
+        run: node scripts/audit-zod.mjs
+        continue-on-error: true
+
+      - name: i18n parity
+        id: i18n
+        run: node scripts/i18n-check.mjs
+        continue-on-error: true
+
+      - name: E2E smoke (Playwright)
+        id: e2e
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test tests/e2e/routes-smoke.spec.ts --reporter=list
+        continue-on-error: true
+
       - name: Security (npm audit)
         id: security
         run: npm audit --omit=dev --audit-level=high | tee .qa-report/security.md || true
