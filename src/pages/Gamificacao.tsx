@@ -1,5 +1,6 @@
 import { GamificacaoCharts } from "@/components/charts/WMSModuleCharts";
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,6 +61,7 @@ export default function GamificacaoPage() {
 
   return (
     <AppLayout title="Gamificação" showBack>
+      <SEO title="Gamificação" path="/gamificacao" description="XP, conquistas, desafios diários e ranking de operadores no ESTOKI WMS." />
       <PageTransition>
         <div className="space-y-6 p-4">
           {/* XP Bar */}

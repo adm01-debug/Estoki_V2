@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SEO } from "@/components/common/SEO";
 import {
   Bot,
   Send,
@@ -175,6 +176,7 @@ export default function AssistenteIA() {
 
   return (
     <div className="mx-auto max-w-[1200px] p-4 md:p-6">
+      <SEO title="Assistente IA" path="/assistente-ia" description="Assistente inteligente para análise de estoque e operação." />
       <PageHeader title="Assistente IA" description="Análise inteligente do seu estoque com IA" />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
