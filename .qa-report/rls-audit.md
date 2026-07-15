@@ -1,6 +1,6 @@
 # RLS Audit
 
-- Tabelas ativas em `public`: **75**
+- Tabelas ativas em `public`: **76**
 - Sem RLS habilitado: **0**
 - Sem policy: **0**
 
