@@ -15,6 +15,7 @@ const Governanca = lazy(() => import("@/pages/Governanca"));
 const SimulationPage = lazy(() => import("@/pages/admin/SimulationPage"));
 const BackendHealthPage = lazy(() => import("@/pages/admin/BackendHealthPage"));
 const AuditoriaCriticaPage = lazy(() => import("@/pages/admin/AuditoriaCriticaPage"));
+const CircuitBreakersPage = lazy(() => import("@/pages/admin/CircuitBreakersPage"));
 
 export const adminRoutes = (
   <>
@@ -25,6 +26,18 @@ export const adminRoutes = (
           <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
             <ProtectedRoute allowedRoles={["admin"]}>
               <BackendHealthPage />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="admin/circuit-breakers"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <CircuitBreakersPage />
             </ProtectedRoute>
           </Suspense>
         </RouteErrorBoundary>
