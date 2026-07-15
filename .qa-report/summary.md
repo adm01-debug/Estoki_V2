@@ -3,10 +3,10 @@
 | Verificação | Status |
 | --- | :---: |
 | Lint (ESLint) | ✅ success |
-| Type-check (tsc) | ❌ failure |
+| Type-check (tsc) | ✅ success |
 | Testes unitários (Vitest) | ✅ success |
 | Build (Vite) | ✅ success |
-| Budget de bundle (size-limit) | ❌ failure |
+| Budget de bundle (size-limit) | ✅ success |
 | Auditoria RLS | ✅ success |
 | Segurança (npm audit) | ⏭️ skipped |
 
@@ -15,14 +15,9 @@
 # RLS Audit
 
 - Tabelas ativas em `public`: **76**
-- Sem RLS habilitado: **1**
-- Sem policy: **1**
+- Sem RLS habilitado: **0**
+- Sem policy: **0**
 
-## ❌ Tabelas sem `ENABLE ROW LEVEL SECURITY`
-- `public.tabela_insegura_teste`
-
-## ⚠️ Tabelas sem `CREATE POLICY`
-- `public.tabela_insegura_teste`
-
+✅ Todas as tabelas públicas têm RLS habilitado e ao menos uma policy.
 
 </details>
