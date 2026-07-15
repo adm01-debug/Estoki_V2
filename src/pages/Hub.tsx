@@ -1,4 +1,5 @@
 import { AppLayout } from "@/components/layout/AppLayout";
+import { SEO } from "@/components/common/SEO";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +121,7 @@ export default function HubPage() {
 
   return (
     <AppLayout title="Hub de Integração" showBack>
+      <SEO title="Hub de Integração" path="/hub" description="Central de integrações e sincronização multi-canal do ESTOKI WMS." />
       <div className="space-y-6 p-4">
         <div className="flex items-center justify-between">
           <div>

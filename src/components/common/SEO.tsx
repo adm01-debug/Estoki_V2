@@ -7,8 +7,8 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const SITE_NAME = "Promo Brindes Intel WMS";
-const BASE_URL = "https://estoki.app";
+const SITE_NAME = "ESTOKI WMS";
+const BASE_URL = "https://cart-bloom-connect.lovable.app";
 
 export function SEO({ title, description, path = "/", noIndex = false }: SEOProps) {
   const fullTitle = `${title} | ${SITE_NAME}`;

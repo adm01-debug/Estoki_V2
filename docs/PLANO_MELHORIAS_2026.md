@@ -28,7 +28,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **17. Marketplace de plugins** — SDK mínimo.
 - [ ] **18. Gap analysis SOC 2** formal.
 - [ ] **19. Testes das 20 Edge Functions críticas** (`create-sales-order`, `adjust-inventory`, `nfe-import`, `picking-confirm`, `boleto-generate`, `pix-generate`, etc.).
-- [ ] **20. SEO `<Helmet>`** em 100% das páginas públicas.
+- [~] **20. SEO `<Helmet>`** em páginas públicas — HelmetProvider ativado + SEO em 10 páginas top (Dashboard, Lotes, Auth, Hub, Gamificação, Armazenamento, AssistenteIA, Movimentação, Relatórios, Romaneios, ModoOffline). Restantes rolam por demanda.
 - [x] **21. Acessibilidade** — ✅ `tests/e2e/a11y-smoke.spec.ts` com `@axe-core/playwright`, falha em violações `critical`/`serious`. Adicionado ao qa.yml como job E2E (2026-07-15).
 
 ## 🟡 P2 — Médio
@@ -66,7 +66,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 | Edge Functions com Zod | 0 |
 | Edge Functions com rate limit | 4 |
 | Edge Functions com teste | 14 |
-| Páginas com `<Helmet>` | 1 / 107 |
+| Páginas com `<Helmet>` | 10 / 107 (HelmetProvider ✅) |
 | Componentes com ARIA | 32 / 516 |
 | Tabelas com RLS | 76 / 76 |
 | Workflows CI | 2 (0 CD) |

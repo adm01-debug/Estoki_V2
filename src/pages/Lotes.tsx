@@ -1,5 +1,6 @@
 import { LotesCharts } from "@/components/charts/WMSModuleCharts";
 import { useState, useMemo, useEffect } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -142,6 +143,7 @@ export default function LotesPage() {
 
   return (
     <AppLayout title="Lotes" showBack>
+      <SEO title="Lotes" path="/lotes" description="Gestão e rastreabilidade de lotes de estoque no ESTOKI WMS." />
       <PageTransition>
         <div className="space-y-4 p-4">
           {/* Stats */}
