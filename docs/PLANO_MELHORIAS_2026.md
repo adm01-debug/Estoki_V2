@@ -10,8 +10,8 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **2. Validação Zod em 100% das Edge Functions** que recebem body — schema + teste de payload inválido → 400.
 - [ ] **3. Rate limiting global** em endpoints sensíveis (auth, pagamento, PIX, boleto) via middleware `_shared/rate-limit.ts`.
 - [ ] **4. Pipeline CD/Deploy** (`.github/workflows/cd.yml`) staging + prod com gate manual e rollback documentado.
-- [ ] **5. Fix type-check + size-limit** reportados como ❌ em `.qa-report/summary.md` (3 CIs verdes consecutivos).
-- [ ] **6. Remover/RLS `tabela_insegura_teste`** residual — `qa:rls` limpo.
+- [x] **5. Fix type-check + size-limit** — ✅ typecheck sem erros; 7/7 budgets abaixo do limite (2026-07-15).
+- [x] **6. Remover/RLS `tabela_insegura_teste`** — ✅ RLS audit 76/76 tabelas ativas com RLS + policy (2026-07-15).
 
 ## 🟠 P1 — Alto
 
