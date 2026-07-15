@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import { Line, LineChart, ResponsiveContainer, YAxis } from "recharts";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,12 +71,16 @@ function StatCard({
   value,
   hint,
   tone = "default",
+  trend,
+  trendColor = "hsl(var(--primary))",
 }: {
   icon: typeof Activity;
   label: string;
   value: string | number;
   hint?: string;
   tone?: "default" | "success" | "warning" | "danger";
+  trend?: number[];
+  trendColor?: string;
 }) {
   const toneClass = {
     default: "border-border bg-card",
@@ -85,12 +91,29 @@ function StatCard({
   return (
     <Card className={cn("border", toneClass)}>
       <CardContent className="flex items-center gap-4 p-4">
-        <Icon className="h-8 w-8 opacity-60" />
-        <div className="flex flex-col">
+        <Icon className="h-8 w-8 shrink-0 opacity-60" />
+        <div className="flex min-w-0 flex-1 flex-col">
           <span className="text-[10px] font-bold uppercase text-muted-foreground">{label}</span>
           <span className="text-2xl font-bold">{value}</span>
           {hint && <span className="text-[10px] text-muted-foreground">{hint}</span>}
         </div>
+        {trend && trend.length > 1 && (
+          <div className="h-10 w-20 shrink-0">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trend.map((v, i) => ({ i, v }))}>
+                <YAxis hide domain={["dataMin", "dataMax"]} />
+                <Line
+                  type="monotone"
+                  dataKey="v"
+                  stroke={trendColor}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -111,6 +134,28 @@ export default function BackendHealthPage() {
     staleTime: 15_000,
     retry: false,
   });
+
+  // Buffer em memória dos últimos 20 samples para sparklines de tendência.
+  const [history, setHistory] = useState<{
+    conn: number[];
+    p95: number[];
+    err: number[];
+    cache: number[];
+  }>({ conn: [], p95: [], err: [], cache: [] });
+  const lastAtRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!data || data.generated_at === lastAtRef.current) return;
+    lastAtRef.current = data.generated_at;
+    setHistory((h) => {
+      const push = (arr: number[], v: number) => [...arr.slice(-19), v];
+      return {
+        conn: push(h.conn, data.db.connections.total),
+        p95: push(h.p95, data.queries.latency.p95Ms),
+        err: push(h.err, data.queries.errorRatePct),
+        cache: push(h.cache, data.db.database.cache_hit_ratio_pct),
+      };
+    });
+  }, [data]);
 
   const conn = data?.db.connections;
   const dbInfo = data?.db.database;
@@ -179,6 +224,8 @@ export default function BackendHealthPage() {
                 value={`${dbInfo!.size_mb} MB`}
                 hint={`Cache hit: ${dbInfo!.cache_hit_ratio_pct}%`}
                 tone={cacheTone}
+                trend={history.cache}
+                trendColor="hsl(var(--success))"
               />
               <StatCard
                 icon={Server}
@@ -186,6 +233,7 @@ export default function BackendHealthPage() {
                 value={`${conn!.total}/${conn!.max}`}
                 hint={`Ativas: ${conn!.active} · Ociosas: ${conn!.idle} · ${conn!.saturation_pct}%`}
                 tone={connTone}
+                trend={history.conn}
               />
               <StatCard
                 icon={Zap}
@@ -193,6 +241,8 @@ export default function BackendHealthPage() {
                 value={data.queries.total.toLocaleString("pt-BR")}
                 hint={`Taxa de erro: ${data.queries.errorRatePct}%`}
                 tone={errorTone}
+                trend={history.err}
+                trendColor="hsl(var(--destructive))"
               />
               <StatCard
                 icon={Clock}
@@ -200,6 +250,8 @@ export default function BackendHealthPage() {
                 value={`${lat!.p95Ms}ms`}
                 hint={`avg ${lat!.avgMs}ms · p99 ${lat!.p99Ms}ms`}
                 tone={lat!.p95Ms > 1000 ? "warning" : "success"}
+                trend={history.p95}
+                trendColor="hsl(var(--warning))"
               />
             </div>
 
