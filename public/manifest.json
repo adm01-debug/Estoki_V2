@@ -4,98 +4,35 @@
   "description": "Sistema WMS completo para gestão de estoque, recebimento, expedição e inventário",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#6366f1",
+  "background_color": "#0f172a",
+  "theme_color": "#f59e0b",
   "orientation": "any",
   "scope": "/",
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/icons/icon-72x72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-96x96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-128x128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-144x144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-152x152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "/icons/icon-192x192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-384x384.png",
-      "sizes": "384x384",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
-    }
-  ],
-  "screenshots": [
+      "purpose": "any"
+    },
     {
-      "src": "/screenshots/dashboard.png",
-      "sizes": "1280x720",
+      "src": "/icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "Dashboard Principal"
-    },
-    {
-      "src": "/screenshots/mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Versão Mobile"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Novo Recebimento",
-      "short_name": "Receber",
-      "description": "Iniciar novo recebimento de mercadorias",
-      "url": "/recebimento/novo",
-      "icons": [{ "src": "/icons/receiving.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Inventário",
-      "short_name": "Inventário",
-      "description": "Realizar contagem de inventário",
-      "url": "/inventario",
-      "icons": [{ "src": "/icons/inventory.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Expedição",
-      "short_name": "Expedir",
-      "description": "Gerenciar expedições",
-      "url": "/expedicao",
-      "icons": [{ "src": "/icons/shipping.png", "sizes": "96x96" }]
+      "purpose": "maskable"
     }
   ],
   "categories": ["business", "productivity", "utilities"],
