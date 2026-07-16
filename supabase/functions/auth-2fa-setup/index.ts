@@ -95,8 +95,6 @@ serve(async (req) => {
     }
 
     if (action === "unenroll") {
-      const { factorId } = await req.json();
-
       if (!factorId) {
         return new Response(JSON.stringify({ error: "Factor ID required" }), {
           status: 400,
