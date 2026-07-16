@@ -7,7 +7,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 ## 🔴 P0 — Crítico
 
 - [~] **1. Cobertura de testes core** — ✅ Testes adicionados para `stockService` (4 casos: getMovements sucesso/erro, createMovement estoque negativo, previous/new_qty corretos) e `pickingService` (3 casos: normalização, erro, updateTaskStatus operador). Total: 10 testes de serviços verdes. Gate de cobertura no CI fica em rodada seguinte (2026-07-15).
-- [ ] **2. Validação Zod em 100% das Edge Functions** que recebem body — schema + teste de payload inválido → 400.
+- [~] **2. Validação Zod em 100% das Edge Functions** — cobertura 26/208 (auth-reset-password, auth-verify-email, auth-refresh-token, auth-change-password, auth-2fa-setup, auth-2fa-verify, boleto-generate + 7 schemas novos em `_shared/schemas.ts`). Restantes seguem em rodadas subsequentes (2026-07-15).
 - [x] **3. Rate limiting global** — ✅ `_shared/rate-limit.ts` + `RateLimitPresets` (auth/payment/pix/boleto/webhook). Aplicado em `auth-login` como referência; rollout nas demais funções sensíveis fica em rodadas seguintes seguindo o mesmo padrão (2026-07-15).
 - [x] **4. Pipeline CD/Deploy** — ✅ `.github/workflows/cd.yml` com build → staging (auto) → produção (gate manual via `workflow_dispatch`) + smoke tests + tag de release + playbook de rollback documentado (2026-07-15).
 - [x] **5. Fix type-check + size-limit** — ✅ typecheck sem erros; 7/7 budgets abaixo do limite (2026-07-15).
