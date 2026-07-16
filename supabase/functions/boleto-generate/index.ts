@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { BoletoGenerateSchema, validateInput } from "../_shared/schemas.ts";
+import { rateLimit, rateLimitResponse, RateLimitPresets } from "../_shared/rate-limit.ts";
 
 interface BoletoRequest {
   amount: number;
@@ -37,6 +38,8 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+  const rl = rateLimit(req, { key: "boleto-generate", ...RateLimitPresets.boleto });
+  if (!rl.ok) return rateLimitResponse(rl, req);
 
   try {
     const supabase = createClient(

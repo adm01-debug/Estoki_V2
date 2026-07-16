@@ -2,9 +2,12 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { RegisterSchema, validateInput } from "../_shared/schemas.ts";
+import { rateLimit, rateLimitResponse, RateLimitPresets } from "../_shared/rate-limit.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
+  const rl = rateLimit(req, { key: "auth-register", ...RateLimitPresets.auth });
+  if (!rl.ok) return rateLimitResponse(rl, req);
   const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
 
   try {
