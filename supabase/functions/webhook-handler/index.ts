@@ -3,6 +3,7 @@ import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { WebhookEventSchema, validateInput } from "../_shared/schemas.ts";
+import { rateLimit, rateLimitResponse, RateLimitPresets } from "../_shared/rate-limit.ts";
 
 const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
@@ -13,6 +14,8 @@ const jsonResponse = (body: unknown, status = 200, request?: Request) =>
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
+  const rl = rateLimit(req, { key: "webhook-handler", ...RateLimitPresets.webhook });
+  if (!rl.ok) return rateLimitResponse(rl, req);
 
   try {
     // Check body size (max 1MB)
