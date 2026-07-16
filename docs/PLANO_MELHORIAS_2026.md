@@ -27,7 +27,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **16. i18n 100%** — script anti-hardcoded no CI.
 - [ ] **17. Marketplace de plugins** — SDK mínimo.
 - [ ] **18. Gap analysis SOC 2** formal.
-- [ ] **19. Testes das 20 Edge Functions críticas** (`create-sales-order`, `adjust-inventory`, `nfe-import`, `picking-confirm`, `boleto-generate`, `pix-generate`, etc.).
+- [~] **19. Testes das Edge Functions críticas** — 10/20 com contract tests: `adjust-inventory`, `ai-assistant`, `calculate-shipping`, `picking-confirm`, `webhook-handler`, `auth-login`, `auth-register`, `auth-reset-password`, `nfe-import`, `boleto-generate`, `stock-movement`, `inventory-reserve` (2026-07-16). Restantes (`create-sales-order`, `pix-generate`, `create-shipment`, `inventory-transfer`, `carrier-book`, `carrier-track`, `auth-2fa-verify`, `auth-refresh-token`) em rodadas seguintes.
 - [~] **20. SEO `<Helmet>`** em páginas públicas — HelmetProvider ativado + SEO em 10 páginas top (Dashboard, Lotes, Auth, Hub, Gamificação, Armazenamento, AssistenteIA, Movimentação, Relatórios, Romaneios, ModoOffline). Restantes rolam por demanda.
 - [x] **21. Acessibilidade** — ✅ `tests/e2e/a11y-smoke.spec.ts` com `@axe-core/playwright`, falha em violações `critical`/`serious`. Adicionado ao qa.yml como job E2E (2026-07-15).
 
