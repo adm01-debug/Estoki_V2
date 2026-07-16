@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { TwoFactorSetupSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -27,7 +28,15 @@ serve(async (req) => {
       });
     }
 
-    const { action } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const v = validateInput(TwoFactorSetupSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { action, factorId } = v.data;
     console.log("2FA Setup action:", action, "for user:", user.id);
 
     if (action === "enroll") {
@@ -86,8 +95,6 @@ serve(async (req) => {
     }
 
     if (action === "unenroll") {
-      const { factorId } = await req.json();
-
       if (!factorId) {
         return new Response(JSON.stringify({ error: "Factor ID required" }), {
           status: 400,

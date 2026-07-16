@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { TwoFactorVerifySchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -27,15 +28,16 @@ serve(async (req) => {
       });
     }
 
-    const { factorId, code, action } = await req.json();
-    console.log("2FA Verify action:", action, "for user:", user.id);
-
-    if (!factorId || !code) {
-      return new Response(JSON.stringify({ error: "Factor ID and code are required" }), {
+    const body = await req.json().catch(() => ({}));
+    const v = validateInput(TwoFactorVerifySchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
+    const { factorId, code, action } = v.data;
+    console.log("2FA Verify action:", action, "for user:", user.id);
 
     if (action === "verify-enrollment") {
       // Create a challenge and verify it to complete enrollment
