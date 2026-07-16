@@ -1,10 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { ChangePasswordOnlySchema, validateInput } from "../_shared/schemas.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
   try {
-    const { newPassword } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    const v = validateInput(ChangePasswordOnlySchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { newPassword } = v.data;
     const authHeader = req.headers.get("Authorization")!;
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
