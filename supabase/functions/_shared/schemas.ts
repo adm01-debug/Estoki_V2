@@ -24,6 +24,42 @@ export const ChangePasswordSchema = z.object({
   newPassword: z.string().min(8).max(128),
 });
 
+export const VerifyEmailSchema = z.object({
+  token: z.string().min(10).max(2048),
+});
+
+export const RefreshTokenSchema = z.object({
+  refresh_token: z.string().min(10).max(4096),
+});
+
+export const TwoFactorSetupSchema = z.object({
+  action: z.enum(["enroll", "unenroll", "list"]),
+  factorId: z.string().min(1).optional(),
+});
+
+export const TwoFactorVerifySchema = z.object({
+  factorId: z.string().min(1),
+  code: z.string().regex(/^\d{6}$/, "Código deve ter 6 dígitos"),
+  action: z.enum(["verify-enrollment", "verify-login", "challenge"]).optional(),
+  challengeId: z.string().optional(),
+});
+
+export const ChangePasswordOnlySchema = z.object({
+  newPassword: z.string().min(8).max(128),
+});
+
+export const BoletoGenerateSchema = z.object({
+  amount: z.number().positive().max(1_000_000),
+  due_date: z.string().min(8).max(40),
+  payer: z.object({
+    name: z.string().min(2).max(200),
+    document: z.string().min(11).max(20),
+    address: z.string().max(500).optional(),
+  }),
+  description: z.string().min(1).max(500),
+  instructions: z.array(z.string().max(200)).max(20).optional(),
+});
+
 // ── NF-e schemas ──────────────────────────────────────────
 export const NfeImportSchema = z
   .object({
