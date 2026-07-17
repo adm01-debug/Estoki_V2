@@ -190,6 +190,30 @@ export const InventoryTransferSchema = z.object({
   lote_id: z.string().uuid().optional(),
 });
 
+export const PixGenerateSchema = z.object({
+  amount: z.number().positive("amount deve ser maior que zero").max(1_000_000),
+  description: z.string().max(140).optional(),
+  payer_name: z.string().max(120).optional(),
+  expiration_minutes: z.number().int().min(1).max(1440).optional(),
+});
+
+export const CreateSalesOrderSchema = z.object({
+  customerId: z.string().uuid("customerId inválido"),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().min(1).max(64).optional(),
+        quantity: z.number().positive(),
+        unitPrice: z.number().nonnegative(),
+      })
+    )
+    .min(1, "Ao menos um item é obrigatório")
+    .max(500),
+  shippingAddress: z.record(z.unknown()).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
