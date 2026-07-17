@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **26**
-- **Faltando Zod: 182**
+- Com Zod: **30**
+- **Faltando Zod: 178**
 
 ## Functions sem validação Zod (top 30)
 
@@ -35,7 +35,7 @@
 - `bulk-upsert`
 - `cache`
 - `cache-invalidate`
-- `cancel-order`
-- `carrier-book`
+- `carrier-cancel`
+- `carrier-label`
 
-_...e mais 152._
+_...e mais 148._

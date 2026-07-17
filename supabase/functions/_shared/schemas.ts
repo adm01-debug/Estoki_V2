@@ -190,6 +190,45 @@ export const InventoryTransferSchema = z.object({
   lote_id: z.string().uuid().optional(),
 });
 
+export const PixGenerateSchema = z.object({
+  amount: z.number().positive("amount deve ser maior que zero").max(1_000_000),
+  description: z.string().max(140).optional(),
+  payer_name: z.string().max(120).optional(),
+  expiration_minutes: z.number().int().min(1).max(1440).optional(),
+});
+
+export const CreateSalesOrderSchema = z.object({
+  customerId: z.string().uuid("customerId inválido"),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().min(1).max(64).optional(),
+        quantity: z.number().positive(),
+        unitPrice: z.number().nonnegative(),
+      })
+    )
+    .min(1, "Ao menos um item é obrigatório")
+    .max(500),
+  shippingAddress: z.record(z.unknown()).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+export const CancelOrderSchema = z.object({
+  orderId: z.string().uuid("orderId inválido"),
+  reason: z.string().min(1).max(500),
+  userId: z.string().uuid().optional(),
+});
+
+export const CarrierBookSchema = z.object({
+  order_id: z.string().uuid().optional(),
+  shipment_id: z.string().uuid().optional(),
+  carrier: z.string().min(1).max(64),
+  service: z.string().max(64).optional(),
+  weight_kg: z.number().positive().max(1000).optional(),
+  destination_zip: z.string().min(3).max(16).optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(

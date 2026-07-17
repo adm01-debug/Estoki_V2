@@ -3,13 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { rateLimit, rateLimitResponse, RateLimitPresets } from "../_shared/rate-limit.ts";
-
-interface PixRequest {
-  amount: number;
-  description?: string;
-  payer_name?: string;
-  expiration_minutes?: number;
-}
+import { PixGenerateSchema, validateInput } from "../_shared/schemas.ts";
 
 function generatePixPayload(
   pixKey: string,
@@ -61,11 +55,15 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const data: PixRequest = await req.json();
-
-    if (!data.amount || data.amount <= 0) {
-      throw new Error("amount é obrigatório e deve ser maior que zero");
+    const body = await req.json().catch(() => ({}));
+    const v = validateInput(PixGenerateSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
+    const data = v.data;
 
     const txId = crypto.randomUUID().replace(/-/g, "").substring(0, 25);
     const pixKey = Deno.env.get("PIX_KEY") || "estoki@empresa.com.br";
