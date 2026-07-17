@@ -214,6 +214,21 @@ export const CreateSalesOrderSchema = z.object({
   notes: z.string().max(2000).optional(),
 });
 
+export const CancelOrderSchema = z.object({
+  orderId: z.string().uuid("orderId inválido"),
+  reason: z.string().min(1).max(500),
+  userId: z.string().uuid().optional(),
+});
+
+export const CarrierBookSchema = z.object({
+  order_id: z.string().uuid().optional(),
+  shipment_id: z.string().uuid().optional(),
+  carrier: z.string().min(1).max(64),
+  service: z.string().max(64).optional(),
+  weight_kg: z.number().positive().max(1000).optional(),
+  destination_zip: z.string().min(3).max(16).optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
