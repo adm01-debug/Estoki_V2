@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { BatchImportSchema, validateInput } from "../_shared/schemas.ts";
 
 interface ImportResult {
   total: number;
@@ -50,7 +51,15 @@ serve(async (req) => {
   );
 
   try {
-    const { type, data, options = {} } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(BatchImportSchema, raw);
+    if (!v.success) {
+      return new Response(JSON.stringify({ success: false, error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { type, data, options = {} } = v.data as any;
     const { skip_errors = true, update_existing = true, batch_size = 100 } = options;
 
     let result: ImportResult;

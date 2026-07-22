@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **30**
-- **Faltando Zod: 178**
+- Com Zod: **38**
+- **Faltando Zod: 170**
 
 ## Functions sem validação Zod (top 30)
 
@@ -15,27 +15,27 @@
 - `ai-sentiment`
 - `ai-summarize`
 - `ai-translate`
-- `alert-expiration`
 - `alert-monitor`
 - `alert-pending-orders`
 - `alert-productivity`
 - `alert-quality`
 - `alert-sla-breach`
-- `alert-stock-low`
 - `analytics`
 - `audit-log`
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
-- `batch-import`
-- `batch-processor`
-- `bulk-delete`
-- `bulk-insert`
-- `bulk-update`
-- `bulk-upsert`
 - `cache`
 - `cache-invalidate`
 - `carrier-cancel`
 - `carrier-label`
+- `carrier-quote-correios`
+- `carrier-quote-jadlog`
+- `carrier-rates-cache`
+- `carrier-webhooks`
+- `check-expiration`
+- `check-permission`
+- `cleanup-old-data`
+- `cleanup-sessions`
 
-_...e mais 148._
+_...e mais 140._

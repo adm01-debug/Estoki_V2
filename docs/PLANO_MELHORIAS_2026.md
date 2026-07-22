@@ -7,7 +7,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 ## 🔴 P0 — Crítico
 
 - [x] **1. Cobertura de testes core** — ✅ 17 testes verdes em `src/services` (stock, picking, receiving, quality, movimentacao). Gate v8 configurado em `vitest.config.ts` (lines 12/branches 55/functions 25 — rampa até 70/60/60/70) e job `test:coverage` + upload de artefato ativo em `.github/workflows/qa.yml` (2026-07-22).
-- [~] **2. Validação Zod em 100% das Edge Functions** — cobertura 30/208 (+ `create-sales-order`, `pix-generate`, `cancel-order`, `carrier-book` e 4 schemas novos em `_shared/schemas.ts`). Restantes seguem em rodadas subsequentes (2026-07-17).
+- [~] **2. Validação Zod em 100% das Edge Functions** — cobertura 38/208 (+ lote `bulk-delete/insert/update/upsert`, `batch-import`, `batch-processor`, `alert-stock-low`, `alert-expiration` com whitelist rigorosa de tabelas nos `bulk-*` + 8 schemas novos em `_shared/schemas.ts` + contract tests em `bulk-delete`). Restantes seguem em rodadas subsequentes (2026-07-22).
 - [x] **3. Rate limiting global** — ✅ `_shared/rate-limit.ts` + `RateLimitPresets`. Rollout aplicado em 10 funções sensíveis: `auth-login`, `auth-register`, `auth-reset-password`, `auth-refresh-token`, `auth-change-password`, `auth-2fa-setup`, `auth-2fa-verify`, `pix-generate`, `boleto-generate`, `create-payment-intent`, `webhook-handler` (2026-07-16).
 - [x] **4. Pipeline CD/Deploy** — ✅ `.github/workflows/cd.yml` com build → staging (auto) → produção (gate manual via `workflow_dispatch`) + smoke tests + tag de release + playbook de rollback documentado (2026-07-15).
 - [x] **5. Fix type-check + size-limit** — ✅ typecheck sem erros; 7/7 budgets abaixo do limite (2026-07-15).
