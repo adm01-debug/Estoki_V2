@@ -229,6 +229,82 @@ export const CarrierBookSchema = z.object({
   destination_zip: z.string().min(3).max(16).optional(),
 });
 
+// ── Bulk / Batch operation schemas ────────────────────────
+// Whitelist rigorosa: apenas tabelas operacionais podem ser alvo dos
+// endpoints `bulk-*` (executam com service_role e ignoram RLS).
+export const BulkTableEnum = z.enum([
+  "lotes",
+  "tarefas",
+  "notificacoes",
+  "alertas_historico",
+  "produtos",
+  "produtos_precos",
+  "posicoes_estoque",
+  "estoque_posicao",
+  "ondas_separacao",
+  "eventos_picking",
+  "eventos_triagem",
+  "romaneios",
+  "romaneio_itens",
+  "orders",
+  "order_items",
+  "rastreamento_historico",
+  "inspecoes_qualidade",
+  "saved_filters",
+  "metricas_dashboard",
+  "metricas_operacionais",
+]);
+
+export const BulkDeleteSchema = z.object({
+  table: BulkTableEnum,
+  ids: z.array(z.string().uuid()).min(1).max(500),
+});
+
+export const BulkInsertSchema = z.object({
+  table: BulkTableEnum,
+  records: z.array(z.record(z.unknown())).min(1).max(500),
+});
+
+export const BulkUpdateSchema = z.object({
+  table: BulkTableEnum,
+  records: z.array(z.record(z.unknown())).min(1).max(500),
+  matchColumns: z.array(z.string().min(1).max(64)).min(1).max(5),
+});
+
+export const BulkUpsertSchema = z.object({
+  table: BulkTableEnum,
+  records: z.array(z.record(z.unknown())).min(1).max(500),
+  conflictColumns: z.array(z.string().min(1).max(64)).min(1).max(5),
+});
+
+export const BatchProcessorSchema = z
+  .object({
+    action: z.string().min(1).max(64).optional(),
+    payload: z.record(z.unknown()).optional(),
+  })
+  .passthrough();
+
+export const BatchImportSchema = z.object({
+  type: z.enum(["products", "receiving", "locations", "stock_adjustment"]),
+  data: z.union([z.array(z.record(z.unknown())).max(5000), z.record(z.unknown())]),
+  options: z
+    .object({
+      skip_errors: z.boolean().optional(),
+      update_existing: z.boolean().optional(),
+      batch_size: z.number().int().min(1).max(1000).optional(),
+    })
+    .optional(),
+});
+
+// ── Alert schemas ─────────────────────────────────────────
+export const AlertStockLowSchema = z.object({
+  warehouse_id: z.string().uuid().optional(),
+});
+
+export const AlertExpirationSchema = z.object({
+  days_threshold: z.number().int().min(1).max(365).optional().default(30),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
