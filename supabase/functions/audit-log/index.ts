@@ -3,6 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AuditLogSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -13,7 +14,15 @@ serve(async (req) => {
   );
 
   try {
-    const { action, data } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(AuditLogSchema, raw);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { action, data } = v.data as { action: "log" | "query"; data: any };
 
     switch (action) {
       case "log": {

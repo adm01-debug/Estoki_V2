@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { CacheSchema, validateInput } from "../_shared/schemas.ts";
 
 const cache = new Map<string, { value: any; expiresAt: number }>();
 
@@ -10,7 +11,15 @@ serve(async (req) => {
   }
 
   try {
-    const { action, key, value, ttl = 300 } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(CacheSchema, raw);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { action, key, value, ttl = 300 } = v.data;
     const now = Date.now();
 
     if (action === "get") {

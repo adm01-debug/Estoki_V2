@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AnalyticsEventSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,7 +15,15 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { event, properties, user_id, session_id } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(AnalyticsEventSchema, raw);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { event, properties, user_id, session_id } = v.data;
 
     const { error } = await supabase.from("analytics_events").insert({
       event,

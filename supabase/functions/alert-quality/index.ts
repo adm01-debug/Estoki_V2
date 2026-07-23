@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AlertQualitySchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,7 +26,15 @@ serve(async (req) => {
       });
     }
 
-    const body = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(AlertQualitySchema, raw);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const body = v.data;
     const result = {
       success: true,
       function: "alert-quality",

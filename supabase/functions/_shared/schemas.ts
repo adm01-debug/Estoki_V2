@@ -305,6 +305,56 @@ export const AlertExpirationSchema = z.object({
   days_threshold: z.number().int().min(1).max(365).optional().default(30),
 });
 
+// ── Lote Zod: alerts + audit + analytics + cache ─────────
+export const AlertMonitorSchema = z.object({
+  tipo: z.string().min(1).max(64).optional(),
+  severidade: z.enum(["info", "warning", "high", "critical"]).optional(),
+  limite: z.number().int().min(1).max(1000).optional(),
+}).passthrough();
+
+export const AlertPendingOrdersSchema = z.object({
+  hours_threshold: z.number().int().min(1).max(720).optional().default(24),
+});
+
+export const AlertProductivitySchema = z.object({
+  user_id: z.string().uuid().optional(),
+  periodo: z.enum(["dia", "semana", "mes"]).optional(),
+}).passthrough();
+
+export const AlertQualitySchema = z.object({
+  taxa_minima: z.number().min(0).max(100).optional(),
+}).passthrough();
+
+export const AlertSlaBreachSchema = z.object({
+  sla_horas: z.number().int().min(1).max(720).optional(),
+}).passthrough();
+
+export const AuditLogSchema = z.object({
+  action: z.enum(["log", "query"]),
+  data: z.record(z.unknown()),
+});
+
+export const AnalyticsEventSchema = z.object({
+  event: z.string().min(1).max(200),
+  properties: z.record(z.unknown()).optional(),
+  user_id: z.string().uuid().optional(),
+  session_id: z.string().max(200).optional(),
+});
+
+export const CacheSchema = z.object({
+  action: z.enum(["get", "set", "delete"]),
+  key: z.string().min(1).max(500),
+  value: z.unknown().optional(),
+  ttl: z.number().int().min(1).max(86400).optional(),
+});
+
+export const CacheInvalidateSchema = z.object({
+  pattern: z.string().min(1).max(500).optional(),
+  keys: z.array(z.string().min(1).max(500)).max(1000).optional(),
+}).refine((d) => d.pattern || (d.keys && d.keys.length > 0), {
+  message: "pattern ou keys[] é obrigatório",
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
