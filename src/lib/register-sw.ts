@@ -1,47 +1,84 @@
-// Service Worker Registration
+/**
+ * Service Worker Registration — guarded para preview Lovable + dev.
+ *
+ * Regras (skill/pwa):
+ *  - Nunca registrar em dev, iframe, hosts de preview Lovable, ou com ?sw=off
+ *  - Em qualquer contexto proibido, faz UNREGISTER de /sw.js para limpar caches antigos
+ *  - Só registra em produção real (domínio publicado / custom domain)
+ *  - `vite-plugin-pwa` é o único emissor de /sw.js — não editar manualmente
+ */
 import { logger } from "@/utils/logger";
 
+const APP_SW_PATH = "/sw.js";
+
+function isForbiddenContext(): { forbidden: boolean; reason: string } {
+  if (!import.meta.env.PROD) return { forbidden: true, reason: "dev" };
+  if (typeof window === "undefined") return { forbidden: true, reason: "ssr" };
+  if (window.self !== window.top) return { forbidden: true, reason: "iframe" };
+
+  const host = window.location.hostname;
+  const isLovablePreview =
+    host.startsWith("id-preview--") ||
+    host.startsWith("preview--") ||
+    host === "lovableproject.com" ||
+    host.endsWith(".lovableproject.com") ||
+    host === "lovableproject-dev.com" ||
+    host.endsWith(".lovableproject-dev.com") ||
+    host === "beta.lovable.dev" ||
+    host.endsWith(".beta.lovable.dev");
+  if (isLovablePreview) return { forbidden: true, reason: "lovable-preview" };
+
+  if (new URLSearchParams(window.location.search).get("sw") === "off") {
+    return { forbidden: true, reason: "kill-switch" };
+  }
+
+  return { forbidden: false, reason: "" };
+}
+
+async function unregisterAppSw(): Promise<void> {
+  if (!("serviceWorker" in navigator)) return;
+  try {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.allSettled(
+      regs
+        .filter((r) => {
+          const url = r.active?.scriptURL ?? r.installing?.scriptURL ?? r.waiting?.scriptURL ?? "";
+          return url.endsWith(APP_SW_PATH);
+        })
+        .map((r) => r.unregister())
+    );
+  } catch {
+    /* noop */
+  }
+}
+
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (!("serviceWorker" in navigator)) {
-    if (import.meta.env.DEV) logger.debug("Service Worker não suportado");
+  if (!("serviceWorker" in navigator)) return null;
+
+  const gate = isForbiddenContext();
+  if (gate.forbidden) {
+    await unregisterAppSw();
+    if (import.meta.env.DEV) logger.debug(`[SW] registro suprimido (${gate.reason})`);
     return null;
   }
 
   try {
-    const registration = await navigator.serviceWorker.register("/sw.js", {
+    const registration = await navigator.serviceWorker.register(APP_SW_PATH, {
       scope: "/",
       updateViaCache: "none",
     });
 
-    if (import.meta.env.DEV) logger.debug("Service Worker registrado", { scope: registration.scope });
+    // Check for updates periodicamente
+    setInterval(() => registration.update(), 60 * 60 * 1000);
 
-    // Check for updates periodically
-    setInterval(
-      () => {
-        registration.update();
-      },
-      60 * 60 * 1000
-    ); // Every hour
-
-    // Handle updates
     registration.addEventListener("updatefound", () => {
       const newWorker = registration.installing;
       if (!newWorker) return;
-
       newWorker.addEventListener("statechange", () => {
         if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-          // New version available
-          if (confirm("Nova versão disponível! Deseja atualizar?")) {
-            newWorker.postMessage({ type: "SKIP_WAITING" });
-            window.location.reload();
-          }
+          window.dispatchEvent(new CustomEvent("sw:update-available"));
         }
       });
-    });
-
-    // Handle controller change
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      if (import.meta.env.DEV) logger.debug("Service Worker controller alterado");
     });
 
     return registration;
