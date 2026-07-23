@@ -594,6 +594,121 @@ export const GeneratePutawayListSchema = z.object({
 
 // ── Helper: validate and return typed result ──────────────
 
+// ── Import / Integration / Inventory batch schemas ────────
+export const ImportCsvSchema = z.object({
+  content: z.string().max(5_000_000).optional(),
+  url: z.string().url().max(2048).optional(),
+  table: z.string().min(1).max(100).optional(),
+  mapping: z.record(z.string().max(100)).optional(),
+  delimiter: z.string().min(1).max(3).optional(),
+  hasHeader: z.boolean().optional(),
+});
+
+export const ImportProductsSchema = z.object({
+  products: z
+    .array(
+      z.object({
+        sku: z.string().min(1).max(100),
+        nome: z.string().min(1).max(200).optional(),
+        name: z.string().min(1).max(200).optional(),
+        preco: z.number().nonnegative().max(1e9).optional(),
+        price: z.number().nonnegative().max(1e9).optional(),
+        categoria: z.string().max(100).optional(),
+        unidade: z.string().max(20).optional(),
+      })
+    )
+    .min(1)
+    .max(10_000),
+  mode: z.enum(["insert", "upsert", "update"]).optional(),
+});
+
+export const IntegrationActionSchema = z.object({
+  action: z.string().min(1).max(100),
+  credentials: z.record(z.unknown()).optional(),
+  data: z.record(z.unknown()).optional(),
+  marketplace_id: z.string().max(100).optional(),
+});
+
+export const IntegrationCorreiosSchema = z.object({
+  action: z.enum(["cep", "frete", "rastreio", "prazo"]),
+  cep: z.string().max(20).optional(),
+  cep_origem: z.string().max(20).optional(),
+  cep_destino: z.string().max(20).optional(),
+  peso: z.number().positive().max(1e6).optional(),
+  comprimento: z.number().positive().max(1e5).optional(),
+  altura: z.number().positive().max(1e5).optional(),
+  largura: z.number().positive().max(1e5).optional(),
+  valor: z.number().nonnegative().max(1e9).optional(),
+  codigo: z.string().max(50).optional(),
+  servicos: z.array(z.string().max(20)).max(20).optional(),
+});
+
+export const InventoryBatchAdjustSchema = z.object({
+  adjustments: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().max(100).optional(),
+        loteId: z.string().uuid().optional(),
+        locationId: z.string().uuid().optional(),
+        quantity: z.number().finite(),
+        reason: z.string().max(500).optional(),
+      })
+    )
+    .min(1)
+    .max(5_000),
+  reference: z.string().max(200).optional(),
+});
+
+export const InventoryCountSchema = z.object({
+  cycleId: z.string().uuid().optional(),
+  locationId: z.string().uuid().optional(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().max(100).optional(),
+        counted: z.number().nonnegative().max(1e9),
+      })
+    )
+    .min(1)
+    .max(10_000),
+});
+
+export const InventoryReconcileSchema = z.object({
+  cycleId: z.string().uuid().optional(),
+  autoApprove: z.boolean().optional(),
+  threshold: z.number().nonnegative().max(1e6).optional(),
+});
+
+export const InventoryReleaseSchema = z.object({
+  reservationId: z.string().uuid().optional(),
+  orderId: z.string().uuid().optional(),
+  productId: z.string().uuid().optional(),
+  quantity: z.number().positive().max(1e9).optional(),
+});
+
+export const InventorySnapshotSchema = z.object({
+  scope: z.enum(["all", "location", "product", "category"]).optional(),
+  locationId: z.string().uuid().optional(),
+  productId: z.string().uuid().optional(),
+  category: z.string().max(100).optional(),
+});
+
+export const InventorySyncSchema = z.object({
+  source: z.string().min(1).max(100),
+  target: z.string().min(1).max(100).optional(),
+  fullSync: z.boolean().optional(),
+  since: z.string().max(40).optional(),
+});
+
+export const InventoryValuationSchema = z.object({
+  method: z.enum(["FIFO", "LIFO", "AVG", "STANDARD"]).optional(),
+  locationId: z.string().uuid().optional(),
+  category: z.string().max(100).optional(),
+  asOf: z.string().max(40).optional(),
+});
+
 export function validateInput<T>(
   schema: z.ZodSchema<T>,
   data: unknown
