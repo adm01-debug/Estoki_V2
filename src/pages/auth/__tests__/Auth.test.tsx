@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Auth from "@/pages/Auth";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,11 +29,13 @@ describe("Authentication Flow", () => {
 
   it("should render login form", async () => {
     render(
-      <MemoryRouter>
-        <AuthProvider>
-          <Auth />
-        </AuthProvider>
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+          <AuthProvider>
+            <Auth />
+          </AuthProvider>
+        </MemoryRouter>
+      </HelmetProvider>
     );
     // AuthProvider resolves its initial getSession asynchronously, so the page
     // shows a loading spinner first and the form mounts on the next tick.
@@ -45,11 +48,13 @@ describe("Authentication Flow", () => {
     mockSignIn.mockResolvedValueOnce({ data: { user: { id: "123" } } as any, error: null });
 
     render(
-      <MemoryRouter>
-        <AuthProvider>
-          <Auth />
-        </AuthProvider>
-      </MemoryRouter>
+      <HelmetProvider>
+        <MemoryRouter>
+          <AuthProvider>
+            <Auth />
+          </AuthProvider>
+        </MemoryRouter>
+      </HelmetProvider>
     );
 
     fireEvent.change(await screen.findByPlaceholderText(/email/i), {

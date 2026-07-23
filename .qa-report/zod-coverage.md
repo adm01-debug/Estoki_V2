@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **62**
-- **Faltando Zod: 146**
+- Com Zod: **69**
+- **Faltando Zod: 139**
 
 ## Functions sem validação Zod (top 30)
 
@@ -11,13 +11,6 @@
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
-- `check-expiration`
-- `check-permission`
-- `complete-job`
-- `create-lot`
-- `create-payment-intent`
-- `create-purchase-order`
-- `create-subscription`
 - `cte-import`
 - `cycle-count`
 - `danfe-generate`
@@ -37,5 +30,12 @@
 - `generate-pdf-report`
 - `generate-pick-list`
 - `generate-putaway-list`
+- `generate-report`
+- `generate-sku`
+- `import-csv`
+- `import-products`
+- `integration-amazon`
+- `integration-correios`
+- `integration-ifood`
 
-_...e mais 116._
+_...e mais 109._
