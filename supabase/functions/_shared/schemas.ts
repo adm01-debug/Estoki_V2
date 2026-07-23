@@ -630,7 +630,7 @@ export const IntegrationActionSchema = z.object({
 });
 
 export const IntegrationCorreiosSchema = z.object({
-  action: z.enum(["cep", "frete", "rastreio", "prazo"]),
+  action: z.enum(["cep", "frete", "rastreio", "prazo", "prepostagem"]),
   cep: z.string().max(20).optional(),
   cep_origem: z.string().max(20).optional(),
   cep_destino: z.string().max(20).optional(),
@@ -641,6 +641,26 @@ export const IntegrationCorreiosSchema = z.object({
   valor: z.number().nonnegative().max(1e9).optional(),
   codigo: z.string().max(50).optional(),
   servicos: z.array(z.string().max(20)).max(20).optional(),
+  // prepostagem
+  remetente: z.record(z.unknown()).optional(),
+  destinatario: z.record(z.unknown()).optional(),
+  servico: z.string().max(10).optional(),
+  volume: z
+    .object({
+      peso: z.number().positive(),
+      altura: z.number().positive(),
+      largura: z.number().positive(),
+      comprimento: z.number().positive(),
+    })
+    .optional(),
+  observacao: z.string().max(500).optional(),
+  nota_fiscal: z
+    .object({
+      chave: z.string().max(60).optional(),
+      numero: z.string().max(30).optional(),
+      serie: z.string().max(10).optional(),
+    })
+    .optional(),
 });
 
 export const InventoryBatchAdjustSchema = z.object({
