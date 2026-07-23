@@ -2,6 +2,13 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { IntegrationCorreiosSchema, validateInput } from "../_shared/schemas.ts";
+import {
+  hasCredentials,
+  quote as correiosQuote,
+  track as correiosTrack,
+  prepostagem as correiosPrepostagem,
+  MissingCredentialsError,
+} from "../_shared/correios.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -31,7 +38,6 @@ serve(async (req) => {
       }
 
       case "frete": {
-        // Simulação de cálculo de frete
         const {
           cep_origem,
           cep_destino,
@@ -41,6 +47,34 @@ serve(async (req) => {
           largura,
           servicos = ["04014", "04510"],
         } = params;
+
+        if (hasCredentials()) {
+          try {
+            const quotes = await correiosQuote({
+              originZip: cep_origem,
+              destZip: cep_destino,
+              weightKg: peso,
+              lengthCm: comprimento,
+              widthCm: largura,
+              heightCm: altura,
+              services: servicos,
+            });
+            result = {
+              mode: "real",
+              cotacoes: quotes.map((q) => ({
+                codigo: q.code,
+                nome: q.service,
+                valor: q.price.toFixed(2),
+                prazo: q.delivery_days,
+              })),
+            };
+            break;
+          } catch (err) {
+            if (!(err instanceof MissingCredentialsError)) {
+              console.error("[integration-correios/frete] fallback:", err);
+            }
+          }
+        }
 
         const results = servicos.map((servico: string) => {
           const basePrice = peso * 0.5 + (comprimento * altura * largura) / 6000;
@@ -55,13 +89,32 @@ serve(async (req) => {
             prazo: days[servico] || 10,
           };
         });
-        result = { cotacoes: results };
+        result = { mode: "simulated", cotacoes: results };
         break;
       }
 
       case "rastreio": {
-        // Simulação de rastreamento
+        if (hasCredentials()) {
+          try {
+            const eventos = await correiosTrack(params.codigo);
+            result = {
+              mode: "real",
+              codigo: params.codigo,
+              eventos: eventos.map((e) => ({
+                data: e.date,
+                local: e.location,
+                status: e.description,
+              })),
+            };
+            break;
+          } catch (err) {
+            if (!(err instanceof MissingCredentialsError)) {
+              console.error("[integration-correios/rastreio] fallback:", err);
+            }
+          }
+        }
         result = {
+          mode: "simulated",
           codigo: params.codigo,
           eventos: [
             { data: new Date().toISOString(), local: "São Paulo/SP", status: "Objeto em trânsito" },
@@ -75,8 +128,24 @@ serve(async (req) => {
         break;
       }
 
+      case "prepostagem": {
+        if (!hasCredentials()) {
+          throw new Error("Credenciais Correios ausentes: configure CORREIOS_USER, CORREIOS_TOKEN e CORREIOS_CARTAO");
+        }
+        const prep = await correiosPrepostagem({
+          remetente: params.remetente,
+          destinatario: params.destinatario,
+          servico: params.servico ?? "04014",
+          volume: params.volume,
+          observacao: params.observacao,
+          notaFiscal: params.nota_fiscal,
+        });
+        result = { mode: "real", ...prep };
+        break;
+      }
+
       default:
-        throw new Error("Ação inválida. Use: cep, frete, rastreio");
+        throw new Error("Ação inválida. Use: cep, frete, rastreio, prepostagem");
     }
 
     return new Response(JSON.stringify({ success: true, ...result }), {

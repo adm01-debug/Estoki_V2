@@ -15,7 +15,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 ## 🟠 P1 — Alto
 
-- [ ] **7. Integração Correios completa** (cotação + rastreio + postagem real).
+- [x] **7. Integração Correios completa** — ✅ Cliente compartilhado `supabase/functions/_shared/correios.ts` (autentica v1 + cache de token + retry 401) integrando **Preço v1**, **Prazo v1**, **SRO Rastro v1** e **Prepostagem v2**. Funções refatoradas: `carrier-quote-correios`, `carrier-track`, `integration-correios` (nova ação `prepostagem`). Fallback automático para simulação quando `CORREIOS_USER`/`CORREIOS_TOKEN` ausentes, resposta inclui `mode: "real"|"simulated"`. Contract test em `carrier-track/contract_test.ts` (2026-07-23).
 - [ ] **8. PWA real** (manifest, service worker guardado, offline, instalável).
 - [ ] **9. Multi-tenant** (`tenant_id` + RLS por tenant).
 - [ ] **10. API pública documentada** (OpenAPI/Swagger + portal).
