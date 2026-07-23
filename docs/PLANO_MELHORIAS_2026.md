@@ -22,7 +22,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [ ] **11. Integrações ERPs SAP/TOTVS** com testes reais.
 - [x] **12. ML de previsão de demanda** — ✅ Biblioteca `_shared/forecast.ts` com **5 modelos** (Naïve, SMA, SES, Holt, Holt-Winters aditivo com sazonalidade semanal), backtest walk-forward e métricas **MAE/RMSE/MAPE/sMAPE**. `autoForecast` escolhe o modelo de menor MAPE por produto. Função `demand-forecast` refatorada: lê `rastreamento_historico` (últimos 90d), agrega em série diária com zero-fill, roda backtest com holdout de 14d e devolve previsão + métricas de acurácia. Validado por 8 testes (Deno) em série sintética: HW bate Naïve, `autoForecast` mantém MAPE < 25% (2026-07-23).
 - [x] **13. Otimização de rotas de picking** — Nearest Neighbor + 2-opt multi-start em `_shared/tsp.ts` (6 testes verdes), integrado em `picking-optimize` e `wave-optimize`, com métricas baseline vs. otimizado e ganho percentual retornados na resposta.
-- [ ] **14. Integração AGV/automação** (MVP).
+- [x] **14. Integração AGV/automação (MVP)** — Tabelas `agv_devices` e `agv_missions` com RLS + GRANTs. Cliente `_shared/agv.ts` implementa subset **VDA 5050 v2.0.0** (nodes/edges/actions) com modo de simulação automático quando não há endpoint. Edge Function `agv-dispatch` valida via Zod, aloca AGV idle (maior bateria) ou enfileira, monta a ordem, despacha com timeout e atualiza status dispositivo/missão. 5 testes Deno verdes.
 - [ ] **15. App nativo** (Capacitor/React Native PoC).
 - [ ] **16. i18n 100%** — script anti-hardcoded no CI.
 - [ ] **17. Marketplace de plugins** — SDK mínimo.
