@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **69**
-- **Faltando Zod: 139**
+- Com Zod: **80**
+- **Faltando Zod: 128**
 
 ## Functions sem validação Zod (top 30)
 
@@ -16,26 +16,26 @@
 - `danfe-generate`
 - `dashboard-stats`
 - `data-migration`
-- `delete-file`
 - `demand-forecast`
 - `download-file`
 - `edi-process`
 - `expiration-check`
-- `export-pdf`
-- `export-products`
 - `external-db-bridge`
-- `generate-barcode`
-- `generate-csv`
-- `generate-excel`
-- `generate-pdf-report`
-- `generate-pick-list`
-- `generate-putaway-list`
-- `generate-report`
-- `generate-sku`
 - `import-csv`
 - `import-products`
 - `integration-amazon`
 - `integration-correios`
 - `integration-ifood`
+- `integration-mercado-livre`
+- `integration-rappi`
+- `integration-sap`
+- `integration-totvs`
+- `inventory-batch-adjust`
+- `inventory-count`
+- `inventory-reconcile`
+- `inventory-release`
+- `inventory-snapshot`
+- `inventory-sync`
+- `inventory-valuation`
 
-_...e mais 109._
+_...e mais 98._

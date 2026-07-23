@@ -1,18 +1,23 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GeneratePdfReportSchema, validateInput } from "../_shared/schemas.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: getCorsHeaders(req) });
   }
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { tipo, filtros, titulo } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GeneratePdfReportSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
+    const { tipo, filtros, titulo } = v.data;
 
     let dados: any[] = [];
     switch (tipo) {

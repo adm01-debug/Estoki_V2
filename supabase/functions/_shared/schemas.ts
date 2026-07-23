@@ -506,6 +506,92 @@ export const CreateSubscriptionSchema = z.object({
   cancelUrl: z.string().url().max(2048),
 });
 
+// ── Export / Generate / Delete file schemas ───────────────
+export const DeleteFileSchema = z.object({
+  path: z.string().min(1).max(1024),
+  bucket: z.string().min(1).max(64).optional(),
+});
+
+export const ExportPdfSchema = z.object({
+  tipo: z.string().min(1).max(64).optional(),
+  filtros: z.record(z.unknown()).optional(),
+  titulo: z.string().max(200).optional(),
+  filename: z.string().max(200).optional(),
+});
+
+export const ExportProductsSchema = z.object({
+  format: z.enum(["csv", "xlsx", "json"]).optional(),
+  filters: z.record(z.unknown()).optional(),
+  columns: z.array(z.string().min(1).max(100)).max(100).optional(),
+});
+
+export const GenerateBarcodeSchema = z.object({
+  value: z.string().min(1).max(200),
+  format: z.enum(["CODE128", "EAN13", "EAN8", "UPC", "CODE39", "QR"]).optional(),
+  width: z.number().int().min(1).max(20).optional(),
+  height: z.number().int().min(10).max(500).optional(),
+});
+
+export const GenerateCsvSchema = z.object({
+  data: z.array(z.record(z.unknown())).max(100_000),
+  columns: z.array(z.string().min(1).max(100)).min(1).max(200),
+  separator: z.string().min(1).max(3).optional(),
+  filename: z.string().max(200).optional(),
+});
+
+export const GenerateExcelSchema = z.object({
+  data: z.array(z.record(z.unknown())).max(100_000),
+  columns: z.array(z.string().min(1).max(100)).min(1).max(200),
+  filename: z.string().max(200).optional(),
+});
+
+export const GeneratePdfReportSchema = z.object({
+  tipo: z.enum(["estoque", "triagem", "recebimento"]),
+  filtros: z.record(z.unknown()).optional(),
+  titulo: z.string().min(1).max(200),
+});
+
+export const GenerateReportSchema = z.object({
+  tipo: z.enum(["triagem", "estoque"]),
+  data_inicio: z.string().min(4).max(40),
+  data_fim: z.string().min(4).max(40),
+});
+
+export const GenerateSkuSchema = z.object({
+  prefix: z.string().max(20).optional(),
+  categoryId: z.string().uuid().optional(),
+  productName: z.string().max(200).optional(),
+});
+
+export const GeneratePickListSchema = z.object({
+  orderId: z.string().uuid(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid(),
+        quantity: z.number().positive().max(1_000_000),
+      })
+    )
+    .min(1)
+    .max(500),
+  strategy: z.enum(["FIFO", "FEFO", "LOCATION"]).optional(),
+});
+
+export const GeneratePutawayListSchema = z.object({
+  receivingId: z.string().uuid(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().max(100).optional(),
+        quantity: z.number().positive().max(1_000_000),
+        preferredZone: z.string().max(20).optional(),
+      })
+    )
+    .min(1)
+    .max(500),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
