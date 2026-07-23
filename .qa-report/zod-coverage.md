@@ -2,40 +2,40 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **96**
-- **Faltando Zod: 112**
+- Com Zod: **130**
+- **Faltando Zod: 78**
 
 ## Functions sem validação Zod (top 30)
 
-- `abc-analysis`
-- `auth-session-list`
-- `auth-session-revoke`
-- `auth-social-login`
-- `cte-import`
-- `cycle-count`
-- `danfe-generate`
-- `dashboard-stats`
-- `data-migration`
-- `demand-forecast`
-- `download-file`
-- `edi-process`
-- `expiration-check`
 - `external-db-bridge`
-- `invoice-generate`
-- `kpi-calculator`
-- `label-print`
-- `location-utilization`
-- `lot-tracking`
-- `nfe-cancel`
-- `nfe-correct`
-- `nfe-distribution`
-- `nfe-manifest`
-- `nfe-process`
-- `nfe-validate`
-- `notifications`
-- `notify-slack`
-- `notify-user`
-- `packing-cancel`
-- `packing-confirm`
+- `packing-repack`
+- `packing-split`
+- `packing-start`
+- `payment-create`
+- `picking-assign`
+- `picking-batch`
+- `picking-cancel`
+- `picking-optimize`
+- `picking-skip`
+- `picking-split`
+- `previsao-demanda`
+- `print-label`
+- `process-queue`
+- `process-sales-order`
+- `push-notification`
+- `quality-inspection`
+- `queue-add`
+- `queue-job`
+- `queue-process`
+- `queue-retry`
+- `rate-limit`
+- `rate-limiter`
+- `receive-purchase-order`
+- `receiving-cancel`
+- `receiving-confirm`
+- `receiving-create`
+- `receiving-inspect`
+- `receiving-putaway`
+- `receiving-reject`
 
-_...e mais 82._
+_...e mais 48._
