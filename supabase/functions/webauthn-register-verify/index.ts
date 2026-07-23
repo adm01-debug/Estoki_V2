@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -35,7 +36,10 @@ serve(async (req) => {
       });
     }
 
-    const { credential, deviceName } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { credential, deviceName } = __raw;
 
     if (!credential || !credential.id || !credential.response) {
       return new Response(JSON.stringify({ error: "Invalid credential data" }), {
