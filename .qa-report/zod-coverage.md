@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **38**
-- **Faltando Zod: 170**
+- Com Zod: **39**
+- **Faltando Zod: 169**
 
 ## Functions sem validação Zod (top 30)
 
@@ -15,7 +15,6 @@
 - `ai-sentiment`
 - `ai-summarize`
 - `ai-translate`
-- `alert-monitor`
 - `alert-pending-orders`
 - `alert-productivity`
 - `alert-quality`
@@ -37,5 +36,6 @@
 - `check-permission`
 - `cleanup-old-data`
 - `cleanup-sessions`
+- `complete-job`
 
-_...e mais 140._
+_...e mais 139._
