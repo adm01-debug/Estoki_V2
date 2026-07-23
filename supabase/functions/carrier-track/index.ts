@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { CarrierTrackSchema, validateInput } from "../_shared/schemas.ts";
+import { hasCredentials, track as correiosTrack, MissingCredentialsError } from "../_shared/correios.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -24,8 +25,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Tracking simulation
-    const events = [
+    let events: Array<{ date: string; status: string; description: string; location: string }> = [];
+    let mode: "real" | "simulated" = "simulated";
+
+    if ((carrier ?? "").toLowerCase() === "correios" && hasCredentials()) {
+      try {
+        events = await correiosTrack(tracking_number);
+        mode = "real";
+      } catch (err) {
+        if (!(err instanceof MissingCredentialsError)) {
+          console.error("[carrier-track] fallback simulação:", err);
+        }
+      }
+    }
+
+    if (events.length === 0) {
+      events = [
       {
         date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
         status: "posted",
@@ -50,7 +65,8 @@ serve(async (req) => {
         description: "Entregue ao destinatário",
         location: "Destino Final",
       },
-    ];
+      ];
+    }
 
     const currentStatus = events[events.length - 1].status;
     await supabase
@@ -65,6 +81,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
+        mode,
         tracking_number,
         carrier,
         current_status: currentStatus,
