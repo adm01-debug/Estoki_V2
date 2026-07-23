@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { SEO } from "@/components/common/SEO";
 import { useOperationalLive, type ActivityItem } from "../hooks/useOperationalLive";
 import { DashboardSkeleton } from "@/components/common/PageSkeleton";
 import { cn } from "@/lib/utils";
@@ -23,7 +24,9 @@ import { ptBR } from "date-fns/locale";
 // ── Live Pulse indicator ──
 function LivePulse({ connected }: { connected: boolean }) {
   return (
-    <div className="flex items-center gap-2">
+    <>
+      <SEO title="Dashboard Operacional" path="/operacional" description="Visão executiva das operações do armazém com KPIs em tempo real." />
+      <div className="flex items-center gap-2">
       <span className="relative flex h-3 w-3">
         {connected && (
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
@@ -47,6 +50,7 @@ function LivePulse({ connected }: { connected: boolean }) {
         )}
       </span>
     </div>
+    </>
   );
 }
 
