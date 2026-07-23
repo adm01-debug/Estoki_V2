@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
+import { erpFetch, ErpCircuitOpenError } from "../_shared/erp.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -34,7 +35,7 @@ serve(async (req) => {
 
     switch (action) {
       case "get_products":
-        const productsResp = await fetch(
+        const productsResp = await erpFetch(
           `${baseUrl}/api/v1/products?page=${data?.page || 1}&pageSize=${data?.pageSize || 100}`,
           { headers }
         );
@@ -43,7 +44,7 @@ serve(async (req) => {
 
       case "get_product":
         if (!data?.product_id) throw new Error("product_id é obrigatório");
-        const productResp = await fetch(`${baseUrl}/api/v1/products/${data.product_id}`, {
+        const productResp = await erpFetch(`${baseUrl}/api/v1/products/${data.product_id}`, {
           headers,
         });
         result = await productResp.json();
@@ -53,7 +54,7 @@ serve(async (req) => {
         if (!data?.product_id || !data?.warehouse_id || data?.quantity === undefined) {
           throw new Error("product_id, warehouse_id e quantity são obrigatórios");
         }
-        const stockResp = await fetch(`${baseUrl}/api/v1/stock/movements`, {
+        const stockResp = await erpFetch(`${baseUrl}/api/v1/stock/movements`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -68,7 +69,7 @@ serve(async (req) => {
         break;
 
       case "get_orders":
-        const ordersResp = await fetch(
+        const ordersResp = await erpFetch(
           `${baseUrl}/api/v1/orders?status=${data?.status || "all"}&page=${data?.page || 1}`,
           { headers }
         );
@@ -79,7 +80,7 @@ serve(async (req) => {
         if (!data?.customer_id || !data?.items) {
           throw new Error("customer_id e items são obrigatórios");
         }
-        const orderResp = await fetch(`${baseUrl}/api/v1/orders`, {
+        const orderResp = await erpFetch(`${baseUrl}/api/v1/orders`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -93,7 +94,7 @@ serve(async (req) => {
         break;
 
       case "get_customers":
-        const customersResp = await fetch(
+        const customersResp = await erpFetch(
           `${baseUrl}/api/v1/customers?page=${data?.page || 1}&pageSize=${data?.pageSize || 100}`,
           { headers }
         );
@@ -110,7 +111,7 @@ serve(async (req) => {
         const syncResults = [];
         for (const product of localProducts || []) {
           if (product.totvs_product_id) {
-            const syncResp = await fetch(`${baseUrl}/api/v1/stock/sync`, {
+            const syncResp = await erpFetch(`${baseUrl}/api/v1/stock/sync`, {
               method: "POST",
               headers,
               body: JSON.stringify({

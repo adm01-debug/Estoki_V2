@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
+import { erpFetch, ErpCircuitOpenError } from "../_shared/erp.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -34,7 +35,7 @@ serve(async (req) => {
 
     switch (action) {
       case "login":
-        const loginResp = await fetch(`${baseUrl}/b1s/v1/Login`, {
+        const loginResp = await erpFetch(`${baseUrl}/b1s/v1/Login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -47,7 +48,7 @@ serve(async (req) => {
         break;
 
       case "get_items":
-        const itemsResp = await fetch(
+        const itemsResp = await erpFetch(
           `${baseUrl}/b1s/v1/Items?$select=ItemCode,ItemName,QuantityOnStock,AvgStdPrice&$top=${data?.limit || 100}`,
           { headers }
         );
@@ -56,7 +57,7 @@ serve(async (req) => {
 
       case "get_item":
         if (!data?.item_code) throw new Error("item_code é obrigatório");
-        const itemResp = await fetch(`${baseUrl}/b1s/v1/Items('${data.item_code}')`, { headers });
+        const itemResp = await erpFetch(`${baseUrl}/b1s/v1/Items('${data.item_code}')`, { headers });
         result = await itemResp.json();
         break;
 
@@ -65,7 +66,7 @@ serve(async (req) => {
           throw new Error("item_code, warehouse e quantity são obrigatórios");
         }
         // SAP usa Goods Receipt/Issue para atualizar estoque
-        const stockResp = await fetch(`${baseUrl}/b1s/v1/InventoryGenEntries`, {
+        const stockResp = await erpFetch(`${baseUrl}/b1s/v1/InventoryGenEntries`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -82,7 +83,7 @@ serve(async (req) => {
         break;
 
       case "get_orders":
-        const ordersResp = await fetch(
+        const ordersResp = await erpFetch(
           `${baseUrl}/b1s/v1/Orders?$select=DocEntry,DocNum,CardCode,DocTotal,DocDate&$orderby=DocDate desc&$top=${data?.limit || 50}`,
           { headers }
         );
@@ -93,7 +94,7 @@ serve(async (req) => {
         if (!data?.card_code || !data?.lines) {
           throw new Error("card_code e lines são obrigatórios");
         }
-        const orderResp = await fetch(`${baseUrl}/b1s/v1/Orders`, {
+        const orderResp = await erpFetch(`${baseUrl}/b1s/v1/Orders`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -105,7 +106,7 @@ serve(async (req) => {
         break;
 
       case "get_business_partners":
-        const bpResp = await fetch(
+        const bpResp = await erpFetch(
           `${baseUrl}/b1s/v1/BusinessPartners?$select=CardCode,CardName,CardType,Phone1,EmailAddress&$top=${data?.limit || 100}`,
           { headers }
         );
