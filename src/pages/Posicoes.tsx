@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEO } from "@/components/common/SEO";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -123,7 +124,9 @@ export default function PosicoesPage() {
   }
 
   return (
-    <AppLayout
+    <>
+      <SEO title="Posições de Estoque" path="/posicoes" description="Mapa 3D de posições, ocupação e status dos endereços do armazém." />
+      <AppLayout
       title="Posições de Estoque"
       showBack
       rightAction={
@@ -381,5 +384,6 @@ export default function PosicoesPage() {
 
       <PosicaoDetalhesDialog position={selectedPosicao} onClose={() => setSelectedPosicao(null)} />
     </AppLayout>
+    </>
   );
 }

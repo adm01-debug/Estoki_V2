@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import AppLayout from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,9 @@ export default function CurvaABCPage() {
   };
 
   return (
-    <AppLayout title="Curva ABC" showBack>
+    <>
+      <SEO title="Curva ABC" path="/curva-abc" description="Análise ABC de produtos por giro, valor e criticidade no ESTOKI WMS." />
+      <AppLayout title="Curva ABC" showBack>
       <PageTransition>
         <div className="space-y-6 p-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -76,5 +79,6 @@ export default function CurvaABCPage() {
         </div>
       </PageTransition>
     </AppLayout>
+    </>
   );
 }

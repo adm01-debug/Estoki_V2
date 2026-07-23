@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { SEO } from "@/components/common/SEO";
 import { useTheme } from "@/contexts/ThemeContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,7 +104,9 @@ const ConfiguracoesPage = () => {
   };
 
   return (
-    <AppLayout title="Configurações" showBack>
+    <>
+      <SEO title="Configurações" path="/configuracoes" description="Configurações gerais, integrações e preferências do ESTOKI WMS." />
+      <AppLayout title="Configurações" showBack>
       <LeaveGuard hasChanges={alterado} />
       <div className="space-y-4 p-4 pb-24">
         <AlertasConfigCard alertas={alertas} onChange={updateAlertas} />
@@ -142,6 +145,7 @@ const ConfiguracoesPage = () => {
         </div>
       </div>
     </AppLayout>
+    </>
   );
 };
 

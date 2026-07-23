@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -104,7 +105,9 @@ export default function AjustesEstoquePage() {
   const isAdmin = role === "admin" || role === "supervisor";
 
   return (
-    <AppLayout title="Ajustes de Estoque" showBack>
+    <>
+      <SEO title="Ajustes de Estoque" path="/ajustes" description="Ajustes de estoque com aprovação, motivo e trilha de auditoria." />
+      <AppLayout title="Ajustes de Estoque" showBack>
       <PageTransition>
         <div className="space-y-6 p-4">
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
@@ -295,5 +298,6 @@ export default function AjustesEstoquePage() {
         </div>
       </PageTransition>
     </AppLayout>
+    </>
   );
 }

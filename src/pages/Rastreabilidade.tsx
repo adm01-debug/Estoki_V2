@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -78,7 +79,9 @@ export default function RastreabilidadePage() {
   }
 
   return (
-    <AppLayout title="Rastreabilidade" showBack>
+    <>
+      <SEO title="Rastreabilidade" path="/rastreabilidade" description="Rastreabilidade completa do produto: da NF-e à entrega ao cliente." />
+      <AppLayout title="Rastreabilidade" showBack>
       <div className="space-y-6 p-4">
         {/* Header */}
         <div>
@@ -251,5 +254,6 @@ export default function RastreabilidadePage() {
         </Tabs>
       </div>
     </AppLayout>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -156,7 +157,9 @@ export default function KPIsOperacionais() {
     );
 
   return (
-    <AppLayout>
+    <>
+      <SEO title="KPIs Operacionais" path="/kpis" description="Indicadores operacionais em tempo real: ocupação, precisão e produtividade." />
+      <AppLayout>
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
         <div className="mx-auto max-w-7xl space-y-6">
           {/* Header */}
@@ -408,5 +411,6 @@ export default function KPIsOperacionais() {
         </div>
       </div>
     </AppLayout>
+    </>
   );
 }
