@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiAssistantSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -8,7 +9,15 @@ serve(async (req) => {
   }
 
   try {
-    const { message, context } = await req.json();
+    const body = await req.json();
+    const v = validateInput(AiAssistantSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { message, context } = v.data;
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
 
     if (!apiKey) {
