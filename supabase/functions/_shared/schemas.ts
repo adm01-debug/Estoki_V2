@@ -392,6 +392,61 @@ export const AiTranslateSchema = z.object({
   targetLang: z.string().min(2).max(20).optional(),
 });
 
+// ── Carrier / Cleanup schemas ─────────────────────────────
+const zipRegex = /^\d{5}-?\d{3}$/;
+
+export const CarrierQuoteSchema = z.object({
+  origin_zip: z.string().regex(zipRegex, "CEP de origem inválido"),
+  destination_zip: z.string().regex(zipRegex, "CEP de destino inválido"),
+  weight: z.number().positive().max(1000),
+  length: z.number().positive().max(500).optional(),
+  width: z.number().positive().max(500).optional(),
+  height: z.number().positive().max(500).optional(),
+  value: z.number().nonnegative().max(1_000_000).optional(),
+  services: z.array(z.string().min(1).max(40)).max(20).optional(),
+});
+
+export const CarrierCancelSchema = z.object({
+  shipment_id: z.string().uuid().optional(),
+  tracking_code: z.string().min(3).max(60).optional(),
+  reason: z.string().min(1).max(500).optional(),
+}).refine((v) => v.shipment_id || v.tracking_code, {
+  message: "shipment_id ou tracking_code é obrigatório",
+});
+
+export const CarrierLabelSchema = z.object({
+  shipment_id: z.string().uuid(),
+  carrier: z.string().min(2).max(40),
+  sender: z.record(z.any()),
+  recipient: z.record(z.any()),
+  packages: z.array(z.record(z.any())).min(1).max(100),
+});
+
+export const CarrierRatesCacheSchema = z.object({
+  action: z.enum(["get", "set", "invalidate"]).default("get"),
+  key: z.string().min(1).max(200).optional(),
+  value: z.unknown().optional(),
+  ttlSeconds: z.number().int().min(1).max(86400 * 30).optional(),
+});
+
+export const CarrierWebhookSchema = z.object({
+  carrier: z.string().min(2).max(40),
+  event: z.string().min(1).max(80),
+  tracking_code: z.string().min(3).max(80).optional(),
+  status: z.string().max(80).optional(),
+  occurred_at: z.string().max(60).optional(),
+  payload: z.record(z.any()).optional(),
+});
+
+export const CleanupOldDataSchema = z.object({
+  days: z.number().int().min(1).max(3650).default(90),
+});
+
+export const CleanupSessionsSchema = z.object({
+  max_age_hours: z.number().int().min(1).max(24 * 365).default(24),
+  dry_run: z.boolean().default(false),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
