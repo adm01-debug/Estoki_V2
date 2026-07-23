@@ -82,6 +82,11 @@ jobs:
         run: node scripts/i18n-hardcoded-check.mjs
         continue-on-error: true
 
+      - name: Migrations TODO guard
+        id: migrations_todo
+        run: node scripts/migrations-todo-check.mjs
+        continue-on-error: true
+
       - name: E2E smoke (Playwright)
         id: e2e
         run: |
