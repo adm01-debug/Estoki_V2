@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { SEO } from "@/components/common/SEO";
 import { useOperationalLive, type ActivityItem } from "../hooks/useOperationalLive";
 import { DashboardSkeleton } from "@/components/common/PageSkeleton";
 import { cn } from "@/lib/utils";
@@ -354,7 +355,9 @@ export default function DashboardOperacional() {
 // ── Task Bar Component ──
 function TaskBar({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="flex items-center gap-3">
+    <>
+      <SEO title="Dashboard Operacional" path="/operacional" description="Visão executiva das operações do armazém com KPIs em tempo real." />
+      <div className="flex items-center gap-3">
       <span className="w-24 shrink-0 text-xs text-muted-foreground">{label}</span>
       <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
         <div
@@ -364,5 +367,6 @@ function TaskBar({ label, value, color }: { label: string; value: number; color:
       </div>
       <span className="w-8 text-right text-sm font-semibold text-foreground">{value}</span>
     </div>
+    </>
   );
 }

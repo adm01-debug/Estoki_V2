@@ -1,4 +1,5 @@
 import { Tarefa } from "@/types/tarefas";
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -74,7 +75,9 @@ export default function GestaoTarefasPage() {
   }
 
   return (
-    <AppLayout title="Gestão de Tarefas" showBack>
+    <>
+      <SEO title="Gestão de Tarefas" path="/tarefas" description="Distribuição, priorização e acompanhamento de tarefas dos operadores." />
+      <AppLayout title="Gestão de Tarefas" showBack>
       <div className="space-y-6 p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -204,5 +207,6 @@ export default function GestaoTarefasPage() {
         onCriar={handleCriarTarefa}
       />
     </AppLayout>
+    </>
   );
 }

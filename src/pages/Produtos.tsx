@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Badge } from "@/components/ui/badge";
@@ -123,7 +124,9 @@ export default function ProdutosPage() {
   }
 
   return (
-    <AppLayout
+    <>
+      <SEO title="Produtos" path="/produtos" description="Cadastro e gestão de produtos, SKUs e categorias no ESTOKI WMS." />
+      <AppLayout
       title="Produtos"
       showBack
       rightAction={
@@ -209,5 +212,6 @@ export default function ProdutosPage() {
         getCurvaBadge={getCurvaBadge}
       />
     </AppLayout>
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEO } from "@/components/common/SEO";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -101,7 +102,9 @@ export default function InventarioCiclicoPage() {
   }
 
   return (
-    <AppLayout title="Inventário Cíclico" showBack>
+    <>
+      <SEO title="Inventário Cíclico" path="/inventario" description="Contagens cíclicas por ABC/localização com divergências e ajustes." />
+      <AppLayout title="Inventário Cíclico" showBack>
       <PageTransition>
         <div className="space-y-6 p-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -211,5 +214,6 @@ export default function InventarioCiclicoPage() {
         />
       </PageTransition>
     </AppLayout>
+    </>
   );
 }
