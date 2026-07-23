@@ -3653,6 +3653,68 @@ export type Database = {
           },
         ]
       }
+      tenant_members: {
+        Row: {
+          created_at: string
+          id: string
+          papel: string
+          tenant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          papel?: string
+          tenant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          papel?: string
+          tenant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_members_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          plano: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          plano?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          plano?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       trocas_devolucoes: {
         Row: {
           aberto_por: string | null
@@ -3897,6 +3959,7 @@ export type Database = {
         Args: { p_desafio_id: string }
         Returns: Json
       }
+      current_tenant_id: { Args: never; Returns: string }
       descontar_pontos: {
         Args: { p_user_id: string; p_valor: number }
         Returns: undefined
@@ -3929,6 +3992,14 @@ export type Database = {
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number }
         Returns: undefined
+      }
+      is_tenant_admin: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tenant_member: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
       }
       log_audit_event: {
         Args: {
