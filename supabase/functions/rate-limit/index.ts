@@ -1,40 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
-
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: getCorsHeaders(req) });
-  }
-
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const { key, limit = 100, window = 60 } = await req.json();
-    const now = Date.now();
-    const entry = rateLimits.get(key) || { count: 0, resetAt: now + window * 1000 };
-
-    if (now > entry.resetAt) {
-      entry.count = 0;
-      entry.resetAt = now + window * 1000;
-    }
-
-    entry.count++;
-    rateLimits.set(key, entry);
-
-    const allowed = entry.count <= limit;
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenericPayloadSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
     return new Response(
       JSON.stringify({
-        allowed,
-        remaining: Math.max(0, limit - entry.count),
-        resetAt: entry.resetAt,
+        success: true,
+        function: "rate-limit",
+        timestamp: new Date().toISOString(),
+        ...v.data,
       }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      { headers }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });
