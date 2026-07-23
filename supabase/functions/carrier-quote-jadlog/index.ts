@@ -1,24 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { CarrierQuoteSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
+    const raw = await req.json().catch(() => null);
+    const validation = validateInput(CarrierQuoteSchema, raw);
+    if (!validation.success) {
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
     const {
       origin_zip,
       destination_zip,
       weight,
-      length,
-      width,
-      height,
       value,
       services = ["EXPRESSO", "PACKAGE"],
-    } = await req.json();
-    if (!origin_zip || !destination_zip || !weight)
-      return new Response(
-        JSON.stringify({ error: "origin_zip, destination_zip, weight required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+    } = validation.data;
 
     const quotes = services.map((service: string) => {
       const basePrice = service === "EXPRESSO" ? 30.0 : 22.0;
