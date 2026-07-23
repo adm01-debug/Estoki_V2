@@ -4040,7 +4040,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      mv_alertas_severidade: {
+        Row: {
+          dia: string | null
+          severidade: Database["public"]["Enums"]["severidade_alerta"] | null
+          status: Database["public"]["Enums"]["status_alerta"] | null
+          tipo: Database["public"]["Enums"]["tipo_alerta"] | null
+          total: number | null
+        }
+        Relationships: []
+      }
+      mv_audit_daily: {
+        Row: {
+          action: string | null
+          dia: string | null
+          entity_type: string | null
+          total: number | null
+          usuarios_distintos: number | null
+        }
+        Relationships: []
+      }
+      mv_notificacoes_tipo: {
+        Row: {
+          dia: string | null
+          enviadas: number | null
+          lidas: number | null
+          taxa_leitura_pct: number | null
+          tipo: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       adicionar_xp: {
@@ -4093,6 +4122,7 @@ export type Database = {
           permission: string
         }[]
       }
+      get_dashboard_metrics: { Args: { _dias?: number }; Returns: Json }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -4156,6 +4186,7 @@ export type Database = {
           seconds_remaining: number
         }[]
       }
+      refresh_dashboard_materialized_views: { Args: never; Returns: Json }
       registrar_checkin_diario: {
         Args: { p_user_id: string }
         Returns: {

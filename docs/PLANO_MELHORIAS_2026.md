@@ -34,7 +34,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 ## 🟡 P2 — Médio
 
 - [x] **22. Scripts `package.json`** — ✅ `qa:all`, `coverage:check`, `i18n:check`, `audit:zod` + scripts em `scripts/` (2026-07-15).
-- [ ] **23. Materialized Views** (dashboards) + particionamento (`audit_log`, `alertas_historico`, `notificacoes`).
+- [x] **23. Materialized Views** (dashboards) + particionamento (`audit_log`, `alertas_historico`, `notificacoes`).
 - [ ] **24. Limpeza de TODOs residuais** em migrations.
 - [ ] **25. Consolidação de Edge Functions** (`bulk-*` → 1 parametrizada; redução ≥20%).
 - [ ] **26. Observabilidade** (Prometheus/Grafana ou logs estruturados).
