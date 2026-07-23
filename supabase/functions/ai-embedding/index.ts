@@ -1,9 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiEmbeddingSchema, validateInput } from "../_shared/schemas.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
-    const { text, model = "text-embedding-ada-002" } = await req.json();
+    const body = await req.json();
+    const v = validateInput(AiEmbeddingSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { text, model = "text-embedding-ada-002" } = v.data;
     const response = await fetch("https://api.openai.com/v1/embeddings", {
       method: "POST",
       headers: {
