@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **39**
-- **Faltando Zod: 169**
+- Com Zod: **47**
+- **Faltando Zod: 161**
 
 ## Functions sem validação Zod (top 30)
 
@@ -15,17 +15,9 @@
 - `ai-sentiment`
 - `ai-summarize`
 - `ai-translate`
-- `alert-pending-orders`
-- `alert-productivity`
-- `alert-quality`
-- `alert-sla-breach`
-- `analytics`
-- `audit-log`
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
-- `cache`
-- `cache-invalidate`
 - `carrier-cancel`
 - `carrier-label`
 - `carrier-quote-correios`
@@ -37,5 +29,13 @@
 - `cleanup-old-data`
 - `cleanup-sessions`
 - `complete-job`
+- `create-lot`
+- `create-payment-intent`
+- `create-purchase-order`
+- `create-subscription`
+- `cte-import`
+- `cycle-count`
+- `danfe-generate`
+- `dashboard-stats`
 
-_...e mais 139._
+_...e mais 131._
