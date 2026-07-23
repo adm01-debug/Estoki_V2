@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiSentimentSchema, validateInput } from "../_shared/schemas.ts";
 
 interface SentimentResult {
   sentiment: "positive" | "negative" | "neutral";
@@ -54,11 +55,15 @@ serve(async (req) => {
   }
 
   try {
-    const { text, language = "pt" } = await req.json();
-
-    if (!text) {
-      throw new Error("text é obrigatório");
+    const body = await req.json();
+    const v = validateInput(AiSentimentSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
+    const { text, language = "pt" } = v.data;
 
     const textLower = text.toLowerCase();
     const words = textLower.split(/\s+/);

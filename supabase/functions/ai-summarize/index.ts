@@ -1,9 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiSummarizeSchema, validateInput } from "../_shared/schemas.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
-    const { text, maxLength = 100 } = await req.json();
+    const body = await req.json();
+    const v = validateInput(AiSummarizeSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { text, maxLength = 100 } = v.data;
     const prompt = `Resuma o seguinte texto em no máximo ${maxLength} palavras:\n\n"${text}"\n\nResponda apenas com o resumo.`;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
