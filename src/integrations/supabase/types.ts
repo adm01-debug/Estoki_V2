@@ -14,6 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      agv_devices: {
+        Row: {
+          ativo: boolean
+          battery_pct: number | null
+          created_at: string
+          current_location: string | null
+          endpoint: string | null
+          id: string
+          last_heartbeat_at: string | null
+          manufacturer: string
+          metadata: Json
+          model: string | null
+          protocol: string
+          serial_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          battery_pct?: number | null
+          created_at?: string
+          current_location?: string | null
+          endpoint?: string | null
+          id?: string
+          last_heartbeat_at?: string | null
+          manufacturer: string
+          metadata?: Json
+          model?: string | null
+          protocol?: string
+          serial_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          battery_pct?: number | null
+          created_at?: string
+          current_location?: string | null
+          endpoint?: string | null
+          id?: string
+          last_heartbeat_at?: string | null
+          manufacturer?: string
+          metadata?: Json
+          model?: string | null
+          protocol?: string
+          serial_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      agv_missions: {
+        Row: {
+          actions: Json
+          completed_at: string | null
+          created_at: string
+          destino: string
+          device_id: string | null
+          dispatched_at: string | null
+          error_message: string | null
+          id: string
+          mission_type: string
+          nodes: Json
+          order_id: string | null
+          origem: string | null
+          prioridade: number
+          progresso_pct: number
+          requested_by: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          completed_at?: string | null
+          created_at?: string
+          destino: string
+          device_id?: string | null
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          mission_type: string
+          nodes?: Json
+          order_id?: string | null
+          origem?: string | null
+          prioridade?: number
+          progresso_pct?: number
+          requested_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          completed_at?: string | null
+          created_at?: string
+          destino?: string
+          device_id?: string | null
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          mission_type?: string
+          nodes?: Json
+          order_id?: string | null
+          origem?: string | null
+          prioridade?: number
+          progresso_pct?: number
+          requested_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agv_missions_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "agv_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ajustes_estoque: {
         Row: {
           aprovado_por: string | null
