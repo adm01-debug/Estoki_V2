@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
-type SupabaseFrom = (table: string) => ReturnType<typeof supabase.from>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SupabaseFrom = (table: string) => any;
 const from = (table: string) => (supabase.from as unknown as SupabaseFrom)(table);
 export const supplierService = {
   async getAll() {
