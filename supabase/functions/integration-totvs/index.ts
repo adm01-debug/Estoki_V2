@@ -148,9 +148,10 @@ serve(async (req) => {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    const isBreaker = error instanceof ErpCircuitOpenError;
+    return new Response(JSON.stringify({ success: false, error: (error as Error).message, circuit_open: isBreaker }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      status: 400,
+      status: isBreaker ? 503 : 400,
     });
   }
 });
