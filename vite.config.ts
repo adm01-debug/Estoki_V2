@@ -54,34 +54,69 @@ export default defineConfig(async ({ mode }) => {
     mode === "production" &&
       VitePWA({
         registerType: "autoUpdate",
+        injectRegister: null, // registro é feito pelo wrapper guardado em src/lib/register-sw.ts
+        devOptions: { enabled: false },
+        filename: "sw.js",
         includeAssets: ["favicon.ico", "robots.txt", "offline.html"],
         manifest: {
           name: "WMS - Sistema de Gestão de Armazém",
           short_name: "WMS",
           description: "Sistema completo de gestão de armazém e logística",
+          id: "/",
           theme_color: "#3b82f6",
           background_color: "#0f172a",
           display: "standalone",
           orientation: "portrait-primary",
           start_url: "/",
+          scope: "/",
+          lang: "pt-BR",
+          categories: ["business", "productivity", "logistics"],
           icons: [
             {
               src: "/favicon.ico",
               sizes: "64x64 32x32 24x24 16x16",
               type: "image/x-icon",
             },
+            { src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+            { src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+            { src: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
           ],
         },
         workbox: {
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
           globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+          cleanupOutdatedCaches: true,
+          clientsClaim: true,
+          skipWaiting: false,
+          navigateFallback: "/index.html",
           navigateFallbackDenylist: [/^\/~oauth/],
           runtimeCaching: [
+            // HTML navegações — NetworkFirst (nunca cache-first).
+            {
+              urlPattern: ({ request }) => request.mode === "navigate",
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "html-nav",
+                networkTimeoutSeconds: 3,
+                expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 },
+              },
+            },
+            // Assets hasheados (built) — CacheFirst.
+            {
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && /\/assets\/.+\.(js|css|woff2|png|jpg|svg)$/.test(url.pathname),
+              handler: "CacheFirst",
+              options: {
+                cacheName: "static-assets",
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              },
+            },
             {
               urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
               handler: "NetworkFirst",
               options: {
                 cacheName: "supabase-cache",
+                networkTimeoutSeconds: 5,
                 expiration: {
                   maxEntries: 100,
                   maxAgeSeconds: 60 * 60 * 24,
