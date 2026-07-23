@@ -447,6 +447,65 @@ export const CleanupSessionsSchema = z.object({
   dry_run: z.boolean().default(false),
 });
 
+// ── Check / Complete / Create schemas ─────────────────────
+export const CheckExpirationSchema = z.object({
+  daysThreshold: z.number().int().min(0).max(3650).default(30),
+});
+
+export const CheckPermissionSchema = z.object({
+  userId: z.string().uuid("userId inválido"),
+  permission: z.string().min(1).max(100),
+  resource: z.string().min(1).max(100),
+});
+
+export const CompleteJobSchema = z.object({
+  jobId: z.string().uuid("jobId inválido"),
+  status: z.enum(["completed", "failed", "cancelled"]),
+  result: z.unknown().optional(),
+  error: z.string().max(2000).optional(),
+});
+
+export const CreateLotSchema = z.object({
+  lotNumber: z.string().min(1).max(80),
+  productId: z.string().uuid(),
+  quantity: z.number().positive().max(1_000_000),
+  manufacturingDate: z.string().max(40).optional(),
+  expirationDate: z.string().max(40).optional(),
+  supplierId: z.string().uuid().optional(),
+});
+
+export const CreatePaymentIntentSchema = z.object({
+  amount: z.number().positive().max(1_000_000),
+  currency: z.string().min(3).max(3).default("brl"),
+  customerId: z.string().min(1).max(200).optional(),
+  description: z.string().max(500).optional(),
+  metadata: z.record(z.string()).optional(),
+});
+
+export const CreatePurchaseOrderSchema = z.object({
+  supplierId: z.string().uuid(),
+  items: z
+    .array(
+      z.object({
+        productId: z.string().uuid().optional(),
+        sku: z.string().max(80).optional(),
+        quantity: z.number().positive().max(1_000_000),
+        unitPrice: z.number().nonnegative().max(1_000_000),
+      })
+    )
+    .min(1)
+    .max(500),
+  expectedDelivery: z.string().max(40).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+export const CreateSubscriptionSchema = z.object({
+  customerId: z.string().min(1).max(200),
+  priceId: z.string().min(1).max(200),
+  successUrl: z.string().url().max(2048),
+  cancelUrl: z.string().url().max(2048),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
