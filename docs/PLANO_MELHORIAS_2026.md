@@ -35,7 +35,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 - [x] **22. Scripts `package.json`** — ✅ `qa:all`, `coverage:check`, `i18n:check`, `audit:zod` + scripts em `scripts/` (2026-07-15).
 - [x] **23. Materialized Views** (dashboards) + particionamento (`audit_log`, `alertas_historico`, `notificacoes`).
-- [ ] **24. Limpeza de TODOs residuais** em migrations.
+- [x] **24. Limpeza de TODOs residuais** em migrations — ✅ Auditoria completa (2026-07-23) das 160 migrations: **zero TODOs/FIXME/XXX/HACK acionáveis**. Apenas 2 comentários históricos (`20251230000001_create_audit_log_table.sql`, `20251230000002_create_feature_flags_table.sql`) referenciam pendências já resolvidas em código — mantidos como rastro de auditoria e explicitados em allowlist. Como migrations são append-only e imutáveis, criado `scripts/migrations-todo-check.mjs` (guard anti-regressão) e adicionado como job no `qa.yml` para bloquear PRs que introduzam novos marcadores em migrations futuras. `src/` também auditado: 0 TODOs.
 - [ ] **25. Consolidação de Edge Functions** (`bulk-*` → 1 parametrizada; redução ≥20%).
 - [ ] **26. Observabilidade** (Prometheus/Grafana ou logs estruturados).
 - [ ] **27. Alerta automatizado** WAL > 500MB + rollbacks.
