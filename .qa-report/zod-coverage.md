@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **54**
-- **Faltando Zod: 154**
+- Com Zod: **62**
+- **Faltando Zod: 146**
 
 ## Functions sem validação Zod (top 30)
 
@@ -11,16 +11,8 @@
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
-- `carrier-cancel`
-- `carrier-label`
-- `carrier-quote-correios`
-- `carrier-quote-jadlog`
-- `carrier-rates-cache`
-- `carrier-webhooks`
 - `check-expiration`
 - `check-permission`
-- `cleanup-old-data`
-- `cleanup-sessions`
 - `complete-job`
 - `create-lot`
 - `create-payment-intent`
@@ -37,5 +29,13 @@
 - `edi-process`
 - `expiration-check`
 - `export-pdf`
+- `export-products`
+- `external-db-bridge`
+- `generate-barcode`
+- `generate-csv`
+- `generate-excel`
+- `generate-pdf-report`
+- `generate-pick-list`
+- `generate-putaway-list`
 
-_...e mais 124._
+_...e mais 116._
