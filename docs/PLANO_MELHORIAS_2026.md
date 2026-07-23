@@ -16,7 +16,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 ## 🟠 P1 — Alto
 
 - [x] **7. Integração Correios completa** — ✅ Cliente compartilhado `supabase/functions/_shared/correios.ts` (autentica v1 + cache de token + retry 401) integrando **Preço v1**, **Prazo v1**, **SRO Rastro v1** e **Prepostagem v2**. Funções refatoradas: `carrier-quote-correios`, `carrier-track`, `integration-correios` (nova ação `prepostagem`). Fallback automático para simulação quando `CORREIOS_USER`/`CORREIOS_TOKEN` ausentes, resposta inclui `mode: "real"|"simulated"`. Contract test em `carrier-track/contract_test.ts` (2026-07-23).
-- [ ] **8. PWA real** (manifest, service worker guardado, offline, instalável).
+- [x] **8. PWA real** — ✅ Removido `public/sw.js` hand-written (conflitava com `vite-plugin-pwa`); passa a ser gerado via `generateSW`/Workbox. Config endurecida: `injectRegister: null`, `devOptions.enabled: false`, `cleanupOutdatedCaches`, `navigateFallback` + denylist `/~oauth`, `NetworkFirst` para navegações HTML + Supabase, `CacheFirst` só para assets hasheados. Manifest ganhou `id/scope/lang/categories` + ícones 192/512 maskable + apple-touch 180. Novo `src/lib/register-sw.ts` com guards da skill/pwa (dev, iframe, hosts `id-preview--*`/`preview--*`/`*.lovableproject*`/`beta.lovable.dev`, `?sw=off`) — só registra em prod real; em contextos proibidos faz UNREGISTER para limpar SWs stale (2026-07-23).
 - [ ] **9. Multi-tenant** (`tenant_id` + RLS por tenant).
 - [ ] **10. API pública documentada** (OpenAPI/Swagger + portal).
 - [ ] **11. Integrações ERPs SAP/TOTVS** com testes reais.

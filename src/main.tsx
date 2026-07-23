@@ -45,26 +45,8 @@ requestAnimationFrame(() => {
   initWebVitals();
 });
 
-// 3) Background: clean up stale service workers in preview/dev (fire-and-forget, never reload)
-if (
-  "serviceWorker" in navigator &&
-  (import.meta.env.DEV || /lovable/.test(window.location.hostname))
-) {
-  navigator.serviceWorker
-    .getRegistrations()
-    .then((regs) => {
-      regs.forEach((r) => r.unregister());
-    })
-    .catch(() => {});
-
-  if ("caches" in window) {
-    caches
-      .keys()
-      .then((keys) => {
-        keys
-          .filter((k) => k.startsWith("estoki-") || k.includes("workbox"))
-          .forEach((k) => caches.delete(k));
-      })
-      .catch(() => {});
-  }
-}
+// 3) Service Worker — registro guardado (só em produção real, fora de preview Lovable / iframe / dev).
+//    Em contextos proibidos, o helper faz UNREGISTER para limpar SWs stale.
+import("./lib/register-sw").then(({ registerServiceWorker }) => {
+  registerServiceWorker().catch(() => {});
+});
