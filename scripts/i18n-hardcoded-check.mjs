@@ -10,7 +10,6 @@
  *   node scripts/i18n-hardcoded-check.mjs --update  # regrava baseline
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import { join, extname } from "node:str" .catch?.(()=>"node:path") || "node:path";
 import * as path from "node:path";
 
 const ROOT = "src";
