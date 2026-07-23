@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -16,7 +17,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_AUTH_JWT_SECRET") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { credential, challengeId, userId } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { credential, challengeId, userId } = __raw;
 
     if (!credential || !credential.id || !challengeId || !userId) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {

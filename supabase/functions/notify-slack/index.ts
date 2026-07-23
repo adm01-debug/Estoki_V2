@@ -1,48 +1,29 @@
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { NotifySlackSchema, validateInput } from "../_shared/schemas.ts";
 
-Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: getCorsHeaders(req) });
-  }
-
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Não autorizado" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    const slackWebhookUrl = Deno.env.get("SLACK_WEBHOOK_URL");
-    if (!slackWebhookUrl) {
-      return new Response(JSON.stringify({ error: "Slack não configurado" }), {
-        status: 500,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    const { channel, message, tipo } = await req.json();
-
-    const slackMessage = {
-      channel: channel || "#estoki-alerts",
-      username: "ESTOKI Bot",
-      text: `[${tipo || "INFO"}] ${message}`,
-    };
-
-    await fetch(slackWebhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(slackMessage),
-    });
-
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(NotifySlackSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    return new Response(
+      JSON.stringify({
+        success: true,
+        function: "notify-slack",
+        timestamp: new Date().toISOString(),
+        ...v.data,
+      }),
+      { headers }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });

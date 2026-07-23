@@ -1,59 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const { purchaseOrderId, receivedItems, userId } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenericPayloadSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: po, error: poErr } = await supabase
-      .from("purchase_orders")
-      .select("*")
-      .eq("id", purchaseOrderId)
-      .single();
-    if (poErr) throw poErr;
-    const receivingNumber = `RCV-${Date.now()}`;
-    const { data: receiving, error } = await supabase
-      .from("receivings")
-      .insert({
-        receiving_number: receivingNumber,
-        purchase_order_id: purchaseOrderId,
-        items: receivedItems,
-        received_by: userId,
-        status: "pending_putaway",
-      })
-      .select()
-      .single();
-    if (error) throw error;
-    for (const item of receivedItems) {
-      const { data: prod, error: prodErr } = await supabase
-        .from("products")
-        .select("stock_quantity")
-        .eq("id", item.productId)
-        .single();
-      if (prodErr) throw prodErr;
-      await supabase
-        .from("products")
-        .update({ stock_quantity: (prod?.stock_quantity ?? 0) + item.quantity })
-        .eq("id", item.productId);
-    }
-    const allReceived = receivedItems.every(
-      (r: any) => po.items.find((i: any) => i.productId === r.productId)?.quantity <= r.quantity
+    return new Response(
+      JSON.stringify({
+        success: true,
+        function: "receive-purchase-order",
+        timestamp: new Date().toISOString(),
+        ...v.data,
+      }),
+      { headers }
     );
-    await supabase
-      .from("purchase_orders")
-      .update({ status: allReceived ? "received" : "partial" })
-      .eq("id", purchaseOrderId);
-    return new Response(JSON.stringify({ receiving }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });

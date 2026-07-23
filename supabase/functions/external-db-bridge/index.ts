@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 const SLOW_QUERY_THRESHOLD_MS = 3000;
 const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;
@@ -137,7 +138,10 @@ Deno.serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const body = await req.json();
+    const __raw = await req.json().catch(() => ({}));
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const body = __v.data as any;
     const { action } = body;
 
     // Action: emit telemetry

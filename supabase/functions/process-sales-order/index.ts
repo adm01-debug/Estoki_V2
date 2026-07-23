@@ -1,48 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const { orderId, userId } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenericPayloadSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: order, error: oErr } = await supabase
-      .from("sales_orders")
-      .select("*")
-      .eq("id", orderId)
-      .single();
-    if (oErr) throw oErr;
-    for (const item of order.items) {
-      const { data: product } = await supabase
-        .from("products")
-        .select("stock_quantity, reserved_quantity")
-        .eq("id", item.productId)
-        .single();
-      if (product && product.stock_quantity - product.reserved_quantity < item.quantity)
-        throw new Error(`Estoque insuficiente: ${item.productId}`);
-      await supabase
-        .from("products")
-        .update({ reserved_quantity: product.reserved_quantity + item.quantity })
-        .eq("id", item.productId);
-    }
-    await supabase
-      .from("sales_orders")
-      .update({
-        status: "processing",
-        processed_at: new Date().toISOString(),
-        processed_by: userId,
-      })
-      .eq("id", orderId);
-    return new Response(JSON.stringify({ success: true, orderId }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        function: "process-sales-order",
+        timestamp: new Date().toISOString(),
+        ...v.data,
+      }),
+      { headers }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });

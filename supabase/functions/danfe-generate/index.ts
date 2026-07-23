@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { NfeActionSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -9,7 +10,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
-    const { nfe_id, format = "pdf" } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(NfeActionSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { nfe_id, format = "pdf" } = __raw;
     if (!nfe_id)
       return new Response(JSON.stringify({ error: "nfe_id required" }), {
         status: 400,

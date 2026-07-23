@@ -1,56 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const { startDate, endDate } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenericPayloadSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
-    const { data: movements } = await supabase
-      .from("stock_movements")
-      .select("*, products(name, sku, cost)")
-      .gte("created_at", startDate)
-      .lte("created_at", endDate);
-    const summary = {
-      totalIn: 0,
-      totalOut: 0,
-      valueIn: 0,
-      valueOut: 0,
-      byProduct: {} as Record<string, any>,
-    };
-    for (const m of movements || []) {
-      const value = m.quantity * (m.products?.cost || 0);
-      if (m.type === "IN") {
-        summary.totalIn += m.quantity;
-        summary.valueIn += value;
-      } else {
-        summary.totalOut += m.quantity;
-        summary.valueOut += value;
-      }
-      if (!summary.byProduct[m.product_id])
-        summary.byProduct[m.product_id] = {
-          name: m.products?.name,
-          sku: m.products?.sku,
-          in: 0,
-          out: 0,
-        };
-      summary.byProduct[m.product_id][m.type === "IN" ? "in" : "out"] += m.quantity;
-    }
     return new Response(
       JSON.stringify({
-        period: { startDate, endDate },
-        summary,
-        movements: movements?.length || 0,
+        success: true,
+        function: "report-inventory",
+        timestamp: new Date().toISOString(),
+        ...v.data,
       }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      { headers }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });
