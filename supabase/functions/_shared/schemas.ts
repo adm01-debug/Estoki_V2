@@ -355,6 +355,43 @@ export const CacheInvalidateSchema = z.object({
   message: "pattern ou keys[] é obrigatório",
 });
 
+// ── AI schemas ────────────────────────────────────────────
+export const AiAssistantSchema = z.object({
+  message: z.string().min(1).max(8000),
+  context: z.unknown().optional(),
+});
+
+export const AiClassifySchema = z.object({
+  text: z.string().min(1).max(8000),
+  categories: z.array(z.string().min(1).max(100)).min(1).max(50),
+});
+
+export const AiCompletionSchema = z.object({
+  prompt: z.string().min(1).max(16000),
+  model: z.string().min(1).max(100).optional(),
+  maxTokens: z.number().int().min(1).max(4000).optional(),
+});
+
+export const AiEmbeddingSchema = z.object({
+  text: z.string().min(1).max(16000),
+  model: z.string().min(1).max(100).optional(),
+});
+
+export const AiSentimentSchema = z.object({
+  text: z.string().min(1).max(8000),
+  language: z.string().min(2).max(10).optional(),
+});
+
+export const AiSummarizeSchema = z.object({
+  text: z.string().min(1).max(16000),
+  maxLength: z.number().int().min(10).max(2000).optional(),
+});
+
+export const AiTranslateSchema = z.object({
+  text: z.string().min(1).max(16000),
+  targetLang: z.string().min(2).max(20).optional(),
+});
+
 // ── Helper: validate and return typed result ──────────────
 
 export function validateInput<T>(
