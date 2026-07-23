@@ -77,6 +77,11 @@ jobs:
         run: node scripts/i18n-check.mjs
         continue-on-error: true
 
+      - name: i18n hardcoded (anti-regressão)
+        id: i18n_hard
+        run: node scripts/i18n-hardcoded-check.mjs
+        continue-on-error: true
+
       - name: E2E smoke (Playwright)
         id: e2e
         run: |
