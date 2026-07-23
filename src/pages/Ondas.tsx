@@ -1,5 +1,4 @@
 import { OndasCharts } from "@/components/charts/WMSModuleCharts";
-import { SEO } from "@/components/common/SEO";
 import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
 import { Download } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
@@ -146,9 +145,7 @@ export default function OndasPage() {
 
   if (loading) {
     return (
-      <>
-        <SEO title="Ondas de Separação" path="/ondas" description="Planejamento e execução de ondas de picking otimizadas por rota e zona." />
-        <AppLayout
+      <AppLayout
         title="Ondas de Separação"
         showBack
         rightAction={
@@ -175,7 +172,6 @@ export default function OndasPage() {
           </div>
         </PageTransition>
       </AppLayout>
-      </>
     );
   }
 

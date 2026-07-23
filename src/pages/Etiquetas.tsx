@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -261,9 +260,7 @@ export default function Etiquetas() {
   const previewEntrega = entregas.find((e) => e.id === previewId) || null;
 
   return (
-    <>
-      <SEO title="Etiquetas" path="/etiquetas" description="Geração e impressão de etiquetas de identificação (QR/Code128) em múltiplos tamanhos." />
-      <AppLayout title="Etiquetas QR Code" showBack>
+    <AppLayout title="Etiquetas QR Code" showBack>
       <div className="space-y-6 p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -495,6 +492,5 @@ export default function Etiquetas() {
         </div>
       </div>
     </AppLayout>
-    </>
   );
 }

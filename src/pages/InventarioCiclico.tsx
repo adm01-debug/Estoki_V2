@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { SEO } from "@/components/common/SEO";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -93,14 +92,11 @@ export default function InventarioCiclicoPage() {
 
   if (loading) {
     return (
-      <>
-        <SEO title="Inventário Cíclico" path="/inventario" description="Contagens cíclicas por ABC/localização com divergências e ajustes." />
-        <AppLayout title="Inventário Cíclico" showBack>
+      <AppLayout title="Inventário Cíclico" showBack>
         <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
-      </>
     );
   }
 

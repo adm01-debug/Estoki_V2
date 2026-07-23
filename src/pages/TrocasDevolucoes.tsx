@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -156,9 +155,7 @@ export default function TrocasDevolucoes() {
   };
 
   return (
-    <>
-      <SEO title="Trocas e Devoluções" path="/trocas" description="Fluxo completo de trocas e devoluções em 5 etapas, com laudo e RMA." />
-      <AppLayout
+    <AppLayout
       title="Trocas e Devoluções"
       rightAction={
         <div className="flex items-center gap-2">
@@ -300,6 +297,5 @@ export default function TrocasDevolucoes() {
         onStatusChange={handleStatusChange}
       />
     </AppLayout>
-    </>
   );
 }
