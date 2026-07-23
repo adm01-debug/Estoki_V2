@@ -1,4 +1,5 @@
 import { AlertasCharts } from "@/components/charts/WMSModuleCharts";
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,7 +85,9 @@ export default function AlertasInteligentesPage() {
   };
 
   return (
-    <AppLayout title="Alertas Inteligentes" showBack>
+    <>
+      <SEO title="Alertas Inteligentes" path="/alertas" description="Alertas de KPI, SLA, qualidade e ruptura com notificações em tempo real." />
+      <AppLayout title="Alertas Inteligentes" showBack>
       <div className="space-y-6 p-4">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
@@ -154,5 +157,6 @@ export default function AlertasInteligentesPage() {
         </Tabs>
       </div>
     </AppLayout>
+    </>
   );
 }

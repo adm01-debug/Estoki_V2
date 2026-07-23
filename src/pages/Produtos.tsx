@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Badge } from "@/components/ui/badge";
@@ -107,9 +108,12 @@ export default function ProdutosPage() {
         return <Badge variant="outline">Curva C</Badge>;
       default:
         return (
-          <Badge variant="outline" className="text-muted-foreground">
+          <>
+            <SEO title="Produtos" path="/produtos" description="Cadastro e gestão de produtos, SKUs e categorias no ESTOKI WMS." />
+            <Badge variant="outline" className="text-muted-foreground">
             Sem curva
           </Badge>
+          </>
         );
     }
   };

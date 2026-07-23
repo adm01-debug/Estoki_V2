@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { SEO } from "@/components/common/SEO";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -104,7 +105,9 @@ export default function PosicoesPage() {
 
   if (loading) {
     return (
-      <AppLayout title="Posições de Estoque" showBack>
+      <>
+        <SEO title="Posições de Estoque" path="/posicoes" description="Mapa 3D de posições, ocupação e status dos endereços do armazém." />
+        <AppLayout title="Posições de Estoque" showBack>
         <PageTransition>
           <div className="space-y-4 p-4">
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -119,6 +122,7 @@ export default function PosicoesPage() {
           </div>
         </PageTransition>
       </AppLayout>
+      </>
     );
   }
 

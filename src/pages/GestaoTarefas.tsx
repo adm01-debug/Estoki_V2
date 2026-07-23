@@ -1,4 +1,5 @@
 import { Tarefa } from "@/types/tarefas";
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -65,11 +66,14 @@ export default function GestaoTarefasPage() {
 
   if (isLoading) {
     return (
-      <AppLayout title="Gestão de Tarefas" showBack>
+      <>
+        <SEO title="Gestão de Tarefas" path="/tarefas" description="Distribuição, priorização e acompanhamento de tarefas dos operadores." />
+        <AppLayout title="Gestão de Tarefas" showBack>
         <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
+      </>
     );
   }
 

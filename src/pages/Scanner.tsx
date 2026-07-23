@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { ScannerOCR } from "@/components/scanner/ScannerOCR";
 import {
@@ -105,7 +106,9 @@ export default function ScannerPage() {
   };
 
   return (
-    <AppLayout title="Centro de Captura" showBack>
+    <>
+      <SEO title="Scanner" path="/scanner" description="Leitura rápida de códigos de barras e QR codes para operações no ESTOKI WMS." />
+      <AppLayout title="Centro de Captura" showBack>
       <div className="mx-auto max-w-[1200px] space-y-8 p-4 md:p-8">
         {/* Seletor de Modo */}
         <div className="mx-auto flex max-w-sm items-center justify-between rounded-2xl border border-border/20 bg-muted/30 p-1.5">
@@ -399,5 +402,6 @@ export default function ScannerPage() {
         )}
       </div>
     </AppLayout>
+    </>
   );
 }

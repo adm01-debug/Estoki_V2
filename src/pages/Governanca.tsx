@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SEO } from "@/components/common/SEO";
 import { Shield, Link2, MapPin, AlertTriangle } from "lucide-react";
 import { CustodiaTab } from "@/components/governanca/CustodiaTab";
 import { CheckpointsTab } from "@/components/governanca/CheckpointsTab";
@@ -6,7 +7,9 @@ import { OcorrenciasTab } from "@/components/governanca/OcorrenciasTab";
 
 export default function Governanca() {
   return (
-    <div className="space-y-6">
+    <>
+      <SEO title="Governança" path="/governanca" description="Cadeia de custódia, checkpoints de zona e ocorrências operacionais." />
+      <div className="space-y-6">
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <Shield className="h-7 w-7 text-primary" />
@@ -47,5 +50,6 @@ export default function Governanca() {
         </TabsContent>
       </Tabs>
     </div>
+    </>
   );
 }

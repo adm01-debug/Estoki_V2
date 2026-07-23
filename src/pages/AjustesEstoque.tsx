@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -73,9 +74,12 @@ export default function AjustesEstoquePage() {
     switch (status) {
       case "aprovado":
         return (
-          <Badge className="gap-1 bg-success">
+          <>
+            <SEO title="Ajustes de Estoque" path="/ajustes" description="Ajustes de estoque com aprovação, motivo e trilha de auditoria." />
+            <Badge className="gap-1 bg-success">
             <CheckCircle2 className="h-3 w-3" /> Aprovado
           </Badge>
+          </>
         );
       case "rejeitado":
         return (

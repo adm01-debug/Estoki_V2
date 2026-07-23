@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { SEO } from "@/components/common/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,9 @@ export default function KanbanPipeline() {
   } = useKanbanData();
 
   return (
-    <div className="space-y-4 p-4 md:p-6">
+    <>
+      <SEO title="Kanban Pipeline" path="/kanban" description="Pipeline operacional em tempo real: fluxo de materiais em 7 estágios." />
+      <div className="space-y-4 p-4 md:p-6">
       {/* Header */}
       <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div>
@@ -92,5 +95,6 @@ export default function KanbanPipeline() {
         onClose={() => setSelectedLote(null)}
       />
     </div>
+    </>
   );
 }
