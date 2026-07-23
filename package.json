@@ -50,7 +50,8 @@
         "path": "./dist/assets/*.css",
         "maxSize": "100 kB"
       }
-    ]
+    ],
+    "i18n:hardcoded": "node scripts/i18n-hardcoded-check.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
