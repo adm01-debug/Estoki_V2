@@ -709,6 +709,64 @@ export const InventoryValuationSchema = z.object({
   asOf: z.string().max(40).optional(),
 });
 
+// Generic permissive payload — for stub/utility functions.
+export const GenericPayloadSchema = z
+  .record(z.unknown())
+  .refine((v) => JSON.stringify(v).length <= 100_000, {
+    message: "Payload too large (max 100KB)",
+  });
+
+export const AuthSessionListSchema = z.object({
+  userId: z.string().uuid().optional(),
+  limit: z.number().int().min(1).max(500).optional(),
+});
+export const AuthSessionRevokeSchema = z.object({
+  sessionId: z.string().min(1).max(200).optional(),
+  userId: z.string().uuid().optional(),
+  all: z.boolean().optional(),
+});
+export const AuthSocialLoginSchema = z.object({
+  provider: z.enum(["google", "github", "azure", "facebook", "apple", "microsoft"]),
+  token: z.string().min(1).max(4096).optional(),
+  code: z.string().min(1).max(4096).optional(),
+  redirectUrl: z.string().url().max(2048).optional(),
+});
+export const NfeActionSchema = z.object({
+  chave: z.string().min(20).max(60).optional(),
+  nfeId: z.string().uuid().optional(),
+  justificativa: z.string().max(500).optional(),
+  correcao: z.string().max(1000).optional(),
+  cnpj: z.string().max(20).optional(),
+  ambiente: z.enum(["producao", "homologacao"]).optional(),
+  xml: z.string().max(2_000_000).optional(),
+});
+export const NotifyUserSchema = z.object({
+  userId: z.string().uuid(),
+  titulo: z.string().min(1).max(200),
+  mensagem: z.string().min(1).max(2000),
+  tipo: z.string().max(50).optional(),
+  referencia_id: z.string().max(200).optional(),
+  referencia_tipo: z.string().max(100).optional(),
+});
+export const NotifySlackSchema = z.object({
+  channel: z.string().max(100).optional(),
+  message: z.string().min(1).max(4000),
+  webhook: z.string().url().max(2048).optional(),
+  blocks: z.array(z.record(z.unknown())).max(50).optional(),
+});
+export const PackingActionSchema = z.object({
+  orderId: z.string().uuid().optional(),
+  packageId: z.string().uuid().optional(),
+  motivo: z.string().max(500).optional(),
+  itens: z.array(z.record(z.unknown())).max(1000).optional(),
+});
+export const ReportRangeSchema = z.object({
+  data_inicio: z.string().min(4).max(40).optional(),
+  data_fim: z.string().min(4).max(40).optional(),
+  filtros: z.record(z.unknown()).optional(),
+  limit: z.number().int().min(1).max(10_000).optional(),
+});
+
 export function validateInput<T>(
   schema: z.ZodSchema<T>,
   data: unknown
