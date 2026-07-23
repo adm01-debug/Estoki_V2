@@ -2,8 +2,8 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **80**
-- **Faltando Zod: 128**
+- Com Zod: **96**
+- **Faltando Zod: 112**
 
 ## Functions sem validação Zod (top 30)
 
@@ -21,21 +21,21 @@
 - `edi-process`
 - `expiration-check`
 - `external-db-bridge`
-- `import-csv`
-- `import-products`
-- `integration-amazon`
-- `integration-correios`
-- `integration-ifood`
-- `integration-mercado-livre`
-- `integration-rappi`
-- `integration-sap`
-- `integration-totvs`
-- `inventory-batch-adjust`
-- `inventory-count`
-- `inventory-reconcile`
-- `inventory-release`
-- `inventory-snapshot`
-- `inventory-sync`
-- `inventory-valuation`
+- `invoice-generate`
+- `kpi-calculator`
+- `label-print`
+- `location-utilization`
+- `lot-tracking`
+- `nfe-cancel`
+- `nfe-correct`
+- `nfe-distribution`
+- `nfe-manifest`
+- `nfe-process`
+- `nfe-validate`
+- `notifications`
+- `notify-slack`
+- `notify-user`
+- `packing-cancel`
+- `packing-confirm`
 
-_...e mais 98._
+_...e mais 82._

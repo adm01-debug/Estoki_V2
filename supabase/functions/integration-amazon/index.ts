@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
 
 const AMAZON_SP_API_BASE = "https://sellingpartnerapi-na.amazon.com";
 
@@ -16,7 +17,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { action, credentials, data, marketplace_id = "ATVPDKIKX0DER" } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(IntegrationActionSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { action, credentials, data, marketplace_id = "ATVPDKIKX0DER" } = __raw;
 
     if (!action || !credentials?.access_token) {
       throw new Error("action e credentials são obrigatórios");
