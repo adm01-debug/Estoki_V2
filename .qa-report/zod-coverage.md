@@ -2,19 +2,12 @@
 
 - Total de functions: **244**
 - Com body (req.json/text): **208**
-- Com Zod: **47**
-- **Faltando Zod: 161**
+- Com Zod: **54**
+- **Faltando Zod: 154**
 
 ## Functions sem validação Zod (top 30)
 
 - `abc-analysis`
-- `ai-assistant`
-- `ai-classify`
-- `ai-completion`
-- `ai-embedding`
-- `ai-sentiment`
-- `ai-summarize`
-- `ai-translate`
 - `auth-session-list`
 - `auth-session-revoke`
 - `auth-social-login`
@@ -37,5 +30,12 @@
 - `cycle-count`
 - `danfe-generate`
 - `dashboard-stats`
+- `data-migration`
+- `delete-file`
+- `demand-forecast`
+- `download-file`
+- `edi-process`
+- `expiration-check`
+- `export-pdf`
 
-_...e mais 131._
+_...e mais 124._

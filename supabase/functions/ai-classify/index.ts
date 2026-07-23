@@ -1,9 +1,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiClassifySchema, validateInput } from "../_shared/schemas.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
   try {
-    const { text, categories } = await req.json();
+    const body = await req.json();
+    const v = validateInput(AiClassifySchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { text, categories } = v.data;
     const prompt = `Classifique o seguinte texto em uma das categorias: ${categories.join(", ")}.\n\nTexto: "${text}"\n\nResponda apenas com o nome da categoria.`;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
