@@ -140,3 +140,50 @@ escaping de labels, declaração única de HELP/TYPE, normalização de `NaN` e 
 ```bash
 deno test --allow-all supabase/functions/_shared/prometheus_test.ts
 ```
+
+---
+
+## 4. Alerta automatizado de WAL e rollbacks (P2 #27)
+
+### RPC `check_db_alert_thresholds(p_wal_limit_mb, p_rollback_ratio)`
+
+`SECURITY DEFINER`, acessível apenas a `service_role` ou usuários `admin`. A cada execução:
+
+1. Lê `pg_ls_waldir()` (tamanho real do WAL em disco; degrada para `0` se o papel não tiver
+   permissão) e `pg_stat_database` (`xact_commit`, `xact_rollback`, `deadlocks`).
+2. Compara com o último registro de `public.db_health_snapshots` — os contadores do Postgres são
+   **cumulativos desde o boot**, então o alerta usa o **delta** entre medições, não o absoluto.
+3. Grava o novo snapshot e insere alertas em `alertas_historico` (`tipo = 'sistema'`).
+
+| Código | Condição | Severidade |
+|---|---|---|
+| `wal_size` | WAL > `p_wal_limit_mb` (default **500 MB**) | `critico` |
+| `rollback_ratio` | rollbacks/total > `p_rollback_ratio` (default **5%**) com amostra ≥ 100 transações | `critico` |
+| `deadlocks` | qualquer deadlock novo desde a medição anterior | `aviso` |
+
+**Anti-flapping:** nenhum alerta do mesmo `codigo` é reinserido enquanto houver um `ativo`
+criado nas últimas **6 horas**. O piso de 100 transações evita falso positivo em janelas ociosas
+(1 rollback em 3 transações = 33%, estatisticamente irrelevante).
+
+### Edge Function `db-alert-monitor`
+
+`POST /functions/v1/db-alert-monitor` — corpo opcional `{ "walLimitMb": 500, "rollbackRatio": 0.05 }`
+validado por Zod. Auth idêntica a `/metrics`: `Bearer <METRICS_TOKEN>` ou JWT `admin`; sem
+credencial → `401`. Instrumentada com `withLogging`, emitindo `db_alert.checked` em nível
+`warn` quando algum alerta é criado e `info` caso contrário.
+
+```bash
+# cron externo (a cada 5 min)
+*/5 * * * * curl -fsS -X POST https://<projeto>.supabase.co/functions/v1/db-alert-monitor \
+  -H "Authorization: Bearer $METRICS_TOKEN" -H 'content-type: application/json' -d '{}'
+```
+
+> `pg_cron`/`pg_net` não estão habilitados neste projeto — por isso o agendamento é externo
+> (cron, GitHub Actions `schedule` ou Grafana Agent). A função é idempotente: execuções extras
+> apenas geram snapshots, nunca alertas duplicados.
+
+### Testes
+
+`supabase/functions/db-alert-monitor/contract_test.ts` — 3 suítes, **403 cenários** (defaults,
+fuzz de 400 combinações de limites válidos/inválidos e tipos hostis). Validação ponta-a-ponta
+executada no banco: limite de 64 MB gerou `wal_size` na 1ª chamada e **zero** na 2ª (dedupe OK).
