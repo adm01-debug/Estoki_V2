@@ -45,7 +45,7 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 ## 🟢 P3 — Baixo
 
-- [ ] **31. README/README_PT** atualizados.
+- [x] **31. README/README_PT** atualizados — ✅ Ambos reescritos e sincronizados (EN canônico + PT-BR espelhado): matriz de funcionalidades por domínio, stack real (Vitest 3, Capacitor 8, 212/212 Zod, 245 Edge Functions), tabela completa de scripts de QA, seções de Segurança e Observabilidade e índice de documentação com links válidos. Corrigidos 4 links quebrados e a divergência de licença (MIT vs. proprietário). Criados `.env.example` (19 vars `VITE_*` mapeadas do código, com aviso de segredos server-side), `LICENSE` (proprietária) e `CONTRIBUTING.md` (fluxo, quality gate, padrões de código/DB/Edge Functions/testes) (2026-07-26).
 - [x] **32. `CHANGELOG.md` unificado** — ✅ criado seguindo Keep a Changelog + SemVer (2026-07-15).
 - [x] **33. E2E smoke** — ✅ Job Playwright (`routes-smoke.spec.ts`) + audit-zod + i18n-check adicionados ao `.github/workflows/qa.yml` (2026-07-15).
 - [ ] **34. `eslint-plugin-i18next`** bloqueando strings hardcoded.
