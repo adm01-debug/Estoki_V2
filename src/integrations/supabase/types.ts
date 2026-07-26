@@ -792,6 +792,33 @@ export type Database = {
           },
         ]
       }
+      db_health_snapshots: {
+        Row: {
+          created_at: string
+          deadlocks: number
+          id: string
+          wal_bytes: number
+          xact_commit: number
+          xact_rollback: number
+        }
+        Insert: {
+          created_at?: string
+          deadlocks?: number
+          id?: string
+          wal_bytes?: number
+          xact_commit?: number
+          xact_rollback?: number
+        }
+        Update: {
+          created_at?: string
+          deadlocks?: number
+          id?: string
+          wal_bytes?: number
+          xact_commit?: number
+          xact_rollback?: number
+        }
+        Relationships: []
+      }
       desafios_diarios: {
         Row: {
           ativo: boolean
@@ -4096,6 +4123,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      check_db_alert_thresholds: {
+        Args: { p_rollback_ratio?: number; p_wal_limit_mb?: number }
+        Returns: Json
       }
       check_login_lockout: {
         Args: { p_email: string }
