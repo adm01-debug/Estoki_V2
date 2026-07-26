@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 
 export const shippingService = {
   async getRomaneios(): Promise<Romaneio[]> {
