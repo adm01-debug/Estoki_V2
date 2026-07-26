@@ -30,7 +30,7 @@
     "size": "size-limit",
     "qa:rls": "node scripts/rls-audit.mjs",
     "qa:report": "node scripts/qa-report.mjs",
-    "qa:all": "npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run size && npm run qa:rls",
+    "qa:all": "npm run lint && npm run typecheck && npm run test:coverage && npm run build && npm run size && npm run qa:rls && npm run audit:deps",
     "coverage:check": "vitest run --coverage",
     "i18n:check": "node scripts/i18n-check.mjs",
     "audit:zod": "node scripts/audit-zod.mjs",
@@ -51,7 +51,9 @@
         "maxSize": "100 kB"
       }
     ],
-    "i18n:hardcoded": "node scripts/i18n-hardcoded-check.mjs"
+    "i18n:hardcoded": "node scripts/i18n-hardcoded-check.mjs",
+    "audit:deps": "node scripts/dep-audit.mjs --level=high",
+    "audit:deps:prod": "node scripts/dep-audit.mjs --level=moderate --prod"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
