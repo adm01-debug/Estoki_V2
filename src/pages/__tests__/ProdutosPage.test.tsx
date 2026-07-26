@@ -3,6 +3,7 @@ import Produtos from "../Produtos";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import * as useProdutosHook from "@/hooks/useProdutos";
 import "@testing-library/jest-dom";
 
@@ -57,9 +58,11 @@ describe("ProdutosPage Search Interaction", () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Produtos />
-        </BrowserRouter>
+        <HelmetProvider>
+          <BrowserRouter>
+            <Produtos />
+          </BrowserRouter>
+        </HelmetProvider>
       </QueryClientProvider>
     );
 

@@ -113,3 +113,47 @@ explícito na primeira linha do corpo.
 ---
 
 _Última atualização: Julho 2026_
+
+## Dependências — política de auditoria (item #29, 2026-07-26)
+
+O mirror npm usado no ambiente de build não expõe `/-/npm/v1/security/audits`,
+então `npm audit` retorna 404. Para não perder o gate, existe
+`scripts/dep-audit.mjs`, que:
+
+1. lê `package-lock.json` e extrai todas as versões instaladas (1.459 pacotes),
+   marcando quais são alcançáveis em produção (`dev` / `devOptional` = dev);
+2. consulta o endpoint público de advisories em lote do registry;
+3. casa cada advisory com as versões realmente presentes via `semver` — evita o
+   falso positivo clássico de "pacote afetado" quando só uma cópia transitiva
+   antiga é vulnerável;
+4. falha o build acima do nível configurado (`--level=high`, `--prod` opcional) e
+   grava `.qa-report/dep-audit.md`.
+
+Scripts: `npm run audit:deps` e `npm run audit:deps:prod`. Job `deps` no
+`qa.yml` é bloqueante. Sem rede, o script sai com 0 (não trava o build).
+
+### Correções aplicadas
+
+| Pacote | Antes | Depois | Motivo |
+|---|---|---|---|
+| `axios` | 1.16.1 (+1.6.0 transitivo) | 1.18.1 (override global) | 30+ advisories: SSRF, prototype pollution, vazamento de `Proxy-Authorization` |
+| `dompurify` | 3.4.3 | 3.4.12 | bypasses de sanitização `IN_PLACE`, poluição de `ALLOWED_ATTR` |
+| `react-router-dom` | 6.30.1 | 6.30.4 | open redirect via `//` |
+| `serialize-javascript` | 7.0.3 | 7.0.7 | DoS por exaustão de CPU |
+| `vitest` | 1.6.1 | 3.2.6+ | crítico GHSA-5xrq-8626-4rwp (Vitest UI) |
+| `form-data` / `tmp` / `qs` / `ws` / `js-yaml` / `uuid` / `fast-uri` / `linkify-it` / `markdown-it` / `postcss` / `@babel/core` / `brace-expansion@1\|2\|5` | várias | patched | via `overrides` do npm |
+
+### Advisories aceitos formalmente (`.dep-audit-allowlist.json`)
+
+- **`vite` 5.4.21** (3 advisories) e **`esbuild` 0.18/0.21** — todos exploram o
+  *dev server*, que nunca roda em produção (o artefato publicado é estático).
+  Não há correção na linha 5.x; a migração para Vite 6/7 está no backlog.
+- **`react-router` / `react-router-dom` 6.30.4** — as correções só existem em
+  v7.18. As rotas do app não passam URLs externas para `<Link>`/`useNavigate`
+  e `deserializeErrors()` pertence ao data-router SSR, não usado aqui.
+- **`brace-expansion` 1.1.16 / 2.1.2** — o fix existe apenas em 5.0.8, que muda
+  o formato de export e quebraria `minimatch@3`. Uso é exclusivamente
+  build-time, com padrões de glob escritos por desenvolvedores — sem entrada
+  controlada por atacante. Nenhuma linha entra no bundle do cliente.
+
+Toda entrada da allowlist deve ser revisada a cada bump de major do tooling.

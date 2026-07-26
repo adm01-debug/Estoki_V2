@@ -57,7 +57,7 @@ export function useRanking() {
       const { data: conquistasData } = await supabase
         .from("conquistas_usuarios")
         .select("user_id")
-        .eq("desbloqueado", true)
+        .eq("desbloqueada", true)
         .in("user_id", userIds);
 
       // Count achievements per user

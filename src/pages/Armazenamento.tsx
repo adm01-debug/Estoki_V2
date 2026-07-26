@@ -188,12 +188,20 @@ const ArmazenamentoPage = () => {
   // Step 1: Cross-docking Engine
   useEffect(() => {
     const checkCrossDocking = async () => {
+      // `order_items` referencia o produto por id; resolvemos o SKU antes de
+      // procurar um pedido pendente que possa consumir o item recebido.
       if (!item.sku) return;
       try {
+        const { data: produto } = await supabase
+          .from("produtos")
+          .select("id")
+          .eq("sku", item.sku)
+          .maybeSingle();
+        if (!produto) return;
         const { data } = await supabase
           .from("order_items")
           .select("*, orders(*)")
-          .eq("sku", item.sku)
+          .eq("produto_id", produto.id)
           .limit(1);
         if (data && data.length > 0) {
           setCrossDockingOrder(data[0]);

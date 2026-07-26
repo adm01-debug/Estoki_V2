@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 
 export type TipoRegistro = "troca" | "devolucao";
 export type StatusRegistro =
@@ -157,7 +158,7 @@ export function useTrocasDevolucoes() {
 
       const { error: updateError } = await supabase
         .from("trocas_devolucoes")
-        .update(updates)
+        .update(updates as TablesUpdate<"trocas_devolucoes">)
         .eq("id", id);
 
       if (updateError) throw updateError;
