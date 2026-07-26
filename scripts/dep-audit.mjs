@@ -11,6 +11,7 @@
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import semver from "semver";
 
 const REGISTRY = process.env.NPM_ADVISORY_REGISTRY ?? "https://registry.npmjs.org";
 const BULK = `${REGISTRY}/-/npm/v1/security/advisories/bulk`;
@@ -38,14 +39,14 @@ const ALLOWLIST = JSON.parse(
 const lock = JSON.parse(readFileSync("package-lock.json", "utf8"));
 /** @type {Record<string, Set<string>>} */
 const versions = {};
-/** @type {Record<string, boolean>} nome -> alcançável em produção */
-const inProd = {};
+/** @type {Record<string, Set<string>>} nome -> versões alcançáveis em produção */
+const prodVersions = {};
 for (const [path, info] of Object.entries(lock.packages ?? {})) {
   const idx = path.lastIndexOf("node_modules/");
   if (idx === -1 || !info.version) continue;
   const name = path.slice(idx + "node_modules/".length);
   (versions[name] ??= new Set()).add(info.version);
-  inProd[name] = inProd[name] || !(info.dev || info.devOptional);
+  if (!(info.dev || info.devOptional)) (prodVersions[name] ??= new Set()).add(info.version);
 }
 
 const payload = Object.fromEntries(Object.entries(versions).map(([k, v]) => [k, [...v]]));
@@ -67,16 +68,23 @@ const threshold = ORDER.indexOf(level);
 const rows = [];
 for (const [name, list] of Object.entries(advisories)) {
   for (const a of list) {
-    const prod = inProd[name] === true;
-    if (prodOnly && !prod) continue;
+    // A API em lote responde por pacote; casamos a faixa vulnerável contra cada
+    // versão realmente presente na árvore para evitar falsos positivos.
+    const affected = [...(versions[name] ?? [])].filter((v) =>
+      semver.satisfies(v, a.vulnerable_versions, { includePrerelease: true })
+    );
+    if (!affected.length) continue;
+    const prodAffected = affected.filter((v) => prodVersions[name]?.has(v));
+    if (prodOnly && !prodAffected.length) continue;
     const allowed = (ALLOWLIST[name] ?? []).includes(a.url) || (ALLOWLIST[name] ?? []).includes("*");
     rows.push({
       name,
       severity: a.severity,
       range: a.vulnerable_versions,
+      affected: affected.join(", "),
       title: a.title,
       url: a.url,
-      scope: prod ? "prod" : "dev",
+      scope: prodAffected.length ? "prod" : "dev",
       allowed,
       blocking: !allowed && ORDER.indexOf(a.severity) >= threshold,
     });
@@ -97,10 +105,10 @@ const md = [
   "",
 ];
 if (rows.length) {
-  md.push("| Pacote | Sev | Escopo | Faixa vulnerável | Achado | Status |", "|---|---|---|---|---|---|");
+  md.push("| Pacote | Sev | Escopo | Instalado | Faixa vulnerável | Achado | Status |", "|---|---|---|---|---|---|---|");
   for (const r of rows.sort((a, b) => ORDER.indexOf(b.severity) - ORDER.indexOf(a.severity))) {
     md.push(
-      `| \`${r.name}\` | ${r.severity} | ${r.scope} | \`${r.range}\` | [${r.title.slice(0, 80)}](${r.url}) | ${
+      `| \`${r.name}\` | ${r.severity} | ${r.scope} | \`${r.affected}\` | \`${r.range}\` | [${r.title.slice(0, 80)}](${r.url}) | ${
         r.allowed ? "aceito" : r.blocking ? "❌ bloqueante" : "informativo"
       } |`
     );
