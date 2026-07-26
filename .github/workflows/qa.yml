@@ -99,6 +99,11 @@ jobs:
         run: npm audit --omit=dev --audit-level=high | tee .qa-report/security.md || true
         continue-on-error: true
 
+      - name: Auditoria de dependências (advisories + allowlist)
+        id: deps
+        run: node scripts/dep-audit.mjs --level=high
+        continue-on-error: true
+
       - name: Gerar relatório consolidado
         if: always()
         env:
@@ -164,4 +169,5 @@ jobs:
           [ "${{ steps.test.outcome }}"      = "success" ] || fail "unit tests"
           [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
           [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
+          [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
           echo "✅ Quality gate aprovado"
