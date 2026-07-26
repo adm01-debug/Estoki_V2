@@ -65,7 +65,7 @@ export function createBulkHandler<S extends z.ZodTypeAny>(schema: S, handler: Ha
     const headers = { ...cors, "Content-Type": "application/json" };
     try {
       const body = await req.json().catch(() => ({}));
-      const v = validateInput(schema, body);
+      const v = validateInput(schema as unknown as z.ZodSchema<z.infer<S>>, body);
       if (!v.success) {
         return new Response(JSON.stringify({ error: v.error, details: v.details }), {
           status: 400,
