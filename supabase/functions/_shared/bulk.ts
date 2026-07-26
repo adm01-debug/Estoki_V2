@@ -1,15 +1,7 @@
 /**
- * Handler genérico compartilhado pelas Edge Functions `bulk-*`.
- *
- * Motivação (P2 #25): as quatro funções (`bulk-insert`, `bulk-update`,
- * `bulk-upsert`, `bulk-delete`) repetiam ~30 linhas idênticas de CORS,
- * validação Zod, criação de client e tratamento de erro. Consolidamos tudo
- * aqui, mantendo **exatamente** os mesmos contratos de request/response.
- *
- * Ganhos de tempo de resposta:
- *  - Client Supabase criado UMA vez por isolate (module scope) em vez de por request.
- *  - `bulk-update` passa de N updates sequenciais para execução em paralelo
- *    com concorrência limitada (evita saturar o pool de conexões).
+ * Handler genérico das Edge Functions `bulk-*` (P2 #25).
+ * Consolida CORS, validação Zod, client e erros — contratos inalterados.
+ * Perf: client reutilizado por isolate + updates paralelos com concorrência limitada.
  */
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import type { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
@@ -53,10 +45,7 @@ type Handler<S extends z.ZodTypeAny> = (
   req: Request
 ) => Promise<unknown>;
 
-/**
- * Cria o `Deno.serve` handler padrão das funções bulk.
- * Mantém os mesmos códigos de status e formatos de erro anteriores.
- */
+/** Cria o handler padrão: mesmos status codes e formatos de erro de antes. */
 export function createBulkHandler<S extends z.ZodTypeAny>(schema: S, handler: Handler<S>) {
   return async (req: Request): Promise<Response> => {
     const cors = getCorsHeaders(req);
