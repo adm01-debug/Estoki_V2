@@ -157,7 +157,7 @@ export function useTrocasDevolucoes() {
 
       const { error: updateError } = await supabase
         .from("trocas_devolucoes")
-        .update(updates)
+        .update(updates as TablesUpdate<"trocas_devolucoes">)
         .eq("id", id);
 
       if (updateError) throw updateError;

@@ -76,7 +76,7 @@ export const shippingService = {
   },
 
   async atualizarStatus(id: string, status: StatusRomaneio): Promise<void> {
-    const updates: Record<string, any> = { status };
+    const updates: TablesUpdate<"romaneios"> = { status };
     if (status === "em_transito") {
       updates.data_saida = new Date().toISOString();
     } else if (status === "entregue" || status === "parcial") {

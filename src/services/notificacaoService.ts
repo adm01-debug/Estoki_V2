@@ -33,9 +33,10 @@ export const notificacaoService = {
     tipo: string;
     titulo: string;
     mensagem?: string;
+    /** Metadados livres — não persistidos: a tabela não possui coluna `data`. */
     data?: unknown;
   }) {
-    const { mensagem, ...rest } = notification;
+    const { mensagem, data: _metadata, ...rest } = notification;
     const payload = { ...rest, mensagem: mensagem ?? "" };
     const { data, error } = await supabase.from("notificacoes").insert([payload]).select().single();
     if (error) throw error;
