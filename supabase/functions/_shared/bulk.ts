@@ -43,7 +43,7 @@ type Handler<S extends z.ZodTypeAny> = (
   data: z.infer<S>,
   supabase: SupabaseClient,
   req: Request
-) => Promise<unknown>;
+) => unknown | Promise<unknown>;
 
 /** Cria o handler padrão: mesmos status codes e formatos de erro de antes. */
 export function createBulkHandler<S extends z.ZodTypeAny>(schema: S, handler: Handler<S>) {
