@@ -73,8 +73,8 @@ export function withLogging(
   handler: (req: Request, log: Logger) => Promise<Response>,
 ): (req: Request) => Promise<Response> {
   return async (req: Request) => {
-    const log = createLogger(fn, req);
-    const requestId = (log as unknown as { ctx: LoggerContext }).ctx?.requestId ?? requestIdFrom(req);
+    const requestId = requestIdFrom(req);
+    const log = new Logger({ fn, requestId });
     const started = performance.now();
     log.info("request.start", { method: req.method, path: new URL(req.url).pathname });
     try {
