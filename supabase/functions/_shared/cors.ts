@@ -7,9 +7,14 @@
  */
 
 const ALLOWED_ORIGINS = [
+  // Lovable dev (projeto original)
   "https://id-preview--0b6dd81f-1d9c-4b9d-85ea-f3b4f874dadd.lovable.app",
   "https://compra-vibe-connect.lovable.app",
+  // Lovable V2 (projeto d9a2e2d9)
+  "https://id-preview--d9a2e2d9-b9d4-4278-9f87-35b47b961e34.lovable.app",
+  // Produção
   "https://estoki.lovable.app",
+  // Local
   "http://localhost:5173",
   "http://localhost:3000",
 ];
