@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,24 +36,28 @@ interface RelatorioAgendado {
   proximo_envio: string | null;
 }
 
+async function fetchRelatorios(): Promise<RelatorioAgendado[]> {
+  const { data, error } = await supabase
+    .from("relatorios_agendados")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data as RelatorioAgendado[]) || [];
+}
+
 export default function RelatoriosAgendados() {
-  const [relatorios, setRelatorios] = useState<RelatorioAgendado[]>([]);
-  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
+  const queryClient = useQueryClient();
 
-  const fetchRelatorios = async () => {
-    const { data } = await supabase
-      .from("relatorios_agendados")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setRelatorios((data as any[]) || []);
-    setLoading(false);
-  };
+  const { data: relatorios = [], isLoading: loading } = useQuery({
+    queryKey: ["relatorios-agendados"],
+    queryFn: fetchRelatorios,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
 
-  useEffect(() => {
-    fetchRelatorios();
-  }, []);
+  const reload = () => queryClient.invalidateQueries({ queryKey: ["relatorios-agendados"] });
 
   const handleCreate = async () => {
     if (!form.nome || !form.email) {
@@ -82,7 +87,7 @@ export default function RelatoriosAgendados() {
     toast.success("Relatório agendado criado!");
     setDialogOpen(false);
     setForm({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
-    fetchRelatorios();
+    reload();
   };
 
   const toggleAtivo = async (id: string, ativo: boolean) => {
@@ -90,13 +95,13 @@ export default function RelatoriosAgendados() {
       .from("relatorios_agendados")
       .update({ ativo: !ativo } as any)
       .eq("id", id);
-    fetchRelatorios();
+    reload();
   };
 
   const handleDelete = async (id: string) => {
     await supabase.from("relatorios_agendados").delete().eq("id", id);
     toast.success("Relatório removido");
-    fetchRelatorios();
+    reload();
   };
 
   const handleEnviarAgora = async (rel: RelatorioAgendado) => {
@@ -114,7 +119,7 @@ export default function RelatoriosAgendados() {
         .update({ ultimo_envio: new Date().toISOString() } as any)
         .eq("id", rel.id);
       toast.success(`Relatório "${rel.nome}" enviado!`);
-      fetchRelatorios();
+      reload();
     } catch {
       toast.error("Erro ao enviar relatório");
     }

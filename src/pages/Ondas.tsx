@@ -2,7 +2,8 @@ import { OndasCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
 import { Download } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,11 +52,29 @@ const statusConfig: Record<
   cancelada: { label: "Cancelada", variant: "destructive", icon: X },
 };
 
+async function fetchOndas() {
+  const { data, error } = await supabase
+    .from("ondas_separacao")
+    .select("*")
+    .order("data_criacao", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
 export default function OndasPage() {
-  const [ondas, setOndas] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const queryClient = useQueryClient();
+
+  const { data: ondas = [], isLoading: loading, error } = useQuery({
+    queryKey: ["ondas-list"],
+    queryFn: fetchOndas,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
+  if (error) toast.error("Erro ao carregar ondas de separação");
+
+  const reloadOndas = () => queryClient.invalidateQueries({ queryKey: ["ondas-list"] });
 
   const handleExportCSV = () => {
     const headers = [
@@ -91,26 +110,6 @@ export default function OndasPage() {
     document.body.removeChild(link);
   };
 
-  useEffect(() => {
-    loadOndas();
-  }, []);
-
-  const loadOndas = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("ondas_separacao")
-        .select("*")
-        .order("data_criacao", { ascending: false });
-      if (error) throw error;
-      setOndas(data || []);
-    } catch {
-      toast.error("Erro ao carregar ondas de separação");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const filtered = useMemo(() => {
     return ondas.filter((o) => {
       const matchSearch =
@@ -138,7 +137,7 @@ export default function OndasPage() {
         .eq("id", id);
       if (error) throw error;
       toast.success("Onda iniciada!");
-      loadOndas();
+      reloadOndas();
     } catch {
       toast.error("Erro ao iniciar onda");
     }
@@ -155,7 +154,7 @@ export default function OndasPage() {
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Exportar</span>
             </Button>
-            <NovoOndaDialog onSuccess={loadOndas} />
+            <NovoOndaDialog onSuccess={reloadOndas} />
           </div>
         }
       >

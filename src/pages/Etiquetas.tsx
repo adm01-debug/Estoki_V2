@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,12 +46,57 @@ import {
 import { gerarCodigoUnico } from "@/components/etiquetas/etiquetaUtils";
 import { generateLotePDF, generateEntregaPDF } from "@/components/etiquetas/pdfGenerators";
 
+async function fetchLotesList(): Promise<LoteItem[]> {
+  const { data, error } = await supabase
+    .from("lotes")
+    .select(
+      "id, numero_lote, produto_id, quantidade_atual, fornecedor, data_recebimento, nf_entrada, produtos(nome, sku)"
+    )
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return (data || []).map((l: Record<string, unknown>) => ({
+    id: l.id as string,
+    numero_lote: l.numero_lote as string,
+    produto_id: l.produto_id as string,
+    quantidade_atual: l.quantidade_atual as number,
+    fornecedor: l.fornecedor as string | null,
+    data_recebimento: l.data_recebimento as string,
+    nf_entrada: l.nf_entrada as string | null,
+    produto_nome: (l.produtos as Record<string, unknown> | null)?.nome as string | undefined,
+    produto_sku: (l.produtos as Record<string, unknown> | null)?.sku as string | undefined,
+  }));
+}
+
+async function fetchEntregasList(): Promise<EntregaItem[]> {
+  const { data, error } = await supabase
+    .from("romaneio_itens")
+    .select(
+      "id, cliente, endereco_entrega, pedido_referencia, nf_saida, quantidade, peso_kg, ordem_entrega, romaneio_id, romaneios(codigo), produtos(nome)"
+    )
+    .order("created_at", { ascending: false })
+    .limit(200);
+  if (error) throw error;
+  return (data || []).map((e: Record<string, unknown>) => ({
+    id: e.id as string,
+    cliente: e.cliente as string,
+    endereco_entrega: e.endereco_entrega as string,
+    pedido_referencia: e.pedido_referencia as string | null,
+    nf_saida: e.nf_saida as string | null,
+    quantidade: e.quantidade as number,
+    peso_kg: e.peso_kg as number | null,
+    ordem_entrega: e.ordem_entrega as number | null,
+    romaneio_id: e.romaneio_id as string,
+    romaneio_codigo: (e.romaneios as Record<string, unknown> | null)?.codigo as
+      | string
+      | undefined,
+    produto_nome: (e.produtos as Record<string, unknown> | null)?.nome as string | undefined,
+  }));
+}
+
 export default function Etiquetas() {
   const { toast } = useToast();
   const [fonte, setFonte] = useState<FonteData>("lotes");
-  const [lotes, setLotes] = useState<LoteItem[]>([]);
-  const [entregas, setEntregas] = useState<EntregaItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [tamanho, setTamanho] = useState<TamanhoEtiqueta>("10x15");
@@ -59,87 +105,38 @@ export default function Etiquetas() {
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const fetchLotes = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("lotes")
-        .select(
-          "id, numero_lote, produto_id, quantidade_atual, fornecedor, data_recebimento, nf_entrada, produtos(nome, sku)"
-        )
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      const mapped: LoteItem[] = (data || []).map((l: Record<string, unknown>) => ({
-        id: l.id as string,
-        numero_lote: l.numero_lote as string,
-        produto_id: l.produto_id as string,
-        quantidade_atual: l.quantidade_atual as number,
-        fornecedor: l.fornecedor as string | null,
-        data_recebimento: l.data_recebimento as string,
-        nf_entrada: l.nf_entrada as string | null,
-        produto_nome: (l.produtos as Record<string, unknown> | null)?.nome as string | undefined,
-        produto_sku: (l.produtos as Record<string, unknown> | null)?.sku as string | undefined,
-      }));
-      setLotes(mapped);
-      if (mapped.length > 0 && !previewId) setPreviewId(mapped[0].id);
-    } catch (err: unknown) {
-      toast({
-        title: "Erro ao carregar lotes",
-        description: err instanceof Error ? err.message : String(err),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast, previewId]);
+  const lotesQuery = useQuery({
+    queryKey: ["etiquetas-lotes"],
+    queryFn: fetchLotesList,
+    staleTime: 1000 * 60 * 5,
+    enabled: fonte === "lotes",
+  });
+  const entregasQuery = useQuery({
+    queryKey: ["etiquetas-entregas"],
+    queryFn: fetchEntregasList,
+    staleTime: 1000 * 60 * 5,
+    enabled: fonte === "entregas",
+  });
 
-  const fetchEntregas = useCallback(async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("romaneio_itens")
-        .select(
-          "id, cliente, endereco_entrega, pedido_referencia, nf_saida, quantidade, peso_kg, ordem_entrega, romaneio_id, romaneios(codigo), produtos(nome)"
-        )
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      const mapped: EntregaItem[] = (data || []).map((e: Record<string, unknown>) => ({
-        id: e.id as string,
-        cliente: e.cliente as string,
-        endereco_entrega: e.endereco_entrega as string,
-        pedido_referencia: e.pedido_referencia as string | null,
-        nf_saida: e.nf_saida as string | null,
-        quantidade: e.quantidade as number,
-        peso_kg: e.peso_kg as number | null,
-        ordem_entrega: e.ordem_entrega as number | null,
-        romaneio_id: e.romaneio_id as string,
-        romaneio_codigo: (e.romaneios as Record<string, unknown> | null)?.codigo as
-          | string
-          | undefined,
-        produto_nome: (e.produtos as Record<string, unknown> | null)?.nome as string | undefined,
-      }));
-      setEntregas(mapped);
-      if (mapped.length > 0 && !previewId) setPreviewId(mapped[0].id);
-    } catch (err: unknown) {
-      toast({
-        title: "Erro ao carregar entregas",
-        description: err instanceof Error ? err.message : String(err),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast, previewId]);
+  const lotes = lotesQuery.data ?? [];
+  const entregas = entregasQuery.data ?? [];
+  const loading = lotesQuery.isLoading || entregasQuery.isLoading;
 
   useEffect(() => {
-    setSelectedIds(new Set());
-    setPreviewId(null);
-    setQrUrl(null);
-    if (fonte === "lotes") fetchLotes();
-    else fetchEntregas();
-  }, [fonte]);
+    if (lotesQuery.error) {
+      toast({ title: "Erro ao carregar lotes", description: String(lotesQuery.error), variant: "destructive" });
+    }
+    if (entregasQuery.error) {
+      toast({ title: "Erro ao carregar entregas", description: String(entregasQuery.error), variant: "destructive" });
+    }
+  }, [lotesQuery.error, entregasQuery.error, toast]);
+
+  useEffect(() => {
+    if (!previewId) {
+      if (fonte === "lotes" && lotes.length > 0) setPreviewId(lotes[0].id);
+      else if (fonte === "entregas" && entregas.length > 0) setPreviewId(entregas[0].id);
+    }
+  }, [lotes, entregas, fonte, previewId]);
 
   useEffect(() => {
     if (!previewId) {
@@ -278,7 +275,7 @@ export default function Etiquetas() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => (fonte === "lotes" ? fetchLotes() : fetchEntregas())}
+            onClick={() => (fonte === "lotes" ? lotesQuery.refetch() : entregasQuery.refetch())}
             disabled={loading}
           >
             <RefreshCw className={`mr-1 h-4 w-4 ${loading ? "animate-spin" : ""}`} />

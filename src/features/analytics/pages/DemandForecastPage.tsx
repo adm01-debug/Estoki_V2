@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { useDemandForecast } from "../hooks/useDemandForecast";
@@ -59,22 +60,25 @@ interface Previsao {
   projecao: { dia: string; estoque: number; previsao: number }[];
 }
 
+async function fetchProdutosPrevisao(): Promise<Produto[]> {
+  const { data, error } = await supabase
+    .from("produtos")
+    .select("id, nome, sku, giro_mensal, estoque_minimo, ponto_pedido");
+  if (error) throw error;
+  return (data as Produto[]) || [];
+}
+
 export default function PrevisaoDemandaIA() {
   const { gerarPrevisaoIA, loading: loadingIA, previsoesIA } = useDemandForecast();
-  const [produtos, setProdutos] = useState<Produto[]>([]);
   const [selectedProduto, setSelectedProduto] = useState("");
   const [previsao, setPrevisao] = useState<Previsao | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const { data } = await supabase
-        .from("produtos")
-        .select("id, nome, sku, giro_mensal, estoque_minimo, ponto_pedido");
-      setProdutos((data as any[]) || []);
-    };
-    fetch();
-  }, []);
+  const { data: produtos = [] } = useQuery({
+    queryKey: ["produtos-previsao"],
+    queryFn: fetchProdutosPrevisao,
+    staleTime: 1000 * 60 * 5,
+  });
 
   const calcularPrevisao = async (produto: Produto): Promise<Previsao> => {
     // Buscar estoque atual

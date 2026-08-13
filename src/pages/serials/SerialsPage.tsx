@@ -1,15 +1,81 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Hash, Search } from "lucide-react";
+
+type Serial = {
+  id: string;
+  numero_serial: string;
+  produto_id: string | null;
+  lote_id: string | null;
+  posicao_id: string | null;
+  status: string;
+};
+
+const STATUS_LABELS: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  disponivel: { label: "Disponível", variant: "default" },
+  reservado: { label: "Reservado", variant: "secondary" },
+  expedido: { label: "Expedido", variant: "outline" },
+  devolvido: { label: "Devolvido", variant: "destructive" },
+  descartado: { label: "Descartado", variant: "destructive" },
+};
+
 export default function SerialsPage() {
+  const [search, setSearch] = useState("");
+
+  const { data: serials = [], isLoading } = useQuery({
+    queryKey: ["serial_numbers", "with_products"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("serial_numbers").select("*, produtos(nome)").order("numero_serial");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const filtered = serials.filter((s: any) =>
+    s.numero_serial.toLowerCase().includes(search.toLowerCase()) ||
+    (s.produtos?.nome || "").toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-4 p-6">
-      <h1 className="text-2xl font-bold">SerialsPage</h1>
-      <Card>
-        <CardContent className="p-6">
-          <p>Conteúdo da página SerialsPage</p>
-        </CardContent>
-      </Card>
+      <div>
+        <h1 className="text-2xl font-bold flex items-center gap-2"><Hash className="h-6 w-6" />Seriais</h1>
+        <p className="text-sm text-muted-foreground">Rastreamento de números de série</p>
+      </div>
+
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input placeholder="Buscar por serial ou produto..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+      </div>
+
+      {isLoading ? (
+        <p className="text-muted-foreground">Carregando...</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+          {filtered.map((s: any) => {
+            const cfg = STATUS_LABELS[s.status] || { label: s.status, variant: "outline" as const };
+            return (
+              <Card key={s.id}>
+                <CardContent className="p-3">
+                  <div className="flex items-start justify-between mb-1">
+                    <Hash className="h-4 w-4 text-primary" />
+                    <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                  </div>
+                  <p className="font-mono font-semibold text-sm">{s.numero_serial}</p>
+                  {s.produtos?.nome && <p className="text-xs text-muted-foreground">{s.produtos.nome}</p>}
+                </CardContent>
+              </Card>
+            );
+          })}
+          {filtered.length === 0 && (
+            <p className="col-span-full text-center text-muted-foreground py-8">Nenhum serial encontrado</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

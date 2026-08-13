@@ -42,7 +42,7 @@ BEGIN
   IF TG_TABLE_NAME = 'ajustes_estoque' THEN
     v_entity_label := 'Ajuste: ' || COALESCE((COALESCE(NEW, OLD)::jsonb ->> 'motivo'), '-');
   ELSIF TG_TABLE_NAME = 'orders' THEN
-    v_entity_label := 'Pedido ' || COALESCE((COALESCE(NEW, OLD)::jsonb ->> 'numero'), v_entity_id);
+    v_entity_label := 'Pedido ' || COALESCE((to_jsonb(NEW) ->> 'codigo'), v_entity_id);
   ELSIF TG_TABLE_NAME = 'gamificacao_transacoes' THEN
     v_entity_label := 'Transação gamificação (' || v_action || ')';
   END IF;

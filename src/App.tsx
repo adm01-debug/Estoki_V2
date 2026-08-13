@@ -19,7 +19,12 @@ const Hub = lazy(() => import("./pages/Hub"));
 
 const App = () => (
   <AppProviders>
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <GlobalLoadingBar />
       <Routes>
         {publicRoutes}

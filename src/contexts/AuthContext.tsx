@@ -20,6 +20,10 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, nome: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
+  updateProfile: (
+    updates: Partial<Pick<Profile, "nome" | "avatar_url" | "departamento">>
+  ) => Promise<{ error: Error | null }>;
+  refreshProfile: () => Promise<void>;
   hasRole: (requiredRole: AppRole) => boolean;
   canAccess: (allowedRoles: AppRole[]) => boolean;
 }
@@ -118,6 +122,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
   };
 
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    await fetchUserData(user.id);
+  }, [user, fetchUserData]);
+
+  const updateProfile = useCallback(
+    async (updates: Partial<Pick<Profile, "nome" | "avatar_url" | "departamento">>) => {
+      if (!user) return { error: new Error("Usuário não autenticado") };
+      try {
+        const updated = await authService.updateProfile(user.id, updates);
+        if (updated) setProfile(updated);
+        return { error: null };
+      } catch (e) {
+        logger.error("Falha ao atualizar perfil", e);
+        return { error: e as Error };
+      }
+    },
+    [user]
+  );
+
   const hasRole = (requiredRole: AppRole): boolean => {
     if (!role) return false;
     const hierarchy: Record<AppRole, number> = { operador: 1, supervisor: 2, admin: 3 };
@@ -131,7 +155,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, session, profile, role, loading, signIn, signUp, signOut, hasRole, canAccess }}
+      value={{
+        user,
+        session,
+        profile,
+        role,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        updateProfile,
+        refreshProfile,
+        hasRole,
+        canAccess,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,35 +37,28 @@ interface RastreioEvento {
   status: string;
 }
 
+async function fetchRomaneiosEmTransito(): Promise<any[]> {
+  const { data, error } = await supabase
+    .from("romaneios")
+    .select("id, codigo, motorista, status, data_saida")
+    .in("status", ["em_transito", "confirmado"])
+    .order("data_saida", { ascending: false })
+    .limit(20);
+  if (error) throw error;
+  return data || [];
+}
+
 export default function IntegracaoTransportadoras() {
   const [codigoRastreio, setCodigoRastreio] = useState("");
   const [rastreios, setRastreios] = useState<Rastreio[]>([]);
-  const [romaneios, setRomaneios] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState("rastrear");
 
-  useEffect(() => {
-    const fetchRomaneios = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("romaneios")
-          .select("id, codigo, motorista, status, data_saida")
-          .in("status", ["em_transito", "confirmado"])
-          .order("data_saida", { ascending: false })
-          .limit(20);
-
-        if (error) throw error;
-        setRomaneios(data || []);
-      } catch (err) {
-        logger.error("Erro ao carregar romaneios:", err);
-        toast.error("Não foi possível carregar os romaneios em trânsito.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRomaneios();
-  }, []);
+  const { data: romaneios = [], isLoading: loading } = useQuery({
+    queryKey: ["romaneios-em-transito"],
+    queryFn: fetchRomaneiosEmTransito,
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 10,
+  });
 
   const simularRastreio = (codigo: string): RastreioEvento[] => {
     const agora = new Date();

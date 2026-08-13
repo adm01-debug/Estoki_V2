@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,81 +35,88 @@ interface RealtimeKPI {
   tarefasPendentes: number;
 }
 
+async function fetchRealtimeKPIs(): Promise<RealtimeKPI> {
+  const hoje = new Date().toISOString().split("T")[0];
+  const [produtos, posOcupadas, posTotal, lotes, triagem, picking, alertas, tarefas] =
+    await Promise.all([
+      supabase.from("produtos").select("id", { count: "exact", head: true }),
+      supabase
+        .from("posicoes_estoque")
+        .select("id", { count: "exact", head: true })
+        .neq("status", "livre"),
+      supabase.from("posicoes_estoque").select("id", { count: "exact", head: true }),
+      supabase
+        .from("lotes")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["recebido", "conferido"]),
+      supabase
+        .from("eventos_triagem")
+        .select("id", { count: "exact", head: true })
+        .gte("data_inicio", hoje),
+      supabase
+        .from("eventos_picking")
+        .select("id", { count: "exact", head: true })
+        .gte("data_inicio", hoje),
+      supabase
+        .from("alertas_historico")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "ativo"),
+      supabase
+        .from("tarefas")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pendente"),
+    ]);
+  return {
+    totalProdutos: produtos.count || 0,
+    posicoesCupadas: posOcupadas.count || 0,
+    posicoesTotal: posTotal.count || 0,
+    lotesAtivos: lotes.count || 0,
+    triagemHoje: triagem.count || 0,
+    pickingHoje: picking.count || 0,
+    alertasAtivos: alertas.count || 0,
+    tarefasPendentes: tarefas.count || 0,
+  };
+}
+
+async function fetchRealtimeFeed(): Promise<any[]> {
+  const { data } = await supabase
+    .from("notificacoes")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(8);
+  return data || [];
+}
+
+const EMPTY_KPI: RealtimeKPI = {
+  totalProdutos: 0,
+  posicoesCupadas: 0,
+  posicoesTotal: 0,
+  lotesAtivos: 0,
+  triagemHoje: 0,
+  pickingHoje: 0,
+  alertasAtivos: 0,
+  tarefasPendentes: 0,
+};
+
 export default function DashboardTempoReal() {
-  const [kpis, setKpis] = useState<RealtimeKPI>({
-    totalProdutos: 0,
-    posicoesCupadas: 0,
-    posicoesTotal: 0,
-    lotesAtivos: 0,
-    triagemHoje: 0,
-    pickingHoje: 0,
-    alertasAtivos: 0,
-    tarefasPendentes: 0,
+  const queryClient = useQueryClient();
+  const { data: kpis = EMPTY_KPI } = useQuery({
+    queryKey: ["realtime-kpis"],
+    queryFn: fetchRealtimeKPIs,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 5,
   });
-  const [feed, setFeed] = useState<any[]>([]);
+  const { data: feed = [] } = useQuery({
+    queryKey: ["realtime-feed"],
+    queryFn: fetchRealtimeFeed,
+    staleTime: 1000 * 30,
+    gcTime: 1000 * 60 * 5,
+  });
   const [isConnected, setIsConnected] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date());
   const [historico, setHistorico] = useState<any[]>([]);
 
-  const fetchKPIs = async () => {
-    const hoje = new Date().toISOString().split("T")[0];
-    const [produtos, posOcupadas, posTotal, lotes, triagem, picking, alertas, tarefas] =
-      await Promise.all([
-        supabase.from("produtos").select("id", { count: "exact", head: true }),
-        supabase
-          .from("posicoes_estoque")
-          .select("id", { count: "exact", head: true })
-          .neq("status", "livre"),
-        supabase.from("posicoes_estoque").select("id", { count: "exact", head: true }),
-        supabase
-          .from("lotes")
-          .select("id", { count: "exact", head: true })
-          .in("status", ["recebido", "conferido"]),
-        supabase
-          .from("eventos_triagem")
-          .select("id", { count: "exact", head: true })
-          .gte("data_inicio", hoje),
-        supabase
-          .from("eventos_picking")
-          .select("id", { count: "exact", head: true })
-          .gte("data_inicio", hoje),
-        supabase
-          .from("alertas_historico")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "ativo"),
-        supabase
-          .from("tarefas")
-          .select("id", { count: "exact", head: true })
-          .eq("status", "pendente"),
-      ]);
-
-    setKpis({
-      totalProdutos: produtos.count || 0,
-      posicoesCupadas: posOcupadas.count || 0,
-      posicoesTotal: posTotal.count || 0,
-      lotesAtivos: lotes.count || 0,
-      triagemHoje: triagem.count || 0,
-      pickingHoje: picking.count || 0,
-      alertasAtivos: alertas.count || 0,
-      tarefasPendentes: tarefas.count || 0,
-    });
-    setLastUpdate(new Date());
-  };
-
-  const fetchFeed = async () => {
-    const { data } = await supabase
-      .from("notificacoes")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(8);
-    setFeed(data || []);
-  };
-
   useEffect(() => {
-    fetchKPIs();
-    fetchFeed();
-
-    // Buscar dados reais de métricas operacionais para o gráfico
     const fetchHistorico = async () => {
       const { data: metricas } = await supabase
         .from("metricas_operacionais")
@@ -129,7 +137,6 @@ export default function DashboardTempoReal() {
           }))
         );
       } else {
-        // Fallback: gerar a partir de contagens reais de hoje
         const hoje = new Date();
         const h = Array.from({ length: 8 }, (_, i) => {
           const hora = 8 + i;
@@ -148,37 +155,40 @@ export default function DashboardTempoReal() {
     const channel = supabase
       .channel("realtime-dashboard")
       .on("postgres_changes", { event: "*", schema: "public", table: "eventos_triagem" }, () => {
-        fetchKPIs();
-        fetchFeed();
+        queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
+        queryClient.invalidateQueries({ queryKey: ["realtime-feed"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "eventos_picking" }, () => {
-        fetchKPIs();
-        fetchFeed();
+        queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
+        queryClient.invalidateQueries({ queryKey: ["realtime-feed"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "tarefas" }, () => {
-        fetchKPIs();
+        queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "alertas_historico" }, () => {
-        fetchKPIs();
-        fetchFeed();
+        queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
+        queryClient.invalidateQueries({ queryKey: ["realtime-feed"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "lotes" }, () => {
-        fetchKPIs();
+        queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "notificacoes" }, () => {
-        fetchFeed();
+        queryClient.invalidateQueries({ queryKey: ["realtime-feed"] });
       })
       .subscribe((status) => {
         setIsConnected(status === "SUBSCRIBED");
       });
 
-    const interval = setInterval(fetchKPIs, 30000);
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ["realtime-kpis"] });
+      setLastUpdate(new Date());
+    }, 30000);
 
     return () => {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
-  }, []);
+  }, [queryClient]);
 
   const ocupacao =
     kpis.posicoesTotal > 0 ? Math.round((kpis.posicoesCupadas / kpis.posicoesTotal) * 100) : 0;

@@ -1,150 +1,151 @@
-import { MovimentacaoCharts } from "@/components/charts/WMSModuleCharts";
-import { SEO } from "@/components/common/SEO";
 import { useState, useMemo } from "react";
-import { useAuditLog } from "@/hooks/useAuditLog";
-import { useNavigate } from "react-router-dom";
-import { movimentacaoSchema, validateForm } from "@/lib/validations";
-import { QrCode, Search, ArrowRight, Package, Clock, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMovimentacoes } from "@/hooks/useMovimentacoes";
-import type { TipoMovimentacao } from "@/types/movimentacao";
-import { MovimentacaoTipoSelector } from "@/components/movimentacao/MovimentacaoTipoSelector";
-import { MovimentacaoDetalhesForm } from "@/components/movimentacao/MovimentacaoDetalhesForm";
-import { MovimentacaoHistorico } from "@/components/movimentacao/MovimentacaoHistorico";
-import { Sparkles } from "lucide-react";
+import { Package, ArrowRight, Clock, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import type { TipoMovimentacao } from "@/types/movimentacao";
+
+const TIPO_LABELS: Record<string, string> = {
+  recebimento_nf: "Entrada (NF)",
+  conferencia: "Conferência",
+  triagem_inicio: "Triagem",
+  triagem_fim: "Triagem Finalizada",
+  armazenamento: "Alocação",
+  transferencia: "Remanejamento",
+  reserva: "Reserva",
+  separacao: "Separação",
+  conferencia_expedicao: "Conf. Expedição",
+  carregamento: "Carregamento",
+  saida_transporte: "Saída (Transporte)",
+  entrega: "Entrega",
+  devolucao: "Devolução",
+  ajuste_estoque: "Ajuste",
+};
+
+const TIPO_ICONS: Record<string, string> = {
+  recebimento_nf: "📥",
+  conferencia: "✅",
+  triagem_inicio: "🔍",
+  triagem_fim: "✔️",
+  armazenamento: "📍",
+  transferencia: "🔄",
+  reserva: "🔒",
+  separacao: "📦",
+  conferencia_expedicao: "📋",
+  carregamento: "🚚",
+  saida_transporte: "📤",
+  entrega: "🎯",
+  devolucao: "↩️",
+  ajuste_estoque: "⚖️",
+};
+
+function tipoLabel(tipo: string) {
+  return TIPO_LABELS[tipo] || tipo || "?";
+}
+
+function tipoIcon(tipo: string) {
+  return TIPO_ICONS[tipo] || "📦";
+}
 
 export default function MovimentacaoPage() {
-  const navigate = useNavigate();
-  const { movimentacoes, loading, error, registrarMovimentacao } = useMovimentacoes();
-  const { log: auditLog } = useAuditLog();
-
-  const [activeTab, setActiveTab] = useState("registrar");
-  const [tipoMovimento, setTipoMovimento] = useState<TipoMovimentacao>("armazenamento");
+  const [activeTab, setActiveTab] = useState("historico");
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
-  const [submitting, setSubmitting] = useState(false);
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Form state
-  const [formData, setFormData] = useState({
-    localizacao: "",
-    quantidade: 1,
-    descricao: "",
+  const { data: movimentacoes = [], isLoading } = useQuery({
+    queryKey: ["rastreamento_historico"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("rastreamento_historico")
+        .select(`*, produtos(nome), lotes(numero_lote), profiles:operador_id(nome)`)
+        .order("created_at", { ascending: false })
+        .limit(200);
+
+      if (error) throw error;
+      return (data || []).map((m: any) => ({
+        id: m.id,
+        tipo: m.tipo_evento,
+        produto_nome: m.produtos?.nome || m.descricao || "?",
+        lote_numero: m.lotes?.numero_lote,
+        quantidade: m.quantidade || 0,
+        localizacao: m.localizacao,
+        descricao: m.descricao || "",
+        operador_nome: m.profiles?.nome,
+        created_at: m.created_at,
+      }));
+    },
   });
-  const [showLocationSuggestion, setShowLocationSuggestion] = useState(false);
 
   const filteredMovimentacoes = useMemo(() => {
-    let filtered = movimentacoes;
-
-    // Filter by search term
+    let list = movimentacoes;
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (mov) =>
-          mov.descricao.toLowerCase().includes(term) ||
-          mov.produto_nome?.toLowerCase().includes(term) ||
-          mov.lote_numero?.toLowerCase().includes(term) ||
-          mov.localizacao?.toLowerCase().includes(term)
+      list = list.filter((m) =>
+        (m.descricao || "").toLowerCase().includes(term) ||
+        (m.produto_nome || "").toLowerCase().includes(term) ||
+        (m.lote_numero || "").toLowerCase().includes(term) ||
+        (m.localizacao || "").toLowerCase().includes(term)
       );
     }
-
-    // Filter by period
     if (periodoFiltro !== "todos") {
       const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const startOfWeek = new Date(startOfDay);
-      startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      filtered = filtered.filter((mov) => {
-        const movDate = new Date(mov.created_at);
-        switch (periodoFiltro) {
-          case "hoje":
-            return movDate >= startOfDay;
-          case "semana":
-            return movDate >= startOfWeek;
-          case "mes":
-            return movDate >= startOfMonth;
-          default:
-            return true;
-        }
+      const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekStart = new Date(dayStart);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      list = list.filter((m) => {
+        const d = new Date(m.created_at);
+        if (periodoFiltro === "hoje") return d >= dayStart;
+        if (periodoFiltro === "semana") return d >= weekStart;
+        if (periodoFiltro === "mes") return d >= monthStart;
+        return true;
       });
     }
-
-    return filtered;
+    return list;
   }, [movimentacoes, searchTerm, periodoFiltro]);
 
-  const handleSubmit = async () => {
-    const validation = validateForm(movimentacaoSchema, {
-      tipo: tipoMovimento,
-      localizacao: formData.localizacao || undefined,
-      quantidade: formData.quantidade,
-      descricao: formData.descricao,
-    });
-
-    if (!validation.success) {
-      setFormErrors(validation.errors);
-      return;
-    }
-    setFormErrors({});
-
-    setSubmitting(true);
-    try {
-      const success = await registrarMovimentacao({
-        tipo: tipoMovimento,
-        quantidade: formData.quantidade,
-        localizacao: formData.localizacao || undefined,
-        descricao: formData.descricao,
-      });
-
-      if (success) {
-        auditLog.create("movimentacao", "", tipoMovimento, {
-          tipo: tipoMovimento,
-          quantidade: formData.quantidade,
-          localizacao: formData.localizacao,
-          descricao: formData.descricao,
-        });
-        setFormData({ localizacao: "", quantidade: 1, descricao: "" });
-        setFormErrors({});
-        setActiveTab("historico");
-      }
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  // Stats
+  const stats = useMemo(() => {
+    const entradas = movimentacoes.filter((m) =>
+      ["recebimento_nf", "entrada_devolucao"].includes(m.tipo as string)
+    ).length;
+    const saidas = movimentacoes.filter((m) =>
+      ["saida_transporte", "separacao"].includes(m.tipo as string)
+    ).length;
+    const remanejamentos = movimentacoes.filter((m) =>
+      ["armazenamento", "transferencia"].includes(m.tipo as string)
+    ).length;
+    return { entradas, saidas, remanejamentos };
+  }, [movimentacoes]);
 
   return (
     <AppLayout title="Movimentação" showBack>
-      <SEO
-        title="Movimentação"
-        description="Registro e histórico de movimentações de estoque."
-        path="/movimentacao"
-      />
-      <div className="animate-fade-in space-y-4 p-4">
-        {movimentacoes.length > 0 && <MovimentacaoCharts movimentacoes={movimentacoes} />}
+      <div className="space-y-4 p-4">
+        {/* Stats row */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Entradas</div>
+            <div className="text-2xl font-bold text-green-600">{stats.entradas}</div>
+          </div>
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Saídas</div>
+            <div className="text-2xl font-bold text-red-600">{stats.saidas}</div>
+          </div>
+          <div className="rounded-xl border bg-card p-4 text-center">
+            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Remanejamentos</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.remanejamentos}</div>
+          </div>
+        </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="status" className="gap-2">
-              <Package className="h-4 w-4" />
-              Status
-            </TabsTrigger>
-            <TabsTrigger value="registrar" className="gap-2">
-              <ArrowRight className="h-4 w-4" />
-              Registrar
-            </TabsTrigger>
             <TabsTrigger value="historico" className="gap-2">
               <Clock className="h-4 w-4" />
               Histórico
@@ -156,157 +157,75 @@ export default function MovimentacaoPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="registrar" className="space-y-4 pt-4">
-            <MovimentacaoTipoSelector
-              tipoMovimento={tipoMovimento}
-              setTipoMovimento={setTipoMovimento}
-            />
-
-            <div className="rounded-xl border border-border bg-card p-4">
-              <Label className="mb-3 block text-sm font-medium">📦 ITEM</Label>
-              <div className="mb-3 flex gap-2">
-                <Button
-                  variant="outline"
-                  className="flex-1 gap-2"
-                  onClick={() => navigate("/scanner")}
-                >
-                  <QrCode className="h-4 w-4" />
-                  Escanear QR
-                </Button>
-                <Button variant="outline" className="flex-1 gap-2">
-                  <Search className="h-4 w-4" />
-                  Buscar
-                </Button>
-              </div>
+          <TabsContent value="historico" className="space-y-4 pt-4">
+            {/* Filters */}
+            <div className="flex gap-2">
+              <Input
+                placeholder="Buscar movimentação..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1"
+              />
+              <select
+                value={periodoFiltro}
+                onChange={(e) => setPeriodoFiltro(e.target.value)}
+                className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+              >
+                <option value="todos">Todos</option>
+                <option value="hoje">Hoje</option>
+                <option value="semana">Esta semana</option>
+                <option value="mes">Este mês</option>
+              </select>
             </div>
 
-            <MovimentacaoDetalhesForm
-              formData={formData}
-              setFormData={setFormData}
-              formErrors={formErrors}
-              setFormErrors={setFormErrors}
-            />
-
-            {((tipoMovimento as string) === "armazenamento" ||
-              (tipoMovimento as string) === "transferencia") && (
-              <div className="flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1 text-xs text-primary"
-                  onClick={() => {
-                    setFormData((prev) => ({ ...prev, localizacao: "PP2-S05-N2" }));
-                    toast.success("IA: Sugestão de destino baseada em giro e curva ABC", {
-                      icon: <Sparkles className="h-3 w-3" />,
-                    });
-                  }}
-                >
-                  <Sparkles className="h-3 w-3" /> Sugerir Local
-                </Button>
+            {/* List */}
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div key={i} className="rounded-xl border bg-card p-4 animate-pulse">
+                    <div className="h-3 w-24 bg-muted rounded mb-2" />
+                    <div className="h-4 w-32 bg-muted rounded mb-1" />
+                    <div className="h-3 w-48 bg-muted rounded" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredMovimentacoes.length === 0 ? (
+              <div className="rounded-xl bg-muted/50 p-8 text-center">
+                <Package className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
+                <p className="text-muted-foreground">
+                  {searchTerm ? "Nenhuma movimentação encontrada" : "Nenhuma movimentação registrada"}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredMovimentacoes.map((mov) => (
+                  <div
+                    key={mov.id}
+                    className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+                  >
+                    <div className="text-xs text-muted-foreground mb-1">
+                      {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <span className="text-xl">{tipoIcon(mov.tipo as string)}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold">{tipoLabel(mov.tipo as string)}</div>
+                        <div className="text-sm text-muted-foreground truncate">
+                          {mov.produto_nome}
+                          {mov.quantidade > 0 && ` · ${mov.quantidade} un`}
+                        </div>
+                        {mov.localizacao && (
+                          <div className="text-xs text-muted-foreground">📍 {mov.localizacao}</div>
+                        )}
+                        {mov.operador_nome && (
+                          <div className="text-xs text-muted-foreground">Por: {mov.operador_nome}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
-
-            <Button
-              className="h-12 w-full gap-2 text-base font-semibold"
-              onClick={handleSubmit}
-              disabled={submitting || !formData.descricao.trim()}
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Registrando...
-                </>
-              ) : (
-                <>✅ CONFIRMAR MOVIMENTAÇÃO</>
-              )}
-            </Button>
-          </TabsContent>
-
-          <TabsContent value="historico" className="space-y-4 pt-4">
-            <TabsContent value="status" className="space-y-4 pt-4">
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                  <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                    Entradas
-                  </div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {
-                      movimentacoes.filter((m) =>
-                        ["recebimento_nf", "entrada_devolucao"].includes(m.tipo as any)
-                      ).length
-                    }
-                  </div>
-                </div>
-                <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                  <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                    Saídas
-                  </div>
-                  <div className="text-2xl font-bold text-red-600">
-                    {
-                      movimentacoes.filter((m) =>
-                        ["saida_transporte", "separacao"].includes(m.tipo as any)
-                      ).length
-                    }
-                  </div>
-                </div>
-                <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                  <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
-                    Remanejamentos
-                  </div>
-                  <div className="text-2xl font-bold text-blue-600">
-                    {
-                      movimentacoes.filter(
-                        (m) =>
-                          (m.tipo as string) === "armazenamento" ||
-                          (m.tipo as string) === "transferencia"
-                      ).length
-                    }
-                  </div>
-                </div>
-              </div>
-              <MovimentacaoHistorico
-                movimentacoes={filteredMovimentacoes.slice(0, 5)}
-                loading={loading}
-                error={error}
-                searchTerm=""
-              />
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setActiveTab("historico")}
-              >
-                Ver Histórico Completo
-              </Button>
-            </TabsContent>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar..."
-                  className="pl-10"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <Select value={periodoFiltro} onValueChange={setPeriodoFiltro}>
-                <SelectTrigger className="w-[130px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos</SelectItem>
-                  <SelectItem value="hoje">Hoje</SelectItem>
-                  <SelectItem value="semana">Esta semana</SelectItem>
-                  <SelectItem value="mes">Este mês</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <MovimentacaoHistorico
-              movimentacoes={filteredMovimentacoes}
-              loading={loading}
-              error={error}
-              searchTerm={searchTerm}
-            />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -25,25 +26,27 @@ interface Aprovacao {
   produto_id: string | null;
 }
 
+async function fetchAprovacoes(): Promise<Aprovacao[]> {
+  const { data, error } = await supabase
+    .from("aprovacoes_movimentacao")
+    .select("*")
+    .order("data_solicitacao", { ascending: false });
+  if (error) throw error;
+  return (data as Aprovacao[]) || [];
+}
+
 export default function AprovacaoMovimentacoes() {
   const { user, role } = useAuth();
-  const [aprovacoes, setAprovacoes] = useState<Aprovacao[]>([]);
-  const [loading, setLoading] = useState(true);
   const [observacao, setObservacao] = useState<Record<string, string>>({});
   const [tab, setTab] = useState("pendente");
+  const queryClient = useQueryClient();
 
-  const fetchAprovacoes = async () => {
-    const { data } = await supabase
-      .from("aprovacoes_movimentacao")
-      .select("*")
-      .order("data_solicitacao", { ascending: false });
-    setAprovacoes((data as any[]) || []);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchAprovacoes();
-  }, []);
+  const { data: aprovacoes = [], isLoading: loading } = useQuery({
+    queryKey: ["aprovacoes-list"],
+    queryFn: fetchAprovacoes,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
 
   const handleDecisao = async (id: string, decisao: "aprovado" | "rejeitado") => {
     const { error } = await supabase
@@ -63,7 +66,7 @@ export default function AprovacaoMovimentacoes() {
     toast.success(
       decisao === "aprovado" ? "✅ Movimentação aprovada!" : "❌ Movimentação rejeitada"
     );
-    fetchAprovacoes();
+    queryClient.invalidateQueries({ queryKey: ["aprovacoes-list"] });
   };
 
   const filtered = aprovacoes.filter((a) => a.status === tab);

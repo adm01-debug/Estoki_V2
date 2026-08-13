@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,18 +39,23 @@ interface FornecedorScore {
   ultima_entrega: string | null;
 }
 
-export default function FornecedoresAvancado() {
-  const [fornecedores, setFornecedores] = useState<FornecedorScore[]>([]);
-  const [loading, setLoading] = useState(true);
+async function fetchScores(): Promise<FornecedorScore[]> {
+  const { data, error } = await supabase
+    .from("fornecedor_scores")
+    .select("*")
+    .order("score", { ascending: false });
+  if (error) throw error;
+  return (data as FornecedorScore[]) || [];
+}
 
-  const fetchScores = async () => {
-    const { data } = await supabase
-      .from("fornecedor_scores")
-      .select("*")
-      .order("score", { ascending: false });
-    setFornecedores((data as any[]) || []);
-    setLoading(false);
-  };
+export default function FornecedoresAvancado() {
+  const queryClient = useQueryClient();
+  const { data: fornecedores = [], isLoading: loading } = useQuery({
+    queryKey: ["fornecedor-scores"],
+    queryFn: fetchScores,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
 
   const recalcularScores = async () => {
     toast.info("Recalculando scores...");
@@ -103,12 +109,8 @@ export default function FornecedoresAvancado() {
     }
 
     toast.success("Scores recalculados!");
-    fetchScores();
+    queryClient.invalidateQueries({ queryKey: ["fornecedor-scores"] });
   };
-
-  useEffect(() => {
-    fetchScores();
-  }, []);
 
   const getScoreColor = (score: number) => {
     if (score >= 90) return "text-success";

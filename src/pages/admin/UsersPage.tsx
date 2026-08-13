@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -45,42 +46,49 @@ interface UserProfile {
   last_login?: string;
 }
 
+async function fetchUsers(): Promise<UserProfile[]> {
+  const { data: profiles, error: pError } = await supabase.from("profiles").select("*");
+  if (pError) throw pError;
+
+  const { data: roles, error: rError } = await supabase
+    .from("user_roles")
+    .select("user_id, role");
+  if (rError) throw rError;
+
+  return (profiles || []).map((p) => ({
+    ...p,
+    role: roles?.find((r) => r.user_id === p.id)?.role || "operador",
+    status: "ativo" as const,
+  }));
+}
+
 export default function UsersPage() {
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    try {
-      const { data: profiles, error: pError } = await supabase.from("profiles").select("*");
+  const { data: users = [], isLoading: loading, error } = useQuery({
+    queryKey: ["users-list"],
+    queryFn: fetchUsers,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    retry: false,
+  });
 
-      if (pError) throw pError;
-
-      const { data: roles, error: rError } = await supabase
-        .from("user_roles")
-        .select("user_id, role");
-
-      if (rError) throw rError;
-
-      const usersWithRoles = profiles.map((p) => ({
-        ...p,
-        role: roles.find((r) => r.user_id === p.id)?.role || "operador",
-        status: "ativo" as const, // Mock status
-      }));
-
-      setUsers(usersWithRoles);
-    } catch (err) {
-      console.error(err);
-      toast({ title: "Erro", description: "Falha ao carregar usuários", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  if (error) {
+    return (
+      <AppLayout title="Gerenciamento de Usuários" showBack>
+        <PageTransition>
+          <div className="p-6">
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-sm font-bold text-destructive">Erro ao carregar usuários</p>
+                <p className="mt-2 text-xs text-muted-foreground">{String((error as Error)?.message ?? error)}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   const filteredUsers = users.filter(
     (u) =>

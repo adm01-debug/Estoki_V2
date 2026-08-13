@@ -1,5 +1,6 @@
 import { LotesCharts } from "@/components/charts/WMSModuleCharts";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -49,32 +50,28 @@ const statusConfig: Record<
   cancelado: { label: "Cancelado", variant: "destructive" },
 };
 
+async function fetchLotes() {
+  const { data, error } = await supabase
+    .from("lotes")
+    .select("*, produtos(nome, sku)")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
 export default function LotesPage() {
-  const [lotes, setLotes] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [sortBy, setSortBy] = useState<"recent" | "expiry" | "qty">("recent");
 
-  useEffect(() => {
-    loadLotes();
-  }, []);
+  const { data: lotes = [], isLoading: loading, error } = useQuery({
+    queryKey: ["lotes-list"],
+    queryFn: fetchLotes,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
 
-  const loadLotes = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("lotes")
-        .select("*, produtos(nome, sku)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      setLotes(data || []);
-    } catch {
-      toast.error("Erro ao carregar lotes");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (error) toast.error("Erro ao carregar lotes");
 
   const filtered = useMemo(() => {
     const result = lotes.filter((l) => {

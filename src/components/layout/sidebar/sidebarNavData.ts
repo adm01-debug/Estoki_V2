@@ -105,7 +105,7 @@ export const sidebarGroups: SidebarGroup[] = [
       { path: "/picking", icon: ListTodo, label: "Picking" },
       { path: "/putaway", icon: Package, label: "Putaway" },
       { path: "/ondas", icon: Route, label: "Ondas" },
-      { path: "/conferencia", icon: Scan, label: "Conferência" },
+      { path: "/recebimento", icon: Scan, label: "Conferência" },
       { path: "/expedicao", icon: Truck, label: "Expedição" },
       { path: "/transportadoras", icon: Truck, label: "Transportadoras" },
       { path: "/enderecamento", icon: MapPin, label: "Endereçamento Auto" },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,9 +25,16 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export default function ProfilePage() {
-  const { profile, role, user, signOut } = useAuth();
+  const { profile, role, user, signOut, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [nome, setNome] = useState(profile?.nome || "");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isEditing) {
+      setNome(profile?.nome || "");
+    }
+  }, [profile?.nome, isEditing]);
 
   const activeSessions = [
     {
@@ -46,7 +53,22 @@ export default function ProfilePage() {
     },
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (!nome.trim()) {
+      toast.error("O nome não pode estar vazio");
+      return;
+    }
+    if (nome === profile?.nome) {
+      setIsEditing(false);
+      return;
+    }
+    setSaving(true);
+    const { error } = await updateProfile({ nome: nome.trim() });
+    setSaving(false);
+    if (error) {
+      toast.error("Erro ao salvar: " + error.message);
+      return;
+    }
     toast.success("Perfil atualizado com sucesso!");
     setIsEditing(false);
   };
@@ -159,9 +181,11 @@ export default function ProfilePage() {
                     <div className="flex justify-end pt-4">
                       <Button
                         onClick={handleSave}
+                        disabled={saving}
                         className="glow-button h-11 gap-2 rounded-xl px-8 text-xs font-black uppercase tracking-wider"
                       >
-                        <Save className="h-4 w-4" /> Salvar Alterações
+                        <Save className="h-4 w-4" />{" "}
+                        {saving ? "Salvando..." : "Salvar Alterações"}
                       </Button>
                     </div>
                   )}

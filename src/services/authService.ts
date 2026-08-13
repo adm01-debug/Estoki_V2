@@ -65,4 +65,23 @@ export const authService = {
     const [profile, role] = await Promise.all([this.getProfile(userId), this.getRole(userId)]);
     return { profile, role };
   },
+
+  async updateProfile(
+    userId: string,
+    updates: Partial<Pick<Profile, "nome" | "avatar_url" | "departamento">>
+  ): Promise<Profile | null> {
+    if (!userId) return null;
+    const { data, error } = await supabase
+      .from("profiles")
+      .update(updates)
+      .eq("id", userId)
+      .select("id, nome, email, avatar_url, departamento")
+      .maybeSingle();
+
+    if (error) {
+      logger.error("Erro ao atualizar perfil", error, { userId, updates });
+      throw error;
+    }
+    return data;
+  },
 };
