@@ -1,0 +1,231 @@
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { CheckCircle2, XCircle, Clock, ShieldCheck, AlertTriangle, Package } from "lucide-react";
+import { motion } from "framer-motion";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface Aprovacao {
+  id: string;
+  tipo: string;
+  quantidade: number;
+  motivo: string | null;
+  solicitante_id: string;
+  aprovador_id: string | null;
+  status: string;
+  data_solicitacao: string;
+  data_decisao: string | null;
+  observacao_aprovador: string | null;
+  produto_id: string | null;
+}
+
+async function fetchAprovacoes(): Promise<Aprovacao[]> {
+  const { data, error } = await supabase
+    .from("aprovacoes_movimentacao")
+    .select("*")
+    .order("data_solicitacao", { ascending: false });
+  if (error) throw error;
+  return (data as Aprovacao[]) || [];
+}
+
+export default function AprovacaoMovimentacoes() {
+  const { user, role } = useAuth();
+  const [observacao, setObservacao] = useState<Record<string, string>>({});
+  const [tab, setTab] = useState("pendente");
+  const queryClient = useQueryClient();
+
+  const { data: aprovacoes = [], isLoading: loading } = useQuery({
+    queryKey: ["aprovacoes-list"],
+    queryFn: fetchAprovacoes,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
+
+  const handleDecisao = async (id: string, decisao: "aprovado" | "rejeitado") => {
+    const { error } = await supabase
+      .from("aprovacoes_movimentacao")
+      .update({
+        status: decisao,
+        aprovador_id: user?.id,
+        data_decisao: new Date().toISOString(),
+        observacao_aprovador: observacao[id] || null,
+      } as any)
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Erro ao processar");
+      return;
+    }
+    toast.success(
+      decisao === "aprovado" ? "✅ Movimentação aprovada!" : "❌ Movimentação rejeitada"
+    );
+    queryClient.invalidateQueries({ queryKey: ["aprovacoes-list"] });
+  };
+
+  const filtered = aprovacoes.filter((a) => a.status === tab);
+  const pendentes = aprovacoes.filter((a) => a.status === "pendente").length;
+  const aprovadas = aprovacoes.filter((a) => a.status === "aprovado").length;
+  const rejeitadas = aprovacoes.filter((a) => a.status === "rejeitado").length;
+
+  const isApprover = role === "admin" || role === "supervisor";
+
+  const statusConfig: Record<
+    string,
+    { icon: React.ComponentType<{ className?: string }>; color: string; label: string }
+  > = {
+    pendente: { icon: Clock, color: "text-warning", label: "Pendente" },
+    aprovado: { icon: CheckCircle2, color: "text-success", label: "Aprovado" },
+    rejeitado: { icon: XCircle, color: "text-destructive", label: "Rejeitado" },
+  };
+
+  const tipoLabel: Record<string, string> = {
+    ajuste: "Ajuste de Estoque",
+    transferencia: "Transferência",
+    saida: "Saída Manual",
+    entrada: "Entrada Manual",
+  };
+
+  return (
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">🔐 Aprovação de Movimentações</h1>
+          <p className="text-sm text-muted-foreground">
+            Workflow de aprovação para movimentações críticas
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Badge variant="outline" className="border-warning/30 text-warning">
+            <Clock className="mr-1 h-3 w-3" />
+            {pendentes} pendentes
+          </Badge>
+          <Badge variant="outline" className="border-success/30 text-success">
+            <CheckCircle2 className="mr-1 h-3 w-3" />
+            {aprovadas}
+          </Badge>
+          <Badge variant="outline" className="border-destructive/30 text-destructive">
+            <XCircle className="mr-1 h-3 w-3" />
+            {rejeitadas}
+          </Badge>
+        </div>
+      </div>
+
+      <Tabs value={tab} onValueChange={setTab}>
+        <TabsList>
+          <TabsTrigger value="pendente">Pendentes ({pendentes})</TabsTrigger>
+          <TabsTrigger value="aprovado">Aprovadas ({aprovadas})</TabsTrigger>
+          <TabsTrigger value="rejeitado">Rejeitadas ({rejeitadas})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value={tab} className="mt-4">
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} className="glass-card h-28 animate-pulse" />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
+            <Card className="glass-card">
+              <CardContent className="flex flex-col items-center py-12">
+                <ShieldCheck className="mb-3 h-12 w-12 text-muted-foreground/30" />
+                <p className="text-muted-foreground">
+                  Nenhuma movimentação {tab === "pendente" ? "pendente de aprovação" : tab}
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {filtered.map((aprov, i) => {
+                const cfg = statusConfig[aprov.status] || statusConfig.pendente;
+                return (
+                  <motion.div
+                    key={aprov.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <Card className="glass-card">
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <cfg.icon className={`h-4 w-4 ${cfg.color}`} />
+                              <span className="text-sm font-semibold">
+                                {tipoLabel[aprov.tipo] || aprov.tipo}
+                              </span>
+                              <Badge variant="outline" className={cfg.color}>
+                                {cfg.label}
+                              </Badge>
+                            </div>
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Package className="h-3 w-3" />
+                                Qtd: {aprov.quantidade}
+                              </span>
+                              <span>
+                                {new Date(aprov.data_solicitacao).toLocaleString("pt-BR")}
+                              </span>
+                            </div>
+                            {aprov.motivo && (
+                              <p className="rounded bg-muted/30 p-2 text-xs text-muted-foreground">
+                                {aprov.motivo}
+                              </p>
+                            )}
+                            {aprov.observacao_aprovador && (
+                              <p className="rounded border-l-2 border-primary bg-muted/50 p-2 text-xs text-muted-foreground">
+                                <strong>Observação:</strong> {aprov.observacao_aprovador}
+                              </p>
+                            )}
+                          </div>
+
+                          {aprov.status === "pendente" && isApprover && (
+                            <div className="flex min-w-[200px] flex-col gap-2">
+                              <Textarea
+                                placeholder="Observação (opcional)"
+                                className="h-16 text-xs"
+                                value={observacao[aprov.id] || ""}
+                                onChange={(e) =>
+                                  setObservacao((o) => ({ ...o, [aprov.id]: e.target.value }))
+                                }
+                              />
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  className="flex-1"
+                                  onClick={() => handleDecisao(aprov.id, "aprovado")}
+                                >
+                                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                                  Aprovar
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  className="flex-1"
+                                  onClick={() => handleDecisao(aprov.id, "rejeitado")}
+                                >
+                                  <XCircle className="mr-1 h-3 w-3" />
+                                  Rejeitar
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

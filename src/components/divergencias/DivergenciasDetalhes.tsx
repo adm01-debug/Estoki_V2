@@ -1,0 +1,122 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { BarChart3, Download, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+interface Divergencia {
+  id: string;
+  numero_lote: string;
+  produto_nome: string;
+  fornecedor: string;
+  quantidade_pedida: number;
+  quantidade_recebida: number;
+  diferenca: number;
+  tipo: "falta" | "sobra";
+  data_conferencia: string;
+}
+
+interface Props {
+  divergenciasFiltradas: Divergencia[];
+}
+
+export function DivergenciasDetalhes({ divergenciasFiltradas }: Props) {
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <BarChart3 className="h-4 w-4" />
+            Divergências ({divergenciasFiltradas.length})
+          </CardTitle>
+          <Button variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Lote</TableHead>
+                <TableHead>Produto</TableHead>
+                <TableHead>Fornecedor</TableHead>
+                <TableHead className="text-right">Pedido</TableHead>
+                <TableHead className="text-right">Recebido</TableHead>
+                <TableHead className="text-right">Diferença</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Data</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {divergenciasFiltradas.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                    Nenhuma divergência encontrada
+                  </TableCell>
+                </TableRow>
+              ) : (
+                divergenciasFiltradas.slice(0, 50).map((d) => (
+                  <TableRow key={d.id}>
+                    <TableCell className="font-medium">{d.numero_lote}</TableCell>
+                    <TableCell className="max-w-[150px] truncate">{d.produto_nome}</TableCell>
+                    <TableCell>{d.fornecedor}</TableCell>
+                    <TableCell className="text-right">{d.quantidade_pedida}</TableCell>
+                    <TableCell className="text-right">{d.quantidade_recebida}</TableCell>
+                    <TableCell className="text-right">
+                      <span className={d.tipo === "falta" ? "text-destructive" : "text-success"}>
+                        {d.tipo === "falta" ? "-" : "+"}
+                        {d.diferenca}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          d.tipo === "falta"
+                            ? "border-destructive/30 bg-destructive/10 text-destructive"
+                            : "border-success/30 bg-success/10 text-success"
+                        }
+                      >
+                        {d.tipo === "falta" ? (
+                          <>
+                            <ArrowDownRight className="mr-1 h-3 w-3" />
+                            Falta
+                          </>
+                        ) : (
+                          <>
+                            <ArrowUpRight className="mr-1 h-3 w-3" />
+                            Sobra
+                          </>
+                        )}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {format(new Date(d.data_conferencia), "dd/MM/yy", { locale: ptBR })}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        {divergenciasFiltradas.length > 50 && (
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            Exibindo 50 de {divergenciasFiltradas.length} registros
+          </p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

@@ -1,0 +1,191 @@
+import { ReactNode, Suspense, createContext, lazy, useContext, useState, useEffect } from "react";
+import { Outlet, Navigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+// Tour interativo — não crítico para o primeiro render.
+const OnboardingTour = lazy(() =>
+  import("@/components/common/OnboardingTour").then((m) => ({ default: m.OnboardingTour }))
+);
+import { useAuth } from "@/contexts/AuthContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
+import { useSwipeBack } from "@/hooks/useSwipeBack";
+import { useAppLayoutState } from "@/hooks/useAppLayoutState";
+import { AuthLoading } from "./AuthLoading";
+import { Header } from "@/components/organisms/layout/Header";
+import { Sidebar } from "@/components/organisms/layout/Sidebar";
+import { MobileNavigation } from "@/components/organisms/layout/MobileNavigation";
+import { ShortcutsHUD } from "@/components/common/ShortcutsHUD";
+import { GlobalLoadingBar } from "@/components/common/GlobalLoadingBar";
+import { PerformanceHUD } from "../telemetry/PerformanceHUD";
+const AppLayoutContext = createContext(false);
+
+interface AppLayoutProps {
+  children?: ReactNode;
+  title?: string;
+  showBack?: boolean;
+  rightAction?: ReactNode;
+}
+
+export function AppLayout({ children, title, showBack = false, rightAction }: AppLayoutProps) {
+  const isNested = useContext(AppLayoutContext);
+  const { user, profile, role, loading } = useAuth();
+
+  const {
+    location,
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    mobileMenuOpen,
+    setMobileMenuOpen,
+    fabOpen,
+    setFabOpen,
+    isHome,
+    handleBack,
+    handleLogout,
+    handleNavigate,
+  } = useAppLayoutState();
+
+  const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
+  useSwipeBack(!isHome && location.pathname !== "/dashboard");
+
+  if (isNested) return <>{children}</>;
+  if (loading) return <AuthLoading />;
+  if (!user) return <Navigate to="/auth" replace />;
+
+  const userName = profile?.nome || user?.email?.split("@")[0] || "Usuário";
+  const userEmail = profile?.email || user?.email || "";
+  const currentRole = role || "operador";
+
+  const sidebarWidth = sidebarCollapsed ? "w-[70px]" : "w-[280px]";
+  const mainPadding = sidebarCollapsed ? "lg:pl-[70px]" : "lg:pl-[280px]";
+
+  return (
+    <AppLayoutContext.Provider value={true}>
+      <TooltipProvider>
+        <div
+          className="flex min-h-screen flex-col bg-background"
+          role="application"
+          aria-label="Promo Brindes Intel WMS"
+        >
+          <GlobalLoadingBar />
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+          >
+            Pular para conteúdo principal
+          </a>
+
+          <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
+            <div className="absolute -right-[20%] -top-[40%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
+            <div className="absolute -bottom-[30%] -left-[10%] h-[40%] w-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
+          </div>
+
+          <Header
+            mainPadding={mainPadding}
+            onOpenMobileMenu={() => setMobileMenuOpen(true)}
+            shouldShowBack={shouldShowBack}
+            title={title}
+            rightAction={rightAction}
+            userName={userName}
+            userEmail={userEmail}
+            currentRole={currentRole}
+            onLogout={handleLogout}
+            isHome={isHome}
+            avatarUrl={profile?.avatar_url}
+          />
+
+          <main
+            id="main-content"
+            className={cn(
+              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out",
+              mainPadding
+            )}
+            aria-label="Conteúdo principal"
+          >
+            <div className="mx-auto flex min-h-full max-w-[1600px] flex-col">
+              <Breadcrumbs className="pb-2 pt-4 lg:px-8" />
+              {children || <Outlet />}
+            </div>
+          </main>
+
+          <MobileNavigation
+            fabOpen={fabOpen}
+            setFabOpen={setFabOpen}
+            pathname={location.pathname}
+            onNavigate={handleNavigate}
+            onBack={handleBack}
+          />
+
+          <aside
+            className={cn(
+              "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-sidebar-border/30 bg-sidebar transition-all duration-300 ease-in-out lg:flex",
+              sidebarWidth
+            )}
+          >
+            <Sidebar
+              sidebarCollapsed={sidebarCollapsed}
+              userName={userName}
+              userRole={currentRole}
+              pathname={location.pathname}
+              onNavigate={handleNavigate}
+              onLogout={handleLogout}
+              onCloseMobile={() => setMobileMenuOpen(false)}
+            />
+            <button
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              aria-label={sidebarCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
+              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/50 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
+              {sidebarCollapsed ? (
+                <ChevronLeft className="h-3 w-3 rotate-180" />
+              ) : (
+                <ChevronLeft className="h-3 w-3" />
+              )}
+            </button>
+          </aside>
+
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <>
+                <motion.div
+                  className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setMobileMenuOpen(false)}
+                />
+                <motion.aside
+                  className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col bg-sidebar shadow-2xl lg:hidden"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "-100%" }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  <Sidebar
+                    isMobile={true}
+                    sidebarCollapsed={sidebarCollapsed}
+                    userName={userName}
+                    userRole={currentRole}
+                    pathname={location.pathname}
+                    onNavigate={handleNavigate}
+                    onLogout={handleLogout}
+                    onCloseMobile={() => setMobileMenuOpen(false)}
+                  />
+                </motion.aside>
+              </>
+            )}
+          </AnimatePresence>
+
+          <Suspense fallback={null}>
+            <OnboardingTour />
+          </Suspense>
+          <ShortcutsHUD />
+          <PerformanceHUD />
+        </div>
+      </TooltipProvider>
+    </AppLayoutContext.Provider>
+  );
+}
+
+export default AppLayout;

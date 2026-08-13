@@ -1,0 +1,200 @@
+import { GamificacaoCharts } from "@/components/charts/WMSModuleCharts";
+import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { motion } from "framer-motion";
+import { useGamificacao } from "@/hooks/useGamificacao";
+import { useConquistas } from "@/hooks/useConquistas";
+import { useDesafiosDiarios } from "@/hooks/useDesafiosDiarios";
+import { useStreaks } from "@/hooks/useStreaks";
+import { XPBar } from "@/components/gamificacao/XPBar";
+import { DesafiosDiarios } from "@/components/gamificacao/DesafiosDiarios";
+import { ConquistasSystem } from "@/components/gamificacao/ConquistasSystem";
+import { StreakResumo } from "@/components/gamificacao/StreakSystem";
+import { GamificacaoLoja } from "@/components/gamificacao/GamificacaoLoja";
+import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Trophy, Star, Flame, Target, Zap, Medal, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export default function GamificacaoPage() {
+  const { perfil, isLoading: loadingGamificacao } = useGamificacao();
+  const { conquistas, loading: loadingConquistas, desbloqueados } = useConquistas();
+  const {
+    desafios,
+    loading: loadingDesafios,
+    desafiosConcluidos: numConcluidos,
+    totalDesafios: numTotal,
+  } = useDesafiosDiarios();
+  const { streak, loading: loadingStreaks, streakAtual } = useStreaks();
+  const [tab, setTab] = useState("visao-geral");
+
+  const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks;
+
+  if (loading) {
+    return (
+      <AppLayout title="Gamificação" showBack>
+        <PageTransition>
+          <div className="space-y-4 p-4">
+            <Skeleton className="h-24 w-full" />
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <Skeleton className="h-16 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
+
+  const conquistasDesbloqueados = desbloqueados?.length || 0;
+  const desafiosConcluidos = numConcluidos || 0;
+  const totalDesafios = numTotal || 0;
+
+  return (
+    <AppLayout title="Gamificação" showBack>
+      <SEO title="Gamificação" path="/gamificacao" description="XP, conquistas, desafios diários e ranking de operadores no ESTOKI WMS." />
+      <PageTransition>
+        <div className="space-y-6 p-4">
+          {/* XP Bar */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+            <Card className="overflow-hidden">
+              <CardContent className="p-6">
+                <div className="mb-4 flex items-center gap-4">
+                  <div className="rounded-full bg-primary/10 p-3">
+                    <Trophy className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold">Nível {perfil?.nivel || 1}</h2>
+                    <p className="text-muted-foreground">{perfil?.xp_total || 0} XP Total</p>
+                  </div>
+                </div>
+                <XPBar
+                  xp={perfil?.xp_total || 0}
+                  level={perfil?.nivel || 1}
+                  xpForNextLevel={perfil?.xp_proximo_nivel || 100}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Quick Stats */}
+          <motion.div
+            className="grid grid-cols-2 gap-3 md:grid-cols-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{perfil?.xp_total || 0}</p>
+                    <p className="text-xs text-muted-foreground">XP Total</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-warning/10 p-2">
+                    <Flame className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-warning">{streakAtual}</p>
+                    <p className="text-xs text-muted-foreground">Streak</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-success/10 p-2">
+                    <Medal className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-success">{conquistasDesbloqueados}</p>
+                    <p className="text-xs text-muted-foreground">Conquistas</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-accent p-2">
+                    <Target className="h-5 w-5 text-accent-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">
+                      {desafiosConcluidos}/{totalDesafios}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Desafios Hoje</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Charts */}
+          <GamificacaoCharts
+            xpTotal={perfil?.xp_total || 0}
+            nivel={perfil?.nivel || 1}
+            conquistasDesbloqueados={conquistasDesbloqueados}
+            totalConquistas={conquistas?.length || 0}
+            desafiosConcluidos={desafiosConcluidos}
+            totalDesafios={totalDesafios}
+            streakAtual={streakAtual}
+          />
+
+          {/* Tabs */}
+          <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="visao-geral">Geral</TabsTrigger>
+              <TabsTrigger value="desafios">Desafios</TabsTrigger>
+              <TabsTrigger value="conquistas">Conquistas</TabsTrigger>
+              <TabsTrigger value="ranking">Ranking</TabsTrigger>
+              <TabsTrigger value="loja" className="flex items-center gap-1">
+                <Star className="h-3 w-3 animate-pulse text-primary" /> Loja
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="visao-geral" className="space-y-4">
+              <StreakResumo />
+              <DesafiosDiarios />
+            </TabsContent>
+
+            <TabsContent value="desafios">
+              <DesafiosDiarios />
+            </TabsContent>
+
+            <TabsContent value="conquistas">
+              <ConquistasSystem />
+            </TabsContent>
+
+            <TabsContent value="ranking">
+              <PlacarLideres />
+            </TabsContent>
+
+            <TabsContent value="loja">
+              <GamificacaoLoja />
+            </TabsContent>
+          </Tabs>
+        </div>
+      </PageTransition>
+    </AppLayout>
+  );
+}

@@ -1,0 +1,340 @@
+import { LotesCharts } from "@/components/charts/WMSModuleCharts";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { SEO } from "@/components/common/SEO";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Layers,
+  Search,
+  Filter,
+  Package,
+  CalendarDays,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  X,
+  Eye,
+  Copy,
+} from "lucide-react";
+import { CopyButton } from "@/components/ui/copy-button";
+import { cn } from "@/lib/utils";
+import { format, differenceInDays } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+const statusConfig: Record<
+  string,
+  { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+> = {
+  aguardando: { label: "Aguardando", variant: "outline" },
+  em_transito: { label: "Em Trânsito", variant: "secondary" },
+  recebido: { label: "Recebido", variant: "secondary" },
+  em_conferencia: { label: "Em Conferência", variant: "default" },
+  conferido: { label: "Conferido", variant: "default" },
+  divergencia: { label: "Divergência", variant: "destructive" },
+  cancelado: { label: "Cancelado", variant: "destructive" },
+};
+
+async function fetchLotes() {
+  const { data, error } = await supabase
+    .from("lotes")
+    .select("*, produtos(nome, sku)")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export default function LotesPage() {
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [sortBy, setSortBy] = useState<"recent" | "expiry" | "qty">("recent");
+
+  const { data: lotes = [], isLoading: loading, error } = useQuery({
+    queryKey: ["lotes-list"],
+    queryFn: fetchLotes,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
+
+  if (error) toast.error("Erro ao carregar lotes");
+
+  const filtered = useMemo(() => {
+    const result = lotes.filter((l) => {
+      const matchSearch =
+        !search ||
+        l.numero_lote.toLowerCase().includes(search.toLowerCase()) ||
+        l.produtos?.nome?.toLowerCase().includes(search.toLowerCase()) ||
+        l.fornecedor?.toLowerCase().includes(search.toLowerCase());
+      const matchStatus = statusFilter === "todos" || l.status === statusFilter;
+      return matchSearch && matchStatus;
+    });
+
+    return result.sort((a, b) => {
+      if (sortBy === "expiry") {
+        if (!a.data_validade) return 1;
+        if (!b.data_validade) return -1;
+        return new Date(a.data_validade).getTime() - new Date(b.data_validade).getTime();
+      }
+      if (sortBy === "qty") {
+        return b.quantidade_atual - a.quantidade_atual;
+      }
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [lotes, search, statusFilter, sortBy]);
+
+  const stats = useMemo(() => {
+    const total = lotes.length;
+    const conferidos = lotes.filter((l) => l.status === "conferido").length;
+    const pendentes = lotes.filter((l) =>
+      ["aguardando", "em_transito", "recebido"].includes(l.status)
+    ).length;
+    const comDivergencia = lotes.filter((l) => l.status === "divergencia").length;
+    const vencendo = lotes.filter((l) => {
+      if (!l.data_validade) return false;
+      return differenceInDays(new Date(l.data_validade), new Date()) <= 30;
+    }).length;
+    return { total, conferidos, pendentes, comDivergencia, vencendo };
+  }, [lotes]);
+
+  if (loading) {
+    return (
+      <AppLayout title="Lotes" showBack>
+        <PageTransition>
+          <div className="space-y-4 p-4">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <Skeleton className="h-16 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-4">
+                  <Skeleton className="h-20 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout title="Lotes" showBack>
+      <SEO title="Lotes" path="/lotes" description="Gestão e rastreabilidade de lotes de estoque no ESTOKI WMS." />
+      <PageTransition>
+        <div className="space-y-4 p-4">
+          {/* Stats */}
+          <motion.div
+            className="grid grid-cols-2 gap-3 md:grid-cols-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2">
+                    <Layers className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{stats.total}</p>
+                    <p className="text-xs text-muted-foreground">Total de Lotes</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-success/10 p-2">
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-success">{stats.conferidos}</p>
+                    <p className="text-xs text-muted-foreground">Conferidos</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-warning/10 p-2">
+                    <Clock className="h-5 w-5 text-warning" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-warning">{stats.pendentes}</p>
+                    <p className="text-xs text-muted-foreground">Pendentes</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-destructive/10 p-2">
+                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-destructive">{stats.comDivergencia}</p>
+                    <p className="text-xs text-muted-foreground">Divergências</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Charts */}
+          {lotes.length > 0 && <LotesCharts lotes={lotes} />}
+
+          {/* Search & Filter */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Buscar lote, produto, fornecedor..."
+                className="pl-10"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              {search && (
+                <button
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  onClick={() => setSearch("")}
+                >
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </button>
+              )}
+            </div>
+            <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Ordenar por" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Recentes</SelectItem>
+                <SelectItem value="expiry">Validade (FEFO)</SelectItem>
+                <SelectItem value="qty">Quantidade</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[150px]">
+                <Filter className="mr-2 h-4 w-4" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos</SelectItem>
+                {Object.entries(statusConfig).map(([key, cfg]) => (
+                  <SelectItem key={key} value={key}>
+                    {cfg.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Lotes List */}
+          <div className="space-y-3">
+            {filtered.length === 0 ? (
+              <Card>
+                <CardContent className="p-8 text-center">
+                  <Layers className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
+                  <p className="text-muted-foreground">Nenhum lote encontrado</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <AnimatePresence>
+                {filtered.map((lote, index) => {
+                  const cfg = statusConfig[lote.status] || {
+                    label: lote.status,
+                    variant: "outline" as const,
+                  };
+                  const diasValidade = lote.data_validade
+                    ? differenceInDays(new Date(lote.data_validade), new Date())
+                    : null;
+                  return (
+                    <motion.div
+                      key={lote.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                    >
+                      <Card className="transition-colors hover:border-primary/50">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-1 flex flex-wrap items-center gap-2">
+                                <div className="flex items-center gap-1">
+                                  <p className="font-semibold">{lote.numero_lote}</p>
+                                  <CopyButton text={lote.numero_lote} className="h-6 w-6" />
+                                </div>
+                                <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                                {diasValidade !== null &&
+                                  diasValidade <= 30 &&
+                                  diasValidade >= 0 && (
+                                    <Badge variant="destructive" className="text-xs">
+                                      Vence em {diasValidade}d
+                                    </Badge>
+                                  )}
+                              </div>
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                                <span className="truncate">
+                                  {lote.produtos?.nome || "Produto removido"}
+                                </span>
+                                {lote.produtos?.sku && (
+                                  <>
+                                    <span className="mx-1">•</span>
+                                    <span className="flex items-center gap-1 rounded bg-muted px-1.5 py-0.5 font-mono text-xs">
+                                      {lote.produtos.sku}
+                                      <CopyButton text={lote.produtos.sku} className="h-4 w-4" />
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                              <div className="mt-1 flex flex-wrap gap-4 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <Package className="h-3 w-3" /> Qtd: {lote.quantidade_atual}/
+                                  {lote.quantidade_inicial}
+                                </span>
+                                {lote.fornecedor && <span>Fornecedor: {lote.fornecedor}</span>}
+                                <span className="flex items-center gap-1">
+                                  <CalendarDays className="h-3 w-3" />
+                                  {format(new Date(lote.data_recebimento), "dd/MM/yyyy", {
+                                    locale: ptBR,
+                                  })}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            )}
+          </div>
+        </div>
+      </PageTransition>
+    </AppLayout>
+  );
+}

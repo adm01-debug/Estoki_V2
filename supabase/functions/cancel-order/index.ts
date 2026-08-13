@@ -1,0 +1,58 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { CancelOrderSchema, validateInput } from "../_shared/schemas.ts";
+serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  try {
+    const body = await req.json().catch(() => ({}));
+    const v = validateInput(CancelOrderSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { orderId, reason, userId } = v.data;
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const { data: order } = await supabase
+      .from("sales_orders")
+      .select("*")
+      .eq("id", orderId)
+      .single();
+    if (order?.status === "shipped" || order?.status === "delivered")
+      throw new Error("Pedido já enviado");
+    for (const item of order?.items || []) {
+      const { data: product } = await supabase
+        .from("products")
+        .select("reserved_quantity")
+        .eq("id", item.productId)
+        .single();
+      if (product)
+        await supabase
+          .from("products")
+          .update({ reserved_quantity: Math.max(0, product.reserved_quantity - item.quantity) })
+          .eq("id", item.productId);
+    }
+    await supabase
+      .from("sales_orders")
+      .update({
+        status: "cancelled",
+        cancelled_at: new Date().toISOString(),
+        cancelled_by: userId,
+        cancel_reason: reason,
+      })
+      .eq("id", orderId);
+    return new Response(JSON.stringify({ cancelled: true, orderId }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
+});

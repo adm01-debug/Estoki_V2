@@ -1,0 +1,15 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+export default function MovementReportPage() {
+  return (
+    <div className="space-y-4 p-6">
+      <h1 className="text-2xl font-bold">MovementReportPage</h1>
+      <Card>
+        <CardContent className="p-6">
+          <p>Conteúdo da página MovementReportPage</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

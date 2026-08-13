@@ -1,0 +1,6 @@
+Contact: mailto:security@estoki.app
+Expires: 2027-07-23T00:00:00.000Z
+Preferred-Languages: pt-BR, en
+Canonical: https://cart-bloom-connect.lovable.app/.well-known/security.txt
+Policy: https://cart-bloom-connect.lovable.app/security
+Acknowledgments: https://cart-bloom-connect.lovable.app/security/hall-of-fame

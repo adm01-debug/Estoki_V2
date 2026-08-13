@@ -1,0 +1,218 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  UserPlus,
+  Shield,
+  Mail,
+  CheckCircle2,
+  XCircle,
+  MoreVertical,
+  Edit,
+  Trash2,
+  UserCheck,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "@/hooks/use-toast";
+
+interface UserProfile {
+  id: string;
+  nome: string | null;
+  email: string | null;
+  role?: string;
+  status?: "ativo" | "inativo";
+  last_login?: string;
+}
+
+async function fetchUsers(): Promise<UserProfile[]> {
+  const { data: profiles, error: pError } = await supabase.from("profiles").select("*");
+  if (pError) throw pError;
+
+  const { data: roles, error: rError } = await supabase
+    .from("user_roles")
+    .select("user_id, role");
+  if (rError) throw rError;
+
+  return (profiles || []).map((p) => ({
+    ...p,
+    role: roles?.find((r) => r.user_id === p.id)?.role || "operador",
+    status: "ativo" as const,
+  }));
+}
+
+export default function UsersPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const { data: users = [], isLoading: loading, error } = useQuery({
+    queryKey: ["users-list"],
+    queryFn: fetchUsers,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    retry: false,
+  });
+
+  if (error) {
+    return (
+      <AppLayout title="Gerenciamento de Usuários" showBack>
+        <PageTransition>
+          <div className="p-6">
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-sm font-bold text-destructive">Erro ao carregar usuários</p>
+                <p className="mt-2 text-xs text-muted-foreground">{String((error as Error)?.message ?? error)}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </PageTransition>
+      </AppLayout>
+    );
+  }
+
+  const filteredUsers = users.filter(
+    (u) =>
+      u.nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getRoleBadge = (role?: string) => {
+    switch (role) {
+      case "admin":
+        return (
+          <Badge className="border-red-500/20 bg-red-500/10 text-red-500">Administrador</Badge>
+        );
+      case "supervisor":
+        return (
+          <Badge className="border-blue-500/20 bg-blue-500/10 text-blue-500">Supervisor</Badge>
+        );
+      default:
+        return <Badge variant="secondary">Operador</Badge>;
+    }
+  };
+
+  return (
+    <AppLayout title="Gerenciamento de Usuários" showBack>
+      <PageTransition>
+        <div className="space-y-6 p-4">
+          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome ou email..."
+                className="pl-9"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button className="w-full gap-2 md:w-auto">
+              <UserPlus className="h-4 w-4" />
+              Convidar Usuário
+            </Button>
+          </div>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle>Todos os Usuários</CardTitle>
+              <CardDescription>Gerencie acessos e permissões dos colaboradores</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              {loading ? (
+                <div className="space-y-4 p-8">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-16 w-full" />
+                  ))}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Usuário</TableHead>
+                      <TableHead>Nível de Acesso</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.map((user) => (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-bold text-primary">
+                              {user.nome?.charAt(0) || user.email?.charAt(0)}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{user.nome || "Sem nome"}</span>
+                              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                <Mail className="h-3 w-3" /> {user.email}
+                              </span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{getRoleBadge(user.role)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-success">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span className="text-xs font-medium">Ativo</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem className="gap-2">
+                                <Edit className="h-4 w-4" /> Editar
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="gap-2 text-primary">
+                                <Shield className="h-4 w-4" /> Alterar Cargo
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="gap-2 text-destructive">
+                                <Trash2 className="h-4 w-4" /> Desativar
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {filteredUsers.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={4} className="h-32 text-center text-muted-foreground">
+                          Nenhum usuário encontrado.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </PageTransition>
+    </AppLayout>
+  );
+}

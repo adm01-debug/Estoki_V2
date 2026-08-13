@@ -1,0 +1,463 @@
+@layer utilities {
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 5000px;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ESTOKI WMS - Premium Dark Design System
+   Inspired by modern SaaS aesthetics: deep blacks, warm amber accents, glassmorphism
+*/
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 10%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 25%;
+
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 10% 46%;
+
+    --accent: 24 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 24 95% 53%;
+
+    --radius: 0.75rem;
+
+    /* Status Colors */
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+
+    /* Sidebar - Dark even in light mode for contrast */
+    --sidebar-background: 220 25% 7%;
+    --sidebar-foreground: 220 10% 85%;
+    --sidebar-primary: 24 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 12%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 220 20% 14%;
+    --sidebar-ring: 24 95% 53%;
+
+    /* Custom */
+    --kpi-card: 0 0% 100%;
+    --kpi-icon-bg: 24 95% 95%;
+
+    /* Glow */
+    --glow-primary: 24 95% 53%;
+    --glow-secondary: 30 100% 45%;
+
+    /* Focus and Interactive */
+    --focus-ring: 24 95% 53% / 0.5;
+    --selection: 24 95% 53% / 0.15;
+  }
+
+  .dark {
+    --background: 220 25% 5%;
+    --foreground: 220 10% 95%;
+
+    --card: 220 25% 8%;
+    --card-foreground: 220 10% 95%;
+
+    --popover: 220 25% 8%;
+    --popover-foreground: 220 10% 95%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 25% 12%;
+    --secondary-foreground: 220 10% 85%;
+
+    --muted: 220 25% 12%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 24 95% 53%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 14%;
+    --input: 220 20% 14%;
+    --ring: 24 95% 53%;
+
+    --sidebar-background: 220 30% 4%;
+    --sidebar-foreground: 220 10% 85%;
+    --sidebar-primary: 24 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 25% 10%;
+    --sidebar-accent-foreground: 220 10% 90%;
+    --sidebar-border: 220 20% 10%;
+    --sidebar-ring: 24 95% 53%;
+
+    --kpi-card: 220 25% 8%;
+    --kpi-icon-bg: 24 95% 15%;
+
+    /* Chart colors for dark mode */
+    --chart-success: 160 70% 50%;
+    --chart-danger: 0 70% 60%;
+    --chart-warning: 38 85% 55%;
+    --chart-info: 217 85% 65%;
+    --chart-accent: 24 90% 55%;
+    --chart-neutral: 220 10% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  ::selection {
+    background-color: hsl(var(--selection));
+    color: inherit;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Typography Scale — Premium SaaS */
+  h1,
+  .h1 {
+    @apply text-3xl font-extrabold tracking-tight md:text-4xl;
+    letter-spacing: -0.025em;
+  }
+
+  h2,
+  .h2 {
+    @apply text-2xl font-bold tracking-tight md:text-3xl;
+    letter-spacing: -0.02em;
+  }
+
+  h3,
+  .h3 {
+    @apply text-xl font-bold;
+    letter-spacing: -0.015em;
+  }
+
+  h4,
+  .h4 {
+    @apply text-lg font-semibold;
+    letter-spacing: -0.01em;
+  }
+
+  .text-display {
+    @apply text-4xl font-extrabold md:text-5xl;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+  }
+
+  .text-caption {
+    @apply text-xs text-muted-foreground;
+    letter-spacing: 0.01em;
+  }
+
+  .text-overline {
+    @apply text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground;
+  }
+}
+
+@layer components {
+  /* Glass morphism card */
+  .glass-card {
+    @apply rounded-xl border border-border/50 bg-card/80 shadow-lg backdrop-blur-xl;
+    transition:
+      transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+      box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .glass-card:hover {
+    @apply border-primary/20 shadow-xl;
+    transform: translateY(-2px);
+  }
+
+  /* KPI Cards with glow effect */
+  .kpi-card {
+    @apply relative overflow-hidden rounded-2xl border border-border/40 bg-card/90 p-4 shadow-sm backdrop-blur-sm transition-all duration-300;
+  }
+
+  .kpi-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .kpi-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .kpi-card:hover {
+    @apply border-primary/40 shadow-xl;
+    box-shadow:
+      0 8px 32px hsl(var(--primary) / 0.1),
+      0 0 0 1px hsl(var(--primary) / 0.1);
+  }
+
+  .kpi-card:hover::before {
+    opacity: 1;
+  }
+
+  .kpi-card:hover::after {
+    opacity: 1;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(30 100% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Performance: Smooth scrolling and hardware acceleration */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Glow button */
+  .glow-button {
+    @apply relative overflow-hidden;
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
+  }
+
+  .glow-button:hover {
+    box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
+  }
+
+  /* Status Badges */
+  .status-aguardando {
+    @apply border border-warning/20 bg-warning/10 text-warning;
+  }
+
+  .status-ok {
+    @apply border border-success/20 bg-success/10 text-success;
+  }
+
+  .status-divergencia {
+    @apply border border-destructive/20 bg-destructive/10 text-destructive;
+  }
+
+  .status-triagem {
+    @apply border border-info/20 bg-info/10 text-info;
+  }
+
+  /* List Items */
+  .list-item-card {
+    @apply rounded-lg border-l-4 border-l-primary bg-card p-4 shadow-sm transition-all duration-200 hover:shadow-md;
+  }
+
+  /* Menu Buttons */
+  .menu-button {
+    @apply flex items-center gap-4 rounded-2xl border border-border/40 bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300;
+  }
+
+  .menu-button:hover {
+    @apply border-primary/30 shadow-xl;
+    box-shadow: 0 8px 24px hsl(var(--primary) / 0.08);
+  }
+
+  .menu-button:active {
+    @apply scale-[0.98];
+  }
+
+  /* Position indicators */
+  .position-livre {
+    @apply border-2 border-dashed border-border bg-muted;
+  }
+
+  .position-ocupado {
+    @apply border-2 border-success bg-success/20;
+  }
+
+  .position-reservado {
+    @apply border-2 border-warning bg-warning/20;
+  }
+
+  .position-bloqueado {
+    @apply border-2 border-destructive bg-destructive/20;
+  }
+
+  /* Sidebar glow indicator */
+  .sidebar-active-glow {
+    box-shadow:
+      inset 3px 0 0 hsl(var(--primary)),
+      0 0 12px hsl(var(--primary) / 0.15);
+  }
+
+  /* Ambient background gradient */
+  .ambient-bg {
+    position: relative;
+  }
+
+  .ambient-bg::before {
+    content: "";
+    position: fixed;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, hsl(var(--primary) / 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Animations */
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s infinite ease-in-out;
+  }
+
+  .shadow-glow-sm {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+  }
+}
+
+@layer utilities {
+  .touch-friendly {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.25rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-area-top {
+    padding-top: max(0.25rem, env(safe-area-inset-top));
+  }
+
+  /* Performance: skip rendering of off-screen sections */
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+
+  /* GPU acceleration for animated elements */
+  .gpu-accelerated {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+}
+
+/* Reduced Motion — Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-ping,
+  .animate-pulse,
+  .animate-spin,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  .shimmer {
+    animation: none !important;
+  }
+}
+
+/* Enhanced Focus Visible — Accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px hsl(var(--focus-ring));
+}
+
+/* Remove default outline for mouse clicks */
+:focus:not(:focus-visible) {
+  outline: none;
+}
