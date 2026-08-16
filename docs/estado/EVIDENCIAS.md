@@ -58,12 +58,19 @@ estoque** (`stock_movements`, `lot_movements`), **fila de jobs** (`job_queue`), 
 `seed-curva-abc`, `seed-inventario-geral`, `seed-putaway`, `seed-trocas`, `seed-aprovacoes`,
 `seed-kpis`, `seed-cadastros`…). Volumes redondos (500, 40, 30, 25) sugerem seed, mas não confirmei.
 
-### 2.3 Tabelas vivas sem nenhum consumidor — 10 de 86
+### 2.3 Tabelas vivas sem nenhum consumidor — 9 de 86
 
-Nenhuma referência em `src/` nem em `supabase/functions/`:
+Citadas apenas em `src/integrations/supabase/types.ts` (arquivo de tipos gerado, que não é
+consumidor) e em nenhum outro lugar de `src/` ou `supabase/functions/`:
 `db_health_snapshots` · `inventario_config` · `ip_whitelist` · `login_attempts` ·
 `produtividade_operador` · `quality_inspections` · `recuperacao_materiais` · `regras_ponto_pedido` ·
-`setores_checkpoint` · `tenants`
+`setores_checkpoint`
+
+**Corrigido na revisão:** o levantamento original listava **10**, incluindo `tenants`. Errado —
+`tenants` é consumida em `src/hooks/useCurrentTenant.ts:24`, através de um join embutido no `select`
+(`"papel, tenants:tenant_id ( id, nome, slug, plano )"`), forma que a busca por `.from("tenants")`
+não enxerga. Testei o alcance desse ponto cego em todo o `src/`: afeta apenas `profiles` e
+`tenants`. As outras 9 se sustentam.
 
 ---
 
@@ -83,18 +90,22 @@ Nenhuma referência em `src/` nem em `supabase/functions/`:
 negócio completa (busca produtos abaixo do ponto de reposição, calcula quantidade sugerida com
 lead time e estoque de segurança, persiste). Ver seção 7 (correção).
 
-### 3.2 Funções com chamador comprovado — 8 de 248 (3,2%)
+### 3.2 Funções com chamador comprovado — 18 de 248 (7,3%)
 
-Via `supabase.functions.invoke(...)` em `src/`:
-`gerar-desafios-diarios` · `scanner-ocr` · `send-email-alert` · `webauthn-auth-options` ·
-`webauthn-auth-verify` · `webauthn-register-options` · `webauthn-register-verify`
+**Corrigido na revisão.** O levantamento original dizia 8 e estava errado: o regex casava
+`invoke("x")` mas não `invoke<T>("x")`, nem chamada quebrada em linhas, nem dispatcher dinâmico.
+Lista completa das 18, por forma de chamada:
 
-Via `fetch`: `src/pages/admin/SimulationPage.tsx:65` monta
-`${SUPABASE_URL}/functions/v1/${s.fn}` — chamada dinâmica a partir de uma lista de simulação.
+| Forma                                                                         | Funções                                                                                                                                                               |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `functions.invoke("nome")` direto                                             | `gerar-desafios-diarios`, `scanner-ocr`, `send-email-alert`, `webauthn-auth-options`, `webauthn-auth-verify`, `webauthn-register-options`, `webauthn-register-verify` |
+| Multilinha (`src/hooks/useDivergencias.ts:173`)                               | `alerta-divergencia-fornecedor`                                                                                                                                       |
+| Genérico `invoke<HealthReport>` (`src/pages/admin/BackendHealthPage.tsx:126`) | `backend-health`                                                                                                                                                      |
+| Dispatcher `aiInvoke` (`src/lib/ai-invoke.ts:31`)                             | `ai-assistant`, `previsao-demanda`, `scanner-ocr`                                                                                                                     |
+| Lista da página de simulação (`src/pages/admin/SimulationPage.tsx:35-56`)     | `health-check`, `dashboard-stats`, `calculate-kpis`, `abc-analysis`, `check-reorder`, `nfe-import`, `export-data`                                                     |
 
-**Critério e seu limite:** busquei `functions.invoke(` e `functions/v1`. Um nome montado
-dinamicamente em runtime escaparia. A chamada em `SimulationPage.tsx` é justamente desse tipo, e eu
-a encontrei — mas não posso garantir que não haja outras. Trate 8 como piso, não como número exato.
+**Limite que permanece:** um nome montado em runtime a partir de dado externo ainda escaparia.
+Trate 18 como piso bem apurado, não como teto provado.
 
 ### 3.3 Tabelas referenciadas × tabelas existentes
 
@@ -114,6 +125,9 @@ Tabelas que o backend pressupõe e que nunca existiram:
 `units_of_measure` · `user_sessions` · `users`
 
 ### 3.4 As 51 funções que tocam tabela inexistente
+
+(Somando a quebra por RPC da seção 3.5, o total de funções quebradas é **52** — `check-reorder`
+entra apenas pela RPC.)
 
 | Função                      | Tabela(s) inexistente(s)                                                  |
 | --------------------------- | ------------------------------------------------------------------------- |
@@ -176,7 +190,39 @@ Fluxos inteiros de WMS estão nessa lista: **expedição** (`create-shipment`, `
 `boleto-generate`, `nfe-process`), **integrações** (as 6 `integration-*` gravam todas em
 `integration_logs`).
 
-### 3.5 Agendamento
+### 3.5 Funções de banco (RPC) chamadas pelas Edge Functions — 5 de 8 não existem
+
+**VERIFICADO** contra `pg_proc` no banco de produção.
+
+| RPC chamada                 | Existe no banco?  | Quem chama                              |
+| --------------------------- | ----------------- | --------------------------------------- |
+| `check_db_alert_thresholds` | ✅ sim            | `db-alert-monitor`                      |
+| `get_backend_health`        | ✅ sim            | `backend-health`                        |
+| `transferir_estoque`        | ✅ sim            | `inventory-transfer` / `transfer-stock` |
+| `decrease_location_stock`   | ❌ **não existe** | `picking-confirm`                       |
+| `get_inventory_summary`     | ❌ **não existe** | `reports`                               |
+| `get_min_stock_threshold`   | ❌ **não existe** | `stock-alert`                           |
+| `get_reorder_point`         | ❌ **não existe** | `check-reorder`                         |
+| `recalculate_weekly_stats`  | ❌ **não existe** | `cron-weekly`                           |
+
+Esta dimensão **não existia no levantamento original** — eu só havia cruzado tabelas. Ela eleva o
+total de funções quebradas de 51 para **52**: `check-reorder` quebra apenas pela RPC, as outras
+quatro já constavam por tabela.
+
+### 3.6 Contraste — RPCs chamadas pelo FRONTEND existem todas
+
+| RPC                            | Existe? | SECURITY DEFINER |
+| ------------------------------ | ------- | ---------------- |
+| `collect_challenge_reward`     | ✅      | sim              |
+| `get_current_user_permissions` | ✅      | não              |
+| `log_audit_event`              | ✅      | não              |
+| `move_stock`                   | ✅      | sim              |
+| `registrar_checkin_diario`     | ✅      | sim              |
+
+5 de 5. Mais uma evidência de que o frontend foi construído contra o banco real, e a camada
+serverless não.
+
+### 3.7 Agendamento
 
 Funções que pressupõem cron: `cron-daily`, `cron-weekly`, `scheduler-daily-tasks`,
 `scheduler-reports`, `scheduler-sync`, `scheduler-cleanup`, `alert-monitor`, `db-alert-monitor`,
@@ -194,9 +240,13 @@ de terceiro, `supabase/config.toml`). Precisa ser checado antes de concluir aban
 
 ## 4. Frontend — camada bem ancorada
 
-- Tabelas distintas referenciadas em `src/`: **67**
-- Existentes no banco: **63 (94%)**
-- Inexistentes: **4** → `backups`, `entity_versions`, `feature_flags`, `produtos_estoque`
+- Tabelas distintas referenciadas em `src/`: **68**
+- Existentes no banco: **63 (93%)**
+- Inexistentes: **5** → `backups`, `entity_versions`, `feature_flags`, `produtos_estoque`, `triagem`
+
+**Corrigido na revisão:** o levantamento original dizia 67/4. A recontagem com padrão mais amplo
+(incluindo template literal) encontrou `triagem` a mais. A conclusão não muda — a aderência do
+frontend ao schema real continua em 93%, contra 43% das Edge Functions.
 
 Contraste direto com as Edge Functions (43% de aderência). É a evidência mais forte de que frontend
 e banco evoluíram juntos, e o backend serverless não.
@@ -207,17 +257,45 @@ e banco evoluíram juntos, e o backend serverless não.
   `publicRoutes`, `wmsRoutes`)
 - Alvos em `src/pages/`: **69 (85,2%)** · em `src/features/`: **12 (14,8%)**
 
-### 4.2 Páginas órfãs — 3 de 53 na raiz de `src/pages`
+### 4.2 Páginas órfãs — 24 de 108 (22,2%)
+
+**Corrigido na revisão.** O levantamento original dizia "3 de 53" porque varri apenas a raiz de
+`src/pages`. As 55 páginas em subpastas ficaram inteiramente fora da varredura.
+
+**Na raiz (3 de 53):**
 
 | Página                             | Situação               | Prova                                                                                                                                                           |
 | ---------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/pages/DashboardTempoReal.tsx` | ⬛ morta — substituída | `src/routes/featureRoutes.tsx:30` carrega `@/features/analytics/pages/RealtimeDashboardPage`; a página de mesmo nome em `src/pages` não é importada por ninguém |
-| `src/pages/Error.tsx`              | ⬛ sem importador      | grep do nome em `src/` retorna só ocorrências de `ApiError`/`Error` nativo, nenhum import                                                                       |
-| `src/pages/Maintenance.tsx`        | ⬛ sem importador      | grep do nome em `src/` retorna **zero** ocorrências fora do próprio arquivo                                                                                     |
+| `src/pages/Error.tsx`              | ⬛ sem importador      | grep do nome em `src/` retorna só `ApiError`/`Error` nativo, nenhum import                                                                                      |
+| `src/pages/Maintenance.tsx`        | ⬛ sem importador      | grep do nome em `src/` retorna zero ocorrências fora do próprio arquivo                                                                                         |
 
-**Critério e seu limite:** busquei por `pages/<Nome>` e depois pelo nome puro em todo `src/`, o que
-cobre import direto, `lazy(() => import(...))` e re-export por `index.ts`. Não cobre string montada
-dinamicamente. Os três casos foram confirmados por busca ampla, não só pelo primeiro padrão.
+**Em subpastas (21 de 55) — nove diretórios inteiros sem nenhuma rota:**
+
+| Diretório                | Páginas órfãs                                                                                                               |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/products/`    | `ProductsPage.tsx`, `ProductDetailPage.tsx`                                                                                 |
+| `src/pages/reports/`     | `ReportsPage.tsx`, `InventoryReportPage.tsx`, `MovementReportPage.tsx`, `TurnoverReportPage.tsx`, `ValuationReportPage.tsx` |
+| `src/pages/suppliers/`   | `SuppliersPage.tsx`, `SupplierDetailPage.tsx`                                                                               |
+| `src/pages/lots/`        | `LotsPage.tsx`, `LotDetailPage.tsx`                                                                                         |
+| `src/pages/locations/`   | `LocationsPage.tsx`, `LocationDetailPage.tsx`                                                                               |
+| `src/pages/error/`       | `NotFoundPage.tsx`, `ForbiddenPage.tsx`                                                                                     |
+| `src/pages/receiving/`   | `ReceivingPage.tsx`                                                                                                         |
+| `src/pages/alerts/`      | `AlertsPage.tsx`                                                                                                            |
+| `src/pages/cycle-count/` | `CycleCountPage.tsx`                                                                                                        |
+| `src/pages/admin/`       | `AuditLogs.tsx`                                                                                                             |
+| `src/pages/auth/`        | `Profile.tsx`, `Settings.tsx`                                                                                               |
+
+**Critério, e por que não é falso-positivo:** para cada arquivo fiz duas buscas independentes —
+(a) pelo caminho relativo (`pages/reports/ReportsPage`), que cobre import direto e
+`lazy(() => import(...))`; (b) pelo **nome puro do componente** com limite de palavra (`\bReportsPage\b`)
+em todo o `src/`, que cobre re-export por barrel e uso com genérico. Confirmei também que **não existe
+nenhum `index.ts` de barrel** dentro de `src/pages`. Ambas as buscas retornaram zero para os 21.
+
+Observação de negócio: `products/`, `reports/`, `suppliers/` e `lots/` são páginas de negócio
+completas, com detalhe e listagem, que nenhuma rota alcança. São candidatas fortes ao mesmo padrão de
+refactor abandonado do `DashboardTempoReal` — provavelmente substituídas pelas páginas equivalentes na
+raiz (`Produtos.tsx`, `Relatorios*.tsx`, `Lotes.tsx`), mas isso eu **não confirmei**.
 
 ### 4.3 Páginas em `src/features` não roteadas — 2
 
@@ -227,7 +305,7 @@ dinamicamente. Os três casos foram confirmados por busca ampla, não só pelo p
 
 ## 5. Testes e CI
 
-### 5.1 Inventário de testes — 23 arquivos para ~146.000 linhas
+### 5.1 Inventário de testes — 35 arquivos para ~146.000 linhas
 
 **14 unitários** (Vitest): `ExportButton.error.test.tsx`, `ExportButton.test.tsx`,
 `ProductGrid.test.tsx`, `useDashboard.test.tsx`, `pickingService.test.ts`,
@@ -238,8 +316,18 @@ dinamicamente. Os três casos foram confirmados por busca ampla, não só pelo p
 **9 E2E** (Playwright): `a11y-smoke`, `auth-flow`, `auth-navigation`, `basic-flow`,
 `export-reports`, `global-search`, `routes-smoke`, `stress`, `wms-flow`
 
-Todos os 23 possuem ao menos 1 import local — **nenhum é teste-espelho puro** (nenhum reimplementa o
-alvo sem importá-lo). `tests/e2e/a11y-smoke.spec.ts` tem 1 `skip`.
+**12 testes Deno** em `supabase/functions/` — ausentes do levantamento original:
+`_shared/agv_test.ts`, `_shared/erp_test.ts`, `_shared/forecast_test.ts`, `_shared/inventory_test.ts`,
+`_shared/prometheus_test.ts`, `_shared/shared_test.ts`, `_shared/tsp_test.ts`,
+`tests/abc-analysis_test.ts`, `tests/simulation_test.ts`, `tests/webhook-handler_test.ts`,
+`carrier-track/contract_test.ts`, `db-alert-monitor/contract_test.ts`.
+
+🔴 **Nenhum runner os executa.** Não há `deno test` em nenhum workflow de `.github/workflows/` nem
+script no `package.json`. São **testes sem runner** — existem, não protegem nada, e dão aparência de
+cobertura no backend serverless que é justamente a camada mais quebrada do sistema.
+
+Os 23 testes de Vitest/Playwright possuem ao menos 1 import local — **nenhum é teste-espelho puro**
+(nenhum reimplementa o alvo sem importá-lo). `tests/e2e/a11y-smoke.spec.ts` tem 1 `skip`.
 
 ⚠️ **NAO_VERIFICADO:** não abri cada teste para conferir se o import é do alvo declarado, se as
 asserções são substantivas, ou se há asserção vacuamente verdadeira. Só verifiquei que importam algo
@@ -405,6 +493,19 @@ parcial, ela foi verificada por mim antes de entrar (seção 7) — ou descartad
 - Nenhum resultado de execução foi afirmado: sem `node_modules`, não há como dizer que o código
   compila ou que os testes passam.
 - Onde faltou evidência verificável, a classificação **não subiu**.
+
+**Revisão adversarial do próprio trabalho.** Depois de entregue, submeti este documento a uma
+verificação independente, refazendo cada medição por um método diferente do original. **Seis
+afirmações estavam erradas** e foram corrigidas no corpo do texto, cada uma com o bloco explicando o
+erro (seções 2.3, 3.2, 4.2, 5.1 e a tabela de errata em `ESTADO_ATUAL.md`). A mais grave: duas
+citações `arquivo:linha` estavam com o número errado — evidência não conferida, que é justamente o
+que esta auditoria proíbe. Duas dimensões novas surgiram da revisão (RPCs inexistentes, testes Deno
+sem runner) e um resultado positivo foi confirmado (as 5 RPCs do frontend existem).
+
+O padrão dos meus erros é consistente e vale registrar: **todos foram falso-negativos de critério de
+busca** — regex que não cobria uma variante de sintaxe, ou varredura que não cobria um diretório.
+Nenhum foi invenção de achado; todos foram subestimação. Quem for continuar este trabalho deve
+assumir que os números remanescentes são **pisos**, não tetos.
 
 **Esta auditoria não está pronta.** O inventário funcionalidade-a-funcionalidade de
 `src/components` (46.570 linhas), `src/hooks` (15.212) e `src/features` (16.398) **não foi feito**.

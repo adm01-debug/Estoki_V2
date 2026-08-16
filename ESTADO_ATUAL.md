@@ -14,12 +14,12 @@
 O ESTOKI V2 é, na prática, **dois sistemas sobrepostos com maturidade muito diferente**:
 
 1. **Frontend + banco de dados: coerente e real.** 81 rotas declaradas, 53 páginas na raiz de
-   `src/pages` mais subpastas, e o frontend acessa 67 tabelas — das quais **63 existem de fato** no
+   `src/pages` mais subpastas, e o frontend acessa 68 tabelas — das quais **63 existem de fato** no
    banco de produção. Essa camada foi construída contra o schema real e conversa com ele.
 
 2. **Camada de Edge Functions: majoritariamente desconectada.** São **248 funções** no repositório.
-   Apenas **8 têm chamador comprovado** (7 via `functions.invoke`, 1 via `fetch` numa página de
-   simulação). E **51 delas (20,6%) leem ou escrevem em tabelas que não existem no banco** — de um
+   Apenas **18 têm chamador comprovado** (7,3%). E **52 delas (21,0%) acessam tabelas ou funções de
+   banco que não existem** — de um
    total de 82 tabelas que as funções referenciam, **47 (57%) não existem**, e **43 dessas nunca
    foram declaradas em nenhuma das 163 migrations**. Não é drift: é código escrito contra um schema
    imaginado que nunca existiu.
@@ -40,21 +40,21 @@ matrizes) — ainda que hoje ele não execute, ver risco 🔴 4; a arquitetura `
 As classificações abaixo cobrem **as dimensões que consegui medir de ponta a ponta**. Não é o
 inventário funcionalidade-a-funcionalidade que o método exige — esse não foi concluído.
 
-| Dimensão medida                                           | Medida                      | Classificação predominante       |
-| --------------------------------------------------------- | --------------------------- | -------------------------------- |
-| Edge Functions com chamador comprovado                    | **8 de 248 (3,2%)**         | 🟦 SUGERIDO_OU_INICIADO          |
-| Edge Functions que tocam tabela inexistente               | **51 de 248 (20,6%)**       | 🟦 (não podem funcionar)         |
-| Tabelas referenciadas por functions que existem           | **35 de 82 (43%)**          | —                                |
-| Tabelas referenciadas pelo frontend que existem           | **63 de 67 (94%)**          | ✅                               |
-| Tabelas de `public` com ao menos 1 linha                  | **57 de 86 (66%)**          | 🟨 (origem do dado não separada) |
-| Tabelas de `public` com zero linhas                       | **29 de 86 (34%)**          | 🟦 dormentes                     |
-| Tabelas vivas que ninguém acessa (nem src, nem functions) | **10 de 86 (11,6%)**        | ⬛                               |
-| Rotas apontando para `src/features` (arquitetura nova)    | **12 de 81 (14,8%)**        | 🟨 refactor parcial              |
-| Páginas órfãs em `src/pages`                              | **3 de 53 (5,7%)**          | ⬛                               |
-| Páginas em `src/features` não roteadas                    | **2**                       | 🟦                               |
-| Arquivos de teste                                         | **23** para ~146.000 linhas | 🟨                               |
-| Jobs de cron ativos                                       | **1**                       | 🟦 automações sem disparo        |
-| Execuções recentes do CI em `main` que passaram           | **0 de 8**                  | 🔴 pipeline quebrado             |
+| Dimensão medida                                           | Medida                | Classificação predominante       |
+| --------------------------------------------------------- | --------------------- | -------------------------------- |
+| Edge Functions com chamador comprovado                    | **18 de 248 (7,3%)**  | 🟦 SUGERIDO_OU_INICIADO          |
+| Edge Functions quebradas (tabela ou RPC inexistente)      | **52 de 248 (21,0%)** | 🟦 (não podem funcionar)         |
+| Tabelas referenciadas por functions que existem           | **35 de 82 (43%)**    | —                                |
+| Tabelas referenciadas pelo frontend que existem           | **63 de 68 (93%)**    | ✅                               |
+| Tabelas de `public` com ao menos 1 linha                  | **57 de 86 (66%)**    | 🟨 (origem do dado não separada) |
+| Tabelas de `public` com zero linhas                       | **29 de 86 (34%)**    | 🟦 dormentes                     |
+| Tabelas vivas que ninguém acessa (nem src, nem functions) | **9 de 86 (10,5%)**   | ⬛                               |
+| Rotas apontando para `src/features` (arquitetura nova)    | **12 de 81 (14,8%)**  | 🟨 refactor parcial              |
+| Páginas órfãs em `src/pages`                              | **24 de 108 (22,2%)** | ⬛                               |
+| Páginas em `src/features` não roteadas                    | **2**                 | 🟦                               |
+| Arquivos de teste                                         | **35**, 12 sem runner | 🟨                               |
+| Jobs de cron ativos                                       | **1**                 | 🟦 automações sem disparo        |
+| Execuções recentes do CI em `main` que passaram           | **0 de 8**            | 🔴 pipeline quebrado             |
 
 ---
 
@@ -67,12 +67,17 @@ consultar). Há 163 arquivos de migration versionados e **zero registro de aplic
 prática: ninguém consegue provar que o banco atual corresponde às migrations, nem recriar o ambiente
 em staging/DR a partir do código. Este é o achado mais grave da auditoria.
 
-### 🔴 2. 51 Edge Functions operam sobre um schema que não existe
+### 🔴 2. 52 Edge Functions operam sobre um schema que não existe
 
 Exemplos verificados linha a linha:
 
-- `supabase/functions/reorder-check/index.ts:41` grava em `reorder_suggestions` — tabela inexistente.
-- `supabase/functions/integration-mercado-livre/index.ts:112` grava em `integration_logs` — inexistente.
+- `supabase/functions/reorder-check/index.ts:42` grava em `reorder_suggestions` — tabela inexistente.
+- `supabase/functions/integration-mercado-livre/index.ts:118` grava em `integration_logs` — inexistente.
+
+Além das tabelas, **5 das 8 funções de banco (RPC) chamadas pelas Edge Functions não existem**:
+`decrease_location_stock`, `get_inventory_summary`, `get_min_stock_threshold`, `get_reorder_point`,
+`recalculate_weekly_stats` — quebrando `picking-confirm`, `reports`, `stock-alert`, `cron-weekly` e
+`check-reorder` (esta última não aparecia na contagem por tabela).
 
 43 tabelas (`users`, `suppliers`, `sales_orders`, `shipments`, `invoices`, `payments`, `pick_lists`,
 `picking_waves`, `stock_balances`, `stock_transfers`, `sessions`, `notifications`, `lots`, `nfe`,
@@ -131,13 +136,18 @@ Existe `github/workflows/ci.yml` (42 linhas), **diferente** de `.github/workflow
 lê apenas `.github/` — esse arquivo nunca executou e nunca executará. É um pipeline fantasma que
 pode enganar quem for auditar o CI pelo diretório.
 
-### 🟡 8. Refactor `src/features/` parado no meio
+### 🟡 8. Refactor `src/features/` parado no meio, e 24 páginas órfãs
 
 Apenas **12 das 81 rotas** apontam para `src/features`; 69 ainda apontam para `src/pages`. Efeito
 colateral já materializado: `src/pages/DashboardTempoReal.tsx` está **morto** — a rota
 `src/routes/featureRoutes.tsx:30` carrega `@/features/analytics/pages/RealtimeDashboardPage`. Quem
 editar a página antiga não muda nada em produção. Outras 2 páginas em `src/features` não estão
 roteadas (`dashboard/pages/DashboardPage.tsx`, `analytics/pages/OperationalMonitorPage.tsx`).
+
+Efeito colateral maior: **24 das 108 páginas de `src/pages` não têm nenhum importador** (22,2%).
+Nove diretórios inteiros estão órfãos — `products/`, `reports/`, `suppliers/`, `lots/`, `locations/`,
+`receiving/`, `alerts/`, `cycle-count/`, `error/`. São páginas de negócio completas que nenhuma rota
+alcança.
 
 ### 🟡 9. Sinais de trabalho inacabado e dado fabricado
 
@@ -151,6 +161,45 @@ classifiquei uma a uma — ver limitações.
 `quality_inspections`, `recuperacao_materiais`, `regras_ponto_pedido`, `setores_checkpoint`, `tenants`
 não são acessadas nem pelo frontend nem pelas Edge Functions. `tenants`/`tenant_members` (1 linha cada)
 indicam multi-tenant iniciado e não concluído.
+
+---
+
+## Errata — erros da própria auditoria, encontrados na revisão
+
+Submeti este documento a uma revisão adversarial, refazendo cada medição com um método diferente do
+original. **Seis afirmações estavam erradas.** Os números acima já estão corrigidos; registro aqui o
+que estava errado e por quê, para que a versão errada não circule.
+
+| #   | Afirmação original                                                     | Valor correto           | Causa do erro                                                                                                                                                                                                             |
+| --- | ---------------------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `reorder-check/index.ts:41` e `integration-mercado-livre/index.ts:112` | linhas **42** e **118** | Citei número de linha sem conferir. Violação direta da regra "não invente evidência" — a mais grave desta lista, porque evidência falsa contamina tudo                                                                    |
+| 2   | 8 Edge Functions com chamador (3,2%)                                   | **18 (7,3%)**           | Meu regex casava `invoke("x")` mas não `invoke<T>("x")`, nem chamada quebrada em várias linhas, nem o dispatcher `aiInvoke(nome)`. É exatamente a armadilha de falso-negativo que eu tinha listado na Fase B — e caí nela |
+| 3   | 3 páginas órfãs de 53                                                  | **24 de 108**           | Só varri a raiz de `src/pages`. As 55 páginas em subpastas ficaram fora da varredura inteira                                                                                                                              |
+| 4   | 10 tabelas sem consumidor                                              | **9**                   | `tenants` é consumida em `src/hooks/useCurrentTenant.ts:24`, via join embutido no `select` — forma que meu grep de `.from()` não enxerga                                                                                  |
+| 5   | 63 de 67 tabelas do frontend existem                                   | **63 de 68**            | Faltou `triagem` na lista de inexistentes (são 5, não 4)                                                                                                                                                                  |
+| 6   | 23 arquivos de teste                                                   | **35**                  | Ignorei 12 testes Deno em `supabase/functions/`                                                                                                                                                                           |
+
+**Dois achados novos surgiram da revisão:**
+
+- 🔴 **5 das 8 funções de banco (RPC) chamadas pelas Edge Functions não existem** — quebra que a
+  contagem por tabela não capturava. Incorporado ao risco 2.
+- 🟠 **Os 12 testes Deno não têm runner.** Nenhum workflow nem script do `package.json` executa
+  `deno test`. São testes que não protegem nada. Incorporado ao risco 5.
+
+**Um resultado positivo confirmado:** as 5 RPCs chamadas pelo **frontend**
+(`collect_challenge_reward`, `get_current_user_permissions`, `log_audit_event`, `move_stock`,
+`registrar_checkin_diario`) **existem todas** no banco. A camada de RPC do frontend é sólida.
+
+**Limitação de método que fica declarada:** busca por `.from("tabela")` é cega a tabelas acessadas
+apenas por join embutido no `select` do PostgREST. Testei o alcance disso: afeta somente `profiles`
+e `tenants`. As demais conclusões sobre tabelas sem consumidor se sustentam.
+
+**O que a revisão _confirmou_, sem alteração:** as 86 tabelas e 29 vazias; a inexistência de
+`supabase_migrations.schema_migrations`; o job único de cron; as 47 tabelas inexistentes e as 43
+nunca declaradas (testei com regex ampla, incluindo identificadores entre aspas — nenhum falso
+negativo); o denominador de 248 funções (250 diretórios, menos `_shared/` e `tests/`); as 81 rotas;
+a quebra do CI. Também confirmei que `.from()` com aspas simples não existe nas Edge Functions —
+zero ocorrências —, então esse grep não teve falso-negativo.
 
 ---
 
