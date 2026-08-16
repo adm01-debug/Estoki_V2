@@ -30,8 +30,8 @@ não existe). As 163 migrations versionadas não têm registro de aplicação. N
 para reconstruir o ambiente a partir do código.
 
 **O que está bom, e é justo dizer:** todas as 86 tabelas de `public` têm RLS habilitado; o frontend
-está bem ancorado no schema real; há CI com lint, type-check, testes, build, size-limit e E2E
-Playwright em duas matrizes; a arquitetura `src/features/` existe e funciona onde foi adotada.
+está bem ancorado no schema real; o desenho do CI é completo (lint, type-check, testes, build, size-limit e E2E Playwright em duas
+matrizes) — ainda que hoje ele não execute, ver risco 🔴 4; a arquitetura `src/features/` existe e funciona onde foi adotada.
 
 ---
 
@@ -54,6 +54,7 @@ inventário funcionalidade-a-funcionalidade que o método exige — esse não fo
 | Páginas em `src/features` não roteadas                    | **2**                       | 🟦                               |
 | Arquivos de teste                                         | **23** para ~146.000 linhas | 🟨                               |
 | Jobs de cron ativos                                       | **1**                       | 🟦 automações sem disparo        |
+| Execuções recentes do CI em `main` que passaram           | **0 de 8**                  | 🔴 pipeline quebrado             |
 
 ---
 
@@ -89,14 +90,32 @@ repositório contém `cron-daily`, `cron-weekly`, `scheduler-daily-tasks`, `sche
 delas tem agendamento no banco. São exatamente as features que **falham sem erro visível** e por
 isso nunca viram chamado.
 
-### 🟠 4. Gate de cobertura quase vazio
+### 🔴 4. O CI está quebrado — nenhum check passa desde antes desta auditoria
+
+`npm ci` falha com `EUSAGE: package.json and package-lock.json are not in sync` (faltam entradas
+`@esbuild/*@0.28.2` no lockfile). **Todo job do CI começa por `npm ci`**, então lint, format,
+typecheck, teste, build, size-limit e Playwright **nunca chegam a executar**.
+
+Verificado: as **8 execuções mais recentes do `ci.yml` na branch `main` terminaram em `failure`**
+(commits `455831e`, `a28624d`, `f7e3df5`, `6018de8`, `41e54c9`, `1b3f27e`, `3ae6127`, `11d7229` —
+todos de 16/08/2026). O lockfile provavelmente dessincronizou numa das PRs recentes do Dependabot.
+
+Consequência direta: **nenhum dos gates de qualidade do repositório está em vigor hoje.** Qualquer
+afirmação de que "o CI valida" o código é falsa no estado atual — inclusive as dos relatórios em
+`.qa-report/`.
+
+Correção provável: `npm install` para regenerar o `package-lock.json`, e commit do lockfile. Não a
+apliquei: regenerar um lockfile de ~1 milhão de linhas é mudança de repositório inteiro, fora do
+escopo desta auditoria, e merece PR própria. Ver _Próximos passos_.
+
+### 🟠 5. Gate de cobertura quase vazio
 
 `vitest.config.ts:29-33` define thresholds de **lines 12%, statements 12%, functions 25%**. Pior:
 `vitest.config.ts:20` restringe a medição a `src/services/**`, `src/features/**/services/**` e
 `src/lib/**` — ou seja, a cobertura **não mede** `src/components` (46.570 linhas), `src/pages`
 (16.887), `src/hooks` (15.212). Um "✅ cobertura" no CI não diz nada sobre 80% do código.
 
-### 🟠 5. Documentação canônica desatualizada
+### 🟠 6. Documentação canônica desatualizada
 
 - `.qa-report/rls-audit.md` afirma **76 tabelas** em `public`. O banco tem **86**. Defasagem de 10.
 - `.qa-report/execucao-final-v4.md` carimba **"10/10"** em Segurança, Performance, RLS, Índices e
@@ -106,13 +125,13 @@ isso nunca viram chamado.
   ano e não foi reconciliado.
 - `.lovable/plan.md` declara _"certified Elite WMS interface"_ e _"operational excellence"_.
 
-### 🟠 6. Workflow morto em `github/` (sem ponto)
+### 🟠 7. Workflow morto em `github/` (sem ponto)
 
 Existe `github/workflows/ci.yml` (42 linhas), **diferente** de `.github/workflows/ci.yml`. O GitHub
 lê apenas `.github/` — esse arquivo nunca executou e nunca executará. É um pipeline fantasma que
 pode enganar quem for auditar o CI pelo diretório.
 
-### 🟡 7. Refactor `src/features/` parado no meio
+### 🟡 8. Refactor `src/features/` parado no meio
 
 Apenas **12 das 81 rotas** apontam para `src/features`; 69 ainda apontam para `src/pages`. Efeito
 colateral já materializado: `src/pages/DashboardTempoReal.tsx` está **morto** — a rota
@@ -120,13 +139,13 @@ colateral já materializado: `src/pages/DashboardTempoReal.tsx` está **morto** 
 editar a página antiga não muda nada em produção. Outras 2 páginas em `src/features` não estão
 roteadas (`dashboard/pages/DashboardPage.tsx`, `analytics/pages/OperationalMonitorPage.tsx`).
 
-### 🟡 8. Sinais de trabalho inacabado e dado fabricado
+### 🟡 9. Sinais de trabalho inacabado e dado fabricado
 
 Em `src/`: **47 ocorrências de `Math.random(`** (concentradas em `hooks/` 6, `lib/` 3, `charts/` 2,
 `feedback/` 2), **219 `TODO`**, **221 ocorrências de `mock`**, **265 de `placeholder`**. Não
 classifiquei uma a uma — ver limitações.
 
-### 🟡 9. Dez tabelas vivas sem nenhum consumidor
+### 🟡 10. Dez tabelas vivas sem nenhum consumidor
 
 `db_health_snapshots`, `inventario_config`, `ip_whitelist`, `login_attempts`, `produtividade_operador`,
 `quality_inspections`, `recuperacao_materiais`, `regras_ponto_pedido`, `setores_checkpoint`, `tenants`
@@ -198,19 +217,23 @@ DML, migration ou deploy. Nenhum arquivo pré-existente do repositório foi edit
    `.qa-report/rls-audit.md` — via errata, sem apagar o original.
 4. **Remover `github/`** (sem ponto): workflow que nunca roda.
 
+5. **Regenerar o `package-lock.json`** (`npm install` + commit) para destravar o CI. É a correção
+   de maior retorno imediato: sem ela, nenhum gate de qualidade do repositório funciona. Merece PR
+   própria, separada desta.
+
 ### Decisão sua — toca produção ou muda arquitetura
 
-5. **Restabelecer o controle de migrations.** Decidir entre baseline do schema atual (`supabase db
+6. **Restabelecer o controle de migrations.** Decidir entre baseline do schema atual (`supabase db
 pull`) ou reconstrução verificada. É a única correção que devolve reprodutibilidade ao ambiente,
    e é DDL em produção: não faço sem sua palavra.
-6. **Decidir o destino das 51 funções quebradas**: criar as 43 tabelas ausentes, reescrever contra o
+7. **Decidir o destino das 51 funções quebradas**: criar as 43 tabelas ausentes, reescrever contra o
    schema real, ou arquivar. São três custos muito diferentes.
-7. **Agendar as automações** (`cron-daily`, `alert-*`, `scheduler-*`) ou assumir que não existem.
+8. **Agendar as automações** (`cron-daily`, `alert-*`, `scheduler-*`) ou assumir que não existem.
    Hoje há 1 job para ~15 funções que pressupõem agendamento.
-8. **Concluir ou reverter o refactor `src/features/`.** 14,8% das rotas migradas é o pior dos dois
+9. **Concluir ou reverter o refactor `src/features/`.** 14,8% das rotas migradas é o pior dos dois
    mundos: mantém duas arquiteturas vivas e produz código morto silencioso.
-9. **Subir o gate de cobertura e ampliar o escopo medido.** 12% de linhas sobre 3 diretórios não
-   protege nada.
+10. **Subir o gate de cobertura e ampliar o escopo medido.** 12% de linhas sobre 3 diretórios não
+    protege nada.
 
 ---
 

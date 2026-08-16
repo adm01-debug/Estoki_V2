@@ -266,8 +266,47 @@ Comentário no próprio arquivo (`vitest.config.ts:28`): _"Coverage gate — sob
 | `.github/workflows/qa.yml` | pull_request                       | checklist de QA                                                                                      |
 | `github/workflows/ci.yml`  | ⬛ **nunca executa**               | 42 linhas, conteúdo **diferente** do `.github/`. O GitHub só lê `.github/workflows/`                 |
 
-⚠️ **NAO_VERIFICADO:** a conclusão real desses checks no GitHub. Li o YAML, não o histórico de
-execuções. Também não verifiquei se o deploy das 248 Edge Functions está automatizado em algum
+### 5.4 O CI está quebrado — **VERIFICADO**
+
+`npm ci` falha neste repositório:
+
+```
+npm error code EUSAGE
+npm error `npm ci` can only install packages when your package.json and package-lock.json
+npm error or npm-shrinkwrap.json are in sync.
+npm error Missing: @esbuild/openbsd-x64@0.28.2 from lock file
+npm error Missing: @esbuild/win32-x64@0.28.2 from lock file   (e outras entradas @esbuild/*)
+```
+
+Todo job de `ci.yml`, `cd.yml` e `qa.yml` executa `npm ci` como primeira etapa após o checkout.
+Nenhum deles chega a rodar lint, format, typecheck, teste, build ou Playwright.
+
+Histórico das 8 execuções mais recentes de `ci.yml` na branch `main` — **todas `failure`**:
+
+| Data                 | Commit    | Conclusão |
+| -------------------- | --------- | --------- |
+| 2026-08-16T15:45:12Z | `455831e` | failure   |
+| 2026-08-16T15:29:04Z | `a28624d` | failure   |
+| 2026-08-16T15:28:57Z | `f7e3df5` | failure   |
+| 2026-08-16T15:28:50Z | `6018de8` | failure   |
+| 2026-08-16T15:28:45Z | `41e54c9` | failure   |
+| 2026-08-16T15:20:49Z | `1b3f27e` | failure   |
+| 2026-08-16T15:15:19Z | `3ae6127` | failure   |
+| 2026-08-16T15:15:11Z | `11d7229` | failure   |
+
+Todos esses commits são merges de PRs do Dependabot (`react-day-picker`, `tailwindcss`,
+`web-vitals`, `i18next`, `@tanstack/react-virtual`, `jotai`, `react-router-dom`, `radix-ui`,
+grupo `testing`). A hipótese mais provável é que um desses bumps atualizou `package.json` sem
+regenerar o lockfile de forma consistente.
+
+Aviso secundário observado no mesmo comando: `@zxing/library@0.23.0` exige `node >= 24.0.0`,
+enquanto o CI fixa `node-version: "20"` (`.github/workflows/ci.yml`). É `EBADENGINE` (aviso, não
+erro), mas vai virar erro se algum dia o `npm ci` voltar a funcionar sem tratar isso.
+
+**Isto invalida, no estado atual, qualquer alegação de que o pipeline valida o código** — incluindo
+os "✅ success" registrados em `.qa-report/summary.md`, que refletem uma execução anterior à quebra.
+
+⚠️ **NAO_VERIFICADO:** não verifiquei se o deploy das 248 Edge Functions está automatizado em algum
 workflow.
 
 ---
