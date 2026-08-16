@@ -7,13 +7,13 @@ Todas as consultas ao banco de produção foram executadas com `read_only:true`.
 
 ## 1. Dimensão medida do sistema
 
-| Escopo | Linhas | Arquivos |
-|---|---:|---:|
-| `src/` | 115.860 | 1.249 |
-| `supabase/functions/` | 19.265 | 305 (248 com `index.ts`) |
-| `supabase/migrations/` | 9.211 | 163 |
-| `scripts/` | ~2.000 | 38 |
-| **Total** | **~146.000** | **~1.760** |
+| Escopo                 |       Linhas |                 Arquivos |
+| ---------------------- | -----------: | -----------------------: |
+| `src/`                 |      115.860 |                    1.249 |
+| `supabase/functions/`  |       19.265 | 305 (248 com `index.ts`) |
+| `supabase/migrations/` |        9.211 |                      163 |
+| `scripts/`             |       ~2.000 |                       38 |
+| **Total**              | **~146.000** |               **~1.760** |
 
 Maiores blocos em `src/`: `components/` 46.570 · `pages/` 16.887 · `features/` 16.398 ·
 `hooks/` 15.212 · `lib/` 5.109 · `integrations/` 4.689.
@@ -71,13 +71,13 @@ Nenhuma referência em `src/` nem em `supabase/functions/`:
 
 ### 3.1 Distribuição por tamanho (248 arquivos `index.ts`)
 
-| Faixa | Funções |
-|---|---:|
-| < 30 linhas | 114 |
-| 30–59 | 52 |
-| 60–119 | 54 |
-| 120–299 | 25 |
-| ≥ 300 | 3 |
+| Faixa       | Funções |
+| ----------- | ------: |
+| < 30 linhas |     114 |
+| 30–59       |      52 |
+| 60–119      |      54 |
+| 120–299     |      25 |
+| ≥ 300       |       3 |
 
 ⚠️ **Tamanho pequeno NÃO implica função vazia.** Verifiquei: `reorder-check/index.ts` tem lógica de
 negócio completa (busca produtos abaixo do ponto de reposição, calcula quantidade sugerida com
@@ -115,59 +115,59 @@ Tabelas que o backend pressupõe e que nunca existiram:
 
 ### 3.4 As 51 funções que tocam tabela inexistente
 
-| Função | Tabela(s) inexistente(s) |
-|---|---|
-| `adjust-inventory` | ajustes_inventario |
-| `ai-classification` | ai_logs |
-| `alert-expiration` | alerts, location_stock |
-| `alert-pending-orders` | alerts |
-| `alert-stock-low` | alerts |
-| `backup-database` | backups |
-| `batch-import` | categories, import_logs, receiving_documents, suppliers, units_of_measure |
-| `boleto-generate` | boletos |
-| `cancel-order` | sales_orders |
-| `carrier-label` | shipping_labels |
-| `carrier-track` | shipments |
-| `check-expiration` | lots |
-| `cleanup-sessions` | cache_entries, cron_logs, temp_files, temp_tokens, user_sessions |
-| `create-lot` | lots |
-| `create-sales-order` | sales_orders |
-| `create-shipment` | shipments |
-| `cron-daily` | cron_logs, sessions |
-| `cron-weekly` | activity_logs, cron_logs |
-| `edi-process` | edi_documents |
-| `generate-pdf-report` | recebimentos |
-| `generate-pick-list` | location_stock |
-| `integration-amazon` | integration_logs |
-| `integration-ifood` | integration_logs |
-| `integration-mercado-livre` | integration_logs |
-| `integration-rappi` | integration_logs |
-| `integration-sap` | integration_logs |
-| `integration-totvs` | integration_logs |
-| `inventory-reserve` | inventory_reservations |
-| `invoice-generate` | invoices |
-| `label-print` | shipments |
-| `merge-pdfs` | merged_documents |
-| `nfe-process` | nfe |
-| `notifications` | notifications |
-| `packing-start` | packings |
-| `payment-create` | payments |
-| `picking-assign` | pick_lists, users |
-| `picking-confirm` | pick_list_items, pick_lists |
-| `picking-optimize` | picking_routes |
-| `pix-generate` | pix_payments |
-| `receiving-putaway` | location_stock |
-| `reorder-check` | reorder_suggestions |
-| `reports` | lot_tracking, receiving_documents, shipments, stock_balances |
-| `shipping-label` | shipments |
-| `shipping-manifest` | shipments, shipping_manifests |
-| `stock-alert` | stock_alerts |
-| `stock-movement` | notifications, stock_balances, stock_reservations |
-| `transfer-stock` | location_stock, stock_transfers |
-| `upload-file` | files |
-| `upload-image` | images |
-| `wave-planning` | picking_waves |
-| `wave-release` | pick_list_items, pick_lists, picking_waves |
+| Função                      | Tabela(s) inexistente(s)                                                  |
+| --------------------------- | ------------------------------------------------------------------------- |
+| `adjust-inventory`          | ajustes_inventario                                                        |
+| `ai-classification`         | ai_logs                                                                   |
+| `alert-expiration`          | alerts, location_stock                                                    |
+| `alert-pending-orders`      | alerts                                                                    |
+| `alert-stock-low`           | alerts                                                                    |
+| `backup-database`           | backups                                                                   |
+| `batch-import`              | categories, import_logs, receiving_documents, suppliers, units_of_measure |
+| `boleto-generate`           | boletos                                                                   |
+| `cancel-order`              | sales_orders                                                              |
+| `carrier-label`             | shipping_labels                                                           |
+| `carrier-track`             | shipments                                                                 |
+| `check-expiration`          | lots                                                                      |
+| `cleanup-sessions`          | cache_entries, cron_logs, temp_files, temp_tokens, user_sessions          |
+| `create-lot`                | lots                                                                      |
+| `create-sales-order`        | sales_orders                                                              |
+| `create-shipment`           | shipments                                                                 |
+| `cron-daily`                | cron_logs, sessions                                                       |
+| `cron-weekly`               | activity_logs, cron_logs                                                  |
+| `edi-process`               | edi_documents                                                             |
+| `generate-pdf-report`       | recebimentos                                                              |
+| `generate-pick-list`        | location_stock                                                            |
+| `integration-amazon`        | integration_logs                                                          |
+| `integration-ifood`         | integration_logs                                                          |
+| `integration-mercado-livre` | integration_logs                                                          |
+| `integration-rappi`         | integration_logs                                                          |
+| `integration-sap`           | integration_logs                                                          |
+| `integration-totvs`         | integration_logs                                                          |
+| `inventory-reserve`         | inventory_reservations                                                    |
+| `invoice-generate`          | invoices                                                                  |
+| `label-print`               | shipments                                                                 |
+| `merge-pdfs`                | merged_documents                                                          |
+| `nfe-process`               | nfe                                                                       |
+| `notifications`             | notifications                                                             |
+| `packing-start`             | packings                                                                  |
+| `payment-create`            | payments                                                                  |
+| `picking-assign`            | pick_lists, users                                                         |
+| `picking-confirm`           | pick_list_items, pick_lists                                               |
+| `picking-optimize`          | picking_routes                                                            |
+| `pix-generate`              | pix_payments                                                              |
+| `receiving-putaway`         | location_stock                                                            |
+| `reorder-check`             | reorder_suggestions                                                       |
+| `reports`                   | lot_tracking, receiving_documents, shipments, stock_balances              |
+| `shipping-label`            | shipments                                                                 |
+| `shipping-manifest`         | shipments, shipping_manifests                                             |
+| `stock-alert`               | stock_alerts                                                              |
+| `stock-movement`            | notifications, stock_balances, stock_reservations                         |
+| `transfer-stock`            | location_stock, stock_transfers                                           |
+| `upload-file`               | files                                                                     |
+| `upload-image`              | images                                                                    |
+| `wave-planning`             | picking_waves                                                             |
+| `wave-release`              | pick_list_items, pick_lists, picking_waves                                |
 
 Fluxos inteiros de WMS estão nessa lista: **expedição** (`create-shipment`, `shipping-label`,
 `shipping-manifest`, `carrier-track`, `carrier-label`, `label-print`), **ondas e picking**
@@ -209,11 +209,11 @@ e banco evoluíram juntos, e o backend serverless não.
 
 ### 4.2 Páginas órfãs — 3 de 53 na raiz de `src/pages`
 
-| Página | Situação | Prova |
-|---|---|---|
+| Página                             | Situação               | Prova                                                                                                                                                           |
+| ---------------------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/pages/DashboardTempoReal.tsx` | ⬛ morta — substituída | `src/routes/featureRoutes.tsx:30` carrega `@/features/analytics/pages/RealtimeDashboardPage`; a página de mesmo nome em `src/pages` não é importada por ninguém |
-| `src/pages/Error.tsx` | ⬛ sem importador | grep do nome em `src/` retorna só ocorrências de `ApiError`/`Error` nativo, nenhum import |
-| `src/pages/Maintenance.tsx` | ⬛ sem importador | grep do nome em `src/` retorna **zero** ocorrências fora do próprio arquivo |
+| `src/pages/Error.tsx`              | ⬛ sem importador      | grep do nome em `src/` retorna só ocorrências de `ApiError`/`Error` nativo, nenhum import                                                                       |
+| `src/pages/Maintenance.tsx`        | ⬛ sem importador      | grep do nome em `src/` retorna **zero** ocorrências fora do próprio arquivo                                                                                     |
 
 **Critério e seu limite:** busquei por `pages/<Nome>` e depois pelo nome puro em todo `src/`, o que
 cobre import direto, `lazy(() => import(...))` e re-export por `index.ts`. Não cobre string montada
@@ -253,18 +253,18 @@ linha 20:  include: ["src/services/**", "src/features/**/services/**", "src/lib/
 linhas 29-33: thresholds — lines 12, branches 55, functions 25, statements 12
 ```
 
-Comentário no próprio arquivo (`vitest.config.ts:28`): *"Coverage gate — sobe 5pp por rodada até
-70/60/60/70"*. O plano existe; o patamar atual é 12%. E o `include` exclui `src/components`,
+Comentário no próprio arquivo (`vitest.config.ts:28`): _"Coverage gate — sobe 5pp por rodada até
+70/60/60/70"_. O plano existe; o patamar atual é 12%. E o `include` exclui `src/components`,
 `src/pages`, `src/hooks` — **78.000 linhas fora da medição**.
 
 ### 5.3 Workflows
 
-| Workflow | Gatilho | Observação |
-|---|---|---|
-| `.github/workflows/ci.yml` | push + PR em main/master/develop | lint, format, typecheck, test, build + Playwright em matriz `preview`/`build` com `fail-fast: false` |
-| `.github/workflows/cd.yml` | push em main + `workflow_dispatch` | build → staging (`staging.estoki.lovable.app`) |
-| `.github/workflows/qa.yml` | pull_request | checklist de QA |
-| `github/workflows/ci.yml` | ⬛ **nunca executa** | 42 linhas, conteúdo **diferente** do `.github/`. O GitHub só lê `.github/workflows/` |
+| Workflow                   | Gatilho                            | Observação                                                                                           |
+| -------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `.github/workflows/ci.yml` | push + PR em main/master/develop   | lint, format, typecheck, test, build + Playwright em matriz `preview`/`build` com `fail-fast: false` |
+| `.github/workflows/cd.yml` | push em main + `workflow_dispatch` | build → staging (`staging.estoki.lovable.app`)                                                       |
+| `.github/workflows/qa.yml` | pull_request                       | checklist de QA                                                                                      |
+| `github/workflows/ci.yml`  | ⬛ **nunca executa**               | 42 linhas, conteúdo **diferente** do `.github/`. O GitHub só lê `.github/workflows/`                 |
 
 ⚠️ **NAO_VERIFICADO:** a conclusão real desses checks no GitHub. Li o YAML, não o histórico de
 execuções. Também não verifiquei se o deploy das 248 Edge Functions está automatizado em algum
@@ -274,14 +274,14 @@ workflow.
 
 ## 6. Documentação × realidade medida
 
-| Afirmação | Onde | Realidade medida | Veredito |
-|---|---|---|---|
-| "Tabelas ativas em `public`: **76**" | `.qa-report/rls-audit.md` | **86** | ❌ Refutado |
-| "Sem RLS habilitado: 0" | `.qa-report/rls-audit.md` | 86/86 com RLS | ✅ Confirmado |
-| "10/10 · Nenhum gap crítico ou importante" | `.qa-report/execucao-final-v4.md` | 3 achados 🔴 não listados | ❌ Refutado |
-| Roadmap Q1–Q4 **2025** | `docs/ROADMAP.md` | hoje é ago/**2026**; nenhum item reconciliado | ❌ Vencido |
-| "certified Elite WMS interface" | `.lovable/plan.md` | não mensurável / contradito pelos achados | ⚠️ Não sustentado |
-| "Todas as tabelas têm ao menos uma policy" | `.qa-report/rls-audit.md` | **NAO_VERIFICADO** — não contei policies por tabela | ⚪ Não verificado |
+| Afirmação                                  | Onde                              | Realidade medida                                    | Veredito          |
+| ------------------------------------------ | --------------------------------- | --------------------------------------------------- | ----------------- |
+| "Tabelas ativas em `public`: **76**"       | `.qa-report/rls-audit.md`         | **86**                                              | ❌ Refutado       |
+| "Sem RLS habilitado: 0"                    | `.qa-report/rls-audit.md`         | 86/86 com RLS                                       | ✅ Confirmado     |
+| "10/10 · Nenhum gap crítico ou importante" | `.qa-report/execucao-final-v4.md` | 3 achados 🔴 não listados                           | ❌ Refutado       |
+| Roadmap Q1–Q4 **2025**                     | `docs/ROADMAP.md`                 | hoje é ago/**2026**; nenhum item reconciliado       | ❌ Vencido        |
+| "certified Elite WMS interface"            | `.lovable/plan.md`                | não mensurável / contradito pelos achados           | ⚠️ Não sustentado |
+| "Todas as tabelas têm ao menos uma policy" | `.qa-report/rls-audit.md`         | **NAO_VERIFICADO** — não contei policies por tabela | ⚪ Não verificado |
 
 ⚠️ Não classifiquei uma a uma as demais afirmações dos 5 relatórios `.qa-report/` nem dos 12
 documentos em `docs/`. Foi amostragem.
@@ -290,10 +290,11 @@ documentos em `docs/`. Foi amostragem.
 
 ## 7. Correção de achado durante a auditoria
 
-**Afirmação original** (de um agente desta auditoria, interrompido antes de concluir): *"os arquivos
-de 29 linhas instanciam um cliente Supabase que nunca é usado e ecoam a entrada de volta"*.
+**Afirmação original** (de um agente desta auditoria, interrompido antes de concluir): _"os arquivos
+de 29 linhas instanciam um cliente Supabase que nunca é usado e ecoam a entrada de volta"_.
 
 **Refutada.** Abri as duas amostras:
+
 - `supabase/functions/reorder-check/index.ts` — usa o cliente, consulta `products` com join em
   fornecedor, calcula quantidade sugerida (`avgDailySales * leadTime + safetyStock - currentStock`)
   e faz `upsert`. Lógica real.
@@ -309,14 +310,14 @@ afirmação errada tivesse passado adiante, o custo teria sido jogar fora trabal
 
 ## 8. Sinais de trabalho inacabado — contados, não classificados
 
-| Marcador | Ocorrências em `src/` |
-|---|---:|
-| `Math.random(` | **47** |
-| `TODO` | 219 |
-| `mock` | 221 |
-| `placeholder` | 265 |
-| `FIXME` | 0 |
-| `hardcoded` | 0 |
+| Marcador       | Ocorrências em `src/` |
+| -------------- | --------------------: |
+| `Math.random(` |                **47** |
+| `TODO`         |                   219 |
+| `mock`         |                   221 |
+| `placeholder`  |                   265 |
+| `FIXME`        |                     0 |
+| `hardcoded`    |                     0 |
 
 Distribuição das 47 `Math.random`: `hooks/` 6 · `lib/` 3 · `pages/` 2 · `contexts/` 2 ·
 `components/ui/` 2 · `components/feedback/` 2 · `components/charts/` 2 · `services/` 1 ·
@@ -357,6 +358,7 @@ consultas de leitura ao banco de produção. Onde um agente interrompido havia d
 parcial, ela foi verificada por mim antes de entrar (seção 7) — ou descartada.
 
 **Guard-rails respeitados:**
+
 - Produção somente leitura: todas as queries com `read_only:true`. Zero DDL, DML, migration, deploy.
 - Nenhum arquivo pré-existente do repositório foi editado. Criei apenas `ESTADO_ATUAL.md` e este
   anexo. As divergências que encontrei em `.qa-report/` e `docs/` viraram linha de relatório, não
