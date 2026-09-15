@@ -52,7 +52,7 @@ describe("stockService", () => {
         type: "OUT",
         quantity: 10,
         user_id: "u1",
-      } as any),
+      } as any)
     ).rejects.toThrow("Estoque insuficiente");
   });
 
@@ -79,7 +79,7 @@ describe("stockService", () => {
     } as any);
     expect(result.new_qty).toBe(8);
     expect(insertMock.insert).toHaveBeenCalledWith(
-      expect.objectContaining({ previous_qty: 5, new_qty: 8 }),
+      expect.objectContaining({ previous_qty: 5, new_qty: 8 })
     );
   });
 });

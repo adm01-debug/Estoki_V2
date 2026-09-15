@@ -31,7 +31,8 @@ const withPolicy = new Set();
 const dropped = new Set();
 
 const RE_CREATE = /create\s+table\s+(?:if\s+not\s+exists\s+)?public\.([a-z0-9_]+)/gi;
-const RE_ENABLE = /alter\s+table\s+(?:only\s+)?public\.([a-z0-9_]+)\s+enable\s+row\s+level\s+security/gi;
+const RE_ENABLE =
+  /alter\s+table\s+(?:only\s+)?public\.([a-z0-9_]+)\s+enable\s+row\s+level\s+security/gi;
 const RE_POLICY = /create\s+policy\s+[^;]*?\s+on\s+(?:only\s+)?public\.([a-z0-9_]+)/gi;
 const RE_DROP = /drop\s+table\s+(?:if\s+exists\s+)?public\.([a-z0-9_]+)/gi;
 

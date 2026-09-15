@@ -68,11 +68,7 @@ export function captureException(error: unknown, context?: Record<string, unknow
   Sentry.captureException(error, context ? { extra: scrubPII(context) } : undefined);
 }
 
-export function addBreadcrumb(
-  category: string,
-  message: string,
-  data?: Record<string, unknown>
-) {
+export function addBreadcrumb(category: string, message: string, data?: Record<string, unknown>) {
   Sentry.addBreadcrumb({
     category,
     message,

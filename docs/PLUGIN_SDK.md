@@ -25,13 +25,13 @@ export default definePlugin({
 
 ## Superfícies
 
-| Campo | Uso |
-|---|---|
-| `nav` | Itens de menu no shell autenticado |
-| `routes` | Rotas React montadas no shell |
-| `widgets` | Cards de dashboard |
-| `on` | Handlers de eventos de domínio |
-| `onActivate` / `onDeactivate` | Ciclo de vida |
+| Campo                         | Uso                                |
+| ----------------------------- | ---------------------------------- |
+| `nav`                         | Itens de menu no shell autenticado |
+| `routes`                      | Rotas React montadas no shell      |
+| `widgets`                     | Cards de dashboard                 |
+| `on`                          | Handlers de eventos de domínio     |
+| `onActivate` / `onDeactivate` | Ciclo de vida                      |
 
 ## Contrato de segurança
 

@@ -125,93 +125,97 @@ export default function ProdutosPage() {
 
   return (
     <>
-      <SEO title="Produtos" path="/produtos" description="Cadastro e gestão de produtos, SKUs e categorias no ESTOKI WMS." />
+      <SEO
+        title="Produtos"
+        path="/produtos"
+        description="Cadastro e gestão de produtos, SKUs e categorias no ESTOKI WMS."
+      />
       <AppLayout
-      title="Produtos"
-      showBack
-      rightAction={
-        <div className="flex gap-2">
-          <BulkImportDialog />
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-2"
-            onClick={handleExport}
-            title="Exportar CSV"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">Exportar</span>
-          </Button>
-          <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Novo Produto</span>
-          </Button>
-        </div>
-      }
-    >
-      <PageTransition>
-        <div className="space-y-4 p-4">
-          <ProdutosStats
-            total={stats.total}
-            curvaA={stats.curvaA}
-            curvaB={stats.curvaB}
-            curvaC={stats.curvaC}
-          />
-
+        title="Produtos"
+        showBack
+        rightAction={
           <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar por nome ou SKU..."
-                className="pl-10"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              {search && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  onClick={() => setSearch("")}
-                >
-                  <X className="h-4 w-4 text-muted-foreground" />
-                </button>
-              )}
-            </div>
-            <Select value={curvaFilter} onValueChange={setCurvaFilter}>
-              <SelectTrigger className="w-[130px]">
-                <Filter className="mr-2 h-4 w-4" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todas</SelectItem>
-                <SelectItem value="A">Curva A</SelectItem>
-                <SelectItem value="B">Curva B</SelectItem>
-                <SelectItem value="C">Curva C</SelectItem>
-              </SelectContent>
-            </Select>
+            <BulkImportDialog />
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={handleExport}
+              title="Exportar CSV"
+            >
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Exportar</span>
+            </Button>
+            <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Novo Produto</span>
+            </Button>
           </div>
+        }
+      >
+        <PageTransition>
+          <div className="space-y-4 p-4">
+            <ProdutosStats
+              total={stats.total}
+              curvaA={stats.curvaA}
+              curvaB={stats.curvaB}
+              curvaC={stats.curvaC}
+            />
 
-          <ProductGrid
-            produtos={filtered}
-            loading={isSearching}
-            onSelect={setSelectedProduto}
-            getCurvaBadge={getCurvaBadge}
-          />
-        </div>
-      </PageTransition>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por nome ou SKU..."
+                  className="pl-10"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setSearch("")}
+                  >
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+              <Select value={curvaFilter} onValueChange={setCurvaFilter}>
+                <SelectTrigger className="w-[130px]">
+                  <Filter className="mr-2 h-4 w-4" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas</SelectItem>
+                  <SelectItem value="A">Curva A</SelectItem>
+                  <SelectItem value="B">Curva B</SelectItem>
+                  <SelectItem value="C">Curva C</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-      <ProdutoFormDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        saving={createProduto.isPending}
-        onSave={handleSave}
-      />
+            <ProductGrid
+              produtos={filtered}
+              loading={isSearching}
+              onSelect={setSelectedProduto}
+              getCurvaBadge={getCurvaBadge}
+            />
+          </div>
+        </PageTransition>
 
-      <ProdutoDetailDialog
-        produto={selectedProduto}
-        onClose={() => setSelectedProduto(null)}
-        getCurvaBadge={getCurvaBadge}
-      />
-    </AppLayout>
+        <ProdutoFormDialog
+          open={showAddDialog}
+          onOpenChange={setShowAddDialog}
+          saving={createProduto.isPending}
+          onSave={handleSave}
+        />
+
+        <ProdutoDetailDialog
+          produto={selectedProduto}
+          onClose={() => setSelectedProduto(null)}
+          getCurvaBadge={getCurvaBadge}
+        />
+      </AppLayout>
     </>
   );
 }

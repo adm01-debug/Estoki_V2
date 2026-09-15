@@ -3,7 +3,10 @@ import { motion, type HTMLMotionProps } from "framer-motion";
 import { usePageTransition } from "@/hooks/usePageTransition";
 import type { TransitionName, TransitionPreset } from "@/lib/transitions/types";
 
-interface PageTransitionProps extends Omit<HTMLMotionProps<"div">, "initial" | "animate" | "exit" | "transition"> {
+interface PageTransitionProps extends Omit<
+  HTMLMotionProps<"div">,
+  "initial" | "animate" | "exit" | "transition"
+> {
   children: ReactNode;
   name?: TransitionName;
   config?: Partial<TransitionPreset>;

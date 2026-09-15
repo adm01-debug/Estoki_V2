@@ -45,19 +45,19 @@ export default function CircuitBreakersPage() {
   const totalOpen = rows.filter((r) => r.state === "OPEN").length;
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-3xl font-bold">
             <Activity className="h-8 w-8 text-primary" />
             Circuit Breakers
           </h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="mt-1 text-muted-foreground">
             Monitoramento em tempo real das integrações externas com fast-fail.
           </p>
         </div>
         <Button variant="outline" onClick={() => setTick((t) => t + 1)}>
-          <RefreshCw className="h-4 w-4 mr-2" /> Atualizar
+          <RefreshCw className="mr-2 h-4 w-4" /> Atualizar
         </Button>
       </div>
 
@@ -78,21 +78,16 @@ export default function CircuitBreakersPage() {
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
             {rows.map((r) => {
               const successRate =
-                r.totalCalls > 0
-                  ? ((r.totalSuccesses / r.totalCalls) * 100).toFixed(1)
-                  : "—";
+                r.totalCalls > 0 ? ((r.totalSuccesses / r.totalCalls) * 100).toFixed(1) : "—";
               return (
-                <div
-                  key={r.name}
-                  className="rounded-lg border border-border bg-card p-4 space-y-2"
-                >
+                <div key={r.name} className="space-y-2 rounded-lg border border-border bg-card p-4">
                   <div className="flex items-center justify-between">
                     <span className="font-semibold">{r.name}</span>
                     <Badge variant="outline" className={stateColor[r.state]}>
                       {r.state}
                     </Badge>
                   </div>
-                  <dl className="text-xs text-muted-foreground grid grid-cols-2 gap-y-1">
+                  <dl className="grid grid-cols-2 gap-y-1 text-xs text-muted-foreground">
                     <dt>Chamadas</dt>
                     <dd className="text-right text-foreground">{r.totalCalls}</dd>
                     <dt>Sucessos</dt>
@@ -105,9 +100,7 @@ export default function CircuitBreakersPage() {
                     <dd className="text-right text-foreground">{successRate}%</dd>
                     <dt>Última falha</dt>
                     <dd className="text-right text-foreground">
-                      {r.lastFailure
-                        ? new Date(r.lastFailure).toLocaleTimeString("pt-BR")
-                        : "—"}
+                      {r.lastFailure ? new Date(r.lastFailure).toLocaleTimeString("pt-BR") : "—"}
                     </dd>
                   </dl>
                   {r.reset && r.state !== "CLOSED" && (

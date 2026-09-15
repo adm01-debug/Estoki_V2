@@ -301,7 +301,11 @@ const ArmazenamentoPage = () => {
 
   return (
     <AppLayout title="Inbound Putaway Excellence" showBack>
-      <SEO title="Armazenamento" path="/armazenamento" description="Putaway inteligente com sugestão de posição e cross-docking." />
+      <SEO
+        title="Armazenamento"
+        path="/armazenamento"
+        description="Putaway inteligente com sugestão de posição e cross-docking."
+      />
       <div className="mx-auto max-w-7xl space-y-6 p-4 pb-32">
         {/* Header Indicators */}
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">

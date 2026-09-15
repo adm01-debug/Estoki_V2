@@ -121,7 +121,11 @@ export default function HubPage() {
 
   return (
     <AppLayout title="Hub de Integração" showBack>
-      <SEO title="Hub de Integração" path="/hub" description="Central de integrações e sincronização multi-canal do ESTOKI WMS." />
+      <SEO
+        title="Hub de Integração"
+        path="/hub"
+        description="Central de integrações e sincronização multi-canal do ESTOKI WMS."
+      />
       <div className="space-y-6 p-4">
         <div className="flex items-center justify-between">
           <div>

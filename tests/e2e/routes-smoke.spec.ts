@@ -60,7 +60,7 @@ test.describe("Smoke: todas as rotas montam no preview/build", () => {
           expires_at: Math.floor(Date.now() / 1000) + 3600,
           token_type: "bearer",
           user: { id: "smoke-user", email: "smoke@test.local" },
-        }),
+        })
       );
     }, SUPABASE_AUTH_KEY);
 
@@ -81,7 +81,7 @@ test.describe("Smoke: todas as rotas montam no preview/build", () => {
 
       // Garante que NÃO caiu no Error Boundary global
       const errorBoundary = page.locator(
-        "text=/Algo deu errado|Something went wrong|Erro inesperado/i",
+        "text=/Algo deu errado|Something went wrong|Erro inesperado/i"
       );
       await expect(errorBoundary).toHaveCount(0);
     });

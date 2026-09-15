@@ -95,7 +95,7 @@ async function testConnection() {
   console.log("RESUMO");
   console.log("=".repeat(50));
 
-  const hasErrors = [profilesError, rolesError, flagsError].some(e => e);
+  const hasErrors = [profilesError, rolesError, flagsError].some((e) => e);
   if (hasErrors) {
     console.log("⚠️  Algumas tabelas não foram encontradas.");
     console.log("   Isso pode significar que as migrações não foram executadas.");

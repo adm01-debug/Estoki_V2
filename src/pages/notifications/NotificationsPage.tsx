@@ -33,11 +33,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
-import {
-  useNotificacoes,
-  type Notificacao,
-  type TipoNotificacao,
-} from "@/hooks/useNotificacoes";
+import { useNotificacoes, type Notificacao, type TipoNotificacao } from "@/hooks/useNotificacoes";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -200,9 +196,7 @@ export default function NotificationsPage() {
           {/* Cards de estatísticas por severidade */}
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             {(Object.keys(SEVERIDADE_CONFIG) as Severidade[]).map((sev) => {
-              const count = notificacoes.filter(
-                (n) => !n.lida && getSeveridade(n) === sev,
-              ).length;
+              const count = notificacoes.filter((n) => !n.lida && getSeveridade(n) === sev).length;
               const cfg = SEVERIDADE_CONFIG[sev];
               const Icon = cfg.icon;
               return (
@@ -212,7 +206,7 @@ export default function NotificationsPage() {
                       <div
                         className={cn(
                           "flex h-10 w-10 items-center justify-center rounded-xl border",
-                          cfg.className,
+                          cfg.className
                         )}
                       >
                         <Icon className="h-5 w-5" />
@@ -249,7 +243,10 @@ export default function NotificationsPage() {
               >
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="todas">
-                    Todas <Badge variant="secondary" className="ml-2">{contagem.todas}</Badge>
+                    Todas{" "}
+                    <Badge variant="secondary" className="ml-2">
+                      {contagem.todas}
+                    </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="nao_lidas">
                     Não lidas{" "}
@@ -258,7 +255,10 @@ export default function NotificationsPage() {
                     </Badge>
                   </TabsTrigger>
                   <TabsTrigger value="lidas">
-                    Lidas <Badge variant="secondary" className="ml-2">{contagem.lidas}</Badge>
+                    Lidas{" "}
+                    <Badge variant="secondary" className="ml-2">
+                      {contagem.lidas}
+                    </Badge>
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -362,7 +362,7 @@ function NotificationItem({
         className={cn(
           "glass-card cursor-pointer transition-all hover:shadow-lg",
           !item.lida && "border-l-4 border-l-primary",
-          item.lida && "opacity-70",
+          item.lida && "opacity-70"
         )}
         onClick={onToggle}
       >
@@ -370,7 +370,7 @@ function NotificationItem({
           <div
             className={cn(
               "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border",
-              cfg.className,
+              cfg.className
             )}
           >
             <Icon className="h-5 w-5" />
@@ -383,14 +383,12 @@ function NotificationItem({
                   <h3
                     className={cn(
                       "truncate text-sm",
-                      !item.lida ? "font-bold text-foreground" : "font-medium text-muted-foreground",
+                      !item.lida ? "font-bold text-foreground" : "font-medium text-muted-foreground"
                     )}
                   >
                     {item.titulo}
                   </h3>
-                  {!item.lida && (
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                  )}
+                  {!item.lida && <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />}
                   <Badge variant="outline" className={cn("text-[9px]", cfg.className)}>
                     {cfg.label}
                   </Badge>
@@ -399,7 +397,7 @@ function NotificationItem({
                   className={cn(
                     "mt-1 text-xs",
                     expandida ? "" : "line-clamp-2",
-                    "text-muted-foreground",
+                    "text-muted-foreground"
                   )}
                 >
                   {item.mensagem}

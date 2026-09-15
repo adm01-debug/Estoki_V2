@@ -248,19 +248,17 @@ export default function SimulationPage() {
                       <div className="space-y-2">
                         <Label>Latência por Endpoint</Label>
                         <ScrollArea className="h-[200px] rounded-lg border bg-muted/30 p-3">
-                          {Object.entries(report.byScenario).map(
-                            ([name, s]: [string, any]) => (
-                              <div
-                                key={name}
-                                className="mb-2 flex items-center justify-between border-b border-border/40 pb-1 text-[11px] last:border-0"
-                              >
-                                <span className="font-mono">{name}</span>
-                                <span className="text-muted-foreground">
-                                  {s.ok}/{s.total} · avg {s.avgMs}ms · p95 {s.p95Ms}ms
-                                </span>
-                              </div>
-                            )
-                          )}
+                          {Object.entries(report.byScenario).map(([name, s]: [string, any]) => (
+                            <div
+                              key={name}
+                              className="mb-2 flex items-center justify-between border-b border-border/40 pb-1 text-[11px] last:border-0"
+                            >
+                              <span className="font-mono">{name}</span>
+                              <span className="text-muted-foreground">
+                                {s.ok}/{s.total} · avg {s.avgMs}ms · p95 {s.p95Ms}ms
+                              </span>
+                            </div>
+                          ))}
                         </ScrollArea>
                       </div>
                     )}

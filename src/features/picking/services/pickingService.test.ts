@@ -53,7 +53,7 @@ describe("pickingService", () => {
     (supabase.from as any).mockReturnValue(mock);
     await pickingService.updateTaskStatus("t1", "em_andamento", "user-1");
     expect(mock.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: "em_andamento", operador_id: "user-1" }),
+      expect.objectContaining({ status: "em_andamento", operador_id: "user-1" })
     );
   });
 });

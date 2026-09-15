@@ -26,59 +26,63 @@ export default function CurvaABCPage() {
 
   return (
     <>
-      <SEO title="Curva ABC" path="/curva-abc" description="Análise ABC de produtos por giro, valor e criticidade no ESTOKI WMS." />
+      <SEO
+        title="Curva ABC"
+        path="/curva-abc"
+        description="Análise ABC de produtos por giro, valor e criticidade no ESTOKI WMS."
+      />
       <AppLayout title="Curva ABC" showBack>
-      <PageTransition>
-        <div className="space-y-6 p-4">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">Análise Curva ABC</h2>
-              <p className="text-sm text-muted-foreground">
-                Classificação de produtos por valor e giro
-              </p>
+        <PageTransition>
+          <div className="space-y-6 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold">Análise Curva ABC</h2>
+                <p className="text-sm text-muted-foreground">
+                  Classificação de produtos por valor e giro
+                </p>
+              </div>
+              <Button onClick={handleRecalcular} disabled={recalculando} className="gap-2">
+                {recalculando ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                Recalcular
+              </Button>
             </div>
-            <Button onClick={handleRecalcular} disabled={recalculando} className="gap-2">
-              {recalculando ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
-              )}
-              Recalcular
-            </Button>
+
+            {loading ? (
+              <div className="flex h-64 items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              <>
+                <ABCStatsCards estatisticas={estatisticas} />
+
+                <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="analise">Análise Detalhada</TabsTrigger>
+                    <TabsTrigger value="produtos">Lista de Produtos</TabsTrigger>
+                    <TabsTrigger value="acoes">Plano de Ação</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="analise" className="space-y-4 pt-2">
+                    <ABCCharts estatisticas={estatisticas} produtos={produtos} />
+                  </TabsContent>
+
+                  <TabsContent value="produtos" className="space-y-4 pt-2">
+                    <ABCProductList produtos={produtos} />
+                  </TabsContent>
+
+                  <TabsContent value="acoes" className="space-y-4 pt-2">
+                    <ABCActionsList produtos={produtos} />
+                  </TabsContent>
+                </Tabs>
+              </>
+            )}
           </div>
-
-          {loading ? (
-            <div className="flex h-64 items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : (
-            <>
-              <ABCStatsCards estatisticas={estatisticas} />
-
-              <Tabs value={tab} onValueChange={setTab} className="space-y-4">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="analise">Análise Detalhada</TabsTrigger>
-                  <TabsTrigger value="produtos">Lista de Produtos</TabsTrigger>
-                  <TabsTrigger value="acoes">Plano de Ação</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="analise" className="space-y-4 pt-2">
-                  <ABCCharts estatisticas={estatisticas} produtos={produtos} />
-                </TabsContent>
-
-                <TabsContent value="produtos" className="space-y-4 pt-2">
-                  <ABCProductList produtos={produtos} />
-                </TabsContent>
-
-                <TabsContent value="acoes" className="space-y-4 pt-2">
-                  <ABCActionsList produtos={produtos} />
-                </TabsContent>
-              </Tabs>
-            </>
-          )}
-        </div>
-      </PageTransition>
-    </AppLayout>
+        </PageTransition>
+      </AppLayout>
     </>
   );
 }

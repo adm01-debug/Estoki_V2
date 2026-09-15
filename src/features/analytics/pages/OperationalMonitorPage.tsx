@@ -356,17 +356,21 @@ export default function DashboardOperacional() {
 function TaskBar({ label, value, color }: { label: string; value: number; color: string }) {
   return (
     <>
-      <SEO title="Dashboard Operacional" path="/operacional" description="Visão executiva das operações do armazém com KPIs em tempo real." />
+      <SEO
+        title="Dashboard Operacional"
+        path="/operacional"
+        description="Visão executiva das operações do armazém com KPIs em tempo real."
+      />
       <div className="flex items-center gap-3">
-      <span className="w-24 shrink-0 text-xs text-muted-foreground">{label}</span>
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-        <div
-          className={cn("h-full rounded-full transition-all duration-700", color)}
-          style={{ width: `${Math.min(value * 5, 100)}%` }}
-        />
+        <span className="w-24 shrink-0 text-xs text-muted-foreground">{label}</span>
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+          <div
+            className={cn("h-full rounded-full transition-all duration-700", color)}
+            style={{ width: `${Math.min(value * 5, 100)}%` }}
+          />
+        </div>
+        <span className="w-8 text-right text-sm font-semibold text-foreground">{value}</span>
       </div>
-      <span className="w-8 text-right text-sm font-semibold text-foreground">{value}</span>
-    </div>
     </>
   );
 }

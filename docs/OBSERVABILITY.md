@@ -7,12 +7,12 @@ Ativado automaticamente quando `import.meta.env.PROD === true` **e**
 
 Variáveis:
 
-| Var                      | Onde       | Uso                                       |
-| ------------------------ | ---------- | ----------------------------------------- |
-| `VITE_SENTRY_DSN`        | Runtime    | Endpoint público do projeto Sentry        |
-| `SENTRY_AUTH_TOKEN`      | CI (build) | Upload de sourcemaps via vite-plugin      |
-| `SENTRY_ORG`             | CI (build) | Slug da org no Sentry                     |
-| `SENTRY_PROJECT`         | CI (build) | Slug do projeto no Sentry                 |
+| Var                 | Onde       | Uso                                  |
+| ------------------- | ---------- | ------------------------------------ |
+| `VITE_SENTRY_DSN`   | Runtime    | Endpoint público do projeto Sentry   |
+| `SENTRY_AUTH_TOKEN` | CI (build) | Upload de sourcemaps via vite-plugin |
+| `SENTRY_ORG`        | CI (build) | Slug da org no Sentry                |
+| `SENTRY_PROJECT`    | CI (build) | Slug do projeto no Sentry            |
 
 O plugin do Sentry só carrega quando as três variáveis do build estão
 presentes — do contrário, o build produz sourcemaps `hidden` sem upload.

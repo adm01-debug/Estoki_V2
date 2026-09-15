@@ -22,15 +22,15 @@ Deno.serve(withLogging("create-sales-order", handler));
 
 Campos emitidos automaticamente:
 
-| Campo | Descrição |
-|---|---|
-| `ts` | ISO-8601 UTC |
-| `level` | `debug` \| `info` \| `warn` \| `error` |
-| `msg` | `request.start`, `request.end`, `request.failed` ou evento de domínio |
-| `fn` | nome da Edge Function |
-| `requestId` | correlação; reaproveita `x-request-id`/`x-correlation-id` de entrada |
-| `duration_ms` | latência total (em `request.end` / `request.failed`) |
-| `status` | HTTP status da resposta |
+| Campo         | Descrição                                                             |
+| ------------- | --------------------------------------------------------------------- |
+| `ts`          | ISO-8601 UTC                                                          |
+| `level`       | `debug` \| `info` \| `warn` \| `error`                                |
+| `msg`         | `request.start`, `request.end`, `request.failed` ou evento de domínio |
+| `fn`          | nome da Edge Function                                                 |
+| `requestId`   | correlação; reaproveita `x-request-id`/`x-correlation-id` de entrada  |
+| `duration_ms` | latência total (em `request.end` / `request.failed`)                  |
+| `status`      | HTTP status da resposta                                               |
 
 **Segurança:** `redact()` mascara chaves que casam com
 `pass|token|secret|apikey|authorization|cookie|cpf|cnpj` antes de serializar. A resposta
@@ -66,22 +66,22 @@ operacional do sistema.
 
 ### Métricas expostas
 
-| Métrica | Tipo | Labels | Significado |
-|---|---|---|---|
-| `estoki_queries_total` | gauge | — | Queries na telemetria (24h) |
-| `estoki_query_errors_total` | gauge | — | Queries com erro (24h) |
-| `estoki_query_duration_ms` | gauge | `quantile=0.5\|0.95\|0.99` | Latência por quantil |
-| `estoki_operation_requests_total` | gauge | `operation` | Chamadas por operação (top 20) |
-| `estoki_operation_errors_total` | gauge | `operation` | Erros por operação (top 20) |
-| `estoki_db_connections_active` / `_total` | gauge | — | Conexões no Postgres |
-| `estoki_db_cache_hit_ratio` | gauge | — | Buffer cache hit (0–1) |
-| `estoki_db_locks_waiting` | gauge | — | Locks em espera |
-| `estoki_db_slow_queries` | gauge | — | Queries lentas detectadas |
-| `estoki_db_size_bytes` | gauge | — | Tamanho do banco |
-| `estoki_alerts_total` | gauge | `severity` | Alertas por severidade (24h) |
-| `estoki_audit_events_total` | gauge | — | Eventos de auditoria (24h) |
-| `estoki_metrics_scrape_duration_ms` | gauge | — | Custo do próprio scrape |
-| `estoki_metrics_up` | gauge | — | `1` sucesso, `0` falha |
+| Métrica                                   | Tipo  | Labels                     | Significado                    |
+| ----------------------------------------- | ----- | -------------------------- | ------------------------------ |
+| `estoki_queries_total`                    | gauge | —                          | Queries na telemetria (24h)    |
+| `estoki_query_errors_total`               | gauge | —                          | Queries com erro (24h)         |
+| `estoki_query_duration_ms`                | gauge | `quantile=0.5\|0.95\|0.99` | Latência por quantil           |
+| `estoki_operation_requests_total`         | gauge | `operation`                | Chamadas por operação (top 20) |
+| `estoki_operation_errors_total`           | gauge | `operation`                | Erros por operação (top 20)    |
+| `estoki_db_connections_active` / `_total` | gauge | —                          | Conexões no Postgres           |
+| `estoki_db_cache_hit_ratio`               | gauge | —                          | Buffer cache hit (0–1)         |
+| `estoki_db_locks_waiting`                 | gauge | —                          | Locks em espera                |
+| `estoki_db_slow_queries`                  | gauge | —                          | Queries lentas detectadas      |
+| `estoki_db_size_bytes`                    | gauge | —                          | Tamanho do banco               |
+| `estoki_alerts_total`                     | gauge | `severity`                 | Alertas por severidade (24h)   |
+| `estoki_audit_events_total`               | gauge | —                          | Eventos de auditoria (24h)     |
+| `estoki_metrics_scrape_duration_ms`       | gauge | —                          | Custo do próprio scrape        |
+| `estoki_metrics_up`                       | gauge | —                          | `1` sucesso, `0` falha         |
 
 > **Cardinalidade:** a série por operação é limitada às 20 mais frequentes — evita explosão
 > de séries no TSDB, que é a causa nº 1 de OOM em Prometheus.
@@ -155,11 +155,11 @@ deno test --allow-all supabase/functions/_shared/prometheus_test.ts
    **cumulativos desde o boot**, então o alerta usa o **delta** entre medições, não o absoluto.
 3. Grava o novo snapshot e insere alertas em `alertas_historico` (`tipo = 'sistema'`).
 
-| Código | Condição | Severidade |
-|---|---|---|
-| `wal_size` | WAL > `p_wal_limit_mb` (default **500 MB**) | `critico` |
-| `rollback_ratio` | rollbacks/total > `p_rollback_ratio` (default **5%**) com amostra ≥ 100 transações | `critico` |
-| `deadlocks` | qualquer deadlock novo desde a medição anterior | `aviso` |
+| Código           | Condição                                                                           | Severidade |
+| ---------------- | ---------------------------------------------------------------------------------- | ---------- |
+| `wal_size`       | WAL > `p_wal_limit_mb` (default **500 MB**)                                        | `critico`  |
+| `rollback_ratio` | rollbacks/total > `p_rollback_ratio` (default **5%**) com amostra ≥ 100 transações | `critico`  |
+| `deadlocks`      | qualquer deadlock novo desde a medição anterior                                    | `aviso`    |
 
 **Anti-flapping:** nenhum alerta do mesmo `codigo` é reinserido enquanto houver um `ativo`
 criado nas últimas **6 horas**. O piso de 100 transações evita falso positivo em janelas ociosas

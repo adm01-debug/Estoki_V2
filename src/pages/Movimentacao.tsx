@@ -87,11 +87,12 @@ export default function MovimentacaoPage() {
     let list = movimentacoes;
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      list = list.filter((m) =>
-        (m.descricao || "").toLowerCase().includes(term) ||
-        (m.produto_nome || "").toLowerCase().includes(term) ||
-        (m.lote_numero || "").toLowerCase().includes(term) ||
-        (m.localizacao || "").toLowerCase().includes(term)
+      list = list.filter(
+        (m) =>
+          (m.descricao || "").toLowerCase().includes(term) ||
+          (m.produto_nome || "").toLowerCase().includes(term) ||
+          (m.lote_numero || "").toLowerCase().includes(term) ||
+          (m.localizacao || "").toLowerCase().includes(term)
       );
     }
     if (periodoFiltro !== "todos") {
@@ -131,15 +132,17 @@ export default function MovimentacaoPage() {
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Entradas</div>
+            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Entradas</div>
             <div className="text-2xl font-bold text-green-600">{stats.entradas}</div>
           </div>
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Saídas</div>
+            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Saídas</div>
             <div className="text-2xl font-bold text-red-600">{stats.saidas}</div>
           </div>
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="text-xs font-medium uppercase text-muted-foreground mb-1">Remanejamentos</div>
+            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">
+              Remanejamentos
+            </div>
             <div className="text-2xl font-bold text-blue-600">{stats.remanejamentos}</div>
           </div>
         </div>
@@ -182,10 +185,10 @@ export default function MovimentacaoPage() {
             {isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="rounded-xl border bg-card p-4 animate-pulse">
-                    <div className="h-3 w-24 bg-muted rounded mb-2" />
-                    <div className="h-4 w-32 bg-muted rounded mb-1" />
-                    <div className="h-3 w-48 bg-muted rounded" />
+                  <div key={i} className="animate-pulse rounded-xl border bg-card p-4">
+                    <div className="mb-2 h-3 w-24 rounded bg-muted" />
+                    <div className="mb-1 h-4 w-32 rounded bg-muted" />
+                    <div className="h-3 w-48 rounded bg-muted" />
                   </div>
                 ))}
               </div>
@@ -193,7 +196,9 @@ export default function MovimentacaoPage() {
               <div className="rounded-xl bg-muted/50 p-8 text-center">
                 <Package className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
                 <p className="text-muted-foreground">
-                  {searchTerm ? "Nenhuma movimentação encontrada" : "Nenhuma movimentação registrada"}
+                  {searchTerm
+                    ? "Nenhuma movimentação encontrada"
+                    : "Nenhuma movimentação registrada"}
                 </p>
               </div>
             ) : (
@@ -201,16 +206,16 @@ export default function MovimentacaoPage() {
                 {filteredMovimentacoes.map((mov) => (
                   <div
                     key={mov.id}
-                    className="rounded-xl border border-border bg-card p-4 hover:border-primary/30 transition-colors"
+                    className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30"
                   >
-                    <div className="text-xs text-muted-foreground mb-1">
+                    <div className="mb-1 text-xs text-muted-foreground">
                       {format(new Date(mov.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="text-xl">{tipoIcon(mov.tipo as string)}</span>
                       <div className="min-w-0 flex-1">
                         <div className="text-sm font-semibold">{tipoLabel(mov.tipo as string)}</div>
-                        <div className="text-sm text-muted-foreground truncate">
+                        <div className="truncate text-sm text-muted-foreground">
                           {mov.produto_nome}
                           {mov.quantidade > 0 && ` · ${mov.quantidade} un`}
                         </div>
@@ -218,7 +223,9 @@ export default function MovimentacaoPage() {
                           <div className="text-xs text-muted-foreground">📍 {mov.localizacao}</div>
                         )}
                         {mov.operador_nome && (
-                          <div className="text-xs text-muted-foreground">Por: {mov.operador_nome}</div>
+                          <div className="text-xs text-muted-foreground">
+                            Por: {mov.operador_nome}
+                          </div>
                         )}
                       </div>
                     </div>

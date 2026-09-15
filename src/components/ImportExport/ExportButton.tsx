@@ -98,7 +98,7 @@ export function ExportButton({
     ? preparing
       ? `Preparando ${preparing.toUpperCase()}...`
       : "Exportando..."
-    : label ?? "Exportar";
+    : (label ?? "Exportar");
 
   return (
     <DropdownMenu>
@@ -110,11 +110,7 @@ export function ExportButton({
           disabled={disabled || busy}
           aria-busy={busy}
         >
-          {busy ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Download className="h-4 w-4" />
-          )}
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
           <span className="ml-2">{buttonLabel}</span>
         </Button>
       </DropdownMenuTrigger>

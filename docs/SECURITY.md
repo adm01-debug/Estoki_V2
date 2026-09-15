@@ -82,12 +82,12 @@ falsos-positivos formalmente aceitos e revalidados a cada rodada de QA.
 
 ### Corrigido (revogado `EXECUTE` de `PUBLIC`/`anon`)
 
-| Função | Nova superfície | Motivo |
-|---|---|---|
-| `attach_user_to_default_tenant()` | só `service_role` | Função de gatilho; chamada direta nunca é legítima |
-| `current_tenant_id()`, `is_tenant_member()`, `is_tenant_admin()` | `authenticated`, `service_role` | Avaliadas dentro de expressões de RLS **como o papel do chamador** → `authenticated` precisa manter `EXECUTE`; `anon` não toca nenhuma tabela multi-tenant |
-| `get_dashboard_metrics()`, `refresh_dashboard_materialized_views()` | `authenticated`, `service_role` | Guard interno `has_role(auth.uid(),'admin')` |
-| `check_db_alert_thresholds()` | `authenticated`, `service_role` | Acionada pela Edge Function `db-alert-monitor` |
+| Função                                                              | Nova superfície                 | Motivo                                                                                                                                                     |
+| ------------------------------------------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `attach_user_to_default_tenant()`                                   | só `service_role`               | Função de gatilho; chamada direta nunca é legítima                                                                                                         |
+| `current_tenant_id()`, `is_tenant_member()`, `is_tenant_admin()`    | `authenticated`, `service_role` | Avaliadas dentro de expressões de RLS **como o papel do chamador** → `authenticated` precisa manter `EXECUTE`; `anon` não toca nenhuma tabela multi-tenant |
+| `get_dashboard_metrics()`, `refresh_dashboard_materialized_views()` | `authenticated`, `service_role` | Guard interno `has_role(auth.uid(),'admin')`                                                                                                               |
+| `check_db_alert_thresholds()`                                       | `authenticated`, `service_role` | Acionada pela Edge Function `db-alert-monitor`                                                                                                             |
 
 Verificação pós-migração: as 4 RPCs acima retornam **401** via PostgREST com a chave anônima.
 
@@ -134,19 +134,19 @@ Scripts: `npm run audit:deps` e `npm run audit:deps:prod`. Job `deps` no
 
 ### Correções aplicadas
 
-| Pacote | Antes | Depois | Motivo |
-|---|---|---|---|
-| `axios` | 1.16.1 (+1.6.0 transitivo) | 1.18.1 (override global) | 30+ advisories: SSRF, prototype pollution, vazamento de `Proxy-Authorization` |
-| `dompurify` | 3.4.3 | 3.4.12 | bypasses de sanitização `IN_PLACE`, poluição de `ALLOWED_ATTR` |
-| `react-router-dom` | 6.30.1 | 6.30.4 | open redirect via `//` |
-| `serialize-javascript` | 7.0.3 | 7.0.7 | DoS por exaustão de CPU |
-| `vitest` | 1.6.1 | 3.2.6+ | crítico GHSA-5xrq-8626-4rwp (Vitest UI) |
-| `form-data` / `tmp` / `qs` / `ws` / `js-yaml` / `uuid` / `fast-uri` / `linkify-it` / `markdown-it` / `postcss` / `@babel/core` / `brace-expansion@1\|2\|5` | várias | patched | via `overrides` do npm |
+| Pacote                                                                                                                                                     | Antes                      | Depois                   | Motivo                                                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------ | ----------------------------------------------------------------------------- |
+| `axios`                                                                                                                                                    | 1.16.1 (+1.6.0 transitivo) | 1.18.1 (override global) | 30+ advisories: SSRF, prototype pollution, vazamento de `Proxy-Authorization` |
+| `dompurify`                                                                                                                                                | 3.4.3                      | 3.4.12                   | bypasses de sanitização `IN_PLACE`, poluição de `ALLOWED_ATTR`                |
+| `react-router-dom`                                                                                                                                         | 6.30.1                     | 6.30.4                   | open redirect via `//`                                                        |
+| `serialize-javascript`                                                                                                                                     | 7.0.3                      | 7.0.7                    | DoS por exaustão de CPU                                                       |
+| `vitest`                                                                                                                                                   | 1.6.1                      | 3.2.6+                   | crítico GHSA-5xrq-8626-4rwp (Vitest UI)                                       |
+| `form-data` / `tmp` / `qs` / `ws` / `js-yaml` / `uuid` / `fast-uri` / `linkify-it` / `markdown-it` / `postcss` / `@babel/core` / `brace-expansion@1\|2\|5` | várias                     | patched                  | via `overrides` do npm                                                        |
 
 ### Advisories aceitos formalmente (`.dep-audit-allowlist.json`)
 
 - **`vite` 5.4.21** (3 advisories) e **`esbuild` 0.18/0.21** — todos exploram o
-  *dev server*, que nunca roda em produção (o artefato publicado é estático).
+  _dev server_, que nunca roda em produção (o artefato publicado é estático).
   Não há correção na linha 5.x; a migração para Vite 6/7 está no backlog.
 - **`react-router` / `react-router-dom` 6.30.4** — as correções só existem em
   v7.18. As rotas do app não passam URLs externas para `<Link>`/`useNavigate`

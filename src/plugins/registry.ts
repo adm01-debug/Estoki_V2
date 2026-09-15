@@ -70,7 +70,10 @@ class PluginRegistry {
         // @ts-expect-error union narrowing runtime
         await handler(event, ctx);
       } catch (err) {
-        ctx.log("error", `[plugin:${plugin.id}] handler falhou`, { event: event.type, err: String(err) });
+        ctx.log("error", `[plugin:${plugin.id}] handler falhou`, {
+          event: event.type,
+          err: String(err),
+        });
       }
     }
   }

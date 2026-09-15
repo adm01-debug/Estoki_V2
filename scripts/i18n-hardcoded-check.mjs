@@ -25,7 +25,8 @@ function walk(dir, out = []) {
     const p = path.join(dir, name);
     const s = statSync(p);
     if (s.isDirectory()) {
-      if (/node_modules|\.git|dist|build|coverage|integrations\/supabase|i18n\/locales/.test(p)) continue;
+      if (/node_modules|\.git|dist|build|coverage|integrations\/supabase|i18n\/locales/.test(p))
+        continue;
       walk(p, out);
     } else if (/\.(tsx|jsx)$/.test(name)) out.push(p);
   }
@@ -59,8 +60,13 @@ for (const file of walk(ROOT)) {
 }
 
 if (UPDATE) {
-  writeFileSync(BASELINE, JSON.stringify({ total, generatedAt: new Date().toISOString() }, null, 2));
-  console.log(`[i18n-hardcoded] baseline atualizado: ${total} ocorrências em ${Object.keys(perFile).length} arquivos.`);
+  writeFileSync(
+    BASELINE,
+    JSON.stringify({ total, generatedAt: new Date().toISOString() }, null, 2)
+  );
+  console.log(
+    `[i18n-hardcoded] baseline atualizado: ${total} ocorrências em ${Object.keys(perFile).length} arquivos.`
+  );
   process.exit(0);
 }
 
@@ -71,9 +77,13 @@ else console.warn(`[i18n-hardcoded] sem baseline — criando um agora (${total})
 console.log(`[i18n-hardcoded] atual=${total} baseline=${baseline.total}`);
 if (total > baseline.total) {
   console.error(`❌ Regressão: +${total - baseline.total} strings hard-coded.`);
-  const top = Object.entries(perFile).sort(([,a],[,b])=>b-a).slice(0, 15);
+  const top = Object.entries(perFile)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 15);
   for (const [f, c] of top) console.error(`  ${c}\t${f}`);
-  console.error(`Migre para t('...') ou atualize baseline: node scripts/i18n-hardcoded-check.mjs --update`);
+  console.error(
+    `Migre para t('...') ou atualize baseline: node scripts/i18n-hardcoded-check.mjs --update`
+  );
   process.exit(1);
 }
 console.log(`✅ Sem regressão de i18n hard-coded.`);

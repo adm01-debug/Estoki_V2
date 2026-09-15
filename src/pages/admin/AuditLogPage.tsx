@@ -173,10 +173,7 @@ export default function AuditLogPage() {
                 <Button variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
-                <ExportButton
-                  onExport={(format) => exportData(format)}
-                  isExporting={isExporting}
-                />
+                <ExportButton onExport={(format) => exportData(format)} isExporting={isExporting} />
               </div>
             </CardContent>
           </Card>

@@ -158,259 +158,267 @@ export default function KPIsOperacionais() {
 
   return (
     <>
-      <SEO title="KPIs Operacionais" path="/kpis" description="Indicadores operacionais em tempo real: ocupação, precisão e produtividade." />
+      <SEO
+        title="KPIs Operacionais"
+        path="/kpis"
+        description="Indicadores operacionais em tempo real: ocupação, precisão e produtividade."
+      />
       <AppLayout>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
-        <div className="mx-auto max-w-7xl space-y-6">
-          {/* Header */}
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="flex items-center gap-2 text-3xl font-bold">
-                <BarChart3 className="h-8 w-8 text-primary" />
-                KPIs Operacionais
-              </h1>
-              <p className="mt-1 text-muted-foreground">Monitoramento em tempo real da operação</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div
-                  className={`h-2 w-2 rounded-full ${isUpdating ? "animate-pulse bg-emerald-500" : "bg-muted"}`}
-                />
-                <Wifi className="h-4 w-4" />
-                <span>Atualizado: {format(lastUpdate, "HH:mm:ss", { locale: ptBR })}</span>
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+          <div className="mx-auto max-w-7xl space-y-6">
+            {/* Header */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h1 className="flex items-center gap-2 text-3xl font-bold">
+                  <BarChart3 className="h-8 w-8 text-primary" />
+                  KPIs Operacionais
+                </h1>
+                <p className="mt-1 text-muted-foreground">
+                  Monitoramento em tempo real da operação
+                </p>
               </div>
-              <Select value={periodoFiltro} onValueChange={setPeriodoFiltro}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="7d">7 dias</SelectItem>
-                  <SelectItem value="30d">30 dias</SelectItem>
-                  <SelectItem value="90d">90 dias</SelectItem>
-                </SelectContent>
-              </Select>
-              {hasCriticalAlerts && (
-                <Badge variant="destructive" className="animate-pulse">
-                  <AlertTriangle className="mr-1 h-3 w-3" />
-                  {criticalAlerts.length} Alertas
-                </Badge>
-              )}
-              <Button variant="outline" size="icon" onClick={refetch}>
-                <RefreshCw className={`h-4 w-4 ${isUpdating ? "animate-spin" : ""}`} />
-              </Button>
-            </div>
-          </div>
-
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <KPICardWithAlert
-              title="Itens Triados"
-              value={kpisConsolidados.totalItensTriados}
-              meta={getMetaValue("itens_triados")}
-              icon={Package}
-              iconColor="text-primary"
-              iconBgColor="bg-primary/10"
-              tendencia={variacaoTriagem.valor}
-            />
-            <KPICardWithAlert
-              title="Taxa de Aprovação"
-              value={kpisConsolidados.taxaAprovacao}
-              meta={getMetaValue("taxa_aprovacao")}
-              icon={CheckCircle2}
-              iconColor="text-success"
-              iconBgColor="bg-success/10"
-            />
-            <KPICardWithAlert
-              title="Pedidos Separados"
-              value={kpisConsolidados.pedidosSeparados}
-              meta={getMetaValue("pedidos_separados")}
-              icon={Warehouse}
-              iconColor="text-info"
-              iconBgColor="bg-info/10"
-              tendencia={variacaoPicking.valor}
-            />
-            <KPICardWithAlert
-              title="Acuracidade Picking"
-              value={kpisConsolidados.acuracidadePicking}
-              meta={getMetaValue("acuracidade_picking")}
-              icon={Target}
-              iconColor="text-warning"
-              iconBgColor="bg-warning/10"
-            />
-          </div>
-
-          {/* Secondary KPIs */}
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Tempo Médio Triagem</p>
-                    <p className="text-2xl font-bold">
-                      {kpisConsolidados.tempoMedioTriagem.toFixed(1)} min
-                    </p>
-                  </div>
-                  <Clock className="h-8 w-8 text-muted-foreground" />
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Taxa de Ocupação</p>
-                    <p className="text-2xl font-bold">
-                      {kpisConsolidados.taxaOcupacao.toFixed(1)}%
-                    </p>
-                  </div>
-                  <Warehouse className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <Progress value={kpisConsolidados.taxaOcupacao} className="mt-2" />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Volumes Recebidos</p>
-                    <p className="text-2xl font-bold">{kpisConsolidados.volumesRecebidos}</p>
-                  </div>
-                  <Package className="h-8 w-8 text-muted-foreground" />
-                </div>
-                {variacaoRecebimento.tipo !== "stable" && (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div
-                    className={`mt-2 flex items-center gap-1 text-sm ${variacaoRecebimento.tipo === "up" ? "text-emerald-500" : "text-destructive"}`}
-                  >
-                    {variacaoRecebimento.tipo === "up" ? (
-                      <ArrowUp className="h-4 w-4" />
-                    ) : (
-                      <ArrowDown className="h-4 w-4" />
-                    )}
-                    {variacaoRecebimento.valor.toFixed(1)}%
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Movimentações</p>
-                    <p className="text-2xl font-bold">{kpisConsolidados.movimentacoesRealizadas}</p>
-                  </div>
-                  <Activity className="h-8 w-8 text-muted-foreground" />
+                    className={`h-2 w-2 rounded-full ${isUpdating ? "animate-pulse bg-emerald-500" : "bg-muted"}`}
+                  />
+                  <Wifi className="h-4 w-4" />
+                  <span>Atualizado: {format(lastUpdate, "HH:mm:ss", { locale: ptBR })}</span>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <Select value={periodoFiltro} onValueChange={setPeriodoFiltro}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7d">7 dias</SelectItem>
+                    <SelectItem value="30d">30 dias</SelectItem>
+                    <SelectItem value="90d">90 dias</SelectItem>
+                  </SelectContent>
+                </Select>
+                {hasCriticalAlerts && (
+                  <Badge variant="destructive" className="animate-pulse">
+                    <AlertTriangle className="mr-1 h-3 w-3" />
+                    {criticalAlerts.length} Alertas
+                  </Badge>
+                )}
+                <Button variant="outline" size="icon" onClick={refetch}>
+                  <RefreshCw className={`h-4 w-4 ${isUpdating ? "animate-spin" : ""}`} />
+                </Button>
+              </div>
+            </div>
 
-          {/* Tabs */}
-          <Tabs defaultValue="evolucao" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="evolucao">Evolução</TabsTrigger>
-              <TabsTrigger value="triagem">Triagem</TabsTrigger>
-              <TabsTrigger value="picking">Picking</TabsTrigger>
-              <TabsTrigger value="metas">Metas</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="evolucao">
-              <KPIEvolucaoCharts
-                evolucaoDiaria={evolucaoDiaria}
-                evolucaoSemanal={evolucaoSemanal}
+            {/* KPI Cards */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <KPICardWithAlert
+                title="Itens Triados"
+                value={kpisConsolidados.totalItensTriados}
+                meta={getMetaValue("itens_triados")}
+                icon={Package}
+                iconColor="text-primary"
+                iconBgColor="bg-primary/10"
+                tendencia={variacaoTriagem.valor}
               />
-            </TabsContent>
+              <KPICardWithAlert
+                title="Taxa de Aprovação"
+                value={kpisConsolidados.taxaAprovacao}
+                meta={getMetaValue("taxa_aprovacao")}
+                icon={CheckCircle2}
+                iconColor="text-success"
+                iconBgColor="bg-success/10"
+              />
+              <KPICardWithAlert
+                title="Pedidos Separados"
+                value={kpisConsolidados.pedidosSeparados}
+                meta={getMetaValue("pedidos_separados")}
+                icon={Warehouse}
+                iconColor="text-info"
+                iconBgColor="bg-info/10"
+                tendencia={variacaoPicking.valor}
+              />
+              <KPICardWithAlert
+                title="Acuracidade Picking"
+                value={kpisConsolidados.acuracidadePicking}
+                meta={getMetaValue("acuracidade_picking")}
+                icon={Target}
+                iconColor="text-warning"
+                iconBgColor="bg-warning/10"
+              />
+            </div>
 
-            <TabsContent value="triagem" className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Total Aprovados</p>
-                      <p className="text-3xl font-bold text-emerald-500">
-                        {kpisConsolidados.itensAprovados}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Total Reprovados</p>
-                      <p className="text-3xl font-bold text-destructive">
-                        {kpisConsolidados.itensReprovados}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Tempo Médio</p>
-                      <p className="text-3xl font-bold">
+            {/* Secondary KPIs */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Tempo Médio Triagem</p>
+                      <p className="text-2xl font-bold">
                         {kpisConsolidados.tempoMedioTriagem.toFixed(1)} min
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <KPITriagemCharts evolucaoDiaria={evolucaoDiaria} />
-            </TabsContent>
-
-            <TabsContent value="picking" className="space-y-4">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Pedidos Separados</p>
-                      <p className="text-3xl font-bold text-primary">
-                        {kpisConsolidados.pedidosSeparados}
+                    <Clock className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Taxa de Ocupação</p>
+                      <p className="text-2xl font-bold">
+                        {kpisConsolidados.taxaOcupacao.toFixed(1)}%
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Itens Separados</p>
-                      <p className="text-3xl font-bold">{kpisConsolidados.itensSeparados}</p>
+                    <Warehouse className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <Progress value={kpisConsolidados.taxaOcupacao} className="mt-2" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Volumes Recebidos</p>
+                      <p className="text-2xl font-bold">{kpisConsolidados.volumesRecebidos}</p>
                     </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="text-center">
-                      <p className="text-sm text-muted-foreground">Erros de Picking</p>
-                      <p className="text-3xl font-bold text-destructive">
-                        {kpisConsolidados.errosPicking}
+                    <Package className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  {variacaoRecebimento.tipo !== "stable" && (
+                    <div
+                      className={`mt-2 flex items-center gap-1 text-sm ${variacaoRecebimento.tipo === "up" ? "text-emerald-500" : "text-destructive"}`}
+                    >
+                      {variacaoRecebimento.tipo === "up" ? (
+                        <ArrowUp className="h-4 w-4" />
+                      ) : (
+                        <ArrowDown className="h-4 w-4" />
+                      )}
+                      {variacaoRecebimento.valor.toFixed(1)}%
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Movimentações</p>
+                      <p className="text-2xl font-bold">
+                        {kpisConsolidados.movimentacoesRealizadas}
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <KPIPickingCharts evolucaoDiaria={evolucaoDiaria} />
-            </TabsContent>
+                    <Activity className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-            <TabsContent value="metas">
-              <KPIMetasTable
-                metas={metas}
-                onEdit={(m) => openMetaDialog(m)}
-                onDelete={handleExcluirMeta}
-                onNew={() => openMetaDialog()}
-              />
-            </TabsContent>
-          </Tabs>
+            {/* Tabs */}
+            <Tabs defaultValue="evolucao" className="space-y-4">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="evolucao">Evolução</TabsTrigger>
+                <TabsTrigger value="triagem">Triagem</TabsTrigger>
+                <TabsTrigger value="picking">Picking</TabsTrigger>
+                <TabsTrigger value="metas">Metas</TabsTrigger>
+              </TabsList>
 
-          <KPIMetaDialog
-            open={isMetaDialogOpen}
-            onOpenChange={setIsMetaDialogOpen}
-            editingMeta={editingMeta}
-            metaForm={metaForm}
-            onMetaFormChange={setMetaForm}
-            onSave={handleSalvarMeta}
-          />
+              <TabsContent value="evolucao">
+                <KPIEvolucaoCharts
+                  evolucaoDiaria={evolucaoDiaria}
+                  evolucaoSemanal={evolucaoSemanal}
+                />
+              </TabsContent>
+
+              <TabsContent value="triagem" className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Total Aprovados</p>
+                        <p className="text-3xl font-bold text-emerald-500">
+                          {kpisConsolidados.itensAprovados}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Total Reprovados</p>
+                        <p className="text-3xl font-bold text-destructive">
+                          {kpisConsolidados.itensReprovados}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Tempo Médio</p>
+                        <p className="text-3xl font-bold">
+                          {kpisConsolidados.tempoMedioTriagem.toFixed(1)} min
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <KPITriagemCharts evolucaoDiaria={evolucaoDiaria} />
+              </TabsContent>
+
+              <TabsContent value="picking" className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Pedidos Separados</p>
+                        <p className="text-3xl font-bold text-primary">
+                          {kpisConsolidados.pedidosSeparados}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Itens Separados</p>
+                        <p className="text-3xl font-bold">{kpisConsolidados.itensSeparados}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Erros de Picking</p>
+                        <p className="text-3xl font-bold text-destructive">
+                          {kpisConsolidados.errosPicking}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                <KPIPickingCharts evolucaoDiaria={evolucaoDiaria} />
+              </TabsContent>
+
+              <TabsContent value="metas">
+                <KPIMetasTable
+                  metas={metas}
+                  onEdit={(m) => openMetaDialog(m)}
+                  onDelete={handleExcluirMeta}
+                  onNew={() => openMetaDialog()}
+                />
+              </TabsContent>
+            </Tabs>
+
+            <KPIMetaDialog
+              open={isMetaDialogOpen}
+              onOpenChange={setIsMetaDialogOpen}
+              editingMeta={editingMeta}
+              metaForm={metaForm}
+              onMetaFormChange={setMetaForm}
+              onSave={handleSalvarMeta}
+            />
+          </div>
         </div>
-      </div>
-    </AppLayout>
+      </AppLayout>
     </>
   );
 }
