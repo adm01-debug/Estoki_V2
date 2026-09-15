@@ -14,6 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      agv_devices: {
+        Row: {
+          ativo: boolean
+          battery_pct: number | null
+          created_at: string
+          current_location: string | null
+          endpoint: string | null
+          id: string
+          last_heartbeat_at: string | null
+          manufacturer: string
+          metadata: Json
+          model: string | null
+          protocol: string
+          serial_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          battery_pct?: number | null
+          created_at?: string
+          current_location?: string | null
+          endpoint?: string | null
+          id?: string
+          last_heartbeat_at?: string | null
+          manufacturer: string
+          metadata?: Json
+          model?: string | null
+          protocol?: string
+          serial_number: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          battery_pct?: number | null
+          created_at?: string
+          current_location?: string | null
+          endpoint?: string | null
+          id?: string
+          last_heartbeat_at?: string | null
+          manufacturer?: string
+          metadata?: Json
+          model?: string | null
+          protocol?: string
+          serial_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      agv_missions: {
+        Row: {
+          actions: Json
+          completed_at: string | null
+          created_at: string
+          destino: string
+          device_id: string | null
+          dispatched_at: string | null
+          error_message: string | null
+          id: string
+          mission_type: string
+          nodes: Json
+          order_id: string | null
+          origem: string | null
+          prioridade: number
+          progresso_pct: number
+          requested_by: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          completed_at?: string | null
+          created_at?: string
+          destino: string
+          device_id?: string | null
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          mission_type: string
+          nodes?: Json
+          order_id?: string | null
+          origem?: string | null
+          prioridade?: number
+          progresso_pct?: number
+          requested_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          completed_at?: string | null
+          created_at?: string
+          destino?: string
+          device_id?: string | null
+          dispatched_at?: string | null
+          error_message?: string | null
+          id?: string
+          mission_type?: string
+          nodes?: Json
+          order_id?: string | null
+          origem?: string | null
+          prioridade?: number
+          progresso_pct?: number
+          requested_by?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agv_missions_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "agv_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ajustes_estoque: {
         Row: {
           aprovado_por: string | null
@@ -224,6 +346,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      analytics_events: {
+        Row: {
+          event: string
+          id: string
+          properties: Json | null
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          event: string
+          id?: string
+          properties?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          event?: string
+          id?: string
+          properties?: Json | null
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       aprovacoes_movimentacao: {
         Row: {
@@ -639,6 +791,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      db_health_snapshots: {
+        Row: {
+          created_at: string
+          deadlocks: number
+          id: string
+          wal_bytes: number
+          xact_commit: number
+          xact_rollback: number
+        }
+        Insert: {
+          created_at?: string
+          deadlocks?: number
+          id?: string
+          wal_bytes?: number
+          xact_commit?: number
+          xact_rollback?: number
+        }
+        Update: {
+          created_at?: string
+          deadlocks?: number
+          id?: string
+          wal_bytes?: number
+          xact_commit?: number
+          xact_rollback?: number
+        }
+        Relationships: []
       }
       desafios_diarios: {
         Row: {
@@ -1367,6 +1546,50 @@ export type Database = {
           },
         ]
       }
+      inventory_lots: {
+        Row: {
+          batch_number: string
+          created_at: string | null
+          id: string
+          location: string | null
+          metadata: Json | null
+          product_id: string | null
+          quantity: number | null
+          received_at: string | null
+          status: string | null
+        }
+        Insert: {
+          batch_number: string
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          product_id?: string | null
+          quantity?: number | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          batch_number?: string
+          created_at?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          product_id?: string | null
+          quantity?: number | null
+          received_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_lots_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ip_whitelist: {
         Row: {
           created_at: string
@@ -1394,6 +1617,105 @@ export type Database = {
           id?: string
           ip_address?: unknown
           is_active?: boolean
+        }
+        Relationships: []
+      }
+      job_queue: {
+        Row: {
+          attempts: number
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          job_type: string
+          max_attempts: number
+          payload: Json
+          priority: number
+          queue_name: string
+          result: Json | null
+          scheduled_at: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          worker_id: string | null
+        }
+        Insert: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          job_type: string
+          max_attempts?: number
+          payload?: Json
+          priority?: number
+          queue_name?: string
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Update: {
+          attempts?: number
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          job_type?: string
+          max_attempts?: number
+          payload?: Json
+          priority?: number
+          queue_name?: string
+          result?: Json | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          worker_id?: string | null
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          aisle: string | null
+          bin: string | null
+          created_at: string | null
+          id: string
+          level: string | null
+          rack: string | null
+          status: string | null
+          updated_at: string | null
+          warehouse_id: string | null
+          zone: string | null
+        }
+        Insert: {
+          aisle?: string | null
+          bin?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          rack?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+          zone?: string | null
+        }
+        Update: {
+          aisle?: string | null
+          bin?: string | null
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          rack?: string | null
+          status?: string | null
+          updated_at?: string | null
+          warehouse_id?: string | null
+          zone?: string | null
         }
         Relationships: []
       }
@@ -1479,6 +1801,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      lot_movements: {
+        Row: {
+          created_at: string | null
+          id: string
+          lot_number: string
+          movement_type: string
+          quantity: number | null
+          to_location: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lot_number: string
+          movement_type: string
+          quantity?: number | null
+          to_location?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lot_number?: string
+          movement_type?: string
+          quantity?: number | null
+          to_location?: string | null
+        }
+        Relationships: []
       }
       lotes: {
         Row: {
@@ -2184,6 +2533,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pick_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       posicao_status_log: {
         Row: {
           created_at: string
@@ -2276,6 +2646,36 @@ export type Database = {
           tipo?: Database["public"]["Enums"]["tipo_posicao"]
           updated_at?: string
           zona?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          quality_status: string | null
+          sku: string
+          stock_quantity: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          quality_status?: string | null
+          sku: string
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          quality_status?: string | null
+          sku?: string
+          stock_quantity?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -2413,6 +2813,104 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          items: Json | null
+          order_number: string
+          status: string | null
+          supplier_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          order_number: string
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          order_number?: string
+          status?: string | null
+          supplier_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      putaway_orders: {
+        Row: {
+          created_at: string | null
+          id: string
+          receiving_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      quality_inspections: {
+        Row: {
+          created_at: string
+          id: string
+          inspection_type: string
+          inspector_id: string | null
+          metadata: Json | null
+          passed: boolean
+          product_id: string | null
+          results: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inspection_type: string
+          inspector_id?: string | null
+          metadata?: Json | null
+          passed?: boolean
+          product_id?: string | null
+          results?: Json | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inspection_type?: string
+          inspector_id?: string | null
+          metadata?: Json | null
+          passed?: boolean
+          product_id?: string | null
+          results?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quality_inspections_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       query_telemetry: {
         Row: {
           count_mode: string | null
@@ -2540,6 +3038,113 @@ export type Database = {
             columns: ["produto_id"]
             isOneToOne: false
             referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receiving_items: {
+        Row: {
+          created_at: string | null
+          expected_quantity: number
+          expiration_date: string | null
+          id: string
+          lot_number: string | null
+          notes: string | null
+          product_id: string | null
+          quality_status: string | null
+          received_at: string | null
+          received_quantity: number | null
+          receiving_id: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expected_quantity: number
+          expiration_date?: string | null
+          id?: string
+          lot_number?: string | null
+          notes?: string | null
+          product_id?: string | null
+          quality_status?: string | null
+          received_at?: string | null
+          received_quantity?: number | null
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expected_quantity?: number
+          expiration_date?: string | null
+          id?: string
+          lot_number?: string | null
+          notes?: string | null
+          product_id?: string | null
+          quality_status?: string | null
+          received_at?: string | null
+          received_quantity?: number | null
+          receiving_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receiving_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receiving_items_receiving_id_fkey"
+            columns: ["receiving_id"]
+            isOneToOne: false
+            referencedRelation: "receivings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      receivings: {
+        Row: {
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string | null
+          id: string
+          items: Json | null
+          purchase_order_id: string | null
+          received_by: string | null
+          receiving_number: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          purchase_order_id?: string | null
+          received_by?: string | null
+          receiving_number: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string | null
+          id?: string
+          items?: Json | null
+          purchase_order_id?: string | null
+          received_by?: string | null
+          receiving_number?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivings_purchase_order_id_fkey"
+            columns: ["purchase_order_id"]
+            isOneToOne: false
+            referencedRelation: "purchase_orders"
             referencedColumns: ["id"]
           },
         ]
@@ -2985,6 +3590,47 @@ export type Database = {
           },
         ]
       }
+      stock_movements: {
+        Row: {
+          created_at: string | null
+          from_location: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          to_location: string | null
+          type: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          from_location?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          to_location?: string | null
+          type: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          from_location?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          to_location?: string | null
+          type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       streaks_historico: {
         Row: {
           created_at: string
@@ -3155,6 +3801,68 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tenant_members: {
+        Row: {
+          created_at: string
+          id: string
+          papel: string
+          tenant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          papel?: string
+          tenant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          papel?: string
+          tenant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_members_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenants: {
+        Row: {
+          ativo: boolean
+          created_at: string
+          id: string
+          nome: string
+          plano: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome: string
+          plano?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          created_at?: string
+          id?: string
+          nome?: string
+          plano?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       trocas_devolucoes: {
         Row: {
@@ -3359,7 +4067,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      mv_alertas_severidade: {
+        Row: {
+          dia: string | null
+          severidade: Database["public"]["Enums"]["severidade_alerta"] | null
+          status: Database["public"]["Enums"]["status_alerta"] | null
+          tipo: Database["public"]["Enums"]["tipo_alerta"] | null
+          total: number | null
+        }
+        Relationships: []
+      }
+      mv_audit_daily: {
+        Row: {
+          action: string | null
+          dia: string | null
+          entity_type: string | null
+          total: number | null
+          usuarios_distintos: number | null
+        }
+        Relationships: []
+      }
+      mv_notificacoes_tipo: {
+        Row: {
+          dia: string | null
+          enviadas: number | null
+          lidas: number | null
+          taxa_leitura_pct: number | null
+          tipo: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       adicionar_xp: {
@@ -3387,9 +4124,9 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      calculate_lockout_duration: {
-        Args: { attempt_count: number }
-        Returns: string
+      check_db_alert_thresholds: {
+        Args: { p_rollback_ratio?: number; p_wal_limit_mb?: number }
+        Returns: Json
       }
       check_login_lockout: {
         Args: { p_email: string }
@@ -3404,10 +4141,19 @@ export type Database = {
         Args: { p_desafio_id: string }
         Returns: Json
       }
+      current_tenant_id: { Args: never; Returns: string }
       descontar_pontos: {
         Args: { p_user_id: string; p_valor: number }
         Returns: undefined
       }
+      get_backend_health: { Args: never; Returns: Json }
+      get_current_user_permissions: {
+        Args: never
+        Returns: {
+          permission: string
+        }[]
+      }
+      get_dashboard_metrics: { Args: { _dias?: number }; Returns: Json }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
@@ -3419,9 +4165,24 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_role_v2: {
+        Args: {
+          required_role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Returns: boolean
+      }
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number }
         Returns: undefined
+      }
+      is_tenant_admin: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tenant_member: {
+        Args: { _tenant_id: string; _user_id: string }
+        Returns: boolean
       }
       log_audit_event: {
         Args: {
@@ -3456,6 +4217,7 @@ export type Database = {
           seconds_remaining: number
         }[]
       }
+      refresh_dashboard_materialized_views: { Args: never; Returns: Json }
       registrar_checkin_diario: {
         Args: { p_user_id: string }
         Returns: {
@@ -3486,7 +4248,6 @@ export type Database = {
         }
         Returns: Json
       }
-      validate_ean13: { Args: { ean: string }; Returns: boolean }
     }
     Enums: {
       app_role: "operador" | "supervisor" | "admin"

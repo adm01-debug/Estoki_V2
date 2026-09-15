@@ -1,12 +1,12 @@
- import { useMutation, useQueryClient } from "@tanstack/react-query";
- import { supabase } from "@/integrations/supabase/client";
- import { toast } from "sonner";
- import { Database } from "@/integrations/supabase/types";
- 
- export type TableName = keyof Database['public']['Tables'];
- 
- interface DuplicateOptions<T extends Record<string, unknown>> {
-   table: TableName;
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types";
+
+export type TableName = keyof Database["public"]["Tables"];
+
+interface DuplicateOptions<T extends Record<string, unknown>> {
+  table: TableName;
   queryKey: string[];
   excludeFields?: string[];
   transformData?: (data: T) => Partial<T>;
@@ -16,16 +16,9 @@
   onError?: (error: Error) => void;
 }
 
-const DEFAULT_EXCLUDE_FIELDS = [
-  "id",
-  "created_at",
-  "updated_at",
-  "deleted_at",
-];
+const DEFAULT_EXCLUDE_FIELDS = ["id", "created_at", "updated_at", "deleted_at"];
 
- export function useDuplicate<T extends Record<string, unknown>>(
-  options: DuplicateOptions<T>
-) {
+export function useDuplicate<T extends Record<string, unknown>>(options: DuplicateOptions<T>) {
   const {
     table,
     queryKey,
@@ -42,40 +35,40 @@ const DEFAULT_EXCLUDE_FIELDS = [
   const allExcludeFields = [...DEFAULT_EXCLUDE_FIELDS, ...excludeFields];
 
   const duplicateMutation = useMutation({
-     mutationFn: async (sourceId: string) => {
-       const { data: sourceRecord, error: fetchError } = await supabase
-         .from(table)
-         .select("*")
-         .eq("id" as never, sourceId as never)
-         .single();
- 
-       if (fetchError) throw fetchError;
-       if (!sourceRecord) throw new Error("Registro não encontrado");
- 
-       const newData = { ...(sourceRecord as Record<string, unknown>) };
- 
-       allExcludeFields.forEach((field) => {
-         delete newData[field];
-       });
- 
-       if (nameField && newData[nameField]) {
-         newData[nameField] = `${String(newData[nameField])}${nameSuffix}`;
-       }
- 
-       let finalData = newData;
-       if (transformData) {
-         finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
-       }
- 
-       const { data: newRecord, error: insertError } = await supabase
-         .from(table)
-         .insert(finalData as any)
-         .select()
-         .single();
- 
-       if (insertError) throw insertError;
-       return newRecord as unknown as T;
-     },
+    mutationFn: async (sourceId: string) => {
+      const { data: sourceRecord, error: fetchError } = await (supabase as any)
+        .from(table)
+        .select("*")
+        .eq("id", sourceId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!sourceRecord) throw new Error("Registro não encontrado");
+
+      const newData = { ...(sourceRecord as Record<string, unknown>) };
+
+      allExcludeFields.forEach((field) => {
+        delete newData[field];
+      });
+
+      if (nameField && newData[nameField]) {
+        newData[nameField] = `${String(newData[nameField])}${nameSuffix}`;
+      }
+
+      let finalData = newData;
+      if (transformData) {
+        finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
+      }
+
+      const { data: newRecord, error: insertError } = await (supabase as any)
+        .from(table)
+        .insert(finalData)
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+      return newRecord as unknown as T;
+    },
     onSuccess: (newRecord) => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Registro duplicado com sucesso!");
@@ -88,70 +81,70 @@ const DEFAULT_EXCLUDE_FIELDS = [
   });
 
   const duplicateWithRelationsMutation = useMutation({
-     mutationFn: async ({
-       sourceId,
-       relations,
-     }: {
-       sourceId: string;
-       relations: Array<{
-         table: TableName;
-         foreignKey: string;
-         excludeFields?: string[];
-       }>;
-     }) => {
-       const { data: sourceRecord, error: fetchError } = await supabase
-         .from(table)
-         .select("*")
-         .eq("id" as never, sourceId as never)
-         .single();
- 
-       if (fetchError) throw fetchError;
-       if (!sourceRecord) throw new Error("Registro não encontrado");
- 
-       const newData = { ...(sourceRecord as Record<string, unknown>) };
-       allExcludeFields.forEach((field) => {
-         delete newData[field];
-       });
- 
-       if (nameField && newData[nameField]) {
-         newData[nameField] = `${String(newData[nameField])}${nameSuffix}`;
-       }
- 
-       let finalData = newData;
-       if (transformData) {
-         finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
-       }
- 
-       const { data: newRecord, error: insertError } = await supabase
-         .from(table)
-         .insert(finalData as any)
-         .select()
-         .single();
- 
-       if (insertError) throw insertError;
- 
-       for (const relation of relations) {
-         const { data: relatedRecords } = await supabase
-           .from(relation.table)
-           .select("*")
-           .eq(relation.foreignKey as never, sourceId as never);
- 
-         if (relatedRecords && relatedRecords.length > 0) {
-           const newRelatedRecords = relatedRecords.map((record: Record<string, unknown>) => {
-             const newRelRecord = { ...record };
-             [...DEFAULT_EXCLUDE_FIELDS, ...(relation.excludeFields || [])].forEach(
-               (field) => delete newRelRecord[field]
-             );
-             newRelRecord[relation.foreignKey] = (newRecord as Record<string, unknown>).id;
-             return newRelRecord;
-           });
- 
-           await supabase.from(relation.table).insert(newRelatedRecords as any);
-         }
-       }
- 
-       return newRecord as unknown as T;
-     },
+    mutationFn: async ({
+      sourceId,
+      relations,
+    }: {
+      sourceId: string;
+      relations: Array<{
+        table: TableName;
+        foreignKey: string;
+        excludeFields?: string[];
+      }>;
+    }) => {
+      const { data: sourceRecord, error: fetchError } = await (supabase as any)
+        .from(table)
+        .select("*")
+        .eq("id", sourceId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      if (!sourceRecord) throw new Error("Registro não encontrado");
+
+      const newData = { ...(sourceRecord as Record<string, unknown>) };
+      allExcludeFields.forEach((field) => {
+        delete newData[field];
+      });
+
+      if (nameField && newData[nameField]) {
+        newData[nameField] = `${String(newData[nameField])}${nameSuffix}`;
+      }
+
+      let finalData = newData;
+      if (transformData) {
+        finalData = { ...newData, ...transformData(sourceRecord as unknown as T) };
+      }
+
+      const { data: newRecord, error: insertError } = await (supabase as any)
+        .from(table)
+        .insert(finalData)
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      for (const relation of relations) {
+        const { data: relatedRecords } = await (supabase as any)
+          .from(relation.table)
+          .select("*")
+          .eq(relation.foreignKey, sourceId);
+
+        if (relatedRecords && relatedRecords.length > 0) {
+          const newRelatedRecords = (relatedRecords as Record<string, unknown>[]).map((record) => {
+            const newRelRecord: Record<string, unknown> = { ...record };
+            [...DEFAULT_EXCLUDE_FIELDS, ...(relation.excludeFields || [])].forEach(
+              (field) => delete newRelRecord[field]
+            );
+            newRelRecord[relation.foreignKey] = (newRecord as Record<string, unknown>).id;
+            return newRelRecord;
+          });
+
+          await (supabase as any).from(relation.table).insert(newRelatedRecords);
+        }
+      }
+
+      return newRecord as unknown as T;
+    },
     onSuccess: (newRecord) => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Registro e relacionamentos duplicados!");
@@ -166,7 +159,6 @@ const DEFAULT_EXCLUDE_FIELDS = [
   return {
     duplicate: duplicateMutation.mutate,
     duplicateWithRelations: duplicateWithRelationsMutation.mutate,
-    isDuplicating:
-      duplicateMutation.isPending || duplicateWithRelationsMutation.isPending,
+    isDuplicating: duplicateMutation.isPending || duplicateWithRelationsMutation.isPending,
   };
 }

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
 
 const ML_API_BASE = "https://api.mercadolibre.com";
 
@@ -22,14 +23,17 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { action, credentials, data } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(IntegrationActionSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { action, credentials, data } = __raw;
 
     if (!action || !credentials?.access_token) {
       throw new Error("action e credentials.access_token são obrigatórios");
     }
 
     const headers = {
-      "Authorization": `Bearer ${credentials.access_token}`,
+      Authorization: `Bearer ${credentials.access_token}`,
       "Content-Type": "application/json",
     };
 
@@ -56,10 +60,9 @@ serve(async (req) => {
         break;
 
       case "list_items":
-        const itemsResp = await fetch(
-          `${ML_API_BASE}/users/${credentials.user_id}/items/search`,
-          { headers }
-        );
+        const itemsResp = await fetch(`${ML_API_BASE}/users/${credentials.user_id}/items/search`, {
+          headers,
+        });
         result = await itemsResp.json();
         break;
 
@@ -111,13 +114,16 @@ serve(async (req) => {
     }
 
     // Log da integração
-    await supabase.from("integration_logs").insert({
-      integration: "mercado_livre",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "mercado_livre",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

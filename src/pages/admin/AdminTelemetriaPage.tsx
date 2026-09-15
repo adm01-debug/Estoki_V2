@@ -3,7 +3,13 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { useQuery } from "@tanstack/react-query";
@@ -53,30 +59,52 @@ export default function AdminTelemetriaPage() {
       return { from: fromDate.toISOString(), to: toDate.toISOString() };
     }
     switch (timeFilter) {
-      case "1h": return { from: new Date(now.getTime() - 60 * 60 * 1000).toISOString(), to };
-      case "6h": return { from: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(), to };
-      case "24h": return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
-      case "7d": return { from: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), to };
-      default: return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
+      case "1h":
+        return { from: new Date(now.getTime() - 60 * 60 * 1000).toISOString(), to };
+      case "6h":
+        return { from: new Date(now.getTime() - 6 * 60 * 60 * 1000).toISOString(), to };
+      case "24h":
+        return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
+      case "7d":
+        return { from: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(), to };
+      default:
+        return { from: new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString(), to };
     }
   };
 
   const getPeriodLabel = (): string => {
     switch (timeFilter) {
-      case "1h": return "Última hora";
-      case "6h": return "Últimas 6h";
-      case "24h": return "Últimas 24h";
-      case "7d": return "Últimos 7 dias";
+      case "1h":
+        return "Última hora";
+      case "6h":
+        return "Últimas 6h";
+      case "24h":
+        return "Últimas 24h";
+      case "7d":
+        return "Últimos 7 dias";
       case "custom":
-        if (customDateFrom && customDateTo) return `${format(customDateFrom, "dd/MM/yyyy")} a ${format(customDateTo, "dd/MM/yyyy")}`;
+        if (customDateFrom && customDateTo)
+          return `${format(customDateFrom, "dd/MM/yyyy")} a ${format(customDateTo, "dd/MM/yyyy")}`;
         if (customDateFrom) return `Desde ${format(customDateFrom, "dd/MM/yyyy")}`;
         return "Personalizado";
-      default: return "Últimas 24h";
+      default:
+        return "Últimas 24h";
     }
   };
 
-  const { data: rows = [], isLoading, refetch, isRefetching } = useQuery<TelemetryRow[]>({
-    queryKey: ["query-telemetry", severityFilter, timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
+  const {
+    data: rows = [],
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery<TelemetryRow[]>({
+    queryKey: [
+      "query-telemetry",
+      severityFilter,
+      timeFilter,
+      customDateFrom?.toISOString(),
+      customDateTo?.toISOString(),
+    ],
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
       let query = supabase
@@ -120,10 +148,18 @@ export default function AdminTelemetriaPage() {
       return;
     }
     const headers = [
-      "Data/Hora", "Operação", "Tabela/RPC", "Duração (ms)", "Severidade",
-      "Registros", "Limit", "Offset", "Count Mode", "Erro"
+      "Data/Hora",
+      "Operação",
+      "Tabela/RPC",
+      "Duração (ms)",
+      "Severidade",
+      "Registros",
+      "Limit",
+      "Offset",
+      "Count Mode",
+      "Erro",
     ];
-    const csvRows = rows.map(r => [
+    const csvRows = rows.map((r) => [
       new Date(r.created_at).toLocaleString("pt-BR"),
       r.operation,
       r.rpc_name || r.table_name || "-",
@@ -137,7 +173,7 @@ export default function AdminTelemetriaPage() {
     ]);
 
     const csvContent = [headers, ...csvRows]
-      .map(row => row.map(cell => `"${cell}"`).join(","))
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
       .join("\n");
 
     const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
@@ -167,16 +203,41 @@ export default function AdminTelemetriaPage() {
       doc.setFontSize(16);
       doc.text("Telemetria de Queries", 14, 15);
       doc.setFontSize(9);
-      doc.text(`Exportado em ${now.toLocaleString("pt-BR")} · Período: ${getPeriodLabel()}`, 14, 22);
-      doc.text(`Total: ${rows.length} registros · Muito Lentas: ${verySlow} · Lentas: ${slow} · Erros: ${errors} · Média: ${formatDuration(avgDuration)}`, 14, 27);
+      doc.text(
+        `Exportado em ${now.toLocaleString("pt-BR")} · Período: ${getPeriodLabel()}`,
+        14,
+        22
+      );
+      doc.text(
+        `Total: ${rows.length} registros · Muito Lentas: ${verySlow} · Lentas: ${slow} · Erros: ${errors} · Média: ${formatDuration(avgDuration)}`,
+        14,
+        27
+      );
 
-      const headers = ["Data/Hora", "Operação", "Tabela/RPC", "Duração", "Severidade", "Records", "Limit", "Offset", "Count", "Erro"];
-      const body = rows.map(r => [
+      const headers = [
+        "Data/Hora",
+        "Operação",
+        "Tabela/RPC",
+        "Duração",
+        "Severidade",
+        "Records",
+        "Limit",
+        "Offset",
+        "Count",
+        "Erro",
+      ];
+      const body = rows.map((r) => [
         new Date(r.created_at).toLocaleString("pt-BR"),
         r.operation,
         r.rpc_name || r.table_name || "-",
         formatDuration(r.duration_ms),
-        r.severity === "very_slow" ? "Muito Lenta" : r.severity === "slow" ? "Lenta" : r.severity === "error" ? "Erro" : r.severity,
+        r.severity === "very_slow"
+          ? "Muito Lenta"
+          : r.severity === "slow"
+            ? "Lenta"
+            : r.severity === "error"
+              ? "Erro"
+              : r.severity,
         r.record_count?.toString() ?? "-",
         r.query_limit?.toString() ?? "-",
         r.query_offset?.toString() ?? "-",
@@ -203,10 +264,11 @@ export default function AdminTelemetriaPage() {
   };
 
   // Stats
-  const verySlow = rows.filter(r => r.severity === "very_slow").length;
-  const slow = rows.filter(r => r.severity === "slow").length;
-  const errors = rows.filter(r => r.severity === "error").length;
-  const avgDuration = rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.duration_ms, 0) / rows.length) : 0;
+  const verySlow = rows.filter((r) => r.severity === "very_slow").length;
+  const slow = rows.filter((r) => r.severity === "slow").length;
+  const errors = rows.filter((r) => r.severity === "error").length;
+  const avgDuration =
+    rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.duration_ms, 0) / rows.length) : 0;
 
   // Top offenders
   const tableStats = new Map<string, { count: number; totalMs: number; maxMs: number }>();
@@ -241,56 +303,92 @@ export default function AdminTelemetriaPage() {
   const getSeverityBadge = (severity: string) => {
     switch (severity) {
       case "very_slow":
-        return <Badge className="bg-destructive/20 text-destructive border-destructive/30 text-[10px]">🔴 Muito Lenta</Badge>;
+        return (
+          <Badge className="border-destructive/30 bg-destructive/20 text-[10px] text-destructive">
+            🔴 Muito Lenta
+          </Badge>
+        );
       case "slow":
-        return <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 text-[10px]">🟡 Lenta</Badge>;
+        return (
+          <Badge className="border-yellow-500/30 bg-yellow-500/20 text-[10px] text-yellow-600">
+            🟡 Lenta
+          </Badge>
+        );
       case "error":
-        return <Badge className="bg-destructive/20 text-destructive border-destructive/30 text-[10px]">❌ Erro</Badge>;
+        return (
+          <Badge className="border-destructive/30 bg-destructive/20 text-[10px] text-destructive">
+            ❌ Erro
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary" className="text-[10px]">{severity}</Badge>;
+        return (
+          <Badge variant="secondary" className="text-[10px]">
+            {severity}
+          </Badge>
+        );
     }
   };
 
   return (
-    <div className="space-y-6 p-6 max-w-7xl mx-auto">
+    <div className="mx-auto max-w-7xl space-y-6 p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
           <Activity className="h-7 w-7 text-primary" />
           <div>
             <h1 className="text-2xl font-bold">Telemetria de Queries</h1>
-            <p className="text-sm text-muted-foreground">Monitoramento de performance do banco externo</p>
+            <p className="text-sm text-muted-foreground">
+              Monitoramento de performance do banco externo
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={handleExportCSV} disabled={rows.length === 0}>
-            <Download className="h-3.5 w-3.5 mr-1.5" />
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportCSV}
+            disabled={rows.length === 0}
+          >
+            <Download className="mr-1.5 h-3.5 w-3.5" />
             CSV
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPDF} disabled={rows.length === 0}>
-            <FileText className="h-3.5 w-3.5 mr-1.5" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExportPDF}
+            disabled={rows.length === 0}
+          >
+            <FileText className="mr-1.5 h-3.5 w-3.5" />
             PDF
           </Button>
           <Button variant="outline" size="sm" onClick={handleCleanup}>
-            <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+            <Trash2 className="mr-1.5 h-3.5 w-3.5" />
             Limpar +7d
           </Button>
           <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>
-            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${isRefetching ? "animate-spin" : ""}`} />
+            <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${isRefetching ? "animate-spin" : ""}`} />
             Atualizar
           </Button>
         </div>
       </div>
 
-      <TelemetryStatsCards verySlow={verySlow} slow={slow} errors={errors} avgDuration={formatDuration(avgDuration)} />
+      <TelemetryStatsCards
+        verySlow={verySlow}
+        slow={slow}
+        errors={errors}
+        avgDuration={formatDuration(avgDuration)}
+      />
       <TelemetryOffenders offenders={topOffenders} />
 
       {/* Charts */}
       <TelemetryCharts rows={rows} timeFilter={timeFilter} />
 
       {/* Filters */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <Select value={severityFilter} onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}>
+      <div className="flex flex-wrap items-center gap-3">
+        <Select
+          value={severityFilter}
+          onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}
+        >
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Severidade" />
           </SelectTrigger>
@@ -318,31 +416,55 @@ export default function AdminTelemetriaPage() {
           <div className="flex items-center gap-2">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("w-[130px] text-left font-normal", !customDateFrom && "text-muted-foreground")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "w-[130px] text-left font-normal",
+                    !customDateFrom && "text-muted-foreground"
+                  )}
+                >
                   <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                   {customDateFrom ? format(customDateFrom, "dd/MM/yyyy") : "De"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={customDateFrom} onSelect={setCustomDateFrom} initialFocus />
+                <Calendar
+                  mode="single"
+                  selected={customDateFrom}
+                  onSelect={setCustomDateFrom}
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
-            <span className="text-muted-foreground text-sm">→</span>
+            <span className="text-sm text-muted-foreground">→</span>
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className={cn("w-[130px] text-left font-normal", !customDateTo && "text-muted-foreground")}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "w-[130px] text-left font-normal",
+                    !customDateTo && "text-muted-foreground"
+                  )}
+                >
                   <CalendarIcon className="mr-2 h-3.5 w-3.5" />
                   {customDateTo ? format(customDateTo, "dd/MM/yyyy") : "Até"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={customDateTo} onSelect={setCustomDateTo} initialFocus />
+                <Calendar
+                  mode="single"
+                  selected={customDateTo}
+                  onSelect={setCustomDateTo}
+                  initialFocus
+                />
               </PopoverContent>
             </Popover>
           </div>
         )}
 
-        <span className="text-xs text-muted-foreground ml-auto">
+        <span className="ml-auto text-xs text-muted-foreground">
           {rows.length} registros · auto-refresh 30s
         </span>
       </div>

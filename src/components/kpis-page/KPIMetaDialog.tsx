@@ -1,8 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import type { MetaKPI } from "@/features/analytics/hooks/useKPIsOperacionais";
 
 interface MetaFormState {
@@ -23,7 +35,14 @@ interface KPIMetaDialogProps {
   onSave: () => void;
 }
 
-export function KPIMetaDialog({ open, onOpenChange, editingMeta, metaForm, onMetaFormChange, onSave }: KPIMetaDialogProps) {
+export function KPIMetaDialog({
+  open,
+  onOpenChange,
+  editingMeta,
+  metaForm,
+  onMetaFormChange,
+  onSave,
+}: KPIMetaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -33,16 +52,29 @@ export function KPIMetaDialog({ open, onOpenChange, editingMeta, metaForm, onMet
         <div className="space-y-4">
           <div>
             <Label>Nome</Label>
-            <Input value={metaForm.nome} onChange={(e) => onMetaFormChange({ ...metaForm, nome: e.target.value })} placeholder="Ex: Meta de Triagem Diária" />
+            <Input
+              value={metaForm.nome}
+              onChange={(e) => onMetaFormChange({ ...metaForm, nome: e.target.value })}
+              placeholder="Ex: Meta de Triagem Diária"
+            />
           </div>
           <div>
             <Label>Descrição</Label>
-            <Input value={metaForm.descricao} onChange={(e) => onMetaFormChange({ ...metaForm, descricao: e.target.value })} placeholder="Descrição opcional" />
+            <Input
+              value={metaForm.descricao}
+              onChange={(e) => onMetaFormChange({ ...metaForm, descricao: e.target.value })}
+              placeholder="Descrição opcional"
+            />
           </div>
           <div>
             <Label>Métrica</Label>
-            <Select value={metaForm.metrica} onValueChange={(v) => onMetaFormChange({ ...metaForm, metrica: v })}>
-              <SelectTrigger><SelectValue placeholder="Selecione a métrica" /></SelectTrigger>
+            <Select
+              value={metaForm.metrica}
+              onValueChange={(v) => onMetaFormChange({ ...metaForm, metrica: v })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a métrica" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="itens_triados">Itens Triados</SelectItem>
                 <SelectItem value="taxa_aprovacao">Taxa de Aprovação</SelectItem>
@@ -55,8 +87,13 @@ export function KPIMetaDialog({ open, onOpenChange, editingMeta, metaForm, onMet
           </div>
           <div>
             <Label>Tipo</Label>
-            <Select value={metaForm.tipo} onValueChange={(v) => onMetaFormChange({ ...metaForm, tipo: v })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={metaForm.tipo}
+              onValueChange={(v) => onMetaFormChange({ ...metaForm, tipo: v })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="maior_melhor">Maior é melhor</SelectItem>
                 <SelectItem value="menor_melhor">Menor é melhor</SelectItem>
@@ -66,16 +103,28 @@ export function KPIMetaDialog({ open, onOpenChange, editingMeta, metaForm, onMet
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label>Valor da Meta</Label>
-              <Input type="number" value={metaForm.valor_meta} onChange={(e) => onMetaFormChange({ ...metaForm, valor_meta: Number(e.target.value) })} />
+              <Input
+                type="number"
+                value={metaForm.valor_meta}
+                onChange={(e) =>
+                  onMetaFormChange({ ...metaForm, valor_meta: Number(e.target.value) })
+                }
+              />
             </div>
             <div>
               <Label>Unidade</Label>
-              <Input value={metaForm.unidade} onChange={(e) => onMetaFormChange({ ...metaForm, unidade: e.target.value })} placeholder="Ex: un, %, min" />
+              <Input
+                value={metaForm.unidade}
+                onChange={(e) => onMetaFormChange({ ...metaForm, unidade: e.target.value })}
+                placeholder="Ex: un, %, min"
+              />
             </div>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={onSave}>{editingMeta ? "Atualizar" : "Criar"}</Button>
         </DialogFooter>
       </DialogContent>

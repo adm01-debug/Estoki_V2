@@ -22,19 +22,37 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 
 // PII field names to mask in production logs
 const PII_FIELDS = new Set([
-  'password', 'senha', 'token', 'secret', 'apikey', 'api_key',
-  'cpf', 'cnpj', 'authorization', 'cookie', 'session',
+  "password",
+  "senha",
+  "token",
+  "secret",
+  "apikey",
+  "api_key",
+  "cpf",
+  "cnpj",
+  "authorization",
+  "cookie",
+  "session",
 ]);
 
 function maskPII(obj: Record<string, unknown>): Record<string, unknown> {
   const masked: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (PII_FIELDS.has(key.toLowerCase())) {
-      masked[key] = '***';
-    } else if (value && typeof value === 'object' && !Array.isArray(value) && !(value instanceof Error)) {
+      masked[key] = "***";
+    } else if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      !(value instanceof Error)
+    ) {
       masked[key] = maskPII(value as Record<string, unknown>);
     } else if (value instanceof Error) {
-      masked[key] = { message: value.message, name: value.name, stack: value.stack?.split('\n').slice(0, 3).join('\n') };
+      masked[key] = {
+        message: value.message,
+        name: value.name,
+        stack: value.stack?.split("\n").slice(0, 3).join("\n"),
+      };
     } else {
       masked[key] = value;
     }
@@ -82,9 +100,16 @@ class Logger {
 
   error(message: string, error?: Error | unknown, data?: Record<string, unknown>) {
     if (this.shouldLog("error")) {
-      const errorData = error instanceof Error
-        ? { errorName: error.name, errorMessage: error.message, stack: error.stack?.split('\n').slice(0, 5).join('\n') }
-        : error ? { error: String(error) } : {};
+      const errorData =
+        error instanceof Error
+          ? {
+              errorName: error.name,
+              errorMessage: error.message,
+              stack: error.stack?.split("\n").slice(0, 5).join("\n"),
+            }
+          : error
+            ? { error: String(error) }
+            : {};
       this.emit("error", message, { ...errorData, ...data });
     }
   }
@@ -115,11 +140,21 @@ class Logger {
     if (import.meta.env.DEV) {
       // Pretty console output in development
       const colors: Record<LogLevel, string> = {
-        debug: '#888', info: '#2196F3', warn: '#FF9800', error: '#F44336',
+        debug: "#888",
+        info: "#2196F3",
+        warn: "#FF9800",
+        error: "#F44336",
       };
       const prefix = `%c[${this.context}]`;
       const style = `color: ${colors[level]}; font-weight: bold`;
-      const fn = level === 'error' ? console.error : level === 'warn' ? console.warn : level === 'debug' ? console.debug : console.info;
+      const fn =
+        level === "error"
+          ? console.error
+          : level === "warn"
+            ? console.warn
+            : level === "debug"
+              ? console.debug
+              : console.info;
       if (safeData) {
         fn(prefix, style, message, safeData);
       } else {
@@ -136,7 +171,7 @@ class Logger {
         ...(this.requestId && { rid: this.requestId }),
         ...(this.userId && { uid: this.userId }),
       };
-      const fn = level === 'error' ? console.error : console.warn;
+      const fn = level === "error" ? console.error : console.warn;
       fn(JSON.stringify(entry));
     }
   }

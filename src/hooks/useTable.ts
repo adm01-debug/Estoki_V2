@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from "react";
 
-export type SortDirection = 'asc' | 'desc';
+export type SortDirection = "asc" | "desc";
 
 export interface SortConfig<T> {
   key: keyof T | null;
@@ -17,11 +17,13 @@ interface UseTableOptions<T> {
 export function useTable<T extends Record<string, any>>({
   data,
   initialPageSize = 10,
-  defaultSort = { key: null, direction: 'asc' },
-  filterFn
+  defaultSort = { key: null, direction: "asc" },
+  filterFn,
 }: UseTableOptions<T>) {
-  const [query, setQuery] = useState('');
-  const [sortConfig, setSortConfig] = useState<SortConfig<T>>(defaultSort || { key: null, direction: 'asc' });
+  const [query, setQuery] = useState("");
+  const [sortConfig, setSortConfig] = useState<SortConfig<T>>(
+    defaultSort || { key: null, direction: "asc" }
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -31,13 +33,15 @@ export function useTable<T extends Record<string, any>>({
     if (!query) return data;
 
     if (filterFn) {
-      return data.filter(item => filterFn(item, query));
+      return data.filter((item) => filterFn(item, query));
     }
 
     const lowerQuery = query.toLowerCase();
-    return data.filter(item => {
-      return Object.values(item).some(val => 
-        String(val ?? '').toLowerCase().includes(lowerQuery)
+    return data.filter((item) => {
+      return Object.values(item).some((val) =>
+        String(val ?? "")
+          .toLowerCase()
+          .includes(lowerQuery)
       );
     });
   }, [data, query, filterFn]);
@@ -45,17 +49,17 @@ export function useTable<T extends Record<string, any>>({
   // 2. Ordenação
   const sortedData = useMemo(() => {
     if (!sortConfig.key) return filteredData;
-    
+
     return [...filteredData].sort((a, b) => {
       const aValue = a[sortConfig.key!];
       const bValue = b[sortConfig.key!];
-      
+
       if (aValue === bValue) return 0;
       if (aValue == null) return 1;
       if (bValue == null) return -1;
-      
+
       const comparison = aValue < bValue ? -1 : 1;
-      return sortConfig.direction === 'asc' ? comparison : -comparison;
+      return sortConfig.direction === "asc" ? comparison : -comparison;
     });
   }, [filteredData, sortConfig]);
 
@@ -68,14 +72,14 @@ export function useTable<T extends Record<string, any>>({
 
   // Handlers
   const handleSort = useCallback((key: keyof T) => {
-    setSortConfig(prev => ({
+    setSortConfig((prev) => ({
       key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
     }));
   }, []);
 
   const toggleSelection = useCallback((id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -91,9 +95,12 @@ export function useTable<T extends Record<string, any>>({
     setSelectedIds(new Set());
   }, []);
 
-  const goToPage = useCallback((page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  }, [totalPages]);
+  const goToPage = useCallback(
+    (page: number) => {
+      setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    },
+    [totalPages]
+  );
 
   return {
     // State
@@ -107,7 +114,7 @@ export function useTable<T extends Record<string, any>>({
     pageSize,
     setPageSize,
     selectedIds: Array.from(selectedIds),
-    
+
     // Data
     data: paginatedData,
     filteredData,
@@ -115,14 +122,14 @@ export function useTable<T extends Record<string, any>>({
     paginatedData,
     totalItems: sortedData.length,
     totalPages,
-    
+
     // Actions
     handleSort,
     toggleSelection,
     selectAll,
     clearSelection,
     goToPage,
-    
+
     // Helpers
     hasNext: currentPage < totalPages,
     hasPrev: currentPage > 1,

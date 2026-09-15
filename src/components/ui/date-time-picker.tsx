@@ -5,11 +5,7 @@ import { Calendar as CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 
 interface DateTimePickerProps {
@@ -61,10 +57,10 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
           </PopoverContent>
         </Popover>
         <div className="relative w-32">
-          <Clock className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            type="time" 
-            className="pl-8" 
+          <Clock className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="time"
+            className="pl-8"
             value={time}
             onChange={(e) => setTime(e.target.value)}
           />

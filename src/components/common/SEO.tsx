@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
   title: string;
@@ -7,13 +7,15 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
- const SITE_NAME = 'Promo Brindes Intel WMS';
-const BASE_URL = 'https://estoki.app';
+const SITE_NAME = "ESTOKI WMS";
+const BASE_URL = "https://cart-bloom-connect.lovable.app";
 
-export function SEO({ title, description, path = '/', noIndex = false }: SEOProps) {
+export function SEO({ title, description, path = "/", noIndex = false }: SEOProps) {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const url = `${BASE_URL}${path}`;
-  const desc = description || 'Sistema completo de gestão de estoque, triagem e controle de inventário para armazéns.';
+  const desc =
+    description ||
+    "Sistema completo de gestão de estoque, triagem e controle de inventário para armazéns.";
 
   return (
     <Helmet>

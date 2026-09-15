@@ -48,53 +48,46 @@ export function useInfiniteScroll<T = any>(
     [table, pageSize, orderBy, filters, searchTerm]
   );
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey,
-    queryFn: async ({ pageParam = 0 }) => {
-      let query = (supabase
-        .from(table as any) as any)
-        .select(selectColumns.join(","), { count: "exact" })
-        .order(orderBy.column, { ascending: orderBy.ascending ?? false })
-        .range(pageParam, pageParam + pageSize - 1);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } =
+    useInfiniteQuery({
+      queryKey,
+      queryFn: async ({ pageParam = 0 }) => {
+        let query = (supabase.from(table as any) as any)
+          .select(selectColumns.join(","), { count: "exact" })
+          .order(orderBy.column, { ascending: orderBy.ascending ?? false })
+          .range(pageParam, pageParam + pageSize - 1);
 
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          if (Array.isArray(value)) {
-            query = query.in(key, value);
-          } else {
-            query = query.eq(key, value);
+        Object.entries(filters).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== "") {
+            if (Array.isArray(value)) {
+              query = query.in(key, value);
+            } else {
+              query = query.eq(key, value);
+            }
           }
+        });
+
+        if (searchTerm && searchColumns.length > 0) {
+          const searchConditions = searchColumns
+            .map((col) => `${col}.ilike.%${searchTerm}%`)
+            .join(",");
+          query = query.or(searchConditions);
         }
-      });
 
-      if (searchTerm && searchColumns.length > 0) {
-        const searchConditions = searchColumns
-          .map((col) => `${col}.ilike.%${searchTerm}%`)
-          .join(",");
-        query = query.or(searchConditions);
-      }
+        const { data, error, count } = await query;
 
-      const { data, error, count } = await query;
+        if (error) throw error;
 
-      if (error) throw error;
-
-      return {
-        items: data as T[],
-        nextPage: data.length === pageSize ? pageParam + pageSize : undefined,
-        totalCount: count || 0,
-      };
-    },
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    enabled,
-  });
+        return {
+          items: data as T[],
+          nextPage: data.length === pageSize ? pageParam + pageSize : undefined,
+          totalCount: count || 0,
+        };
+      },
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) => lastPage.nextPage,
+      enabled,
+    });
 
   const allItems = useMemo(() => {
     return data?.pages.flatMap((page) => page.items) ?? [];

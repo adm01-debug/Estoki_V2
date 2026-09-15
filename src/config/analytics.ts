@@ -3,43 +3,46 @@
  * Tracking de eventos, métricas de negócio e performance
  */
 
-import { envConfig, isProduction } from './environment';
+import { envConfig, isProduction } from "./environment";
+import { logger } from "@/utils/logger";
+
+type AnalyticsMetadata = Record<string, unknown>;
 
 // Tipos de eventos
 export enum EventCategory {
-  USER = 'user',
-  INVENTORY = 'inventory',
-  RECEIVING = 'receiving',
-  SHIPPING = 'shipping',
-  PICKING = 'picking',
-  ERROR = 'error',
-  PERFORMANCE = 'performance',
+  USER = "user",
+  INVENTORY = "inventory",
+  RECEIVING = "receiving",
+  SHIPPING = "shipping",
+  PICKING = "picking",
+  ERROR = "error",
+  PERFORMANCE = "performance",
 }
 
 export enum EventAction {
   // User
-  LOGIN = 'login',
-  LOGOUT = 'logout',
-  PAGE_VIEW = 'page_view',
+  LOGIN = "login",
+  LOGOUT = "logout",
+  PAGE_VIEW = "page_view",
   // Inventory
-  STOCK_UPDATE = 'stock_update',
-  INVENTORY_COUNT = 'inventory_count',
-  LOW_STOCK_ALERT = 'low_stock_alert',
+  STOCK_UPDATE = "stock_update",
+  INVENTORY_COUNT = "inventory_count",
+  LOW_STOCK_ALERT = "low_stock_alert",
   // Receiving
-  RECEIPT_CREATED = 'receipt_created',
-  RECEIPT_COMPLETED = 'receipt_completed',
+  RECEIPT_CREATED = "receipt_created",
+  RECEIPT_COMPLETED = "receipt_completed",
   // Shipping
-  SHIPMENT_CREATED = 'shipment_created',
-  SHIPMENT_DISPATCHED = 'shipment_dispatched',
+  SHIPMENT_CREATED = "shipment_created",
+  SHIPMENT_DISPATCHED = "shipment_dispatched",
   // Picking
-  PICK_STARTED = 'pick_started',
-  PICK_COMPLETED = 'pick_completed',
+  PICK_STARTED = "pick_started",
+  PICK_COMPLETED = "pick_completed",
   // Error
-  API_ERROR = 'api_error',
-  VALIDATION_ERROR = 'validation_error',
+  API_ERROR = "api_error",
+  VALIDATION_ERROR = "validation_error",
   // Performance
-  PAGE_LOAD = 'page_load',
-  API_LATENCY = 'api_latency',
+  PAGE_LOAD = "page_load",
+  API_LATENCY = "api_latency",
 }
 
 interface AnalyticsEvent {
@@ -47,14 +50,14 @@ interface AnalyticsEvent {
   action: EventAction;
   label?: string;
   value?: number;
-  metadata?: Record<string, any>;
+  metadata?: AnalyticsMetadata;
   timestamp: string;
   userId?: string;
   sessionId?: string;
 }
 
 // Session ID único por sessão
-const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const sessionId = `session_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
 // Fila de eventos para batch processing
 let eventQueue: AnalyticsEvent[] = [];
@@ -69,9 +72,9 @@ async function flushEvents(): Promise<void> {
 
   try {
     // Google Analytics 4
-    if (envConfig.gaTrackingId && typeof window !== 'undefined' && (window as any).gtag) {
+    if (envConfig.gaTrackingId && typeof window !== "undefined" && window.gtag) {
       eventsToSend.forEach((event) => {
-        (window as any).gtag('event', event.action, {
+        window.gtag?.("event", event.action, {
           event_category: event.category,
           event_label: event.label,
           value: event.value,
@@ -83,8 +86,8 @@ async function flushEvents(): Promise<void> {
     // Backend próprio para métricas de negócio
     if (envConfig.apiUrl && isProduction()) {
       await fetch(`${envConfig.apiUrl}/api/analytics/events`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ events: eventsToSend }),
       }).catch(() => {}); // Silencioso se falhar
     }
@@ -110,7 +113,7 @@ export function trackEvent(
   options?: {
     label?: string;
     value?: number;
-    metadata?: Record<string, any>;
+    metadata?: AnalyticsMetadata;
     userId?: string;
   }
 ): void {
@@ -127,7 +130,7 @@ export function trackEvent(
 
   // Em dev, apenas logar no console
   if (!isProduction()) {
-    console.log('[ANALYTICS]', event);
+    logger.debug("Evento de analytics capturado", { event });
     return;
   }
 
@@ -144,8 +147,7 @@ export const analytics = {
       label: method,
     }),
 
-  userLogout: (userId: string) =>
-    trackEvent(EventCategory.USER, EventAction.LOGOUT, { userId }),
+  userLogout: (userId: string) => trackEvent(EventCategory.USER, EventAction.LOGOUT, { userId }),
 
   pageView: (path: string, title?: string) =>
     trackEvent(EventCategory.USER, EventAction.PAGE_VIEW, {
@@ -209,10 +211,10 @@ export const analytics = {
 
 // Inicializar tracking de performance automático
 export function initPerformanceTracking(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   // Page load timing
-  window.addEventListener('load', () => {
+  window.addEventListener("load", () => {
     setTimeout(() => {
       const timing = performance.timing;
       const loadTime = timing.loadEventEnd - timing.navigationStart;
@@ -229,10 +231,10 @@ export function initPerformanceTracking(): void {
 }
 
 // Flush eventos antes de fechar página
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', flushEvents);
-  window.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeunload", flushEvents);
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
       flushEvents();
     }
   });

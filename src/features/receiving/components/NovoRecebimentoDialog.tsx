@@ -56,12 +56,14 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
         .order("nome");
 
       if (!error && data) {
-        setProdutos((data || []).map(p => ({ 
-          id: p.id,
-          nome: p.nome,
-          sku: p.sku,
-          fornecedor_principal: p.fornecedor_principal ?? undefined 
-        })));
+        setProdutos(
+          (data || []).map((p) => ({
+            id: p.id,
+            nome: p.nome,
+            sku: p.sku,
+            fornecedor_principal: p.fornecedor_principal ?? undefined,
+          }))
+        );
       }
       setLoadingProdutos(false);
     };
@@ -79,7 +81,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
     } catch (err) {
       if (err instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
-        err.errors.forEach(e => {
+        err.errors.forEach((e) => {
           if (e.path[0]) {
             newErrors[e.path[0] as string] = e.message;
           }
@@ -119,7 +121,6 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
     } finally {
       setLoading(false);
     }
-
   };
 
   const resetForm = () => {
@@ -144,7 +145,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />

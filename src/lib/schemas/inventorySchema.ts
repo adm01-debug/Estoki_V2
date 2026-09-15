@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const inventorySchema = z.object({
   id: z.string().uuid(),
@@ -21,9 +21,9 @@ export const inventoryAdjustSchema = z.object({
   product_id: z.string().uuid(),
   warehouse_id: z.string().uuid(),
   location_id: z.string().uuid(),
-  adjustment_type: z.enum(['increase', 'decrease', 'set']),
+  adjustment_type: z.enum(["increase", "decrease", "set"]),
   quantity: z.number().int(),
-  reason: z.enum(['count', 'damage', 'expiration', 'return', 'correction', 'other']),
+  reason: z.enum(["count", "damage", "expiration", "return", "correction", "other"]),
   notes: z.string().nullable().optional(),
 });
 

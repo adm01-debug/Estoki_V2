@@ -10,10 +10,10 @@ export function PrintButton({ targetId, title = "Imprimir" }: PrintButtonProps) 
   const handlePrint = () => {
     const content = document.getElementById(targetId);
     if (!content) return;
-    
+
     const printWindow = window.open("", "_blank");
     if (!printWindow) return;
-    
+
     printWindow.document.write(`
       <html>
         <head><title>${title}</title>
@@ -29,7 +29,8 @@ export function PrintButton({ targetId, title = "Imprimir" }: PrintButtonProps) 
 
   return (
     <Button variant="outline" size="sm" onClick={handlePrint}>
-      <Printer className="mr-2 h-4 w-4" />{title}
+      <Printer className="mr-2 h-4 w-4" />
+      {title}
     </Button>
   );
 }

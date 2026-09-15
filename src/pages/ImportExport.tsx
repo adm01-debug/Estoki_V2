@@ -7,7 +7,7 @@ import { ExportSection } from "@/components/ImportExport/ExportSection";
 
 /**
  * Página de Importação e Exportação de Dados
- * 
+ *
  * Centraliza as operações de carga e extração de dados em massa (CSV),
  * permitindo a gestão eficiente de produtos, posições e lotes.
  */
@@ -15,11 +15,8 @@ export default function ImportExport() {
   const [activeTab, setActiveTab] = useState("import");
 
   return (
-    <div className="p-4 md:p-6 max-w-[1200px] mx-auto">
-      <PageHeader 
-        title="Importar / Exportar" 
-        description="Gerencie dados em massa via CSV"
-      />
+    <div className="mx-auto max-w-[1200px] p-4 md:p-6">
+      <PageHeader title="Importar / Exportar" description="Gerencie dados em massa via CSV" />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full max-w-md grid-cols-2">
@@ -42,4 +39,3 @@ export default function ImportExport() {
     </div>
   );
 }
-

@@ -8,15 +8,21 @@ export function useKanbanData() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedLote, setSelectedLote] = useState<LoteKanban | null>(null);
 
-  const { data: lotes = [], isLoading, refetch } = useQuery({
+  const {
+    data: lotes = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["kanban-lotes"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("lotes")
-        .select("id, numero_lote, status, quantidade_atual, quantidade_inicial, fornecedor, nf_entrada, data_recebimento, data_validade, updated_at, produto_id, produtos(nome, sku)")
+        .select(
+          "id, numero_lote, status, quantidade_atual, quantidade_inicial, fornecedor, nf_entrada, data_recebimento, data_validade, updated_at, produto_id, produtos(nome, sku)"
+        )
         .order("updated_at", { ascending: false })
         .limit(500);
-      
+
       if (error) throw error;
       return (data || []).map((l: any) => ({
         ...l,
@@ -35,24 +41,27 @@ export function useKanbanData() {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [refetch]);
 
   const filteredLotes = useMemo(() => {
     if (!searchTerm) return lotes;
     const term = searchTerm.toLowerCase();
-    return lotes.filter(l =>
-      l.numero_lote.toLowerCase().includes(term) ||
-      l.produto?.nome?.toLowerCase().includes(term) ||
-      l.fornecedor?.toLowerCase().includes(term) ||
-      l.nf_entrada?.toLowerCase().includes(term)
+    return lotes.filter(
+      (l) =>
+        l.numero_lote.toLowerCase().includes(term) ||
+        l.produto?.nome?.toLowerCase().includes(term) ||
+        l.fornecedor?.toLowerCase().includes(term) ||
+        l.nf_entrada?.toLowerCase().includes(term)
     );
   }, [lotes, searchTerm]);
 
   const columns = useMemo(() => {
-    return PIPELINE_COLUMNS.map(col => ({
+    return PIPELINE_COLUMNS.map((col) => ({
       ...col,
-      items: filteredLotes.filter(l => col.statuses.includes(l.status)),
+      items: filteredLotes.filter((l) => col.statuses.includes(l.status)),
     }));
   }, [filteredLotes]);
 
@@ -65,6 +74,6 @@ export function useKanbanData() {
     selectedLote,
     setSelectedLote,
     columns,
-    totalLotes: lotes.length
+    totalLotes: lotes.length,
   };
 }

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { MFAVerify } from '@/components/MFAVerify';
-import { useMFA } from '@/hooks/useMFA';
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { MFAVerify } from "@/components/MFAVerify";
+import { useMFA } from "@/hooks/useMFA";
 
 export default function TwoFactorAuth() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export default function TwoFactorAuth() {
   const [factorId, setFactorId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const returnTo = (location.state as any)?.returnTo || '/dashboard';
+  const returnTo = (location.state as any)?.returnTo || "/dashboard";
 
   useEffect(() => {
     checkMFAStatus();
@@ -28,8 +28,8 @@ export default function TwoFactorAuth() {
         navigate(returnTo, { replace: true });
       }
     } catch (err) {
-      if (import.meta.env.DEV) console.error('Error checking MFA status:', err);
-      navigate('/login', { replace: true });
+      if (import.meta.env.DEV) console.error("Error checking MFA status:", err);
+      navigate("/auth/login", { replace: true });
     } finally {
       setLoading(false);
     }
@@ -40,20 +40,20 @@ export default function TwoFactorAuth() {
   };
 
   const handleCancel = () => {
-    navigate('/login', { replace: true });
+    navigate("/auth/login", { replace: true });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted">
+      <div className="flex min-h-screen items-center justify-center bg-muted">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted p-4">
-      <MFAVerify 
+    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
+      <MFAVerify
         factorId={factorId || undefined}
         onSuccess={handleSuccess}
         onCancel={handleCancel}

@@ -22,7 +22,7 @@ export async function importExcel<T>(
   options?: ExcelImportOptions
 ): Promise<ImportResult<T>> {
   const opts = { ...defaultOptions, ...options };
-  const ExcelJS = (await import('exceljs')).default;
+  const ExcelJS = (await import("exceljs")).default;
 
   const arrayBuffer = await file.arrayBuffer();
   const workbook = new ExcelJS.Workbook();
@@ -80,15 +80,19 @@ export async function importExcel<T>(
 }
 
 export async function getExcelSheets(file: File): Promise<string[]> {
-  const ExcelJS = (await import('exceljs')).default;
+  const ExcelJS = (await import("exceljs")).default;
   const arrayBuffer = await file.arrayBuffer();
   const workbook = new ExcelJS.Workbook();
   await workbook.xlsx.load(arrayBuffer);
-  return workbook.worksheets.map(ws => ws.name);
+  return workbook.worksheets.map((ws) => ws.name);
 }
 
-export async function downloadExcel(data: Record<string, unknown>[], filename: string, sheetName = "Dados"): Promise<void> {
-  const ExcelJS = (await import('exceljs')).default;
+export async function downloadExcel(
+  data: Record<string, unknown>[],
+  filename: string,
+  sheetName = "Dados"
+): Promise<void> {
+  const ExcelJS = (await import("exceljs")).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet(sheetName);
 
@@ -99,17 +103,21 @@ export async function downloadExcel(data: Record<string, unknown>[], filename: s
   const headerRow = worksheet.getRow(1);
   headerRow.font = { bold: true };
 
-  data.forEach(row => worksheet.addRow(headers.map(h => row[h] ?? '')));
+  data.forEach((row) => worksheet.addRow(headers.map((h) => row[h] ?? "")));
 
   headers.forEach((key, i) => {
     worksheet.getColumn(i + 1).width = Math.max(key.length, 15);
   });
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `${filename}.xlsx`; a.click();
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.xlsx`;
+  a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -118,7 +126,7 @@ export async function generateExcelTemplate(
   filename: string,
   exampleData?: Record<string, unknown>[]
 ): Promise<void> {
-  const ExcelJS = (await import('exceljs')).default;
+  const ExcelJS = (await import("exceljs")).default;
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Template");
 
@@ -127,8 +135,8 @@ export async function generateExcelTemplate(
   headerRow.font = { bold: true };
 
   if (exampleData) {
-    exampleData.forEach(row => {
-      worksheet.addRow(headers.map(h => row[h] ?? ''));
+    exampleData.forEach((row) => {
+      worksheet.addRow(headers.map((h) => row[h] ?? ""));
     });
   }
 
@@ -137,9 +145,13 @@ export async function generateExcelTemplate(
   });
 
   const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `${filename}_template.xlsx`; a.click();
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}_template.xlsx`;
+  a.click();
   URL.revokeObjectURL(url);
 }

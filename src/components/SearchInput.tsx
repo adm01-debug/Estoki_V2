@@ -1,14 +1,14 @@
 /**
  * Componente de Input de Busca
- * 
+ *
  * @module components/SearchInput
  */
 
-import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, X, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, X, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SearchInputProps {
   value?: string;
@@ -24,14 +24,14 @@ interface SearchInputProps {
 export function SearchInput({
   value: externalValue,
   onChange,
-  placeholder = 'Buscar...',
+  placeholder = "Buscar...",
   isLoading = false,
   debounceMs = 300,
   className,
   showClear = true,
   autoFocus = false,
 }: SearchInputProps) {
-  const [internalValue, setInternalValue] = useState(externalValue ?? '');
+  const [internalValue, setInternalValue] = useState(externalValue ?? "");
 
   // Sincronizar valor externo
   useEffect(() => {
@@ -52,12 +52,12 @@ export function SearchInput({
   }, [internalValue, debounceMs, onChange, externalValue]);
 
   const handleClear = () => {
-    setInternalValue('');
-    onChange('');
+    setInternalValue("");
+    onChange("");
   };
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn("relative", className)}>
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="text"
@@ -67,15 +67,10 @@ export function SearchInput({
         className="pl-10 pr-10"
         autoFocus={autoFocus}
       />
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+      <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
         {showClear && internalValue && !isLoading && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={handleClear}
-          >
+          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClear}>
             <X className="h-4 w-4" />
             <span className="sr-only">Limpar busca</span>
           </Button>

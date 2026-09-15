@@ -5,7 +5,7 @@ Deno.test("InventoryReserveSchema validation - Valid inputs", () => {
   const valid = {
     produto_id: "550e8400-e29b-41d4-a716-446655440000",
     quantidade: 10,
-    prioridade: "alta"
+    prioridade: "alta",
   };
 
   assertEquals(validateInput(InventoryReserveSchema, valid).success, true);
@@ -14,12 +14,12 @@ Deno.test("InventoryReserveSchema validation - Valid inputs", () => {
 Deno.test("InventoryReserveSchema validation - Invalid inputs", () => {
   const invalidId = {
     produto_id: "not-a-uuid",
-    quantidade: 10
+    quantidade: 10,
   };
-  
+
   const negativeQty = {
     produto_id: "550e8400-e29b-41d4-a716-446655440000",
-    quantidade: -1
+    quantidade: -1,
   };
 
   assertEquals(validateInput(InventoryReserveSchema, invalidId).success, false);

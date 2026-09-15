@@ -1,14 +1,21 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { KeyRound, Check, X, Clock, Loader2, Send, AlertTriangle } from 'lucide-react';
-import { usePasswordResetRequests } from '@/hooks/usePasswordResetRequests';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { KeyRound, Check, X, Clock, Loader2, Send, AlertTriangle } from "lucide-react";
+import { usePasswordResetRequests } from "@/hooks/usePasswordResetRequests";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import {
   Dialog,
   DialogContent,
@@ -16,30 +23,41 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function PasswordResetApproval() {
-  const { requests, myRequests, loading, createRequest, approveRequest, rejectRequest, pendingCount } = usePasswordResetRequests();
-  const [motivo, setMotivo] = useState('');
+  const {
+    requests,
+    myRequests,
+    loading,
+    createRequest,
+    approveRequest,
+    rejectRequest,
+    pendingCount,
+  } = usePasswordResetRequests();
+  const [motivo, setMotivo] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [actionDialog, setActionDialog] = useState<{ type: 'approve' | 'reject'; id: string } | null>(null);
-  const [observacao, setObservacao] = useState('');
+  const [actionDialog, setActionDialog] = useState<{
+    type: "approve" | "reject";
+    id: string;
+  } | null>(null);
+  const [observacao, setObservacao] = useState("");
 
   const handleCreateRequest = async () => {
     if (!motivo.trim()) return;
     setSubmitting(true);
     await createRequest(motivo);
-    setMotivo('');
+    setMotivo("");
     setSubmitting(false);
   };
 
   const handleAction = async () => {
     if (!actionDialog) return;
     setSubmitting(true);
-    
-    if (actionDialog.type === 'approve') {
+
+    if (actionDialog.type === "approve") {
       await approveRequest(actionDialog.id, observacao);
     } else {
       if (!observacao.trim()) {
@@ -48,22 +66,42 @@ export function PasswordResetApproval() {
       }
       await rejectRequest(actionDialog.id, observacao);
     }
-    
+
     setActionDialog(null);
-    setObservacao('');
+    setObservacao("");
     setSubmitting(false);
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pendente':
-        return <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600"><Clock className="h-3 w-3 mr-1" />Pendente</Badge>;
-      case 'aprovado':
-        return <Badge variant="outline" className="bg-green-500/10 text-green-600"><Check className="h-3 w-3 mr-1" />Aprovado</Badge>;
-      case 'rejeitado':
-        return <Badge variant="outline" className="bg-red-500/10 text-red-600"><X className="h-3 w-3 mr-1" />Rejeitado</Badge>;
-      case 'expirado':
-        return <Badge variant="secondary"><AlertTriangle className="h-3 w-3 mr-1" />Expirado</Badge>;
+      case "pendente":
+        return (
+          <Badge variant="outline" className="bg-yellow-500/10 text-yellow-600">
+            <Clock className="mr-1 h-3 w-3" />
+            Pendente
+          </Badge>
+        );
+      case "aprovado":
+        return (
+          <Badge variant="outline" className="bg-green-500/10 text-green-600">
+            <Check className="mr-1 h-3 w-3" />
+            Aprovado
+          </Badge>
+        );
+      case "rejeitado":
+        return (
+          <Badge variant="outline" className="bg-red-500/10 text-red-600">
+            <X className="mr-1 h-3 w-3" />
+            Rejeitado
+          </Badge>
+        );
+      case "expirado":
+        return (
+          <Badge variant="secondary">
+            <AlertTriangle className="mr-1 h-3 w-3" />
+            Expirado
+          </Badge>
+        );
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
@@ -89,7 +127,10 @@ export function PasswordResetApproval() {
             <KeyRound className="h-4 w-4" />
             Aprovações
             {pendingCount > 0 && (
-              <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+              <Badge
+                variant="destructive"
+                className="ml-1 flex h-5 w-5 items-center justify-center p-0 text-xs"
+              >
                 {pendingCount}
               </Badge>
             )}
@@ -105,7 +146,8 @@ export function PasswordResetApproval() {
                 Solicitar Reset de Senha
               </CardTitle>
               <CardDescription>
-                Solicite um reset de senha. Um administrador precisará aprovar antes do envio do email de recuperação.
+                Solicite um reset de senha. Um administrador precisará aprovar antes do envio do
+                email de recuperação.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -119,7 +161,11 @@ export function PasswordResetApproval() {
                 />
               </div>
               <Button onClick={handleCreateRequest} disabled={!motivo.trim() || submitting}>
-                {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+                {submitting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="mr-2 h-4 w-4" />
+                )}
                 Enviar Solicitação
               </Button>
             </CardContent>
@@ -132,7 +178,9 @@ export function PasswordResetApproval() {
             </CardHeader>
             <CardContent>
               {myRequests.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">Nenhuma solicitação encontrada</p>
+                <p className="py-4 text-center text-muted-foreground">
+                  Nenhuma solicitação encontrada
+                </p>
               ) : (
                 <Table>
                   <TableHeader>
@@ -147,12 +195,14 @@ export function PasswordResetApproval() {
                     {myRequests.map((req) => (
                       <TableRow key={req.id}>
                         <TableCell className="text-sm">
-                          {format(new Date(req.solicitado_em), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                          {format(new Date(req.solicitado_em), "dd/MM/yyyy HH:mm", {
+                            locale: ptBR,
+                          })}
                         </TableCell>
-                        <TableCell className="max-w-xs truncate">{req.motivo || '-'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{req.motivo || "-"}</TableCell>
                         <TableCell>{getStatusBadge(req.status)}</TableCell>
                         <TableCell className="max-w-xs truncate text-muted-foreground">
-                          {req.observacao_admin || '-'}
+                          {req.observacao_admin || "-"}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -176,8 +226,8 @@ export function PasswordResetApproval() {
             </CardHeader>
             <CardContent>
               {requests.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <KeyRound className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <div className="py-8 text-center text-muted-foreground">
+                  <KeyRound className="mx-auto mb-4 h-12 w-12 opacity-50" />
                   <p>Nenhuma solicitação encontrada</p>
                 </div>
               ) : (
@@ -196,22 +246,24 @@ export function PasswordResetApproval() {
                     {requests.map((req) => (
                       <TableRow key={req.id}>
                         <TableCell className="text-sm">
-                          {format(new Date(req.solicitado_em), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                          {format(new Date(req.solicitado_em), "dd/MM/yyyy HH:mm", {
+                            locale: ptBR,
+                          })}
                         </TableCell>
                         <TableCell className="font-medium">{req.user_email}</TableCell>
-                        <TableCell className="max-w-xs truncate">{req.motivo || '-'}</TableCell>
+                        <TableCell className="max-w-xs truncate">{req.motivo || "-"}</TableCell>
                         <TableCell>{getStatusBadge(req.status)}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
                           {format(new Date(req.expira_em), "dd/MM HH:mm", { locale: ptBR })}
                         </TableCell>
                         <TableCell className="text-right">
-                          {req.status === 'pendente' && (
-                            <div className="flex gap-2 justify-end">
+                          {req.status === "pendente" && (
+                            <div className="flex justify-end gap-2">
                               <Button
                                 size="sm"
                                 variant="outline"
                                 className="text-green-600 hover:text-green-700"
-                                onClick={() => setActionDialog({ type: 'approve', id: req.id })}
+                                onClick={() => setActionDialog({ type: "approve", id: req.id })}
                               >
                                 <Check className="h-4 w-4" />
                               </Button>
@@ -219,7 +271,7 @@ export function PasswordResetApproval() {
                                 size="sm"
                                 variant="outline"
                                 className="text-red-600 hover:text-red-700"
-                                onClick={() => setActionDialog({ type: 'reject', id: req.id })}
+                                onClick={() => setActionDialog({ type: "reject", id: req.id })}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -241,33 +293,41 @@ export function PasswordResetApproval() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionDialog?.type === 'approve' ? 'Aprovar Solicitação' : 'Rejeitar Solicitação'}
+              {actionDialog?.type === "approve" ? "Aprovar Solicitação" : "Rejeitar Solicitação"}
             </DialogTitle>
             <DialogDescription>
-              {actionDialog?.type === 'approve' 
-                ? 'Ao aprovar, um email de reset será enviado ao usuário.'
-                : 'Informe o motivo da rejeição.'}
+              {actionDialog?.type === "approve"
+                ? "Ao aprovar, um email de reset será enviado ao usuário."
+                : "Informe o motivo da rejeição."}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{actionDialog?.type === 'approve' ? 'Observação (opcional)' : 'Motivo da rejeição *'}</Label>
+              <Label>
+                {actionDialog?.type === "approve"
+                  ? "Observação (opcional)"
+                  : "Motivo da rejeição *"}
+              </Label>
               <Textarea
-                placeholder={actionDialog?.type === 'approve' ? 'Observação...' : 'Informe o motivo...'}
+                placeholder={
+                  actionDialog?.type === "approve" ? "Observação..." : "Informe o motivo..."
+                }
                 value={observacao}
                 onChange={(e) => setObservacao(e.target.value)}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setActionDialog(null)}>Cancelar</Button>
-            <Button 
-              onClick={handleAction} 
-              disabled={submitting || (actionDialog?.type === 'reject' && !observacao.trim())}
-              variant={actionDialog?.type === 'approve' ? 'default' : 'destructive'}
+            <Button variant="outline" onClick={() => setActionDialog(null)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleAction}
+              disabled={submitting || (actionDialog?.type === "reject" && !observacao.trim())}
+              variant={actionDialog?.type === "approve" ? "default" : "destructive"}
             >
-              {submitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              {actionDialog?.type === 'approve' ? 'Aprovar' : 'Rejeitar'}
+              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {actionDialog?.type === "approve" ? "Aprovar" : "Rejeitar"}
             </Button>
           </DialogFooter>
         </DialogContent>

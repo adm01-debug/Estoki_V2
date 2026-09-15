@@ -1,5 +1,5 @@
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface SearchInputProps {
   value?: string;
@@ -8,10 +8,15 @@ interface SearchInputProps {
   className?: string;
 }
 
-export default function SearchInput({ value, onChange, placeholder = "Buscar...", className }: SearchInputProps) {
+export default function SearchInput({
+  value,
+  onChange,
+  placeholder = "Buscar...",
+  className,
+}: SearchInputProps) {
   return (
-    <div className={`relative ${className || ''}`}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+    <div className={`relative ${className || ""}`}>
+      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         value={value}
         onChange={(e) => onChange?.(e.target.value)}

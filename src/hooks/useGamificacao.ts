@@ -1,12 +1,17 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useEffect } from 'react';
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 
 export const useGamificacao = () => {
   const queryClient = useQueryClient();
 
-  const { data: perfil, isLoading, error, refetch } = useQuery({
-    queryKey: ['gamificacao-perfil'],
+  const {
+    data: perfil,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["gamificacao-perfil"],
     queryFn: async () => {
       const {
         data: { user },
@@ -15,9 +20,9 @@ export const useGamificacao = () => {
       if (!user) return null;
 
       const { data, error } = await supabase
-        .from('gamificacao_usuarios')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("gamificacao_usuarios")
+        .select("*")
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -26,9 +31,9 @@ export const useGamificacao = () => {
   });
 
   const { data: conquistas } = useQuery({
-    queryKey: ['gamificacao-conquistas'],
+    queryKey: ["gamificacao-conquistas"],
     queryFn: async () => {
-      const { data, error } = await supabase.from('conquistas_definicoes').select('*');
+      const { data, error } = await supabase.from("conquistas_definicoes").select("*");
       if (error) throw error;
       return data;
     },
@@ -36,13 +41,21 @@ export const useGamificacao = () => {
 
   useEffect(() => {
     const channel = supabase
-      .channel('gamificacao-realtime')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'gamificacao_usuarios' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['gamificacao-perfil'] });
-      })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'conquistas_definicoes' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['gamificacao-conquistas'] });
-      })
+      .channel("gamificacao-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "gamificacao_usuarios" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["gamificacao-perfil"] });
+        }
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "conquistas_definicoes" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["gamificacao-conquistas"] });
+        }
+      )
       .subscribe();
 
     return () => {

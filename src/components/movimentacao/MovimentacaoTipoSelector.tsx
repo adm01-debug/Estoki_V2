@@ -9,10 +9,13 @@ interface MovimentacaoTipoSelectorProps {
   setTipoMovimento: (tipo: TipoMovimentacao) => void;
 }
 
-export function MovimentacaoTipoSelector({ tipoMovimento, setTipoMovimento }: MovimentacaoTipoSelectorProps) {
+export function MovimentacaoTipoSelector({
+  tipoMovimento,
+  setTipoMovimento,
+}: MovimentacaoTipoSelectorProps) {
   return (
-    <div className="bg-card rounded-xl p-4 border border-border">
-      <Label className="text-sm font-medium mb-3 block">Tipo de Movimento:</Label>
+    <div className="rounded-xl border border-border bg-card p-4">
+      <Label className="mb-3 block text-sm font-medium">Tipo de Movimento:</Label>
       <RadioGroup
         value={tipoMovimento}
         onValueChange={(v) => setTipoMovimento(v as TipoMovimentacao)}
@@ -22,7 +25,7 @@ export function MovimentacaoTipoSelector({ tipoMovimento, setTipoMovimento }: Mo
           <div
             key={tipo.value}
             className={cn(
-              "flex items-center space-x-3 p-3 rounded-lg border transition-all cursor-pointer",
+              "flex cursor-pointer items-center space-x-3 rounded-lg border p-3 transition-all",
               tipoMovimento === tipo.value
                 ? "border-primary bg-primary/5"
                 : "border-border hover:border-primary/50"

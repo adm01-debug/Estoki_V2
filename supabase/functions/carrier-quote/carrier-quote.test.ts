@@ -7,7 +7,7 @@ Deno.test("CarrierQuoteRequestSchema validation - Valid inputs", () => {
     destination_cep: "87654321",
     weight: 2.5,
     dimensions: { width: 10, height: 20, length: 30 },
-    carriers: ["correios"]
+    carriers: ["correios"],
   };
 
   assertEquals(validateInput(CarrierQuoteRequestSchema, valid).success, true);
@@ -18,13 +18,13 @@ Deno.test("CarrierQuoteRequestSchema validation - Invalid inputs", () => {
     origin_cep: "123",
     destination_cep: "87654321",
     weight: 2.5,
-    dimensions: { width: 10, height: 20, length: 30 }
+    dimensions: { width: 10, height: 20, length: 30 },
   };
-  
+
   const missingDimensions = {
     origin_cep: "01234567",
     destination_cep: "87654321",
-    weight: 2.5
+    weight: 2.5,
   };
 
   assertEquals(validateInput(CarrierQuoteRequestSchema, invalidCep).success, false);

@@ -1,9 +1,13 @@
 import type { Config } from "tailwindcss";
-import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -113,14 +117,15 @@ export default {
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
       },
       fontFamily: {
-        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
       },
       boxShadow: {
-        'glow-sm': '0 0 10px hsl(var(--primary) / 0.2)',
-        'glow': '0 0 20px hsl(var(--primary) / 0.3)',
-        'glow-lg': '0 0 40px hsl(var(--primary) / 0.3)',
+        "glow-sm": "0 0 10px hsl(var(--primary) / 0.2)",
+        glow: "0 0 20px hsl(var(--primary) / 0.3)",
+        "glow-lg": "0 0 40px hsl(var(--primary) / 0.3)",
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  plugins: [require("tailwindcss-animate")],
 } satisfies Config;

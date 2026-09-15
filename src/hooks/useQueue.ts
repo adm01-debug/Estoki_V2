@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export function useQueue<T>(initialValue: T[] = []) {
   const [queue, setQueue] = useState<T[]>(initialValue);
 
   const enqueue = useCallback((item: T) => {
-    setQueue(prev => [...prev, item]);
+    setQueue((prev) => [...prev, item]);
   }, []);
 
   const dequeue = useCallback(() => {
     let removed: T | undefined;
-    setQueue(prev => {
+    setQueue((prev) => {
       removed = prev[0];
       return prev.slice(1);
     });

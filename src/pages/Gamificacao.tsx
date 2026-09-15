@@ -1,5 +1,6 @@
 import { GamificacaoCharts } from "@/components/charts/WMSModuleCharts";
 import { useState } from "react";
+import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,21 +17,18 @@ import { StreakResumo } from "@/components/gamificacao/StreakSystem";
 import { GamificacaoLoja } from "@/components/gamificacao/GamificacaoLoja";
 import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Trophy,
-  Star,
-  Flame,
-  Target,
-  Zap,
-  Medal,
-  Loader2,
-} from "lucide-react";
+import { Trophy, Star, Flame, Target, Zap, Medal, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function GamificacaoPage() {
   const { perfil, isLoading: loadingGamificacao } = useGamificacao();
   const { conquistas, loading: loadingConquistas, desbloqueados } = useConquistas();
-  const { desafios, loading: loadingDesafios, desafiosConcluidos: numConcluidos, totalDesafios: numTotal } = useDesafiosDiarios();
+  const {
+    desafios,
+    loading: loadingDesafios,
+    desafiosConcluidos: numConcluidos,
+    totalDesafios: numTotal,
+  } = useDesafiosDiarios();
   const { streak, loading: loadingStreaks, streakAtual } = useStreaks();
   const [tab, setTab] = useState("visao-geral");
 
@@ -40,11 +38,15 @@ export default function GamificacaoPage() {
     return (
       <AppLayout title="Gamificação" showBack>
         <PageTransition>
-          <div className="p-4 space-y-4">
+          <div className="space-y-4 p-4">
             <Skeleton className="h-24 w-full" />
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {[1, 2, 3, 4].map((i) => (
-                <Card key={i}><CardContent className="p-4"><Skeleton className="h-16 w-full" /></CardContent></Card>
+                <Card key={i}>
+                  <CardContent className="p-4">
+                    <Skeleton className="h-16 w-full" />
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
@@ -59,14 +61,15 @@ export default function GamificacaoPage() {
 
   return (
     <AppLayout title="Gamificação" showBack>
+      <SEO title="Gamificação" path="/gamificacao" description="XP, conquistas, desafios diários e ranking de operadores no ESTOKI WMS." />
       <PageTransition>
-        <div className="p-4 space-y-6">
+        <div className="space-y-6 p-4">
           {/* XP Bar */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Card className="overflow-hidden">
               <CardContent className="p-6">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-3 rounded-full bg-primary/10">
+                <div className="mb-4 flex items-center gap-4">
+                  <div className="rounded-full bg-primary/10 p-3">
                     <Trophy className="h-8 w-8 text-primary" />
                   </div>
                   <div>
@@ -74,17 +77,28 @@ export default function GamificacaoPage() {
                     <p className="text-muted-foreground">{perfil?.xp_total || 0} XP Total</p>
                   </div>
                 </div>
-                <XPBar xp={perfil?.xp_total || 0} level={perfil?.nivel || 1} xpForNextLevel={perfil?.xp_proximo_nivel || 100} />
+                <XPBar
+                  xp={perfil?.xp_total || 0}
+                  level={perfil?.nivel || 1}
+                  xpForNextLevel={perfil?.xp_proximo_nivel || 100}
+                />
               </CardContent>
             </Card>
           </motion.div>
 
           {/* Quick Stats */}
-          <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-3" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <motion.div
+            className="grid grid-cols-2 gap-3 md:grid-cols-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-primary/10"><Zap className="h-5 w-5 text-primary" /></div>
+                  <div className="rounded-lg bg-primary/10 p-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                  </div>
                   <div>
                     <p className="text-2xl font-bold">{perfil?.xp_total || 0}</p>
                     <p className="text-xs text-muted-foreground">XP Total</p>
@@ -95,7 +109,9 @@ export default function GamificacaoPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-warning/10"><Flame className="h-5 w-5 text-warning" /></div>
+                  <div className="rounded-lg bg-warning/10 p-2">
+                    <Flame className="h-5 w-5 text-warning" />
+                  </div>
                   <div>
                     <p className="text-2xl font-bold text-warning">{streakAtual}</p>
                     <p className="text-xs text-muted-foreground">Streak</p>
@@ -106,7 +122,9 @@ export default function GamificacaoPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-success/10"><Medal className="h-5 w-5 text-success" /></div>
+                  <div className="rounded-lg bg-success/10 p-2">
+                    <Medal className="h-5 w-5 text-success" />
+                  </div>
                   <div>
                     <p className="text-2xl font-bold text-success">{conquistasDesbloqueados}</p>
                     <p className="text-xs text-muted-foreground">Conquistas</p>
@@ -117,9 +135,13 @@ export default function GamificacaoPage() {
             <Card>
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-accent"><Target className="h-5 w-5 text-accent-foreground" /></div>
+                  <div className="rounded-lg bg-accent p-2">
+                    <Target className="h-5 w-5 text-accent-foreground" />
+                  </div>
                   <div>
-                    <p className="text-2xl font-bold">{desafiosConcluidos}/{totalDesafios}</p>
+                    <p className="text-2xl font-bold">
+                      {desafiosConcluidos}/{totalDesafios}
+                    </p>
                     <p className="text-xs text-muted-foreground">Desafios Hoje</p>
                   </div>
                 </div>
@@ -146,7 +168,7 @@ export default function GamificacaoPage() {
               <TabsTrigger value="conquistas">Conquistas</TabsTrigger>
               <TabsTrigger value="ranking">Ranking</TabsTrigger>
               <TabsTrigger value="loja" className="flex items-center gap-1">
-                <Star className="h-3 w-3 text-primary animate-pulse" /> Loja
+                <Star className="h-3 w-3 animate-pulse text-primary" /> Loja
               </TabsTrigger>
             </TabsList>
 

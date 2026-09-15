@@ -6,14 +6,14 @@ const Unauthorized = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-6 p-8">
-        <ShieldX className="h-24 w-24 text-destructive mx-auto" />
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="space-y-6 p-8 text-center">
+        <ShieldX className="mx-auto h-24 w-24 text-destructive" />
         <h1 className="text-4xl font-bold">Acesso Negado</h1>
-        <p className="text-muted-foreground max-w-md">
+        <p className="max-w-md text-muted-foreground">
           Você não tem permissão para acessar esta página.
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex justify-center gap-4">
           <Button onClick={() => navigate("/auth")}>
             <LogIn className="mr-2 h-4 w-4" /> Fazer Login
           </Button>

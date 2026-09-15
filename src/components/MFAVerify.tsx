@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { OTPInput } from '@/components/forms/OTPInput';
-import { useMFA } from '@/hooks/useMFA';
-import { Shield, Loader2 } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { OTPInput } from "@/components/forms/OTPInput";
+import { useMFA } from "@/hooks/useMFA";
+import { Shield, Loader2 } from "lucide-react";
 
 interface MFAVerifyProps {
   onSuccess?: () => void;
@@ -14,7 +14,7 @@ interface MFAVerifyProps {
 
 export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVerifyProps) {
   const { loading, error, factors, listFactors, verifyLogin, clearError } = useMFA();
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState("");
   const [selectedFactorId, setSelectedFactorId] = useState<string | null>(propFactorId || null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
 
   const loadFactors = async () => {
     const allFactors = await listFactors();
-    const verifiedFactors = allFactors.filter(f => f.status === 'verified');
+    const verifiedFactors = allFactors.filter((f) => f.status === "verified");
     if (verifiedFactors.length > 0 && !selectedFactorId) {
       setSelectedFactorId(verifiedFactors[0].id);
     }
@@ -35,7 +35,7 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
 
   const handleVerify = async () => {
     if (!selectedFactorId || code.length !== 6) return;
-    
+
     clearError();
     const result = await verifyLogin(selectedFactorId, code);
     if (result.success) {
@@ -46,7 +46,7 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
   const handleCodeChange = (newCode: string) => {
     setCode(newCode);
     clearError();
-    
+
     // Auto-submit when 6 digits are entered
     if (newCode.length === 6 && selectedFactorId) {
       setTimeout(() => {
@@ -56,10 +56,10 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="mx-auto w-full max-w-md">
       <CardHeader className="text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-          <Shield className="w-6 h-6 text-primary" />
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+          <Shield className="h-6 w-6 text-primary" />
         </div>
         <CardTitle>Verificação em Duas Etapas</CardTitle>
         <CardDescription>
@@ -74,15 +74,10 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
         )}
 
         <div className="flex justify-center">
-          <OTPInput 
-            length={6} 
-            value={code} 
-            onChange={handleCodeChange}
-            autoFocus
-          />
+          <OTPInput length={6} value={code} onChange={handleCodeChange} autoFocus />
         </div>
 
-        <p className="text-xs text-center text-muted-foreground">
+        <p className="text-center text-xs text-muted-foreground">
           Abra seu aplicativo autenticador (Google Authenticator, Authy, etc.) para obter o código
         </p>
 
@@ -92,12 +87,12 @@ export function MFAVerify({ onSuccess, onCancel, factorId: propFactorId }: MFAVe
               Cancelar
             </Button>
           )}
-          <Button 
-            onClick={handleVerify} 
+          <Button
+            onClick={handleVerify}
             disabled={loading || code.length !== 6 || !selectedFactorId}
             className="flex-1"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Verificar
           </Button>
         </div>

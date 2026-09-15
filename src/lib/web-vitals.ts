@@ -2,11 +2,12 @@
  * Web Vitals Performance Monitoring
  * Tracks Core Web Vitals (LCP, FID, CLS, TTFB, INP) and reports them
  */
+import { logger } from "@/utils/logger";
 
 interface WebVitalMetric {
   name: string;
   value: number;
-  rating: 'good' | 'needs-improvement' | 'poor';
+  rating: "good" | "needs-improvement" | "poor";
   delta: number;
   id: string;
 }
@@ -21,11 +22,11 @@ const thresholds: Record<string, [number, number]> = {
   INP: [200, 500],
 };
 
-function getRating(name: string, value: number): WebVitalMetric['rating'] {
+function getRating(name: string, value: number): WebVitalMetric["rating"] {
   const [good, poor] = thresholds[name] || [Infinity, Infinity];
-  if (value <= good) return 'good';
-  if (value <= poor) return 'needs-improvement';
-  return 'poor';
+  if (value <= good) return "good";
+  if (value <= poor) return "needs-improvement";
+  return "poor";
 }
 
 function generateId(): string {
@@ -36,7 +37,7 @@ function generateId(): string {
  * Observe Largest Contentful Paint
  */
 function observeLCP(onReport: ReportHandler): void {
-  if (!('PerformanceObserver' in window)) return;
+  if (!("PerformanceObserver" in window)) return;
 
   try {
     const observer = new PerformanceObserver((list) => {
@@ -45,15 +46,15 @@ function observeLCP(onReport: ReportHandler): void {
       if (lastEntry) {
         const value = lastEntry.startTime;
         onReport({
-          name: 'LCP',
+          name: "LCP",
           value,
-          rating: getRating('LCP', value),
+          rating: getRating("LCP", value),
           delta: value,
           id: generateId(),
         });
       }
     });
-    observer.observe({ type: 'largest-contentful-paint', buffered: true });
+    observer.observe({ type: "largest-contentful-paint", buffered: true });
   } catch {
     // Silently fail if not supported
   }
@@ -63,7 +64,7 @@ function observeLCP(onReport: ReportHandler): void {
  * Observe First Input Delay
  */
 function observeFID(onReport: ReportHandler): void {
-  if (!('PerformanceObserver' in window)) return;
+  if (!("PerformanceObserver" in window)) return;
 
   try {
     const observer = new PerformanceObserver((list) => {
@@ -72,15 +73,15 @@ function observeFID(onReport: ReportHandler): void {
         const fidEntry = entry as PerformanceEventTiming;
         const value = fidEntry.processingStart - fidEntry.startTime;
         onReport({
-          name: 'FID',
+          name: "FID",
           value,
-          rating: getRating('FID', value),
+          rating: getRating("FID", value),
           delta: value,
           id: generateId(),
         });
       }
     });
-    observer.observe({ type: 'first-input', buffered: true });
+    observer.observe({ type: "first-input", buffered: true });
   } catch {
     // Silently fail
   }
@@ -90,7 +91,7 @@ function observeFID(onReport: ReportHandler): void {
  * Observe Cumulative Layout Shift
  */
 function observeCLS(onReport: ReportHandler): void {
-  if (!('PerformanceObserver' in window)) return;
+  if (!("PerformanceObserver" in window)) return;
 
   let clsValue = 0;
   let sessionValue = 0;
@@ -121,9 +122,9 @@ function observeCLS(onReport: ReportHandler): void {
           if (sessionValue > clsValue) {
             clsValue = sessionValue;
             onReport({
-              name: 'CLS',
+              name: "CLS",
               value: clsValue,
-              rating: getRating('CLS', clsValue),
+              rating: getRating("CLS", clsValue),
               delta: layoutShift.value,
               id: generateId(),
             });
@@ -131,7 +132,7 @@ function observeCLS(onReport: ReportHandler): void {
         }
       }
     });
-    observer.observe({ type: 'layout-shift', buffered: true });
+    observer.observe({ type: "layout-shift", buffered: true });
   } catch {
     // Silently fail
   }
@@ -142,13 +143,13 @@ function observeCLS(onReport: ReportHandler): void {
  */
 function observeTTFB(onReport: ReportHandler): void {
   try {
-    const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const navEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
     if (navEntry) {
       const value = navEntry.responseStart - navEntry.requestStart;
       onReport({
-        name: 'TTFB',
+        name: "TTFB",
         value,
-        rating: getRating('TTFB', value),
+        rating: getRating("TTFB", value),
         delta: value,
         id: generateId(),
       });
@@ -162,23 +163,16 @@ function observeTTFB(onReport: ReportHandler): void {
  * Initialize Web Vitals monitoring
  */
 export function initWebVitals(): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   const reportMetric: ReportHandler = (metric) => {
-    // Log in development
-    if (import.meta.env.DEV) {
-      const color = metric.rating === 'good' ? '#0cce6b' : metric.rating === 'needs-improvement' ? '#ffa400' : '#ff4e42';
-      if (import.meta.env.DEV) console.log(
-        `%c[Web Vital] ${metric.name}: ${metric.value.toFixed(metric.name === 'CLS' ? 3 : 0)}${metric.name === 'CLS' ? '' : 'ms'} (${metric.rating})`,
-        `color: ${color}; font-weight: bold;`
-      );
-    }
+    if (import.meta.env.DEV) logger.debug("Web Vital capturado", { metric });
 
     // Send to analytics in production (if available)
-    if (!import.meta.env.DEV && 'sendBeacon' in navigator) {
+    if (!import.meta.env.DEV && "sendBeacon" in navigator) {
       try {
         navigator.sendBeacon(
-          '/api/vitals',
+          "/api/vitals",
           JSON.stringify({
             name: metric.name,
             value: metric.value,
@@ -201,8 +195,10 @@ export function initWebVitals(): void {
     observeTTFB(reportMetric);
   };
 
-  if ('requestIdleCallback' in window) {
-    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(observe);
+  if ("requestIdleCallback" in window) {
+    (window as Window & { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(
+      observe
+    );
   } else {
     setTimeout(observe, 0);
   }
@@ -212,18 +208,34 @@ export function initWebVitals(): void {
  * Get current performance summary
  */
 export function getPerformanceSummary(): Record<string, unknown> {
-  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
-  
+  const nav = performance.getEntriesByType("navigation")[0] as
+    | PerformanceNavigationTiming
+    | undefined;
+
   return {
     domContentLoaded: nav ? nav.domContentLoadedEventEnd - nav.startTime : null,
     domInteractive: nav ? nav.domInteractive - nav.startTime : null,
     loadComplete: nav ? nav.loadEventEnd - nav.startTime : null,
     transferSize: nav ? nav.transferSize : null,
-    resourceCount: performance.getEntriesByType('resource').length,
-    memoryUsage: (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }).memory
+    resourceCount: performance.getEntriesByType("resource").length,
+    memoryUsage: (
+      performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number } }
+    ).memory
       ? {
-          used: ((performance as Performance & { memory: { usedJSHeapSize: number } }).memory.usedJSHeapSize / 1024 / 1024).toFixed(1) + 'MB',
-          total: ((performance as Performance & { memory: { totalJSHeapSize: number } }).memory.totalJSHeapSize / 1024 / 1024).toFixed(1) + 'MB',
+          used:
+            (
+              (performance as Performance & { memory: { usedJSHeapSize: number } }).memory
+                .usedJSHeapSize /
+              1024 /
+              1024
+            ).toFixed(1) + "MB",
+          total:
+            (
+              (performance as Performance & { memory: { totalJSHeapSize: number } }).memory
+                .totalJSHeapSize /
+              1024 /
+              1024
+            ).toFixed(1) + "MB",
         }
       : null,
   };

@@ -17,11 +17,11 @@ interface BackButtonProps {
  * BackButton Molecule
  * Robust back navigation with history detection and fallback.
  */
-export const BackButton = ({ 
-  className, 
-  fallbackPath = "/dashboard", 
+export const BackButton = ({
+  className,
+  fallbackPath = "/dashboard",
   variant = "ghost",
-  size = "icon"
+  size = "icon",
 }: BackButtonProps) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,10 +41,9 @@ export const BackButton = ({
     } else {
       // If no history, navigate to fallback or parent
       const segments = location.pathname.split("/").filter(Boolean);
-      const parentRoute = segments.length > 1 
-        ? "/" + segments.slice(0, -1).join("/") 
-        : fallbackPath;
-      
+      const parentRoute =
+        segments.length > 1 ? "/" + segments.slice(0, -1).join("/") : fallbackPath;
+
       navigate(parentRoute, { replace: true });
     }
   }, [navigate, location.pathname, fallbackPath]);
@@ -61,15 +60,18 @@ export const BackButton = ({
             variant={variant}
             size={size}
             onClick={handleBack}
-            className="touch-friendly bg-background/50 border border-border/20 shadow-sm hover:bg-primary/10 transition-colors"
+            className="touch-friendly border border-border/20 bg-background/50 shadow-sm transition-colors hover:bg-primary/10"
             aria-label="Voltar para tela anterior"
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
         </motion.div>
       </TooltipTrigger>
-      <TooltipContent side="bottom" className="text-[10px] font-bold uppercase tracking-wider bg-popover/95 backdrop-blur-md border-border/40">
-        Voltar <kbd className="ml-2 px-1 py-0.5 rounded bg-muted text-[10px] font-mono">Alt+←</kbd>
+      <TooltipContent
+        side="bottom"
+        className="border-border/40 bg-popover/95 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+      >
+        Voltar <kbd className="ml-2 rounded bg-muted px-1 py-0.5 font-mono text-[10px]">Alt+←</kbd>
       </TooltipContent>
     </Tooltip>
   );

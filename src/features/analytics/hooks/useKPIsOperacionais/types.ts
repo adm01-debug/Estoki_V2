@@ -12,8 +12,8 @@ export interface MetricaOperacional {
   erros_picking: number | null;
   acuracidade_picking: number | null;
   tempo_total_picking_minutos: number | null;
-   posicoes_totais: number | null;
-   posicoes_ocupadas: number | null;
+  posicoes_totais: number | null;
+  posicoes_ocupadas: number | null;
   taxa_ocupacao: number | null;
   volumes_recebidos: number | null;
   nfs_processadas: number | null;
@@ -74,6 +74,6 @@ export interface UseKPIsOperacionaisReturn {
   salvarMeta: (meta: Partial<MetaKPI>) => Promise<void>;
   excluirMeta: (id: string) => Promise<void>;
   getMetricaPorData: (data: string) => MetricaOperacional | undefined;
-  getKPIStatus: (metrica: string, valor: number) => 'success' | 'warning' | 'danger';
-  calcularVariacao: (metrica: string) => { valor: number; tipo: 'up' | 'down' | 'stable' };
+  getKPIStatus: (metrica: string, valor: number) => "success" | "warning" | "danger";
+  calcularVariacao: (metrica: string) => { valor: number; tipo: "up" | "down" | "stable" };
 }

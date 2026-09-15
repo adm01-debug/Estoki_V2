@@ -3,26 +3,26 @@
  */
 
 // Níveis de raridade das conquistas
-export type BadgeRarity = 'comum' | 'raro' | 'epico' | 'lendario';
+export type BadgeRarity = "comum" | "raro" | "epico" | "lendario";
 
 // Categorias de conquistas
-export type BadgeCategory = 'produtividade' | 'qualidade' | 'consistencia' | 'especial' | 'sazonal';
+export type BadgeCategory = "produtividade" | "qualidade" | "consistencia" | "especial" | "sazonal";
 
 // Períodos para ranking
-export type PeriodoRanking = 'semanal' | 'mensal' | 'geral';
+export type PeriodoRanking = "semanal" | "mensal" | "geral";
 
 // Status de desafios
-export type StatusDesafio = 'ativo' | 'concluido' | 'expirado' | 'cancelado';
+export type StatusDesafio = "ativo" | "concluido" | "expirado" | "cancelado";
 
 // Tipos de eventos para XP
-export type TipoEventoXP = 
-  | 'triagem_concluida'
-  | 'triagem_rapida'
-  | 'triagem_perfeita'
-  | 'desafio_concluido'
-  | 'conquista_desbloqueado'
-  | 'streak_mantido'
-  | 'bonus_diario';
+export type TipoEventoXP =
+  | "triagem_concluida"
+  | "triagem_rapida"
+  | "triagem_perfeita"
+  | "desafio_concluido"
+  | "conquista_desbloqueado"
+  | "streak_mantido"
+  | "bonus_diario";
 
 /**
  * Definição de uma conquista no sistema
@@ -132,7 +132,7 @@ export interface RankingEntry {
   conquistas: number;
   posicao: number;
   posicao_anterior?: number;
-  variacao: 'up' | 'down' | 'stable';
+  variacao: "up" | "down" | "stable";
 }
 
 /**
@@ -144,7 +144,7 @@ export interface StreakUsuario {
   streak_atual: number;
   maior_streak: number;
   ultima_atividade: string;
-  tipo: 'diario' | 'semanal';
+  tipo: "diario" | "semanal";
 }
 
 /**
@@ -211,7 +211,7 @@ export interface EstatisticasGamificacao {
  * Evento de gamificação para notificações
  */
 export interface EventoGamificacao {
-  tipo: 'conquista' | 'nivel' | 'desafio' | 'streak' | 'ranking';
+  tipo: "conquista" | "nivel" | "desafio" | "streak" | "ranking";
   titulo: string;
   mensagem: string;
   xp?: number;

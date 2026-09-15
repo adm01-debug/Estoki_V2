@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const lotSchema = z.object({
   id: z.string().uuid(),
@@ -11,7 +11,7 @@ export const lotSchema = z.object({
   initial_quantity: z.number().int().positive(),
   current_quantity: z.number().int().nonnegative(),
   unit_cost: z.number().nonnegative(),
-  status: z.enum(['active', 'quarantine', 'expired', 'depleted', 'recalled']),
+  status: z.enum(["active", "quarantine", "expired", "depleted", "recalled"]),
   certificate_url: z.string().url().nullable().optional(),
   notes: z.string().nullable().optional(),
   created_at: z.string().datetime(),

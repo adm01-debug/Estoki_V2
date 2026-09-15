@@ -1,6 +1,6 @@
 // Validadores para o Brasil
 export function isValidCPF(cpf: string): boolean {
-  const cleaned = cpf.replace(/\D/g, '');
+  const cleaned = cpf.replace(/\D/g, "");
   if (cleaned.length !== 11 || /^(\d)\1+$/.test(cleaned)) return false;
   let sum = 0;
   for (let i = 0; i < 9; i++) sum += parseInt(cleaned[i]) * (10 - i);
@@ -15,7 +15,7 @@ export function isValidCPF(cpf: string): boolean {
 }
 
 export function isValidCNPJ(cnpj: string): boolean {
-  const cleaned = cnpj.replace(/\D/g, '');
+  const cleaned = cnpj.replace(/\D/g, "");
   if (cleaned.length !== 14 || /^(\d)\1+$/.test(cleaned)) return false;
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -34,7 +34,7 @@ export function isValidEmail(email: string): boolean {
 }
 
 export function isValidPhone(phone: string): boolean {
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
   return cleaned.length === 10 || cleaned.length === 11;
 }
 
@@ -50,21 +50,35 @@ export function isValidEAN13(ean: string): boolean {
   return checkDigit === parseInt(ean[12]);
 }
 
-export function isValidPassword(password: string, options: { minLength?: number; requireNumber?: boolean; requireSpecial?: boolean; requireUppercase?: boolean } = {}): { valid: boolean; errors: string[] } {
-  const { minLength = 8, requireNumber = true, requireSpecial = true, requireUppercase = true } = options;
+export function isValidPassword(
+  password: string,
+  options: {
+    minLength?: number;
+    requireNumber?: boolean;
+    requireSpecial?: boolean;
+    requireUppercase?: boolean;
+  } = {}
+): { valid: boolean; errors: string[] } {
+  const {
+    minLength = 8,
+    requireNumber = true,
+    requireSpecial = true,
+    requireUppercase = true,
+  } = options;
   const errors: string[] = [];
   if (password.length < minLength) errors.push(`Mínimo ${minLength} caracteres`);
-  if (requireNumber && !/\d/.test(password)) errors.push('Precisa ter número');
-  if (requireSpecial && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) errors.push('Precisa ter caractere especial');
-  if (requireUppercase && !/[A-Z]/.test(password)) errors.push('Precisa ter letra maiúscula');
+  if (requireNumber && !/\d/.test(password)) errors.push("Precisa ter número");
+  if (requireSpecial && !/[!@#$%^&*(),.?":{}|<>]/.test(password))
+    errors.push("Precisa ter caractere especial");
+  if (requireUppercase && !/[A-Z]/.test(password)) errors.push("Precisa ter letra maiúscula");
   return { valid: errors.length === 0, errors };
 }
 
 export function isNotEmpty(value: unknown): boolean {
   if (value === null || value === undefined) return false;
-  if (typeof value === 'string') return value.trim().length > 0;
+  if (typeof value === "string") return value.trim().length > 0;
   if (Array.isArray(value)) return value.length > 0;
-  if (typeof value === 'object') return Object.keys(value).length > 0;
+  if (typeof value === "object") return Object.keys(value).length > 0;
   return true;
 }
 
@@ -74,7 +88,12 @@ export function isPositiveNumber(value: unknown): boolean {
 }
 
 export function isValidURL(url: string): boolean {
-  try { new URL(url); return true; } catch { return false; }
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function isValidDate(date: string): boolean {

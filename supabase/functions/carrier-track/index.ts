@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { CarrierTrackSchema, validateInput } from "../_shared/schemas.ts";
+import { hasCredentials, track as correiosTrack, MissingCredentialsError } from "../_shared/correios.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -10,36 +11,84 @@ serve(async (req) => {
   try {
     const body = await req.json();
     const validation = validateInput(CarrierTrackSchema, body);
-    
+
     if (!validation.success) {
-      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { status: 400, headers });
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers }
+      );
     }
 
     const { tracking_number, carrier } = validation.data;
-    const supabase = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
 
-    // Tracking simulation
-    const events = [
-      { date: new Date(Date.now() - 3*24*60*60*1000).toISOString(), status: "posted", description: "Objeto postado", location: "São Paulo - SP" },
-      { date: new Date(Date.now() - 2*24*60*60*1000).toISOString(), status: "in_transit", description: "Em trânsito para destino", location: "Curitiba - PR" },
-      { date: new Date(Date.now() - 1*24*60*60*1000).toISOString(), status: "out_for_delivery", description: "Saiu para entrega", location: "Destino Final" },
-      { date: new Date().toISOString(), status: "delivered", description: "Entregue ao destinatário", location: "Destino Final" }
-    ];
+    let events: Array<{ date: string; status: string; description: string; location: string }> = [];
+    let mode: "real" | "simulated" = "simulated";
+
+    if ((carrier ?? "").toLowerCase() === "correios" && hasCredentials()) {
+      try {
+        events = await correiosTrack(tracking_number);
+        mode = "real";
+      } catch (err) {
+        if (!(err instanceof MissingCredentialsError)) {
+          console.error("[carrier-track] fallback simulação:", err);
+        }
+      }
+    }
+
+    if (events.length === 0) {
+      events = [
+      {
+        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "posted",
+        description: "Objeto postado",
+        location: "São Paulo - SP",
+      },
+      {
+        date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "in_transit",
+        description: "Em trânsito para destino",
+        location: "Curitiba - PR",
+      },
+      {
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        status: "out_for_delivery",
+        description: "Saiu para entrega",
+        location: "Destino Final",
+      },
+      {
+        date: new Date().toISOString(),
+        status: "delivered",
+        description: "Entregue ao destinatário",
+        location: "Destino Final",
+      },
+      ];
+    }
 
     const currentStatus = events[events.length - 1].status;
-    await supabase.from("shipments").update({ 
-      status: currentStatus, 
-      last_tracking_update: new Date().toISOString(), 
-      tracking_events: events 
-    }).eq("tracking_number", tracking_number);
+    await supabase
+      .from("shipments")
+      .update({
+        status: currentStatus,
+        last_tracking_update: new Date().toISOString(),
+        tracking_events: events,
+      })
+      .eq("tracking_number", tracking_number);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      tracking_number, 
-      carrier, 
-      current_status: currentStatus, 
-      events 
-    }), { headers });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        mode,
+        tracking_number,
+        carrier,
+        current_status: currentStatus,
+        events,
+      }),
+      { headers }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
   }

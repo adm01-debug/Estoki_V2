@@ -29,7 +29,7 @@ export async function importCSV<T>(
   options?: ImportOptions
 ): Promise<ImportResult<T>> {
   const opts = { ...defaultOptions, ...options };
-  const Papa = (await import('papaparse')).default;
+  const Papa = (await import("papaparse")).default;
 
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
@@ -79,8 +79,12 @@ export function generateCSVTemplate(headers: string[]): string {
   return headers.join(",") + "\n";
 }
 
-export async function downloadCSV(data: Record<string, unknown>[], filename: string, headers?: string[]): Promise<void> {
-  const Papa = (await import('papaparse')).default;
+export async function downloadCSV(
+  data: Record<string, unknown>[],
+  filename: string,
+  headers?: string[]
+): Promise<void> {
+  const Papa = (await import("papaparse")).default;
   const csv = Papa.unparse(data, { columns: headers, header: true });
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -98,7 +102,7 @@ export async function validateCSVHeaders(
   file: File,
   requiredHeaders: string[]
 ): Promise<{ valid: boolean; missing: string[]; extra: string[] }> {
-  const Papa = (await import('papaparse')).default;
+  const Papa = (await import("papaparse")).default;
   return new Promise((resolve) => {
     Papa.parse(file, {
       preview: 1,

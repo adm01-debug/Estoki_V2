@@ -17,16 +17,115 @@ const DashboardTrocas = lazy(() => import("@/pages/DashboardTrocas"));
 
 export const analyticsRoutes = (
   <>
-    <Route path="relatorios" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Relatorios /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="kpis-operacionais" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><KPIsOperacionais /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="produtividade" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Produtividade /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="alertas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><AlertasInteligentes /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="rastreabilidade" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><Rastreabilidade /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="divergencias" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioDivergencias /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="fornecedores" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><RelatorioFornecedores /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route
+      path="relatorios"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <Relatorios />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="kpis-operacionais"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <KPIsOperacionais />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="produtividade"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <Produtividade />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="alertas"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <AlertasInteligentes />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="rastreabilidade"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <Rastreabilidade />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="divergencias"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <RelatorioDivergencias />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="fornecedores"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <RelatorioFornecedores />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
 
     {/* Returns */}
-    <Route path="trocas" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="table" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><TrocasDevolucoes /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
-    <Route path="trocas-dashboard" element={<RouteErrorBoundary><Suspense fallback={<RouteLoadingFallback type="dashboard" />}><ProtectedRoute allowedRoles={["admin", "supervisor"]}><DashboardTrocas /></ProtectedRoute></Suspense></RouteErrorBoundary>} />
+    <Route
+      path="trocas"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="table" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <TrocasDevolucoes />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="trocas-dashboard"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <DashboardTrocas />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
   </>
 );

@@ -94,7 +94,7 @@ export function SavedFiltersDropdown({
           {hasActiveFilters && (
             <>
               <DropdownMenuItem onClick={() => setShowSaveDialog(true)}>
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="mr-2 h-4 w-4" />
                 Salvar Filtro Atual
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -107,10 +107,7 @@ export function SavedFiltersDropdown({
             </div>
           ) : (
             filters.map((filter) => (
-              <DropdownMenuItem
-                key={filter.id}
-                className="flex items-center justify-between p-2"
-              >
+              <DropdownMenuItem key={filter.id} className="flex items-center justify-between p-2">
                 <div
                   className="flex-1 cursor-pointer"
                   onClick={() => handleApply(filter.filters, filter.id)}
@@ -122,12 +119,12 @@ export function SavedFiltersDropdown({
                     <span className="font-medium">{filter.name}</span>
                   </div>
                   {filter.description && (
-                    <p className="text-xs text-muted-foreground truncate max-w-[180px]">
+                    <p className="max-w-[180px] truncate text-xs text-muted-foreground">
                       {filter.description}
                     </p>
                   )}
                 </div>
-                <div className="flex gap-1 ml-2">
+                <div className="ml-2 flex gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -196,9 +193,9 @@ export function SavedFiltersDropdown({
                 rows={2}
               />
             </div>
-            <div className="p-3 bg-muted rounded-lg">
-              <p className="text-sm font-medium mb-2">Filtros a serem salvos:</p>
-              <pre className="text-xs overflow-auto max-h-32">
+            <div className="rounded-lg bg-muted p-3">
+              <p className="mb-2 text-sm font-medium">Filtros a serem salvos:</p>
+              <pre className="max-h-32 overflow-auto text-xs">
                 {JSON.stringify(currentFilters, null, 2)}
               </pre>
             </div>
@@ -208,7 +205,7 @@ export function SavedFiltersDropdown({
               Cancelar
             </Button>
             <Button onClick={handleSave} disabled={!filterName.trim() || isSaving}>
-              {isSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Salvar
             </Button>
           </DialogFooter>

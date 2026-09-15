@@ -60,9 +60,7 @@ export function DataImporter<T>({
   const [showPreview, setShowPreview] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
 
-  const acceptedTypes = allowedFormats
-    .map((f) => (f === "csv" ? ".csv" : ".xlsx,.xls"))
-    .join(",");
+  const acceptedTypes = allowedFormats.map((f) => (f === "csv" ? ".csv" : ".xlsx,.xls")).join(",");
 
   const handleFileChange = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,8 +73,7 @@ export function DataImporter<T>({
       setResult(null);
 
       try {
-        const isExcel =
-          selectedFile.name.endsWith(".xlsx") || selectedFile.name.endsWith(".xls");
+        const isExcel = selectedFile.name.endsWith(".xlsx") || selectedFile.name.endsWith(".xls");
 
         setProgress(30);
         const importResult = isExcel
@@ -149,7 +146,7 @@ export function DataImporter<T>({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap gap-2">
-        <label className="flex-1 min-w-[200px]">
+        <label className="min-w-[200px] flex-1">
           <Input
             type="file"
             accept={acceptedTypes}
@@ -162,13 +159,13 @@ export function DataImporter<T>({
         <div className="flex gap-2">
           {allowedFormats.includes("csv") && (
             <Button variant="outline" size="sm" onClick={() => handleDownloadTemplate("csv")}>
-              <FileText className="h-4 w-4 mr-1" />
+              <FileText className="mr-1 h-4 w-4" />
               CSV
             </Button>
           )}
           {allowedFormats.includes("xlsx") && (
             <Button variant="outline" size="sm" onClick={() => handleDownloadTemplate("xlsx")}>
-              <FileSpreadsheet className="h-4 w-4 mr-1" />
+              <FileSpreadsheet className="mr-1 h-4 w-4" />
               Excel
             </Button>
           )}
@@ -178,7 +175,7 @@ export function DataImporter<T>({
       {(isProcessing || isImporting) && (
         <div className="space-y-2">
           <Progress value={progress} />
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-center text-sm text-muted-foreground">
             {isProcessing ? "Processando arquivo..." : "Importando dados..."}
           </p>
         </div>
@@ -198,7 +195,7 @@ export function DataImporter<T>({
                 {result.errors.length > 0 && (
                   <>
                     {" | "}
-                    <span className="text-destructive font-medium">
+                    <span className="font-medium text-destructive">
                       {result.errors.length} erros
                     </span>
                   </>
@@ -222,8 +219,8 @@ export function DataImporter<T>({
           <div className="flex gap-2">
             {result.success.length > 0 && (
               <Button onClick={handleImport} disabled={isImporting} className="flex-1">
-                {isImporting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                <Upload className="h-4 w-4 mr-2" />
+                {isImporting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                <Upload className="mr-2 h-4 w-4" />
                 Importar {result.success.length} Registros
               </Button>
             )}
@@ -235,7 +232,7 @@ export function DataImporter<T>({
       )}
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-h-[80vh] max-w-4xl overflow-auto">
           <DialogHeader>
             <DialogTitle>Preview dos Dados ({result?.success.length} registros)</DialogTitle>
           </DialogHeader>
@@ -262,7 +259,7 @@ export function DataImporter<T>({
             </Table>
           )}
           {result && result.success.length > maxPreviewRows && (
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-center text-sm text-muted-foreground">
               Mostrando {maxPreviewRows} de {result.success.length} registros
             </p>
           )}
@@ -270,13 +267,13 @@ export function DataImporter<T>({
       </Dialog>
 
       <Dialog open={showErrors} onOpenChange={setShowErrors}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
           <DialogHeader>
             <DialogTitle>Erros de Validação ({result?.errors.length})</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
             {result?.errors.slice(0, 50).map((err, i) => (
-              <div key={i} className="text-sm p-2 bg-destructive/10 rounded">
+              <div key={i} className="rounded bg-destructive/10 p-2 text-sm">
                 <Badge variant="outline" className="mr-2">
                   Linha {err.row}
                 </Badge>

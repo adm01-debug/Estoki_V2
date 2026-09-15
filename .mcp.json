@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "supabase-estoki": {
+      "url": "https://supabase-estoki-v2-mcp.adm01.workers.dev/d75abc2f21f5ca7b47b64ac9730bb7c521134c1e/mcp",
+      "description": "Supabase Estoki V2 - Banco de dados do sistema WMS"
+    }
+  }
+}

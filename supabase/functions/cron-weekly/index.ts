@@ -56,14 +56,17 @@ serve(async (req) => {
       details: tasks,
     });
 
-    return new Response(JSON.stringify({
-      success: true,
-      executed_at: new Date().toISOString(),
-      duration_ms: Date.now() - startTime,
-      tasks,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        executed_at: new Date().toISOString(),
+        duration_ms: Date.now() - startTime,
+        tasks,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

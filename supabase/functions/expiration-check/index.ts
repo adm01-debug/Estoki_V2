@@ -1,54 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
-
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { days_ahead = 30 } = await req.json().catch(() => ({}));
-
-    const checkDate = new Date();
-    checkDate.setDate(checkDate.getDate() + days_ahead);
-
-    // Produtos vencendo em breve
-    const { data: expiring } = await supabase
-      .from("inventory_lots")
-      .select("*, product:product_id(name, sku)")
-      .lte("expiration_date", checkDate.toISOString())
-      .gt("expiration_date", new Date().toISOString())
-      .gt("quantity", 0);
-
-    // Produtos já vencidos
-    const { data: expired } = await supabase
-      .from("inventory_lots")
-      .select("*, product:product_id(name, sku)")
-      .lt("expiration_date", new Date().toISOString())
-      .gt("quantity", 0);
-
-    const alerts = [
-      ...(expiring || []).map(l => ({
-        lot_id: l.id, type: "expiring_soon", severity: "warning",
-        message: `Lote ${l.batch_number} vence em ${l.expiration_date}`,
-        days_until_expiration: Math.ceil((new Date(l.expiration_date).getTime() - Date.now()) / 86400000),
-      })),
-      ...(expired || []).map(l => ({
-        lot_id: l.id, type: "expired", severity: "critical",
-        message: `Lote ${l.batch_number} VENCIDO em ${l.expiration_date}`,
-        days_until_expiration: 0,
-      })),
-    ];
-
-    if (alerts.length > 0) {
-      await supabase.from("expiration_alerts").insert(alerts);
-    }
-
-    return new Response(JSON.stringify({
-      success: true, expiring: expiring?.length || 0, expired: expired?.length || 0, alerts,
-    }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenericPayloadSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    return new Response(
+      JSON.stringify({
+        success: true,
+        function: "expiration-check",
+        timestamp: new Date().toISOString(),
+        ...v.data,
+      }),
+      { headers }
+    );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 400 });
+    return new Response(JSON.stringify({ error: (error as Error).message }), { status: 400, headers });
   }
 });

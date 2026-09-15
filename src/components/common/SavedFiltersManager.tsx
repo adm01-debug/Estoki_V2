@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Bookmark, Save, Trash2, ChevronDown } from 'lucide-react';
-import { toast } from 'sonner';
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Bookmark, Save, Trash2, ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 
 interface SavedFiltersManagerProps {
   modulo: string;
@@ -23,22 +36,26 @@ interface SavedFilter {
   created_at: string;
 }
 
-export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: SavedFiltersManagerProps) {
+export function SavedFiltersManager({
+  modulo,
+  currentFilters,
+  onApplyFilter,
+}: SavedFiltersManagerProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [filterName, setFilterName] = useState('');
+  const [filterName, setFilterName] = useState("");
 
   const { data: savedFilters = [] } = useQuery<SavedFilter[]>({
-    queryKey: ['saved-filters', modulo, user?.id],
+    queryKey: ["saved-filters", modulo, user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
-        .from('saved_filters' as any)
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('modulo', modulo)
-        .order('created_at', { ascending: false });
+        .from("saved_filters" as any)
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("modulo", modulo)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as unknown as SavedFilter[];
     },
@@ -47,8 +64,8 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
 
   const saveMutation = useMutation({
     mutationFn: async (nome: string) => {
-      if (!user?.id) throw new Error('Não autenticado');
-      const { error } = await supabase.from('saved_filters' as any).insert({
+      if (!user?.id) throw new Error("Não autenticado");
+      const { error } = await supabase.from("saved_filters" as any).insert({
         user_id: user.id,
         nome,
         modulo,
@@ -57,33 +74,38 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['saved-filters', modulo] });
-      toast.success('Filtro salvo com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ["saved-filters", modulo] });
+      toast.success("Filtro salvo com sucesso!");
       setShowSaveDialog(false);
-      setFilterName('');
+      setFilterName("");
     },
-    onError: () => toast.error('Erro ao salvar filtro'),
+    onError: () => toast.error("Erro ao salvar filtro"),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('saved_filters' as any).delete().eq('id', id);
+      const { error } = await supabase
+        .from("saved_filters" as any)
+        .delete()
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['saved-filters', modulo] });
-      toast.success('Filtro removido');
+      queryClient.invalidateQueries({ queryKey: ["saved-filters", modulo] });
+      toast.success("Filtro removido");
     },
   });
 
-  const hasActiveFilters = Object.values(currentFilters).some(v => v !== '' && v !== undefined && v !== null);
+  const hasActiveFilters = Object.values(currentFilters).some(
+    (v) => v !== "" && v !== undefined && v !== null
+  );
 
   return (
     <>
       <div className="flex items-center gap-2">
         {hasActiveFilters && (
           <Button variant="outline" size="sm" onClick={() => setShowSaveDialog(true)}>
-            <Save className="h-4 w-4 mr-1" /> Salvar Filtro
+            <Save className="mr-1 h-4 w-4" /> Salvar Filtro
           </Button>
         )}
 
@@ -91,8 +113,8 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <Bookmark className="h-4 w-4 mr-1" /> Meus Filtros
-                <ChevronDown className="h-3 w-3 ml-1" />
+                <Bookmark className="mr-1 h-4 w-4" /> Meus Filtros
+                <ChevronDown className="ml-1 h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
@@ -133,11 +155,16 @@ export function SavedFiltersManager({ modulo, currentFilters, onApplyFilter }: S
             placeholder="Nome do filtro..."
             value={filterName}
             onChange={(e) => setFilterName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && filterName && saveMutation.mutate(filterName)}
+            onKeyDown={(e) => e.key === "Enter" && filterName && saveMutation.mutate(filterName)}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>Cancelar</Button>
-            <Button onClick={() => saveMutation.mutate(filterName)} disabled={!filterName || saveMutation.isPending}>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => saveMutation.mutate(filterName)}
+              disabled={!filterName || saveMutation.isPending}
+            >
               Salvar
             </Button>
           </DialogFooter>

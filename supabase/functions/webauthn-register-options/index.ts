@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 // Generate cryptographically secure random bytes
 function generateChallenge(): string {
@@ -19,6 +20,10 @@ serve(async (req) => {
   }
 
   try {
+    const __raw = await req.json().catch(() => ({}));
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -26,20 +31,23 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization header required" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Authorization header required" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: "Invalid token" }),
-        { status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     const { deviceName } = await req.json().catch(() => ({}));
@@ -77,7 +85,7 @@ serve(async (req) => {
         displayName: user.email?.split("@")[0] || "User",
       },
       pubKeyCredParams: [
-        { alg: -7, type: "public-key" },   // ES256
+        { alg: -7, type: "public-key" }, // ES256
         { alg: -257, type: "public-key" }, // RS256
       ],
       timeout: 60000,
@@ -88,25 +96,25 @@ serve(async (req) => {
         residentKey: "preferred",
         userVerification: "preferred",
       },
-      excludeCredentials: existingCredentials?.map((cred) => ({
-        id: cred.credential_id,
-        type: "public-key",
-        transports: cred.transports || ["internal"],
-      })) || [],
+      excludeCredentials:
+        existingCredentials?.map((cred) => ({
+          id: cred.credential_id,
+          type: "public-key",
+          transports: cred.transports || ["internal"],
+        })) || [],
     };
 
     console.log("Generated registration options for user:", user.id);
 
-    return new Response(
-      JSON.stringify({ options: registrationOptions, deviceName }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ options: registrationOptions, deviceName }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error: unknown) {
     console.error("Error generating registration options:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
-    return new Response(
-      JSON.stringify({ error: message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

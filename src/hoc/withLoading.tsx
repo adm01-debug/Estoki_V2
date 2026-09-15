@@ -1,5 +1,5 @@
-import React, { ComponentType, Suspense } from 'react';
-import { LoadingSpinner } from '@/components/ui/spinner';
+import React, { ComponentType, Suspense } from "react";
+import { LoadingSpinner } from "@/components/ui/spinner";
 
 export interface WithLoadingOptions {
   LoadingComponent?: React.FC;
@@ -13,7 +13,7 @@ export function withLoading<P extends object>(
   const { LoadingComponent } = options;
 
   const DefaultLoading = () => (
-    <div className="flex items-center justify-center min-h-[200px]">
+    <div className="flex min-h-[200px] items-center justify-center">
       <LoadingSpinner size="lg" />
     </div>
   );
@@ -26,7 +26,7 @@ export function withLoading<P extends object>(
     );
   };
 
-  WithLoadingComponent.displayName = `withLoading(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  WithLoadingComponent.displayName = `withLoading(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithLoadingComponent;
 }
@@ -42,7 +42,7 @@ export function withSkeleton<P extends object>(
     return <WrappedComponent {...props} />;
   };
 
-  WithSkeletonComponent.displayName = `withSkeleton(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+  WithSkeletonComponent.displayName = `withSkeleton(${WrappedComponent.displayName || WrappedComponent.name || "Component"})`;
 
   return WithSkeletonComponent;
 }

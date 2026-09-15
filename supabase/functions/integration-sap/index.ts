@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
+import { erpFetch, ErpCircuitOpenError } from "../_shared/erp.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,14 +16,17 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { action, config, data } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(IntegrationActionSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { action, config, data } = __raw;
 
     if (!action || !config?.base_url || !config?.session_id) {
       throw new Error("action, config.base_url e config.session_id são obrigatórios");
     }
 
     const headers = {
-      "Cookie": `B1SESSION=${config.session_id}`,
+      Cookie: `B1SESSION=${config.session_id}`,
       "Content-Type": "application/json",
     };
 
@@ -30,7 +35,7 @@ serve(async (req) => {
 
     switch (action) {
       case "login":
-        const loginResp = await fetch(`${baseUrl}/b1s/v1/Login`, {
+        const loginResp = await erpFetch(`${baseUrl}/b1s/v1/Login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -43,7 +48,7 @@ serve(async (req) => {
         break;
 
       case "get_items":
-        const itemsResp = await fetch(
+        const itemsResp = await erpFetch(
           `${baseUrl}/b1s/v1/Items?$select=ItemCode,ItemName,QuantityOnStock,AvgStdPrice&$top=${data?.limit || 100}`,
           { headers }
         );
@@ -52,10 +57,7 @@ serve(async (req) => {
 
       case "get_item":
         if (!data?.item_code) throw new Error("item_code é obrigatório");
-        const itemResp = await fetch(
-          `${baseUrl}/b1s/v1/Items('${data.item_code}')`,
-          { headers }
-        );
+        const itemResp = await erpFetch(`${baseUrl}/b1s/v1/Items('${data.item_code}')`, { headers });
         result = await itemResp.json();
         break;
 
@@ -64,22 +66,24 @@ serve(async (req) => {
           throw new Error("item_code, warehouse e quantity são obrigatórios");
         }
         // SAP usa Goods Receipt/Issue para atualizar estoque
-        const stockResp = await fetch(`${baseUrl}/b1s/v1/InventoryGenEntries`, {
+        const stockResp = await erpFetch(`${baseUrl}/b1s/v1/InventoryGenEntries`, {
           method: "POST",
           headers,
           body: JSON.stringify({
-            DocumentLines: [{
-              ItemCode: data.item_code,
-              WarehouseCode: data.warehouse,
-              Quantity: data.quantity,
-            }],
+            DocumentLines: [
+              {
+                ItemCode: data.item_code,
+                WarehouseCode: data.warehouse,
+                Quantity: data.quantity,
+              },
+            ],
           }),
         });
         result = await stockResp.json();
         break;
 
       case "get_orders":
-        const ordersResp = await fetch(
+        const ordersResp = await erpFetch(
           `${baseUrl}/b1s/v1/Orders?$select=DocEntry,DocNum,CardCode,DocTotal,DocDate&$orderby=DocDate desc&$top=${data?.limit || 50}`,
           { headers }
         );
@@ -90,7 +94,7 @@ serve(async (req) => {
         if (!data?.card_code || !data?.lines) {
           throw new Error("card_code e lines são obrigatórios");
         }
-        const orderResp = await fetch(`${baseUrl}/b1s/v1/Orders`, {
+        const orderResp = await erpFetch(`${baseUrl}/b1s/v1/Orders`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -102,7 +106,7 @@ serve(async (req) => {
         break;
 
       case "get_business_partners":
-        const bpResp = await fetch(
+        const bpResp = await erpFetch(
           `${baseUrl}/b1s/v1/BusinessPartners?$select=CardCode,CardName,CardType,Phone1,EmailAddress&$top=${data?.limit || 100}`,
           { headers }
         );
@@ -113,21 +117,25 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase.from("integration_logs").insert({
-      integration: "sap_b1",
-      action,
-      request: { action, data },
-      response: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabase
+      .from("integration_logs")
+      .insert({
+        integration: "sap_b1",
+        action,
+        request: { action, data },
+        response: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    const isBreaker = error instanceof ErpCircuitOpenError;
+    return new Response(JSON.stringify({ success: false, error: (error as Error).message, circuit_open: isBreaker }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      status: 400,
+      status: isBreaker ? 503 : 400,
     });
   }
 });

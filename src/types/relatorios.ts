@@ -1,19 +1,19 @@
 // Tipos para o módulo de Relatórios
 
-export type TipoRelatorio = 
-  | 'estoque' 
-  | 'movimentacoes' 
-  | 'recebimentos' 
-  | 'triagens'
-  | 'produtividade'
-  | 'divergencias'
-  | 'fornecedores'
-  | 'trocas'
-  | 'inventario'
-  | 'kpis';
+export type TipoRelatorio =
+  | "estoque"
+  | "movimentacoes"
+  | "recebimentos"
+  | "triagens"
+  | "produtividade"
+  | "divergencias"
+  | "fornecedores"
+  | "trocas"
+  | "inventario"
+  | "kpis";
 
-export type FormatoExportacao = 'pdf' | 'xlsx' | 'csv';
-export type PeriodoRelatorio = 'hoje' | 'semana' | 'mes' | 'trimestre' | 'ano' | 'personalizado';
+export type FormatoExportacao = "pdf" | "xlsx" | "csv";
+export type PeriodoRelatorio = "hoje" | "semana" | "mes" | "trimestre" | "ano" | "personalizado";
 
 export interface FiltrosRelatorio {
   tipo: TipoRelatorio;
@@ -41,7 +41,7 @@ export interface RelatorioConfig {
 export interface ColunaRelatorio {
   campo: string;
   label: string;
-  tipo: 'texto' | 'numero' | 'data' | 'moeda' | 'percentual' | 'badge';
+  tipo: "texto" | "numero" | "data" | "moeda" | "percentual" | "badge";
   visivel: boolean;
   largura?: number;
   formatacao?: string;
@@ -49,7 +49,7 @@ export interface ColunaRelatorio {
 
 export interface OrdenacaoRelatorio {
   campo: string;
-  direcao: 'asc' | 'desc';
+  direcao: "asc" | "desc";
 }
 
 export interface DadosRelatorio {
@@ -64,7 +64,7 @@ export interface DadosRelatorio {
 }
 
 export interface GraficoRelatorio {
-  tipo: 'linha' | 'barra' | 'pizza' | 'area';
+  tipo: "linha" | "barra" | "pizza" | "area";
   titulo: string;
   dados: {
     labels: string[];
@@ -81,7 +81,7 @@ export interface DatasetGrafico {
 export interface AgendamentoRelatorio {
   id: string;
   relatorioId: string;
-  frequencia: 'diario' | 'semanal' | 'mensal';
+  frequencia: "diario" | "semanal" | "mensal";
   horario: string;
   destinatarios: string[];
   formato: FormatoExportacao;

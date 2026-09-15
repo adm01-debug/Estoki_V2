@@ -11,13 +11,13 @@ interface SidebarFooterProps {
   isCollapsed: boolean;
 }
 
-export const SidebarFooter = memo(function SidebarFooter({ 
-  pathname, 
-  onNavigate, 
-  onLogout, 
-  isCollapsed 
+export const SidebarFooter = memo(function SidebarFooter({
+  pathname,
+  onNavigate,
+  onLogout,
+  isCollapsed,
 }: SidebarFooterProps) {
   const preloadRoute = useRoutePreload();
-  
+
   return null;
 });

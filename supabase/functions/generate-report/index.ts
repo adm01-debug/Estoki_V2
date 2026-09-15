@@ -1,58 +1,63 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
+import { GenerateReportSchema, validateInput } from "../_shared/schemas.ts";
 
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: getCorsHeaders(req) });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: getCorsHeaders(req) });
   }
+  const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
 
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    const { tipo, data_inicio, data_fim } = await req.json();
+    const raw = await req.json().catch(() => ({}));
+    const v = validateInput(GenerateReportSchema, raw);
+    if (!v.success) return new Response(JSON.stringify(v), { status: 400, headers });
+    const { tipo, data_inicio, data_fim } = v.data;
     let reportData: Record<string, unknown> = {};
 
     switch (tipo) {
-      case 'triagem':
+      case "triagem":
         const { data: triagens } = await supabase
-          .from('eventos_triagem')
-          .select('*')
-          .gte('created_at', data_inicio)
-          .lte('created_at', data_fim);
+          .from("eventos_triagem")
+          .select("*")
+          .gte("created_at", data_inicio)
+          .lte("created_at", data_fim);
         reportData = {
-          tipo: 'Relatório de Triagem',
+          tipo: "Relatório de Triagem",
           periodo: { inicio: data_inicio, fim: data_fim },
           total_registros: triagens?.length || 0,
           dados: triagens,
         };
         break;
-      case 'estoque':
-        const { data: posicoes } = await supabase.from('posicoes_estoque').select('*');
+      case "estoque":
+        const { data: posicoes } = await supabase.from("posicoes_estoque").select("*");
         reportData = {
-          tipo: 'Relatório de Estoque',
+          tipo: "Relatório de Estoque",
           total_posicoes: posicoes?.length || 0,
-          ocupadas: posicoes?.filter(p => p.status === 'ocupada').length || 0,
-          disponiveis: posicoes?.filter(p => p.status === 'disponivel').length || 0,
+          ocupadas: posicoes?.filter((p) => p.status === "ocupada").length || 0,
+          disponiveis: posicoes?.filter((p) => p.status === "disponivel").length || 0,
         };
         break;
       default:
-        return new Response(JSON.stringify({ error: 'Tipo inválido' }), {
+        return new Response(JSON.stringify({ error: "Tipo inválido" }), {
           status: 400,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         });
     }
 
     reportData.gerado_em = new Date().toISOString();
     return new Response(JSON.stringify(reportData), {
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

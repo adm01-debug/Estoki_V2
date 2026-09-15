@@ -1,12 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { IntegrationCorreiosSchema, validateInput } from "../_shared/schemas.ts";
+import {
+  hasCredentials,
+  quote as correiosQuote,
+  track as correiosTrack,
+  prepostagem as correiosPrepostagem,
+  MissingCredentialsError,
+} from "../_shared/correios.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    const { action, ...params } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(IntegrationCorreiosSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { action, ...params } = __raw;
 
     let result;
     switch (action) {
@@ -16,52 +27,134 @@ serve(async (req) => {
         const data = await response.json();
         if (data.erro) throw new Error("CEP não encontrado");
         result = {
-          cep: data.cep, street: data.logradouro, neighborhood: data.bairro,
-          city: data.localidade, state: data.uf, ibge: data.ibge,
+          cep: data.cep,
+          street: data.logradouro,
+          neighborhood: data.bairro,
+          city: data.localidade,
+          state: data.uf,
+          ibge: data.ibge,
         };
         break;
       }
 
       case "frete": {
-        // Simulação de cálculo de frete
-        const { cep_origem, cep_destino, peso, comprimento, altura, largura, servicos = ["04014", "04510"] } = params;
-        
+        const {
+          cep_origem,
+          cep_destino,
+          peso,
+          comprimento,
+          altura,
+          largura,
+          servicos = ["04014", "04510"],
+        } = params;
+
+        if (hasCredentials()) {
+          try {
+            const quotes = await correiosQuote({
+              originZip: cep_origem,
+              destZip: cep_destino,
+              weightKg: peso,
+              lengthCm: comprimento,
+              widthCm: largura,
+              heightCm: altura,
+              services: servicos,
+            });
+            result = {
+              mode: "real",
+              cotacoes: quotes.map((q) => ({
+                codigo: q.code,
+                nome: q.service,
+                valor: q.price.toFixed(2),
+                prazo: q.delivery_days,
+              })),
+            };
+            break;
+          } catch (err) {
+            if (!(err instanceof MissingCredentialsError)) {
+              console.error("[integration-correios/frete] fallback:", err);
+            }
+          }
+        }
+
         const results = servicos.map((servico: string) => {
           const basePrice = peso * 0.5 + (comprimento * altura * largura) / 6000;
           const prices: Record<string, number> = { "04014": basePrice * 1.5, "04510": basePrice };
           const days: Record<string, number> = { "04014": 3, "04510": 8 };
           const names: Record<string, string> = { "04014": "SEDEX", "04510": "PAC" };
-          
+
           return {
-            codigo: servico, nome: names[servico] || servico,
+            codigo: servico,
+            nome: names[servico] || servico,
             valor: (prices[servico] || basePrice).toFixed(2),
             prazo: days[servico] || 10,
           };
         });
-        result = { cotacoes: results };
+        result = { mode: "simulated", cotacoes: results };
         break;
       }
 
       case "rastreio": {
-        // Simulação de rastreamento
+        if (hasCredentials()) {
+          try {
+            const eventos = await correiosTrack(params.codigo);
+            result = {
+              mode: "real",
+              codigo: params.codigo,
+              eventos: eventos.map((e) => ({
+                data: e.date,
+                local: e.location,
+                status: e.description,
+              })),
+            };
+            break;
+          } catch (err) {
+            if (!(err instanceof MissingCredentialsError)) {
+              console.error("[integration-correios/rastreio] fallback:", err);
+            }
+          }
+        }
         result = {
+          mode: "simulated",
           codigo: params.codigo,
           eventos: [
             { data: new Date().toISOString(), local: "São Paulo/SP", status: "Objeto em trânsito" },
-            { data: new Date(Date.now() - 86400000).toISOString(), local: "Curitiba/PR", status: "Objeto postado" },
+            {
+              data: new Date(Date.now() - 86400000).toISOString(),
+              local: "Curitiba/PR",
+              status: "Objeto postado",
+            },
           ],
         };
         break;
       }
 
+      case "prepostagem": {
+        if (!hasCredentials()) {
+          throw new Error("Credenciais Correios ausentes: configure CORREIOS_USER, CORREIOS_TOKEN e CORREIOS_CARTAO");
+        }
+        const prep = await correiosPrepostagem({
+          remetente: params.remetente,
+          destinatario: params.destinatario,
+          servico: params.servico ?? "04014",
+          volume: params.volume,
+          observacao: params.observacao,
+          notaFiscal: params.nota_fiscal,
+        });
+        result = { mode: "real", ...prep };
+        break;
+      }
+
       default:
-        throw new Error("Ação inválida. Use: cep, frete, rastreio");
+        throw new Error("Ação inválida. Use: cep, frete, rastreio, prepostagem");
     }
 
     return new Response(JSON.stringify({ success: true, ...result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 400 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });

@@ -36,9 +36,7 @@ export function useTriagemTimer(): UseTriagemTimerReturn {
         .toString()
         .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   }, []);
 
   // Inicia o timer

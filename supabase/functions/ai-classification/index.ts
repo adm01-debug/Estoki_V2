@@ -24,12 +24,15 @@ serve(async (req) => {
 
     const body = await req.json();
     const validation = validateInput(AiClassificationSchema, body);
-    
+
     if (!validation.success) {
-      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { 
-        status: 400, 
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } 
-      });
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        {
+          status: 400,
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+        }
+      );
     }
 
     const { text, categories, model } = validation.data;
@@ -40,12 +43,12 @@ serve(async (req) => {
 
     // Keywords por categoria (expandir conforme necessidade)
     const categoryKeywords: Record<string, string[]> = {
-      "eletronicos": ["celular", "notebook", "tablet", "tv", "computador", "fone", "cabo"],
-      "vestuario": ["roupa", "camisa", "calça", "vestido", "sapato", "tenis", "blusa"],
-      "alimentos": ["comida", "bebida", "lanche", "frutas", "legumes", "carne", "leite"],
-      "escritorio": ["caneta", "papel", "caderno", "agenda", "pasta", "grampo", "clips"],
-      "limpeza": ["sabão", "detergente", "desinfetante", "vassoura", "pano", "esponja"],
-      "ferramentas": ["martelo", "chave", "parafuso", "furadeira", "serra", "alicate"],
+      eletronicos: ["celular", "notebook", "tablet", "tv", "computador", "fone", "cabo"],
+      vestuario: ["roupa", "camisa", "calça", "vestido", "sapato", "tenis", "blusa"],
+      alimentos: ["comida", "bebida", "lanche", "frutas", "legumes", "carne", "leite"],
+      escritorio: ["caneta", "papel", "caderno", "agenda", "pasta", "grampo", "clips"],
+      limpeza: ["sabão", "detergente", "desinfetante", "vassoura", "pano", "esponja"],
+      ferramentas: ["martelo", "chave", "parafuso", "furadeira", "serra", "alicate"],
     };
 
     categories.forEach((cat) => {
@@ -100,12 +103,15 @@ serve(async (req) => {
     };
 
     // Log para auditoria
-    await supabaseClient.from("ai_logs").insert({
-      function_name: "ai-classification",
-      input: { text, categories, model },
-      output: result,
-      created_at: new Date().toISOString(),
-    }).catch(() => {});
+    await supabaseClient
+      .from("ai_logs")
+      .insert({
+        function_name: "ai-classification",
+        input: { text, categories, model },
+        output: result,
+        created_at: new Date().toISOString(),
+      })
+      .catch(() => {});
 
     return new Response(JSON.stringify(result), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

@@ -2,7 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CalendarIcon, Filter, X } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -15,7 +21,12 @@ export interface ReportFiltersProps {
   className?: string;
 }
 
-export function ReportFilters({ onPeriodoChange, onTipoChange, tipos, className }: ReportFiltersProps) {
+export function ReportFilters({
+  onPeriodoChange,
+  onTipoChange,
+  tipos,
+  className,
+}: ReportFiltersProps) {
   const [dataInicio, setDataInicio] = useState<Date | undefined>();
   const [dataFim, setDataFim] = useState<Date | undefined>();
   const [tipoSelecionado, setTipoSelecionado] = useState<string>("");
@@ -39,7 +50,7 @@ export function ReportFilters({ onPeriodoChange, onTipoChange, tipos, className 
   };
 
   return (
-    <div className={cn("flex flex-wrap gap-3 p-4 bg-card rounded-lg border", className)}>
+    <div className={cn("flex flex-wrap gap-3 rounded-lg border bg-card p-4", className)}>
       <div className="flex items-center gap-2">
         <Filter className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm font-medium">Filtros:</span>
@@ -53,7 +64,12 @@ export function ReportFilters({ onPeriodoChange, onTipoChange, tipos, className 
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
-          <Calendar mode="single" selected={dataInicio} onSelect={handleDataInicioChange} locale={ptBR} />
+          <Calendar
+            mode="single"
+            selected={dataInicio}
+            onSelect={handleDataInicioChange}
+            locale={ptBR}
+          />
         </PopoverContent>
       </Popover>
 
@@ -70,13 +86,21 @@ export function ReportFilters({ onPeriodoChange, onTipoChange, tipos, className 
       </Popover>
 
       {tipos && tipos.length > 0 && (
-        <Select value={tipoSelecionado} onValueChange={(v) => { setTipoSelecionado(v); onTipoChange?.(v); }}>
+        <Select
+          value={tipoSelecionado}
+          onValueChange={(v) => {
+            setTipoSelecionado(v);
+            onTipoChange?.(v);
+          }}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
-            {tipos.map(t => (
-              <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+            {tipos.map((t) => (
+              <SelectItem key={t.value} value={t.value}>
+                {t.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

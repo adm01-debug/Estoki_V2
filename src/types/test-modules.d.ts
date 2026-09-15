@@ -1,7 +1,7 @@
 // Type declarations for test modules - these allow TypeScript to compile without errors
 // The actual implementations come from dev dependencies during test runs
 
-declare module 'vitest' {
+declare module "vitest" {
   export function describe(name: string, fn: () => void): void;
   export function it(name: string, fn: () => void | Promise<void>): void;
   export function test(name: string, fn: () => void | Promise<void>): void;
@@ -42,7 +42,9 @@ declare module 'vitest' {
   export function beforeAll(fn: () => void | Promise<void>): void;
   export function afterAll(fn: () => void | Promise<void>): void;
   export const vi: {
-    fn<T extends (...args: unknown[]) => unknown>(implementation?: T): T & {
+    fn<T extends (...args: unknown[]) => unknown>(
+      implementation?: T
+    ): T & {
       mock: { calls: unknown[][] };
       mockReturnValue(value: unknown): unknown;
       mockResolvedValue(value: unknown): unknown;
@@ -52,7 +54,10 @@ declare module 'vitest' {
       mockClear(): void;
       mockReset(): void;
     };
-    spyOn<T extends object, K extends keyof T>(obj: T, method: K): {
+    spyOn<T extends object, K extends keyof T>(
+      obj: T,
+      method: K
+    ): {
       mockReturnValue(value: unknown): unknown;
       mockResolvedValue(value: unknown): unknown;
       mockRejectedValue(value: unknown): unknown;
@@ -70,9 +75,9 @@ declare module 'vitest' {
   };
 }
 
-declare module '@testing-library/react' {
-  import { ReactElement } from 'react';
-  
+declare module "@testing-library/react" {
+  import { ReactElement } from "react";
+
   export interface RenderResult {
     container: HTMLElement;
     baseElement: HTMLElement;
@@ -102,13 +107,13 @@ declare module '@testing-library/react' {
     queryAllByRole: (role: string, options?: object) => HTMLElement[];
     findAllByRole: (role: string, options?: object) => Promise<HTMLElement[]>;
   }
-  
+
   export interface RenderOptions {
     wrapper?: React.ComponentType<{ children: React.ReactNode }>;
     container?: HTMLElement;
     baseElement?: HTMLElement;
   }
-  
+
   export function render(ui: ReactElement, options?: RenderOptions): RenderResult;
   export function renderHook<Result, Props>(
     render: (props: Props) => Result,
@@ -120,7 +125,10 @@ declare module '@testing-library/react' {
     waitFor: <T>(callback: () => T | Promise<T>) => Promise<T>;
   };
   export function cleanup(): void;
-  export function waitFor<T>(callback: () => T | Promise<T>, options?: { timeout?: number }): Promise<T>;
+  export function waitFor<T>(
+    callback: () => T | Promise<T>,
+    options?: { timeout?: number }
+  ): Promise<T>;
   export function act(callback: () => void | Promise<void>): Promise<void>;
   export const screen: RenderResult;
   export const fireEvent: {

@@ -11,24 +11,24 @@ export interface DashboardKPIs {
 export interface KPICardData {
   label: string;
   value: number | string;
-  trend?: 'up' | 'down' | 'stable';
+  trend?: "up" | "down" | "stable";
   trendValue?: number;
   icon: string;
-  color: 'success' | 'warning' | 'danger' | 'info';
+  color: "success" | "warning" | "danger" | "info";
 }
 
 export interface AtividadeRecente {
   id: string;
-  tipo: 'recebimento' | 'triagem' | 'movimentacao' | 'tarefa' | 'divergencia';
+  tipo: "recebimento" | "triagem" | "movimentacao" | "tarefa" | "divergencia";
   descricao: string;
   timestamp: string;
-  status: 'success' | 'warning' | 'danger' | 'info';
+  status: "success" | "warning" | "danger" | "info";
   usuario?: string;
 }
 
 export interface AlertaOperacional {
   id: string;
-  tipo: 'critico' | 'alerta' | 'info';
+  tipo: "critico" | "alerta" | "info";
   titulo: string;
   mensagem: string;
   acao?: string;

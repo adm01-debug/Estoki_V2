@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { CleanupSessionsSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,7 +15,15 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { max_age_hours = 24, dry_run = false } = await req.json() || {};
+    const raw = await req.json().catch(() => ({}));
+    const validation = validateInput(CleanupSessionsSchema, raw);
+    if (!validation.success) {
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      );
+    }
+    const { max_age_hours, dry_run } = validation.data;
 
     const cutoffDate = new Date(Date.now() - max_age_hours * 60 * 60 * 1000).toISOString();
     const results: any = { cleaned: {} };
@@ -70,17 +79,23 @@ serve(async (req) => {
       });
     }
 
-    const totalCleaned = Object.values(results.cleaned).reduce((a: number, b: any) => a + (b || 0), 0);
+    const totalCleaned = Object.values(results.cleaned).reduce(
+      (a: number, b: any) => a + (b || 0),
+      0
+    );
 
-    return new Response(JSON.stringify({
-      success: true,
-      dry_run,
-      cutoff_date: cutoffDate,
-      total_cleaned: totalCleaned,
-      details: results.cleaned,
-    }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        dry_run,
+        cutoff_date: cutoffDate,
+        total_cleaned: totalCleaned,
+        details: results.cleaned,
+      }),
+      {
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },

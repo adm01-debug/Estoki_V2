@@ -44,12 +44,15 @@ export function useOfflineCache() {
     }
   }, []);
 
-  const queueOfflineOp = useCallback(async (operation: { table: string; type: "insert" | "update"; data: any }) => {
-    const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
-    ops.push({ ...operation, id: Date.now(), createdAt: new Date().toISOString() });
-    localStorage.setItem("wms-pending-ops", JSON.stringify(ops));
-    setPendingOps(ops.length);
-  }, []);
+  const queueOfflineOp = useCallback(
+    async (operation: { table: string; type: "insert" | "update"; data: any }) => {
+      const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
+      ops.push({ ...operation, id: Date.now(), createdAt: new Date().toISOString() });
+      localStorage.setItem("wms-pending-ops", JSON.stringify(ops));
+      setPendingOps(ops.length);
+    },
+    []
+  );
 
   const syncPendingOps = useCallback(async () => {
     const ops = JSON.parse(localStorage.getItem("wms-pending-ops") || "[]");
@@ -61,7 +64,10 @@ export function useOfflineCache() {
         if (op.type === "insert") {
           await supabase.from(op.table as any).insert(op.data as any);
         } else if (op.type === "update") {
-          await supabase.from(op.table as any).update(op.data as any).eq("id", op.data.id);
+          await supabase
+            .from(op.table as any)
+            .update(op.data as any)
+            .eq("id", op.data.id);
         }
       } catch {
         remaining.push(op);

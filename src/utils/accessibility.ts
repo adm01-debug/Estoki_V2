@@ -38,13 +38,11 @@ export function announceToScreenReader(
  */
 export function trapFocus(element: HTMLElement) {
   const focusableElements = element.querySelectorAll(
-    "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])"
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   );
 
   const firstFocusable = focusableElements[0] as HTMLElement;
-  const lastFocusable = focusableElements[
-    focusableElements.length - 1
-  ] as HTMLElement;
+  const lastFocusable = focusableElements[focusableElements.length - 1] as HTMLElement;
 
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key !== "Tab") return;

@@ -1,0 +1,173 @@
+name: QA Checklist (PR)
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+
+concurrency:
+  group: qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    name: Quality Gate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        id: lint
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Type-check
+        id: typecheck
+        run: npm run typecheck
+        continue-on-error: true
+
+      - name: Unit tests
+        id: test
+        run: npm run test:coverage
+        continue-on-error: true
+
+      - name: Publicar cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: .qa-report/coverage/
+          retention-days: 14
+
+      - name: Build (com análise de bundle)
+        id: build
+        env:
+          ANALYZE: "true"
+        run: npm run build
+        continue-on-error: true
+
+      - name: Bundle budget (size-limit)
+        id: size
+        run: npx size-limit
+        continue-on-error: true
+
+      - name: RLS audit
+        id: rls
+        run: node scripts/rls-audit.mjs
+        continue-on-error: true
+
+      - name: Zod coverage (Edge Functions)
+        id: zod
+        run: node scripts/audit-zod.mjs
+        continue-on-error: true
+
+      - name: i18n parity
+        id: i18n
+        run: node scripts/i18n-check.mjs
+        continue-on-error: true
+
+      - name: i18n hardcoded (anti-regressão)
+        id: i18n_hard
+        run: node scripts/i18n-hardcoded-check.mjs
+        continue-on-error: true
+
+      - name: Migrations TODO guard
+        id: migrations_todo
+        run: node scripts/migrations-todo-check.mjs
+        continue-on-error: true
+
+      - name: E2E smoke (Playwright)
+        id: e2e
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test tests/e2e/routes-smoke.spec.ts --reporter=list
+        continue-on-error: true
+
+      - name: Security (npm audit)
+        id: security
+        run: npm audit --omit=dev --audit-level=high | tee .qa-report/security.md || true
+        continue-on-error: true
+
+      - name: Auditoria de dependências (advisories + allowlist)
+        id: deps
+        run: node scripts/dep-audit.mjs --level=high
+        continue-on-error: true
+
+      - name: Gerar relatório consolidado
+        if: always()
+        env:
+          QA_LINT_STATUS: ${{ steps.lint.outcome }}
+          QA_TYPECHECK_STATUS: ${{ steps.typecheck.outcome }}
+          QA_TEST_STATUS: ${{ steps.test.outcome }}
+          QA_BUILD_STATUS: ${{ steps.build.outcome }}
+          QA_SIZE_STATUS: ${{ steps.size.outcome }}
+          QA_RLS_STATUS: ${{ steps.rls.outcome }}
+          QA_SECURITY_STATUS: ${{ steps.security.outcome }}
+        run: node scripts/qa-report.mjs
+
+      - name: Publicar análise de bundle
+        if: always() && hashFiles('dist/stats.html') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: dist/stats.html
+          retention-days: 14
+
+      - name: Publicar QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-report
+          path: .qa-report/
+          retention-days: 14
+
+      - name: Comentar no PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.qa-report/summary.md';
+            if (!fs.existsSync(path)) return;
+            const body = fs.readFileSync(path, 'utf8');
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const prev = comments.find(c => c.user.type === 'Bot' && c.body.startsWith('## 🧪 QA Report'));
+            if (prev) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                comment_id: prev.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: context.issue.number, body,
+              });
+            }
+
+      - name: Falhar se qualquer verificação crítica quebrou
+        if: always()
+        run: |
+          set -e
+          fail() { echo "❌ $1 falhou"; exit 1; }
+          [ "${{ steps.lint.outcome }}"      = "success" ] || fail "lint"
+          [ "${{ steps.typecheck.outcome }}" = "success" ] || fail "typecheck"
+          [ "${{ steps.test.outcome }}"      = "success" ] || fail "unit tests"
+          [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
+          [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
+          [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
+          echo "✅ Quality gate aprovado"

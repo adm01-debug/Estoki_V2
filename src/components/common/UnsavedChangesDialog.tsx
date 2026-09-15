@@ -26,13 +26,16 @@ export function UnsavedChangesDialog({ open, onConfirm, onCancel }: UnsavedChang
             Alterações não salvas
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Você tem alterações não salvas nesta página. Se sair agora, as alterações serão perdidas.
-            Deseja continuar?
+            Você tem alterações não salvas nesta página. Se sair agora, as alterações serão
+            perdidas. Deseja continuar?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onCancel}>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+          <AlertDialogAction
+            onClick={onConfirm}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
             Sair sem salvar
           </AlertDialogAction>
         </AlertDialogFooter>

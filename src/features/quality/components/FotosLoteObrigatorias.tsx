@@ -8,7 +8,7 @@ import { useTriagemFotos, type FotoTriagem } from "@/hooks/useTriagemFotos";
 interface FotosLoteProps {
   triagemId?: string;
   fotos: FotoTriagem[];
-  onAddFoto: (file: File, tipo: FotoTriagem['tipo']) => Promise<FotoTriagem | null>;
+  onAddFoto: (file: File, tipo: FotoTriagem["tipo"]) => Promise<FotoTriagem | null>;
   onRemoveFoto: (id: string) => void;
   uploading?: boolean;
   minFotos?: number;
@@ -16,9 +16,24 @@ interface FotosLoteProps {
 }
 
 const tiposFoto = [
-  { tipo: "geral" as const, label: "Visão Geral", emoji: "📦", descricao: "Foto geral do lote/volumes" },
-  { tipo: "etiqueta" as const, label: "Etiqueta/NF", emoji: "🏷️", descricao: "Etiqueta ou nota fiscal visível" },
-  { tipo: "detalhe" as const, label: "Detalhe", emoji: "🔍", descricao: "Detalhe do produto (opcional)" },
+  {
+    tipo: "geral" as const,
+    label: "Visão Geral",
+    emoji: "📦",
+    descricao: "Foto geral do lote/volumes",
+  },
+  {
+    tipo: "etiqueta" as const,
+    label: "Etiqueta/NF",
+    emoji: "🏷️",
+    descricao: "Etiqueta ou nota fiscal visível",
+  },
+  {
+    tipo: "detalhe" as const,
+    label: "Detalhe",
+    emoji: "🔍",
+    descricao: "Detalhe do produto (opcional)",
+  },
 ];
 
 export function FotosLoteObrigatorias({
@@ -31,9 +46,9 @@ export function FotosLoteObrigatorias({
   className,
 }: FotosLoteProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [tipoSelecionado, setTipoSelecionado] = useState<FotoTriagem['tipo']>("geral");
+  const [tipoSelecionado, setTipoSelecionado] = useState<FotoTriagem["tipo"]>("geral");
 
-  const fotosCompletas = fotos.filter(f => !f.uploading).length >= minFotos;
+  const fotosCompletas = fotos.filter((f) => !f.uploading).length >= minFotos;
   const temFotoGeral = fotos.some((f) => f.tipo === "geral" && !f.uploading);
   const temFotoEtiqueta = fotos.some((f) => f.tipo === "etiqueta" && !f.uploading);
   const requisitosAtendidos = temFotoGeral && temFotoEtiqueta;
@@ -50,48 +65,59 @@ export function FotosLoteObrigatorias({
     }
   };
 
-  const handleCapture = (tipo: FotoTriagem['tipo']) => {
+  const handleCapture = (tipo: FotoTriagem["tipo"]) => {
     setTipoSelecionado(tipo);
     fileInputRef.current?.click();
   };
 
   return (
-    <div className={cn("bg-card rounded-xl p-4 border border-border", className)}>
+    <div className={cn("rounded-xl border border-border bg-card p-4", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Camera className="h-4 w-4 text-muted-foreground" />
-          <h3 className="text-sm font-semibold text-muted-foreground">
-            FOTOS DO LOTE
-          </h3>
+          <h3 className="text-sm font-semibold text-muted-foreground">FOTOS DO LOTE</h3>
           <Badge variant="destructive" className="text-[10px]">
             Obrigatório
           </Badge>
-          {uploading && (
-            <Loader2 className="h-4 w-4 animate-spin text-primary" />
-          )}
+          {uploading && <Loader2 className="h-4 w-4 animate-spin text-primary" />}
         </div>
-        <Badge variant={requisitosAtendidos ? "default" : "secondary"} className={requisitosAtendidos ? "bg-success" : ""}>
-          {fotos.filter(f => !f.uploading).length}/{minFotos} mín.
+        <Badge
+          variant={requisitosAtendidos ? "default" : "secondary"}
+          className={requisitosAtendidos ? "bg-success" : ""}
+        >
+          {fotos.filter((f) => !f.uploading).length}/{minFotos} mín.
         </Badge>
       </div>
 
       {/* Status de Requisitos */}
-      <div className="bg-muted/50 rounded-lg p-3 mb-4 space-y-2">
-        <div className="text-xs text-muted-foreground mb-2">Fotos necessárias:</div>
+      <div className="mb-4 space-y-2 rounded-lg bg-muted/50 p-3">
+        <div className="mb-2 text-xs text-muted-foreground">Fotos necessárias:</div>
         <div className="flex flex-wrap gap-2">
-          <div className={cn(
-            "flex items-center gap-1.5 text-xs px-2 py-1 rounded-full",
-            temFotoGeral ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
-          )}>
-            {temFotoGeral ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+          <div
+            className={cn(
+              "flex items-center gap-1.5 rounded-full px-2 py-1 text-xs",
+              temFotoGeral ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
+            )}
+          >
+            {temFotoGeral ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <AlertCircle className="h-3 w-3" />
+            )}
             📦 Visão Geral
           </div>
-          <div className={cn(
-            "flex items-center gap-1.5 text-xs px-2 py-1 rounded-full",
-            temFotoEtiqueta ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
-          )}>
-            {temFotoEtiqueta ? <CheckCircle2 className="h-3 w-3" /> : <AlertCircle className="h-3 w-3" />}
+          <div
+            className={cn(
+              "flex items-center gap-1.5 rounded-full px-2 py-1 text-xs",
+              temFotoEtiqueta ? "bg-success/20 text-success" : "bg-destructive/10 text-destructive"
+            )}
+          >
+            {temFotoEtiqueta ? (
+              <CheckCircle2 className="h-3 w-3" />
+            ) : (
+              <AlertCircle className="h-3 w-3" />
+            )}
             🏷️ Etiqueta/NF
           </div>
         </div>
@@ -108,7 +134,7 @@ export function FotosLoteObrigatorias({
       />
 
       {/* Botões de Captura */}
-      <div className="grid grid-cols-3 gap-2 mb-4">
+      <div className="mb-4 grid grid-cols-3 gap-2">
         {tiposFoto.map((tipo) => {
           const temFoto = fotos.some((f) => f.tipo === tipo.tipo && !f.uploading);
           const isObrigatorio = tipo.tipo !== "detalhe";
@@ -119,26 +145,28 @@ export function FotosLoteObrigatorias({
               onClick={() => handleCapture(tipo.tipo)}
               disabled={uploading}
               className={cn(
-                "relative p-3 rounded-lg border-2 border-dashed flex flex-col items-center gap-1 transition-all disabled:opacity-50 group/btn overflow-hidden",
+                "group/btn relative flex flex-col items-center gap-1 overflow-hidden rounded-lg border-2 border-dashed p-3 transition-all disabled:opacity-50",
                 temFoto
                   ? "border-success bg-success/5 hover:bg-success/10"
                   : isObrigatorio
-                  ? "border-destructive/50 bg-destructive/5 hover:border-destructive hover:bg-destructive/10"
-                  : "border-border hover:border-primary hover:bg-primary/5"
+                    ? "border-destructive/50 bg-destructive/5 hover:border-destructive hover:bg-destructive/10"
+                    : "border-border hover:border-primary hover:bg-primary/5"
               )}
             >
               {/* Overlay Guideline Grid - Implementation forlegible capture */}
-              <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-40 transition-opacity pointer-events-none">
+              <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity group-hover/btn:opacity-40">
                 {/* Horizontal lines */}
-                <div className="w-full h-px bg-primary absolute top-1/3" />
-                <div className="w-full h-px bg-primary absolute top-2/3" />
+                <div className="absolute top-1/3 h-px w-full bg-primary" />
+                <div className="absolute top-2/3 h-px w-full bg-primary" />
                 {/* Vertical lines */}
-                <div className="h-full w-px bg-primary absolute left-1/3" />
-                <div className="h-full w-px bg-primary absolute left-2/3" />
-                
+                <div className="absolute left-1/3 h-full w-px bg-primary" />
+                <div className="absolute left-2/3 h-full w-px bg-primary" />
+
                 {/* Focus box for Labels/Seals */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/3 h-1/4 border-2 border-primary/50 rounded-lg flex items-center justify-center">
-                   <div className="text-[6px] font-black text-primary/40 uppercase">Enquadrar Etiqueta</div>
+                <div className="absolute left-1/2 top-1/2 flex h-1/4 w-1/3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border-2 border-primary/50">
+                  <div className="text-[6px] font-black uppercase text-primary/40">
+                    Enquadrar Etiqueta
+                  </div>
                 </div>
               </div>
 
@@ -158,14 +186,14 @@ export function FotosLoteObrigatorias({
             {fotos.map((foto) => {
               const tipoInfo = tiposFoto.find((t) => t.tipo === foto.tipo);
               return (
-                <div key={foto.id} className="relative group">
+                <div key={foto.id} className="group relative">
                   <img
                     src={foto.url}
                     alt={tipoInfo?.label || "Foto"}
                     loading="lazy"
                     decoding="async"
                     className={cn(
-                      "w-full aspect-square object-cover rounded-lg border border-border",
+                      "aspect-square w-full rounded-lg border border-border object-cover",
                       foto.uploading && "opacity-50"
                     )}
                   />
@@ -174,13 +202,13 @@ export function FotosLoteObrigatorias({
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     </div>
                   )}
-                  <div className="absolute bottom-1 left-1 bg-background/90 rounded px-1.5 py-0.5 text-[10px] font-medium">
+                  <div className="absolute bottom-1 left-1 rounded bg-background/90 px-1.5 py-0.5 text-[10px] font-medium">
                     {tipoInfo?.emoji} {tipoInfo?.label}
                   </div>
                   {!foto.uploading && (
                     <button
                       onClick={() => onRemoveFoto(foto.id)}
-                      className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -188,15 +216,15 @@ export function FotosLoteObrigatorias({
                 </div>
               );
             })}
-            
+
             {/* Botão adicionar mais */}
             <button
               onClick={() => handleCapture("detalhe")}
               disabled={uploading}
-              className="aspect-square border-2 border-dashed border-border rounded-lg flex flex-col items-center justify-center text-muted-foreground hover:border-primary hover:text-primary transition-colors disabled:opacity-50"
+              className="flex aspect-square flex-col items-center justify-center rounded-lg border-2 border-dashed border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
             >
               <ImagePlus className="h-6 w-6" />
-              <span className="text-[10px] mt-1">Adicionar</span>
+              <span className="mt-1 text-[10px]">Adicionar</span>
             </button>
           </div>
         </div>
@@ -204,16 +232,16 @@ export function FotosLoteObrigatorias({
 
       {/* Mensagem quando não tem fotos */}
       {fotos.length === 0 && (
-        <div className="text-center py-4 text-muted-foreground">
-          <Camera className="h-10 w-10 mx-auto mb-2 opacity-50" />
+        <div className="py-4 text-center text-muted-foreground">
+          <Camera className="mx-auto mb-2 h-10 w-10 opacity-50" />
           <p className="text-sm">Capture as fotos obrigatórias do lote</p>
-          <p className="text-xs mt-1">Fotos são salvas automaticamente na nuvem</p>
+          <p className="mt-1 text-xs">Fotos são salvas automaticamente na nuvem</p>
         </div>
       )}
 
       {/* Alerta se não atende requisitos */}
       {!requisitosAtendidos && fotos.length > 0 && (
-        <div className="mt-3 bg-warning/10 border border-warning/30 rounded-lg p-2 text-center text-warning text-xs">
+        <div className="mt-3 rounded-lg border border-warning/30 bg-warning/10 p-2 text-center text-xs text-warning">
           ⚠️ Capture pelo menos a foto geral e da etiqueta/NF para continuar
         </div>
       )}

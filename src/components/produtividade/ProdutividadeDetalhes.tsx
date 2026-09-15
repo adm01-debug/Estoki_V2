@@ -21,20 +21,25 @@ interface ProdutividadeDetalhesProps {
 
 export function ProdutividadeDetalhes({ metricas }: ProdutividadeDetalhesProps) {
   const getInitials = (nome: string) => {
-    return nome.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+    return nome
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   if (metricas.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+      <div className="py-12 text-center text-muted-foreground">
+        <Users className="mx-auto mb-4 h-12 w-12 opacity-50" />
         <p>Nenhum dado de produtividade encontrado</p>
       </div>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-4">
+    <div className="grid gap-4 md:grid-cols-2">
       {metricas.map((metrica) => (
         <Card key={metrica.operadorId}>
           <CardHeader className="pb-2">
@@ -56,16 +61,16 @@ export function ProdutividadeDetalhes({ metricas }: ProdutividadeDetalhesProps) 
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="bg-muted/50 rounded-lg p-2">
+              <div className="rounded-lg bg-muted/50 p-2">
                 <p className="text-xs text-muted-foreground">Triagens</p>
-                <p className="font-bold text-lg">{metrica.triagensRealizadas}</p>
+                <p className="text-lg font-bold">{metrica.triagensRealizadas}</p>
               </div>
-              <div className="bg-muted/50 rounded-lg p-2">
+              <div className="rounded-lg bg-muted/50 p-2">
                 <p className="text-xs text-muted-foreground">Tarefas</p>
-                <p className="font-bold text-lg">{metrica.tarefasConcluidas}</p>
+                <p className="text-lg font-bold">{metrica.tarefasConcluidas}</p>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Aprovação</span>
@@ -73,7 +78,7 @@ export function ProdutividadeDetalhes({ metricas }: ProdutividadeDetalhesProps) 
               </div>
               <Progress value={metrica.aprovacaoMedia} className="h-2" />
             </div>
-            
+
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Tempo médio</span>
               <span className="font-medium">{metrica.tempoMedioTriagem.toFixed(1)} min</span>

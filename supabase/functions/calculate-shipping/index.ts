@@ -27,33 +27,36 @@ serve(async (req) => {
     };
 
     const config = carriers[carrier];
-    
+
     // Cálculo de peso cubado (LxAxC / 6000) ou peso real, o que for maior
-    const volume = dimensions ? (dimensions.width * dimensions.height * dimensions.length) / 6000 : 0;
+    const volume = dimensions
+      ? (dimensions.width * dimensions.height * dimensions.length) / 6000
+      : 0;
     const chargeableWeight = Math.max(weight, volume);
-    
-    const price = config.baseRate + (chargeableWeight * config.weightRate);
-    const deliveryDays = {
-      azul: 2,
-      jadlog: 4,
-      correios: 7,
-      fedex: 3,
-      dhl: 1,
-    }[carrier as string] || 5;
+
+    const price = config.baseRate + chargeableWeight * config.weightRate;
+    const deliveryDays =
+      {
+        azul: 2,
+        jadlog: 4,
+        correios: 7,
+        fedex: 3,
+        dhl: 1,
+      }[carrier as string] || 5;
 
     return new Response(
-      JSON.stringify({ 
-        carrier, 
-        price: Math.round(price * 100) / 100, 
-        deliveryDays, 
+      JSON.stringify({
+        carrier,
+        price: Math.round(price * 100) / 100,
+        deliveryDays,
         chargeableWeight,
-        timestamp: new Date().toISOString()
-      }), 
+        timestamp: new Date().toISOString(),
+      }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: "Internal Server Error", message: error.message }), 
+      JSON.stringify({ error: "Internal Server Error", message: error.message }),
       { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   }

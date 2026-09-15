@@ -1,6 +1,6 @@
 /**
  * ESTOKI — Unified Loading Patterns
- * 
+ *
  * Usage guide:
  * - PageSkeleton: Full page loading (route transitions)
  * - CardSkeleton: Individual card loading
@@ -15,25 +15,25 @@ import { motion } from "framer-motion";
 
 // ── Skeleton Base ────────────────────────────────────────
 
- export function Skeleton({ className }: { className?: string }) {
-   return (
-     <div 
-       className={cn(
-         "animate-pulse bg-gradient-to-r from-muted via-muted/60 to-muted rounded relative overflow-hidden",
-         "after:absolute after:inset-0 after:-translate-x-full after:animate-shimmer after:bg-gradient-to-r after:from-transparent after:via-white/5 after:to-transparent",
-         className
-       )} 
-     />
-   );
- }
+export function Skeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={cn(
+        "relative animate-pulse overflow-hidden rounded bg-gradient-to-r from-muted via-muted/60 to-muted",
+        "after:animate-shimmer after:absolute after:inset-0 after:-translate-x-full after:bg-gradient-to-r after:from-transparent after:via-white/5 after:to-transparent",
+        className
+      )}
+    />
+  );
+}
 
 // ── Card Skeleton ────────────────────────────────────────
 
 export function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-2xl border border-border/40 bg-card/80 p-4 space-y-3", className)}>
+    <div className={cn("space-y-3 rounded-2xl border border-border/40 bg-card/80 p-4", className)}>
       <div className="flex items-center gap-3">
-        <Skeleton className="w-12 h-12 rounded-xl" />
+        <Skeleton className="h-12 w-12 rounded-xl" />
         <div className="flex-1 space-y-2">
           <Skeleton className="h-4 w-3/4" />
           <Skeleton className="h-3 w-1/2" />
@@ -48,7 +48,7 @@ export function CardSkeleton({ className }: { className?: string }) {
 
 export function KPIGridSkeleton({ count = 4 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
         <CardSkeleton key={i} />
       ))}
@@ -60,14 +60,14 @@ export function KPIGridSkeleton({ count = 4 }: { count?: number }) {
 
 export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
   return (
-    <div className="rounded-xl border border-border/40 overflow-hidden">
-      <div className="flex gap-4 p-4 bg-muted/30 border-b border-border/30">
+    <div className="overflow-hidden rounded-xl border border-border/40">
+      <div className="flex gap-4 border-b border-border/30 bg-muted/30 p-4">
         {Array.from({ length: columns }).map((_, i) => (
           <Skeleton key={i} className="h-4 flex-1" />
         ))}
       </div>
       {Array.from({ length: rows }).map((_, row) => (
-        <div key={row} className="flex gap-4 p-4 border-b border-border/20 last:border-0">
+        <div key={row} className="flex gap-4 border-b border-border/20 p-4 last:border-0">
           {Array.from({ length: columns }).map((_, col) => (
             <Skeleton key={col} className="h-4 flex-1" />
           ))}
@@ -81,16 +81,16 @@ export function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; column
 
 export function PageSkeleton() {
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+    <div className="mx-auto max-w-[1400px] space-y-6 p-4 duration-300 animate-in fade-in md:p-6">
       <div className="flex items-center justify-between">
         <div className="space-y-2">
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-48" />
         </div>
-        <Skeleton className="h-10 w-32 hidden sm:block" />
+        <Skeleton className="hidden h-10 w-32 sm:block" />
       </div>
       <KPIGridSkeleton />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Skeleton className="col-span-2 h-64 rounded-xl" />
         <Skeleton className="h-64 rounded-xl" />
       </div>
@@ -115,13 +115,16 @@ export function BrandedSpinner({
   return (
     <div className={cn("flex flex-col items-center justify-center gap-3", className)}>
       <motion.div
-        className={cn("rounded-2xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-glow", sizes[size])}
+        className={cn(
+          "flex items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow",
+          sizes[size]
+        )}
         animate={{ scale: [1, 1.05, 1] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
       >
         <Box className={cn("text-primary-foreground", iconSizes[size])} />
       </motion.div>
-      {text && <p className="text-sm text-muted-foreground animate-pulse">{text}</p>}
+      {text && <p className="animate-pulse text-sm text-muted-foreground">{text}</p>}
     </div>
   );
 }
@@ -130,7 +133,7 @@ export function BrandedSpinner({
 
 export function FullPageLoader({ text = "Carregando..." }: { text?: string }) {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <BrandedSpinner size="lg" text={text} />
     </div>
   );
@@ -139,7 +142,5 @@ export function FullPageLoader({ text = "Carregando..." }: { text?: string }) {
 // ── Inline Loader ────────────────────────────────────────
 
 export function InlineLoader({ className }: { className?: string }) {
-  return (
-    <Loader2 className={cn("h-4 w-4 animate-spin text-muted-foreground", className)} />
-  );
+  return <Loader2 className={cn("h-4 w-4 animate-spin text-muted-foreground", className)} />;
 }

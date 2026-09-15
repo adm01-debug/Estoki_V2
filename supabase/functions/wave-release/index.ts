@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -12,11 +13,16 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { wave_id, released_by } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { wave_id, released_by } = __raw;
 
     if (!wave_id) {
-      return new Response(JSON.stringify({ error: "wave_id is required" }), 
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "wave_id is required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Buscar wave e pedidos
@@ -27,8 +33,10 @@ serve(async (req) => {
       .single();
 
     if (!wave) {
-      return new Response(JSON.stringify({ error: "Wave not found" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ error: "Wave not found" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Gerar pick lists para cada pedido
@@ -39,20 +47,25 @@ serve(async (req) => {
         .select("*, product:products(*, locations:location_stock(*, location:locations(*)))")
         .eq("order_id", order.id);
 
-      const pickItems = items?.flatMap((item: any) => {
-        const bestLocation = item.product?.locations
-          ?.filter((l: any) => l.quantity >= item.quantity)
-          ?.sort((a: any, b: any) => a.location?.sequence - b.location?.sequence)[0];
+      const pickItems =
+        items?.flatMap((item: any) => {
+          const bestLocation = item.product?.locations
+            ?.filter((l: any) => l.quantity >= item.quantity)
+            ?.sort((a: any, b: any) => a.location?.sequence - b.location?.sequence)[0];
 
-        return bestLocation ? [{
-          order_item_id: item.id,
-          product_id: item.product_id,
-          location_id: bestLocation.location_id,
-          location_code: bestLocation.location?.code,
-          quantity: item.quantity,
-          status: "pending",
-        }] : [];
-      }) || [];
+          return bestLocation
+            ? [
+                {
+                  order_item_id: item.id,
+                  product_id: item.product_id,
+                  location_id: bestLocation.location_id,
+                  location_code: bestLocation.location?.code,
+                  quantity: item.quantity,
+                  status: "pending",
+                },
+              ]
+            : [];
+        }) || [];
 
       if (pickItems.length) {
         const { data: pickList } = await supabase
@@ -67,9 +80,9 @@ serve(async (req) => {
           .single();
 
         if (pickList) {
-          await supabase.from("pick_list_items").insert(
-            pickItems.map((pi: any) => ({ ...pi, pick_list_id: pickList.id }))
-          );
+          await supabase
+            .from("pick_list_items")
+            .insert(pickItems.map((pi: any) => ({ ...pi, pick_list_id: pickList.id })));
           pickLists.push(pickList);
         }
       }
@@ -81,17 +94,15 @@ serve(async (req) => {
       .update({ status: "released", released_at: new Date().toISOString(), released_by })
       .eq("id", wave_id);
 
-    await supabase
-      .from("orders")
-      .update({ status: "picking" })
-      .eq("wave_id", wave_id);
+    await supabase.from("orders").update({ status: "picking" }).eq("wave_id", wave_id);
 
-    return new Response(
-      JSON.stringify({ success: true, pick_lists_created: pickLists.length }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, pick_lists_created: pickLists.length }), {
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

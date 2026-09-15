@@ -27,9 +27,9 @@ Deno.test("webhook-handler: unit - fuzzing - should handle nested invalid data",
     data: {
       nested: {
         array: [1, 2, "3"],
-        active: true
-      }
-    }
+        active: true,
+      },
+    },
   };
   const result = WebhookSchema.safeParse(payload);
   assertEquals(result.success, true);

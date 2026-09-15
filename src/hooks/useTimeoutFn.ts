@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useCallback } from "react";
 export function useTimeoutFn(fn: () => void, ms: number = 0) {
   const ready = useRef<boolean | null>(false);
   const timeout = useRef<ReturnType<typeof setTimeout>>();
@@ -6,8 +6,14 @@ export function useTimeoutFn(fn: () => void, ms: number = 0) {
   const set = useCallback(() => {
     ready.current = false;
     if (timeout.current) clearTimeout(timeout.current);
-    timeout.current = setTimeout(() => { ready.current = true; fn(); }, ms);
+    timeout.current = setTimeout(() => {
+      ready.current = true;
+      fn();
+    }, ms);
   }, [ms, fn]);
-  const clear = useCallback(() => { ready.current = null; if (timeout.current) clearTimeout(timeout.current); }, []);
+  const clear = useCallback(() => {
+    ready.current = null;
+    if (timeout.current) clearTimeout(timeout.current);
+  }, []);
   return [isReady, clear, set] as const;
 }

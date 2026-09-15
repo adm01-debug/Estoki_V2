@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { OTPInput } from '@/components/forms/OTPInput';
-import { useMFA } from '@/hooks/useMFA';
-import { Shield, Copy, Check, Loader2, Smartphone, Key } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { OTPInput } from "@/components/forms/OTPInput";
+import { useMFA } from "@/hooks/useMFA";
+import { Shield, Copy, Check, Loader2, Smartphone, Key } from "lucide-react";
+import { toast } from "sonner";
 
 interface MFAEnrollProps {
   onSuccess?: () => void;
@@ -13,15 +13,23 @@ interface MFAEnrollProps {
 }
 
 export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
-  const { loading, error, enrollmentData, startEnrollment, verifyEnrollment, cancelEnrollment, clearError } = useMFA();
-  const [code, setCode] = useState('');
-  const [step, setStep] = useState<'start' | 'scan' | 'verify'>('start');
+  const {
+    loading,
+    error,
+    enrollmentData,
+    startEnrollment,
+    verifyEnrollment,
+    cancelEnrollment,
+    clearError,
+  } = useMFA();
+  const [code, setCode] = useState("");
+  const [step, setStep] = useState<"start" | "scan" | "verify">("start");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     return () => {
       // Cleanup on unmount
-      if (enrollmentData && step !== 'verify') {
+      if (enrollmentData && step !== "verify") {
         cancelEnrollment();
       }
     };
@@ -33,7 +41,7 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
     clearError();
     const result = await startEnrollment();
     if (result) {
-      setStep('scan');
+      setStep("scan");
     }
   };
 
@@ -41,34 +49,34 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
     if (enrollmentData?.secret) {
       await navigator.clipboard.writeText(enrollmentData.secret);
       setCopied(true);
-      toast.success('Chave copiada!');
+      toast.success("Chave copiada!");
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   const handleVerify = async () => {
     if (!enrollmentData?.factorId || code.length !== 6) return;
-    
+
     const success = await verifyEnrollment(enrollmentData.factorId, code);
     if (success) {
-      toast.success('2FA ativado com sucesso!');
+      toast.success("2FA ativado com sucesso!");
       onSuccess?.();
     }
   };
 
   const handleCancel = () => {
     cancelEnrollment();
-    setStep('start');
-    setCode('');
+    setStep("start");
+    setCode("");
     onCancel?.();
   };
 
-  if (step === 'start') {
+  if (step === "start") {
     return (
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <Shield className="w-6 h-6 text-primary" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Shield className="h-6 w-6 text-primary" />
           </div>
           <CardTitle>Ativar Autenticação 2FA</CardTitle>
           <CardDescription>
@@ -77,18 +85,22 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-              <Smartphone className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
+              <Smartphone className="mt-0.5 h-5 w-5 text-muted-foreground" />
               <div className="text-sm">
                 <p className="font-medium">Aplicativos compatíveis:</p>
-                <p className="text-muted-foreground">Google Authenticator, Microsoft Authenticator, Authy, 1Password</p>
+                <p className="text-muted-foreground">
+                  Google Authenticator, Microsoft Authenticator, Authy, 1Password
+                </p>
               </div>
             </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-              <Key className="w-5 h-5 text-muted-foreground mt-0.5" />
+            <div className="flex items-start gap-3 rounded-lg bg-muted/50 p-3">
+              <Key className="mt-0.5 h-5 w-5 text-muted-foreground" />
               <div className="text-sm">
                 <p className="font-medium">Como funciona:</p>
-                <p className="text-muted-foreground">Você escaneará um QR code e digitará um código de 6 dígitos para confirmar</p>
+                <p className="text-muted-foreground">
+                  Você escaneará um QR code e digitará um código de 6 dígitos para confirmar
+                </p>
               </div>
             </div>
           </div>
@@ -100,7 +112,7 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
               </Button>
             )}
             <Button onClick={handleStart} disabled={loading} className="flex-1">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Começar
             </Button>
           </div>
@@ -109,9 +121,9 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
     );
   }
 
-  if (step === 'scan') {
+  if (step === "scan") {
     return (
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle>Escaneie o QR Code</CardTitle>
           <CardDescription>
@@ -120,25 +132,21 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           {enrollmentData?.qrCode && (
-            <div className="flex justify-center p-4 bg-white rounded-lg">
-              <img 
-                src={enrollmentData.qrCode} 
-                alt="QR Code para 2FA" 
-                className="w-48 h-48"
-              />
+            <div className="flex justify-center rounded-lg bg-white p-4">
+              <img src={enrollmentData.qrCode} alt="QR Code para 2FA" className="h-48 w-48" />
             </div>
           )}
 
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-center text-sm text-muted-foreground">
               Ou insira a chave manualmente:
             </p>
             <div className="flex items-center gap-2">
-              <code className="flex-1 p-2 text-xs bg-muted rounded font-mono break-all">
+              <code className="flex-1 break-all rounded bg-muted p-2 font-mono text-xs">
                 {enrollmentData?.secret}
               </code>
               <Button variant="outline" size="icon" onClick={handleCopySecret}>
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>
           </div>
@@ -147,7 +155,7 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
             <Button variant="outline" onClick={handleCancel} className="flex-1">
               Cancelar
             </Button>
-            <Button onClick={() => setStep('verify')} className="flex-1">
+            <Button onClick={() => setStep("verify")} className="flex-1">
               Próximo
             </Button>
           </div>
@@ -157,7 +165,7 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="mx-auto w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle>Verificar Código</CardTitle>
         <CardDescription>
@@ -172,24 +180,15 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
         )}
 
         <div className="flex justify-center">
-          <OTPInput 
-            length={6} 
-            value={code} 
-            onChange={setCode}
-            autoFocus
-          />
+          <OTPInput length={6} value={code} onChange={setCode} autoFocus />
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => setStep('scan')} className="flex-1">
+          <Button variant="outline" onClick={() => setStep("scan")} className="flex-1">
             Voltar
           </Button>
-          <Button 
-            onClick={handleVerify} 
-            disabled={loading || code.length !== 6}
-            className="flex-1"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+          <Button onClick={handleVerify} disabled={loading || code.length !== 6} className="flex-1">
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Ativar 2FA
           </Button>
         </div>

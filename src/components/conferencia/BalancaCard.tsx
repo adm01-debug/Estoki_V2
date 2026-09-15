@@ -57,9 +57,9 @@ export function BalancaCard({ onPesoCapturado }: BalancaCardProps) {
             <div>
               <p className="font-medium">Balança Digital</p>
               <p className="text-sm text-muted-foreground">
-                {balancaConectada 
-                  ? leituraBalanca 
-                    ? `${leituraBalanca.peso} ${leituraBalanca.unidade} ${leituraBalanca.estavel ? '(estável)' : '(aguardando...)'}`
+                {balancaConectada
+                  ? leituraBalanca
+                    ? `${leituraBalanca.peso} ${leituraBalanca.unidade} ${leituraBalanca.estavel ? "(estável)" : "(aguardando...)"}`
                     : "Aguardando leitura..."
                   : "Desconectada"}
               </p>

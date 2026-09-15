@@ -12,7 +12,10 @@ export function PosicaoActions({ position }: { position: PosicaoEstoque }) {
       await updatePosicao.mutateAsync({
         id: position.id,
         status: newStatus,
-        motivo: newStatus === "bloqueado" ? "Bloqueio manual via detalhes" : "Liberação manual via detalhes"
+        motivo:
+          newStatus === "bloqueado"
+            ? "Bloqueio manual via detalhes"
+            : "Liberação manual via detalhes",
       });
     } catch (error) {
       console.error(error);
@@ -23,26 +26,50 @@ export function PosicaoActions({ position }: { position: PosicaoEstoque }) {
     <div className="flex gap-2 pt-2">
       {position.status === "ocupado" && (
         <>
-          <Button variant="outline" className="flex-1 gap-2"><Eye className="h-4 w-4" />Ver Rastreio</Button>
-          <Button variant="outline" className="flex-1 gap-2"><ArrowLeftRight className="h-4 w-4" />Mover</Button>
-          <Button className="flex-1 gap-2"><PackageOpen className="h-4 w-4" />Separar</Button>
+          <Button variant="outline" className="flex-1 gap-2">
+            <Eye className="h-4 w-4" />
+            Ver Rastreio
+          </Button>
+          <Button variant="outline" className="flex-1 gap-2">
+            <ArrowLeftRight className="h-4 w-4" />
+            Mover
+          </Button>
+          <Button className="flex-1 gap-2">
+            <PackageOpen className="h-4 w-4" />
+            Separar
+          </Button>
         </>
       )}
       {position.status === "livre" && (
-        <Button className="flex-1 gap-2"><Package className="h-4 w-4" />Alocar Produto</Button>
+        <Button className="flex-1 gap-2">
+          <Package className="h-4 w-4" />
+          Alocar Produto
+        </Button>
       )}
       {position.status === "bloqueado" && (
-        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleToggleStatus("livre")}>
+        <Button
+          variant="outline"
+          className="flex-1 gap-2"
+          onClick={() => handleToggleStatus("livre")}
+        >
           <UserCheck className="h-4 w-4" /> Liberar Posição
         </Button>
       )}
       {position.status === "reservado" && (
-        <Button variant="outline" className="flex-1 gap-2" onClick={() => handleToggleStatus("livre")}>
+        <Button
+          variant="outline"
+          className="flex-1 gap-2"
+          onClick={() => handleToggleStatus("livre")}
+        >
           <UserCheck className="h-4 w-4" /> Cancelar Reserva
         </Button>
       )}
       {position.status === "livre" && (
-        <Button variant="destructive" className="flex-1 gap-2" onClick={() => handleToggleStatus("bloqueado")}>
+        <Button
+          variant="destructive"
+          className="flex-1 gap-2"
+          onClick={() => handleToggleStatus("bloqueado")}
+        >
           <UserX className="h-4 w-4" /> Bloquear Posição
         </Button>
       )}

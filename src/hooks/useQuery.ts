@@ -1,8 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 
-interface QueryOptions { enabled?: boolean; refetchInterval?: number; }
+interface QueryOptions {
+  enabled?: boolean;
+  refetchInterval?: number;
+}
 
-export function useQuery<T>(queryKey: string, queryFn: () => Promise<T>, options: QueryOptions = {}) {
+export function useQuery<T>(
+  queryKey: string,
+  queryFn: () => Promise<T>,
+  options: QueryOptions = {}
+) {
   const { enabled = true, refetchInterval } = options;
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);

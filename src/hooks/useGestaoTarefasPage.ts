@@ -1,13 +1,17 @@
 import { useState, useMemo } from "react";
 import { useTarefas } from "@/hooks/useTarefas";
 import { toast } from "sonner";
-import { TipoTarefa, StatusTarefa, PrioridadeTarefa, statusLabels, tipoLabels } from "@/types/tarefas";
-
-const COLORS = ['hsl(var(--primary))', 'hsl(142, 76%, 36%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84%, 60%)', 'hsl(221, 83%, 53%)'];
+import {
+  TipoTarefa,
+  StatusTarefa,
+  PrioridadeTarefa,
+  statusLabels,
+  tipoLabels,
+} from "@/types/tarefas";
 
 export function useGestaoTarefasPage() {
   const { tarefas, isLoading, error, createTarefa, completarTarefa } = useTarefas();
-  const safeTarefas = useMemo(() => tarefas ?? [], [tarefas]);
+  const safeTarefas = tarefas ?? [];
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
@@ -22,35 +26,51 @@ export function useGestaoTarefasPage() {
     quantidade: 0,
   });
 
-  const stats = useMemo(() => ({
-    total: safeTarefas.length,
-    pendentes: safeTarefas.filter((t: any) => t.status === "pendente").length,
-    emAndamento: safeTarefas.filter((t: any) => t.status === "em_andamento").length,
-    concluidas: safeTarefas.filter((t: any) => t.status === "concluida").length,
-  }), [safeTarefas]);
+  const stats = useMemo(
+    () => ({
+      total: safeTarefas.length,
+      pendentes: safeTarefas.filter((t: any) => t.status === "pendente").length,
+      emAndamento: safeTarefas.filter((t: any) => t.status === "em_andamento").length,
+      concluidas: safeTarefas.filter((t: any) => t.status === "concluida").length,
+    }),
+    [safeTarefas]
+  );
 
   const tarefasFiltradas = useMemo(() => {
     return safeTarefas.filter((t: any) => {
-      const matchSearch = searchTerm === "" || t.descricao?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchSearch =
+        searchTerm === "" || t.descricao?.toLowerCase().includes(searchTerm.toLowerCase());
       const matchStatus = filtroStatus === "todos" || t.status === filtroStatus;
       const matchTipo = filtroTipo === "todos" || t.tipo === filtroTipo;
       return matchSearch && matchStatus && matchTipo;
     });
   }, [safeTarefas, searchTerm, filtroStatus, filtroTipo]);
 
+  const COLORS = [
+    "hsl(var(--primary))",
+    "hsl(142, 76%, 36%)",
+    "hsl(38, 92%, 50%)",
+    "hsl(0, 84%, 60%)",
+    "hsl(221, 83%, 53%)",
+  ];
+
   const dadosStatus = useMemo(() => {
-    return Object.entries(statusLabels).map(([status, label], i) => ({
-      name: label,
-      value: safeTarefas.filter((t: any) => t.status === status).length,
-      color: COLORS[i % COLORS.length],
-    })).filter(d => d.value > 0);
+    return Object.entries(statusLabels)
+      .map(([status, label], i) => ({
+        name: label,
+        value: safeTarefas.filter((t: any) => t.status === status).length,
+        color: COLORS[i % COLORS.length],
+      }))
+      .filter((d) => d.value > 0);
   }, [safeTarefas]);
 
   const dadosTipo = useMemo(() => {
-    return Object.entries(tipoLabels).map(([tipo, label]) => ({
-      tipo: label,
-      quantidade: safeTarefas.filter((t: any) => t.tipo === tipo).length,
-    })).filter(d => d.quantidade > 0);
+    return Object.entries(tipoLabels)
+      .map(([tipo, label]) => ({
+        tipo: label,
+        quantidade: safeTarefas.filter((t: any) => t.tipo === tipo).length,
+      }))
+      .filter((d) => d.quantidade > 0);
   }, [safeTarefas]);
 
   const handleCriarTarefa = async () => {
@@ -108,6 +128,6 @@ export function useGestaoTarefasPage() {
     dadosTipo,
     handleCriarTarefa,
     handleIniciar,
-    handleConcluir
+    handleConcluir,
   };
 }

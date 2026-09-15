@@ -1,7 +1,7 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Loader2 } from 'lucide-react';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 
 type AppRole = "operador" | "supervisor" | "admin";
 
@@ -12,17 +12,17 @@ interface RoleGuardProps {
   fallback?: React.ReactNode;
 }
 
-export const RoleGuard: React.FC<RoleGuardProps> = ({ 
-  children, 
+export const RoleGuard: React.FC<RoleGuardProps> = ({
+  children,
   allowedRoles,
-  redirectTo = '/unauthorized',
-  fallback
+  redirectTo = "/unauthorized",
+  fallback,
 }) => {
   const { user, role, loading, canAccess } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -45,15 +45,15 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({
 };
 
 export const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <RoleGuard allowedRoles={['admin']}>{children}</RoleGuard>
+  <RoleGuard allowedRoles={["admin"]}>{children}</RoleGuard>
 );
 
 export const SupervisorGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <RoleGuard allowedRoles={['admin', 'supervisor']}>{children}</RoleGuard>
+  <RoleGuard allowedRoles={["admin", "supervisor"]}>{children}</RoleGuard>
 );
 
 export const OperatorGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <RoleGuard allowedRoles={['admin', 'supervisor', 'operador']}>{children}</RoleGuard>
+  <RoleGuard allowedRoles={["admin", "supervisor", "operador"]}>{children}</RoleGuard>
 );
 
 export default RoleGuard;

@@ -10,31 +10,29 @@ interface ModuleErrorBoundaryProps {
 
 export function ModuleErrorBoundary({ children, moduleName = "Módulo" }: ModuleErrorBoundaryProps) {
   const Fallback = (
-    <Card className="border-destructive/20 bg-destructive/5 overflow-hidden">
-      <CardContent className="p-6 flex flex-col items-center justify-center text-center space-y-3">
-        <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center">
+    <Card className="overflow-hidden border-destructive/20 bg-destructive/5">
+      <CardContent className="flex flex-col items-center justify-center space-y-3 p-6 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
           <AlertTriangle className="h-5 w-5 text-destructive" />
         </div>
         <div>
           <h4 className="text-sm font-bold text-destructive">{moduleName} Indisponível</h4>
-          <p className="text-xs text-muted-foreground">Ocorreu um erro ao carregar este componente.</p>
+          <p className="text-xs text-muted-foreground">
+            Ocorreu um erro ao carregar este componente.
+          </p>
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           className="h-8 rounded-lg text-[10px] font-bold uppercase"
           onClick={() => window.location.reload()}
         >
-          <RefreshCw className="h-3 w-3 mr-1.5" />
+          <RefreshCw className="mr-1.5 h-3 w-3" />
           Tentar Novamente
         </Button>
       </CardContent>
     </Card>
   );
 
-  return (
-    <ErrorBoundary fallback={Fallback}>
-      {children}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary fallback={Fallback}>{children}</ErrorBoundary>;
 }

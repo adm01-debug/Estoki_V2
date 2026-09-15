@@ -1,5 +1,17 @@
-export type StatusRomaneio = 'rascunho' | 'confirmado' | 'em_transito' | 'entregue' | 'parcial' | 'cancelado';
-export type StatusEntrega = 'pendente' | 'em_rota' | 'entregue' | 'recusado' | 'parcial' | 'reagendado';
+export type StatusRomaneio =
+  | "rascunho"
+  | "confirmado"
+  | "em_transito"
+  | "entregue"
+  | "parcial"
+  | "cancelado";
+export type StatusEntrega =
+  | "pendente"
+  | "em_rota"
+  | "entregue"
+  | "recusado"
+  | "parcial"
+  | "reagendado";
 
 export interface RomaneioItem {
   id: string;

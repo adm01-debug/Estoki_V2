@@ -1,24 +1,26 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const profileFormSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  email: z.string().email('Email inválido'),
+  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: z.string().email("Email inválido"),
   phone: z.string().optional(),
-  avatar_url: z.string().url().optional().or(z.literal('')),
+  avatar_url: z.string().url().optional().or(z.literal("")),
 });
 
-export const passwordChangeFormSchema = z.object({
-  current_password: z.string().min(1, 'Senha atual obrigatória'),
-  new_password: z.string().min(8, 'Nova senha deve ter pelo menos 8 caracteres'),
-  confirm_password: z.string(),
-}).refine(data => data.new_password === data.confirm_password, {
-  message: 'As senhas não conferem',
-  path: ['confirm_password'],
-});
+export const passwordChangeFormSchema = z
+  .object({
+    current_password: z.string().min(1, "Senha atual obrigatória"),
+    new_password: z.string().min(8, "Nova senha deve ter pelo menos 8 caracteres"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "As senhas não conferem",
+    path: ["confirm_password"],
+  });
 
 export const preferencesFormSchema = z.object({
-  theme: z.enum(['light', 'dark', 'system']),
-  language: z.enum(['pt-BR', 'en-US', 'es']),
+  theme: z.enum(["light", "dark", "system"]),
+  language: z.enum(["pt-BR", "en-US", "es"]),
   notifications_enabled: z.boolean(),
   email_notifications: z.boolean(),
   sound_enabled: z.boolean(),
@@ -32,7 +34,7 @@ export const companySettingsFormSchema = z.object({
   ie: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email().optional(),
-  logo_url: z.string().url().optional().or(z.literal('')),
+  logo_url: z.string().url().optional().or(z.literal("")),
   address: z.object({
     street: z.string(),
     number: z.string(),

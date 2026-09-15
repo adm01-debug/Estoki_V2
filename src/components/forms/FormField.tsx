@@ -14,12 +14,39 @@ interface FormFieldProps {
   className?: string;
 }
 
-export function FormField({ name, label, type = "text", placeholder, error, required, value, onChange, className }: FormFieldProps) {
+export function FormField({
+  name,
+  label,
+  type = "text",
+  placeholder,
+  error,
+  required,
+  value,
+  onChange,
+  className,
+}: FormFieldProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor={name}>{label}{required && <span className="text-destructive ml-1">*</span>}</Label>
-      <Input id={name} name={name} type={type} placeholder={placeholder} value={value} onChange={onChange} className={cn(error && "border-destructive")} aria-invalid={!!error} aria-describedby={error ? `${name}-error` : undefined} />
-      {error && <p id={`${name}-error`} className="text-sm text-destructive">{error}</p>}
+      <Label htmlFor={name}>
+        {label}
+        {required && <span className="ml-1 text-destructive">*</span>}
+      </Label>
+      <Input
+        id={name}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className={cn(error && "border-destructive")}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${name}-error` : undefined}
+      />
+      {error && (
+        <p id={`${name}-error`} className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

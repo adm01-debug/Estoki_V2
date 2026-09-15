@@ -12,11 +12,11 @@ interface ProdutividadeKPIsProps {
 
 export function ProdutividadeKPIs({ metricasGerais }: ProdutividadeKPIsProps) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/10">
+            <div className="rounded-lg bg-primary/10 p-2">
               <Package className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -30,7 +30,7 @@ export function ProdutividadeKPIs({ metricasGerais }: ProdutividadeKPIsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-500/10">
+            <div className="rounded-lg bg-green-500/10 p-2">
               <TrendingUp className="h-5 w-5 text-green-500" />
             </div>
             <div>
@@ -44,7 +44,7 @@ export function ProdutividadeKPIs({ metricasGerais }: ProdutividadeKPIsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-500/10">
+            <div className="rounded-lg bg-blue-500/10 p-2">
               <Target className="h-5 w-5 text-blue-500" />
             </div>
             <div>
@@ -58,12 +58,15 @@ export function ProdutividadeKPIs({ metricasGerais }: ProdutividadeKPIsProps) {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-500/10">
+            <div className="rounded-lg bg-amber-500/10 p-2">
               <Timer className="h-5 w-5 text-amber-500" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Tempo Médio</p>
-              <p className="text-2xl font-bold">{metricasGerais.tempoMedioGeral.toFixed(1)}<span className="text-sm font-normal">min</span></p>
+              <p className="text-2xl font-bold">
+                {metricasGerais.tempoMedioGeral.toFixed(1)}
+                <span className="text-sm font-normal">min</span>
+              </p>
             </div>
           </div>
         </CardContent>

@@ -2,13 +2,14 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 interface StockMovement {
   product_id: string;
   from_location_id?: string;
   to_location_id?: string;
   quantity: number;
-  type: 'in' | 'out' | 'transfer' | 'adjustment';
+  type: "in" | "out" | "transfer" | "adjustment";
   reference_type?: string;
   reference_id?: string;
   lot_id?: string;
@@ -35,12 +36,15 @@ serve(async (req) => {
   );
 
   try {
-    const { action, data } = await req.json();
+    const __raw = await req.json();
+    const __v = validateInput(GenericPayloadSchema, __raw);
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    const { action, data } = __raw;
 
     switch (action) {
       case "create_movement": {
         const movement = data as StockMovement;
-        
+
         // Validar movimento
         if (!movement.product_id || !movement.quantity || !movement.type) {
           throw new Error("Campos obrigatórios: product_id, quantity, type");
@@ -66,38 +70,68 @@ serve(async (req) => {
         if (moveError) throw moveError;
 
         // Atualizar saldos baseado no tipo
-        if (movement.type === 'in' && movement.to_location_id) {
+        if (movement.type === "in" && movement.to_location_id) {
           // Entrada: adicionar ao destino
-          await updateStockBalance(supabase, movement.product_id, movement.to_location_id, movement.quantity);
-        } else if (movement.type === 'out' && movement.from_location_id) {
+          await updateStockBalance(
+            supabase,
+            movement.product_id,
+            movement.to_location_id,
+            movement.quantity
+          );
+        } else if (movement.type === "out" && movement.from_location_id) {
           // Saída: remover da origem
-          await updateStockBalance(supabase, movement.product_id, movement.from_location_id, -movement.quantity);
-        } else if (movement.type === 'transfer' && movement.from_location_id && movement.to_location_id) {
+          await updateStockBalance(
+            supabase,
+            movement.product_id,
+            movement.from_location_id,
+            -movement.quantity
+          );
+        } else if (
+          movement.type === "transfer" &&
+          movement.from_location_id &&
+          movement.to_location_id
+        ) {
           // Transferência: remover da origem e adicionar ao destino
-          await updateStockBalance(supabase, movement.product_id, movement.from_location_id, -movement.quantity);
-          await updateStockBalance(supabase, movement.product_id, movement.to_location_id, movement.quantity);
-        } else if (movement.type === 'adjustment' && movement.to_location_id) {
+          await updateStockBalance(
+            supabase,
+            movement.product_id,
+            movement.from_location_id,
+            -movement.quantity
+          );
+          await updateStockBalance(
+            supabase,
+            movement.product_id,
+            movement.to_location_id,
+            movement.quantity
+          );
+        } else if (movement.type === "adjustment" && movement.to_location_id) {
           // Ajuste: pode ser positivo ou negativo
-          await updateStockBalance(supabase, movement.product_id, movement.to_location_id, movement.quantity);
+          await updateStockBalance(
+            supabase,
+            movement.product_id,
+            movement.to_location_id,
+            movement.quantity
+          );
         }
 
         // Verificar alertas de estoque baixo
         await checkLowStockAlert(supabase, movement.product_id);
 
-        return new Response(JSON.stringify({ 
-          success: true, 
-          movement: insertedMovement 
-        }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            movement: insertedMovement,
+          }),
+          {
+            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          }
+        );
       }
 
       case "get_balance": {
         const { product_id, location_id } = data;
 
-        let query = supabase
-          .from("stock_balances")
-          .select("*");
+        let query = supabase.from("stock_balances").select("*");
 
         if (product_id) query = query.eq("product_id", product_id);
         if (location_id) query = query.eq("location_id", location_id);
@@ -105,12 +139,15 @@ serve(async (req) => {
         const { data: balances, error } = await query;
         if (error) throw error;
 
-        return new Response(JSON.stringify({ 
-          success: true, 
-          balances 
-        }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            balances,
+          }),
+          {
+            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          }
+        );
       }
 
       case "get_movements": {
@@ -118,7 +155,9 @@ serve(async (req) => {
 
         let query = supabase
           .from("stock_movements")
-          .select("*, product:products(*), from_location:locations!from_location_id(*), to_location:locations!to_location_id(*)")
+          .select(
+            "*, product:products(*), from_location:locations!from_location_id(*), to_location:locations!to_location_id(*)"
+          )
           .order("created_at", { ascending: false })
           .limit(limit);
 
@@ -133,12 +172,15 @@ serve(async (req) => {
         const { data: movements, error } = await query;
         if (error) throw error;
 
-        return new Response(JSON.stringify({ 
-          success: true, 
-          movements 
-        }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            movements,
+          }),
+          {
+            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          }
+        );
       }
 
       case "reserve_stock": {
@@ -158,16 +200,14 @@ serve(async (req) => {
         }
 
         // Criar reserva
-        const { error: reserveError } = await supabase
-          .from("stock_reservations")
-          .insert({
-            product_id,
-            location_id,
-            quantity,
-            order_id,
-            status: 'active',
-            expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
-          });
+        const { error: reserveError } = await supabase.from("stock_reservations").insert({
+          product_id,
+          location_id,
+          quantity,
+          order_id,
+          status: "active",
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
+        });
 
         if (reserveError) throw reserveError;
 
@@ -183,12 +223,15 @@ serve(async (req) => {
 
         if (updateError) throw updateError;
 
-        return new Response(JSON.stringify({ 
-          success: true, 
-          message: "Estoque reservado com sucesso" 
-        }), {
-          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-        });
+        return new Response(
+          JSON.stringify({
+            success: true,
+            message: "Estoque reservado com sucesso",
+          }),
+          {
+            headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+          }
+        );
       }
 
       default:
@@ -196,13 +239,16 @@ serve(async (req) => {
     }
   } catch (error) {
     console.error("[stock-movement] Error:", error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error.message 
-    }), {
-      status: 400,
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error.message,
+      }),
+      {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
+    );
   }
 });
 
@@ -238,15 +284,13 @@ async function updateStockBalance(
       .eq("location_id", locationId);
   } else if (quantityChange > 0) {
     // Criar novo registro de saldo
-    await supabase
-      .from("stock_balances")
-      .insert({
-        product_id: productId,
-        location_id: locationId,
-        quantity: quantityChange,
-        reserved_quantity: 0,
-        available_quantity: quantityChange,
-      });
+    await supabase.from("stock_balances").insert({
+      product_id: productId,
+      location_id: locationId,
+      quantity: quantityChange,
+      reserved_quantity: 0,
+      available_quantity: quantityChange,
+    });
   } else {
     throw new Error("Não é possível criar saldo negativo");
   }

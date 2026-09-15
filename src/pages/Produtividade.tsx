@@ -11,15 +11,8 @@ import { ProdutividadeKPIs } from "@/components/produtividade/ProdutividadeKPIs"
 import { ProdutividadeDetalhes } from "@/components/produtividade/ProdutividadeDetalhes";
 
 export default function ProdutividadePage() {
-  const { 
-    operadores, 
-    metricas, 
-    loading, 
-    error, 
-    refetch, 
-    getRanking, 
-    getMetricasGerais 
-  } = useProdutividade();
+  const { operadores, metricas, loading, error, refetch, getRanking, getMetricasGerais } =
+    useProdutividade();
 
   const [periodo, setPeriodo] = useState<"hoje" | "semana" | "mes">("semana");
   const [operadorSelecionado, setOperadorSelecionado] = useState<string>("todos");
@@ -39,7 +32,7 @@ export default function ProdutividadePage() {
 
   // Dados para gráfico de barras
   const dadosBarras = useMemo(() => {
-    return ranking.slice(0, 6).map(r => ({
+    return ranking.slice(0, 6).map((r) => ({
       nome: r.operadorNome.split(" ")[0],
       triagens: r.triagensRealizadas,
       tarefas: r.tarefasConcluidas,
@@ -49,10 +42,11 @@ export default function ProdutividadePage() {
   // Dados para gráfico de evolução
   const dadosEvolucao = useMemo(() => {
     const dias = periodo === "hoje" ? 1 : periodo === "semana" ? 7 : 30;
-    const labels = periodo === "hoje" 
-      ? ["Manhã", "Tarde"] 
-      : Array.from({ length: Math.min(dias, 7) }, (_, i) => `Dia ${i + 1}`);
-    
+    const labels =
+      periodo === "hoje"
+        ? ["Manhã", "Tarde"]
+        : Array.from({ length: Math.min(dias, 7) }, (_, i) => `Dia ${i + 1}`);
+
     return labels.map((label, i) => ({
       periodo: label,
       triagens: metricasGerais.totalTriagens / labels.length + Math.floor(Math.random() * 10 - 5),
@@ -63,8 +57,8 @@ export default function ProdutividadePage() {
   // Dados para gráfico radar (operador selecionado)
   const dadosRadar = useMemo(() => {
     if (operadorSelecionado === "todos") return [];
-    
-    const op = metricas.find(m => m.operadorId === operadorSelecionado);
+
+    const op = metricas.find((m) => m.operadorId === operadorSelecionado);
     if (!op) return [];
 
     return [
@@ -79,7 +73,7 @@ export default function ProdutividadePage() {
   if (loading) {
     return (
       <AppLayout title="Produtividade" showBack>
-        <div className="flex items-center justify-center h-64">
+        <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       </AppLayout>
@@ -99,8 +93,8 @@ export default function ProdutividadePage() {
   return (
     <AppLayout title="Produtividade" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
-          <ProdutividadeFilters 
+        <div className="space-y-6 p-4">
+          <ProdutividadeFilters
             periodo={periodo}
             onPeriodoChange={handlePeriodoChange}
             operadorSelecionado={operadorSelecionado}
@@ -118,11 +112,11 @@ export default function ProdutividadePage() {
             </TabsList>
 
             <TabsContent value="visao-geral" className="space-y-4">
-              <ProdutividadeCharts 
-                dadosEvolucao={dadosEvolucao} 
-                dadosBarras={dadosBarras} 
-                dadosRadar={dadosRadar} 
-                showRadar={operadorSelecionado !== "todos"} 
+              <ProdutividadeCharts
+                dadosEvolucao={dadosEvolucao}
+                dadosBarras={dadosBarras}
+                dadosRadar={dadosRadar}
+                showRadar={operadorSelecionado !== "todos"}
               />
             </TabsContent>
 

@@ -32,43 +32,51 @@ export default function OrdersPage() {
   return (
     <AppLayout title="Gestão de Pedidos" showBack>
       <PageTransition>
-        <div className="p-4 space-y-6">
+        <div className="space-y-6 p-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold">Pedidos de Saída</h2>
-              <p className="text-sm text-muted-foreground">Acompanhe o fluxo de vendas e expedição</p>
+              <p className="text-sm text-muted-foreground">
+                Acompanhe o fluxo de vendas e expedição
+              </p>
             </div>
             <Button className="gap-2">
               <Plus className="h-4 w-4" /> Novo Pedido
             </Button>
           </div>
 
-          <KanbanBoard 
+          <KanbanBoard
             columns={[
               { id: "pendente", title: "Pendente", color: "bg-slate-400" },
               { id: "em_separacao", title: "Picking", color: "bg-blue-500" },
               { id: "embalagem", title: "Embalagem", color: "bg-purple-500" },
               { id: "aguardando_transporte", title: "Expedição", color: "bg-orange-500" },
-              { id: "enviado", title: "Enviado", color: "bg-success" }
+              { id: "enviado", title: "Enviado", color: "bg-success" },
             ]}
-            items={orders.map(o => ({
+            items={orders.map((o) => ({
               id: o.id,
               columnId: o.status,
               title: o.codigo,
               description: o.cliente_nome,
               priority: o.prioridade === 3 ? "critical" : o.prioridade === 2 ? "high" : "medium",
-              tags: [`${o.itens?.length || 0} itens`]
+              tags: [`${o.itens?.length || 0} itens`],
             }))}
             renderItem={(item) => {
-              const order = orders.find(o => o.id === item.id);
+              const order = orders.find((o) => o.id === item.id);
               return (
-                <Card className="hover:border-primary/50 transition-all shadow-sm group">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex justify-between items-start">
-                      <span className="font-mono font-bold text-sm text-primary">{order.codigo}</span>
-                      {order.prioridade >= 2 && <Badge variant="destructive" className="text-[9px] h-4 px-1">URGENTE</Badge>}
+                <Card className="group shadow-sm transition-all hover:border-primary/50">
+                  <CardContent className="space-y-3 p-4">
+                    <div className="flex items-start justify-between">
+                      <span className="font-mono text-sm font-bold text-primary">
+                        {order.codigo}
+                      </span>
+                      {order.prioridade >= 2 && (
+                        <Badge variant="destructive" className="h-4 px-1 text-[9px]">
+                          URGENTE
+                        </Badge>
+                      )}
                     </div>
-                    
+
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <User className="h-3 w-3" />
@@ -76,17 +84,23 @@ export default function OrdersPage() {
                       </div>
                       <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        <span>{format(new Date(order.created_at), "dd MMM HH:mm", { locale: ptBR })}</span>
+                        <span>
+                          {format(new Date(order.created_at), "dd MMM HH:mm", { locale: ptBR })}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="pt-2 border-t flex justify-between items-center">
-                       <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-tighter">
-                         {order.itens?.length || 0} Itens
-                       </span>
-                       <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px] opacity-0 group-hover:opacity-100">
-                         Gerenciar
-                       </Button>
+                    <div className="flex items-center justify-between border-t pt-2">
+                      <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
+                        {order.itens?.length || 0} Itens
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-[10px] opacity-0 group-hover:opacity-100"
+                      >
+                        Gerenciar
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

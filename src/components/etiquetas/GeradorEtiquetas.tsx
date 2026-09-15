@@ -4,12 +4,7 @@ import { Download, Printer, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -30,7 +25,7 @@ interface GeradorEtiquetasProps {
 
 export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasProps) {
   const { toast } = useToast();
-  
+
   const [qtdEtiquetas, setQtdEtiquetas] = useState(data.totalVolumes);
   const [tamanho, setTamanho] = useState<TamanhoEtiqueta>("10x7");
   const [qrCodeUrls, setQrCodeUrls] = useState<string[]>([]);
@@ -40,7 +35,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
   useEffect(() => {
     const generateQRCodes = async () => {
       const urls: string[] = [];
-      
+
       for (let i = 1; i <= qtdEtiquetas; i++) {
         const qrData = JSON.stringify({
           pedido: data.pedido,
@@ -49,7 +44,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
           totalVolumes: qtdEtiquetas,
           url: `https://app.promobrindes.com.br/estoque/item/${data.pedido}?vol=${i}`,
         });
-        
+
         try {
           const url = await QRCode.toDataURL(qrData, {
             width: 200,
@@ -94,30 +89,32 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            🏷️ Gerar Etiquetas QR Code
-          </DialogTitle>
+          <DialogTitle className="flex items-center gap-2">🏷️ Gerar Etiquetas QR Code</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="bg-muted/50 rounded-lg p-3 text-sm">
+          <div className="rounded-lg bg-muted/50 p-3 text-sm">
             <div className="font-medium">Pedido: #{data.pedido}</div>
-            <div className="text-muted-foreground truncate">{data.produto}</div>
-            <div className="text-xs text-muted-foreground mt-1">Lote: {data.lote}</div>
+            <div className="truncate text-muted-foreground">{data.produto}</div>
+            <div className="mt-1 text-xs text-muted-foreground">Lote: {data.lote}</div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="qtdEtiquetas" className="text-xs">Quantidade</Label>
+              <Label htmlFor="qtdEtiquetas" className="text-xs">
+                Quantidade
+              </Label>
               <Input
                 id="qtdEtiquetas"
                 type="number"
                 min={1}
                 max={50}
                 value={qtdEtiquetas}
-                onChange={(e) => setQtdEtiquetas(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))}
+                onChange={(e) =>
+                  setQtdEtiquetas(Math.min(50, Math.max(1, parseInt(e.target.value) || 1)))
+                }
               />
             </div>
             <div>
@@ -130,7 +127,9 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
                   {Object.entries(tamanhos)
                     .filter(([key]) => key !== "10x15")
                     .map(([key, val]) => (
-                      <SelectItem key={key} value={key}>{val.label}</SelectItem>
+                      <SelectItem key={key} value={key}>
+                        {val.label}
+                      </SelectItem>
                     ))}
                 </SelectContent>
               </Select>
@@ -140,8 +139,8 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
           {qtdEtiquetas > 1 && (
             <div className="flex items-center gap-2">
               <Label className="text-xs">Visualizar volume:</Label>
-              <Select 
-                value={previewVolume.toString()} 
+              <Select
+                value={previewVolume.toString()}
                 onValueChange={(v) => setPreviewVolume(parseInt(v))}
               >
                 <SelectTrigger className="w-24">
@@ -158,7 +157,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
             </div>
           )}
 
-          <EtiquetaPreview 
+          <EtiquetaPreview
             data={data}
             tamanho={tamanho}
             qrCodeUrl={qrCodeUrls[previewVolume - 1]}
@@ -166,13 +165,13 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
             totalVolumes={qtdEtiquetas}
           />
 
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-center text-xs text-muted-foreground">
             Serão geradas {qtdEtiquetas} etiqueta(s) no tamanho {tamanhos[tamanho]?.label}
           </p>
 
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="flex-1 gap-2"
               onClick={handleGeneratePDF}
               disabled={isGenerating || qrCodeUrls.length === 0}
@@ -184,7 +183,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
               )}
               Baixar PDF
             </Button>
-            <Button 
+            <Button
               className="flex-1 gap-2"
               onClick={handlePrint}
               disabled={isGenerating || qrCodeUrls.length === 0}

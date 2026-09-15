@@ -1,7 +1,14 @@
 import { VolumeData as SharedVolumeData } from "@/features/quality/components/VolumeContagem";
 
 export type VolumeData = SharedVolumeData;
-export type StatusRecebimento = "aguardando" | "em_transito" | "recebido" | "em_conferencia" | "conferido" | "divergencia" | "cancelado";
+export type StatusRecebimento =
+  | "aguardando"
+  | "em_transito"
+  | "recebido"
+  | "em_conferencia"
+  | "conferido"
+  | "divergencia"
+  | "cancelado";
 
 export type TipoEmbalagem = "original" | "plastica" | "generica";
 

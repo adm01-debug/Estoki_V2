@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { LoginSchema, validateInput } from "../_shared/schemas.ts";
+import { rateLimit, rateLimitResponse, RateLimitPresets } from "../_shared/rate-limit.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
@@ -9,17 +10,29 @@ serve(async (req) => {
 
   try {
     if (req.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405, headers });
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers,
+      });
     }
+
+    const rl = rateLimit(req, { key: "auth-login", ...RateLimitPresets.auth });
+    if (!rl.ok) return rateLimitResponse(rl, req);
 
     const body = await req.json();
     const validation = validateInput(LoginSchema, body);
     if (!validation.success) {
-      return new Response(JSON.stringify({ error: validation.error, details: validation.details }), { status: 400, headers });
+      return new Response(
+        JSON.stringify({ error: validation.error, details: validation.details }),
+        { status: 400, headers }
+      );
     }
 
     const { email, password } = validation.data;
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!
+    );
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
 

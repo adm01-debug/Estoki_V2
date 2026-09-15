@@ -1,6 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-interface CounterProps { value: number; duration?: number; prefix?: string; suffix?: string; className?: string; }
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+interface CounterProps {
+  value: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+  className?: string;
+}
 export function Counter({ value, duration = 1000, prefix, suffix, className }: CounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
   useEffect(() => {
@@ -17,5 +23,11 @@ export function Counter({ value, duration = 1000, prefix, suffix, className }: C
     // displayValue é capturado como valor inicial da animação; incluí-lo reiniciaria a cada frame
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, duration]);
-  return <span className={cn("tabular-nums", className)}>{prefix}{displayValue.toLocaleString('pt-BR')}{suffix}</span>;
+  return (
+    <span className={cn("tabular-nums", className)}>
+      {prefix}
+      {displayValue.toLocaleString("pt-BR")}
+      {suffix}
+    </span>
+  );
 }

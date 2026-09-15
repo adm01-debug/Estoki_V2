@@ -1,8 +1,8 @@
 // Tipos para o módulo de Armazenamento
 
-export type TipoPosicao = 'picking' | 'pulmao' | 'blocado' | 'reserva';
-export type StatusPosicao = 'disponivel' | 'ocupado' | 'bloqueado' | 'manutencao';
-export type ZonaArmazem = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type TipoPosicao = "picking" | "pulmao" | "blocado" | "reserva";
+export type StatusPosicao = "disponivel" | "ocupado" | "bloqueado" | "manutencao";
+export type ZonaArmazem = "A" | "B" | "C" | "D" | "E" | "F";
 
 export interface Posicao {
   id: string;
@@ -68,7 +68,7 @@ export interface MovimentacaoArmazenamento {
   posicao_destino_id: string;
   produto_id: string;
   quantidade: number;
-  tipo: 'entrada' | 'saida' | 'transferencia';
+  tipo: "entrada" | "saida" | "transferencia";
   motivo: string;
   usuario_id: string;
   created_at: string;

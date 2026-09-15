@@ -1,12 +1,25 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Trash2, Plus, Globe, Shield, Loader2 } from 'lucide-react';
-import { useGeoWhitelist } from '@/hooks/useGeoWhitelist';
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Trash2, Plus, Globe, Shield, Loader2 } from "lucide-react";
+import { useGeoWhitelist } from "@/hooks/useGeoWhitelist";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,24 +30,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 export function GeoBlockingManager() {
-  const { entries, loading, addCountry, removeCountry, toggleActive, getAvailableCountries } = useGeoWhitelist();
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const { entries, loading, addCountry, removeCountry, toggleActive, getAvailableCountries } =
+    useGeoWhitelist();
+  const [selectedCountry, setSelectedCountry] = useState("");
   const [adding, setAdding] = useState(false);
 
   const availableCountries = getAvailableCountries();
 
   const handleAddCountry = async () => {
     if (!selectedCountry) return;
-    
-    const country = availableCountries.find(c => c.code === selectedCountry);
+
+    const country = availableCountries.find((c) => c.code === selectedCountry);
     if (!country) return;
 
     setAdding(true);
     await addCountry(country.code, country.name);
-    setSelectedCountry('');
+    setSelectedCountry("");
     setAdding(false);
   };
 
@@ -63,17 +77,18 @@ export function GeoBlockingManager() {
             <CardTitle>Bloqueio Geográfico</CardTitle>
           </div>
           <CardDescription>
-            Configure quais países podem acessar o sistema. Apenas usuários de países na whitelist terão acesso.
+            Configure quais países podem acessar o sistema. Apenas usuários de países na whitelist
+            terão acesso.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Status */}
-          <div className="flex items-center gap-4 p-4 rounded-lg bg-muted/50 border">
+          <div className="flex items-center gap-4 rounded-lg border bg-muted/50 p-4">
             <Shield className="h-8 w-8 text-green-500" />
             <div>
               <p className="font-medium">Whitelist Ativa</p>
               <p className="text-sm text-muted-foreground">
-                {entries.filter(e => e.is_active).length} país(es) permitido(s)
+                {entries.filter((e) => e.is_active).length} país(es) permitido(s)
               </p>
             </div>
           </div>
@@ -100,8 +115,8 @@ export function GeoBlockingManager() {
 
           {/* Countries Table */}
           {entries.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Globe className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="py-8 text-center text-muted-foreground">
+              <Globe className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>Nenhum país na whitelist</p>
               <p className="text-sm">Adicione países para permitir o acesso</p>
             </div>
@@ -124,8 +139,8 @@ export function GeoBlockingManager() {
                       <Badge variant="outline">{entry.country_code}</Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={entry.is_active ? 'default' : 'secondary'}>
-                        {entry.is_active ? 'Permitido' : 'Bloqueado'}
+                      <Badge variant={entry.is_active ? "default" : "secondary"}>
+                        {entry.is_active ? "Permitido" : "Bloqueado"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -137,7 +152,11 @@ export function GeoBlockingManager() {
                     <TableCell className="text-right">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -145,7 +164,7 @@ export function GeoBlockingManager() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Remover país?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Tem certeza que deseja remover {entry.country_name} da whitelist? 
+                              Tem certeza que deseja remover {entry.country_name} da whitelist?
                               Usuários deste país não poderão mais acessar o sistema.
                             </AlertDialogDescription>
                           </AlertDialogHeader>

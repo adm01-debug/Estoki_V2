@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 interface ConfirmItemRequest {
   item_id: string;
@@ -32,10 +33,10 @@ serve(async (req) => {
     const { receiving_id, items, confirmed_by }: ConfirmReceivingRequest = await req.json();
 
     if (!receiving_id || !items?.length) {
-      return new Response(
-        JSON.stringify({ error: "receiving_id and items are required" }),
-        { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "receiving_id and items are required" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Verificar se recebimento existe
@@ -46,10 +47,10 @@ serve(async (req) => {
       .single();
 
     if (recError || !receiving) {
-      return new Response(
-        JSON.stringify({ error: "Receiving not found" }),
-        { status: 404, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Receiving not found" }), {
+        status: 404,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
     }
 
     // Atualizar cada item
@@ -66,7 +67,7 @@ serve(async (req) => {
           received_at: new Date().toISOString(),
         })
         .eq("id", item.item_id);
-      
+
       if (error) throw error;
       return item;
     });
@@ -106,9 +107,9 @@ serve(async (req) => {
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

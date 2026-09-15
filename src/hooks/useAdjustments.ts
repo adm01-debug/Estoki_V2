@@ -31,23 +31,27 @@ export function useAdjustments() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("ajustes_estoque")
-        .select(`
+        .select(
+          `
           *,
           produto:produtos(nome, sku),
           lote:lotes(numero_lote)
-        `)
+        `
+        )
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as (Adjustment & { 
-        produto: { nome: string; sku: string } | null; 
-        lote: { numero_lote: string } | null 
+      return data as (Adjustment & {
+        produto: { nome: string; sku: string } | null;
+        lote: { numero_lote: string } | null;
       })[];
     },
   });
 
   const createAdjustment = useMutation({
-    mutationFn: async (newAdj: Omit<Adjustment, "id" | "created_at" | "status" | "operador_id" | "diferenca">) => {
+    mutationFn: async (
+      newAdj: Omit<Adjustment, "id" | "created_at" | "status" | "operador_id" | "diferenca">
+    ) => {
       if (!user) throw new Error("Usuário não autenticado");
       const { data, error } = await supabase
         .from("ajustes_estoque")
@@ -59,10 +63,17 @@ export function useAdjustments() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adjustments"] });
-      toast({ title: "Ajuste solicitado", description: "O ajuste foi enviado para aprovação do supervisor." });
+      toast({
+        title: "Ajuste solicitado",
+        description: "O ajuste foi enviado para aprovação do supervisor.",
+      });
     },
     onError: (error) => {
-      toast({ title: "Erro ao solicitar ajuste", description: error.message, variant: "destructive" });
+      toast({
+        title: "Erro ao solicitar ajuste",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -71,10 +82,10 @@ export function useAdjustments() {
       if (!user) throw new Error("Usuário não autenticado");
       const { data, error } = await supabase
         .from("ajustes_estoque")
-        .update({ 
-          status, 
-          aprovado_por: user.id, 
-          data_aprovacao: new Date().toISOString() 
+        .update({
+          status,
+          aprovado_por: user.id,
+          data_aprovacao: new Date().toISOString(),
         })
         .eq("id", id)
         .select()
@@ -85,9 +96,9 @@ export function useAdjustments() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["adjustments"] });
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
-      toast({ 
-        title: variables.status === "aprovado" ? "Ajuste aprovado" : "Ajuste rejeitado", 
-        description: `O ajuste foi ${variables.status} com sucesso.` 
+      toast({
+        title: variables.status === "aprovado" ? "Ajuste aprovado" : "Ajuste rejeitado",
+        description: `O ajuste foi ${variables.status} com sucesso.`,
       });
     },
   });

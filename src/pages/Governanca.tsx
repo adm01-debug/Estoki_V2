@@ -1,19 +1,23 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, Link2, MapPin, AlertTriangle } from 'lucide-react';
-import { CustodiaTab } from '@/components/governanca/CustodiaTab';
-import { CheckpointsTab } from '@/components/governanca/CheckpointsTab';
-import { OcorrenciasTab } from '@/components/governanca/OcorrenciasTab';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SEO } from "@/components/common/SEO";
+import { Shield, Link2, MapPin, AlertTriangle } from "lucide-react";
+import { CustodiaTab } from "@/components/governanca/CustodiaTab";
+import { CheckpointsTab } from "@/components/governanca/CheckpointsTab";
+import { OcorrenciasTab } from "@/components/governanca/OcorrenciasTab";
 
 export default function Governanca() {
   return (
-    <div className="space-y-6">
+    <>
+      <SEO title="Governança" path="/governanca" description="Cadeia de custódia, checkpoints de zona e ocorrências operacionais." />
+      <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
           <Shield className="h-7 w-7 text-primary" />
           Governança & Responsabilização
         </h1>
-        <p className="text-muted-foreground mt-1">
-          Cadeia de custódia, checkpoints obrigatórios e investigação de perdas — zero margem para "ninguém sabe onde está".
+        <p className="mt-1 text-muted-foreground">
+          Cadeia de custódia, checkpoints obrigatórios e investigação de perdas — zero margem para
+          "ninguém sabe onde está".
         </p>
       </div>
 
@@ -35,10 +39,17 @@ export default function Governanca() {
             <span className="sm:hidden">Ocorrências</span>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="custodia"><CustodiaTab /></TabsContent>
-        <TabsContent value="checkpoints"><CheckpointsTab /></TabsContent>
-        <TabsContent value="ocorrencias"><OcorrenciasTab /></TabsContent>
+        <TabsContent value="custodia">
+          <CustodiaTab />
+        </TabsContent>
+        <TabsContent value="checkpoints">
+          <CheckpointsTab />
+        </TabsContent>
+        <TabsContent value="ocorrencias">
+          <OcorrenciasTab />
+        </TabsContent>
       </Tabs>
     </div>
+    </>
   );
 }

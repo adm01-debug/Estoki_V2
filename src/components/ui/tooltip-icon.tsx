@@ -11,7 +11,7 @@ export function TooltipIcon({ content, side = "top" }: TooltipIconProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <HelpCircle className="h-4 w-4 text-muted-foreground cursor-help inline-block ml-1" />
+          <HelpCircle className="ml-1 inline-block h-4 w-4 cursor-help text-muted-foreground" />
         </TooltipTrigger>
         <TooltipContent side={side}>
           <p className="max-w-xs">{content}</p>

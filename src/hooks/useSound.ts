@@ -1,10 +1,10 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react";
 
 const sounds = {
-  success: '/sounds/success.mp3',
-  error: '/sounds/error.mp3',
-  notification: '/sounds/notification.mp3',
-  scan: '/sounds/scan.mp3',
+  success: "/sounds/success.mp3",
+  error: "/sounds/error.mp3",
+  notification: "/sounds/notification.mp3",
+  scan: "/sounds/scan.mp3",
 };
 
 export function useSound() {
@@ -18,13 +18,15 @@ export function useSound() {
       audioRef.current = new Audio(sounds[sound]);
       audioRef.current.volume = volume;
       audioRef.current.play().catch(() => {});
-    } catch { /* ignore audio playback errors */ }
+    } catch {
+      // Audio playback not supported
+    }
   }, []);
 
-  const playSuccess = useCallback(() => play('success'), [play]);
-  const playError = useCallback(() => play('error'), [play]);
-  const playNotification = useCallback(() => play('notification'), [play]);
-  const playScan = useCallback(() => play('scan'), [play]);
+  const playSuccess = useCallback(() => play("success"), [play]);
+  const playError = useCallback(() => play("error"), [play]);
+  const playNotification = useCallback(() => play("notification"), [play]);
+  const playScan = useCallback(() => play("scan"), [play]);
 
   return { play, playSuccess, playError, playNotification, playScan };
 }

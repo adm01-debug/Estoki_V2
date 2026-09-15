@@ -15,23 +15,33 @@ export function ABCStatsCards({ estatisticas }: ABCStatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       {items.map((item) => (
         <Card key={item.label}>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg ${
-                item.color === 'green' ? 'bg-green-500/10' : 
-                item.color === 'amber' ? 'bg-amber-500/10' : 
-                item.color === 'blue' ? 'bg-blue-500/10' : 
-                'bg-primary/10'
-              }`}>
-                <Package className={`h-5 w-5 ${
-                  item.color === 'green' ? 'text-green-500' : 
-                  item.color === 'amber' ? 'text-amber-500' : 
-                  item.color === 'blue' ? 'text-blue-500' : 
-                  'text-primary'
-                }`} />
+              <div
+                className={`rounded-lg p-2 ${
+                  item.color === "green"
+                    ? "bg-green-500/10"
+                    : item.color === "amber"
+                      ? "bg-amber-500/10"
+                      : item.color === "blue"
+                        ? "bg-blue-500/10"
+                        : "bg-primary/10"
+                }`}
+              >
+                <Package
+                  className={`h-5 w-5 ${
+                    item.color === "green"
+                      ? "text-green-500"
+                      : item.color === "amber"
+                        ? "text-amber-500"
+                        : item.color === "blue"
+                          ? "text-blue-500"
+                          : "text-primary"
+                  }`}
+                />
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">{item.label}</p>

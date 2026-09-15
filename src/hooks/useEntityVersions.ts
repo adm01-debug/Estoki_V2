@@ -35,11 +35,14 @@ export function useEntityVersions({
   const queryClient = useQueryClient();
   const queryKey = ["entity-versions", entityType, entityId];
 
-  const { data: versions = [], isLoading, error } = useQuery({
+  const {
+    data: versions = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await (supabase
-        .from("entity_versions" as any) as any)
+      const { data, error } = await (supabase.from("entity_versions" as any) as any)
         .select(`*`)
         .eq("entity_type", entityType)
         .eq("entity_id", entityId)
@@ -84,10 +87,7 @@ export function useEntityVersions({
     if (!version1 || !version2) return null;
 
     const changes: Record<string, { old: unknown; new: unknown }> = {};
-    const allKeys = new Set([
-      ...Object.keys(version1.data),
-      ...Object.keys(version2.data),
-    ]);
+    const allKeys = new Set([...Object.keys(version1.data), ...Object.keys(version2.data)]);
 
     allKeys.forEach((key) => {
       if (key === "updated_at" || key === "created_at") return;

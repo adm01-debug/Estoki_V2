@@ -7,9 +7,11 @@ export function initAnalytics() {
     script.async = true;
     document.head.appendChild(script);
 
-     window.dataLayer = window.dataLayer || [];
-     const dataLayer = window.dataLayer;
-     window.gtag = function (...args: unknown[]) { dataLayer.push(args); };
+    window.dataLayer = window.dataLayer || [];
+    const dataLayer = window.dataLayer;
+    window.gtag = function (...args: unknown[]) {
+      dataLayer.push(args);
+    };
     window.gtag("js", new Date());
     window.gtag("config", import.meta.env.VITE_GA_ID);
   }
@@ -26,4 +28,3 @@ export function trackPageView(path: string) {
     window.gtag("event", "page_view", { page_path: path });
   }
 }
-

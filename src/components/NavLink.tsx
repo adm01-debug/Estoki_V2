@@ -12,13 +12,16 @@ interface NavLinkCompatProps extends Omit<NavLinkProps, "className"> {
 const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
   ({ className, activeClassName, pendingClassName, to, onMouseEnter, ...props }, ref) => {
     const preload = useRoutePreload();
-    
-    const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
-      if (typeof to === 'string') {
-        preload(to);
-      }
-      onMouseEnter?.(e);
-    }, [to, preload, onMouseEnter]);
+
+    const handleMouseEnter = useCallback(
+      (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (typeof to === "string") {
+          preload(to);
+        }
+        onMouseEnter?.(e);
+      },
+      [to, preload, onMouseEnter]
+    );
 
     return (
       <RouterNavLink
@@ -31,7 +34,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkCompatProps>(
         {...props}
       />
     );
-  },
+  }
 );
 
 NavLink.displayName = "NavLink";

@@ -1,4 +1,4 @@
- interface Window {
-   dataLayer?: unknown[];
-   gtag?: (...args: any[]) => void;
- }
+interface Window {
+  dataLayer?: unknown[];
+  gtag?: (...args: unknown[]) => void;
+}

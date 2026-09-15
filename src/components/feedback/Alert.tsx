@@ -21,7 +21,10 @@ const styles = {
 export function Alert({ variant = "info", title, children, className }: AlertProps) {
   const Icon = icons[variant];
   return (
-    <div className={cn("flex gap-3 p-4 rounded-lg border", styles[variant], className)} role="alert">
+    <div
+      className={cn("flex gap-3 rounded-lg border p-4", styles[variant], className)}
+      role="alert"
+    >
       <Icon className="h-5 w-5 shrink-0" />
       <div>
         {title && <p className="font-medium">{title}</p>}

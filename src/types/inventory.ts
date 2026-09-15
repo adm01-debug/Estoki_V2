@@ -1,7 +1,7 @@
-import { Database } from '@/integrations/supabase/types';
+import { Database } from "@/integrations/supabase/types";
 
-export type StatusPosicao = Database['public']['Enums']['status_posicao'];
-export type TipoPosicao = Database['public']['Enums']['tipo_posicao'];
+export type StatusPosicao = Database["public"]["Enums"]["status_posicao"];
+export type TipoPosicao = Database["public"]["Enums"]["tipo_posicao"];
 
 export interface SaldoPosicao {
   id: string;

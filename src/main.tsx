@@ -1,13 +1,15 @@
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 import "./i18n";
 import { prefetchCriticalRoutes } from "./lib/prefetch";
 import { initWebVitals } from "./lib/web-vitals";
 import { setupGlobalErrorHandler } from "./config/error-handler";
+import { initSentry } from "./lib/sentry";
 // 0) Setup global monitoring
 setupGlobalErrorHandler();
-
+initSentry();
 
 // Suppress noisy errors
 window.addEventListener("unhandledrejection", (event) => {
@@ -31,7 +33,11 @@ if (!rootElement) {
 
 // 1) Mount the app IMMEDIATELY — never delay rendering
 const root = createRoot(rootElement);
-root.render(<App />);
+root.render(
+  <HelmetProvider>
+    <App />
+  </HelmetProvider>
+);
 
 // 2) Post-mount: prefetch routes & web vitals
 requestAnimationFrame(() => {
@@ -39,16 +45,8 @@ requestAnimationFrame(() => {
   initWebVitals();
 });
 
-// 3) Background: clean up stale service workers in preview/dev (fire-and-forget, never reload)
-if ("serviceWorker" in navigator && (import.meta.env.DEV || /lovable/.test(window.location.hostname))) {
-  navigator.serviceWorker.getRegistrations().then((regs) => {
-    regs.forEach((r) => r.unregister());
-  }).catch(() => {});
-  
-  if ("caches" in window) {
-    caches.keys().then((keys) => {
-      keys.filter((k) => k.startsWith("estoki-") || k.includes("workbox"))
-        .forEach((k) => caches.delete(k));
-    }).catch(() => {});
-  }
-}
+// 3) Service Worker — registro guardado (só em produção real, fora de preview Lovable / iframe / dev).
+//    Em contextos proibidos, o helper faz UNREGISTER para limpar SWs stale.
+import("./lib/register-sw").then(({ registerServiceWorker }) => {
+  registerServiceWorker().catch(() => {});
+});

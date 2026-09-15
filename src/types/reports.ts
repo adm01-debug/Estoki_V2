@@ -13,7 +13,7 @@ export interface ReportData {
   parameters: ReportFilter;
   data: Record<string, unknown>;
   generated_at: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: "pending" | "processing" | "completed" | "failed";
 }
 
 export interface InventoryReport {

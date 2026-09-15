@@ -3,26 +3,26 @@
  */
 
 // Tipos de KPI
-export type TipoKPI = 
-  | 'triagem'
-  | 'picking'
-  | 'armazenamento'
-  | 'recebimento'
-  | 'expedicao'
-  | 'qualidade'
-  | 'produtividade';
+export type TipoKPI =
+  | "triagem"
+  | "picking"
+  | "armazenamento"
+  | "recebimento"
+  | "expedicao"
+  | "qualidade"
+  | "produtividade";
 
 // Tipo de meta (maior é melhor ou menor é melhor)
-export type TipoMeta = 'maior_melhor' | 'menor_melhor';
+export type TipoMeta = "maior_melhor" | "menor_melhor";
 
 // Status do alerta
-export type StatusAlerta = 'ativo' | 'reconhecido' | 'resolvido' | 'ignorado';
+export type StatusAlerta = "ativo" | "reconhecido" | "resolvido" | "ignorado";
 
 // Severidade do alerta
-export type SeveridadeAlerta = 'info' | 'warning' | 'critical';
+export type SeveridadeAlerta = "info" | "warning" | "critical";
 
 // Período de análise
-export type PeriodoAnalise = 'hoje' | 'semana' | 'mes' | 'trimestre' | 'ano';
+export type PeriodoAnalise = "hoje" | "semana" | "mes" | "trimestre" | "ano";
 
 /**
  * Métrica operacional diária
@@ -30,7 +30,7 @@ export type PeriodoAnalise = 'hoje' | 'semana' | 'mes' | 'trimestre' | 'ano';
 export interface MetricaOperacional {
   id: string;
   data: string;
-  
+
   // Triagem
   itens_triados: number | null;
   tempo_total_triagem_minutos: number | null;
@@ -38,27 +38,27 @@ export interface MetricaOperacional {
   itens_aprovados: number | null;
   itens_reprovados: number | null;
   taxa_aprovacao: number | null;
-  
+
   // Picking/Separação
   pedidos_separados: number | null;
   itens_separados: number | null;
   erros_picking: number | null;
   acuracidade_picking: number | null;
   tempo_total_picking_minutos: number | null;
-  
+
   // Armazenamento
   posicoes_totais: number | null;
   posicoes_ocupados: number | null;
   taxa_ocupacao: number | null;
-  
+
   // Recebimento
   volumes_recebidos: number | null;
   nfs_processadas: number | null;
   tempo_medio_recebimento_minutos: number | null;
-  
+
   // Movimentações
   movimentacoes_realizadas: number | null;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -121,23 +121,23 @@ export interface KPIConsolidado {
   taxaAprovacao: number;
   itensAprovados: number;
   itensReprovados: number;
-  
+
   // Picking
   pedidosSeparados: number;
   itensSeparados: number;
   errosPicking: number;
   acuracidadePicking: number;
-  
+
   // Armazenamento
   taxaOcupacao: number;
   posicoesTotais: number;
   posicoesOcupadas: number;
-  
+
   // Recebimento
   volumesRecebidos: number;
   nfsProcessadas: number;
   tempoMedioRecebimento: number;
-  
+
   // Movimentações
   movimentacoesRealizadas: number;
 }
@@ -150,7 +150,7 @@ export interface EvolucaoKPI {
   dataFormatada: string;
   valor: number;
   meta?: number;
-  status: 'success' | 'warning' | 'danger';
+  status: "success" | "warning" | "danger";
 }
 
 /**
@@ -161,7 +161,7 @@ export interface ComparativoPeriodo {
   periodo_anterior: number;
   variacao_absoluta: number;
   variacao_percentual: number;
-  tendencia: 'up' | 'down' | 'stable';
+  tendencia: "up" | "down" | "stable";
 }
 
 /**
@@ -184,7 +184,7 @@ export interface KPICard {
  */
 export interface KPIWidget {
   id: string;
-  tipo: 'card' | 'chart' | 'gauge' | 'table';
+  tipo: "card" | "chart" | "gauge" | "table";
   metrica: string;
   titulo: string;
   posicao: { x: number; y: number };

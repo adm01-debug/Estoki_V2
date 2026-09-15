@@ -35,16 +35,16 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
   const percent = (strength / rules.length) * 100;
 
   return (
-    <div className="space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-200">
+    <div className="space-y-2.5 duration-200 animate-in fade-in slide-in-from-top-2">
       {/* Strength bar */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">
-          <span className={cn("text-[11px] font-semibold", level.textColor)}>
-            {level.label}
+          <span className={cn("text-[11px] font-semibold", level.textColor)}>{level.label}</span>
+          <span className="text-[11px] text-sidebar-foreground/30">
+            {strength}/{rules.length}
           </span>
-          <span className="text-[11px] text-sidebar-foreground/30">{strength}/{rules.length}</span>
         </div>
-        <div className="h-1.5 w-full rounded-full bg-sidebar-accent/60 overflow-hidden">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-sidebar-accent/60">
           <div
             className={cn("h-full rounded-full transition-all duration-500 ease-out", level.color)}
             style={{ width: `${percent}%` }}
@@ -57,9 +57,9 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
         {rules.map((rule, i) => (
           <div key={rule.label} className="flex items-center gap-1.5">
             {passed[i] ? (
-              <Check className="h-3 w-3 text-success shrink-0" />
+              <Check className="h-3 w-3 shrink-0 text-success" />
             ) : (
-              <X className="h-3 w-3 text-sidebar-foreground/20 shrink-0" />
+              <X className="h-3 w-3 shrink-0 text-sidebar-foreground/20" />
             )}
             <span
               className={cn(

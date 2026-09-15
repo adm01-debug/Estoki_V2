@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const packageSchema = z.object({
   id: z.string().uuid(),
@@ -7,11 +7,13 @@ export const packageSchema = z.object({
   width_cm: z.number().positive(),
   height_cm: z.number().positive(),
   depth_cm: z.number().positive(),
-  items: z.array(z.object({
-    product_id: z.string().uuid(),
-    quantity: z.number().int().positive(),
-    serial_numbers: z.array(z.string()).optional(),
-  })),
+  items: z.array(
+    z.object({
+      product_id: z.string().uuid(),
+      quantity: z.number().int().positive(),
+      serial_numbers: z.array(z.string()).optional(),
+    })
+  ),
 });
 
 export const packingSchema = z.object({
@@ -20,7 +22,7 @@ export const packingSchema = z.object({
   order_id: z.string().uuid(),
   picking_id: z.string().uuid(),
   warehouse_id: z.string().uuid(),
-  status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
+  status: z.enum(["pending", "in_progress", "completed", "cancelled"]),
   packer_id: z.string().uuid().nullable().optional(),
   station_id: z.string().nullable().optional(),
   packages: z.array(packageSchema).default([]),
@@ -33,5 +35,10 @@ export const packingSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const packingCreateSchema = packingSchema.omit({ id: true, created_at: true, updated_at: true, packing_number: true });
+export const packingCreateSchema = packingSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  packing_number: true,
+});
 export type Packing = z.infer<typeof packingSchema>;

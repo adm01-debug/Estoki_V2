@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { performanceService } from '../services/performanceService';
+import { useEffect } from "react";
+import { performanceService } from "../services/performanceService";
 
 /**
  * Silent component that initializes performance tracking on mount.

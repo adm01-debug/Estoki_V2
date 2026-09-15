@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 /**
  * Hook para media queries responsivas
- * 
+ *
  * @example
  * const isMobile = useMediaQuery("(max-width: 768px)");
  * const prefersDark = useMediaQuery("(prefers-color-scheme: dark)");

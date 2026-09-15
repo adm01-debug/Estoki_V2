@@ -1,5 +1,5 @@
-import React, { useRef, useState, useCallback } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import React, { useRef, useState, useCallback } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 interface VirtualGridProps<T> {
   data: T[];
@@ -20,18 +20,20 @@ export function VirtualGrid<T>({ data, columns, rowHeight, renderItem }: Virtual
 
   return (
     <div ref={parentRef} className="h-[600px] overflow-auto">
-      <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
+      <div
+        style={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}
+      >
         {virtualizer.getVirtualItems().map((virtualRow) => (
           <div
             key={virtualRow.key}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
-              width: '100%',
+              width: "100%",
               height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start}px)`,
-              display: 'grid',
+              display: "grid",
               gridTemplateColumns: `repeat(${columns}, 1fr)`,
             }}
           >

@@ -7,7 +7,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
 
   try {
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
     // Buscar produtos com estoque baixo
     const { data: lowStock } = await supabase
@@ -23,13 +26,13 @@ serve(async (req) => {
 
     // Criar alertas
     const alerts = [
-      ...(lowStock || []).map(p => ({
+      ...(lowStock || []).map((p) => ({
         product_id: p.id,
         type: "low_stock",
         message: `Estoque baixo: ${p.name} (${p.current_stock}/${p.min_stock})`,
         severity: "warning",
       })),
-      ...(outOfStock || []).map(p => ({
+      ...(outOfStock || []).map((p) => ({
         product_id: p.id,
         type: "out_of_stock",
         message: `Sem estoque: ${p.name}`,
@@ -41,15 +44,19 @@ serve(async (req) => {
       await supabase.from("stock_alerts").insert(alerts);
     }
 
-    return new Response(JSON.stringify({
-      success: true,
-      alerts_created: alerts.length,
-      low_stock: lowStock?.length || 0,
-      out_of_stock: outOfStock?.length || 0,
-    }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    return new Response(
+      JSON.stringify({
+        success: true,
+        alerts_created: alerts.length,
+        low_stock: lowStock?.length || 0,
+        out_of_stock: outOfStock?.length || 0,
+      }),
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), {
-      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" }, status: 400,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      status: 400,
     });
   }
 });

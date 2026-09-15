@@ -9,14 +9,14 @@ Deno.test("Contract Test: picking-confirm - Valid Payload", async () => {
     items: [
       {
         pick_item_id: VALID_UUID,
-        picked_quantity: 10
-      }
-    ]
+        picked_quantity: 10,
+      },
+    ],
   };
 
   const { PickingConfirmSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(PickingConfirmSchema, payload);
-  
+
   assertEquals(validation.success, true);
 });
 
@@ -27,14 +27,14 @@ Deno.test("Contract Test: picking-confirm - Negative Quantity", async () => {
     items: [
       {
         pick_item_id: VALID_UUID,
-        picked_quantity: -1
-      }
-    ]
+        picked_quantity: -1,
+      },
+    ],
   };
 
   const { PickingConfirmSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(PickingConfirmSchema, payload);
-  
+
   assertEquals(validation.success, false);
 });
 
@@ -42,11 +42,11 @@ Deno.test("Contract Test: picking-confirm - Empty items", async () => {
   const payload = {
     pick_list_id: VALID_UUID,
     picker_id: VALID_UUID,
-    items: []
+    items: [],
   };
 
   const { PickingConfirmSchema, validateInput } = await import("../_shared/schemas.ts");
   const validation = validateInput(PickingConfirmSchema, payload);
-  
+
   assertEquals(validation.success, false);
 });

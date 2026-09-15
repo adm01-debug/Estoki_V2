@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface Permission {
   id: string;
@@ -13,7 +13,7 @@ interface Permission {
 
 interface RolePermission {
   id: string;
-  role: 'operador' | 'supervisor' | 'admin';
+  role: "operador" | "supervisor" | "admin";
   permission_id: string;
   granted: boolean;
 }
@@ -34,8 +34,8 @@ export function usePermissions() {
     setLoading(true);
     try {
       const [permissionsRes, rolePermissionsRes] = await Promise.all([
-        supabase.from('permissions').select('*').order('category', { ascending: true }),
-        supabase.from('role_permissions').select('*')
+        supabase.from("permissions").select("*").order("category", { ascending: true }),
+        supabase.from("role_permissions").select("*"),
       ]);
 
       if (permissionsRes.error) throw permissionsRes.error;
@@ -44,7 +44,7 @@ export function usePermissions() {
       setPermissions(permissionsRes.data || []);
       setRolePermissions(rolePermissionsRes.data || []);
     } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Error fetching permissions:', error);
+      if (import.meta.env.DEV) console.error("Error fetching permissions:", error);
     } finally {
       setLoading(false);
     }
@@ -54,13 +54,13 @@ export function usePermissions() {
     if (!user?.id) return;
     try {
       const { data } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
         .single();
-      setUserRole(data?.role || 'operador');
+      setUserRole(data?.role || "operador");
     } catch (error) {
-      setUserRole('operador');
+      setUserRole("operador");
     }
   }, [user?.id]);
 
@@ -79,115 +79,124 @@ export function usePermissions() {
     }, {} as PermissionsByCategory);
   }, [permissions]);
 
-  const hasPermission = useCallback((role: string, permissionCode: string): boolean => {
-    const permission = permissions.find(p => p.code === permissionCode);
-    if (!permission) return false;
+  const hasPermission = useCallback(
+    (role: string, permissionCode: string): boolean => {
+      const permission = permissions.find((p) => p.code === permissionCode);
+      if (!permission) return false;
 
-    const rolePermission = rolePermissions.find(
-      rp => rp.role === role && rp.permission_id === permission.id
-    );
-
-    return rolePermission?.granted ?? false;
-  }, [permissions, rolePermissions]);
-
-  const getRolePermissions = useCallback((role: string): string[] => {
-    return rolePermissions
-      .filter(rp => rp.role === role && rp.granted)
-      .map(rp => {
-        const perm = permissions.find(p => p.id === rp.permission_id);
-        return perm?.code || '';
-      })
-      .filter(Boolean);
-  }, [permissions, rolePermissions]);
-
-  const togglePermission = useCallback(async (
-    role: 'operador' | 'supervisor' | 'admin',
-    permissionId: string,
-    granted: boolean
-  ) => {
-    setSaving(true);
-    try {
-      const existingPermission = rolePermissions.find(
-        rp => rp.role === role && rp.permission_id === permissionId
+      const rolePermission = rolePermissions.find(
+        (rp) => rp.role === role && rp.permission_id === permission.id
       );
 
-      if (existingPermission) {
-        const { error } = await supabase
-          .from('role_permissions')
-          .update({ granted, granted_at: new Date().toISOString() })
-          .eq('id', existingPermission.id);
+      return rolePermission?.granted ?? false;
+    },
+    [permissions, rolePermissions]
+  );
 
-        if (error) throw error;
+  const getRolePermissions = useCallback(
+    (role: string): string[] => {
+      return rolePermissions
+        .filter((rp) => rp.role === role && rp.granted)
+        .map((rp) => {
+          const perm = permissions.find((p) => p.id === rp.permission_id);
+          return perm?.code || "";
+        })
+        .filter(Boolean);
+    },
+    [permissions, rolePermissions]
+  );
 
-        setRolePermissions(prev =>
-          prev.map(rp =>
-            rp.id === existingPermission.id ? { ...rp, granted } : rp
-          )
-        );
-      } else {
-        const { data, error } = await supabase
-          .from('role_permissions')
-          .insert({ role, permission_id: permissionId, granted })
-          .select()
-          .single();
-
-        if (error) throw error;
-
-        setRolePermissions(prev => [...prev, data]);
-      }
-
-      toast.success('Permissão atualizada');
-    } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Error toggling permission:', error);
-      toast.error('Erro ao atualizar permissão');
-    } finally {
-      setSaving(false);
-    }
-  }, [rolePermissions]);
-
-  const bulkUpdateRolePermissions = useCallback(async (
-    role: 'operador' | 'supervisor' | 'admin',
-    permissionUpdates: { permissionId: string; granted: boolean }[]
-  ) => {
-    setSaving(true);
-    try {
-      for (const update of permissionUpdates) {
+  const togglePermission = useCallback(
+    async (role: "operador" | "supervisor" | "admin", permissionId: string, granted: boolean) => {
+      setSaving(true);
+      try {
         const existingPermission = rolePermissions.find(
-          rp => rp.role === role && rp.permission_id === update.permissionId
+          (rp) => rp.role === role && rp.permission_id === permissionId
         );
 
         if (existingPermission) {
-          await supabase
-            .from('role_permissions')
-            .update({ granted: update.granted, granted_at: new Date().toISOString() })
-            .eq('id', existingPermission.id);
-        } else {
-          await supabase
-            .from('role_permissions')
-            .insert({ role, permission_id: update.permissionId, granted: update.granted });
-        }
-      }
+          const { error } = await supabase
+            .from("role_permissions")
+            .update({ granted, granted_at: new Date().toISOString() })
+            .eq("id", existingPermission.id);
 
-      await fetchPermissions();
-      toast.success('Permissões atualizadas');
-    } catch (error: unknown) {
-      if (import.meta.env.DEV) console.error('Error bulk updating permissions:', error);
-      toast.error('Erro ao atualizar permissões');
-    } finally {
-      setSaving(false);
-    }
-  }, [rolePermissions, fetchPermissions]);
+          if (error) throw error;
+
+          setRolePermissions((prev) =>
+            prev.map((rp) => (rp.id === existingPermission.id ? { ...rp, granted } : rp))
+          );
+        } else {
+          const { data, error } = await supabase
+            .from("role_permissions")
+            .insert({ role, permission_id: permissionId, granted })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          setRolePermissions((prev) => [...prev, data]);
+        }
+
+        toast.success("Permissão atualizada");
+      } catch (error: unknown) {
+        if (import.meta.env.DEV) console.error("Error toggling permission:", error);
+        toast.error("Erro ao atualizar permissão");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [rolePermissions]
+  );
+
+  const bulkUpdateRolePermissions = useCallback(
+    async (
+      role: "operador" | "supervisor" | "admin",
+      permissionUpdates: { permissionId: string; granted: boolean }[]
+    ) => {
+      setSaving(true);
+      try {
+        for (const update of permissionUpdates) {
+          const existingPermission = rolePermissions.find(
+            (rp) => rp.role === role && rp.permission_id === update.permissionId
+          );
+
+          if (existingPermission) {
+            await supabase
+              .from("role_permissions")
+              .update({ granted: update.granted, granted_at: new Date().toISOString() })
+              .eq("id", existingPermission.id);
+          } else {
+            await supabase
+              .from("role_permissions")
+              .insert({ role, permission_id: update.permissionId, granted: update.granted });
+          }
+        }
+
+        await fetchPermissions();
+        toast.success("Permissões atualizadas");
+      } catch (error: unknown) {
+        if (import.meta.env.DEV) console.error("Error bulk updating permissions:", error);
+        toast.error("Erro ao atualizar permissões");
+      } finally {
+        setSaving(false);
+      }
+    },
+    [rolePermissions, fetchPermissions]
+  );
 
   // Legacy API compatibility
-  const can = useCallback((permissionCode: string): boolean => {
-    if (!userRole) return false;
-    return hasPermission(userRole, permissionCode);
-  }, [userRole, hasPermission]);
+  const can = useCallback(
+    (permissionCode: string): boolean => {
+      if (!userRole) return false;
+      return hasPermission(userRole, permissionCode);
+    },
+    [userRole, hasPermission]
+  );
 
-  const canRead = useCallback(() => can('estoque.view'), [can]);
-  const canWrite = useCallback(() => can('estoque.edit'), [can]);
-  const canDelete = useCallback(() => can('config.users'), [can]);
-  const isAdmin = useCallback(() => userRole === 'admin', [userRole]);
+  const canRead = useCallback(() => can("estoque.view"), [can]);
+  const canWrite = useCallback(() => can("estoque.edit"), [can]);
+  const canDelete = useCallback(() => can("config.users"), [can]);
+  const isAdmin = useCallback(() => userRole === "admin", [userRole]);
 
   return {
     // New API
@@ -202,13 +211,13 @@ export function usePermissions() {
     togglePermission,
     bulkUpdateRolePermissions,
     refresh: fetchPermissions,
-    
+
     // Legacy API
     can,
     canRead,
     canWrite,
     canDelete,
-    isAdmin
+    isAdmin,
   };
 }
 

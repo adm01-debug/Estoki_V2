@@ -3,7 +3,7 @@
  * Cliente HTTP robusto com retry, timeout, cache e tratamento de erros
  */
 
-import { envConfig } from './environment';
+import { envConfig } from "./environment";
 
 // Tipos
 interface RequestConfig {
@@ -47,7 +47,7 @@ function cleanExpiredCache() {
 setInterval(cleanExpiredCache, 60000);
 
 // Função de delay para retry
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Classe principal do API Client
 class ApiClient {
@@ -56,9 +56,9 @@ class ApiClient {
   private defaultConfig: RequestConfig;
 
   constructor(baseUrl: string, defaultConfig?: RequestConfig) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+    this.baseUrl = baseUrl.replace(/\/$/, "");
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
     this.defaultConfig = {
       timeout: envConfig.limits.apiTimeout,
@@ -71,11 +71,11 @@ class ApiClient {
   }
 
   setAuthToken(token: string) {
-    this.defaultHeaders['Authorization'] = `Bearer ${token}`;
+    this.defaultHeaders["Authorization"] = `Bearer ${token}`;
   }
 
   clearAuthToken() {
-    delete this.defaultHeaders['Authorization'];
+    delete this.defaultHeaders["Authorization"];
   }
 
   private async fetchWithTimeout(
@@ -120,7 +120,7 @@ class ApiClient {
         lastError = error as Error;
 
         // Se foi abortado (timeout) ou é último retry, não tentar mais
-        if ((error as Error).name === 'AbortError' || attempt >= (retries || 0)) {
+        if ((error as Error).name === "AbortError" || attempt >= (retries || 0)) {
           break;
         }
 
@@ -128,11 +128,11 @@ class ApiClient {
       }
     }
 
-    throw lastError || new Error('Request failed after retries');
+    throw lastError || new Error("Request failed after retries");
   }
 
   private getCacheKey(method: string, url: string, body?: unknown): string {
-    return `${method}:${url}:${body ? JSON.stringify(body) : ''}`;
+    return `${method}:${url}:${body ? JSON.stringify(body) : ""}`;
   }
 
   private getFromCache<T>(key: string): T | null {
@@ -161,7 +161,7 @@ class ApiClient {
     const mergedConfig = { ...this.defaultConfig, ...config };
 
     // Verificar cache (apenas para GET)
-    if (method === 'GET' && mergedConfig.cache) {
+    if (method === "GET" && mergedConfig.cache) {
       const cacheKey = mergedConfig.cacheKey || this.getCacheKey(method, url);
       const cached = this.getFromCache<T>(cacheKey);
       if (cached) {
@@ -182,7 +182,7 @@ class ApiClient {
       },
     };
 
-    if (body && method !== 'GET') {
+    if (body && method !== "GET") {
       options.body = JSON.stringify(body);
     }
 
@@ -203,7 +203,7 @@ class ApiClient {
       const data = await response.json();
 
       // Salvar no cache se aplicável
-      if (method === 'GET' && mergedConfig.cache) {
+      if (method === "GET" && mergedConfig.cache) {
         const cacheKey = mergedConfig.cacheKey || this.getCacheKey(method, url);
         this.setCache(cacheKey, data, mergedConfig.cacheTTL!);
       }
@@ -215,8 +215,8 @@ class ApiClient {
         cached: false,
       };
     } catch (error) {
-      if ((error as Error).name === 'AbortError') {
-        throw { message: 'Request timeout', code: 'TIMEOUT' } as ApiError;
+      if ((error as Error).name === "AbortError") {
+        throw { message: "Request timeout", code: "TIMEOUT" } as ApiError;
       }
       throw error;
     }
@@ -224,23 +224,23 @@ class ApiClient {
 
   // Métodos convenientes
   get<T>(endpoint: string, config?: RequestConfig) {
-    return this.request<T>('GET', endpoint, undefined, config);
+    return this.request<T>("GET", endpoint, undefined, config);
   }
 
   post<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
-    return this.request<T>('POST', endpoint, body, config);
+    return this.request<T>("POST", endpoint, body, config);
   }
 
   put<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
-    return this.request<T>('PUT', endpoint, body, config);
+    return this.request<T>("PUT", endpoint, body, config);
   }
 
   patch<T>(endpoint: string, body?: unknown, config?: RequestConfig) {
-    return this.request<T>('PATCH', endpoint, body, config);
+    return this.request<T>("PATCH", endpoint, body, config);
   }
 
   delete<T>(endpoint: string, config?: RequestConfig) {
-    return this.request<T>('DELETE', endpoint, undefined, config);
+    return this.request<T>("DELETE", endpoint, undefined, config);
   }
 
   // Limpar todo o cache

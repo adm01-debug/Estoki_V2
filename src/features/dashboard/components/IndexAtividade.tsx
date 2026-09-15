@@ -4,7 +4,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Activity, ArrowRight, Package, Search, AlertTriangle, ArrowLeftRight, CheckCircle2, Clock, MoreVertical, ExternalLink } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  Package,
+  Search,
+  AlertTriangle,
+  ArrowLeftRight,
+  CheckCircle2,
+  Clock,
+  MoreVertical,
+  ExternalLink,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getStatusClasses } from "@/lib/statusColors";
@@ -16,12 +27,18 @@ const itemVariants = {
 
 const getActivityIcon = (type: string) => {
   switch (type) {
-    case "recebimento": return Package;
-    case "triagem": return Search;
-    case "divergencia": return AlertTriangle;
-    case "movimentacao": return ArrowLeftRight;
-    case "tarefa": return CheckCircle2;
-    default: return Clock;
+    case "recebimento":
+      return Package;
+    case "triagem":
+      return Search;
+    case "divergencia":
+      return AlertTriangle;
+    case "movimentacao":
+      return ArrowLeftRight;
+    case "tarefa":
+      return CheckCircle2;
+    default:
+      return Clock;
   }
 };
 
@@ -42,34 +59,42 @@ interface Props {
 export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) => {
   return (
     <motion.section variants={itemVariants}>
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xs font-bold text-primary/60 uppercase tracking-[0.2em] flex items-center gap-2">
-          <span className="w-4 h-px bg-primary/30" />Atividade Recente
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/60">
+          <span className="h-px w-4 bg-primary/30" />
+          Atividade Recente
         </h2>
-        <Button variant="ghost" size="sm" className="text-xs gap-1 text-primary hover:text-primary" onClick={onSeeAll}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1 text-xs text-primary hover:text-primary"
+          onClick={onSeeAll}
+        >
           Ver tudo <ArrowRight className="h-3 w-3" />
         </Button>
       </div>
-      <Card className="glass-card border-border/30 overflow-hidden">
+      <Card className="glass-card overflow-hidden border-border/30">
         <CardContent className="p-0">
           <div className="divide-y divide-border/30">
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-3 p-4">
-                  <Skeleton className="w-10 h-10 rounded-xl" />
+                  <Skeleton className="h-10 w-10 rounded-xl" />
                   <div className="flex-1">
-                    <Skeleton className="h-4 w-3/4 mb-1.5" />
+                    <Skeleton className="mb-1.5 h-4 w-3/4" />
                     <Skeleton className="h-3 w-1/4" />
                   </div>
                 </div>
               ))
             ) : atividades.length === 0 ? (
               <div className="p-10 text-center text-muted-foreground">
-                <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-3">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/50">
                   <Activity className="h-6 w-6 opacity-40" />
                 </div>
                 <p className="text-sm font-medium">Nenhuma atividade recente</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">As atividades aparecerão aqui</p>
+                <p className="mt-1 text-xs text-muted-foreground/60">
+                  As atividades aparecerão aqui
+                </p>
               </div>
             ) : (
               <TooltipProvider>
@@ -78,38 +103,51 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                   return (
                     <div
                       key={activity.id}
-                      className="flex items-center gap-3 p-4 hover:bg-muted/30 transition-colors cursor-pointer group/item hover:pl-5 transition-all duration-200 relative overflow-hidden"
+                      className="group/item relative flex cursor-pointer items-center gap-3 overflow-hidden p-4 transition-all transition-colors duration-200 hover:bg-muted/30 hover:pl-5"
                     >
                       {/* Indicador lateral dinâmico */}
-                      <div className={cn(
-                        "absolute left-0 top-0 bottom-0 w-1 opacity-0 group-hover/item:opacity-100 transition-opacity",
-                        activity.status === 'success' ? "bg-success" :
-                        activity.status === 'danger' ? "bg-destructive" :
-                        activity.status === 'warning' ? "bg-warning" : "bg-primary"
-                      )} />
+                      <div
+                        className={cn(
+                          "absolute bottom-0 left-0 top-0 w-1 opacity-0 transition-opacity group-hover/item:opacity-100",
+                          activity.status === "success"
+                            ? "bg-success"
+                            : activity.status === "danger"
+                              ? "bg-destructive"
+                              : activity.status === "warning"
+                                ? "bg-warning"
+                                : "bg-primary"
+                        )}
+                      />
 
-                      <div className={cn(
-                        "w-11 h-11 rounded-xl flex items-center justify-center border shadow-sm transition-transform group-hover/item:scale-110 shrink-0",
-                        getStatusClasses(activity.status)
-                      )}>
+                      <div
+                        className={cn(
+                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform group-hover/item:scale-110",
+                          getStatusClasses(activity.status)
+                        )}
+                      >
                         <Icon className="h-5 w-5" />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-foreground truncate tracking-tight group-hover/item:text-primary transition-colors">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-bold tracking-tight text-foreground transition-colors group-hover/item:text-primary">
                           {activity.desc}
                         </p>
-                        <div className="flex items-center gap-2 mt-0.5">
+                        <div className="mt-0.5 flex items-center gap-2">
                           <Clock className="h-3 w-3 text-muted-foreground/60" />
-                          <p className="text-[11px] font-medium text-muted-foreground">{activity.time}</p>
+                          <p className="text-[11px] font-medium text-muted-foreground">
+                            {activity.time}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Badge variant="outline" className={cn(
-                              "text-[10px] font-bold uppercase tracking-wider px-2 rounded-full border-none",
-                              getStatusClasses(activity.status)
-                            )}>
+                            <Badge
+                              variant="outline"
+                              className={cn(
+                                "rounded-full border-none px-2 text-[10px] font-bold uppercase tracking-wider",
+                                getStatusClasses(activity.status)
+                              )}
+                            >
                               {activity.type}
                             </Badge>
                           </TooltipTrigger>
@@ -117,9 +155,13 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                             <p className="text-xs">Evento de {activity.type}</p>
                           </TooltipContent>
                         </Tooltip>
-                        
-                        <div className="flex items-center opacity-0 group-hover/item:opacity-100 transition-opacity">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+
+                        <div className="flex items-center opacity-0 transition-opacity group-hover/item:opacity-100">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                          >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8">

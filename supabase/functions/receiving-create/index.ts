@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
 interface ReceivingItem {
   product_id: string;
@@ -31,7 +32,14 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { purchase_order_id, supplier_id, warehouse_id, expected_date, items, notes }: CreateReceivingRequest = await req.json();
+    const {
+      purchase_order_id,
+      supplier_id,
+      warehouse_id,
+      expected_date,
+      items,
+      notes,
+    }: CreateReceivingRequest = await req.json();
 
     // Validações
     if (!supplier_id || !warehouse_id || !items?.length) {
@@ -74,9 +82,7 @@ serve(async (req) => {
       status: "pending",
     }));
 
-    const { error: itemsError } = await supabase
-      .from("receiving_items")
-      .insert(receivingItems);
+    const { error: itemsError } = await supabase.from("receiving_items").insert(receivingItems);
 
     if (itemsError) throw itemsError;
 
@@ -93,9 +99,9 @@ serve(async (req) => {
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 });

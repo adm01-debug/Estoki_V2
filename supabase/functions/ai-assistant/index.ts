@@ -1,18 +1,27 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { AiAssistantSchema, validateInput } from "../_shared/schemas.ts";
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
-    const { message, context } = await req.json();
-    const apiKey = Deno.env.get('LOVABLE_API_KEY');
-    
+    const body = await req.json();
+    const v = validateInput(AiAssistantSchema, body);
+    if (!v.success) {
+      return new Response(JSON.stringify({ error: v.error, details: v.details }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+    const { message, context } = v.data;
+    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+
     if (!apiKey) {
-      throw new Error('LOVABLE_API_KEY not configured');
+      throw new Error("LOVABLE_API_KEY not configured");
     }
 
     const systemPrompt = `Você é o Assistente IA do ESTOKI WMS - um sistema de gestão de armazém. 
@@ -32,17 +41,17 @@ Suas capacidades:
 Responda de forma concisa, direta e acionável. Use emojis para destacar pontos importantes.
 Quando possível, forneça números específicos e ações concretas.`;
 
-    const response = await fetch('https://ai.lovable.dev/v1/chat/completions', {
-      method: 'POST',
+    const response = await fetch("https://ai.lovable.dev/v1/chat/completions", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: "google/gemini-2.5-flash",
         messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: message },
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message },
         ],
         max_tokens: 2000,
         temperature: 0.7,
@@ -55,16 +64,16 @@ Quando possível, forneça números específicos e ações concretas.`;
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || 'Não foi possível gerar uma resposta.';
+    const reply = data.choices?.[0]?.message?.content || "Não foi possível gerar uma resposta.";
 
     return new Response(JSON.stringify({ reply }), {
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error('AI Assistant error:', error);
+    console.error("AI Assistant error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

@@ -1,6 +1,13 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ConfigAlerta {
   id: string;
@@ -24,7 +31,7 @@ export function AlertasConfigTable({ configAlertas }: Props) {
       </CardHeader>
       <CardContent>
         {configAlertas.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">
+          <p className="py-8 text-center text-muted-foreground">
             Nenhuma configuração encontrada. Configure na tabela alertas_config.
           </p>
         ) : (

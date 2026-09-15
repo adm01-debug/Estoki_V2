@@ -36,11 +36,8 @@ export function KPICardWithAlert({
 }: KPICardWithAlertProps) {
   // Determine status
   const isGood = invertido ? value <= meta : value >= meta;
-  const percentageDiff = meta > 0 
-    ? (invertido 
-        ? ((value - meta) / meta) * 100 
-        : ((meta - value) / meta) * 100)
-    : 0;
+  const percentageDiff =
+    meta > 0 ? (invertido ? ((value - meta) / meta) * 100 : ((meta - value) / meta) * 100) : 0;
   const alertLevel = percentageDiff > 20 ? "critical" : percentageDiff > 10 ? "warning" : "ok";
 
   return (
@@ -69,11 +66,13 @@ export function KPICardWithAlert({
                 )}
               </div>
               <p className="text-3xl font-bold">
-                {value.toFixed(1)}{unit}
+                {value.toFixed(1)}
+                {unit}
               </p>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="mt-1 flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
-                  Meta: {meta}{unit}
+                  Meta: {meta}
+                  {unit}
                 </span>
                 {isGood ? (
                   <CheckCircle2 className="h-3 w-3 text-green-500" />
@@ -83,25 +82,29 @@ export function KPICardWithAlert({
                   <AlertTriangle className="h-3 w-3 text-amber-500" />
                 )}
                 {tendencia !== undefined && tendencia !== 0 && (
-                  <Badge 
-                    variant="outline" 
+                  <Badge
+                    variant="outline"
                     className={cn(
                       invertido
-                        ? tendencia < 0 ? "text-green-500" : "text-destructive"
-                        : tendencia > 0 ? "text-green-500" : "text-destructive"
+                        ? tendencia < 0
+                          ? "text-green-500"
+                          : "text-destructive"
+                        : tendencia > 0
+                          ? "text-green-500"
+                          : "text-destructive"
                     )}
                   >
                     {tendencia > 0 ? (
-                      <ArrowUp className="h-3 w-3 mr-1" />
+                      <ArrowUp className="mr-1 h-3 w-3" />
                     ) : (
-                      <ArrowDown className="h-3 w-3 mr-1" />
+                      <ArrowDown className="mr-1 h-3 w-3" />
                     )}
                     {Math.abs(tendencia).toFixed(1)}%
                   </Badge>
                 )}
               </div>
             </div>
-            <motion.div 
+            <motion.div
               className={cn("rounded-full p-3", iconBgColor)}
               animate={isCritical ? { rotate: [0, -10, 10, -10, 0] } : {}}
               transition={{ repeat: Infinity, duration: 1, repeatDelay: 2 }}
@@ -112,15 +115,10 @@ export function KPICardWithAlert({
           {showProgress && (
             <Progress
               value={Math.min(value, 100)}
-              className={cn(
-                "mt-4 h-2",
-                isCritical && "[&>div]:bg-destructive"
-              )}
+              className={cn("mt-4 h-2", isCritical && "[&>div]:bg-destructive")}
             />
           )}
-          {subtitle && (
-            <p className="text-xs text-muted-foreground mt-2">{subtitle}</p>
-          )}
+          {subtitle && <p className="mt-2 text-xs text-muted-foreground">{subtitle}</p>}
         </CardContent>
       </Card>
     </motion.div>

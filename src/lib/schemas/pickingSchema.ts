@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const pickingItemSchema = z.object({
   id: z.string().uuid(),
@@ -19,8 +19,8 @@ export const pickingSchema = z.object({
   wave_id: z.string().uuid().nullable().optional(),
   order_id: z.string().uuid(),
   warehouse_id: z.string().uuid(),
-  status: z.enum(['pending', 'assigned', 'in_progress', 'completed', 'cancelled']),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  status: z.enum(["pending", "assigned", "in_progress", "completed", "cancelled"]),
+  priority: z.enum(["low", "normal", "high", "urgent"]).default("normal"),
   assigned_to: z.string().uuid().nullable().optional(),
   items: z.array(pickingItemSchema).min(1),
   total_items: z.number().int().positive(),
@@ -33,5 +33,10 @@ export const pickingSchema = z.object({
   updated_at: z.string().datetime(),
 });
 
-export const pickingCreateSchema = pickingSchema.omit({ id: true, created_at: true, updated_at: true, picking_number: true });
+export const pickingCreateSchema = pickingSchema.omit({
+  id: true,
+  created_at: true,
+  updated_at: true,
+  picking_number: true,
+});
 export type Picking = z.infer<typeof pickingSchema>;

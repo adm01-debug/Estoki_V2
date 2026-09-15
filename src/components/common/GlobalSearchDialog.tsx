@@ -1,0 +1,326 @@
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Search,
+  Package,
+  Layers,
+  Warehouse,
+  FileText,
+  ArrowRight,
+  LayoutDashboard,
+  Truck,
+  ArrowLeftRight,
+  Activity,
+  Plus,
+  FileBarChart,
+  History,
+  X,
+  Shield,
+  Lock,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useHaptics } from "@/hooks/useHaptics";
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
+import { SkeletonPulse } from "./PageSkeleton";
+
+interface SearchResult {
+  id: string;
+  type: "produto" | "lote" | "posicao" | "pedido";
+  title: string;
+  subtitle: string;
+}
+
+const typeConfig = {
+  produto: { icon: Package, label: "Produto", color: "text-blue-500", route: "/produtos" },
+  lote: { icon: Layers, label: "Lote", color: "text-green-500", route: "/lotes" },
+  posicao: { icon: Warehouse, label: "Posição", color: "text-orange-500", route: "/posicoes" },
+  pedido: { icon: FileText, label: "Pedido", color: "text-purple-500", route: "/pedidos" },
+};
+
+interface GlobalSearchDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogProps) {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  // Load recent searches
+  useEffect(() => {
+    const saved = localStorage.getItem("recent-searches");
+    if (saved) setRecentSearches(JSON.parse(saved));
+  }, []);
+
+  const addRecentSearch = (term: string) => {
+    if (!term || term.length < 2) return;
+    const newRecent = [term, ...recentSearches.filter((t) => t !== term)].slice(0, 5);
+    setRecentSearches(newRecent);
+    localStorage.setItem("recent-searches", JSON.stringify(newRecent));
+  };
+
+  const removeRecentSearch = (term: string) => {
+    const newRecent = recentSearches.filter((t) => t !== term);
+    setRecentSearches(newRecent);
+    localStorage.setItem("recent-searches", JSON.stringify(newRecent));
+  };
+
+  const navigate = useNavigate();
+  const debouncedQuery = useDebounce(query, 300);
+  const { light } = useHaptics();
+
+  // Search
+  useEffect(() => {
+    if (!debouncedQuery || debouncedQuery.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const search = async () => {
+      setLoading(true);
+      const searchTerm = `%${debouncedQuery}%`;
+      const allResults: SearchResult[] = [];
+
+      try {
+        const [produtos, lotes, posicoes] = await Promise.all([
+          supabase.from("produtos").select("id, sku, nome").ilike("nome", searchTerm).limit(3),
+          supabase
+            .from("lotes")
+            .select("id, numero_lote, fornecedor")
+            .ilike("numero_lote", searchTerm)
+            .limit(3),
+          supabase
+            .from("posicoes_estoque")
+            .select("id, codigo, zona")
+            .ilike("codigo", searchTerm)
+            .limit(3),
+        ]);
+
+        produtos.data?.forEach((p) =>
+          allResults.push({ id: p.id, type: "produto", title: p.nome, subtitle: `SKU: ${p.sku}` })
+        );
+        lotes.data?.forEach((l) =>
+          allResults.push({
+            id: l.id,
+            type: "lote",
+            title: l.numero_lote,
+            subtitle: l.fornecedor || "Sem fornecedor",
+          })
+        );
+        posicoes.data?.forEach((p) =>
+          allResults.push({
+            id: p.id,
+            type: "posicao",
+            title: p.codigo,
+            subtitle: `Zona: ${p.zona || "N/A"}`,
+          })
+        );
+
+        setResults(allResults);
+      } catch {
+        // silently fail
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    search();
+  }, [debouncedQuery]);
+
+  const onSelect = useCallback(
+    (path: string, term?: string) => {
+      if (term) addRecentSearch(term);
+      light();
+      navigate(path);
+      onOpenChange(false);
+      setQuery("");
+    },
+    [navigate, light, recentSearches, onOpenChange]
+  );
+
+  return (
+    <CommandDialog open={open} onOpenChange={onOpenChange}>
+        <div className="pointer-events-none absolute inset-0 bg-primary/5" />
+        <CommandInput
+          placeholder="O que você está procurando?"
+          value={query}
+          onValueChange={setQuery}
+        />
+        <CommandList className="scrollbar-hide">
+          {loading && (
+            <div className="space-y-3 p-4">
+              <div className="flex items-center gap-3">
+                <SkeletonPulse className="h-10 w-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <SkeletonPulse className="h-4 w-1/2" />
+                  <SkeletonPulse className="h-3 w-1/4" />
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <SkeletonPulse className="h-10 w-10 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <SkeletonPulse className="h-4 w-2/3" />
+                  <SkeletonPulse className="h-3 w-1/3" />
+                </div>
+              </div>
+            </div>
+          )}
+          <CommandEmpty>{!loading && "Nenhum resultado encontrado."}</CommandEmpty>
+
+          {!query && recentSearches.length > 0 && (
+            <CommandGroup heading="Buscas Recentes">
+              {recentSearches.map((term) => (
+                <CommandItem
+                  key={term}
+                  onSelect={() => setQuery(term)}
+                  className="group mx-2 my-0.5 flex cursor-pointer items-center justify-between rounded-xl py-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <History className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium">{term}</span>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeRecentSearch(term);
+                    }}
+                    className="rounded-md p-1 opacity-0 transition-all hover:bg-muted group-hover:opacity-100"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          {results.length > 0 && (
+            <CommandGroup heading="Resultados do Banco">
+              {results.map((result) => (
+                <CommandItem
+                  key={`${result.type}-${result.id}`}
+                  onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
+                  className="mx-2 my-0.5 flex cursor-pointer items-center gap-3 rounded-xl py-3"
+                >
+                  <div className={`rounded-lg border border-border bg-background p-2`}>
+                    {(() => {
+                      const Icon = typeConfig[result.type].icon;
+                      return <Icon className={`h-4 w-4 ${typeConfig[result.type].color}`} />;
+                    })()}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium">{result.title}</span>
+                    <span className="text-xs text-muted-foreground">{result.subtitle}</span>
+                  </div>
+                  <CommandShortcut>{typeConfig[result.type].label}</CommandShortcut>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+
+          <CommandSeparator />
+
+          <CommandGroup heading="Ações & Segurança">
+            <CommandItem
+              onSelect={() => onSelect("/recebimento")}
+              keywords={["entrada", "chegada", "fornecedor", "inbound", "new"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Plus className="mr-2 h-4 w-4 text-success" />
+              Novo Recebimento
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/triagem")}
+              keywords={["conferência", "qualidade", "check", "inspection"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Search className="mr-2 h-4 w-4 text-primary" />
+              Iniciar Triagem
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/admin/auditoria")}
+              keywords={["logs", "histórico", "segurança", "audit", "events"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Shield className="mr-2 h-4 w-4 text-orange-500" />
+              Ver Logs de Auditoria
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/seguranca")}
+              keywords={["senha", "mfa", "permissões", "access", "privacy"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Lock className="mr-2 h-4 w-4 text-red-500" />
+              Configurações de Segurança
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/relatorios")}
+              keywords={["pdf", "excel", "exportar", "analytics", "data"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <FileBarChart className="mr-2 h-4 w-4 text-blue-500" />
+              Gerar Relatório de Inventário
+            </CommandItem>
+          </CommandGroup>
+
+          <CommandSeparator className="bg-border/40" />
+
+          <CommandGroup heading="Navegação">
+            <CommandItem
+              onSelect={() => onSelect("/")}
+              keywords={["home", "painel", "resumo"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              Início
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/dashboard")}
+              keywords={["kpis", "gráficos", "estatísticas", "charts"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Activity className="mr-2 h-4 w-4" />
+              Dashboard Analítico
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/estoque")}
+              keywords={["inventário", "produtos", "armazenamento", "warehouse"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Warehouse className="mr-2 h-4 w-4" />
+              Estoque Central
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/expedicao")}
+              keywords={["saída", "romaneio", "transporte", "shipping", "outbound"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <Truck className="mr-2 h-4 w-4" />
+              Expedição
+            </CommandItem>
+            <CommandItem
+              onSelect={() => onSelect("/movimentacao")}
+              keywords={["transferência", "mudança", "local", "move"]}
+              className="mx-2 my-0.5 cursor-pointer rounded-xl"
+            >
+              <ArrowLeftRight className="mr-2 h-4 w-4" />
+              Movimentar Itens
+            </CommandItem>
+          </CommandGroup>
+        </CommandList>
+    </CommandDialog>
+  );
+}
+
+// Backwards-compat default export
+export default GlobalSearchDialog;

@@ -13,14 +13,14 @@ interface Props {
 export function ProdutoInfoCard({ detalhes, diasArmazenado }: Props) {
   return (
     <Card>
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="space-y-3 p-4">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Package className="h-4 w-4" />
           Produto Armazenado
         </div>
         <div className="space-y-3">
           <div>
-            <p className="font-semibold text-lg">{detalhes.produto.nome}</p>
+            <p className="text-lg font-semibold">{detalhes.produto.nome}</p>
             {detalhes.produto.descricao && (
               <p className="text-sm text-muted-foreground">{detalhes.produto.descricao}</p>
             )}
@@ -35,12 +35,16 @@ export function ProdutoInfoCard({ detalhes, diasArmazenado }: Props) {
             </div>
             <div>
               <span className="text-muted-foreground">Quantidade</span>
-              <p className="font-bold text-lg">{detalhes.quantidade} {detalhes.produto.unidade || 'un'}</p>
+              <p className="text-lg font-bold">
+                {detalhes.quantidade} {detalhes.produto.unidade || "un"}
+              </p>
             </div>
             {detalhes.produto.curva_abc && (
               <div>
                 <span className="text-muted-foreground">Curva ABC</span>
-                <Badge variant="outline" className="ml-2">{detalhes.produto.curva_abc}</Badge>
+                <Badge variant="outline" className="ml-2">
+                  {detalhes.produto.curva_abc}
+                </Badge>
               </div>
             )}
             {detalhes.produto.peso_unitario && (
@@ -63,7 +67,13 @@ export function ProdutoInfoCard({ detalhes, diasArmazenado }: Props) {
               <Clock className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">Armazenado há</span>
             </div>
-            <Badge className={cn(diasArmazenado > 30 ? "bg-warning/10 text-warning border-warning/30" : "bg-muted text-muted-foreground")}>
+            <Badge
+              className={cn(
+                diasArmazenado > 30
+                  ? "border-warning/30 bg-warning/10 text-warning"
+                  : "bg-muted text-muted-foreground"
+              )}
+            >
               {diasArmazenado} dias
             </Badge>
           </div>

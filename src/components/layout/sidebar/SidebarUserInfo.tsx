@@ -10,10 +10,10 @@ interface SidebarUserInfoProps {
   initials: string;
 }
 
-export const SidebarUserInfo = memo(function SidebarUserInfo({ 
-  userName, 
-  userRole, 
-  initials 
+export const SidebarUserInfo = memo(function SidebarUserInfo({
+  userName,
+  userRole,
+  initials,
 }: SidebarUserInfoProps) {
   return null;
 });

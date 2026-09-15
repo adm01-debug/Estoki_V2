@@ -5,7 +5,7 @@ import {
   getFaixaLote,
   calcularAmostraRaizQuadrada,
   calcularAmostraAQL,
-  getCriteriosAceite
+  getCriteriosAceite,
 } from "./amostragemUtils";
 import { AmostragemProgresso } from "./AmostragemProgresso";
 import { AmostragemSelecao } from "./AmostragemSelecao";
@@ -13,15 +13,17 @@ import { mockHistoricoDefeitos } from "./DefeitoHistorico";
 import { toast } from "sonner";
 import { Sparkles, ShieldCheck } from "lucide-react";
 
-
 interface AmostragemAutomaticaProps {
   tamanhoLote: number;
   sku?: string;
-  onConfirmarAmostra: (tamanhoAmostra: number, metodo: string, criterios: { aceite: number; rejeite: number }) => void;
+  onConfirmarAmostra: (
+    tamanhoAmostra: number,
+    metodo: string,
+    criterios: { aceite: number; rejeite: number }
+  ) => void;
   itensVerificados?: number;
   defeitosEncontrados?: number;
 }
-
 
 export function AmostragemAutomatica({
   tamanhoLote,
@@ -33,19 +35,21 @@ export function AmostragemAutomatica({
   const [metodoSelecionado, setMetodoSelecionado] = useState<MetodoAmostragem>("aql_normal");
   const [amostraConfirmada, setAmostraConfirmada] = useState(false);
   const [tamanhoAmostraConfirmado, setTamanhoAmostraConfirmado] = useState(0);
-  const [recomendacaoInteligente, setRecomendacaoInteligente] = useState<MetodoAmostragem | null>(null);
+  const [recomendacaoInteligente, setRecomendacaoInteligente] = useState<MetodoAmostragem | null>(
+    null
+  );
 
   useEffect(() => {
     if (sku && mockHistoricoDefeitos[sku]) {
       const hist = mockHistoricoDefeitos[sku];
-      
+
       // Fast-Track Platinum: 100% clean history for 30 days (mocked as totalTriagens >= 10 and no history)
       if (hist.totalTriagens >= 10 && hist.historico.length === 0) {
         setMetodoSelecionado("aql_reduzido");
         toast("🚀 Fast-Track Platinum Ativado", {
           description: "Fornecedor com histórico 100% limpo. Inspeção ultra-rápida liberada.",
           icon: <ShieldCheck className="h-4 w-4 text-primary" />,
-          duration: 6000
+          duration: 6000,
         });
         return;
       }
@@ -57,24 +61,22 @@ export function AmostragemAutomatica({
           setMetodoSelecionado("aql_reduzido");
           toast("Amostragem Inteligente Ativada", {
             description: "Histórico impecável detectado. Sugerimos inspeção reduzida.",
-            icon: <Sparkles className="h-4 w-4 text-yellow-500" />
+            icon: <Sparkles className="h-4 w-4 text-yellow-500" />,
           });
         } else {
           // Se tem defeito recorrente (algum com > 50% de ocorrência), sugere Rigoroso
-          const temRecorrente = hist.historico.some(d => d.percentualLotes >= 50);
+          const temRecorrente = hist.historico.some((d) => d.percentualLotes >= 50);
           if (temRecorrente) {
             setRecomendacaoInteligente("aql_rigoroso");
             setMetodoSelecionado("aql_rigoroso");
             toast.warning("Alerta de Amostragem Progressiva", {
-              description: "Histórico com recorrência de falhas. Rigor aumentado."
+              description: "Histórico com recorrência de falhas. Rigor aumentado.",
             });
           }
         }
       }
     }
   }, [sku]);
-
-
 
   const calculos = useMemo(() => {
     const raizQuadrada = calcularAmostraRaizQuadrada(tamanhoLote);
@@ -118,9 +120,14 @@ export function AmostragemAutomatica({
   const handleConfirmar = () => {
     setAmostraConfirmada(true);
     setTamanhoAmostraConfirmado(tamanhoAmostraSelecionado);
-    const metodoNome = metodoSelecionado === "raiz_quadrada" ? "Raiz Quadrada" :
-      metodoSelecionado === "aql_normal" ? "AQL Normal" :
-      metodoSelecionado === "aql_rigoroso" ? "AQL Rigoroso" : "AQL Reduzido";
+    const metodoNome =
+      metodoSelecionado === "raiz_quadrada"
+        ? "Raiz Quadrada"
+        : metodoSelecionado === "aql_normal"
+          ? "AQL Normal"
+          : metodoSelecionado === "aql_rigoroso"
+            ? "AQL Rigoroso"
+            : "AQL Reduzido";
     onConfirmarAmostra(tamanhoAmostraSelecionado, metodoNome, criterios);
   };
 
@@ -130,7 +137,13 @@ export function AmostragemAutomatica({
     if (defeitosEncontrados > criterios.rejeite) return "rejeitado";
     if (defeitosEncontrados <= criterios.aceite) return "aprovado";
     return "limite";
-  }, [amostraConfirmada, itensVerificados, tamanhoAmostraConfirmado, defeitosEncontrados, criterios]);
+  }, [
+    amostraConfirmada,
+    itensVerificados,
+    tamanhoAmostraConfirmado,
+    defeitosEncontrados,
+    criterios,
+  ]);
 
   if (amostraConfirmada) {
     return (

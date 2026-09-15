@@ -11,13 +11,13 @@ interface ListSkeletonProps {
 
 export function ListSkeleton({ count = 5, showStats = true }: ListSkeletonProps) {
   return (
-    <div className="p-4 space-y-4 animate-fade-in">
+    <div className="animate-fade-in space-y-4 p-4">
       {showStats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <Card key={i}>
               <CardContent className="p-4">
-                <Skeleton className="h-4 w-16 mb-2" />
+                <Skeleton className="mb-2 h-4 w-16" />
                 <Skeleton className="h-8 w-12" />
               </CardContent>
             </Card>
@@ -27,7 +27,7 @@ export function ListSkeleton({ count = 5, showStats = true }: ListSkeletonProps)
       <Skeleton className="h-10 w-full" />
       {Array.from({ length: count }).map((_, i) => (
         <Card key={i}>
-          <CardContent className="p-4 space-y-2">
+          <CardContent className="space-y-2 p-4">
             <div className="flex justify-between">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-5 w-20" />
@@ -48,7 +48,11 @@ interface PageLoaderProps {
 
 export function PageLoader({ message = "Carregando..." }: PageLoaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3" role="status" aria-live="polite">
+    <div
+      className="flex min-h-[60vh] flex-col items-center justify-center gap-3"
+      role="status"
+      aria-live="polite"
+    >
       <Loader2 className="h-8 w-8 animate-spin text-primary" aria-hidden="true" />
       <p className="text-sm text-muted-foreground">{message}</p>
     </div>
@@ -63,13 +67,17 @@ interface ErrorStateProps {
 
 export function ErrorState({ message = "Erro ao carregar dados.", onRetry }: ErrorStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4 p-4" role="alert" aria-live="assertive">
-      <div className="p-3 rounded-full bg-destructive/10">
+    <div
+      className="flex min-h-[40vh] flex-col items-center justify-center gap-4 p-4"
+      role="alert"
+      aria-live="assertive"
+    >
+      <div className="rounded-full bg-destructive/10 p-3">
         <AlertCircle className="h-8 w-8 text-destructive" />
       </div>
       <div className="text-center">
         <p className="font-medium text-foreground">Algo deu errado</p>
-        <p className="text-sm text-muted-foreground mt-1">{message}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{message}</p>
       </div>
       {onRetry && (
         <Button onClick={onRetry} variant="outline" className="gap-2">
@@ -96,13 +104,17 @@ export function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 gap-4 text-center" role="status" aria-live="polite">
-      <div className="p-3 rounded-full bg-muted">
+    <div
+      className="flex flex-col items-center justify-center gap-4 py-12 text-center"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="rounded-full bg-muted p-3">
         {icon || <PackageOpen className="h-8 w-8 text-muted-foreground" />}
       </div>
       <div>
         <p className="font-medium text-foreground">{title}</p>
-        <p className="text-sm text-muted-foreground mt-1 max-w-sm">{description}</p>
+        <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>
       </div>
       {action}
     </div>

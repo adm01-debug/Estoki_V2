@@ -26,16 +26,18 @@ export function TemplateCard({
       onClick={() => onSelect(id)}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
-      className={`p-4 rounded-2xl border text-left transition-all ${
+      className={`rounded-2xl border p-4 text-left transition-all ${
         isSelected
           ? "border-primary/50 bg-primary/5 shadow-glow-sm"
           : "border-border/40 bg-card/80 hover:border-primary/30"
       }`}
     >
-      <div className="flex items-center gap-3 mb-2">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-          isSelected ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-        }`}>
+      <div className="mb-2 flex items-center gap-3">
+        <div
+          className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+            isSelected ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+          }`}
+        >
           <Icon className="h-5 w-5" />
         </div>
         <div>
@@ -43,13 +45,16 @@ export function TemplateCard({
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
       </div>
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         className="text-xs text-primary"
-        onClick={(e) => { e.stopPropagation(); onDownloadTemplate(id); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDownloadTemplate(id);
+        }}
       >
-        <Download className="h-3 w-3 mr-1" /> Baixar template
+        <Download className="mr-1 h-3 w-3" /> Baixar template
       </Button>
     </motion.button>
   );

@@ -48,10 +48,10 @@
     /* Status Colors */
     --success: 160 84% 39%;
     --success-foreground: 0 0% 100%;
-    
+
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
-    
+
     --info: 217 91% 60%;
     --info-foreground: 0 0% 100%;
 
@@ -141,34 +141,43 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      sans-serif;
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   /* Typography Scale — Premium SaaS */
-  h1, .h1 {
-    @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+  h1,
+  .h1 {
+    @apply text-3xl font-extrabold tracking-tight md:text-4xl;
     letter-spacing: -0.025em;
   }
 
-  h2, .h2 {
-    @apply text-2xl md:text-3xl font-bold tracking-tight;
+  h2,
+  .h2 {
+    @apply text-2xl font-bold tracking-tight md:text-3xl;
     letter-spacing: -0.02em;
   }
 
-  h3, .h3 {
+  h3,
+  .h3 {
     @apply text-xl font-bold;
     letter-spacing: -0.015em;
   }
 
-  h4, .h4 {
+  h4,
+  .h4 {
     @apply text-lg font-semibold;
     letter-spacing: -0.01em;
   }
 
   .text-display {
-    @apply text-4xl md:text-5xl font-extrabold;
+    @apply text-4xl font-extrabold md:text-5xl;
     letter-spacing: -0.035em;
     line-height: 1.1;
   }
@@ -186,22 +195,24 @@
 @layer components {
   /* Glass morphism card */
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl rounded-xl border border-border/50 shadow-lg;
-    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
+    @apply rounded-xl border border-border/50 bg-card/80 shadow-lg backdrop-blur-xl;
+    transition:
+      transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+      box-shadow 0.2s cubic-bezier(0.2, 0, 0, 1);
   }
 
   .glass-card:hover {
-    @apply shadow-xl border-primary/20;
+    @apply border-primary/20 shadow-xl;
     transform: translateY(-2px);
   }
 
   /* KPI Cards with glow effect */
   .kpi-card {
-    @apply bg-card/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-border/40 transition-all duration-300 relative overflow-hidden;
+    @apply relative overflow-hidden rounded-2xl border border-border/40 bg-card/90 p-4 shadow-sm backdrop-blur-sm transition-all duration-300;
   }
-  
+
   .kpi-card::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -213,19 +224,21 @@
   }
 
   .kpi-card::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 50%);
     opacity: 0;
     transition: opacity 0.3s;
   }
-  
+
   .kpi-card:hover {
-    @apply shadow-xl border-primary/40;
-    box-shadow: 0 8px 32px hsl(var(--primary) / 0.1), 0 0 0 1px hsl(var(--primary) / 0.1);
+    @apply border-primary/40 shadow-xl;
+    box-shadow:
+      0 8px 32px hsl(var(--primary) / 0.1),
+      0 0 0 1px hsl(var(--primary) / 0.1);
   }
-  
+
   .kpi-card:hover::before {
     opacity: 1;
   }
@@ -235,95 +248,97 @@
   }
 
   /* Gradient text */
-   .gradient-text {
-     background: linear-gradient(135deg, hsl(var(--primary)), hsl(30 100% 60%));
-     -webkit-background-clip: text;
-     -webkit-text-fill-color: transparent;
-     background-clip: text;
-   }
- 
-   /* Performance: Smooth scrolling and hardware acceleration */
-   html {
-     scroll-behavior: smooth;
-     -webkit-font-smoothing: antialiased;
-     -moz-osx-font-smoothing: grayscale;
-   }
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(30 100% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Performance: Smooth scrolling and hardware acceleration */
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
   /* Glow button */
   .glow-button {
     @apply relative overflow-hidden;
     box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
   }
-  
+
   .glow-button:hover {
     box-shadow: 0 0 30px hsl(var(--primary) / 0.5);
   }
 
   /* Status Badges */
   .status-aguardando {
-    @apply bg-warning/10 text-warning border border-warning/20;
+    @apply border border-warning/20 bg-warning/10 text-warning;
   }
-  
+
   .status-ok {
-    @apply bg-success/10 text-success border border-success/20;
+    @apply border border-success/20 bg-success/10 text-success;
   }
-  
+
   .status-divergencia {
-    @apply bg-destructive/10 text-destructive border border-destructive/20;
+    @apply border border-destructive/20 bg-destructive/10 text-destructive;
   }
-  
+
   .status-triagem {
-    @apply bg-info/10 text-info border border-info/20;
+    @apply border border-info/20 bg-info/10 text-info;
   }
 
   /* List Items */
   .list-item-card {
-    @apply bg-card rounded-lg p-4 border-l-4 border-l-primary shadow-sm hover:shadow-md transition-all duration-200;
+    @apply rounded-lg border-l-4 border-l-primary bg-card p-4 shadow-sm transition-all duration-200 hover:shadow-md;
   }
 
   /* Menu Buttons */
   .menu-button {
-    @apply flex items-center gap-4 p-4 rounded-2xl bg-card/80 backdrop-blur-sm border border-border/40 shadow-sm transition-all duration-300;
+    @apply flex items-center gap-4 rounded-2xl border border-border/40 bg-card/80 p-4 shadow-sm backdrop-blur-sm transition-all duration-300;
   }
-  
+
   .menu-button:hover {
-    @apply shadow-xl border-primary/30;
+    @apply border-primary/30 shadow-xl;
     box-shadow: 0 8px 24px hsl(var(--primary) / 0.08);
   }
-  
+
   .menu-button:active {
     @apply scale-[0.98];
   }
 
   /* Position indicators */
   .position-livre {
-    @apply bg-muted border-2 border-dashed border-border;
+    @apply border-2 border-dashed border-border bg-muted;
   }
-  
+
   .position-ocupado {
-    @apply bg-success/20 border-2 border-success;
+    @apply border-2 border-success bg-success/20;
   }
-  
+
   .position-reservado {
-    @apply bg-warning/20 border-2 border-warning;
+    @apply border-2 border-warning bg-warning/20;
   }
-  
+
   .position-bloqueado {
-    @apply bg-destructive/20 border-2 border-destructive;
+    @apply border-2 border-destructive bg-destructive/20;
   }
 
   /* Sidebar glow indicator */
   .sidebar-active-glow {
-    box-shadow: inset 3px 0 0 hsl(var(--primary)), 0 0 12px hsl(var(--primary) / 0.15);
+    box-shadow:
+      inset 3px 0 0 hsl(var(--primary)),
+      0 0 12px hsl(var(--primary) / 0.15);
   }
 
   /* Ambient background gradient */
   .ambient-bg {
     position: relative;
   }
-  
+
   .ambient-bg::before {
-    content: '';
+    content: "";
     position: fixed;
     top: -50%;
     right: -20%;
@@ -351,29 +366,38 @@
     }
   }
 
-   @keyframes shimmer {
-     0% { background-position: -200% 0; }
-     100% { background-position: 200% 0; }
-   }
- 
-   .shimmer {
-     background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
-     background-size: 200% 100%;
-     animation: shimmer 2s infinite;
-   }
- 
-   @keyframes bounce-subtle {
-     0%, 100% { transform: translateY(0); }
-     50% { transform: translateY(-5px); }
-   }
- 
-   .animate-bounce-subtle {
-     animation: bounce-subtle 3s infinite ease-in-out;
-   }
- 
-   .shadow-glow-sm {
-     box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
-   }
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.1), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s infinite ease-in-out;
+  }
+
+  .shadow-glow-sm {
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.2);
+  }
 }
 
 @layer utilities {
@@ -405,7 +429,9 @@
 
 /* Reduced Motion — Accessibility */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

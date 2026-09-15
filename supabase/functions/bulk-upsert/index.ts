@@ -1,15 +1,13 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
-  try {
-    const { table, records, conflictColumns } = await req.json();
-    const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data, error } = await supabase.from(table).upsert(records, { onConflict: conflictColumns.join(",") }).select();
+import { createBulkHandler } from "../_shared/bulk.ts";
+import { BulkUpsertSchema } from "../_shared/schemas.ts";
+
+Deno.serve(
+  createBulkHandler(BulkUpsertSchema, async ({ table, records, conflictColumns }, supabase) => {
+    const { data, error } = await supabase
+      .from(table)
+      .upsert(records, { onConflict: conflictColumns.join(",") })
+      .select();
     if (error) throw error;
-    return new Response(JSON.stringify({ upserted: data.length, data }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
-  }
-});
+    return { upserted: data.length, data };
+  })
+);

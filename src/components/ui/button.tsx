@@ -1,7 +1,7 @@
- import * as React from "react";
+import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
- import { Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -28,41 +28,53 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  },
+  }
 );
 
- export interface ButtonProps
-   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-     VariantProps<typeof buttonVariants> {
-   asChild?: boolean;
-   loading?: boolean;
-   loadingText?: string;
- }
- 
- const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-   ({ className, variant, size, asChild = false, loading = false, loadingText, children, disabled, ...props }, ref) => {
-     const Comp = asChild ? Slot : "button";
-     const isDisabled = disabled || loading;
- 
-     return (
-       <Comp 
-         className={cn(buttonVariants({ variant, size, className }))} 
-         ref={ref} 
-         disabled={isDisabled}
-         {...props}
-       >
-         {loading ? (
-           <span className="flex items-center gap-2">
-             <Loader2 className="h-4 w-4 animate-spin" />
-             {loadingText || children}
-           </span>
-         ) : (
-           children
-         )}
-       </Comp>
-     );
-   },
- );
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  loading?: boolean;
+  loadingText?: string;
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      loadingText,
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : "button";
+    const isDisabled = disabled || loading;
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={isDisabled}
+        {...props}
+      >
+        {loading ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {loadingText || children}
+          </span>
+        ) : (
+          children
+        )}
+      </Comp>
+    );
+  }
+);
 Button.displayName = "Button";
 
 export { Button, buttonVariants };

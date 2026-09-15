@@ -2,7 +2,13 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UIStatus, statusConfig } from "./StatusBadge";
 
-export const statusWorkflow: UIStatus[] = ['pendente', 'em_analise', 'autorizado', 'enviado', 'concluido'];
+export const statusWorkflow: UIStatus[] = [
+  "pendente",
+  "em_analise",
+  "autorizado",
+  "enviado",
+  "concluido",
+];
 
 interface WorkflowProgressProps {
   status: UIStatus;
@@ -11,12 +17,12 @@ interface WorkflowProgressProps {
 
 export function WorkflowProgress({ status, className }: WorkflowProgressProps) {
   const currentIndex = statusWorkflow.indexOf(status);
-  const isRecusado = status === 'recusado';
+  const isRecusado = status === "recusado";
 
   if (isRecusado) {
     return (
       <div className={cn("flex items-center gap-2 text-sm text-destructive", className)}>
-        <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-destructive/20">
           <span className="text-xs">✕</span>
         </div>
         <span>Solicitação recusada</span>
@@ -35,7 +41,7 @@ export function WorkflowProgress({ status, className }: WorkflowProgressProps) {
           <div key={s} className="flex items-center">
             <div
               className={cn(
-                "w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all",
+                "flex h-6 w-6 items-center justify-center rounded-full text-xs transition-all",
                 isCompleted && "bg-success text-white",
                 isCurrent && "bg-primary text-white ring-2 ring-primary/30",
                 !isCompleted && !isCurrent && "bg-muted text-muted-foreground"
@@ -46,10 +52,7 @@ export function WorkflowProgress({ status, className }: WorkflowProgressProps) {
             </div>
             {index < statusWorkflow.length - 1 && (
               <div
-                className={cn(
-                  "w-8 h-0.5 mx-0.5",
-                  index < currentIndex ? "bg-success" : "bg-muted"
-                )}
+                className={cn("mx-0.5 h-0.5 w-8", index < currentIndex ? "bg-success" : "bg-muted")}
               />
             )}
           </div>

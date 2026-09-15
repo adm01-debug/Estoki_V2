@@ -9,24 +9,24 @@
  * Points to the actual feature-first paths to ensure cache hits.
  */
 const routeImports: Record<string, () => Promise<unknown>> = {
-  '/': () => import('../features/dashboard/pages/DashboardPage'),
-  '/dashboard': () => import('../pages/Dashboard'),
-  '/dashboard-realtime': () => import('../features/analytics/pages/RealtimeDashboardPage'),
-  '/monitor': () => import('../pages/DashboardOperacional'),
-  '/estoque': () => import('../features/inventory/pages/EstoquePage'),
-  '/triagem': () => import('../features/quality/pages/TriagemPage'),
-  '/recebimento': () => import('../features/receiving/pages/RecebimentoPage'),
-  '/produtos': () => import('../pages/Produtos'),
-  '/lotes': () => import('../pages/Lotes'),
-  '/posicoes': () => import('../pages/Posicoes'),
-  '/picking': () => import('../features/picking/pages/PickingPage'),
-  '/romaneios': () => import('../pages/Romaneios'),
-  '/scanner': () => import('../pages/Scanner'),
-  '/tarefas': () => import('../pages/GestaoTarefas'),
-  '/relatorios': () => import('../pages/Relatorios'),
-  '/kpis-operacionais': () => import('../features/analytics/pages/KPIsPage'),
-  '/expedicao': () => import('../features/shipping/pages/ShippingPage'),
-  '/curva-abc': () => import('../features/analytics/pages/ABCAnalysisPage'),
+  "/": () => import("../features/dashboard/pages/DashboardPage"),
+  "/dashboard": () => import("../pages/Dashboard"),
+  "/dashboard-realtime": () => import("../features/analytics/pages/RealtimeDashboardPage"),
+  "/monitor": () => import("../pages/DashboardOperacional"),
+  "/estoque": () => import("../features/inventory/pages/EstoquePage"),
+  "/triagem": () => import("../features/quality/pages/TriagemPage"),
+  "/recebimento": () => import("../features/receiving/pages/RecebimentoPage"),
+  "/produtos": () => import("../pages/Produtos"),
+  "/lotes": () => import("../pages/Lotes"),
+  "/posicoes": () => import("../pages/Posicoes"),
+  "/picking": () => import("../features/picking/pages/PickingPage"),
+  "/romaneios": () => import("../pages/Romaneios"),
+  "/scanner": () => import("../pages/Scanner"),
+  "/tarefas": () => import("../pages/GestaoTarefas"),
+  "/relatorios": () => import("../pages/Relatorios"),
+  "/kpis-operacionais": () => import("../features/analytics/pages/KPIsPage"),
+  "/expedicao": () => import("../features/shipping/pages/ShippingPage"),
+  "/curva-abc": () => import("../features/analytics/pages/ABCAnalysisPage"),
 };
 
 const prefetched = new Set<string>();
@@ -54,6 +54,6 @@ export function prefetchRoute(path: string): void {
  * Called once after the app mounts.
  */
 export function prefetchCriticalRoutes(): void {
-  const critical = ['/', '/dashboard', '/estoque', '/recebimento', '/triagem'];
+  const critical = ["/", "/dashboard", "/estoque", "/recebimento", "/triagem"];
   critical.forEach((route) => prefetchRoute(route));
 }

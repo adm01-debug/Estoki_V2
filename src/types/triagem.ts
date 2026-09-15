@@ -3,36 +3,27 @@
  */
 
 // Status da triagem
-export type StatusTriagem = 
-  | 'pendente'
-  | 'em_andamento'
-  | 'pausado'
-  | 'concluido'
-  | 'cancelado';
+export type StatusTriagem = "pendente" | "em_andamento" | "pausado" | "concluido" | "cancelado";
 
 // Resultado da triagem
-export type ResultadoTriagem = 
-  | 'aprovado'
-  | 'aprovado_parcial'
-  | 'reprovado'
-  | 'pendente';
+export type ResultadoTriagem = "aprovado" | "aprovado_parcial" | "reprovado" | "pendente";
 
 // Tipos de defeito
-export type TipoDefeito = 
-  | 'risco'
-  | 'mancha'
-  | 'amassado'
-  | 'quebrado'
-  | 'faltando_pecas'
-  | 'cor_diferente'
-  | 'tamanho_incorreto'
-  | 'outro';
+export type TipoDefeito =
+  | "risco"
+  | "mancha"
+  | "amassado"
+  | "quebrado"
+  | "faltando_pecas"
+  | "cor_diferente"
+  | "tamanho_incorreto"
+  | "outro";
 
 // Severidade do defeito
-export type SeveridadeDefeito = 'leve' | 'moderado' | 'grave' | 'critico';
+export type SeveridadeDefeito = "leve" | "moderado" | "grave" | "critico";
 
 // Tipo de foto
-export type TipoFotoTriagem = 'geral' | 'etiqueta' | 'detalhe' | 'defeito';
+export type TipoFotoTriagem = "geral" | "etiqueta" | "detalhe" | "defeito";
 
 /**
  * Triagem de lote
@@ -42,26 +33,26 @@ export interface Triagem {
   lote_id: string;
   operador_id: string;
   operador_nome?: string;
-  
+
   // Quantidades
   quantidade_esperada: number;
   quantidade_conferida: number;
   quantidade_aprovada: number;
   quantidade_reprovada: number;
-  
+
   // Status
   status: StatusTriagem;
   resultado: ResultadoTriagem;
-  
+
   // Tempos
   inicio: string;
   fim?: string;
   tempo_total_minutos?: number;
   tempo_pausado_minutos?: number;
-  
+
   // Observações
   observacoes?: string;
-  
+
   // Metadados
   created_at: string;
   updated_at: string;
@@ -147,7 +138,7 @@ export interface Amostragem {
   percentual_amostra: number;
   nivel_confianca: number;
   margem_erro: number;
-  metodo: 'aleatorio' | 'sistematico' | 'estratificado';
+  metodo: "aleatorio" | "sistematico" | "estratificado";
 }
 
 /**
@@ -210,7 +201,7 @@ export interface RegraTriagem {
   id: string;
   nome: string;
   condicao: string;
-  acao: 'aprovar' | 'reprovar' | 'alerta' | 'revisar';
+  acao: "aprovar" | "reprovar" | "alerta" | "revisar";
   mensagem?: string;
   ativo: boolean;
   prioridade: number;
@@ -222,7 +213,7 @@ export interface RegraTriagem {
 export interface EventoTriagem {
   id: string;
   triagem_id: string;
-  tipo: 'inicio' | 'pausa' | 'retomada' | 'item_conferido' | 'defeito' | 'foto' | 'conclusao';
+  tipo: "inicio" | "pausa" | "retomada" | "item_conferido" | "defeito" | "foto" | "conclusao";
   dados?: Record<string, unknown>;
   created_at: string;
 }

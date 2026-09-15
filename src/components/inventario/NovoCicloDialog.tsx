@@ -1,10 +1,23 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { toast } from "@/hooks/use-toast";
@@ -26,7 +39,13 @@ const tipoLabels: Record<TipoCiclo, string> = {
 interface NovoCicloDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  criarCiclo: (data: { nome: string; descricao?: string; tipo: TipoCiclo; zona_alvo?: string; data_agendada: string }) => Promise<unknown>;
+  criarCiclo: (data: {
+    nome: string;
+    descricao?: string;
+    tipo: TipoCiclo;
+    zona_alvo?: string;
+    data_agendada: string;
+  }) => Promise<unknown>;
 }
 
 export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDialogProps) {
@@ -55,7 +74,13 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
     setSubmitting(false);
     if (ciclo) {
       onOpenChange(false);
-      setNewCiclo({ nome: "", descricao: "", tipo: "completo", zona_alvo: "", data_agendada: new Date() });
+      setNewCiclo({
+        nome: "",
+        descricao: "",
+        tipo: "completo",
+        zona_alvo: "",
+        data_agendada: new Date(),
+      });
       toast({ title: "Sucesso", description: "Ciclo de inventário criado" });
     }
   };
@@ -70,27 +95,46 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>Nome do Ciclo *</Label>
-            <Input placeholder="Ex: Inventário Zona A - Semana 51" value={newCiclo.nome} onChange={(e) => setNewCiclo({ ...newCiclo, nome: e.target.value })} />
+            <Input
+              placeholder="Ex: Inventário Zona A - Semana 51"
+              value={newCiclo.nome}
+              onChange={(e) => setNewCiclo({ ...newCiclo, nome: e.target.value })}
+            />
           </div>
           <div className="space-y-2">
             <Label>Descrição</Label>
-            <Textarea placeholder="Descrição opcional" value={newCiclo.descricao} onChange={(e) => setNewCiclo({ ...newCiclo, descricao: e.target.value })} />
+            <Textarea
+              placeholder="Descrição opcional"
+              value={newCiclo.descricao}
+              onChange={(e) => setNewCiclo({ ...newCiclo, descricao: e.target.value })}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Tipo</Label>
-              <Select value={newCiclo.tipo} onValueChange={(v) => setNewCiclo({ ...newCiclo, tipo: v as TipoCiclo })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select
+                value={newCiclo.tipo}
+                onValueChange={(v) => setNewCiclo({ ...newCiclo, tipo: v as TipoCiclo })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {Object.entries(tipoLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>{label}</SelectItem>
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Zona Alvo</Label>
-              <Input placeholder="Ex: A, B, C" value={newCiclo.zona_alvo} onChange={(e) => setNewCiclo({ ...newCiclo, zona_alvo: e.target.value })} />
+              <Input
+                placeholder="Ex: A, B, C"
+                value={newCiclo.zona_alvo}
+                onChange={(e) => setNewCiclo({ ...newCiclo, zona_alvo: e.target.value })}
+              />
             </div>
           </div>
           <div className="space-y-2">
@@ -98,20 +142,27 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start">
-                  <CalendarIcon className="h-4 w-4 mr-2" />
+                  <CalendarIcon className="mr-2 h-4 w-4" />
                   {format(newCiclo.data_agendada, "dd/MM/yyyy", { locale: ptBR })}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={newCiclo.data_agendada} onSelect={(date) => date && setNewCiclo({ ...newCiclo, data_agendada: date })} locale={ptBR} />
+                <Calendar
+                  mode="single"
+                  selected={newCiclo.data_agendada}
+                  onSelect={(date) => date && setNewCiclo({ ...newCiclo, data_agendada: date })}
+                  locale={ptBR}
+                />
               </PopoverContent>
             </Popover>
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
           <Button onClick={handleCriarCiclo} disabled={submitting}>
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Criar Ciclo
           </Button>
         </DialogFooter>

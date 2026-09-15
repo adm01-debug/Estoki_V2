@@ -4,29 +4,29 @@ import { cn } from "@/lib/utils";
 
 const routeNames: Record<string, string> = {
   "": "Início",
-  "dashboard": "Dashboard",
-  "recebimento": "Recebimento",
-  "triagem": "Triagem",
-  "estoque": "Estoque",
-  "scanner": "Scanner",
-  "movimentacao": "Movimentação",
-  "produtividade": "Produtividade",
+  dashboard: "Dashboard",
+  recebimento: "Recebimento",
+  triagem: "Triagem",
+  estoque: "Estoque",
+  scanner: "Scanner",
+  movimentacao: "Movimentação",
+  produtividade: "Produtividade",
   "inventario-ciclico": "Inventário Cíclico",
   "curva-abc": "Curva ABC",
   "gestao-tarefas": "Gestão de Tarefas",
-  "alertas": "Alertas",
-  "kpis": "KPIs",
-  "rastreabilidade": "Rastreabilidade",
+  alertas: "Alertas",
+  kpis: "KPIs",
+  rastreabilidade: "Rastreabilidade",
   "qualidade-fornecedores": "Qualidade Fornecedores",
   "trocas-devolucoes": "Trocas e Devoluções",
   "dashboard-trocas": "Dashboard Trocas",
-  "divergencias": "Divergências",
-  "relatorios": "Relatórios",
+  divergencias: "Divergências",
+  relatorios: "Relatórios",
   "minha-produtividade": "Minha Produtividade",
-  "configuracoes": "Configurações",
+  configuracoes: "Configurações",
   "conferencia-recebimento": "Conferência",
   "formulario-triagem": "Formulário Triagem",
-  "armazenamento": "Armazenamento",
+  armazenamento: "Armazenamento",
   "dashboard-triador": "Dashboard Triador",
 };
 
@@ -42,7 +42,7 @@ export function Breadcrumbs() {
         <li>
           <Link
             to="/"
-            className="flex items-center gap-1 hover:text-foreground transition-colors"
+            className="flex items-center gap-1 transition-colors hover:text-foreground"
             aria-label="Ir para página inicial"
           >
             <Home className="h-4 w-4" aria-hidden="true" />
@@ -62,10 +62,7 @@ export function Breadcrumbs() {
                   {name}
                 </span>
               ) : (
-                <Link
-                  to={to}
-                  className="hover:text-foreground transition-colors"
-                >
+                <Link to={to} className="transition-colors hover:text-foreground">
                   {name}
                 </Link>
               )}

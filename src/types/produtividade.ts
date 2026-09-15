@@ -23,10 +23,10 @@ export interface RankingOperador {
 
 export interface MetaProdutividade {
   id: string;
-  tipo: 'triagens' | 'tempo' | 'qualidade';
+  tipo: "triagens" | "tempo" | "qualidade";
   meta: number;
   atual: number;
-  periodo: 'dia' | 'semana' | 'mes';
+  periodo: "dia" | "semana" | "mes";
 }
 
 export interface EstatisticasProdutividade {

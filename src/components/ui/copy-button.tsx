@@ -12,7 +12,13 @@ export function CopyButton({ text, className }: CopyButtonProps) {
   const { copy, copied } = useClipboard();
 
   return (
-    <Button variant="ghost" size="icon" className={className} onClick={() => copy(text)} aria-label={copied ? "Copiado" : "Copiar"}>
+    <Button
+      variant="ghost"
+      size="icon"
+      className={className}
+      onClick={() => copy(text)}
+      aria-label={copied ? "Copiado" : "Copiar"}
+    >
       {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
     </Button>
   );

@@ -1,287 +1,71 @@
- import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, Package, Layers, Warehouse, FileText, ArrowRight, LayoutDashboard, Truck, ArrowLeftRight, Activity, Plus, FileBarChart, History, X, Shield, Lock } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useHaptics } from "@/hooks/useHaptics";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-   CommandShortcut,
- } from "@/components/ui/command";
- import { SkeletonPulse } from "./PageSkeleton";
 
-interface SearchResult {
-  id: string;
-  type: "produto" | "lote" | "posicao" | "pedido";
-  title: string;
-  subtitle: string;
-}
+// Diálogo pesado (cmdk + 20 lucide icons + supabase queries) — carregado
+// apenas quando o usuário abre a busca (Ctrl+K, evento global ou clique),
+// mantendo o main bundle enxuto.
+const GlobalSearchDialog = lazy(() =>
+  import("./GlobalSearchDialog").then((m) => ({ default: m.GlobalSearchDialog }))
+);
 
-const typeConfig = {
-  produto: { icon: Package, label: "Produto", color: "text-blue-500", route: "/produtos" },
-  lote: { icon: Layers, label: "Lote", color: "text-green-500", route: "/lotes" },
-  posicao: { icon: Warehouse, label: "Posição", color: "text-orange-500", route: "/posicoes" },
-  pedido: { icon: FileText, label: "Pedido", color: "text-purple-500", route: "/pedidos" },
-};
+export function GlobalSearch() {
+  const [open, setOpen] = useState(false);
+  const [everOpened, setEverOpened] = useState(false);
 
- export function GlobalSearch() {
-   const [open, setOpen] = useState(false);
-   const [query, setQuery] = useState("");
-   const [results, setResults] = useState<SearchResult[]>([]);
-   const [loading, setLoading] = useState(false);
-   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-   // Load recent searches
-   useEffect(() => {
-     try {
-       const saved = localStorage.getItem("recent-searches");
-       if (saved) setRecentSearches(JSON.parse(saved));
-     } catch {
-       /* ignore corrupted localStorage */
-     }
-   }, []);
- 
-   const addRecentSearch = useCallback((term: string) => {
-     if (!term || term.length < 2) return;
-     const newRecent = [term, ...recentSearches.filter(t => t !== term)].slice(0, 5);
-     setRecentSearches(newRecent);
-     localStorage.setItem("recent-searches", JSON.stringify(newRecent));
-   }, [recentSearches]);
- 
-   const removeRecentSearch = (term: string) => {
-     const newRecent = recentSearches.filter(t => t !== term);
-     setRecentSearches(newRecent);
-     localStorage.setItem("recent-searches", JSON.stringify(newRecent));
-   };
- 
-  const navigate = useNavigate();
-  const debouncedQuery = useDebounce(query, 300);
-  const { light } = useHaptics();
-
-  // Listen for custom event to open search
-  useEffect(() => {
-    const handleOpen = () => setOpen(true);
-    window.addEventListener("open-global-search", handleOpen);
-    return () => window.removeEventListener("open-global-search", handleOpen);
+  const openDialog = useCallback(() => {
+    setEverOpened(true);
+    setOpen(true);
   }, []);
 
-  // Keyboard shortcut
+  // Prefetch on hover para esconder o custo do chunk async.
+  const prefetch = useCallback(() => {
+    void import("./GlobalSearchDialog");
+  }, []);
+
   useEffect(() => {
-    const down = (e: KeyboardEvent) => {
+    const handleOpen = () => openDialog();
+    const handleKey = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setEverOpened(true);
+        setOpen((v) => !v);
       }
     };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  // Search
-  useEffect(() => {
-    if (!debouncedQuery || debouncedQuery.length < 2) {
-      setResults([]);
-      return;
-    }
-
-    const search = async () => {
-      setLoading(true);
-      const searchTerm = `%${debouncedQuery}%`;
-      const allResults: SearchResult[] = [];
-
-      try {
-        const [produtos, lotes, posicoes] = await Promise.all([
-          supabase.from("produtos").select("id, sku, nome").ilike("nome", searchTerm).limit(3),
-          supabase.from("lotes").select("id, numero_lote, fornecedor").ilike("numero_lote", searchTerm).limit(3),
-          supabase.from("posicoes_estoque").select("id, codigo, zona").ilike("codigo", searchTerm).limit(3),
-        ]);
-
-        produtos.data?.forEach((p) =>
-          allResults.push({ id: p.id, type: "produto", title: p.nome, subtitle: `SKU: ${p.sku}` })
-        );
-        lotes.data?.forEach((l) =>
-          allResults.push({ id: l.id, type: "lote", title: l.numero_lote, subtitle: l.fornecedor || "Sem fornecedor" })
-        );
-        posicoes.data?.forEach((p) =>
-          allResults.push({ id: p.id, type: "posicao", title: p.codigo, subtitle: `Zona: ${p.zona || "N/A"}` })
-        );
-
-        setResults(allResults);
-      } catch {
-        // silently fail
-      } finally {
-        setLoading(false);
-      }
+    window.addEventListener("open-global-search", handleOpen);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      window.removeEventListener("open-global-search", handleOpen);
+      document.removeEventListener("keydown", handleKey);
     };
-
-    search();
-  }, [debouncedQuery]);
-
-   const onSelect = useCallback(
-     (path: string, term?: string) => {
-       if (term) addRecentSearch(term);
-       light();
-       navigate(path);
-       setOpen(false);
-       setQuery("");
-     },
-     [navigate, light, addRecentSearch]
-   );
+  }, [openDialog]);
 
   return (
     <>
       <Button
         variant="ghost"
         size="icon"
-         className="h-9 w-9 lg:w-72 lg:justify-start lg:px-3 lg:bg-muted/30 lg:border lg:border-border/20 lg:hover:bg-muted lg:hover:border-primary/30 transition-all duration-300 group/search"
-        onClick={() => setOpen(true)}
+        className="group/search h-9 w-9 transition-all duration-300 lg:w-72 lg:justify-start lg:border lg:border-border/20 lg:bg-muted/30 lg:px-3 lg:hover:border-primary/30 lg:hover:bg-muted"
+        onClick={openDialog}
+        onMouseEnter={prefetch}
+        onFocus={prefetch}
         title="Buscar (Ctrl+K)"
+        aria-label="Abrir busca global"
       >
         <Search className="h-4 w-4 shrink-0" />
-         <span className="hidden lg:inline-flex ml-2 text-xs text-muted-foreground font-medium flex-1 group-hover/search:text-foreground transition-colors">Buscar (funções, produtos, lotes)...</span>
-         <kbd className="hidden lg:inline-flex ml-auto pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 group-hover/search:border-primary/50 group-hover/search:text-primary transition-all">
+        <span className="ml-2 hidden flex-1 text-xs font-medium text-muted-foreground transition-colors group-hover/search:text-foreground lg:inline-flex">
+          Buscar (funções, produtos, lotes)...
+        </span>
+        <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 transition-all group-hover/search:border-primary/50 group-hover/search:text-primary lg:inline-flex">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
-        <CommandInput 
-          placeholder="O que você está procurando?" 
-          value={query}
-          onValueChange={setQuery}
-        />
-         <CommandList className="scrollbar-hide">
-           {loading && (
-             <div className="p-4 space-y-3">
-               <div className="flex items-center gap-3">
-                 <SkeletonPulse className="h-10 w-10 rounded-lg" />
-                 <div className="flex-1 space-y-2">
-                   <SkeletonPulse className="h-4 w-1/2" />
-                   <SkeletonPulse className="h-3 w-1/4" />
-                 </div>
-               </div>
-               <div className="flex items-center gap-3">
-                 <SkeletonPulse className="h-10 w-10 rounded-lg" />
-                 <div className="flex-1 space-y-2">
-                   <SkeletonPulse className="h-4 w-2/3" />
-                   <SkeletonPulse className="h-3 w-1/3" />
-                 </div>
-               </div>
-             </div>
-           )}
-           <CommandEmpty>
-             {!loading && "Nenhum resultado encontrado."}
-           </CommandEmpty>
-          
-           {!query && recentSearches.length > 0 && (
-             <CommandGroup heading="Buscas Recentes">
-               {recentSearches.map((term) => (
-                  <CommandItem
-                    key={term}
-                    onSelect={() => setQuery(term)}
-                    className="flex items-center justify-between py-3 group cursor-pointer rounded-xl mx-2 my-0.5"
-                  >
-                   <div className="flex items-center gap-3">
-                     <History className="h-4 w-4 text-muted-foreground" />
-                     <span className="font-medium">{term}</span>
-                   </div>
-                   <button 
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       removeRecentSearch(term);
-                     }}
-                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-muted rounded-md transition-all"
-                   >
-                     <X className="h-3 w-3" />
-                   </button>
-                 </CommandItem>
-               ))}
-             </CommandGroup>
-           )}
- 
-           {results.length > 0 && (
-             <CommandGroup heading="Resultados do Banco">
-               {results.map((result) => (
-                  <CommandItem
-                    key={`${result.type}-${result.id}`}
-                    onSelect={() => onSelect(typeConfig[result.type].route, result.title)}
-                    className="flex items-center gap-3 py-3 cursor-pointer rounded-xl mx-2 my-0.5"
-                  >
-                   <div className={`p-2 rounded-lg bg-background border border-border`}>
-                     {(() => {
-                       const Icon = typeConfig[result.type].icon;
-                       return <Icon className={`h-4 w-4 ${typeConfig[result.type].color}`} />;
-                     })()}
-                   </div>
-                   <div className="flex flex-col">
-                     <span className="font-medium text-sm">{result.title}</span>
-                     <span className="text-xs text-muted-foreground">{result.subtitle}</span>
-                   </div>
-                   <CommandShortcut>{typeConfig[result.type].label}</CommandShortcut>
-                 </CommandItem>
-               ))}
-             </CommandGroup>
-           )}
-
-          <CommandSeparator />
-          
-          <CommandGroup heading="Ações & Segurança">
-            <CommandItem onSelect={() => onSelect("/recebimento")} keywords={["entrada", "chegada", "fornecedor", "inbound", "new"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Plus className="mr-2 h-4 w-4 text-success" />
-              Novo Recebimento
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/triagem")} keywords={["conferência", "qualidade", "check", "inspection"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Search className="mr-2 h-4 w-4 text-primary" />
-              Iniciar Triagem
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/admin/auditoria")} keywords={["logs", "histórico", "segurança", "audit", "events"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Shield className="mr-2 h-4 w-4 text-orange-500" />
-              Ver Logs de Auditoria
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/seguranca")} keywords={["senha", "mfa", "permissões", "access", "privacy"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Lock className="mr-2 h-4 w-4 text-red-500" />
-              Configurações de Segurança
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/relatorios")} keywords={["pdf", "excel", "exportar", "analytics", "data"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <FileBarChart className="mr-2 h-4 w-4 text-blue-500" />
-              Gerar Relatório de Inventário
-            </CommandItem>
-          </CommandGroup>
-
-          <CommandSeparator className="bg-border/40" />
-
-          <CommandGroup heading="Navegação">
-            <CommandItem onSelect={() => onSelect("/")} keywords={["home", "painel", "resumo"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <LayoutDashboard className="mr-2 h-4 w-4" />
-              Início
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/dashboard")} keywords={["kpis", "gráficos", "estatísticas", "charts"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Activity className="mr-2 h-4 w-4" />
-              Dashboard Analítico
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/estoque")} keywords={["inventário", "produtos", "armazenamento", "warehouse"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Warehouse className="mr-2 h-4 w-4" />
-              Estoque Central
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/expedicao")} keywords={["saída", "romaneio", "transporte", "shipping", "outbound"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <Truck className="mr-2 h-4 w-4" />
-              Expedição
-            </CommandItem>
-            <CommandItem onSelect={() => onSelect("/movimentacao")} keywords={["transferência", "mudança", "local", "move"]} className="cursor-pointer rounded-xl mx-2 my-0.5">
-              <ArrowLeftRight className="mr-2 h-4 w-4" />
-              Movimentar Itens
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+      {everOpened && (
+        <Suspense fallback={null}>
+          <GlobalSearchDialog open={open} onOpenChange={setOpen} />
+        </Suspense>
+      )}
     </>
   );
 }

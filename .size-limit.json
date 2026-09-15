@@ -1,0 +1,44 @@
+[
+  {
+    "name": "main entry (index)",
+    "path": "dist/assets/index-*.js",
+    "limit": "220 KB",
+    "gzip": true
+  },
+  {
+    "name": "vendor-recharts",
+    "path": "dist/assets/vendor-recharts-*.js",
+    "limit": "170 KB",
+    "gzip": true
+  },
+  {
+    "name": "vendor-motion",
+    "path": "dist/assets/vendor-motion-*.js",
+    "limit": "50 KB",
+    "gzip": true
+  },
+  {
+    "name": "lazy: exceljs",
+    "path": "dist/assets/exceljs*.js",
+    "limit": "270 KB",
+    "gzip": true
+  },
+  {
+    "name": "lazy: jspdf",
+    "path": "dist/assets/jspdf*.js",
+    "limit": "140 KB",
+    "gzip": true
+  },
+  {
+    "name": "lazy: html2canvas",
+    "path": "dist/assets/html2canvas*.js",
+    "limit": "55 KB",
+    "gzip": true
+  },
+  {
+    "name": "CSS total",
+    "path": "dist/assets/*.css",
+    "limit": "80 KB",
+    "gzip": true
+  }
+]

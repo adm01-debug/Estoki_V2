@@ -3,7 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { User, Palette } from "lucide-react";
 
 export interface PreferenciasUsuario {
@@ -26,7 +32,7 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base">
           <User className="h-5 w-5 text-primary" />
           Preferências do Usuário
         </CardTitle>
@@ -35,13 +41,26 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label className="text-sm">Nome do Operador</Label>
-          <Input value={preferencias.nome} onChange={(e) => onChange({ nome: e.target.value })} placeholder="Seu nome" maxLength={50} />
+          <Input
+            value={preferencias.nome}
+            onChange={(e) => onChange({ nome: e.target.value })}
+            placeholder="Seu nome"
+            maxLength={50}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm flex items-center gap-2"><Palette className="h-4 w-4" />Tema</Label>
-            <Select value={theme || "system"} onValueChange={(v: "light" | "dark" | "system") => onThemeChange(v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Label className="flex items-center gap-2 text-sm">
+              <Palette className="h-4 w-4" />
+              Tema
+            </Label>
+            <Select
+              value={theme || "system"}
+              onValueChange={(v: "light" | "dark" | "system") => onThemeChange(v)}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="light">Claro</SelectItem>
                 <SelectItem value="dark">Escuro</SelectItem>
@@ -51,8 +70,13 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
           </div>
           <div className="space-y-2">
             <Label className="text-sm">Formato de Data</Label>
-            <Select value={preferencias.formatoData} onValueChange={(v) => onChange({ formatoData: v })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={preferencias.formatoData}
+              onValueChange={(v) => onChange({ formatoData: v })}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
                 <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
@@ -63,8 +87,13 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
         </div>
         <div className="space-y-2">
           <Label className="text-sm">Itens por Página</Label>
-          <Select value={preferencias.paginacaoPadrao.toString()} onValueChange={(v) => onChange({ paginacaoPadrao: Number(v) })}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
+          <Select
+            value={preferencias.paginacaoPadrao.toString()}
+            onValueChange={(v) => onChange({ paginacaoPadrao: Number(v) })}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="10">10 itens</SelectItem>
               <SelectItem value="20">20 itens</SelectItem>
@@ -79,7 +108,10 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
             <span className="text-sm font-medium">Exibir Valores</span>
             <p className="text-xs text-muted-foreground">Mostrar valores monetários nas telas</p>
           </div>
-          <Switch checked={preferencias.exibirValores} onCheckedChange={(c) => onChange({ exibirValores: c })} />
+          <Switch
+            checked={preferencias.exibirValores}
+            onCheckedChange={(c) => onChange({ exibirValores: c })}
+          />
         </div>
       </CardContent>
     </Card>

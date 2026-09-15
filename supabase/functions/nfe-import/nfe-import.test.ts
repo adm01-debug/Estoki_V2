@@ -7,7 +7,7 @@ Deno.test("NfeImportSchema validation - Valid inputs", () => {
     xml_content: "<nfeProc>...</nfeProc>",
     access_key: "12345678901234567890123456789012345678901234",
   };
-  
+
   const validOnlyAccessKey = {
     access_key: "12345678901234567890123456789012345678901234",
   };
@@ -23,7 +23,7 @@ Deno.test("NfeImportSchema validation - Valid inputs", () => {
 
 Deno.test("NfeImportSchema validation - Invalid inputs", () => {
   const missingBoth = {};
-  
+
   const invalidAccessKey = {
     access_key: "123", // Too short
   };

@@ -36,7 +36,7 @@ export function Countdown({ targetDate, onComplete }: CountdownProps) {
   return (
     <div className="flex gap-2 text-center">
       {Object.entries(timeLeft).map(([key, value]) => (
-        <div key={key} className="bg-muted rounded p-2">
+        <div key={key} className="rounded bg-muted p-2">
           <div className="text-2xl font-bold">{String(value).padStart(2, "0")}</div>
           <div className="text-xs text-muted-foreground">{key}</div>
         </div>

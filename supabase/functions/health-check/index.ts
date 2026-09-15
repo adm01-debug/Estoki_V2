@@ -48,20 +48,17 @@ serve(async (req) => {
   // Check Database
   const dbStart = Date.now();
   try {
-    const { error } = await supabase.from("_health").select("id").limit(1);
+    // Ping barato em tabela real (profiles existe sempre).
+    const { error } = await supabase.from("profiles").select("id", { head: true, count: "exact" }).limit(1);
     checks.database.latency_ms = Date.now() - dbStart;
     if (error) {
-      // Tabela pode não existir, tentar query simples
-      const { error: error2 } = await supabase.rpc("now");
-      if (error2) {
-        checks.database.status = "fail";
-        checks.database.message = error2.message;
-      }
+      checks.database.status = "fail";
+      checks.database.message = error.message;
     }
   } catch (e) {
     checks.database.status = "fail";
     checks.database.latency_ms = Date.now() - dbStart;
-    checks.database.message = e.message;
+    checks.database.message = e instanceof Error ? e.message : String(e);
   }
 
   // Check Storage
@@ -95,14 +92,14 @@ serve(async (req) => {
   }
 
   // Determine overall status
-  const hasFailure = Object.values(checks).some(c => c.status === "fail");
-  const hasWarning = Object.values(checks).some(c => c.status === "warn");
+  const hasFailure = Object.values(checks).some((c) => c.status === "fail");
+  const hasWarning = Object.values(checks).some((c) => c.status === "warn");
 
   const overallStatus: HealthStatus["status"] = hasFailure
     ? "unhealthy"
     : hasWarning
-    ? "degraded"
-    : "healthy";
+      ? "degraded"
+      : "healthy";
 
   const health: HealthStatus = {
     status: overallStatus,
