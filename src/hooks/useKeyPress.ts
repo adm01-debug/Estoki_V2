@@ -39,5 +39,7 @@ export function useHotkey(key: string, callback: () => void, deps: unknown[] = [
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
+    // deps é spread externo intencional do consumidor do hook
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, callback, ...deps]);
 }

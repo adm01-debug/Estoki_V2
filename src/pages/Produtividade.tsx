@@ -25,10 +25,10 @@ export default function ProdutividadePage() {
   };
 
   // Métricas gerais
-  const metricasGerais = useMemo(() => getMetricasGerais(), [metricas]);
+  const metricasGerais = useMemo(() => getMetricasGerais(), [getMetricasGerais]);
 
   // Ranking
-  const ranking = useMemo(() => getRanking(), [metricas]);
+  const ranking = useMemo(() => getRanking(), [getRanking]);
 
   // Dados para gráfico de barras
   const dadosBarras = useMemo(() => {

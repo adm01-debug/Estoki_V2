@@ -36,8 +36,25 @@ export const stockService = {
       .eq("id", movement.product_id)
       .single();
     const previousQty = product?.stock_quantity || 0;
-    const newQty =
-      movement.type === "IN" ? previousQty + movement.quantity : previousQty - movement.quantity;
+    let newQty: number;
+    switch (movement.type) {
+      case "IN":
+        newQty = previousQty + movement.quantity;
+        break;
+      case "OUT":
+        newQty = previousQty - movement.quantity;
+        break;
+      case "ADJUSTMENT":
+        // quantity é um delta com sinal (positivo soma, negativo remove)
+        newQty = previousQty + movement.quantity;
+        break;
+      case "TRANSFER":
+        // transferência move estoque entre posições; o total do produto não muda
+        newQty = previousQty;
+        break;
+      default:
+        newQty = previousQty;
+    }
     if (newQty < 0) throw new Error("Estoque insuficiente");
     await from("products").update({ stock_quantity: newQty }).eq("id", movement.product_id);
     const { data, error } = await from("stock_movements")

@@ -25,5 +25,7 @@ export const useRealtime = (table: string, queryKey: string[]) => {
     return () => {
       supabase.removeChannel(channel);
     };
+    // reinscreve apenas quando a tabela muda; queryKey é usado só na invalidação
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table, queryClient]);
 };

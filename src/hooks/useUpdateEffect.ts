@@ -7,6 +7,8 @@ export function useUpdateEffect(effect: EffectCallback, deps?: DependencyList) {
       return;
     }
     return effect();
+    // deps é repassado pelo consumidor; effect é intencionalmente externo
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
 export default useUpdateEffect;

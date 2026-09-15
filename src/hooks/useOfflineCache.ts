@@ -20,6 +20,8 @@ export function useOfflineCache() {
       window.removeEventListener("online", online);
       window.removeEventListener("offline", offline);
     };
+    // registra listeners uma vez na montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const cacheData = useCallback(async (key: string, data: unknown) => {

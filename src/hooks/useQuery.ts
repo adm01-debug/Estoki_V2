@@ -30,6 +30,8 @@ export function useQuery<T>(
 
   useEffect(() => {
     if (enabled) fetch();
+    // refetch apenas quando enabled/queryKey mudam
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, queryKey]);
 
   useEffect(() => {

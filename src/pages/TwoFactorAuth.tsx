@@ -14,6 +14,8 @@ export default function TwoFactorAuth() {
 
   useEffect(() => {
     checkMFAStatus();
+    // verifica status uma vez na montagem
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkMFAStatus = async () => {

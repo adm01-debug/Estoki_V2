@@ -33,9 +33,9 @@ export function DashboardFornecedores() {
     getFornecedoresCriticos,
   } = useFornecedores();
 
-  const estatisticas = useMemo(() => getEstatisticasGerais(), [fornecedores]);
-  const topFornecedores = useMemo(() => getTopFornecedores(5), [fornecedores]);
-  const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [fornecedores]);
+  const estatisticas = useMemo(() => getEstatisticasGerais(), [getEstatisticasGerais]);
+  const topFornecedores = useMemo(() => getTopFornecedores(5), [getTopFornecedores]);
+  const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [getFornecedoresCriticos]);
 
   const getClassificacaoBadge = (classificacao: string) => {
     const configs: Record<
