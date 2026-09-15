@@ -43,6 +43,7 @@ export default tseslint.config(
     rules: {
       "no-undef": "off",
       "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   }
 );
