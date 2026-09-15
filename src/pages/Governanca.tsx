@@ -8,48 +8,52 @@ import { OcorrenciasTab } from "@/components/governanca/OcorrenciasTab";
 export default function Governanca() {
   return (
     <>
-      <SEO title="Governança" path="/governanca" description="Cadeia de custódia, checkpoints de zona e ocorrências operacionais." />
+      <SEO
+        title="Governança"
+        path="/governanca"
+        description="Cadeia de custódia, checkpoints de zona e ocorrências operacionais."
+      />
       <div className="space-y-6">
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <Shield className="h-7 w-7 text-primary" />
-          Governança & Responsabilização
-        </h1>
-        <p className="mt-1 text-muted-foreground">
-          Cadeia de custódia, checkpoints obrigatórios e investigação de perdas — zero margem para
-          "ninguém sabe onde está".
-        </p>
-      </div>
+        <div>
+          <h1 className="flex items-center gap-2 text-2xl font-bold">
+            <Shield className="h-7 w-7 text-primary" />
+            Governança & Responsabilização
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Cadeia de custódia, checkpoints obrigatórios e investigação de perdas — zero margem para
+            "ninguém sabe onde está".
+          </p>
+        </div>
 
-      <Tabs defaultValue="custodia" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="custodia" className="gap-2">
-            <Link2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Cadeia de Custódia</span>
-            <span className="sm:hidden">Custódia</span>
-          </TabsTrigger>
-          <TabsTrigger value="checkpoints" className="gap-2">
-            <MapPin className="h-4 w-4" />
-            <span className="hidden sm:inline">Checkpoints Zona</span>
-            <span className="sm:hidden">Checkpoints</span>
-          </TabsTrigger>
-          <TabsTrigger value="ocorrencias" className="gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            <span className="hidden sm:inline">Ocorrências</span>
-            <span className="sm:hidden">Ocorrências</span>
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="custodia">
-          <CustodiaTab />
-        </TabsContent>
-        <TabsContent value="checkpoints">
-          <CheckpointsTab />
-        </TabsContent>
-        <TabsContent value="ocorrencias">
-          <OcorrenciasTab />
-        </TabsContent>
-      </Tabs>
-    </div>
+        <Tabs defaultValue="custodia" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="custodia" className="gap-2">
+              <Link2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Cadeia de Custódia</span>
+              <span className="sm:hidden">Custódia</span>
+            </TabsTrigger>
+            <TabsTrigger value="checkpoints" className="gap-2">
+              <MapPin className="h-4 w-4" />
+              <span className="hidden sm:inline">Checkpoints Zona</span>
+              <span className="sm:hidden">Checkpoints</span>
+            </TabsTrigger>
+            <TabsTrigger value="ocorrencias" className="gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              <span className="hidden sm:inline">Ocorrências</span>
+              <span className="sm:hidden">Ocorrências</span>
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="custodia">
+            <CustodiaTab />
+          </TabsContent>
+          <TabsContent value="checkpoints">
+            <CheckpointsTab />
+          </TabsContent>
+          <TabsContent value="ocorrencias">
+            <OcorrenciasTab />
+          </TabsContent>
+        </Tabs>
+      </div>
     </>
   );
 }

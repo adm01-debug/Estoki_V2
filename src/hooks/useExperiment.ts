@@ -12,7 +12,8 @@ export function useExperiment(experimentId: string, variants: string[]) {
 
   const track = useCallback(
     (event: string) => {
-      if (import.meta.env.DEV) logger.debug("Evento de experimento", { experimentId, variant, event });
+      if (import.meta.env.DEV)
+        logger.debug("Evento de experimento", { experimentId, variant, event });
     },
     [experimentId, variant]
   );

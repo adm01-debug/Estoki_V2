@@ -44,11 +44,15 @@ for (const route of WMS_ROUTES) {
     const heading = page.locator("h1, h2").filter({ hasText: route.heading }).first();
     await expect(heading).toBeVisible({ timeout: 10_000 });
 
-    expect(consoleErrors, `Console errors em ${route.path}: ${consoleErrors.join("\n")}`).toEqual([]);
+    expect(consoleErrors, `Console errors em ${route.path}: ${consoleErrors.join("\n")}`).toEqual(
+      []
+    );
   });
 }
 
-test("WMS: fluxo picking → romaneio (navegação sequencial)", async ({ authenticatedPage: page }) => {
+test("WMS: fluxo picking → romaneio (navegação sequencial)", async ({
+  authenticatedPage: page,
+}) => {
   await page.goto("/picking", { waitUntil: "networkidle", timeout: 20_000 });
   await expect(page.locator("h1, h2").first()).toBeVisible();
 

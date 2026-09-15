@@ -26,9 +26,19 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Autentica um usuário",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthLoginInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthLoginInput" } }
+          }
+        },
         "responses": {
-          "200": { "description": "Sessão criada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthSession" } } } },
+          "200": {
+            "description": "Sessão criada",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuthSession" } }
+            }
+          },
           "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" },
           "429": { "$ref": "#/components/responses/RateLimited" }
@@ -39,9 +49,19 @@
       "post": {
         "tags": ["Auth"],
         "summary": "Cria um novo usuário",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthRegisterInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthRegisterInput" } }
+          }
+        },
         "responses": {
-          "200": { "description": "Usuário criado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AuthSession" } } } },
+          "200": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/AuthSession" } }
+            }
+          },
           "400": { "$ref": "#/components/responses/BadRequest" },
           "429": { "$ref": "#/components/responses/RateLimited" }
         }
@@ -51,9 +71,19 @@
       "post": {
         "tags": ["Estoque"],
         "summary": "Registra ajuste de estoque com auditoria",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AdjustInventoryInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AdjustInventoryInput" }
+            }
+          }
+        },
         "responses": {
-          "200": { "description": "Ajuste registrado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } } },
+          "200": {
+            "description": "Ajuste registrado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } }
+          },
           "400": { "$ref": "#/components/responses/BadRequest" },
           "401": { "$ref": "#/components/responses/Unauthorized" }
         }
@@ -63,9 +93,17 @@
       "post": {
         "tags": ["Estoque"],
         "summary": "Movimenta lote entre posições",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/StockMovementInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/StockMovementInput" } }
+          }
+        },
         "responses": {
-          "200": { "description": "Movimentação persistida", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } } },
+          "200": {
+            "description": "Movimentação persistida",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } }
+          },
           "400": { "$ref": "#/components/responses/BadRequest" }
         }
       }
@@ -74,23 +112,46 @@
       "post": {
         "tags": ["Estoque"],
         "summary": "Reserva estoque para um pedido",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReserveInput" } } } },
-        "responses": { "200": { "description": "Reserva criada", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } } } }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ReserveInput" } }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reserva criada",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Ok" } } }
+          }
+        }
       }
     },
     "/nfe-import": {
       "post": {
         "tags": ["Recebimento"],
         "summary": "Importa XML de NF-e",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/NfeImportInput" } } } },
-        "responses": { "200": { "description": "NF-e processada" }, "400": { "$ref": "#/components/responses/BadRequest" } }
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/NfeImportInput" } }
+          }
+        },
+        "responses": {
+          "200": { "description": "NF-e processada" },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
       }
     },
     "/picking-confirm": {
       "post": {
         "tags": ["Picking"],
         "summary": "Confirma item coletado numa onda",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PickingConfirmInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/PickingConfirmInput" } }
+          }
+        },
         "responses": { "200": { "description": "Item confirmado" } }
       }
     },
@@ -98,7 +159,12 @@
       "post": {
         "tags": ["Shipping"],
         "summary": "Calcula prazo e valor de frete",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ShippingQuoteInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/ShippingQuoteInput" } }
+          }
+        },
         "responses": { "200": { "description": "Cotações" } }
       }
     },
@@ -108,7 +174,12 @@
         "summary": "Rastreia um objeto",
         "parameters": [
           { "name": "codigo", "in": "query", "required": true, "schema": { "type": "string" } },
-          { "name": "transportadora", "in": "query", "required": true, "schema": { "type": "string", "enum": ["correios","jadlog","totalexpress","loggi"] } }
+          {
+            "name": "transportadora",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "enum": ["correios", "jadlog", "totalexpress", "loggi"] }
+          }
         ],
         "responses": { "200": { "description": "Histórico de rastreio" } }
       }
@@ -117,7 +188,12 @@
       "post": {
         "tags": ["Pagamentos"],
         "summary": "Gera cobrança PIX",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PixGenerateInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/PixGenerateInput" } }
+          }
+        },
         "responses": { "200": { "description": "PIX gerado" } }
       }
     },
@@ -125,7 +201,12 @@
       "post": {
         "tags": ["Pagamentos"],
         "summary": "Gera boleto bancário",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/BoletoGenerateInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/BoletoGenerateInput" } }
+          }
+        },
         "responses": { "200": { "description": "Boleto gerado" } }
       }
     },
@@ -133,7 +214,12 @@
       "post": {
         "tags": ["IA"],
         "summary": "Consulta o assistente IA operacional",
-        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/AiAssistantInput" } } } },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AiAssistantInput" } }
+          }
+        },
         "responses": { "200": { "description": "Resposta do assistente" } }
       }
     },
@@ -151,25 +237,150 @@
       "apiKey": { "type": "apiKey", "in": "header", "name": "apikey" }
     },
     "responses": {
-      "BadRequest": { "description": "Payload inválido", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-      "Unauthorized": { "description": "Não autenticado", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
-      "RateLimited": { "description": "Muitas requisições", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+      "BadRequest": {
+        "description": "Payload inválido",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Não autenticado",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "RateLimited": {
+        "description": "Muitas requisições",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
     },
     "schemas": {
-      "Ok": { "type": "object", "properties": { "success": { "type": "boolean" }, "data": { "type": "object", "additionalProperties": true } } },
-      "Error": { "type": "object", "required": ["error"], "properties": { "error": { "type": "string" }, "code": { "type": "string" }, "details": { "type": "object", "additionalProperties": true } } },
-      "AuthLoginInput": { "type": "object", "required": ["email","password"], "properties": { "email": { "type": "string", "format": "email" }, "password": { "type": "string", "minLength": 8 } } },
-      "AuthRegisterInput": { "type": "object", "required": ["email","password","nome"], "properties": { "email": { "type": "string", "format": "email" }, "password": { "type": "string", "minLength": 8 }, "nome": { "type": "string" } } },
-      "AuthSession": { "type": "object", "properties": { "access_token": { "type": "string" }, "refresh_token": { "type": "string" }, "user": { "type": "object", "additionalProperties": true } } },
-      "AdjustInventoryInput": { "type": "object", "required": ["produto_id","quantidade_nova","motivo"], "properties": { "produto_id": { "type": "string", "format": "uuid" }, "lote_id": { "type": "string", "format": "uuid" }, "quantidade_nova": { "type": "number" }, "motivo": { "type": "string", "minLength": 3 } } },
-      "StockMovementInput": { "type": "object", "required": ["lote_id","quantidade","tipo_evento"], "properties": { "lote_id": { "type": "string", "format": "uuid" }, "from_posicao_id": { "type": "string", "format": "uuid" }, "to_posicao_id": { "type": "string", "format": "uuid" }, "quantidade": { "type": "number", "minimum": 0 }, "tipo_evento": { "type": "string" }, "descricao": { "type": "string" } } },
-      "ReserveInput": { "type": "object", "required": ["order_id","itens"], "properties": { "order_id": { "type": "string", "format": "uuid" }, "itens": { "type": "array", "items": { "type": "object", "properties": { "produto_id": { "type": "string", "format": "uuid" }, "quantidade": { "type": "number" } } } } } },
-      "NfeImportInput": { "type": "object", "required": ["xml"], "properties": { "xml": { "type": "string" } } },
-      "PickingConfirmInput": { "type": "object", "required": ["onda_id","item_id","quantidade"], "properties": { "onda_id": { "type": "string", "format": "uuid" }, "item_id": { "type": "string", "format": "uuid" }, "quantidade": { "type": "number" } } },
-      "ShippingQuoteInput": { "type": "object", "required": ["cep_origem","cep_destino","peso"], "properties": { "cep_origem": { "type": "string" }, "cep_destino": { "type": "string" }, "peso": { "type": "number" }, "servicos": { "type": "array", "items": { "type": "string" } } } },
-      "PixGenerateInput": { "type": "object", "required": ["valor","descricao"], "properties": { "valor": { "type": "number", "minimum": 0.01 }, "descricao": { "type": "string" }, "expiracao_segundos": { "type": "integer", "minimum": 60 } } },
-      "BoletoGenerateInput": { "type": "object", "required": ["valor","vencimento","pagador"], "properties": { "valor": { "type": "number" }, "vencimento": { "type": "string", "format": "date" }, "pagador": { "type": "object" } } },
-      "AiAssistantInput": { "type": "object", "required": ["prompt"], "properties": { "prompt": { "type": "string", "minLength": 2 }, "context": { "type": "object", "additionalProperties": true } } }
+      "Ok": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "data": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": { "type": "string" },
+          "code": { "type": "string" },
+          "details": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "AuthLoginInput": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 }
+        }
+      },
+      "AuthRegisterInput": {
+        "type": "object",
+        "required": ["email", "password", "nome"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string", "minLength": 8 },
+          "nome": { "type": "string" }
+        }
+      },
+      "AuthSession": {
+        "type": "object",
+        "properties": {
+          "access_token": { "type": "string" },
+          "refresh_token": { "type": "string" },
+          "user": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "AdjustInventoryInput": {
+        "type": "object",
+        "required": ["produto_id", "quantidade_nova", "motivo"],
+        "properties": {
+          "produto_id": { "type": "string", "format": "uuid" },
+          "lote_id": { "type": "string", "format": "uuid" },
+          "quantidade_nova": { "type": "number" },
+          "motivo": { "type": "string", "minLength": 3 }
+        }
+      },
+      "StockMovementInput": {
+        "type": "object",
+        "required": ["lote_id", "quantidade", "tipo_evento"],
+        "properties": {
+          "lote_id": { "type": "string", "format": "uuid" },
+          "from_posicao_id": { "type": "string", "format": "uuid" },
+          "to_posicao_id": { "type": "string", "format": "uuid" },
+          "quantidade": { "type": "number", "minimum": 0 },
+          "tipo_evento": { "type": "string" },
+          "descricao": { "type": "string" }
+        }
+      },
+      "ReserveInput": {
+        "type": "object",
+        "required": ["order_id", "itens"],
+        "properties": {
+          "order_id": { "type": "string", "format": "uuid" },
+          "itens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "produto_id": { "type": "string", "format": "uuid" },
+                "quantidade": { "type": "number" }
+              }
+            }
+          }
+        }
+      },
+      "NfeImportInput": {
+        "type": "object",
+        "required": ["xml"],
+        "properties": { "xml": { "type": "string" } }
+      },
+      "PickingConfirmInput": {
+        "type": "object",
+        "required": ["onda_id", "item_id", "quantidade"],
+        "properties": {
+          "onda_id": { "type": "string", "format": "uuid" },
+          "item_id": { "type": "string", "format": "uuid" },
+          "quantidade": { "type": "number" }
+        }
+      },
+      "ShippingQuoteInput": {
+        "type": "object",
+        "required": ["cep_origem", "cep_destino", "peso"],
+        "properties": {
+          "cep_origem": { "type": "string" },
+          "cep_destino": { "type": "string" },
+          "peso": { "type": "number" },
+          "servicos": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "PixGenerateInput": {
+        "type": "object",
+        "required": ["valor", "descricao"],
+        "properties": {
+          "valor": { "type": "number", "minimum": 0.01 },
+          "descricao": { "type": "string" },
+          "expiracao_segundos": { "type": "integer", "minimum": 60 }
+        }
+      },
+      "BoletoGenerateInput": {
+        "type": "object",
+        "required": ["valor", "vencimento", "pagador"],
+        "properties": {
+          "valor": { "type": "number" },
+          "vencimento": { "type": "string", "format": "date" },
+          "pagador": { "type": "object" }
+        }
+      },
+      "AiAssistantInput": {
+        "type": "object",
+        "required": ["prompt"],
+        "properties": {
+          "prompt": { "type": "string", "minLength": 2 },
+          "context": { "type": "object", "additionalProperties": true }
+        }
+      }
     }
   }
 }

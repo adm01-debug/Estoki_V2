@@ -57,7 +57,11 @@ export function useDemandForecast(data: DemandData[] = []) {
   const gerarPrevisaoIA = async (produtoId?: string) => {
     setLoading(true);
     try {
-      const { data: response, error, circuitOpen } = await aiInvoke<{
+      const {
+        data: response,
+        error,
+        circuitOpen,
+      } = await aiInvoke<{
         success: boolean;
         previsoes: PrevisaoDemanda[];
         fallback?: boolean;

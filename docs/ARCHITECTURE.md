@@ -222,12 +222,12 @@ Proxy seguro para telemetria e consultas auditadas.
 
 #### Erros Padronizados
 
-| Código | Motivo                                                   |
-| ------ | -------------------------------------------------------- |
-| `400`  | Payload inválido ou ação não reconhecida.                |
-| `401`  | Token JWT inválido ou expirado.                          |
-| `403`  | Violação de Política RLS.                                |
-| `500`  | Falha interna na execução.                               |
+| Código | Motivo                                    |
+| ------ | ----------------------------------------- |
+| `400`  | Payload inválido ou ação não reconhecida. |
+| `401`  | Token JWT inválido ou expirado.           |
+| `403`  | Violação de Política RLS.                 |
+| `500`  | Falha interna na execução.                |
 
 ---
 
@@ -243,9 +243,11 @@ Proxy seguro para telemetria e consultas auditadas.
 ## 🧪 Estratégia de Testes
 
 ### E2E (`tests/e2e/`)
+
 Playwright cobre login/logout, rotas protegidas, persistência de sessão e fluxos críticos. Relatórios HTML + traces publicados como artifacts no GitHub Actions.
 
 ### Unitários e Integração
+
 Vitest + React Testing Library próximos aos componentes (`__tests__/`).
 
 ```bash

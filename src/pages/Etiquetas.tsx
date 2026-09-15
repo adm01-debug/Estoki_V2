@@ -87,9 +87,7 @@ async function fetchEntregasList(): Promise<EntregaItem[]> {
     peso_kg: e.peso_kg as number | null,
     ordem_entrega: e.ordem_entrega as number | null,
     romaneio_id: e.romaneio_id as string,
-    romaneio_codigo: (e.romaneios as Record<string, unknown> | null)?.codigo as
-      | string
-      | undefined,
+    romaneio_codigo: (e.romaneios as Record<string, unknown> | null)?.codigo as string | undefined,
     produto_nome: (e.produtos as Record<string, unknown> | null)?.nome as string | undefined,
   }));
 }
@@ -124,10 +122,18 @@ export default function Etiquetas() {
 
   useEffect(() => {
     if (lotesQuery.error) {
-      toast({ title: "Erro ao carregar lotes", description: String(lotesQuery.error), variant: "destructive" });
+      toast({
+        title: "Erro ao carregar lotes",
+        description: String(lotesQuery.error),
+        variant: "destructive",
+      });
     }
     if (entregasQuery.error) {
-      toast({ title: "Erro ao carregar entregas", description: String(entregasQuery.error), variant: "destructive" });
+      toast({
+        title: "Erro ao carregar entregas",
+        description: String(entregasQuery.error),
+        variant: "destructive",
+      });
     }
   }, [lotesQuery.error, entregasQuery.error, toast]);
 
@@ -259,239 +265,245 @@ export default function Etiquetas() {
 
   return (
     <>
-      <SEO title="Etiquetas" path="/etiquetas" description="Geração e impressão de etiquetas de identificação (QR/Code128) em múltiplos tamanhos." />
+      <SEO
+        title="Etiquetas"
+        path="/etiquetas"
+        description="Geração e impressão de etiquetas de identificação (QR/Code128) em múltiplos tamanhos."
+      />
       <AppLayout title="Etiquetas QR Code" showBack>
-      <div className="space-y-6 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="flex items-center gap-2 text-lg font-semibold">
-              <Tag className="h-5 w-5 text-primary" />
-              Impressão de Etiquetas
-            </h2>
-            <p className="text-sm text-muted-foreground">
-              Gere etiquetas com QR Code para identificação de materiais e entregas
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => (fonte === "lotes" ? lotesQuery.refetch() : entregasQuery.refetch())}
-            disabled={loading}
-          >
-            <RefreshCw className={`mr-1 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            Atualizar
-          </Button>
-        </div>
-
-        <Tabs value={fonte} onValueChange={(v) => setFonte(v as FonteData)}>
-          <TabsList>
-            <TabsTrigger value="lotes" className="gap-2">
-              <Package className="h-4 w-4" /> Lotes / Materiais
-            </TabsTrigger>
-            <TabsTrigger value="entregas" className="gap-2">
-              <Truck className="h-4 w-4" /> Entregas
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="space-y-4 lg:col-span-2">
-            <div className="flex flex-wrap gap-3">
-              <div className="relative min-w-[200px] flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder={
-                    fonte === "lotes"
-                      ? "Buscar lote, produto, SKU, NF..."
-                      : "Buscar cliente, pedido, NF, romaneio..."
-                  }
-                  className="pl-9"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <Button variant="outline" size="sm" onClick={selectAll}>
-                {selectedIds.size === currentItems.length && currentItems.length > 0
-                  ? "Desmarcar todos"
-                  : "Selecionar todos"}
-              </Button>
+        <div className="space-y-6 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <Tag className="h-5 w-5 text-primary" />
+                Impressão de Etiquetas
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Gere etiquetas com QR Code para identificação de materiais e entregas
+              </p>
             </div>
-            <Card>
-              <CardHeader className="px-4 py-3">
-                <CardTitle className="flex items-center justify-between text-sm">
-                  <span>
-                    {fonte === "lotes" ? "Lotes" : "Entregas"} ({currentItems.length})
-                  </span>
-                  {selectedIds.size > 0 && (
-                    <Badge variant="secondary">{selectedIds.size} selecionado(s)</Badge>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="max-h-[400px] overflow-y-auto p-0">
-                {loading ? (
-                  <div className="flex justify-center py-12">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                  </div>
-                ) : currentItems.length === 0 ? (
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    Nenhum registro encontrado
-                  </p>
-                ) : fonte === "lotes" ? (
-                  filteredLotes.map((lote) => (
-                    <div
-                      key={lote.id}
-                      className={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent/50 ${previewId === lote.id ? "bg-accent/30" : ""}`}
-                      onClick={() => setPreviewId(lote.id)}
-                    >
-                      <Checkbox
-                        checked={selectedIds.has(lote.id)}
-                        onCheckedChange={() => toggleSelect(lote.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <Package className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">
-                          {lote.produto_nome || "Produto"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Lote: {lote.numero_lote} • {lote.quantidade_atual} un
-                          {lote.nf_entrada && ` • NF: ${lote.nf_entrada}`}
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                    </div>
-                  ))
-                ) : (
-                  filteredEntregas.map((ent) => (
-                    <div
-                      key={ent.id}
-                      className={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent/50 ${previewId === ent.id ? "bg-accent/30" : ""}`}
-                      onClick={() => setPreviewId(ent.id)}
-                    >
-                      <Checkbox
-                        checked={selectedIds.has(ent.id)}
-                        onCheckedChange={() => toggleSelect(ent.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                      <Truck className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{ent.cliente}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {ent.pedido_referencia && `Pedido: ${ent.pedido_referencia} • `}
-                          {ent.quantidade} un{ent.nf_saida && ` • NF: ${ent.nf_saida}`}
-                        </p>
-                      </div>
-                      <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => (fonte === "lotes" ? lotesQuery.refetch() : entregasQuery.refetch())}
+              disabled={loading}
+            >
+              <RefreshCw className={`mr-1 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              Atualizar
+            </Button>
           </div>
 
-          <div className="space-y-4">
-            <Card>
-              <CardHeader className="px-4 py-3">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <QrCode className="h-4 w-4" />
-                  Configuração
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label className="text-xs">Tamanho da etiqueta</Label>
-                  <Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(tamanhos).map(([key, val]) => (
-                        <SelectItem key={key} value={key}>
-                          {(val as { label: string }).label} {key === "10x15" && "⭐"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+          <Tabs value={fonte} onValueChange={(v) => setFonte(v as FonteData)}>
+            <TabsList>
+              <TabsTrigger value="lotes" className="gap-2">
+                <Package className="h-4 w-4" /> Lotes / Materiais
+              </TabsTrigger>
+              <TabsTrigger value="entregas" className="gap-2">
+                <Truck className="h-4 w-4" /> Entregas
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            <div className="space-y-4 lg:col-span-2">
+              <div className="flex flex-wrap gap-3">
+                <div className="relative min-w-[200px] flex-1">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder={
+                      fonte === "lotes"
+                        ? "Buscar lote, produto, SKU, NF..."
+                        : "Buscar cliente, pedido, NF, romaneio..."
+                    }
+                    className="pl-9"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-                {fonte === "lotes" && (
-                  <div>
-                    <Label className="text-xs">Volumes por lote</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={50}
-                      value={volumesPorLote}
-                      onChange={(e) =>
-                        setVolumesPorLote(Math.max(1, Math.min(50, parseInt(e.target.value) || 1)))
-                      }
-                    />
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Total: {(selectedIds.size || 1) * volumesPorLote} etiqueta(s)
+                <Button variant="outline" size="sm" onClick={selectAll}>
+                  {selectedIds.size === currentItems.length && currentItems.length > 0
+                    ? "Desmarcar todos"
+                    : "Selecionar todos"}
+                </Button>
+              </div>
+              <Card>
+                <CardHeader className="px-4 py-3">
+                  <CardTitle className="flex items-center justify-between text-sm">
+                    <span>
+                      {fonte === "lotes" ? "Lotes" : "Entregas"} ({currentItems.length})
+                    </span>
+                    {selectedIds.size > 0 && (
+                      <Badge variant="secondary">{selectedIds.size} selecionado(s)</Badge>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="max-h-[400px] overflow-y-auto p-0">
+                  {loading ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                    </div>
+                  ) : currentItems.length === 0 ? (
+                    <p className="py-8 text-center text-sm text-muted-foreground">
+                      Nenhum registro encontrado
                     </p>
+                  ) : fonte === "lotes" ? (
+                    filteredLotes.map((lote) => (
+                      <div
+                        key={lote.id}
+                        className={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent/50 ${previewId === lote.id ? "bg-accent/30" : ""}`}
+                        onClick={() => setPreviewId(lote.id)}
+                      >
+                        <Checkbox
+                          checked={selectedIds.has(lote.id)}
+                          onCheckedChange={() => toggleSelect(lote.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <Package className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">
+                            {lote.produto_nome || "Produto"}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Lote: {lote.numero_lote} • {lote.quantidade_atual} un
+                            {lote.nf_entrada && ` • NF: ${lote.nf_entrada}`}
+                          </p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                      </div>
+                    ))
+                  ) : (
+                    filteredEntregas.map((ent) => (
+                      <div
+                        key={ent.id}
+                        className={`flex cursor-pointer items-center gap-3 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-accent/50 ${previewId === ent.id ? "bg-accent/30" : ""}`}
+                        onClick={() => setPreviewId(ent.id)}
+                      >
+                        <Checkbox
+                          checked={selectedIds.has(ent.id)}
+                          onCheckedChange={() => toggleSelect(ent.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <Truck className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">{ent.cliente}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {ent.pedido_referencia && `Pedido: ${ent.pedido_referencia} • `}
+                            {ent.quantidade} un{ent.nf_saida && ` • NF: ${ent.nf_saida}`}
+                          </p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                      </div>
+                    ))
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="space-y-4">
+              <Card>
+                <CardHeader className="px-4 py-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <QrCode className="h-4 w-4" />
+                    Configuração
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-xs">Tamanho da etiqueta</Label>
+                    <Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(tamanhos).map(([key, val]) => (
+                          <SelectItem key={key} value={key}>
+                            {(val as { label: string }).label} {key === "10x15" && "⭐"}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="px-4 py-3">
-                <CardTitle className="flex items-center gap-2 text-sm">
-                  <Eye className="h-4 w-4" />
-                  Prévia
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {fonte === "lotes" && previewLote ? (
-                  <EtiquetaPreviewLote
-                    lote={previewLote}
-                    tamanho={tamanho}
-                    volume={1}
-                    totalVolumes={volumesPorLote}
-                    qrUrl={qrUrl}
-                  />
-                ) : fonte === "entregas" && previewEntrega ? (
-                  <EtiquetaPreviewEntrega
-                    entrega={previewEntrega}
-                    tamanho={tamanho}
-                    qrUrl={qrUrl}
-                  />
-                ) : (
-                  <p className="py-8 text-center text-sm text-muted-foreground">
-                    Selecione um item para visualizar
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex-1 gap-2"
-                onClick={() => handleGenerate("download")}
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                Baixar PDF
-              </Button>
-              <Button
-                className="flex-1 gap-2"
-                onClick={() => handleGenerate("print")}
-                disabled={isGenerating}
-              >
-                {isGenerating ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Printer className="h-4 w-4" />
-                )}
-                Imprimir
-              </Button>
+                  {fonte === "lotes" && (
+                    <div>
+                      <Label className="text-xs">Volumes por lote</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={50}
+                        value={volumesPorLote}
+                        onChange={(e) =>
+                          setVolumesPorLote(
+                            Math.max(1, Math.min(50, parseInt(e.target.value) || 1))
+                          )
+                        }
+                      />
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Total: {(selectedIds.size || 1) * volumesPorLote} etiqueta(s)
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="px-4 py-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <Eye className="h-4 w-4" />
+                    Prévia
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {fonte === "lotes" && previewLote ? (
+                    <EtiquetaPreviewLote
+                      lote={previewLote}
+                      tamanho={tamanho}
+                      volume={1}
+                      totalVolumes={volumesPorLote}
+                      qrUrl={qrUrl}
+                    />
+                  ) : fonte === "entregas" && previewEntrega ? (
+                    <EtiquetaPreviewEntrega
+                      entrega={previewEntrega}
+                      tamanho={tamanho}
+                      qrUrl={qrUrl}
+                    />
+                  ) : (
+                    <p className="py-8 text-center text-sm text-muted-foreground">
+                      Selecione um item para visualizar
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  onClick={() => handleGenerate("download")}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Baixar PDF
+                </Button>
+                <Button
+                  className="flex-1 gap-2"
+                  onClick={() => handleGenerate("print")}
+                  disabled={isGenerating}
+                >
+                  {isGenerating ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Printer className="h-4 w-4" />
+                  )}
+                  Imprimir
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </AppLayout>
+      </AppLayout>
     </>
   );
 }

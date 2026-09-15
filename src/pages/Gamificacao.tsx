@@ -61,7 +61,11 @@ export default function GamificacaoPage() {
 
   return (
     <AppLayout title="Gamificação" showBack>
-      <SEO title="Gamificação" path="/gamificacao" description="XP, conquistas, desafios diários e ranking de operadores no ESTOKI WMS." />
+      <SEO
+        title="Gamificação"
+        path="/gamificacao"
+        description="XP, conquistas, desafios diários e ranking de operadores no ESTOKI WMS."
+      />
       <PageTransition>
         <div className="space-y-6 p-4">
           {/* XP Bar */}

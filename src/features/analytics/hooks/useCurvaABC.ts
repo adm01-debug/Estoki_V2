@@ -56,9 +56,7 @@ async function calcularCurvaABC(): Promise<ProdutoABC[]> {
     `);
   if (prodError) throw prodError;
 
-  const { data: lotesData } = await supabase
-    .from("lotes")
-    .select("produto_id, quantidade_atual");
+  const { data: lotesData } = await supabase.from("lotes").select("produto_id, quantidade_atual");
 
   const trintaDiasAtras = new Date();
   trintaDiasAtras.setDate(trintaDiasAtras.getDate() - 30);
@@ -92,8 +90,7 @@ async function calcularCurvaABC(): Promise<ProdutoABC[]> {
     const valorUnitario = Number(p.peso_unitario) || 0;
     const valorTotal = quantidadeEstoque * valorUnitario;
     const giroMensal = girosPorProduto[p.id] || p.giro_mensal || 0;
-    const diasCobertura =
-      giroMensal > 0 ? Math.round((quantidadeEstoque / giroMensal) * 30) : 999;
+    const diasCobertura = giroMensal > 0 ? Math.round((quantidadeEstoque / giroMensal) * 30) : 999;
 
     return {
       id: p.id,
@@ -177,7 +174,12 @@ async function calcularCurvaABC(): Promise<ProdutoABC[]> {
 export function useCurvaABC() {
   const queryClient = useQueryClient();
 
-  const { data: produtos = [], isLoading: loading, error: queryError, refetch } = useQuery({
+  const {
+    data: produtos = [],
+    isLoading: loading,
+    error: queryError,
+    refetch,
+  } = useQuery({
     queryKey: ["curva-abc"],
     queryFn: calcularCurvaABC,
     staleTime: 1000 * 60 * 5,

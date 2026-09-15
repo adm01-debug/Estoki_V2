@@ -64,7 +64,11 @@ export default function LotesPage() {
   const [statusFilter, setStatusFilter] = useState("todos");
   const [sortBy, setSortBy] = useState<"recent" | "expiry" | "qty">("recent");
 
-  const { data: lotes = [], isLoading: loading, error } = useQuery({
+  const {
+    data: lotes = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
     queryKey: ["lotes-list"],
     queryFn: fetchLotes,
     staleTime: 1000 * 60 * 5,
@@ -140,7 +144,11 @@ export default function LotesPage() {
 
   return (
     <AppLayout title="Lotes" showBack>
-      <SEO title="Lotes" path="/lotes" description="Gestão e rastreabilidade de lotes de estoque no ESTOKI WMS." />
+      <SEO
+        title="Lotes"
+        path="/lotes"
+        description="Gestão e rastreabilidade de lotes de estoque no ESTOKI WMS."
+      />
       <PageTransition>
         <div className="space-y-4 p-4">
           {/* Stats */}

@@ -20,13 +20,13 @@ for (const route of PUBLIC_ROUTES) {
       .analyze();
 
     const blocking = results.violations.filter(
-      (v) => v.impact === "critical" || v.impact === "serious",
+      (v) => v.impact === "critical" || v.impact === "serious"
     );
 
     if (blocking.length) {
       console.log(
         "A11y violations:",
-        blocking.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length })),
+        blocking.map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length }))
       );
     }
     expect(blocking, `Blocking a11y issues on ${route}`).toEqual([]);

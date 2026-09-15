@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useTransitionContext } from "@/contexts/TransitionContext";
-import {
-  presets,
-  reducedMotionPreset,
-} from "@/lib/transitions/presets";
+import { presets, reducedMotionPreset } from "@/lib/transitions/presets";
 import { resolveRouteTransition } from "@/lib/transitions/registry";
 import type { TransitionName, TransitionPreset } from "@/lib/transitions/types";
 
@@ -44,5 +41,14 @@ export function usePageTransition(override?: TransitionName): TransitionPreset {
       };
     }
     return preset;
-  }, [override, location.pathname, location.state, routes, defaultPreset, durationScale, disabled, reduced]);
+  }, [
+    override,
+    location.pathname,
+    location.state,
+    routes,
+    defaultPreset,
+    durationScale,
+    disabled,
+    reduced,
+  ]);
 }

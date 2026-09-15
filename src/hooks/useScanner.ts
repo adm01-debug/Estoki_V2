@@ -175,7 +175,11 @@ export function useScanner(): UseScannerReturn {
     setError(null);
 
     try {
-      const { data, error: fnError, circuitOpen } = await aiInvoke<any>("scanner-ocr", {
+      const {
+        data,
+        error: fnError,
+        circuitOpen,
+      } = await aiInvoke<any>("scanner-ocr", {
         image: imageBase64,
         extractData: true,
       });

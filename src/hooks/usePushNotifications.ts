@@ -61,7 +61,8 @@ export function usePushNotifications() {
   const showNotification = useCallback(
     (options: PushNotificationOptions): Notification | null => {
       if (!isSupported || permission !== "granted") {
-        if (import.meta.env.DEV) logger.debug("Notificação não exibida", { isSupported, permission });
+        if (import.meta.env.DEV)
+          logger.debug("Notificação não exibida", { isSupported, permission });
         return null;
       }
 

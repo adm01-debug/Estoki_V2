@@ -11,8 +11,7 @@ import { test as base, expect, type Page } from "@playwright/test";
  *    suficiente para hidratar o AuthContext em CI onde não há Supabase real.
  */
 const SUPABASE_STORAGE_KEY =
-  process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ??
-  "sb-wrhidiguevvnqywlueps-auth-token";
+  process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ?? "sb-wrhidiguevvnqywlueps-auth-token";
 
 const MOCK_SESSION = JSON.stringify({
   access_token: "e2e-mock-access-token",
@@ -27,8 +26,7 @@ const MOCK_SESSION = JSON.stringify({
 });
 
 export async function injectSession(page: Page): Promise<void> {
-  const sessionJson =
-    process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON ?? MOCK_SESSION;
+  const sessionJson = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON ?? MOCK_SESSION;
 
   // Precisa estabelecer a origem antes de escrever no localStorage.
   await page.goto("/", { waitUntil: "domcontentloaded" });

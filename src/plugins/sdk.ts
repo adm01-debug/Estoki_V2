@@ -52,10 +52,10 @@ export interface PluginContext {
 }
 
 export interface EstokiPlugin {
-  id: string;                 // ex: "com.acme.frete-extra"
+  id: string; // ex: "com.acme.frete-extra"
   name: string;
-  version: string;            // semver
-  minHostVersion: string;     // semver
+  version: string; // semver
+  minHostVersion: string; // semver
   description?: string;
   author?: string;
   permissions?: Array<"read:estoque" | "read:pedidos" | "write:notificacoes" | "invoke:ai">;
@@ -65,7 +65,7 @@ export interface EstokiPlugin {
   on?: Partial<{
     [K in EstokiEvent["type"]]: (
       event: Extract<EstokiEvent, { type: K }>,
-      ctx: PluginContext,
+      ctx: PluginContext
     ) => void | Promise<void>;
   }>;
   onActivate?: (ctx: PluginContext) => void | Promise<void>;

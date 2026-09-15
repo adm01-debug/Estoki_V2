@@ -125,265 +125,272 @@ export default function PosicoesPage() {
 
   return (
     <>
-      <SEO title="Posições de Estoque" path="/posicoes" description="Mapa 3D de posições, ocupação e status dos endereços do armazém." />
+      <SEO
+        title="Posições de Estoque"
+        path="/posicoes"
+        description="Mapa 3D de posições, ocupação e status dos endereços do armazém."
+      />
       <AppLayout
-      title="Posições de Estoque"
-      showBack
-      rightAction={
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-2"
-            onClick={handleExport}
-            title="Exportar CSV"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">Exportar</span>
-          </Button>
-          <NovaPosicaoDialog onSuccess={refetch}>
-            <Button size="sm" className="gap-2">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Nova Posição</span>
-            </Button>
-          </NovaPosicaoDialog>
-        </div>
-      }
-    >
-      <PageTransition>
-        <div className="space-y-4 p-4">
-          {selectedIds.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="sticky top-0 z-10 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3"
+        title="Posições de Estoque"
+        showBack
+        rightAction={
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-2"
+              onClick={handleExport}
+              title="Exportar CSV"
             >
-              <CheckSquare className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
-              <div className="flex-1" />
-              <Button size="sm" variant="ghost" onClick={clearSelection}>
-                Limpar
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Exportar</span>
+            </Button>
+            <NovaPosicaoDialog onSuccess={refetch}>
+              <Button size="sm" className="gap-2">
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Nova Posição</span>
               </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1"
-                onClick={() => toast.info(`Imprimindo ${selectedIds.length} etiquetas...`)}
-              >
-                <Printer className="h-3 w-3" />
-                Etiquetas
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1"
-                onClick={() => handleBulkUpdate("bloqueado")}
-              >
-                <Lock className="h-3 w-3" />
-                Bloquear
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="gap-1"
-                onClick={() => handleBulkUpdate("livre")}
-              >
-                <Unlock className="h-3 w-3" />
-                Liberar
-              </Button>
-            </motion.div>
-          )}
-          {/* Stats */}
-          <motion.div
-            className="grid grid-cols-2 gap-3 md:grid-cols-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card>
-              <CardContent className="flex items-center gap-3 p-4">
-                <ProgressRing
-                  value={Math.round(stats.taxaOcupacao)}
-                  size={60}
-                  strokeWidth={5}
-                  variant={
-                    stats.taxaOcupacao > 90
-                      ? "danger"
-                      : stats.taxaOcupacao > 70
-                        ? "warning"
-                        : "success"
-                  }
-                />
-                <div>
-                  <p className="text-2xl font-bold">{Math.round(stats.taxaOcupacao)}%</p>
-                  <p className="text-xs text-muted-foreground">Ocupação</p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-primary/10 p-2">
-                    <Warehouse className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{stats.total}</p>
-                    <p className="text-xs text-muted-foreground">Total</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-success/10 p-2">
-                    <Package className="h-5 w-5 text-success" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-success">{stats.ocupados}</p>
-                    <p className="text-xs text-muted-foreground">Ocupadas</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-lg bg-muted p-2">
-                    <Box className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold">{stats.livres}</p>
-                    <p className="text-xs text-muted-foreground">Livres</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Filters */}
-          <div className="flex flex-wrap gap-2">
-            <div className="relative min-w-[200px] flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Buscar posição..."
-                className="pl-10"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              {search && (
-                <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  onClick={() => setSearch("")}
-                >
-                  <X className="h-4 w-4 text-muted-foreground" />
-                </button>
-              )}
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos</SelectItem>
-                {Object.entries(statusLabels).map(([key, cfg]) => (
-                  <SelectItem key={key} value={key}>
-                    {cfg.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={tipoFilter} onValueChange={setTipoFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos</SelectItem>
-                <SelectItem value="porta_palete">Porta Palete</SelectItem>
-                <SelectItem value="box">Box</SelectItem>
-              </SelectContent>
-            </Select>
+            </NovaPosicaoDialog>
           </div>
-
-          {/* Position List */}
-          <div className="space-y-2">
-            {filtered.length === 0 ? (
+        }
+      >
+        <PageTransition>
+          <div className="space-y-4 p-4">
+            {selectedIds.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="sticky top-0 z-10 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3"
+              >
+                <CheckSquare className="h-4 w-4 text-primary" />
+                <span className="text-sm font-medium">{selectedIds.length} selecionado(s)</span>
+                <div className="flex-1" />
+                <Button size="sm" variant="ghost" onClick={clearSelection}>
+                  Limpar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  onClick={() => toast.info(`Imprimindo ${selectedIds.length} etiquetas...`)}
+                >
+                  <Printer className="h-3 w-3" />
+                  Etiquetas
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  onClick={() => handleBulkUpdate("bloqueado")}
+                >
+                  <Lock className="h-3 w-3" />
+                  Bloquear
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1"
+                  onClick={() => handleBulkUpdate("livre")}
+                >
+                  <Unlock className="h-3 w-3" />
+                  Liberar
+                </Button>
+              </motion.div>
+            )}
+            {/* Stats */}
+            <motion.div
+              className="grid grid-cols-2 gap-3 md:grid-cols-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <Card>
-                <CardContent className="p-8 text-center">
-                  <MapPin className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground">Nenhuma posição encontrada</p>
+                <CardContent className="flex items-center gap-3 p-4">
+                  <ProgressRing
+                    value={Math.round(stats.taxaOcupacao)}
+                    size={60}
+                    strokeWidth={5}
+                    variant={
+                      stats.taxaOcupacao > 90
+                        ? "danger"
+                        : stats.taxaOcupacao > 70
+                          ? "warning"
+                          : "success"
+                    }
+                  />
+                  <div>
+                    <p className="text-2xl font-bold">{Math.round(stats.taxaOcupacao)}%</p>
+                    <p className="text-xs text-muted-foreground">Ocupação</p>
+                  </div>
                 </CardContent>
               </Card>
-            ) : (
-              <AnimatePresence>
-                {filtered.map((pos: any, index: number) => {
-                  const cfg = statusLabels[pos.status as keyof typeof statusLabels];
-                  return (
-                    <motion.div
-                      key={pos.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.02 }}
-                    >
-                      <Card
-                        className={cn(
-                          "relative cursor-pointer overflow-hidden transition-colors hover:border-primary/50",
-                          selectedIds.includes(pos.id) && "border-primary bg-primary/5"
-                        )}
-                        onClick={() => setSelectedPosicao(pos)}
-                      >
-                        {selectedIds.includes(pos.id) && (
-                          <div className="absolute bottom-0 left-0 top-0 w-1 bg-primary" />
-                        )}
-                        <CardContent className="flex items-center justify-between p-3">
-                          <div
-                            className="mr-2 flex items-center gap-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleSelection(pos.id);
-                            }}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedIds.includes(pos.id)}
-                              onChange={() => {}}
-                              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                            />
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={cn(
-                                "h-3 w-3 rounded-full",
-                                pos.status === "livre"
-                                  ? "bg-muted-foreground/30"
-                                  : pos.status === "ocupado"
-                                    ? "bg-success"
-                                    : pos.status === "reservado"
-                                      ? "bg-warning"
-                                      : "bg-destructive"
-                              )}
-                            />
-                            <div>
-                              <p className="font-medium">{pos.codigo}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {pos.tipo === "porta_palete" ? "Porta Palete" : "Box"}{" "}
-                                {pos.zona ? `• Zona ${pos.zona}` : ""}
-                              </p>
-                            </div>
-                          </div>
-                          <Badge variant={cfg.variant}>{cfg.label}</Badge>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  );
-                })}
-              </AnimatePresence>
-            )}
-          </div>
-        </div>
-      </PageTransition>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-primary/10 p-2">
+                      <Warehouse className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold">{stats.total}</p>
+                      <p className="text-xs text-muted-foreground">Total</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-success/10 p-2">
+                      <Package className="h-5 w-5 text-success" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-success">{stats.ocupados}</p>
+                      <p className="text-xs text-muted-foreground">Ocupadas</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-lg bg-muted p-2">
+                      <Box className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold">{stats.livres}</p>
+                      <p className="text-xs text-muted-foreground">Livres</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-      <PosicaoDetalhesDialog position={selectedPosicao} onClose={() => setSelectedPosicao(null)} />
-    </AppLayout>
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2">
+              <div className="relative min-w-[200px] flex-1">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar posição..."
+                  className="pl-10"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                {search && (
+                  <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    onClick={() => setSearch("")}
+                  >
+                    <X className="h-4 w-4 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  {Object.entries(statusLabels).map(([key, cfg]) => (
+                    <SelectItem key={key} value={key}>
+                      {cfg.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={tipoFilter} onValueChange={setTipoFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos</SelectItem>
+                  <SelectItem value="porta_palete">Porta Palete</SelectItem>
+                  <SelectItem value="box">Box</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Position List */}
+            <div className="space-y-2">
+              {filtered.length === 0 ? (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <MapPin className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
+                    <p className="text-muted-foreground">Nenhuma posição encontrada</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <AnimatePresence>
+                  {filtered.map((pos: any, index: number) => {
+                    const cfg = statusLabels[pos.status as keyof typeof statusLabels];
+                    return (
+                      <motion.div
+                        key={pos.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.02 }}
+                      >
+                        <Card
+                          className={cn(
+                            "relative cursor-pointer overflow-hidden transition-colors hover:border-primary/50",
+                            selectedIds.includes(pos.id) && "border-primary bg-primary/5"
+                          )}
+                          onClick={() => setSelectedPosicao(pos)}
+                        >
+                          {selectedIds.includes(pos.id) && (
+                            <div className="absolute bottom-0 left-0 top-0 w-1 bg-primary" />
+                          )}
+                          <CardContent className="flex items-center justify-between p-3">
+                            <div
+                              className="mr-2 flex items-center gap-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleSelection(pos.id);
+                              }}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedIds.includes(pos.id)}
+                                onChange={() => {}}
+                                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                              />
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={cn(
+                                  "h-3 w-3 rounded-full",
+                                  pos.status === "livre"
+                                    ? "bg-muted-foreground/30"
+                                    : pos.status === "ocupado"
+                                      ? "bg-success"
+                                      : pos.status === "reservado"
+                                        ? "bg-warning"
+                                        : "bg-destructive"
+                                )}
+                              />
+                              <div>
+                                <p className="font-medium">{pos.codigo}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {pos.tipo === "porta_palete" ? "Porta Palete" : "Box"}{" "}
+                                  {pos.zona ? `• Zona ${pos.zona}` : ""}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              )}
+            </div>
+          </div>
+        </PageTransition>
+
+        <PosicaoDetalhesDialog
+          position={selectedPosicao}
+          onClose={() => setSelectedPosicao(null)}
+        />
+      </AppLayout>
     </>
   );
 }

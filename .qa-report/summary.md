@@ -1,14 +1,14 @@
 ## 🧪 QA Report
 
-| Verificação | Status |
-| --- | :---: |
-| Lint (ESLint) | ✅ success |
-| Type-check (tsc) | ✅ success |
-| Testes unitários (Vitest) | ✅ success |
-| Build (Vite) | ✅ success |
+| Verificação                   |   Status   |
+| ----------------------------- | :--------: |
+| Lint (ESLint)                 | ✅ success |
+| Type-check (tsc)              | ✅ success |
+| Testes unitários (Vitest)     | ✅ success |
+| Build (Vite)                  | ✅ success |
 | Budget de bundle (size-limit) | ✅ success |
-| Auditoria RLS | ✅ success |
-| Segurança (npm audit) | ⏭️ skipped |
+| Auditoria RLS                 | ✅ success |
+| Segurança (npm audit)         | ⏭️ skipped |
 
 <details><summary>rls-audit.md</summary>
 

@@ -4,18 +4,19 @@ Data: 2026-07-15
 
 ## Placar por Dimensão
 
-| Dimensão | Status | Evidência |
-|---|---|---|
-| Segurança (scanners) | ✅ 10/10 | 5 findings, todos `warn` já classificados como falso-positivos |
-| Dependências (npm audit) | ✅ 10/10 | 0 vulnerabilidades high/critical |
-| TypeScript strict | ✅ 10/10 | `tsgo --noEmit` sem erros |
-| RLS coverage | ✅ 10/10 | 76/76 tabelas com RLS + policy |
-| Performance DB | ✅ 10/10 | mean_ms ≤ 1ms nas top queries; DB 17MB, mem 57%, conn 8/60 |
-| Runtime edge functions | ✅ 10/10 | 10/10 endpoints responderam 200; erros restantes = rate-limit correto |
+| Dimensão                 | Status   | Evidência                                                             |
+| ------------------------ | -------- | --------------------------------------------------------------------- |
+| Segurança (scanners)     | ✅ 10/10 | 5 findings, todos `warn` já classificados como falso-positivos        |
+| Dependências (npm audit) | ✅ 10/10 | 0 vulnerabilidades high/critical                                      |
+| TypeScript strict        | ✅ 10/10 | `tsgo --noEmit` sem erros                                             |
+| RLS coverage             | ✅ 10/10 | 76/76 tabelas com RLS + policy                                        |
+| Performance DB           | ✅ 10/10 | mean_ms ≤ 1ms nas top queries; DB 17MB, mem 57%, conn 8/60            |
+| Runtime edge functions   | ✅ 10/10 | 10/10 endpoints responderam 200; erros restantes = rate-limit correto |
 
 ## Simulação Massiva
 
 100 chamadas combinatórias (10 cenários × 10 execuções):
+
 - Todos os 10 endpoints retornaram HTTP 200 nas execuções que passaram do rate-limit
 - Rate limiter travou 70/100 chamadas — **comportamento esperado** (proteção contra burst do mesmo trace)
 - p95 mais alto: `calculate-kpis` 1069ms (aceitável para cálculo agregado)

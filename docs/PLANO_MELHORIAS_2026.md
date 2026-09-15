@@ -58,20 +58,20 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 
 ## Métricas iniciais (baseline)
 
-| Métrica | Valor atual |
-|---|---|
-| Arquivos `src/` | 1.222 |
-| Arquivos com `describe()` | 9 |
-| Edge Functions totais | 245 |
-| Edge Functions com Zod | 30 / 208 |
-| Edge Functions com rate limit | 4 |
-| Edge Functions com teste | 14 |
-| Páginas com `<Helmet>` | 10 / 107 (HelmetProvider ✅) |
-| Componentes com ARIA | 32 / 516 |
-| Tabelas com RLS | 76 / 76 |
-| Workflows CI | 2 (0 CD) |
-| Materialized Views / Partições | 0 / 0 |
-| Chaves i18n | 135 (pt-BR, en, en-US, es — paridade) |
+| Métrica                        | Valor atual                           |
+| ------------------------------ | ------------------------------------- |
+| Arquivos `src/`                | 1.222                                 |
+| Arquivos com `describe()`      | 9                                     |
+| Edge Functions totais          | 245                                   |
+| Edge Functions com Zod         | 30 / 208                              |
+| Edge Functions com rate limit  | 4                                     |
+| Edge Functions com teste       | 14                                    |
+| Páginas com `<Helmet>`         | 10 / 107 (HelmetProvider ✅)          |
+| Componentes com ARIA           | 32 / 516                              |
+| Tabelas com RLS                | 76 / 76                               |
+| Workflows CI                   | 2 (0 CD)                              |
+| Materialized Views / Partições | 0 / 0                                 |
+| Chaves i18n                    | 135 (pt-BR, en, en-US, es — paridade) |
 
 ## Protocolo
 

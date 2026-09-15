@@ -48,7 +48,8 @@ function useUserPermissions(userId?: string) {
     enabled: Boolean(userId),
     staleTime: 5 * 60 * 1000,
     retry: (failureCount, error) => {
-      const status = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+      const status =
+        typeof error === "object" && error !== null && "status" in error ? error.status : null;
       if (status === 401 || status === 403) return false;
       return failureCount < 2;
     },
@@ -68,7 +69,9 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallback,
 }) => {
   const { user, loading } = useAuth();
-  const { data: userPermissions = [], isLoading: permissionsLoading } = useUserPermissions(user?.id);
+  const { data: userPermissions = [], isLoading: permissionsLoading } = useUserPermissions(
+    user?.id
+  );
 
   if (loading || permissionsLoading) {
     return (

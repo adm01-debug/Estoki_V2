@@ -37,8 +37,10 @@ for (const f of files) {
   if (missing.length || extra.length) {
     failed = true;
     console.error(`\n❌ ${f}: missing=${missing.length} extra=${extra.length}`);
-    if (missing.length) console.error("  Missing:", missing.slice(0, 5).join(", "), missing.length > 5 ? "..." : "");
-    if (extra.length) console.error("  Extra:", extra.slice(0, 5).join(", "), extra.length > 5 ? "..." : "");
+    if (missing.length)
+      console.error("  Missing:", missing.slice(0, 5).join(", "), missing.length > 5 ? "..." : "");
+    if (extra.length)
+      console.error("  Extra:", extra.slice(0, 5).join(", "), extra.length > 5 ? "..." : "");
   } else {
     console.log(`✅ ${f}: paridade OK (${baseKeys.length} chaves)`);
   }

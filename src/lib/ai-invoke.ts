@@ -38,7 +38,9 @@ export async function aiInvoke<T = unknown>(
       logger.warn("AI circuit aberto — fast-fail", { functionName });
       return {
         data: null,
-        error: new Error("Serviço de IA temporariamente indisponível. Tente novamente em alguns segundos."),
+        error: new Error(
+          "Serviço de IA temporariamente indisponível. Tente novamente em alguns segundos."
+        ),
         circuitOpen: true,
       };
     }

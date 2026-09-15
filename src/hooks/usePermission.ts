@@ -34,7 +34,8 @@ export function usePermission() {
     enabled: Boolean(user?.id),
     staleTime: 5 * 60 * 1000,
     retry: (failureCount, error) => {
-      const status = typeof error === "object" && error !== null && "status" in error ? error.status : null;
+      const status =
+        typeof error === "object" && error !== null && "status" in error ? error.status : null;
       if (status === 401 || status === 403) return false;
       return failureCount < 2;
     },

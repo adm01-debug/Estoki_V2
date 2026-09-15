@@ -13,18 +13,18 @@ observabilidade pronta para produção.
 
 ## ✨ Funcionalidades
 
-| Domínio | Destaques |
-|---|---|
-| Recebimento | Import de NF-e XML, conferência cega, alertas de divergência |
-| Qualidade | Triagem cronometrada, fotos obrigatórias, amostragem ISO 2859-1 |
-| Armazenagem | Mapa de 120 posições, heatmap, sugestão de endereçamento |
-| Separação | Ondas de picking, otimização de rota TSP (NN + 2-opt) |
-| Expedição | Romaneio, cotação/rastreio de transportadoras (Correios v1/v2), comprovante |
-| Trocas/Devoluções | Fluxo completo em 5 etapas |
-| Analytics | KPIs operacionais, curva ABC, previsão de demanda (5 modelos) |
-| Governança | Cadeia de custódia, painel de auditoria crítica, ocorrências |
-| Engajamento | XP, conquistas, desafios diários, streaks |
-| Plataforma | PWA + fila offline, i18n (pt-BR/en/es), SDK de plugins, base multi-tenant |
+| Domínio           | Destaques                                                                   |
+| ----------------- | --------------------------------------------------------------------------- |
+| Recebimento       | Import de NF-e XML, conferência cega, alertas de divergência                |
+| Qualidade         | Triagem cronometrada, fotos obrigatórias, amostragem ISO 2859-1             |
+| Armazenagem       | Mapa de 120 posições, heatmap, sugestão de endereçamento                    |
+| Separação         | Ondas de picking, otimização de rota TSP (NN + 2-opt)                       |
+| Expedição         | Romaneio, cotação/rastreio de transportadoras (Correios v1/v2), comprovante |
+| Trocas/Devoluções | Fluxo completo em 5 etapas                                                  |
+| Analytics         | KPIs operacionais, curva ABC, previsão de demanda (5 modelos)               |
+| Governança        | Cadeia de custódia, painel de auditoria crítica, ocorrências                |
+| Engajamento       | XP, conquistas, desafios diários, streaks                                   |
+| Plataforma        | PWA + fila offline, i18n (pt-BR/en/es), SDK de plugins, base multi-tenant   |
 
 ## 🛠️ Tecnologias
 
@@ -51,20 +51,20 @@ Pré-requisitos: **Node.js 20+**, npm 10+ e um projeto Supabase (ou backend Lova
 
 ## 📋 Scripts
 
-| Comando | Descrição |
-|---|---|
-| `npm run dev` | Servidor de desenvolvimento (Vite, porta 8080) |
-| `npm run build` | Build de produção (`ANALYZE=true` gera `dist/stats.html`) |
-| `npm run lint` / `lint:fix` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` / `test:coverage` | Vitest 3 (cobertura v8) |
-| `npm run test:e2e` | Testes E2E (Playwright) |
-| `npm run size` | Orçamentos de bundle |
-| `npm run qa:rls` | Auditoria de RLS — toda tabela pública precisa de RLS + policy |
-| `npm run audit:zod` | Cobertura de Zod nas Edge Functions |
-| `npm run i18n:check` / `i18n:hardcoded` | Paridade de traduções + trava anti-regressão de strings fixas |
-| `npm run audit:deps` | Advisories de dependências (auditor independente do registry) |
-| `npm run qa:all` | Quality gate completo local |
+| Comando                                 | Descrição                                                      |
+| --------------------------------------- | -------------------------------------------------------------- |
+| `npm run dev`                           | Servidor de desenvolvimento (Vite, porta 8080)                 |
+| `npm run build`                         | Build de produção (`ANALYZE=true` gera `dist/stats.html`)      |
+| `npm run lint` / `lint:fix`             | ESLint                                                         |
+| `npm run typecheck`                     | `tsc --noEmit`                                                 |
+| `npm test` / `test:coverage`            | Vitest 3 (cobertura v8)                                        |
+| `npm run test:e2e`                      | Testes E2E (Playwright)                                        |
+| `npm run size`                          | Orçamentos de bundle                                           |
+| `npm run qa:rls`                        | Auditoria de RLS — toda tabela pública precisa de RLS + policy |
+| `npm run audit:zod`                     | Cobertura de Zod nas Edge Functions                            |
+| `npm run i18n:check` / `i18n:hardcoded` | Paridade de traduções + trava anti-regressão de strings fixas  |
+| `npm run audit:deps`                    | Advisories de dependências (auditor independente do registry)  |
+| `npm run qa:all`                        | Quality gate completo local                                    |
 
 ## 🔐 Segurança
 

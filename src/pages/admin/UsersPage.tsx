@@ -50,9 +50,7 @@ async function fetchUsers(): Promise<UserProfile[]> {
   const { data: profiles, error: pError } = await supabase.from("profiles").select("*");
   if (pError) throw pError;
 
-  const { data: roles, error: rError } = await supabase
-    .from("user_roles")
-    .select("user_id, role");
+  const { data: roles, error: rError } = await supabase.from("user_roles").select("user_id, role");
   if (rError) throw rError;
 
   return (profiles || []).map((p) => ({
@@ -65,7 +63,11 @@ async function fetchUsers(): Promise<UserProfile[]> {
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: users = [], isLoading: loading, error } = useQuery({
+  const {
+    data: users = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
     queryKey: ["users-list"],
     queryFn: fetchUsers,
     staleTime: 1000 * 60 * 5,
@@ -81,7 +83,9 @@ export default function UsersPage() {
             <Card>
               <CardContent className="p-6">
                 <p className="text-sm font-bold text-destructive">Erro ao carregar usuários</p>
-                <p className="mt-2 text-xs text-muted-foreground">{String((error as Error)?.message ?? error)}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {String((error as Error)?.message ?? error)}
+                </p>
               </CardContent>
             </Card>
           </div>

@@ -5,17 +5,11 @@
     "https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
     "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
   ],
-  "esbuild": [
-    "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
-  ],
+  "esbuild": ["https://github.com/advisories/GHSA-67mh-4wv8-2f99"],
   "react-router": [
     "https://github.com/advisories/GHSA-wrjc-x8rr-h8h6",
     "https://github.com/advisories/GHSA-337j-9hxr-rhxg"
   ],
-  "react-router-dom": [
-    "https://github.com/advisories/GHSA-jjmj-jmhj-qwj2"
-  ],
-  "brace-expansion": [
-    "https://github.com/advisories/GHSA-mh99-v99m-4gvg"
-  ]
+  "react-router-dom": ["https://github.com/advisories/GHSA-jjmj-jmhj-qwj2"],
+  "brace-expansion": ["https://github.com/advisories/GHSA-mh99-v99m-4gvg"]
 }

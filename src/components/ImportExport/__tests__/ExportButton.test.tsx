@@ -56,18 +56,14 @@ describe("ExportButton", () => {
 
   it("mostra texto 'Preparando XLSX...' enquanto onExport está pendente", async () => {
     let resolveExport: (() => void) | undefined;
-    const onExport = vi.fn(
-      () => new Promise<void>((resolve) => (resolveExport = resolve))
-    );
+    const onExport = vi.fn(() => new Promise<void>((resolve) => (resolveExport = resolve)));
     const user = userEvent.setup();
     render(<ExportButton onExport={onExport} formats={["xlsx"]} />);
 
     await user.click(screen.getByRole("button", { name: /exportar/i }));
     await user.click(await screen.findByText(/Exportar Excel/i));
 
-    await waitFor(() =>
-      expect(screen.getByRole("button")).toHaveTextContent(/Preparando XLSX/i)
-    );
+    await waitFor(() => expect(screen.getByRole("button")).toHaveTextContent(/Preparando XLSX/i));
     expect(screen.getByRole("button")).toBeDisabled();
 
     resolveExport?.();

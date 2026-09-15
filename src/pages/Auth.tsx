@@ -107,7 +107,12 @@ const AuthPage = () => {
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
-      <SEO title="Entrar" path="/auth" description="Acesse o ESTOKI WMS com sua conta corporativa." noIndex />
+      <SEO
+        title="Entrar"
+        path="/auth"
+        description="Acesse o ESTOKI WMS com sua conta corporativa."
+        noIndex
+      />
       {/* Background Layers */}
       <div className="absolute inset-0 bg-sidebar" />
       <div className="pointer-events-none absolute right-[-10%] top-[-30%] h-[60%] w-[60%] rounded-full bg-primary/[0.05] blur-[120px]" />

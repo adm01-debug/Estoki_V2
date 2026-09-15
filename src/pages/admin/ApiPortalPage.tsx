@@ -51,32 +51,36 @@ export default function ApiPortalPage() {
   }, []);
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto space-y-6 py-6">
       <Helmet>
         <title>Portal da API — ESTOKI WMS</title>
-        <meta name="description" content="Documentação interativa (OpenAPI 3.1) das Edge Functions públicas do ESTOKI WMS." />
+        <meta
+          name="description"
+          content="Documentação interativa (OpenAPI 3.1) das Edge Functions públicas do ESTOKI WMS."
+        />
       </Helmet>
 
-      <header className="flex items-start justify-between gap-4 flex-wrap">
+      <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-3xl font-bold">
             <BookOpen className="h-7 w-7 text-primary" />
             Portal da API
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Especificação OpenAPI 3.1 com try-it-out. Endpoints validados por Zod e protegidos por rate limit.
+          <p className="mt-1 text-muted-foreground">
+            Especificação OpenAPI 3.1 com try-it-out. Endpoints validados por Zod e protegidos por
+            rate limit.
           </p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <a href="/openapi.json" download>
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="mr-2 h-4 w-4" />
               openapi.json
             </a>
           </Button>
           <Button variant="outline" asChild>
             <a href="https://editor.swagger.io/?url=/openapi.json" target="_blank" rel="noreferrer">
-              <ExternalLink className="h-4 w-4 mr-2" />
+              <ExternalLink className="mr-2 h-4 w-4" />
               Abrir no editor
             </a>
           </Button>
@@ -88,7 +92,7 @@ export default function ApiPortalPage() {
           <CardTitle>Referência interativa</CardTitle>
         </CardHeader>
         <CardContent>
-          <div ref={containerRef} className="swagger-ui-host bg-background rounded" />
+          <div ref={containerRef} className="swagger-ui-host rounded bg-background" />
         </CardContent>
       </Card>
     </div>

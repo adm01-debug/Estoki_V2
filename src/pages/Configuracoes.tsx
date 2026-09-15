@@ -105,46 +105,54 @@ const ConfiguracoesPage = () => {
 
   return (
     <>
-      <SEO title="Configurações" path="/configuracoes" description="Configurações gerais, integrações e preferências do ESTOKI WMS." />
+      <SEO
+        title="Configurações"
+        path="/configuracoes"
+        description="Configurações gerais, integrações e preferências do ESTOKI WMS."
+      />
       <AppLayout title="Configurações" showBack>
-      <LeaveGuard hasChanges={alterado} />
-      <div className="space-y-4 p-4 pb-24">
-        <AlertasConfigCard alertas={alertas} onChange={updateAlertas} />
-        <EstoqueConfigCard estoque={estoque} onChange={updateEstoque} />
-        <PreferenciasCard
-          preferencias={preferencias}
-          theme={theme}
-          onChange={updatePreferencias}
-          onThemeChange={setTheme}
-        />
+        <LeaveGuard hasChanges={alterado} />
+        <div className="space-y-4 p-4 pb-24">
+          <AlertasConfigCard alertas={alertas} onChange={updateAlertas} />
+          <EstoqueConfigCard estoque={estoque} onChange={updateEstoque} />
+          <PreferenciasCard
+            preferencias={preferencias}
+            theme={theme}
+            onChange={updatePreferencias}
+            onThemeChange={setTheme}
+          />
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Versão do Sistema</span>
-              <span className="font-medium">1.0.0</span>
-            </div>
-            <div className="mt-2 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Última Sincronização</span>
-              <span className="font-medium">{new Date().toLocaleString("pt-BR")}</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
-        <div className="mx-auto flex max-w-lg gap-3">
-          <Button variant="outline" className="flex-1 gap-2" onClick={handleResetar}>
-            <RotateCcw className="h-4 w-4" />
-            Resetar
-          </Button>
-          <Button className="flex-1 gap-2" onClick={handleSalvar} disabled={salvando || !alterado}>
-            <Save className="h-4 w-4" />
-            {salvando ? "Salvando..." : "Salvar"}
-          </Button>
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Versão do Sistema</span>
+                <span className="font-medium">1.0.0</span>
+              </div>
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Última Sincronização</span>
+                <span className="font-medium">{new Date().toLocaleString("pt-BR")}</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </AppLayout>
+
+        <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
+          <div className="mx-auto flex max-w-lg gap-3">
+            <Button variant="outline" className="flex-1 gap-2" onClick={handleResetar}>
+              <RotateCcw className="h-4 w-4" />
+              Resetar
+            </Button>
+            <Button
+              className="flex-1 gap-2"
+              onClick={handleSalvar}
+              disabled={salvando || !alterado}
+            >
+              <Save className="h-4 w-4" />
+              {salvando ? "Salvando..." : "Salvar"}
+            </Button>
+          </div>
+        </div>
+      </AppLayout>
     </>
   );
 };

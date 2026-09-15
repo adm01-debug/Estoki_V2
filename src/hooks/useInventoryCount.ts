@@ -37,16 +37,11 @@ export function useInventoryCount() {
     staleTime: 1000 * 60 * 5,
   });
 
-  const totalVariance = useMemo(
-    () => items.reduce((acc, i) => acc + i.variance, 0),
-    [items]
-  );
+  const totalVariance = useMemo(() => items.reduce((acc, i) => acc + i.variance, 0), [items]);
 
   const accuracy = useMemo(() => {
     const total = items.reduce((acc, i) => acc + i.expected, 0);
-    const matched = items
-      .filter((i) => i.variance === 0)
-      .reduce((acc, i) => acc + i.expected, 0);
+    const matched = items.filter((i) => i.variance === 0).reduce((acc, i) => acc + i.expected, 0);
     return total > 0 ? (matched / total) * 100 : 0;
   }, [items]);
 

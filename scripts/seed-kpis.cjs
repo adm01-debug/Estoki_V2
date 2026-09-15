@@ -1,6 +1,8 @@
-require('dotenv').config({ path: '.env' });
-const { createClient } = require('@supabase/supabase-js');
-const sb = createClient(process.env.VITE_SUPABASE_URL, process.env.SERVICE_ROLE_KEY, { auth: { autoRefreshToken: false, persistSession: false } });
+require("dotenv").config({ path: ".env" });
+const { createClient } = require("@supabase/supabase-js");
+const sb = createClient(process.env.VITE_SUPABASE_URL, process.env.SERVICE_ROLE_KEY, {
+  auth: { autoRefreshToken: false, persistSession: false },
+});
 
 async function insert(table, records) {
   if (!records.length) return;
@@ -10,23 +12,72 @@ async function insert(table, records) {
 }
 
 (async () => {
-  await sb.from('metricas_operacionais').delete().gte('data', '1900-01-01');
-  await sb.from('metas_kpi').delete().like('metrica', 'kpi_%');
+  await sb.from("metricas_operacionais").delete().gte("data", "1900-01-01");
+  await sb.from("metas_kpi").delete().like("metrica", "kpi_%");
 
   // Limpa metas_seed (não conflitar se rodado antes)
-  await sb.from('metas_kpi').delete().like('nome', 'META-%');
+  await sb.from("metas_kpi").delete().like("nome", "META-%");
 
   // METAS
   const metas = [
-    { nome: 'META-TaxaAprovacao', descricao: 'Taxa mínima de aprovação de itens triados', tipo: 'percentual', metrica: 'kpi_taxa_aprovacao', valor_meta: 95, unidade: '%' },
-    { nome: 'META-AcuracidadePicking', descricao: 'Acuracidade mínima de picking', tipo: 'percentual', metrica: 'kpi_acuracidade_picking', valor_meta: 99.5, unidade: '%' },
-    { nome: 'META-TempoTriagem', descricao: 'Tempo médio de triagem por item', tipo: 'tempo', metrica: 'kpi_tempo_medio_triagem', valor_meta: 3, unidade: 'min' },
-    { nome: 'META-TaxaOcupacao', descricao: 'Taxa mínima de ocupação do armazém', tipo: 'percentual', metrica: 'kpi_taxa_ocupacao', valor_meta: 80, unidade: '%' },
-    { nome: 'META-ItensTriados', descricao: 'Meta diária de itens triados', tipo: 'quantidade', metrica: 'kpi_itens_triados', valor_meta: 500, unidade: 'un' },
-    { nome: 'META-PedidosSeparados', descricao: 'Meta diária de pedidos separados', tipo: 'quantidade', metrica: 'kpi_pedidos_separados', valor_meta: 80, unidade: 'pedidos' },
-    { nome: 'META-VolumesRecebidos', descricao: 'Meta diária de volumes recebidos', tipo: 'quantidade', metrica: 'kpi_volumes_recebidos', valor_meta: 100, unidade: 'vol' },
+    {
+      nome: "META-TaxaAprovacao",
+      descricao: "Taxa mínima de aprovação de itens triados",
+      tipo: "percentual",
+      metrica: "kpi_taxa_aprovacao",
+      valor_meta: 95,
+      unidade: "%",
+    },
+    {
+      nome: "META-AcuracidadePicking",
+      descricao: "Acuracidade mínima de picking",
+      tipo: "percentual",
+      metrica: "kpi_acuracidade_picking",
+      valor_meta: 99.5,
+      unidade: "%",
+    },
+    {
+      nome: "META-TempoTriagem",
+      descricao: "Tempo médio de triagem por item",
+      tipo: "tempo",
+      metrica: "kpi_tempo_medio_triagem",
+      valor_meta: 3,
+      unidade: "min",
+    },
+    {
+      nome: "META-TaxaOcupacao",
+      descricao: "Taxa mínima de ocupação do armazém",
+      tipo: "percentual",
+      metrica: "kpi_taxa_ocupacao",
+      valor_meta: 80,
+      unidade: "%",
+    },
+    {
+      nome: "META-ItensTriados",
+      descricao: "Meta diária de itens triados",
+      tipo: "quantidade",
+      metrica: "kpi_itens_triados",
+      valor_meta: 500,
+      unidade: "un",
+    },
+    {
+      nome: "META-PedidosSeparados",
+      descricao: "Meta diária de pedidos separados",
+      tipo: "quantidade",
+      metrica: "kpi_pedidos_separados",
+      valor_meta: 80,
+      unidade: "pedidos",
+    },
+    {
+      nome: "META-VolumesRecebidos",
+      descricao: "Meta diária de volumes recebidos",
+      tipo: "quantidade",
+      metrica: "kpi_volumes_recebidos",
+      valor_meta: 100,
+      unidade: "vol",
+    },
   ];
-  await insert('metas_kpi', metas);
+  await insert("metas_kpi", metas);
 
   // MÉTRICAS DIÁRIAS (últimos 30 dias)
   const metrics = [];
@@ -78,7 +129,7 @@ async function insert(table, records) {
       movimentacoes_realizadas: movs,
     });
   }
-  await insert('metricas_operacionais', metrics);
+  await insert("metricas_operacionais", metrics);
 
-  console.log('=== Concluído ===');
+  console.log("=== Concluído ===");
 })();

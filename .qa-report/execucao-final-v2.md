@@ -4,14 +4,14 @@ Data: 2026-07-15
 
 ## Placar Consolidado
 
-| Dimensão | Status | Evidência |
-|---|---|---|
-| TypeScript strict | ✅ 10/10 | `tsgo --noEmit` sem erros |
-| Testes unitários | ✅ 10/10 | 21/21 passando (8 arquivos, 24.95s) |
-| RLS coverage | ✅ 10/10 | 76/76 tabelas com RLS + policy |
-| Dependências | ✅ 10/10 | 0 vulnerabilidades high/critical |
-| Performance DB | ✅ 10/10 | mean_ms ≤ 1ms nas top queries; 17MB, mem 51%, conn 13/60 |
-| Segurança (scanners) | ✅ 10/10 | 4 warnings restantes = falso-positivos já documentados |
+| Dimensão             | Status   | Evidência                                                |
+| -------------------- | -------- | -------------------------------------------------------- |
+| TypeScript strict    | ✅ 10/10 | `tsgo --noEmit` sem erros                                |
+| Testes unitários     | ✅ 10/10 | 21/21 passando (8 arquivos, 24.95s)                      |
+| RLS coverage         | ✅ 10/10 | 76/76 tabelas com RLS + policy                           |
+| Dependências         | ✅ 10/10 | 0 vulnerabilidades high/critical                         |
+| Performance DB       | ✅ 10/10 | mean_ms ≤ 1ms nas top queries; 17MB, mem 51%, conn 13/60 |
+| Segurança (scanners) | ✅ 10/10 | 4 warnings restantes = falso-positivos já documentados   |
 
 ## Fase 1 — Simulação
 

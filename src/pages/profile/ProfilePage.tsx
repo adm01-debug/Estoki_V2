@@ -184,8 +184,7 @@ export default function ProfilePage() {
                         disabled={saving}
                         className="glow-button h-11 gap-2 rounded-xl px-8 text-xs font-black uppercase tracking-wider"
                       >
-                        <Save className="h-4 w-4" />{" "}
-                        {saving ? "Salvando..." : "Salvar Alterações"}
+                        <Save className="h-4 w-4" /> {saving ? "Salvando..." : "Salvar Alterações"}
                       </Button>
                     </div>
                   )}

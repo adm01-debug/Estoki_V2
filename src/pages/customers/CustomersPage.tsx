@@ -25,7 +25,16 @@ export default function CustomersPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Cliente | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ nome: "", cpf_cnpj: "", email: "", telefone: "", endereco: "", cidade: "", estado: "", cep: "" });
+  const [form, setForm] = useState({
+    nome: "",
+    cpf_cnpj: "",
+    email: "",
+    telefone: "",
+    endereco: "",
+    cidade: "",
+    estado: "",
+    cep: "",
+  });
 
   const { data: clientes = [], isLoading } = useQuery({
     queryKey: ["clientes"],
@@ -39,7 +48,10 @@ export default function CustomersPage() {
   const save = useMutation({
     mutationFn: async (payload: typeof form) => {
       if (editing) {
-        const { error } = await supabase.from("clientes").update({ ...payload, ativo: true }).eq("id", editing.id);
+        const { error } = await supabase
+          .from("clientes")
+          .update({ ...payload, ativo: true })
+          .eq("id", editing.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from("clientes").insert(payload);
@@ -51,7 +63,16 @@ export default function CustomersPage() {
       toast.success(editing ? "Cliente atualizado" : "Cliente criado");
       setShowForm(false);
       setEditing(null);
-      setForm({ nome: "", cpf_cnpj: "", email: "", telefone: "", endereco: "", cidade: "", estado: "", cep: "" });
+      setForm({
+        nome: "",
+        cpf_cnpj: "",
+        email: "",
+        telefone: "",
+        endereco: "",
+        cidade: "",
+        estado: "",
+        cep: "",
+      });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -68,11 +89,23 @@ export default function CustomersPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const filtered = clientes.filter(c => c.nome.toLowerCase().includes(search.toLowerCase()) || (c.cpf_cnpj || "").includes(search));
+  const filtered = clientes.filter(
+    (c) =>
+      c.nome.toLowerCase().includes(search.toLowerCase()) || (c.cpf_cnpj || "").includes(search)
+  );
 
   const openEdit = (c: Cliente) => {
     setEditing(c);
-    setForm({ nome: c.nome, cpf_cnpj: c.cpf_cnpj || "", email: c.email || "", telefone: c.telefone || "", endereco: c.endereco || "", cidade: c.cidade || "", estado: c.estado || "", cep: c.cep || "" });
+    setForm({
+      nome: c.nome,
+      cpf_cnpj: c.cpf_cnpj || "",
+      email: c.email || "",
+      telefone: c.telefone || "",
+      endereco: c.endereco || "",
+      cidade: c.cidade || "",
+      estado: c.estado || "",
+      cep: c.cep || "",
+    });
     setShowForm(true);
   };
 
@@ -80,11 +113,20 @@ export default function CustomersPage() {
     <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2"><Users className="h-6 w-6" />Clientes</h1>
+          <h1 className="flex items-center gap-2 text-2xl font-bold">
+            <Users className="h-6 w-6" />
+            Clientes
+          </h1>
           <p className="text-sm text-muted-foreground">Gerencie a base de clientes</p>
         </div>
-        <Button onClick={() => { setEditing(null); setShowForm(true); }}>
-          <Plus className="h-4 w-4 mr-2" />Novo Cliente
+        <Button
+          onClick={() => {
+            setEditing(null);
+            setShowForm(true);
+          }}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Novo Cliente
         </Button>
       </div>
 
@@ -94,17 +136,61 @@ export default function CustomersPage() {
             <CardTitle>{editing ? "Editar" : "Novo"} Cliente</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={(e) => { e.preventDefault(); save.mutate(form); }} className="grid grid-cols-2 gap-3">
-              <Input placeholder="Nome" value={form.nome} onChange={(e) => setForm({ ...form, nome: e.target.value })} required />
-              <Input placeholder="CPF/CNPJ" value={form.cpf_cnpj} onChange={(e) => setForm({ ...form, cpf_cnpj: e.target.value })} />
-              <Input placeholder="Email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
-              <Input placeholder="Telefone" value={form.telefone} onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
-              <Input placeholder="Endereço" value={form.endereco} onChange={(e) => setForm({ ...form, endereco: e.target.value })} className="col-span-2" />
-              <Input placeholder="Cidade" value={form.cidade} onChange={(e) => setForm({ ...form, cidade: e.target.value })} />
-              <Input placeholder="Estado" maxLength={2} value={form.estado} onChange={(e) => setForm({ ...form, estado: e.target.value.toUpperCase() })} />
-              <Input placeholder="CEP" value={form.cep} onChange={(e) => setForm({ ...form, cep: e.target.value })} />
-              <div className="flex gap-2 justify-end col-span-2">
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>Cancelar</Button>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                save.mutate(form);
+              }}
+              className="grid grid-cols-2 gap-3"
+            >
+              <Input
+                placeholder="Nome"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                required
+              />
+              <Input
+                placeholder="CPF/CNPJ"
+                value={form.cpf_cnpj}
+                onChange={(e) => setForm({ ...form, cpf_cnpj: e.target.value })}
+              />
+              <Input
+                placeholder="Email"
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+              <Input
+                placeholder="Telefone"
+                value={form.telefone}
+                onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+              />
+              <Input
+                placeholder="Endereço"
+                value={form.endereco}
+                onChange={(e) => setForm({ ...form, endereco: e.target.value })}
+                className="col-span-2"
+              />
+              <Input
+                placeholder="Cidade"
+                value={form.cidade}
+                onChange={(e) => setForm({ ...form, cidade: e.target.value })}
+              />
+              <Input
+                placeholder="Estado"
+                maxLength={2}
+                value={form.estado}
+                onChange={(e) => setForm({ ...form, estado: e.target.value.toUpperCase() })}
+              />
+              <Input
+                placeholder="CEP"
+                value={form.cep}
+                onChange={(e) => setForm({ ...form, cep: e.target.value })}
+              />
+              <div className="col-span-2 flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
+                  Cancelar
+                </Button>
                 <Button type="submit">{editing ? "Atualizar" : "Criar"}</Button>
               </div>
             </form>
@@ -113,18 +199,23 @@ export default function CustomersPage() {
       )}
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Buscar clientes..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Buscar clientes..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9"
+        />
       </div>
 
       {isLoading ? (
         <p className="text-muted-foreground">Carregando...</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((c) => (
             <Card key={c.id}>
               <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-2">
+                <div className="mb-2 flex items-start justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-primary" />
                     <div>
@@ -133,20 +224,45 @@ export default function CustomersPage() {
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => openEdit(c)}><Pencil className="h-4 w-4" /></Button>
-                    <Button size="icon" variant="ghost" onClick={() => confirm(`Remover "${c.nome}"?`) && remove.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button size="icon" variant="ghost" onClick={() => openEdit(c)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => confirm(`Remover "${c.nome}"?`) && remove.mutate(c.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
                   </div>
                 </div>
-                <div className="text-sm space-y-1 text-muted-foreground">
-                  {c.email && <p className="flex items-center gap-1"><Mail className="h-3 w-3" />{c.email}</p>}
-                  {c.telefone && <p className="flex items-center gap-1"><Phone className="h-3 w-3" />{c.telefone}</p>}
-                  {c.endereco && <p className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.cidade}/{c.estado}</p>}
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  {c.email && (
+                    <p className="flex items-center gap-1">
+                      <Mail className="h-3 w-3" />
+                      {c.email}
+                    </p>
+                  )}
+                  {c.telefone && (
+                    <p className="flex items-center gap-1">
+                      <Phone className="h-3 w-3" />
+                      {c.telefone}
+                    </p>
+                  )}
+                  {c.endereco && (
+                    <p className="flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      {c.cidade}/{c.estado}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
           ))}
           {filtered.length === 0 && (
-            <p className="col-span-full text-center text-muted-foreground py-8">Nenhum cliente encontrado</p>
+            <p className="col-span-full py-8 text-center text-muted-foreground">
+              Nenhum cliente encontrado
+            </p>
           )}
         </div>
       )}

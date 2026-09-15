@@ -40,7 +40,14 @@ const lines = [
 for (const detail of ["rls-audit.md", "size-limit.md", "security.md"]) {
   const p = join(REPORT_DIR, detail);
   if (existsSync(p)) {
-    lines.push("<details><summary>" + detail + "</summary>", "", readFileSync(p, "utf8"), "", "</details>", "");
+    lines.push(
+      "<details><summary>" + detail + "</summary>",
+      "",
+      readFileSync(p, "utf8"),
+      "",
+      "</details>",
+      ""
+    );
   }
 }
 

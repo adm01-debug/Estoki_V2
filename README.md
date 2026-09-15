@@ -13,18 +13,18 @@ observability stack ready for production.
 
 ## ✨ Features
 
-| Domain | Highlights |
-|---|---|
-| Inbound | NF-e XML import, blind receiving, discrepancy alerts |
-| Quality | Timed triage, mandatory photos, ISO 2859-1 sampling |
-| Storage | 120-position rack map, heatmap, slotting suggestions |
-| Picking | Wave management, TSP route optimization (NN + 2-opt) |
-| Shipping | Romaneio, carrier quotes/tracking (Correios v1/v2), POD |
-| Returns | 5-step exchange & return workflow |
-| Analytics | Operational KPIs, ABC analysis, demand forecast (5 models) |
-| Governance | Chain of custody, critical-action audit panel, occurrences |
-| Engagement | XP, achievements, daily challenges, streaks |
-| Platform | PWA + offline queue, i18n (pt-BR/en/es), plugin SDK, multi-tenant foundation |
+| Domain     | Highlights                                                                   |
+| ---------- | ---------------------------------------------------------------------------- |
+| Inbound    | NF-e XML import, blind receiving, discrepancy alerts                         |
+| Quality    | Timed triage, mandatory photos, ISO 2859-1 sampling                          |
+| Storage    | 120-position rack map, heatmap, slotting suggestions                         |
+| Picking    | Wave management, TSP route optimization (NN + 2-opt)                         |
+| Shipping   | Romaneio, carrier quotes/tracking (Correios v1/v2), POD                      |
+| Returns    | 5-step exchange & return workflow                                            |
+| Analytics  | Operational KPIs, ABC analysis, demand forecast (5 models)                   |
+| Governance | Chain of custody, critical-action audit panel, occurrences                   |
+| Engagement | XP, achievements, daily challenges, streaks                                  |
+| Platform   | PWA + offline queue, i18n (pt-BR/en/es), plugin SDK, multi-tenant foundation |
 
 ## 🛠️ Tech Stack
 
@@ -51,20 +51,20 @@ Requirements: **Node.js 20+**, npm 10+, a Supabase project (or Lovable Cloud bac
 
 ## 📋 Scripts
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Dev server (Vite, port 8080) |
-| `npm run build` | Production build (`ANALYZE=true` emits `dist/stats.html`) |
-| `npm run lint` / `lint:fix` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm test` / `test:coverage` | Vitest 3 (v8 coverage) |
-| `npm run test:e2e` | Playwright E2E |
-| `npm run size` | Bundle budgets (size-limit) |
-| `npm run qa:rls` | RLS audit — every public table must have RLS + policy |
-| `npm run audit:zod` | Zod coverage across Edge Functions |
-| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate |
-| `npm run audit:deps` | Dependency advisories (registry-independent auditor) |
-| `npm run qa:all` | Full local quality gate |
+| Command                                 | Purpose                                                   |
+| --------------------------------------- | --------------------------------------------------------- |
+| `npm run dev`                           | Dev server (Vite, port 8080)                              |
+| `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`) |
+| `npm run lint` / `lint:fix`             | ESLint                                                    |
+| `npm run typecheck`                     | `tsc --noEmit`                                            |
+| `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                    |
+| `npm run test:e2e`                      | Playwright E2E                                            |
+| `npm run size`                          | Bundle budgets (size-limit)                               |
+| `npm run qa:rls`                        | RLS audit — every public table must have RLS + policy     |
+| `npm run audit:zod`                     | Zod coverage across Edge Functions                        |
+| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate          |
+| `npm run audit:deps`                    | Dependency advisories (registry-independent auditor)      |
+| `npm run qa:all`                        | Full local quality gate                                   |
 
 ## 🔐 Security
 

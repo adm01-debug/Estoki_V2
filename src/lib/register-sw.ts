@@ -124,7 +124,8 @@ export async function subscribeToPush(
       ) as BufferSource,
     });
 
-    if (import.meta.env.DEV) logger.debug("Push subscription criada", { endpoint: subscription.endpoint });
+    if (import.meta.env.DEV)
+      logger.debug("Push subscription criada", { endpoint: subscription.endpoint });
     return subscription;
   } catch (error) {
     if (import.meta.env.DEV) console.error("[SW] Push subscription failed:", error);

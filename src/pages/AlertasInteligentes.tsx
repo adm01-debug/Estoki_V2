@@ -86,77 +86,85 @@ export default function AlertasInteligentesPage() {
 
   return (
     <>
-      <SEO title="Alertas Inteligentes" path="/alertas" description="Alertas de KPI, SLA, qualidade e ruptura com notificações em tempo real." />
+      <SEO
+        title="Alertas Inteligentes"
+        path="/alertas"
+        description="Alertas de KPI, SLA, qualidade e ruptura com notificações em tempo real."
+      />
       <AppLayout title="Alertas Inteligentes" showBack>
-      <div className="space-y-6 p-4">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 text-2xl font-bold">
-              <Bell className="h-6 w-6 text-primary" />
-              Central de Alertas
-            </h1>
-            <p className="text-muted-foreground">Monitoramento inteligente de KPIs e operações</p>
+        <div className="space-y-6 p-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="flex items-center gap-2 text-2xl font-bold">
+                <Bell className="h-6 w-6 text-primary" />
+                Central de Alertas
+              </h1>
+              <p className="text-muted-foreground">Monitoramento inteligente de KPIs e operações</p>
+            </div>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="alerts-enabled"
+                  checked={alertsEnabled}
+                  onCheckedChange={setAlertsEnabled}
+                />
+                <Label htmlFor="alerts-enabled">Alertas ativos</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                {soundEnabled ? (
+                  <Volume2 className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <VolumeX className="h-4 w-4 text-muted-foreground" />
+                )}
+                <Switch
+                  id="sound-enabled"
+                  checked={soundEnabled}
+                  onCheckedChange={setSoundEnabled}
+                />
+                <Label htmlFor="sound-enabled">Som</Label>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Switch
-                id="alerts-enabled"
-                checked={alertsEnabled}
-                onCheckedChange={setAlertsEnabled}
+
+          <AlertasResumoCards
+            criticosCount={criticalAlerts.length}
+            avisosCount={0}
+            reconhecidosCount={historico.filter((a) => a.status === "reconhecido").length}
+            resolvidosCount={historico.filter((a) => a.status === "resolvido").length}
+            hasCriticalAlerts={hasCriticalAlerts}
+          />
+
+          {historico.length > 0 && <AlertasCharts historico={historico} />}
+
+          <Tabs defaultValue="historico" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="historico">
+                <History className="mr-2 h-4 w-4" />
+                Histórico
+              </TabsTrigger>
+              <TabsTrigger value="config">
+                <Settings className="mr-2 h-4 w-4" />
+                Configurações
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="historico">
+              <AlertasHistoricoTable
+                historico={historico}
+                loading={loadingHistorico}
+                filtroSeveridade={filtroSeveridade}
+                filtroStatus={filtroStatus}
+                onChangeSeveridade={setFiltroSeveridade}
+                onChangeStatus={setFiltroStatus}
+                onReconhecer={handleReconhecer}
+                onResolver={handleResolver}
               />
-              <Label htmlFor="alerts-enabled">Alertas ativos</Label>
-            </div>
-            <div className="flex items-center gap-2">
-              {soundEnabled ? (
-                <Volume2 className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <VolumeX className="h-4 w-4 text-muted-foreground" />
-              )}
-              <Switch id="sound-enabled" checked={soundEnabled} onCheckedChange={setSoundEnabled} />
-              <Label htmlFor="sound-enabled">Som</Label>
-            </div>
-          </div>
+            </TabsContent>
+            <TabsContent value="config">
+              <AlertasConfigTable configAlertas={configAlertas} />
+            </TabsContent>
+          </Tabs>
         </div>
-
-        <AlertasResumoCards
-          criticosCount={criticalAlerts.length}
-          avisosCount={0}
-          reconhecidosCount={historico.filter((a) => a.status === "reconhecido").length}
-          resolvidosCount={historico.filter((a) => a.status === "resolvido").length}
-          hasCriticalAlerts={hasCriticalAlerts}
-        />
-
-        {historico.length > 0 && <AlertasCharts historico={historico} />}
-
-        <Tabs defaultValue="historico" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="historico">
-              <History className="mr-2 h-4 w-4" />
-              Histórico
-            </TabsTrigger>
-            <TabsTrigger value="config">
-              <Settings className="mr-2 h-4 w-4" />
-              Configurações
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="historico">
-            <AlertasHistoricoTable
-              historico={historico}
-              loading={loadingHistorico}
-              filtroSeveridade={filtroSeveridade}
-              filtroStatus={filtroStatus}
-              onChangeSeveridade={setFiltroSeveridade}
-              onChangeStatus={setFiltroStatus}
-              onReconhecer={handleReconhecer}
-              onResolver={handleResolver}
-            />
-          </TabsContent>
-          <TabsContent value="config">
-            <AlertasConfigTable configAlertas={configAlertas} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AppLayout>
+      </AppLayout>
     </>
   );
 }

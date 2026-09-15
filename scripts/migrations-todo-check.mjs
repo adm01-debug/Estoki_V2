@@ -38,7 +38,9 @@ for (const file of readdirSync(DIR)) {
 }
 
 if (violations > 0) {
-  console.error(`\n${violations} marcador(es) acionável(is) em migrations. Resolva ou justifique via allowlist.`);
+  console.error(
+    `\n${violations} marcador(es) acionável(is) em migrations. Resolva ou justifique via allowlist.`
+  );
   process.exit(1);
 }
 

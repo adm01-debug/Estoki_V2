@@ -61,7 +61,7 @@ describe("receivingService", () => {
         quantidade_inicial: 0,
         quantidade_atual: 0,
         status: "aguardando",
-      }),
+      })
     );
   });
 

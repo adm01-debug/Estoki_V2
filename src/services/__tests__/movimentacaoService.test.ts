@@ -72,7 +72,7 @@ describe("movimentacaoService", () => {
         tipo: "armazenamento",
         quantidade: 1,
         operador_id: "u1",
-      } as any),
+      } as any)
     ).rejects.toThrow(/lote/i);
   });
 
@@ -96,7 +96,7 @@ describe("movimentacaoService", () => {
         p_quantidade: 3,
         p_tipo_evento: "armazenamento",
         p_operador_id: "u1",
-      }),
+      })
     );
   });
 
@@ -109,7 +109,7 @@ describe("movimentacaoService", () => {
         quantidade: 1,
         descricao: "x",
         operador_id: "u1",
-      } as any),
+      } as any)
     ).rejects.toThrow("rpc-fail");
   });
 });

@@ -137,10 +137,10 @@ export default function AssistenteIA() {
     try {
       const context = await getContext();
 
-      const { data, error, circuitOpen } = await aiInvoke<{ reply: string }>(
-        "ai-assistant",
-        { message: text, context }
-      );
+      const { data, error, circuitOpen } = await aiInvoke<{ reply: string }>("ai-assistant", {
+        message: text,
+        context,
+      });
 
       if (error || !data) throw error ?? new Error("Sem resposta da IA");
 
@@ -176,7 +176,11 @@ export default function AssistenteIA() {
 
   return (
     <div className="mx-auto max-w-[1200px] p-4 md:p-6">
-      <SEO title="Assistente IA" path="/assistente-ia" description="Assistente inteligente para análise de estoque e operação." />
+      <SEO
+        title="Assistente IA"
+        path="/assistente-ia"
+        description="Assistente inteligente para análise de estoque e operação."
+      />
       <PageHeader title="Assistente IA" description="Análise inteligente do seu estoque com IA" />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">

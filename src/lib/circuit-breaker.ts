@@ -9,7 +9,6 @@
  */
 import { logger } from "@/utils/logger";
 
-
 type CircuitState = "CLOSED" | "OPEN" | "HALF_OPEN";
 
 interface CircuitBreakerOptions {

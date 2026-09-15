@@ -17,8 +17,9 @@ describe("ExportButton — telemetria de erro", () => {
     await user.click(screen.getByRole("button", { name: /exportar/i }));
     await user.click(await screen.findByText(/Exportar CSV/i));
     await waitFor(() => expect(sentry.addBreadcrumb).toHaveBeenCalled());
-    const startCall = (sentry.addBreadcrumb as unknown as { mock: { calls: unknown[][] } })
-      .mock.calls.find((c) => String(c[1]).includes("start"));
+    const startCall = (
+      sentry.addBreadcrumb as unknown as { mock: { calls: unknown[][] } }
+    ).mock.calls.find((c) => String(c[1]).includes("start"));
     expect(startCall?.[0]).toBe("export");
   });
 
@@ -30,9 +31,11 @@ describe("ExportButton — telemetria de erro", () => {
     await user.click(screen.getByRole("button", { name: /exportar/i }));
     await user.click(await screen.findByText(/Exportar PDF/i));
     await waitFor(() => expect(sentry.captureException).toHaveBeenCalled());
-    const [err, ctx] = (sentry.captureException as unknown as {
-      mock: { calls: [unknown, Record<string, unknown>][] };
-    }).mock.calls[0];
+    const [err, ctx] = (
+      sentry.captureException as unknown as {
+        mock: { calls: [unknown, Record<string, unknown>][] };
+      }
+    ).mock.calls[0];
     expect(err).toBe(boom);
     expect(ctx).toMatchObject({ format: "pdf", source: "ExportButton" });
   });
@@ -43,8 +46,6 @@ describe("ExportButton — telemetria de erro", () => {
     render(<ExportButton onExport={onExport} formats={["xlsx"]} />);
     await user.click(screen.getByRole("button", { name: /exportar/i }));
     await user.click(await screen.findByText(/Exportar Excel/i));
-    await waitFor(() =>
-      expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false")
-    );
+    await waitFor(() => expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false"));
   });
 });

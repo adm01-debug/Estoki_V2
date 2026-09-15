@@ -4,17 +4,17 @@ Bateria de diagnósticos rodada **antes** de tocar código, para dimensionar o b
 
 ## Resultados
 
-| Cenário | Ferramenta | Resultado | Ação |
-|---|---|---|---|
-| Type-check completo | `tsc --noEmit` | ✅ 0 erros | P0 #5 já resolvido |
-| Bundle size (7 budgets) | `size-limit` | ✅ todos abaixo do limite (main 192/220 kB, recharts 149/170, motion 39/50, exceljs 254/270, jspdf 131/140, html2canvas 45/55, CSS 25/80) | P0 #5 já resolvido |
-| RLS coverage | `scripts/rls-audit.mjs` | ✅ 76/76 tabelas ativas com RLS + policy | P0 #6 já resolvido |
-| Build Vite + PWA | `npm run build` | ✅ 231 assets precached, sem falha | — |
-| Cobertura de testes | baseline | ⚠️ 8 arquivos com `describe()` em 1222 src | Alimenta item #1 (meta ≥60%) |
-| Edge Functions com Zod | grep | ⚠️ 0/245 | Alimenta item #2 (rollout gradual) |
-| Edge Functions com rate-limit | grep | ⚠️ 4/245 | Alimenta item #3 (`_shared/rate-limit.ts`) |
-| Páginas com `<Helmet>` | grep | ⚠️ 1/107 | Alimenta item #20 |
-| Componentes com ARIA | grep | ⚠️ 32/516 | Alimenta item #21 (axe-core CI) |
+| Cenário                       | Ferramenta              | Resultado                                                                                                                                 | Ação                                       |
+| ----------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Type-check completo           | `tsc --noEmit`          | ✅ 0 erros                                                                                                                                | P0 #5 já resolvido                         |
+| Bundle size (7 budgets)       | `size-limit`            | ✅ todos abaixo do limite (main 192/220 kB, recharts 149/170, motion 39/50, exceljs 254/270, jspdf 131/140, html2canvas 45/55, CSS 25/80) | P0 #5 já resolvido                         |
+| RLS coverage                  | `scripts/rls-audit.mjs` | ✅ 76/76 tabelas ativas com RLS + policy                                                                                                  | P0 #6 já resolvido                         |
+| Build Vite + PWA              | `npm run build`         | ✅ 231 assets precached, sem falha                                                                                                        | —                                          |
+| Cobertura de testes           | baseline                | ⚠️ 8 arquivos com `describe()` em 1222 src                                                                                                | Alimenta item #1 (meta ≥60%)               |
+| Edge Functions com Zod        | grep                    | ⚠️ 0/245                                                                                                                                  | Alimenta item #2 (rollout gradual)         |
+| Edge Functions com rate-limit | grep                    | ⚠️ 4/245                                                                                                                                  | Alimenta item #3 (`_shared/rate-limit.ts`) |
+| Páginas com `<Helmet>`        | grep                    | ⚠️ 1/107                                                                                                                                  | Alimenta item #20                          |
+| Componentes com ARIA          | grep                    | ⚠️ 32/516                                                                                                                                 | Alimenta item #21 (axe-core CI)            |
 
 ## Conclusões
 

@@ -76,7 +76,8 @@ for (const [name, list] of Object.entries(advisories)) {
     if (!affected.length) continue;
     const prodAffected = affected.filter((v) => prodVersions[name]?.has(v));
     if (prodOnly && !prodAffected.length) continue;
-    const allowed = (ALLOWLIST[name] ?? []).includes(a.url) || (ALLOWLIST[name] ?? []).includes("*");
+    const allowed =
+      (ALLOWLIST[name] ?? []).includes(a.url) || (ALLOWLIST[name] ?? []).includes("*");
     rows.push({
       name,
       severity: a.severity,
@@ -92,7 +93,10 @@ for (const [name, list] of Object.entries(advisories)) {
 }
 
 const blocking = rows.filter((r) => r.blocking);
-const counts = ORDER.reduce((acc, s) => ({ ...acc, [s]: rows.filter((r) => r.severity === s).length }), {});
+const counts = ORDER.reduce(
+  (acc, s) => ({ ...acc, [s]: rows.filter((r) => r.severity === s).length }),
+  {}
+);
 
 mkdirSync(REPORT_DIR, { recursive: true });
 const md = [
@@ -105,7 +109,10 @@ const md = [
   "",
 ];
 if (rows.length) {
-  md.push("| Pacote | Sev | Escopo | Instalado | Faixa vulnerável | Achado | Status |", "|---|---|---|---|---|---|---|");
+  md.push(
+    "| Pacote | Sev | Escopo | Instalado | Faixa vulnerável | Achado | Status |",
+    "|---|---|---|---|---|---|---|"
+  );
   for (const r of rows.sort((a, b) => ORDER.indexOf(b.severity) - ORDER.indexOf(a.severity))) {
     md.push(
       `| \`${r.name}\` | ${r.severity} | ${r.scope} | \`${r.affected}\` | \`${r.range}\` | [${r.title.slice(0, 80)}](${r.url}) | ${
@@ -120,7 +127,9 @@ writeFileSync(REPORT_FILE, md.join("\n") + "\n");
 console.log(md.join("\n"));
 
 if (blocking.length) {
-  console.error(`\n[dep-audit] FALHA: ${blocking.length} advisory(ies) >= ${level} sem correção nem allowlist.`);
+  console.error(
+    `\n[dep-audit] FALHA: ${blocking.length} advisory(ies) >= ${level} sem correção nem allowlist.`
+  );
   process.exit(1);
 }
 console.log("\n[dep-audit] OK");

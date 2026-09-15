@@ -13,13 +13,7 @@ import {
 } from "lucide-react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -55,7 +49,7 @@ type ProfileMap = Record<string, { nome: string | null; email: string | null }>;
 function useProfileMap(userIds: (string | null | undefined)[]) {
   const ids = useMemo(
     () => Array.from(new Set(userIds.filter((id): id is string => !!id))),
-    [userIds],
+    [userIds]
   );
   return useQuery({
     queryKey: ["auditoria-critica", "profiles", ids],
@@ -126,9 +120,7 @@ function CriticalActionsTab({ search }: { search: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("audit_log")
-        .select(
-          "id, user_id, action, entity_type, entity_id, entity_label, ip_address, created_at",
-        )
+        .select("id, user_id, action, entity_type, entity_id, entity_label, ip_address, created_at")
         .in("action", Array.from(CRITICAL_ACTIONS))
         .order("created_at", { ascending: false })
         .limit(300);
@@ -193,9 +185,7 @@ function CriticalActionsTab({ search }: { search: string }) {
                   </span>
                 </div>
               </TableCell>
-              <TableCell className="max-w-md truncate text-sm">
-                {r.entity_label ?? "-"}
-              </TableCell>
+              <TableCell className="max-w-md truncate text-sm">{r.entity_label ?? "-"}</TableCell>
             </TableRow>
           ))
         )}
@@ -214,7 +204,7 @@ function StockChangesTab({ search }: { search: string }) {
         supabase
           .from("ajustes_estoque")
           .select(
-            "id, produto_id, lote_id, quantidade_anterior, quantidade_nova, diferenca, motivo, status, operador_id, aprovado_por, created_at",
+            "id, produto_id, lote_id, quantidade_anterior, quantidade_nova, diferenca, motivo, status, operador_id, aprovado_por, created_at"
           )
           .order("created_at", { ascending: false })
           .limit(200),
@@ -262,9 +252,7 @@ function StockChangesTab({ search }: { search: string }) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-          Ajustes de estoque
-        </h3>
+        <h3 className="mb-2 text-sm font-semibold text-muted-foreground">Ajustes de estoque</h3>
         <Table>
           <TableHeader>
             <TableRow>
@@ -288,9 +276,7 @@ function StockChangesTab({ search }: { search: string }) {
             ) : (
               filteredAjustes.map((a) => (
                 <TableRow key={a.id}>
-                  <TableCell className="font-mono text-xs">
-                    {formatDate(a.created_at)}
-                  </TableCell>
+                  <TableCell className="font-mono text-xs">{formatDate(a.created_at)}</TableCell>
                   <TableCell>
                     <UserCell userId={a.operador_id} profiles={profiles} />
                   </TableCell>
@@ -311,16 +297,14 @@ function StockChangesTab({ search }: { search: string }) {
                         a.status === "aprovado"
                           ? "default"
                           : a.status === "rejeitado"
-                          ? "destructive"
-                          : "secondary"
+                            ? "destructive"
+                            : "secondary"
                       }
                     >
                       {a.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-w-xs truncate text-sm">
-                    {a.motivo ?? "-"}
-                  </TableCell>
+                  <TableCell className="max-w-xs truncate text-sm">{a.motivo ?? "-"}</TableCell>
                 </TableRow>
               ))
             )}
@@ -354,9 +338,7 @@ function StockChangesTab({ search }: { search: string }) {
             ) : (
               filteredMovs.map((m) => (
                 <TableRow key={m.id}>
-                  <TableCell className="font-mono text-xs">
-                    {formatDate(m.created_at)}
-                  </TableCell>
+                  <TableCell className="font-mono text-xs">{formatDate(m.created_at)}</TableCell>
                   <TableCell>
                     <UserCell userId={m.user_id} profiles={profiles} />
                   </TableCell>
@@ -450,9 +432,7 @@ function XpEventsTab({ search }: { search: string }) {
                 {(r.quantidade ?? 0) > 0 ? "+" : ""}
                 {r.quantidade ?? 0}
               </TableCell>
-              <TableCell className="max-w-md truncate text-sm">
-                {r.descricao ?? "-"}
-              </TableCell>
+              <TableCell className="max-w-md truncate text-sm">{r.descricao ?? "-"}</TableCell>
             </TableRow>
           ))
         )}
@@ -476,8 +456,8 @@ export default function AuditoriaCriticaPage() {
                 Painel de Auditoria Crítica
               </CardTitle>
               <CardDescription>
-                Acompanhe ações sensíveis (RPCs SECURITY DEFINER), mudanças de estoque e
-                eventos de XP — com autor e horário.
+                Acompanhe ações sensíveis (RPCs SECURITY DEFINER), mudanças de estoque e eventos de
+                XP — com autor e horário.
               </CardDescription>
             </CardHeader>
             <CardContent>
