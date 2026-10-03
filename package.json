@@ -139,7 +139,7 @@
     "recharts": "^2.15.4",
     "serialize-javascript": "^7.0.7",
     "sonner": "^2.0.8",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
     "vite-plugin-pwa": "0.19.8",
