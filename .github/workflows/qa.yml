@@ -44,7 +44,7 @@ jobs:
 
       - name: Publicar cobertura
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: .qa-report/coverage/
@@ -118,7 +118,7 @@ jobs:
 
       - name: Publicar análise de bundle
         if: always() && hashFiles('dist/stats.html') != ''
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: bundle-analysis
           path: dist/stats.html
@@ -126,7 +126,7 @@ jobs:
 
       - name: Publicar QA report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: qa-report
           path: .qa-report/
