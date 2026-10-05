@@ -148,7 +148,7 @@
     "workbox-routing": "^7.0.0",
     "workbox-window": "^7.0.0",
     "yup": "^1.7.1",
-    "zod": "^3.25.76",
+    "zod": "^4.6.5",
     "zustand": "^5.0.15"
   },
   "devDependencies": {
