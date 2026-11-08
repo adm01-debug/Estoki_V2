@@ -24,6 +24,14 @@ jobs:
           node-version: "20"
           cache: "npm"
 
+      # Nao depende de node_modules: roda antes do install e sobrevive a quebra do `npm ci`.
+      - name: Integridade das instruções para agentes
+        id: agents_md
+        run: |
+          git fetch --no-tags --depth=1 origin main
+          AGENTS_MD_BASE=FETCH_HEAD node scripts/check-agents-integrity.mjs
+        continue-on-error: true
+
       - name: Install
         run: npm ci
 
@@ -170,4 +178,5 @@ jobs:
           [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
           [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
           [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
+          [ "${{ steps.agents_md.outcome }}" = "success" ] || fail "integridade das instruções para agentes"
           echo "✅ Quality gate aprovado"
