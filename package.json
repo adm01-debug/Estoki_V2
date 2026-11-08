@@ -43,7 +43,16 @@
     "release": "semantic-release",
     "i18n:hardcoded": "node scripts/i18n-hardcoded-check.mjs",
     "audit:deps": "node scripts/dep-audit.mjs --level=high",
-    "audit:deps:prod": "node scripts/dep-audit.mjs --level=moderate --prod"
+    "audit:deps:prod": "node scripts/dep-audit.mjs --level=moderate --prod",
+    "contexto:ia": "node scripts/ai-context/gerar.mjs --out docs/contexto/codigo",
+    "contexto:ia:test": "node --test scripts/ai-context/gerar.unit.mjs",
+    "contexto:regras": "python3 scripts/regras_negocio/generate.py --repo . --out docs/contexto/regras --profile regras --schema-snapshot docs/contexto/supabase --index-path docs/contexto/00-INDEX.md --no-pointer",
+    "contexto:banco": "python3 scripts/supabase_snapshot/snapshot.py",
+    "inventario:rotas": "node scripts/inventario/gerar-rotas.mjs",
+    "inventario:rotas:check": "node scripts/inventario/gerar-rotas.mjs --check",
+    "inventario:edges": "node scripts/inventario/gerar-repo.mjs < /dev/null",
+    "inventario:banco": "node scripts/inventario/gerar-banco.mjs",
+    "inventario:mudou": "node scripts/inventario/mudou-conteudo.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.2",
