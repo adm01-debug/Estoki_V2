@@ -44,8 +44,13 @@ rodar SQL.** Nenhum dos abaixo é o Estoki:
   produção (erro `42P01`) e que as 163 migrations não têm registro de aplicação. **NÃO VERIFICADO nesta
   sessão** (a sessão não tem MCP do Estoki carregado para conferir no banco) — confirme com um `SELECT`
   antes de concluir qualquer coisa a partir disso.
-- Há pares de nome semanticamente duplicados no começo da série: `20240115000001_notifications.sql` ×
-  `20240115_notifications.sql`; `20240115000002_audit_logs.sql` × `20240116_audit_logs.sql`.
+- Há **5 pares** que criam a mesma tabela em arquivos diferentes, e não só no começo da série:
+  `20240115000001_notifications` × `20240115_notifications`; `20240115000002_audit_logs` ×
+  `20240116_audit_logs`; `20240115000003_inventory_counts` × `20240117_inventory_count`;
+  `20241231000000_saved_filters` × `20251231000001_create_saved_filters_table`;
+  `20241231000001_entity_versions` × `20251231000002_create_entity_versions_table`. Todos usam
+  `IF NOT EXISTS`, então o segundo é no-op se o primeiro rodou — e o schema efetivo depende da ordem.
+  A causa é a série misturar `AAAAMMDDHHMMSS` (14 dígitos) com `AAAAMMDD` (8): **use sempre 14 dígitos**.
 
 ## Regras de migration
 
@@ -60,7 +65,9 @@ rodar SQL.** Nenhum dos abaixo é o Estoki:
    e portanto ponto único de erro: registre o que aplicou na PR.
 4. **Antes de criar arquivo de migration:** confira o maior timestamp (`ls supabase/migrations | tail`) e
    se há PR aberta tocando `supabase/migrations/`. Sessões paralelas usam o mesmo repo e o mesmo banco.
-5. Migrations são **append-only**: `scripts/migrations-todo-check.mjs` falha se um `.sql` contiver
+5. Migrations são **append-only** — regra que existe só como comentário em
+   `scripts/migrations-todo-check.mjs:5`; **nenhum guard impede editar um `.sql` já aplicado**. O que o
+   script faz é falhar se um `.sql` contiver
    `TODO|FIXME|XXX|HACK|PENDING` (allowlist de 2 arquivos em `scripts/migrations-todo-check.mjs:19-22`).
 6. `npm run db:migrate` é `supabase db push` **sem `--local`** (`package.json:39`) → mira o projeto
    linkado, isto é, produção. `npm run db:reset` (`package.json:41`) é destrutivo no alvo linkado.
@@ -75,9 +82,20 @@ rodar SQL.** Nenhum dos abaixo é o Estoki:
 | `scripts/audit-zod.mjs`             | Cobertura de validação Zod nas edge functions; escreve `.qa-report/zod-coverage.md`                                                                                  | **nunca** (exit 0 sempre)                                                                                                          |
 | `scripts/migrations-todo-check.mjs` | Marcador pendente em migration                                                                                                                                       | exit 1 por violação, mas **não está na lista de gates** do `qa.yml` → na prática não barra a PR                                    |
 
-**Limite de evidência do `rls-audit`:** ele valida o texto das migrations, não o estado do banco. Com as
-migrations sem registro de aplicação (acima), o gate pode ficar verde com o banco divergente. Para
-afirmar que uma tabela tem RLS em produção, consulte `pg_policies`/`pg_class` pelo MCP — não o relatório.
+**Limites de evidência do `rls-audit` — três, e todos deixam passar:**
+
+1. **Ele lê texto de migration, não banco.** Com as migrations sem registro de aplicação (acima), o gate
+   fica verde com o banco divergente. Para afirmar que uma tabela tem RLS em produção, consulte
+   `pg_policies`/`pg_class` pelo MCP — não o relatório.
+2. **Os 4 regexes exigem o prefixo `public.`** (`rls-audit.mjs:33-37`). Tabela criada como
+   `CREATE TABLE <nome>` sem schema é **invisível ao gate**: não é contada nem checada. Hoje são 10
+   (`notifications`, `audit_logs`, `audit_log`, `inventory_counts`, `inventory_count_items`,
+   `stock_reservations`, `import_logs`, `saved_filters`, `entity_versions`, `feature_flags`) — todas com
+   RLS nas suas migrations, então não há exposição ativa; mas uma migration nova sem `public.` e sem RLS
+   **passa verde**. Escreva sempre `public.<tabela>`.
+3. **Os relatórios commitados em `.qa-report/` estão velhos.** Rodando os scripts agora: `rls-audit` dá
+   85 tabelas ativas (o `.qa-report/rls-audit.md` versionado diz 76) e `audit-zod` dá 248/209/209 (o
+   arquivo diz 244/212/212). Rode, não leia o arquivo.
 
 ## Armadilhas (verificadas no código)
 
@@ -89,10 +107,25 @@ afirmar que uma tabela tem RLS em produção, consulte `pg_policies`/`pg_class` 
 2. **Os 23 scripts `seed-*.cjs` / `probe-*.cjs` apontam para produção.** Todos usam
    `createClient(process.env.VITE_SUPABASE_URL, ...)` — a mesma URL do front — e 22 deles usam
    `SERVICE_ROLE_KEY`, que **bypassa RLS**. Não existe variável separada de dev/staging nem nenhum check
-   de ambiente. `scripts/seed-db.cjs:16-17` imprime "não execute em produção", mas o alvo efetivo é a
+   de ambiente. `scripts/seed-db.cjs:15-16` imprime "não execute em produção", mas o alvo efetivo é a
    produção. Antes de rodar qualquer `seed-*`/`probe-*`: confirme com o dono.
 3. **SQL solto fora de `supabase/migrations/`** (não é alcançado por `db push` nem pelo `rls-audit`):
-   `scripts/create_cadastros_tables.sql` (duplica a migration `20260520120000_create_cadastros_tables.sql`),
+   `scripts/create_cadastros_tables.sql` (cria as **mesmas 4 tabelas** da migration
+   `20260520120000_create_cadastros_tables.sql` — `categorias`, `armazens`, `clientes`,
+   `serial_numbers` — mas **sem `ENABLE ROW LEVEL SECURITY`, sem as 16 policies e sem os 4 triggers de
+   `updated_at`**; aplicá-lo no lugar da migration deixa 4 tabelas abertas),
    `scripts/create_cadastros_rls.sql` (aplicado pelo `apply_rls_helper.cjs`), `scripts/rls-fix-users.sql`
    (policies `USING (true)` para `authenticated`) e `scripts/rls-fix-profile-update.sql`. Nenhum deles é
    fonte de verdade; não os trate como migration.
+4. **`supabase/seed.sql` existe** (6.677 B, 10 `INSERT INTO`, cabeçalho "popula o banco com dados
+   iniciais para produção") e é o que `npm run db:seed` e `supabase db reset` executam contra o **alvo
+   linkado**. Ele insere em `categories`, `units_of_measure` e afins — tabelas que `ESTADO_ATUAL.md:82-88`
+   lista como nunca declaradas em migration, então provavelmente falha. Não rode.
+
+## O que estes docs não respondem (saiba antes de prometer)
+
+- **Qual é o caminho sancionado para aplicar uma migration.** O fluxo é `arquivo → PR → merge → deploy do
+código → apply`, mas nenhum workflow aplica DDL e `db:migrate` está proibido. O último passo depende do
+  dono definir o meio (MCP, painel ou `db push` com `--db-url` próprio). Não improvise.
+- **Como regenerar `src/integrations/supabase/types.ts` sem stack local.** `db:generate` usa `--local`
+  (`package.json:38`). Sem instrução alternativa, mudar schema deixa os 142 KB de tipos desalinhados.

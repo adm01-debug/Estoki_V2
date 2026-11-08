@@ -86,7 +86,8 @@ corrija no mesmo PR do fix. **Responda sempre em PT-BR** — resposta, código, 
   PRODUTOS") nem `tnnnlkbymytvtqngbbqh` ("ZAPP WEB V2") — vários MCP de Supabase podem estar na mesma
   sessão; confira qual respondeu antes de rodar SQL.
 - Diagnóstico = produção só leitura; teste de banco = Postgres descartável. **Nunca** `npm run db:migrate`
-  nem `db:reset` para "testar": miram o projeto linkado (produção) e o segundo é destrutivo.
+  nem `db:reset` para "testar": miram o projeto linkado (produção) e o segundo é destrutivo. `db:seed`
+  roda `supabase/seed.sql` (10 `INSERT`, cabeçalho diz "para produção") contra o mesmo alvo.
 - DDL = arquivo em `supabase/migrations/` (163 hoje, **sem ledger neste repo**), ordem arquivo → PR →
   merge → deploy do código → apply. Nenhum workflow aplica DDL: é manual, registre na PR.
 - Todo `CREATE TABLE` em `public` leva, na mesma migration, `GRANT` → `ENABLE ROW LEVEL SECURITY` →
@@ -98,12 +99,12 @@ corrija no mesmo PR do fix. **Responda sempre em PT-BR** — resposta, código, 
 
 ## Serviços
 
-- **Edge Functions** — ler `docs/agentes/edge-functions.md` ao criar ou alterar função. 249 funções +
-  `_shared/`; só `migrate-helper` tem `verify_jwt = false`; 201/248 usam `service_role` e só 35/248 checam
-  `Authorization`. Sempre CORS + Zod (400) + `try/catch` + `withLogging()`. Deploy é manual.
+- **Edge Functions** — ler `docs/agentes/edge-functions.md` ao criar ou alterar função. **248 funções**
+  com `index.ts` (+ `_shared/` e `tests/`, que não são funções); só `migrate-helper` tem
+  `verify_jwt = false`; 201/248 usam `service_role` e só 21/248 leem o header `Authorization` de entrada. Sempre CORS + Zod (400) + `try/catch` + `withLogging()`. Deploy é manual.
 - **Deploy** — ler `docs/agentes/deploy.md` antes de dizer "deploy confirmado". O CI aponta para Lovable
-  (`estoki.lovable.app`), o repo aponta para a Vercel (projeto `estoki-v2`, team `juca1`, último deploy
-  `ERROR`, `live: false`): qual é a produção viva é **NÃO VERIFICADO** e a escolha é do dono.
+  (`estoki.lovable.app`), o repo aponta para a Vercel (projeto `estoki-v2`, team `juca1`, `live: false`,
+  últimos deploys `BLOCKED`): qual é a produção viva é **NÃO VERIFICADO** e a escolha é do dono.
 - **Observabilidade** — Sentry só com `PROD` + `VITE_SENTRY_DSN`, PII removida em `src/lib/sentry.ts`;
   `/functions/v1/metrics` exige `Bearer METRICS_TOKEN` ou JWT `admin`; painel `/admin/saude-backend`.
 - **GitHub/CI** — ler `docs/agentes/github-ci.md` ao mexer em workflow ou settings do repo.
@@ -123,11 +124,13 @@ corrija no mesmo PR do fix. **Responda sempre em PT-BR** — resposta, código, 
 - Convenção de código e de commit: skill `estoki-v2` (`.claude/skills/estoki-v2/SKILL.md`) — token
   semântico obrigatório, componente ≤ 150 linhas, sem `any`, texto em `t()`, `.limit(500)`.
 - **Não ampliar `manualChunks`** em `vite.config.ts`: separar mais já causou o crash de produção
-  `Cannot read properties of undefined (reading 'forwardRef')` (`vite.config.ts:188-201`).
+  `Cannot read properties of undefined (reading 'forwardRef')` (`vite.config.ts:189-194`).
 
 ## Qualidade e guardas
 
-- Barram a PR (`qa.yml:165-172`): `lint`, `typecheck`, testes unitários, `build`, `rls-audit`, `dep-audit`.
+- Barram a PR (`qa.yml:167-172` na `main`): `lint`, `typecheck`, testes unitários, `build`, `rls-audit`,
+  `dep-audit` — e `check-agents-integrity` quando a PR que liga o guard no CI entrar (aí são 7, em
+  `qa.yml:177-183`).
   Rodam e **não** barram: `size-limit`, cobertura Zod, `i18n:check`, `i18n:hardcoded`,
   `migrations-todo-check`, E2E smoke, `npm audit`.
 - `scripts/rls-audit.mjs` é **estático** (lê `supabase/migrations/*.sql`, não o banco) e falha só com
@@ -140,9 +143,11 @@ corrija no mesmo PR do fix. **Responda sempre em PT-BR** — resposta, código, 
 - Cobertura mede só `src/services/**`, `src/features/**/services/**`, `src/lib/**`
   (`vitest.config.ts:20`), thresholds `12/55/25/12`: `components/`, `pages/` e `hooks/` ficam fora —
   cobertura verde não cobre a UI.
-- **`npm ci` está quebrado:** as 3 últimas execuções do `ci.yml` falharam no step `Install dependencies` e
-  `npm ci --dry-run` aborta localmente. Convivem `package-lock.json`, `bun.lock` e `bun.lockb` sem
+- **`npm ci` está quebrado:** as execuções recentes do `ci.yml` falham no step `Install dependencies` e
+  `npm ci --dry-run` aborta localmente em `#loadPeerSet` (peer do `vitest@5.0.3`; lockfile **não** está
+  dessincronizado). Convivem `package-lock.json`, `bun.lock` e `bun.lockb` sem
   `packageManager` declarado — corrigir exige escolher um gerenciador (decisão do dono).
 - `node scripts/check-agents-integrity.mjs` vigia estas instruções: exige os cabeçalhos deste arquivo e
-  barra o conjunto `AGENTS.md` + `CLAUDE.md` + `docs/agentes/*.md` encolher (proteção contra wipe por
-  sessão paralela). Rode ao mexer em qualquer um deles.
+  barra o conjunto vigiado (`AGENTS.md`, `CLAUDE.md`, `docs/agentes/*.md` e os dois `SKILL.md`) encolher
+  mais de **30%** em bytes, ou qualquer arquivo dele encolher mais de **50%**, contra a base — proteção
+  contra wipe por sessão paralela. Rode ao mexer em qualquer um deles.
