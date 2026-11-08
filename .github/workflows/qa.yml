@@ -24,7 +24,9 @@ jobs:
           node-version: "20"
           cache: "npm"
 
-      # Nao depende de node_modules: roda antes do install e sobrevive a quebra do `npm ci`.
+      # Nao depende de node_modules: roda antes do install e sobrevive a quebra do `npm ci`. Por isso
+      # tambem e a PRIMEIRA linha do gate final: o `Install` nao tem continue-on-error, entao quando o
+      # `npm ci` quebra os demais steps ficam `skipped` e o primeiro `fail` do bloco dispara.
       - name: Integridade das instruções para agentes
         id: agents_md
         run: |
@@ -172,11 +174,11 @@ jobs:
         run: |
           set -e
           fail() { echo "❌ $1 falhou"; exit 1; }
+          [ "${{ steps.agents_md.outcome }}" = "success" ] || fail "integridade das instruções para agentes"
           [ "${{ steps.lint.outcome }}"      = "success" ] || fail "lint"
           [ "${{ steps.typecheck.outcome }}" = "success" ] || fail "typecheck"
           [ "${{ steps.test.outcome }}"      = "success" ] || fail "unit tests"
           [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
           [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
           [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
-          [ "${{ steps.agents_md.outcome }}" = "success" ] || fail "integridade das instruções para agentes"
           echo "✅ Quality gate aprovado"
