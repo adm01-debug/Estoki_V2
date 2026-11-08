@@ -7,7 +7,8 @@ linkado no README, mas é onde os valores estão escritos) — confirmado por am
 ## Fluxo macro
 
 recebimento (NF-e XML, conferência cega, alerta de divergência) → triagem/qualidade (cronometrada, foto
-obrigatória, amostragem **ISO 2859-1**) → armazenagem/putaway (mapa de **120 posições**, heatmap,
+obrigatória, amostragem **ISO 2859-1**) → armazenagem/putaway (mapa de 120 posições — **NÃO VERIFICADO**,
+afirmação só de `README_PT.md:20`, sem respaldo em migration nem em código —, heatmap,
 sugestão de endereçamento) → picking (ondas, rota TSP `nearestNeighbor` + `twoOpt`) → expedição (romaneio,
 cotação/rastreio Correios, comprovante) → trocas/devoluções em **5 etapas**.
 
@@ -21,20 +22,24 @@ cotação/rastreio Correios, comprovante) → trocas/devoluções em **5 etapas*
 | Tarefa (tipo)       | `separacao \| armazenagem \| transferencia \| inventario \| expedicao`                                                      | `:1025-1033`                                 |
 | Onda de picking     | `pendente \| em_andamento \| concluida \| cancelada`                                                                        | `:391-398`                                   |
 | Romaneio            | `rascunho \| confirmado \| em_transito \| entregue \| parcial`                                                              | `:424-432`                                   |
-| Entrega             | `pendente \| em_rota \| entregue \| recusado \| parcial \| reagendado`                                                      | `:435-443`                                   |
+| Entrega             | `pendente \| em_rota \| entregue \| recusado \| parcial \| reagendado`                                                      | `:435-444`                                   |
 | Inventário cíclico  | ciclo `agendado \| em_andamento \| concluido \| cancelado`; contagem `pendente \| em_andamento \| concluido \| divergencia` | `:482-498`                                   |
-| Troca/devolução     | `aberto \| em_analise \| aprovado \| recusado \| em_transito \| recebido \| finalizado`                                     | `:702-710`                                   |
+| Troca/devolução     | `aberto \| em_analise \| aprovado \| recusado \| em_transito \| recebido \| finalizado`                                     | `:702-712`                                   |
 | Posição             | tipo `porta_palete \| box`; status `livre \| ocupado \| reservado \| bloqueado`                                             | `:1009-1023`                                 |
 
 Eventos de triagem usados no código: `triagem_pendente`, `triagem_inicio`, `triagem_fim`,
-`triagem_conferencia`, `triagem_concluida`. Funções: `triage-start`, `triage-complete`,
-`quality-inspection`, `quality-control`.
+`triagem_conferencia`, `triagem_concluida` — mas atenção: eles **não** são um enum do fluxo de triagem;
+`triagem_pendente` é tipo de **notificação** (`src/types/notifications.ts`) e `triagem_concluida` é evento
+de **gamificação** (`src/types/gamificacao.ts:19`). Edge functions existentes nesse domínio:
+`quality-inspection` e `alert-quality`. **Não existem** `triage-start`, `triage-complete` nem
+`quality-control`.
 
 ## Rastreabilidade (cadeia de custódia)
 
 `recebimento_nf → conferencia → triagem_inicio → triagem_fim → armazenamento → reserva → separacao →
 conferencia_expedicao → carregamento → saida_transporte → entrega`, mais `devolucao`
-(`:1035-1048`). Quem inserir etapa nova no fluxo tem que inserir o elo aqui também, senão a tela de
+(`:1035-1050`; o enum ainda tem `ajuste_estoque` na `:1051`, fora da cadeia linear). Quem inserir etapa
+nova no fluxo tem que inserir o elo aqui também, senão a tela de
 rastreabilidade mostra buraco.
 
 ## Regras numéricas
@@ -72,7 +77,11 @@ pendente** — ou seja, **hoje não presuma isolamento por tenant** ao escrever 
    tabelas pressupostas pelo backend que nunca foram declaradas em migration (`users`, `suppliers`,
    `sales_orders`, `shipments`, `pick_lists`, `stock_balances`…); o banco real tem `profiles`, `orders`,
    `fornecedor_scores`. Tabelas referenciadas por `src/` que não existem: `backups`, `entity_versions`,
-   `feature_flags`, `produtos_estoque`, `triagem` (`docs/estado/EVIDENCIAS.md:245`).
+   `feature_flags`, `produtos_estoque`, `triagem` (`docs/estado/EVIDENCIAS.md:245`). **Esse número de 5
+   não resiste à conferência:** `entity_versions` e `feature_flags` **têm** migration
+   (`20241231000001_entity_versions.sql`, `20251231000002_create_entity_versions_table.sql`,
+   `20251230000002_create_feature_flags_table.sql`) e `backups` é **bucket de Storage**, não tabela
+   (`src/services/backupService.ts:5`). Confirme no banco antes de repetir a lista.
 3. **Duas arquiteturas de página vivas** (`src/pages/` e `src/features/`): antes de editar uma tela,
    confirme qual arquivo a rota carrega. Exemplo verificado: `src/pages/DashboardTempoReal.tsx` está
    **morto** — a rota usa `@/features/analytics/pages/RealtimeDashboardPage`

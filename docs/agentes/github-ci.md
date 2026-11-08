@@ -21,21 +21,21 @@ de forma estranha.
 
 ## Perímetro do GitHub — estado canônico (verificado nesta sessão via API)
 
-| Campo                       | Estado real                                                                                                                                   | Observação                                                                                               |
-| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Visibilidade                | `private`                                                                                                                                     | —                                                                                                        |
-| Branch protection em `main` | **nenhuma** (`GET /branches/main/protection` → 404 "Branch not protected")                                                                    | não há required check, nem `enforce_admins`, nem histórico linear                                        |
-| Rulesets                    | **nenhum** (`GET /rulesets` → `[]`)                                                                                                           | —                                                                                                        |
-| Merge                       | `allow_squash_merge=true` · `allow_merge_commit=true` · `allow_rebase_merge=true` · `allow_auto_merge=false` · `delete_branch_on_merge=false` | merge commit e rebase estão **abertos**; a regra de squash-only é do dono, não do repo                   |
-| Squash                      | `squash_merge_commit_title=COMMIT_OR_PR_TITLE` · `squash_merge_commit_message=COMMIT_MESSAGES`                                                | diferente do Zapp (que usa PR_TITLE/PR_BODY)                                                             |
-| Environments                | **4**: `copilot` · `Preview` · `Production` · `staging`                                                                                       | **nenhum tem protection rule** (`protection_rules: []`), nem revisor obrigatório, nem política de branch |
-| PRs abertas                 | **10**, todas do `dependabot`, todas tocando só `package.json` + `package-lock.json`                                                          | nenhuma toca `src/`, `supabase/` ou docs                                                                 |
-| Issues abertas              | **0** (o `open_issues_count=10` do repo conta as PRs)                                                                                         | —                                                                                                        |
+| Campo                       | Estado real                                                                                                                                    | Observação                                                                                               |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Visibilidade                | `private`                                                                                                                                      | —                                                                                                        |
+| Branch protection em `main` | **nenhuma** (`GET /branches/main/protection` → 404 "Branch not protected")                                                                     | não há required check, nem `enforce_admins`, nem histórico linear                                        |
+| Rulesets                    | **nenhum** (`GET /rulesets` → `[]`)                                                                                                            | —                                                                                                        |
+| Merge                       | `allow_squash_merge=true` · `allow_merge_commit=true` · `allow_rebase_merge=true` · `allow_auto_merge=false` · `delete_branch_on_merge=false`  | merge commit e rebase estão **abertos**; a regra de squash-only é do dono, não do repo                   |
+| Squash                      | `squash_merge_commit_title=COMMIT_OR_PR_TITLE` · `squash_merge_commit_message=COMMIT_MESSAGES`                                                 | diferente do Zapp (que usa PR_TITLE/PR_BODY)                                                             |
+| Environments                | **4**: `copilot` · `Preview` · `Production` · `staging`                                                                                        | **nenhum tem protection rule** (`protection_rules: []`), nem revisor obrigatório, nem política de branch |
+| PRs abertas                 | **12**: 10 do `dependabot` (#50-#59, só `package.json` + `package-lock.json`) + #60 e #61, de agente (instruções e `.github/workflows/qa.yml`) | o limite de 10 do dependabot está saturado                                                               |
+| Issues abertas              | **0** (o `open_issues_count=12` do repo conta as PRs)                                                                                          | —                                                                                                        |
 
 **Consequência prática:** nada no GitHub impede um push direto em `main` nem um merge com CI vermelha.
 A disciplina é inteiramente das regras do `AGENTS.md`. Não trate "o merge passou" como "o CI aprovou".
 
-## Workflows — 3 arquivos
+## Workflows — 3 arquivos (a API lista 5)
 
 | Arquivo                                | Gatilho                                | O que faz                                                                                                                                                                                                                                                                                      |
 | -------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -45,10 +45,22 @@ A disciplina é inteiramente das regras do `AGENTS.md`. Não trate "o merge pass
 
 ### Quais checks realmente barram a PR
 
-`qa.yml` tem um passo final ("Falhar se qualquer verificação crítica quebrou", `qa.yml:165-172`) que
+Além dos 3 arquivos em `.github/workflows/`, a API lista mais 2 workflows ativos e dinâmicos —
+`Dependabot Updates` e `Copilot` (`dynamic/agents/copilot-pull-request-reviewer`) — que produzem check em
+PR. Somados aos 2 status da Vercel, "CI vermelha" na PR pode ser qualquer um deles: leia o nome do check
+antes de culpar o seu diff.
+
+`qa.yml` tem um passo final ("Falhar se qualquer verificação crítica quebrou", `qa.yml:162-173` na `main`,
+com os checks em `:167-172`) que
 reavalia os outcomes. **Bloqueiam:** `lint`, `typecheck`, testes unitários, `build`, `rls-audit`,
 `dep-audit`. **São informativos** (rodam, relatam, não barram): `size-limit`, cobertura Zod, `i18n:check`,
 `i18n:hardcoded`, `migrations-todo-check`, E2E smoke, `npm audit`.
+
+Com a PR que liga o guard de instruções no CI, passam a ser **7** bloqueantes (+ `check-agents-integrity`)
+e o passo vai para `qa.yml:172-184`, com os checks em `:177-183`. Esse guard é a **primeira** linha do
+bloco de propósito: o step `Install` não tem `continue-on-error`, então quando o `npm ci` quebra todos os
+outros ficam `skipped` e o primeiro `fail` do bloco é o único que dispara — se o guard estivesse no fim,
+nunca seria avaliado.
 
 Note a pegadinha: `scripts/migrations-todo-check.mjs` faz `process.exit(1)` por violação, mas **não está
 na lista de gates** — então na prática não barra nada.
@@ -60,8 +72,11 @@ na lista de gates** — então na prática não barra nada.
   **`Install dependencies`** — ex.: https://github.com/adm01-debug/Estoki_V2/actions/runs/37379691205.
   Reproduzido localmente nesta sessão com Node 22.23.4 / npm 10.9.9: `npm ci --dry-run` aborta com
   `npm error Cannot read properties of null (reading 'edgesOut')`. `ESTADO_ATUAL.md` registra o sintoma
-  como `EUSAGE: package.json and package-lock.json are not in sync`. **A causa raiz não foi confirmada
-  nesta sessão** — antes de qualquer patch, rode `npm ci` e leia o erro atual.
+  como `EUSAGE: package.json and package-lock.json are not in sync` — **esse sintoma não reproduz mais**.
+  A hipótese "lockfile dessincronizado" está **descartada por medição**: o lock tem 1.999 pacotes, nenhum
+  sem `resolved`/`version`, e as 146 dependências do `package.json` estão todas lá. O npm aborta em
+  `#loadPeerSet` com o timer `idealTree:node_modules/vitest` aberto — é **resolução de peer do
+  `vitest@5.0.3`**. Antes de qualquer patch, rode `npm ci` e leia o erro atual.
 - **Convivem três lockfiles:** `package-lock.json` (1,0 MB), `bun.lock` (592 KB) e `bun.lockb` (199 KB).
   O CI usa `npm ci` com `cache: npm` e Node **20**; o `package.json` não declara `packageManager`.
   Manter os três sincronizados não é possível na prática — qualquer correção de dependência precisa
