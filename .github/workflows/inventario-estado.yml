@@ -62,7 +62,7 @@ jobs:
       - name: Abrir PR com o inventario novo
         id: pr
         if: steps.mudou.outputs.mudou == 'true'
-        uses: peter-evans/create-pull-request@v8.1.1
+        uses: peter-evans/create-pull-request@v8.1.2
         with:
           base: main
           branch: automation/inventario-estado
