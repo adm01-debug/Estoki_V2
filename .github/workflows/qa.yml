@@ -24,6 +24,13 @@ jobs:
           node-version: "20"
           cache: "npm"
 
+      # Pin explícito: o npm que acompanha o node-version acima tem um bug conhecido do
+      # arborist (TypeError: Cannot read properties of null (reading 'edgesOut')) ao
+      # resolver o grafo de peer dependencies deste package.json. Reproduzido e corrigido
+      # nesta sessão; ver package-lock.json regenerado com npm 12.2.2, testado com `npm ci`.
+      - name: Fixar npm (evita bug do arborist na resolução de peer deps)
+        run: npm install -g npm@12.2.2
+
       - name: Install
         run: npm ci
 
