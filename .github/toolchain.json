@@ -1,0 +1,12 @@
+{
+  "_comentario": [
+    "Versoes das ferramentas usadas pelos workflows. scripts/ci/bump-toolchain.mjs consulta a",
+    "ultima release de cada uma e avisa (informativo, nunca falha).",
+    "node 22 e o usado pelos workflows de estado (contexto, inventario, db-manifesto);",
+    "ci.yml, cd.yml e qa.yml ainda rodam em 20 - alinhar e tarefa propria."
+  ],
+  "node": "22",
+  "bun": "1.4.4",
+  "playwright": "1.63.0",
+  "supabase-cli": "2.116.0"
+}

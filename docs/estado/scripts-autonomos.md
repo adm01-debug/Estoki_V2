@@ -59,6 +59,7 @@ Detalhe de cada um em `inventario/estado/README.md`.
 | `.github/workflows/inventario-estado.yml` | cron segunda 10:23 UTC · dispatch | regera `inventario/estado/*.json` e **abre PR** só se `mudou-conteudo.mjs` achar mudança estrutural | `SUPABASE_ACCESS_TOKEN` (opcional: sem ele só rotas e edges) |
 | `.github/workflows/db-manifesto.yml` | push em `supabase/migrations/**` · cron segunda 06:13 UTC · dispatch | lê o banco em sessão somente leitura e abre PR com catálogo/manifesto/grants quando divergirem; a PR **fica aberta** para leitura humana | `DESTINO_URL` (opcional: sem ele fica verde com warning) |
 | `.github/workflows/notifica-falha-main.yml` | `workflow_run` dos workflows críticos na `main` | abre issue `[falha-main]` quando um deles falha e fecha quando volta ao verde | nenhum |
+| `.github/workflows/branch-hygiene-audit.yml` | cron segunda 07:56 UTC · dispatch | relatório semanal de higiene: branches podáveis (comando pronto, **nunca apaga**), PRs paradas, KPI de uso do Actions, SLA dos alertas de code scanning e atualizações da toolchain; mantém as issues `[branch-hygiene]` e `[kpi-actions]` | nenhum |
 
 Separação de privilégio: o job que toca credencial de banco tem `permissions: contents: read` e
 entrega o resultado por artifact; o job que escreve no repo não vê credencial nenhuma. `permissions`
