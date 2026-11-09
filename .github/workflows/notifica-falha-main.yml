@@ -1,0 +1,73 @@
+# docs:
+#   gatilho: workflow_run (completed) dos workflows criticos na main
+#   prova: nenhum cron morre calado - toda falha na main vira issue
+#   falha: so se a propria API do GitHub recusar abrir a issue
+#   avisa: issue [falha-main] no repo
+# nao-e-bug:
+#   - uma-issue-por-workflow: a issue e reaproveitada por workflow; fecha quando o workflow volta ao verde
+name: Notifica falha na main
+
+on:
+  workflow_run:
+    types: [completed]
+    branches: [main]
+    workflows:
+      - "CI Pipeline"
+      - "CD — Staging & Production"
+      - "Contexto para agentes de IA"
+      - "Inventario do estado real (semanal)"
+
+permissions: {}
+
+jobs:
+  avisar:
+    name: Abrir ou fechar a issue
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const run = context.payload.workflow_run;
+            const falhou = run.conclusion === 'failure';
+            const titulo = `[falha-main] ${run.name}`;
+            const { data: abertas } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              state: 'open', labels: 'falha-main', per_page: 50,
+            });
+            const existente = abertas.find((i) => i.title === titulo);
+            if (!falhou) {
+              if (existente) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo, issue_number: existente.number,
+                  body: `Voltou ao verde em ${run.html_url} (\`${run.head_sha.slice(0, 7)}\`). Fechando.`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner, repo: context.repo.repo,
+                  issue_number: existente.number, state: 'closed', state_reason: 'completed',
+                });
+              }
+              return;
+            }
+            const corpo = [
+              `**${run.name}** falhou na \`main\`.`,
+              '',
+              `- run: ${run.html_url}`,
+              `- commit: \`${run.head_sha.slice(0, 7)}\``,
+              `- evento: \`${run.event}\``,
+              `- quando: ${run.updated_at}`,
+              '',
+              'Leia o resumo da falha antes de qualquer patch.',
+            ].join('\n');
+            if (existente) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: existente.number, body: corpo,
+              });
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: titulo, body: corpo, labels: ['falha-main'],
+            });

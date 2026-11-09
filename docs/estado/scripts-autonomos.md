@@ -51,6 +51,27 @@ Detalhe de cada um em `inventario/estado/README.md`.
 7. **Exit code uniforme nos comparadores:** `0` igual, `1` divergência revisável, `2` entrada
    inválida ou identidade não comprovada — `2` nunca atualiza artefato.
 
+## Quem roda isso sozinho (workflows)
+
+| Workflow | Quando | O que faz | Secret |
+|---|---|---|---|
+| `.github/workflows/contexto.yml` | push na `main` nos caminhos de contexto · cron a cada 6 h · dispatch | gera os três eixos + índice e publica na branch gerada `contexto` (push direto, nunca PR) | `SUPABASE_DB_URL` (opcional: sem ele o eixo do banco fica verde com warning) |
+| `.github/workflows/inventario-estado.yml` | cron segunda 10:23 UTC · dispatch | regera `inventario/estado/*.json` e **abre PR** só se `mudou-conteudo.mjs` achar mudança estrutural | `SUPABASE_ACCESS_TOKEN` (opcional: sem ele só rotas e edges) |
+| `.github/workflows/db-manifesto.yml` | push em `supabase/migrations/**` · cron segunda 06:13 UTC · dispatch | lê o banco em sessão somente leitura e abre PR com catálogo/manifesto/grants quando divergirem; a PR **fica aberta** para leitura humana | `DESTINO_URL` (opcional: sem ele fica verde com warning) |
+| `.github/workflows/notifica-falha-main.yml` | `workflow_run` dos workflows críticos na `main` | abre issue `[falha-main]` quando um deles falha e fecha quando volta ao verde | nenhum |
+
+Separação de privilégio: o job que toca credencial de banco tem `permissions: contents: read` e
+entrega o resultado por artifact; o job que escreve no repo não vê credencial nenhuma. `permissions`
+fica sempre no job, nunca no topo do workflow.
+
+Cada workflow carrega no topo um bloco `# docs:` dizendo gatilho, o que prova, quando falha e quem é
+avisado — mais `# nao-e-bug:` para o comportamento esperado que parece falha (ex.: verde com warning
+quando o secret não existe).
+
+A branch `contexto` é **gerada**: branch padrão + 1 commit, reescrita a cada publicação. Nunca abra
+PR dela nem a edite à mão. Ela carrega um `vercel.json` com `ignoreCommand: exit 0` para não
+disparar preview deploy.
+
 ## Comandos
 
 ```bash
