@@ -119,3 +119,5 @@ Proprietário — ESTOKI © 2026. Veja [LICENSE](LICENSE).
 ## Automação local sem IA
 
 Veja [docs/AUTOMACAO_LOCAL.md](docs/AUTOMACAO_LOCAL.md) para comandos, gatilhos e limites do pipeline local. `npm run automation:test` executa as suites de automação; a instalação local de hooks e timer é verificada separadamente.
+
+Validação inicial com rede isolada: o app tem 36 erros reais de TypeScript; o projeto node/Vite passou. O lint passou com 0 erros e 1.083 avisos. Os testes de app não iniciam porque Vitest 5 exige uma API ausente no Vite 5; o build falha porque Tailwind 4 está ligado ao plugin legado de PostCSS. Esses bloqueios herdados impedem a autocorreção validada; nenhum gate foi afrouxado para fabricar sucesso.

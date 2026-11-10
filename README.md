@@ -119,3 +119,5 @@ Proprietary — ESTOKI © 2026. See [LICENSE](LICENSE).
 ## Automação local sem IA
 
 O fluxo local e seus gatilhos estão em [docs/AUTOMACAO_LOCAL.md](docs/AUTOMACAO_LOCAL.md). `npm run automation:test` roda as suites de automação; `npm run automation:doctor` verifica a instalação local. O novo workflow testa contratos em PR/push para main; timer e hooks dependem do runtime local instalado, sem push automático.
+
+Validação inicial com rede isolada: o app tem 36 erros reais de TypeScript; o projeto node/Vite passou. O lint passou com 0 erros e 1.083 avisos. Os testes de app não iniciam porque Vitest 5 exige uma API ausente no Vite 5; o build falha porque Tailwind 4 está ligado ao plugin legado de PostCSS. Esses bloqueios herdados impedem a autocorreção validada; nenhum gate foi afrouxado para fabricar sucesso.
