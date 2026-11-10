@@ -56,7 +56,7 @@ Requirements: **Node.js 20+**, npm 10+, a Supabase project (or Lovable Cloud bac
 | `npm run dev`                           | Dev server (Vite, port 8080)                              |
 | `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`) |
 | `npm run lint` / `lint:fix`             | ESLint                                                    |
-| `npm run typecheck`                     | `tsc --noEmit`                                            |
+| `npm run typecheck`                     | TypeScript app + configuração Vite, com projetos explícitos |
 | `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                    |
 | `npm run test:e2e`                      | Playwright E2E                                            |
 | `npm run size`                          | Bundle budgets (size-limit)                               |
@@ -115,3 +115,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 📄 License
 
 Proprietary — ESTOKI © 2026. See [LICENSE](LICENSE).
+
+## Automação local sem IA
+
+O fluxo local e seus gatilhos estão em [docs/AUTOMACAO_LOCAL.md](docs/AUTOMACAO_LOCAL.md). `npm run automation:test` roda as suites de automação; `npm run automation:doctor` verifica a instalação local. O novo workflow testa contratos em PR/push para main; timer e hooks dependem do runtime local instalado, sem push automático.

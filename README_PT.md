@@ -56,7 +56,7 @@ Pré-requisitos: **Node.js 20+**, npm 10+ e um projeto Supabase (ou backend Lova
 | `npm run dev`                           | Servidor de desenvolvimento (Vite, porta 8080)                 |
 | `npm run build`                         | Build de produção (`ANALYZE=true` gera `dist/stats.html`)      |
 | `npm run lint` / `lint:fix`             | ESLint                                                         |
-| `npm run typecheck`                     | `tsc --noEmit`                                                 |
+| `npm run typecheck`                     | TypeScript app + configuração Vite, com projetos explícitos                                                 |
 | `npm test` / `test:coverage`            | Vitest 3 (cobertura v8)                                        |
 | `npm run test:e2e`                      | Testes E2E (Playwright)                                        |
 | `npm run size`                          | Orçamentos de bundle                                           |
@@ -115,3 +115,7 @@ Veja [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 📄 Licença
 
 Proprietário — ESTOKI © 2026. Veja [LICENSE](LICENSE).
+
+## Automação local sem IA
+
+Veja [docs/AUTOMACAO_LOCAL.md](docs/AUTOMACAO_LOCAL.md) para comandos, gatilhos e limites do pipeline local. `npm run automation:test` executa as suites de automação; a instalação local de hooks e timer é verificada separadamente.

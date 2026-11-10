@@ -76,3 +76,7 @@ __pycache__/
 # Ambiente e artefatos Graphify locais
 /.tools/graphify/
 /graphify-out/
+
+# Estado local privado dos novos adaptadores de automação
+/.tools/repo-automation/
+/.tools/graphify/local-state/

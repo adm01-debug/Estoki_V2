@@ -20,11 +20,7 @@ const kit = dirname(fileURLToPath(import.meta.url));
 const text = (p) => readFileSync(p, "utf8");
 function fixture(
   t,
-  {
-    originalHook = "",
-    hookName = "pre-commit",
-    previous = ".original-hooks",
-  } = {},
+  { originalHook = "", hookName = "pre-commit", previous = ".original-hooks" } = {}
 ) {
   const root = mkdtempSync(join(tmpdir(), "repo-automation-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -53,18 +49,18 @@ function fixture(
   write("src/source.txt", "base\n");
   write(
     "scripts/smoke.unit.mjs",
-    "import test from 'node:test'; import assert from 'node:assert/strict'; test('fixture',()=>assert.equal(2+2,4));\n",
+    "import test from 'node:test'; import assert from 'node:assert/strict'; test('fixture',()=>assert.equal(2+2,4));\n"
   );
   write(
     "scripts/motor.sh",
-    '#!/bin/sh\nprintf \'%s\\n\' "$@" > fixture-motor.log\nexit "${FIXTURE_MOTOR_EXIT:-0}"\n',
+    '#!/bin/sh\nprintf \'%s\\n\' "$@" > fixture-motor.log\nexit "${FIXTURE_MOTOR_EXIT:-0}"\n'
   );
   write(
     "scripts/graph.mjs",
     `import fs from 'node:fs';
 fs.writeFileSync('fixture-graph.log',JSON.stringify(process.argv.slice(2)));
 if(process.argv[2]==='mark'){fs.mkdirSync('.tools/graph-state',{recursive:true});fs.writeFileSync('.tools/graph-state/dirty.json','{}');}
-process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`,
+process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`
   );
   write("scripts/automation.mjs", text(join(kit, "automation.mjs")));
   write("graphify.local.json", "{}\n");
@@ -107,13 +103,7 @@ process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`,
         kind: "graph",
         files: ["scripts/graph.mjs"],
         manual: ["node", "scripts/automation.mjs", "graph", "status"],
-        triggers: [
-          "manual",
-          "postcommit",
-          "postmerge",
-          "postcheckout",
-          "nightly",
-        ],
+        triggers: ["manual", "postcommit", "postmerge", "postcheckout", "nightly"],
       },
     ],
     ci: [
@@ -124,26 +114,16 @@ process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`,
       },
     ],
     nightly: {
-      command: [
-        "node",
-        "scripts/automation.mjs",
-        "nightly",
-        "--ref",
-        "origin/main",
-      ],
+      command: ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"],
     },
     timeoutMs: 5000,
   };
-  const save = () =>
-    write("scripts/automation.config.json", JSON.stringify(config, null, 2));
+  const save = () => write("scripts/automation.config.json", JSON.stringify(config, null, 2));
   save();
-  write(
-    "package.json",
-    JSON.stringify({ type: "module", scripts: config.aliases }),
-  );
+  write("package.json", JSON.stringify({ type: "module", scripts: config.aliases }));
   write(
     ".github/workflows/ci.yml",
-    "name: fixture\non:\n  pull_request: {}\n  push:\n    branches: [main]\njobs:\n  tools:\n    runs-on: ubuntu-latest\n    steps:\n      - run: node scripts/automation.mjs test\n",
+    "name: fixture\non:\n  pull_request: {}\n  push:\n    branches: [main]\njobs:\n  tools:\n    runs-on: ubuntu-latest\n    steps:\n      - run: node scripts/automation.mjs test\n"
   );
   git("add", ".");
   git("commit", "-m", "base");
@@ -199,7 +179,7 @@ test("doctor não confunde comentário de workflow com execução", (t) => {
   const f = fixture(t);
   f.write(
     ".github/workflows/ci.yml",
-    "on:\n  pull_request: {}\n  push:\n    branches: [main]\n# run: node scripts/automation.mjs test\njobs: {}\n",
+    "on:\n  pull_request: {}\n  push:\n    branches: [main]\n# run: node scripts/automation.mjs test\njobs: {}\n"
   );
   const r = f.cli("doctor", "--static");
   assert.equal(r.status, 1);
@@ -208,13 +188,7 @@ test("doctor não confunde comentário de workflow com execução", (t) => {
 
 test("CLI/config desconhecidos falham e check/heal exigem ref explícita", (t) => {
   const f = fixture(t);
-  for (const args of [
-    ["unknown"],
-    ["doctor", "--oops"],
-    ["check"],
-    ["heal"],
-    ["nightly"],
-  ])
+  for (const args of [["unknown"], ["doctor", "--oops"], ["check"], ["heal"], ["nightly"]])
     assert.notEqual(f.cli(...args).status, 0);
   f.config.secretEscape = true;
   f.save();
@@ -226,7 +200,7 @@ test("test propaga falha real de node:test", (t) => {
   const f = fixture(t);
   f.write(
     "scripts/smoke.unit.mjs",
-    "import test from 'node:test';test('erro',()=>{throw new Error('falha fixture')});\n",
+    "import test from 'node:test';test('erro',()=>{throw new Error('falha fixture')});\n"
   );
   assert.equal(f.cli("test").status, 1);
 });
@@ -239,18 +213,15 @@ test("check/heal preservam root/ref e encaminham configuração do motor", (t) =
   for (const action of ["check", "heal"]) {
     const r = f.cli(action, "--ref", "HEAD");
     assert.equal(r.status, 0, r.stderr);
-    assert.deepEqual(
-      text(join(f.root, "fixture-motor.log")).trim().split("\n"),
-      [
-        action,
-        "--root",
-        f.root,
-        "--ref",
-        "HEAD",
-        "--config",
-        join(f.root, "motor.json"),
-      ],
-    );
+    assert.deepEqual(text(join(f.root, "fixture-motor.log")).trim().split("\n"), [
+      action,
+      "--root",
+      f.root,
+      "--ref",
+      "HEAD",
+      "--config",
+      join(f.root, "motor.json"),
+    ]);
   }
 });
 
@@ -274,11 +245,9 @@ test("graph usa seu próprio config e traduz doctor/build, sem instalar implicit
 
 test("nightly tenta grafo e heal independentes e agrega falha", (t) => {
   const f = fixture(t);
-  const r = f.run(
-    process.execPath,
-    ["scripts/automation.mjs", "nightly", "--ref", "origin/main"],
-    { env: { ...process.env, FIXTURE_GRAPH_EXIT: "3" } },
-  );
+  const r = f.run(process.execPath, ["scripts/automation.mjs", "nightly", "--ref", "origin/main"], {
+    env: { ...process.env, FIXTURE_GRAPH_EXIT: "3" },
+  });
   assert.equal(r.status, 1);
   assert.ok(existsSync(join(f.root, "fixture-motor.log")));
   const report = JSON.parse(r.stdout);
@@ -294,7 +263,7 @@ test("install/uninstall idempotentes restauram hooksPath e exclusões anteriores
   f.install();
   assert.equal(
     f.git("check-ignore", ".tools/repo-automation/state.json"),
-    ".tools/repo-automation/state.json",
+    ".tools/repo-automation/state.json"
   );
   assert.equal(f.cli("doctor").status, 0);
   assert.equal(f.cli("uninstall-hooks").status, 0);
@@ -309,11 +278,7 @@ test("uninstall funciona se o config versionado foi removido e não apaga mudan�
   f.git("config", "core.hooksPath", ".third-party");
   assert.notEqual(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.git("config", "core.hooksPath"), ".third-party");
-  f.git(
-    "config",
-    "core.hooksPath",
-    join(f.root, ".tools/repo-automation/hooks"),
-  );
+  f.git("config", "core.hooksPath", join(f.root, ".tools/repo-automation/hooks"));
   rmSync(join(f.root, "scripts/automation.config.json"));
   assert.equal(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.git("config", "core.hooksPath"), ".original-hooks");
@@ -348,27 +313,18 @@ test("commit-msg original também permanece obrigatório", (t) => {
 test("ponte preserva argumentos e stdin completos do pre-push", (t) => {
   const f = fixture(t, {
     hookName: "pre-push",
-    originalHook:
-      'printf "%s\\n" "$@" > fixture-args.log\ncat > fixture-stdin.log\n',
+    originalHook: 'printf "%s\\n" "$@" > fixture-args.log\ncat > fixture-stdin.log\n',
   });
   f.install();
-  const input =
-    "refs/heads/main " +
-    "1".repeat(40) +
-    " refs/heads/main " +
-    "0".repeat(40) +
-    "\n";
+  const input = "refs/heads/main " + "1".repeat(40) + " refs/heads/main " + "0".repeat(40) + "\n";
   const r = f.run(
     join(f.root, ".tools/repo-automation/hooks/pre-push"),
     ["origin", "remote fixture"],
-    { input },
+    { input }
   );
   assert.equal(r.status, 0, r.stderr);
   assert.equal(text(join(f.root, "fixture-stdin.log")), input);
-  assert.equal(
-    text(join(f.root, "fixture-args.log")),
-    "origin\nremote fixture\n",
-  );
+  assert.equal(text(join(f.root, "fixture-args.log")), "origin\nremote fixture\n");
 });
 
 test("hook versionado Husky executa via sh quando bootstrap não existe", (t) => {
@@ -399,7 +355,7 @@ test("pre-commit executa testes de tooling e conserva erro de suite", (t) => {
   f.install();
   f.write(
     "scripts/smoke.unit.mjs",
-    "import test from 'node:test';test('bloqueia',()=>{throw Error('fixture')});\n",
+    "import test from 'node:test';test('bloqueia',()=>{throw Error('fixture')});\n"
   );
   f.git("add", "scripts/smoke.unit.mjs");
   const r = f.run("git", ["commit", "-m", "tool quebrado"]);
@@ -420,12 +376,8 @@ test("hook recursivo original é bloqueado sem bypass", (t) => {
 test("timeout encerra subprocesso e retorna 124 em prazo finito", async () => {
   const before = Date.now();
   const r = await execute(
-    [
-      process.execPath,
-      "-e",
-      "process.on('SIGTERM',()=>{});setInterval(()=>{},1000)",
-    ],
-    { timeout: 100, capture: true },
+    [process.execPath, "-e", "process.on('SIGTERM',()=>{});setInterval(()=>{},1000)"],
+    { timeout: 100, capture: true }
   );
   assert.equal(r.code, 124);
   assert.equal(r.timedOut, true);
@@ -439,7 +391,7 @@ test("captura preserva UTF-8 dividido em eventos de saída", async () => {
       "-e",
       "process.stdout.write(Buffer.from([0xc3]));setTimeout(()=>process.stdout.write(Buffer.from([0xa7])),20)",
     ],
-    { capture: true },
+    { capture: true }
   );
   assert.equal(r.code, 0);
   assert.equal(r.stdout, "ç");
@@ -467,12 +419,7 @@ test("snapshot aprovado atende pré-merge sem afirmar source/CI integrados", (t)
     store = join(home, ".local/share/repo-maintenance"),
     snapshot = join(store, "snapshots/fixture");
   mkdirSync(snapshot, { recursive: true });
-  for (const rel of [
-    "scripts",
-    ".github",
-    "package.json",
-    "graphify.local.json",
-  ])
+  for (const rel of ["scripts", ".github", "package.json", "graphify.local.json"])
     cpSync(join(f.root, rel), join(snapshot, rel), { recursive: true });
   f.write("package.json", '{"scripts":{}}');
   const config = {
@@ -493,7 +440,7 @@ test("snapshot aprovado atende pré-merge sem afirmar source/CI integrados", (t)
       "doctor",
       "--static",
     ],
-    { env: { ...process.env, HOME: home } },
+    { env: { ...process.env, HOME: home } }
   );
   assert.equal(r.status, 0, r.stderr + r.stdout);
   const health = JSON.parse(r.stdout);
@@ -514,7 +461,7 @@ test("snapshot aprovado atende pré-merge sem afirmar source/CI integrados", (t)
       "doctor",
       "--static",
     ],
-    { env: { ...process.env, HOME: home } },
+    { env: { ...process.env, HOME: home } }
   );
   assert.equal(blocked.status, 1);
   assert.match(blocked.stdout, /fora do runtime instalado aprovado/);
@@ -524,10 +471,7 @@ test("não sobrescreve arquivos de terceiros na instalação nem na reversão", 
   const f = fixture(t);
   f.write(".tools/repo-automation/foreign.txt", "preservar\n");
   assert.notEqual(f.cli("install-hooks").status, 0);
-  assert.equal(
-    text(join(f.root, ".tools/repo-automation/foreign.txt")),
-    "preservar\n",
-  );
+  assert.equal(text(join(f.root, ".tools/repo-automation/foreign.txt")), "preservar\n");
   rmSync(join(f.root, ".tools/repo-automation/foreign.txt"));
   f.install();
   const bridge = join(f.root, ".tools/repo-automation/hooks/pre-commit");
@@ -550,27 +494,21 @@ test("dependência ausente falha no doctor local sem instalação automática", 
 
 test("registro operacional manual não é executado por hooks ou nightly", (t) => {
   const f = fixture(t);
-  f.write(
-    "scripts/legacy-danger.sh",
-    "#!/bin/sh\nprintf indevido > fixture-legacy.log\nexit 9\n",
-  );
+  f.write("scripts/legacy-danger.sh", "#!/bin/sh\nprintf indevido > fixture-legacy.log\nexit 9\n");
   f.config.registrations.push({
     id: "legacy-op",
     kind: "legacy",
     files: ["scripts/legacy-danger.sh"],
     manual: ["sh", "scripts/legacy-danger.sh"],
     triggers: ["manual"],
-    reason:
-      "Operação operacional exige seleção manual explícita; não pertence aos gates.",
+    reason: "Operação operacional exige seleção manual explícita; não pertence aos gates.",
   });
   f.save();
   f.install();
   assert.equal(f.cli("nightly", "--ref", "HEAD").status, 0);
-  const hook = f.run(
-    join(f.root, ".tools/repo-automation/hooks/pre-push"),
-    ["origin", "fixture"],
-    { input: "" },
-  );
+  const hook = f.run(join(f.root, ".tools/repo-automation/hooks/pre-push"), ["origin", "fixture"], {
+    input: "",
+  });
   assert.equal(hook.status, 0, hook.stderr);
   assert.equal(existsSync(join(f.root, "fixture-legacy.log")), false);
 });

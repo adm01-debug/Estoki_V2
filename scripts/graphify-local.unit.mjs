@@ -1,14 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  mkdtemp,
-  mkdir,
-  writeFile,
-  readFile,
-  rm,
-  readdir,
-  symlink,
-} from "node:fs/promises";
+import { mkdtemp, mkdir, writeFile, readFile, rm, readdir, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
@@ -23,11 +15,9 @@ import {
 } from "./graphify-local.mjs";
 
 function git(root, ...args) {
-  const result = spawnSync(
-    "git",
-    ["-c", "core.hooksPath=/dev/null", "-C", root, ...args],
-    { encoding: "utf8" },
-  );
+  const result = spawnSync("git", ["-c", "core.hooksPath=/dev/null", "-C", root, ...args], {
+    encoding: "utf8",
+  });
   assert.equal(result.status, 0, result.stderr);
   return result.stdout.trim();
 }
@@ -38,18 +28,9 @@ async function fixture(t) {
     env = path.join(root, ".tools/graphify/.venv");
   await mkdir(path.join(root, "src"), { recursive: true });
   await mkdir(path.join(env, "bin"), { recursive: true });
-  await writeFile(
-    path.join(root, ".gitignore"),
-    ".tools/\ngraphify-out/\nnode_modules/\n",
-  );
-  await writeFile(
-    path.join(root, "package.json"),
-    '{"name":"fixture","type":"commonjs"}',
-  );
-  await writeFile(
-    path.join(root, "src/value.ts"),
-    'export const value = "v1";\n',
-  );
+  await writeFile(path.join(root, ".gitignore"), ".tools/\ngraphify-out/\nnode_modules/\n");
+  await writeFile(path.join(root, "package.json"), '{"name":"fixture","type":"commonjs"}');
+  await writeFile(path.join(root, "src/value.ts"), 'export const value = "v1";\n');
   const python = `#!${process.execPath}\nconst path=require('node:path');const prefix=path.resolve(__dirname,'..');console.log(JSON.stringify({version:'0.9.97',prefix,module:path.join(prefix,'lib/graphify/__init__.py')}));\n`;
   await writeFile(path.join(env, "bin/python"), python, { mode: 0o700 });
   const graphify = `#!${process.execPath}\nconst fs=require('node:fs'),path=require('node:path');const a=process.argv.slice(2);const base=path.resolve(__dirname,'..');
@@ -92,14 +73,7 @@ if(a[0]==='extract'){
     globalLock: path.join(dir, "fleet.lock"),
     fixtureOfflinePrefix: [],
   };
-  const args = (action, ...terms) => [
-    action,
-    ...terms,
-    "--config",
-    configFile,
-    "--root",
-    root,
-  ];
+  const args = (action, ...terms) => [action, ...terms, "--config", configFile, "--root", root];
   const call = (action, ...terms) => main(args(action, ...terms), options);
   const graph = path.join(root, "graphify-out/graph.json");
   return { dir, root, env, config, configFile, options, args, call, graph };
@@ -108,17 +82,12 @@ if(a[0]==='extract'){
 test("mark é leve, aceita flags intercaladas e não importa runtime nem gera grafo", async (t) => {
   const f = await fixture(t);
   await rm(path.join(f.env, "bin/python"));
-  const result = await main(
-    ["--root", f.root, "mark", "--config", f.configFile],
-    f.options,
-  );
+  const result = await main(["--root", f.root, "mark", "--config", f.configFile], f.options);
   assert.equal(result.exitCode, 0);
   assert.equal(result.report.status, "marked");
   assert.equal(
-    (await readdir(path.join(f.root, ".tools/graphify/state"))).includes(
-      "dirty.json",
-    ),
-    true,
+    (await readdir(path.join(f.root, ".tools/graphify/state"))).includes("dirty.json"),
+    true
   );
   await assert.rejects(readFile(f.graph), /ENOENT/);
 });
@@ -130,18 +99,12 @@ test("ensure gera em staging, valida e status usa fonte/config/versão/HEAD", as
   assert.equal(first.exitCode, 0, JSON.stringify(first.report));
   assert.equal(first.report.status, "generated");
   assert.equal((await f.call("status")).report.status, "current");
-  await writeFile(
-    path.join(f.root, "src/value.ts"),
-    'export const value = "dirty";\n',
-  );
+  await writeFile(path.join(f.root, "src/value.ts"), 'export const value = "dirty";\n');
   assert.equal((await f.call("status")).report.status, "stale");
   const second = await f.call("ensure");
   assert.equal(second.exitCode, 0, JSON.stringify(second.report));
   assert.ok(second.report.backup);
-  assert.match(
-    await readFile(path.join(second.report.backup, "graph.json"), "utf8"),
-    /v1/,
-  );
+  assert.match(await readFile(path.join(second.report.backup, "graph.json"), "utf8"), /v1/);
   assert.equal((await f.call("status")).report.status, "current");
   assert.match(await readFile(f.graph, "utf8"), /dirty/);
 });
@@ -152,10 +115,7 @@ test("query/path/explain sempre verificam freshness e usam CLI local", async (t)
   assert.equal(first.exitCode, 0, JSON.stringify(first.report));
   assert.equal(first.report.status, "queried");
   assert.match(first.report.output, /v1/);
-  await writeFile(
-    path.join(f.root, "src/value.ts"),
-    'export const value = "v2";\n',
-  );
+  await writeFile(path.join(f.root, "src/value.ts"), 'export const value = "v2";\n');
   const updated = await f.call("path", "first", "second");
   assert.equal(updated.exitCode, 0, JSON.stringify(updated.report));
   assert.match(updated.report.output, /v2/);
@@ -176,48 +136,28 @@ test("mark com hash igual não desperdiça nova extração", async (t) => {
 test("arquivo novo e alteração de configuração tornam o snapshot stale", async (t) => {
   const f = await fixture(t);
   assert.equal((await f.call("ensure")).exitCode, 0);
-  await writeFile(
-    path.join(f.root, "src/new.ts"),
-    "export const created = true;\n",
-  );
+  await writeFile(path.join(f.root, "src/new.ts"), "export const created = true;\n");
   assert.equal((await f.call("status")).report.status, "stale");
   assert.equal((await f.call("ensure")).exitCode, 0);
-  await writeFile(
-    f.configFile,
-    JSON.stringify({ ...f.config, timeoutMs: 4000 }),
-  );
+  await writeFile(f.configFile, JSON.stringify({ ...f.config, timeoutMs: 4000 }));
   assert.equal((await f.call("status")).report.status, "stale");
 });
 
 test("fingerprint ignora secrets/env, dependências, saídas e symlinks", async (t) => {
   const f = await fixture(t),
     before = await fingerprint(f.root, f.config);
-  await writeFile(
-    path.join(f.root, ".env"),
-    "PRIVATE_FIXTURE_TOKEN=private-value",
-  );
-  await writeFile(
-    path.join(f.root, "credentials.json"),
-    '{"token":"private-value"}',
-  );
+  await writeFile(path.join(f.root, ".env"), "PRIVATE_FIXTURE_TOKEN=private-value");
+  await writeFile(path.join(f.root, "credentials.json"), '{"token":"private-value"}');
   await mkdir(path.join(f.root, "node_modules"));
   await writeFile(path.join(f.root, "node_modules/pkg.js"), "module.exports=1");
-  await symlink(
-    path.join(f.dir, "outside.ts"),
-    path.join(f.root, "src/link.ts"),
-  );
-  await writeFile(
-    path.join(f.dir, "outside.ts"),
-    "export const outside = true;",
-  );
+  await symlink(path.join(f.dir, "outside.ts"), path.join(f.root, "src/link.ts"));
+  await writeFile(path.join(f.dir, "outside.ts"), "export const outside = true;");
   const after = await fingerprint(f.root, f.config);
   assert.deepEqual(after.files, before.files);
   assert.ok(after.skipped.includes("src/link.ts"));
   assert.equal(
-    Object.keys(after.files).some(
-      (file) => file.includes("credentials") || file.includes(".env"),
-    ),
-    false,
+    Object.keys(after.files).some((file) => file.includes("credentials") || file.includes(".env")),
+    false
   );
 });
 
@@ -235,10 +175,7 @@ test("grafo vazio ou inválido não substitui snapshot anterior", async (t) => {
   const f = await fixture(t);
   assert.equal((await f.call("ensure")).exitCode, 0);
   const before = await readFile(f.graph, "utf8");
-  await writeFile(
-    path.join(f.root, "src/value.ts"),
-    'export const value = "INVALID";\n',
-  );
+  await writeFile(path.join(f.root, "src/value.ts"), 'export const value = "INVALID";\n');
   const result = await f.call("ensure");
   assert.equal(result.exitCode, 1);
   assert.equal(await readFile(f.graph, "utf8"), before);
@@ -246,10 +183,7 @@ test("grafo vazio ou inválido não substitui snapshot anterior", async (t) => {
 
 test("mudança de código durante geração impede promoção", async (t) => {
   const f = await fixture(t);
-  await writeFile(
-    path.join(f.root, "src/value.ts"),
-    'export const value = "MUTATE";\n',
-  );
+  await writeFile(path.join(f.root, "src/value.ts"), 'export const value = "MUTATE";\n');
   const result = await f.call("ensure");
   assert.equal(result.exitCode, 1);
   assert.match(result.report.message, /Fonte mudou/);
@@ -259,10 +193,7 @@ test("mudança de código durante geração impede promoção", async (t) => {
 test("saída rastreada é preservada e exige fluxo versionado", async (t) => {
   const f = await fixture(t);
   await mkdir(path.dirname(f.graph));
-  await writeFile(
-    f.graph,
-    JSON.stringify({ nodes: [{ id: "old" }], links: [] }),
-  );
+  await writeFile(f.graph, JSON.stringify({ nodes: [{ id: "old" }], links: [] }));
   git(f.root, "add", "-f", "graphify-out/graph.json");
   git(f.root, "commit", "-m", "tracked graph");
   const result = await f.call("ensure");
@@ -279,7 +210,7 @@ test("corpus parcial permite apenas imports externos documentados", async (t) =>
     JSON.stringify({
       nodes: [{ id: "source" }],
       edges: [{ source: "source", target: "external", relation: "imports" }],
-    }),
+    })
   );
   assert.equal((await validateGraph(f.graph, true)).unresolvedImports, 1);
   await assert.rejects(validateGraph(f.graph), /sem origem/);
@@ -288,7 +219,7 @@ test("corpus parcial permite apenas imports externos documentados", async (t) =>
     JSON.stringify({
       nodes: [{ id: "source" }],
       edges: [{ source: "missing", target: "external", relation: "imports" }],
-    }),
+    })
   );
   await assert.rejects(validateGraph(f.graph, true), /sem origem/);
 });
@@ -300,10 +231,7 @@ test("trava local impede concorrência e recupera apenas dono comprovadamente mo
   await assert.rejects(acquire(lock), (e) => e.status === "busy");
   await release();
   await mkdir(lock);
-  await writeFile(
-    path.join(lock, "owner.json"),
-    JSON.stringify({ pid: 2147483647, token: "old" }),
-  );
+  await writeFile(path.join(lock, "owner.json"), JSON.stringify({ pid: 2147483647, token: "old" }));
   const recovered = await acquire(lock);
   await recovered();
 });
@@ -321,14 +249,8 @@ test("lease global é interoperável com flock e libera FD ao terminar", async (
 
 test("timeout termina grupos de subprocessos e não deixa grafo parcial", async (t) => {
   const f = await fixture(t);
-  await writeFile(
-    f.configFile,
-    JSON.stringify({ ...f.config, timeoutMs: 100 }),
-  );
-  await writeFile(
-    path.join(f.root, "src/value.ts"),
-    'export const value = "TIMEOUT";\n',
-  );
+  await writeFile(f.configFile, JSON.stringify({ ...f.config, timeoutMs: 100 }));
+  await writeFile(path.join(f.root, "src/value.ts"), 'export const value = "TIMEOUT";\n');
   const started = Date.now(),
     result = await f.call("ensure");
   assert.equal(result.exitCode, 1);
@@ -338,7 +260,7 @@ test("timeout termina grupos de subprocessos e não deixa grafo parcial", async 
     [process.execPath, "-e", "setInterval(()=>{},1000)"],
     f.root,
     { PATH: process.env.PATH },
-    100,
+    100
   );
   assert.equal(child.timedOut, true);
   assert.notEqual(child.code, 0);
@@ -359,16 +281,10 @@ test("configuração não pode desativar rede, escapar raiz ou trocar corpus sil
 test("adoção inicial exige bytes, corpus, commit, pin e escopo iguais", async (t) => {
   const f = await fixture(t);
   await mkdir(path.dirname(f.graph));
-  await writeFile(
-    f.graph,
-    JSON.stringify({ nodes: [{ id: "initial" }], links: [] }),
-  );
+  await writeFile(f.graph, JSON.stringify({ nodes: [{ id: "initial" }], links: [] }));
   const fp = await fingerprint(f.root, f.config),
     info = await validateGraph(f.graph);
-  const initial = path.join(
-    f.root,
-    "graphify-out/graphify-local-initial-provenance.json",
-  );
+  const initial = path.join(f.root, "graphify-out/graphify-local-initial-provenance.json");
   await writeFile(
     initial,
     JSON.stringify({
@@ -380,27 +296,18 @@ test("adoção inicial exige bytes, corpus, commit, pin e escopo iguais", async 
       sourceFingerprint: { head: fp.head, files: fp.files },
       graphSha256: info.sha256,
       createdAt: new Date(Date.now() + 1000).toISOString(),
-    }),
+    })
   );
   const ctx = {
     root: f.root,
     config: f.config,
     graph: f.graph,
     outputRoot: path.dirname(f.graph),
-    provenance: path.join(
-      path.dirname(f.graph),
-      "graphify-local-provenance.json",
-    ),
+    provenance: path.join(path.dirname(f.graph), "graphify-local-provenance.json"),
   };
-  await writeFile(
-    f.graph,
-    JSON.stringify({ nodes: [{ id: "tampered" }], links: [] }),
-  );
+  await writeFile(f.graph, JSON.stringify({ nodes: [{ id: "tampered" }], links: [] }));
   assert.equal(await adoptInitial(ctx, fp), false);
-  await writeFile(
-    f.graph,
-    JSON.stringify({ nodes: [{ id: "initial" }], links: [] }),
-  );
+  await writeFile(f.graph, JSON.stringify({ nodes: [{ id: "initial" }], links: [] }));
   assert.equal(await adoptInitial(ctx, fp), true);
   assert.equal((await f.call("status")).report.status, "current");
   await assert.rejects(readFile(path.join(f.env, "calls")), /ENOENT/);
@@ -439,14 +346,8 @@ test("corpus de geração contém apenas arquivos permitidos e hashes grandes us
   await mkdir(path.join(f.root, "node_modules"));
   await writeFile(path.join(f.root, "node_modules/dep.js"), "dep");
   await mkdir(path.join(f.root, "src/tools"));
-  await writeFile(
-    path.join(f.root, "src/tools/tool.ts"),
-    "export const tool=1",
-  );
-  await writeFile(
-    path.join(f.root, "src/large.sql"),
-    Buffer.alloc(11 * 1024 * 1024, 32),
-  );
+  await writeFile(path.join(f.root, "src/tools/tool.ts"), "export const tool=1");
+  await writeFile(path.join(f.root, "src/large.sql"), Buffer.alloc(11 * 1024 * 1024, 32));
   const fp = await fingerprint(f.root, f.config);
   assert.ok(fp.files["src/tools/tool.ts"]);
   assert.ok(fp.files["src/large.sql"]);
@@ -459,13 +360,7 @@ test("corpus de geração contém apenas arquivos permitidos e hashes grandes us
 
 test("config relativo resolve em root mesmo com cwd diferente", async (t) => {
   const f = await fixture(t);
-  await writeFile(
-    path.join(f.root, "graphify.local.json"),
-    JSON.stringify(f.config),
-  );
-  const r = await main(
-    ["--root", f.root, "--config", "graphify.local.json", "mark"],
-    f.options,
-  );
+  await writeFile(path.join(f.root, "graphify.local.json"), JSON.stringify(f.config));
+  const r = await main(["--root", f.root, "--config", "graphify.local.json", "mark"], f.options);
   assert.equal(r.exitCode, 0);
 });

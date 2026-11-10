@@ -27,8 +27,7 @@ export class MaintenanceError extends Error {
 export const fail = (message) => {
   throw new MaintenanceError("failed", message);
 };
-export const digest = (value) =>
-  createHash("sha256").update(value).digest("hex");
+export const digest = (value) => createHash("sha256").update(value).digest("hex");
 export const exists = async (file) => {
   try {
     await stat(file);
@@ -41,17 +40,8 @@ export const exists = async (file) => {
 export const safeEnv = ({ nodeEnv, publicEnv = {}, hooks = false } = {}) => ({
   ...Object.fromEntries(
     Object.entries(process.env).filter(([k]) =>
-      [
-        "PATH",
-        "HOME",
-        "TMPDIR",
-        "TEMP",
-        "SystemRoot",
-        "COMSPEC",
-        "TZ",
-        "LANG",
-      ].includes(k),
-    ),
+      ["PATH", "HOME", "TMPDIR", "TEMP", "SystemRoot", "COMSPEC", "TZ", "LANG"].includes(k)
+    )
   ),
   CI: "true",
   NO_COLOR: "1",
@@ -139,8 +129,8 @@ export function run(command, cwd, timeoutMs = 120000, options = {}) {
       reject(
         new MaintenanceError(
           "failed",
-          `Não foi possível executar ${path.basename(command[0])}: ${e.code}`,
-        ),
+          `Não foi possível executar ${path.basename(command[0])}: ${e.code}`
+        )
       );
     });
     child.once("close", (code, signal) => {
@@ -161,44 +151,25 @@ export async function checked(command, cwd, timeout) {
   const result = await run(command, cwd, timeout);
   if (result.code !== 0 || result.timedOut || result.overflow)
     fail(
-      `Comando ${path.basename(command[0])} falhou (exit=${result.code}, timeout=${result.timedOut}, limiteSaida=${result.overflow})`,
+      `Comando ${path.basename(command[0])} falhou (exit=${result.code}, timeout=${result.timedOut}, limiteSaida=${result.overflow})`
     );
   return result.output.trim();
 }
 export const git = (cwd, args, timeout, prefix = []) =>
-  checked(
-    [...prefix, "git", "-c", "core.hooksPath=/dev/null", ...args],
-    cwd,
-    timeout,
-  );
-export async function commitWithHooks(
-  source,
-  workspace,
-  jobDir,
-  args,
-  timeout,
-  prefix = [],
-) {
+  checked([...prefix, "git", "-c", "core.hooksPath=/dev/null", ...args], cwd, timeout);
+export async function commitWithHooks(source, workspace, jobDir, args, timeout, prefix = []) {
   const configured = await run(
     [...prefix, "git", "config", "--get", "core.hooksPath"],
     source,
-    timeout,
+    timeout
   );
-  if (
-    ![0, 1].includes(configured.code) ||
-    configured.timedOut ||
-    configured.overflow
-  )
+  if (![0, 1].includes(configured.code) || configured.timedOut || configured.overflow)
     fail("Não foi possível resolver os hooks obrigatórios");
   const value = configured.stdout.trim();
-  const relative = value
-    ? path.relative(source, path.resolve(source, value))
-    : "";
+  const relative = value ? path.relative(source, path.resolve(source, value)) : "";
   const husky =
     relative.replaceAll("\\", "/").match(/^(.*\.husky)(?:\/_)?$/)?.[1] ||
-    (!value && (await exists(path.join(workspace, ".husky")))
-      ? ".husky"
-      : null);
+    (!value && (await exists(path.join(workspace, ".husky"))) ? ".husky" : null);
   const directory = path.join(jobDir, "commit-hooks");
   await mkdir(directory, { mode: 0o700 });
   let bootstrap;
@@ -208,11 +179,9 @@ export async function commitWithHooks(
       const parent = path.dirname(helper),
         createdParent = !(await exists(parent));
       await mkdir(parent, { recursive: true });
-      await writeFile(
-        helper,
-        "# Bootstrap isolado: o dispatcher executa os hooks com sh -e.\n",
-        { mode: 0o600 },
-      );
+      await writeFile(helper, "# Bootstrap isolado: o dispatcher executa os hooks com sh -e.\n", {
+        mode: 0o600,
+      });
       bootstrap = async () => {
         await rm(helper, { force: true });
         if (createdParent) await rm(parent, { recursive: true, force: true });
@@ -222,12 +191,7 @@ export async function commitWithHooks(
   const names = [];
   const quote = (text) => `'${text.replaceAll("'", "'\\''")}'`;
   try {
-    for (const name of [
-      "pre-commit",
-      "prepare-commit-msg",
-      "commit-msg",
-      "post-commit",
-    ]) {
+    for (const name of ["pre-commit", "prepare-commit-msg", "commit-msg", "post-commit"]) {
       let script;
       if (husky) script = path.join(workspace, husky, name);
       else if (value && inside(source, path.resolve(source, value))) {
@@ -236,16 +200,9 @@ export async function commitWithHooks(
           const installed = path.resolve(source, value, name);
           if (await exists(installed)) {
             const tracked = await run(
-              [
-                ...prefix,
-                "git",
-                "ls-files",
-                "-z",
-                "--",
-                path.relative(source, installed),
-              ],
+              [...prefix, "git", "ls-files", "-z", "--", path.relative(source, installed)],
               source,
-              timeout,
+              timeout
             );
             if (tracked.code !== 0 || tracked.timedOut || tracked.overflow)
               fail("Não foi possível resolver o hook instalado");
@@ -259,17 +216,17 @@ export async function commitWithHooks(
             source,
             ["rev-parse", "--path-format=absolute", "--git-common-dir"],
             timeout,
-            prefix,
+            prefix
           ),
           "hooks",
-          name,
+          name
         );
       if (!(await exists(script))) continue;
       const invocation = husky ? `sh -e ${quote(script)}` : quote(script);
       await writeFile(
         path.join(directory, name),
         `#!/bin/sh\nset -eu\nPATH=${quote(path.join(workspace, "node_modules/.bin"))}:"$PATH"\nexport PATH\nexec ${invocation} "$@"\n`,
-        { mode: 0o700 },
+        { mode: 0o700 }
       );
       names.push(name);
     }
@@ -277,27 +234,19 @@ export async function commitWithHooks(
       [...prefix, "git", "-c", `core.hooksPath=${directory}`, ...args],
       workspace,
       timeout,
-      { hooks: true },
+      { hooks: true }
     );
     return { names, ...result };
   } finally {
     if (bootstrap) await bootstrap();
   }
 }
-const locks = [
-  "bun.lock",
-  "bun.lockb",
-  "package-lock.json",
-  "pnpm-lock.yaml",
-  "yarn.lock",
-];
+const locks = ["bun.lock", "bun.lockb", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"];
 const inside = (root, file) => {
   const relative = path.relative(root, file);
   return (
     relative === "" ||
-    (!path.isAbsolute(relative) &&
-      relative !== ".." &&
-      !relative.startsWith(`..${path.sep}`))
+    (!path.isAbsolute(relative) && relative !== ".." && !relative.startsWith(`..${path.sep}`))
   );
 };
 async function directoryHash(root) {
@@ -307,26 +256,23 @@ async function directoryHash(root) {
     if (info.isSymbolicLink())
       throw new MaintenanceError(
         "missing_dependencies",
-        "Symlink interno em dependência local não suportado",
+        "Symlink interno em dependência local não suportado"
       );
     if (info.isDirectory()) {
       for (const name of (await readdir(file)).sort()) {
         if (name === ".git")
           throw new MaintenanceError(
             "missing_dependencies",
-            "Submódulo local precisa de instalação isolada explícita",
+            "Submódulo local precisa de instalação isolada explícita"
           );
-        await visit(
-          path.join(file, name),
-          relative ? `${relative}/${name}` : name,
-        );
+        await visit(path.join(file, name), relative ? `${relative}/${name}` : name);
       }
     } else if (info.isFile())
       entries.push([relative, info.mode & 0o111, digest(await readFile(file))]);
     else
       throw new MaintenanceError(
         "missing_dependencies",
-        "Entrada especial em dependência local não suportada",
+        "Entrada especial em dependência local não suportada"
       );
   }
   await visit(root, "");
@@ -344,31 +290,24 @@ async function localDependencies(root) {
     if (!relative || relative === "." || !inside(root, absolute))
       throw new MaintenanceError(
         "missing_dependencies",
-        "Dependência local fora do repositório não suportada",
+        "Dependência local fora do repositório não suportada"
       );
     paths.add(path.relative(root, absolute).replaceAll("\\", "/"));
     return path.relative(root, absolute).replaceAll("\\", "/");
   };
-  const manifest = JSON.parse(
-    await readFile(path.join(root, "package.json"), "utf8"),
-  );
+  const manifest = JSON.parse(await readFile(path.join(root, "package.json"), "utf8"));
   const visit = (value) => {
     if (typeof value === "string" && /^(file:|link:)/.test(value)) add(value);
     else if (typeof value === "string" && value.startsWith("workspace:"))
       throw new MaintenanceError(
         "missing_dependencies",
-        "Dependência workspace precisa de instalação isolada explícita",
+        "Dependência workspace precisa de instalação isolada explícita"
       );
     else if (value && typeof value === "object")
       for (const child of Object.values(value)) visit(child);
   };
   visit(manifest);
-  for (const name of [
-    "package-lock.json",
-    "bun.lock",
-    "pnpm-lock.yaml",
-    "yarn.lock",
-  ])
+  for (const name of ["package-lock.json", "bun.lock", "pnpm-lock.yaml", "yarn.lock"])
     if (await exists(path.join(root, name))) {
       const text = await readFile(path.join(root, name), "utf8");
       if (name === "package-lock.json") {
@@ -376,19 +315,13 @@ async function localDependencies(root) {
         for (const [key, entry] of Object.entries(lock.packages || {})) {
           if (entry.link === true && typeof entry.resolved === "string")
             links[key] = add(entry.resolved);
-          else if (
-            typeof entry.resolved === "string" &&
-            /^(file:|link:)/.test(entry.resolved)
-          )
+          else if (typeof entry.resolved === "string" && /^(file:|link:)/.test(entry.resolved))
             links[key] = add(entry.resolved);
         }
-      } else if (
-        /\b(?:file:|link:|workspace:)/.test(text) &&
-        paths.size === 0
-      ) {
+      } else if (/\b(?:file:|link:|workspace:)/.test(text) && paths.size === 0) {
         throw new MaintenanceError(
           "missing_dependencies",
-          "Dependência local no lockfile sem manifesto/package-lock verificável",
+          "Dependência local no lockfile sem manifesto/package-lock verificável"
         );
       }
     }
@@ -398,21 +331,14 @@ async function localDependencies(root) {
     if (!(await exists(absolute)) || !(await lstat(absolute)).isDirectory())
       throw new MaintenanceError(
         "missing_dependencies",
-        "Dependência local precisa ser um diretório versionado",
+        "Dependência local precisa ser um diretório versionado"
       );
-    const metadata = JSON.parse(
-      await readFile(path.join(absolute, "package.json"), "utf8"),
-    );
+    const metadata = JSON.parse(await readFile(path.join(absolute, "package.json"), "utf8"));
     local[relative] = await directoryHash(absolute);
     if (typeof metadata.name === "string") {
       const installed = path.posix.join("node_modules", metadata.name);
-      if (
-        !inside(path.join(root, "node_modules"), path.resolve(root, installed))
-      )
-        throw new MaintenanceError(
-          "missing_dependencies",
-          "Nome de dependência local inválido",
-        );
+      if (!inside(path.join(root, "node_modules"), path.resolve(root, installed)))
+        throw new MaintenanceError("missing_dependencies", "Nome de dependência local inválido");
       links[installed] ||= relative;
     }
   }
@@ -424,10 +350,7 @@ export async function dependencyFingerprint(root) {
     if (await exists(path.join(root, file)))
       files[file] = digest(await readFile(path.join(root, file)));
   if (!files["package.json"] || !locks.some((f) => files[f]))
-    throw new MaintenanceError(
-      "missing_dependencies",
-      "Manifesto ou lockfile ausente",
-    );
+    throw new MaintenanceError("missing_dependencies", "Manifesto ou lockfile ausente");
   const dependencies = await localDependencies(root);
   if (await exists(path.join(root, "node_modules"))) {
     for (const [installed, relative] of Object.entries(dependencies.links))
@@ -436,15 +359,12 @@ export async function dependencyFingerprint(root) {
         try {
           actual = await realpath(path.join(root, installed));
         } catch {
-          throw new MaintenanceError(
-            "missing_dependencies",
-            "Dependência local instalada ausente",
-          );
+          throw new MaintenanceError("missing_dependencies", "Dependência local instalada ausente");
         }
         if ((await directoryHash(actual)) !== dependencies.local[relative])
           throw new MaintenanceError(
             "missing_dependencies",
-            "Dependência local instalada difere do conteúdo versionado",
+            "Dependência local instalada difere do conteúdo versionado"
           );
       }
   }
@@ -460,13 +380,13 @@ export async function reuseDependencies(source, target) {
   if (before.hash !== after.hash)
     throw new MaintenanceError(
       "missing_dependencies",
-      "Manifesto/lockfiles/dependências locais do clone diferem da referência isolada",
+      "Manifesto/lockfiles/dependências locais do clone diferem da referência isolada"
     );
   const modules = path.join(source, "node_modules");
   if (!(await exists(modules)))
     throw new MaintenanceError(
       "missing_dependencies",
-      "node_modules ausente; instalação automática desabilitada",
+      "node_modules ausente; instalação automática desabilitada"
     );
   for (const [installed, relative] of Object.entries(before.links)) {
     if (!installed.startsWith("node_modules/")) continue;
@@ -474,15 +394,12 @@ export async function reuseDependencies(source, target) {
     try {
       actual = await realpath(path.join(source, installed));
     } catch {
-      throw new MaintenanceError(
-        "missing_dependencies",
-        "Dependência local instalada ausente",
-      );
+      throw new MaintenanceError("missing_dependencies", "Dependência local instalada ausente");
     }
     if ((await directoryHash(actual)) !== before.local[relative])
       throw new MaintenanceError(
         "missing_dependencies",
-        "Dependência local instalada difere da referência isolada",
+        "Dependência local instalada difere da referência isolada"
       );
   }
   const modulesReal = await realpath(modules);
@@ -495,23 +412,16 @@ export async function reuseDependencies(source, target) {
         await checkLinks(full, entry.name);
       if (entry.isSymbolicLink()) {
         const actual = await realpath(full);
-        if (
-          !inside(modulesReal, actual) &&
-          !before.links[`node_modules/${name}`]
-        )
+        if (!inside(modulesReal, actual) && !before.links[`node_modules/${name}`])
           throw new MaintenanceError(
             "missing_dependencies",
-            "Link externo em node_modules sem dependência local verificável",
+            "Link externo em node_modules sem dependência local verificável"
           );
       }
     }
   }
   await checkLinks(modulesReal);
-  await symlink(
-    await realpath(modules),
-    path.join(target, "node_modules"),
-    "dir",
-  );
+  await symlink(await realpath(modules), path.join(target, "node_modules"), "dir");
   return {
     source,
     hash: before.hash,
@@ -519,8 +429,7 @@ export async function reuseDependencies(source, target) {
     local: before.local,
   };
 }
-export const localRequire = (root) =>
-  createRequire(path.join(root, "package.json"));
+export const localRequire = (root) => createRequire(path.join(root, "package.json"));
 export function tool(root, name) {
   try {
     const req = localRequire(root),
@@ -528,10 +437,7 @@ export function tool(root, name) {
       dir = path.dirname(pkg);
     return { req, dir, pkg };
   } catch {
-    throw new MaintenanceError(
-      "missing_dependencies",
-      `Dependência local ausente: ${name}`,
-    );
+    throw new MaintenanceError("missing_dependencies", `Dependência local ausente: ${name}`);
   }
 }
 export function validateConfig(c) {
@@ -552,19 +458,14 @@ export function validateConfig(c) {
     c.version !== 1
   )
     fail("Configuração inválida ou versão desconhecida");
-  if (!["npm", "bun"].includes(c.manager))
-    fail("Gerenciador deve ser npm ou bun");
+  if (!["npm", "bun"].includes(c.manager)) fail("Gerenciador deve ser npm ou bun");
   const relative = (x) =>
     typeof x === "string" &&
     x.length &&
     !path.isAbsolute(x) &&
     !x.split(/[\\/]/).includes("..") &&
     !x.startsWith("-");
-  if (
-    !Array.isArray(c.tsconfigs) ||
-    !c.tsconfigs.length ||
-    !c.tsconfigs.every(relative)
-  )
+  if (!Array.isArray(c.tsconfigs) || !c.tsconfigs.length || !c.tsconfigs.every(relative))
     fail("tsconfigs explícitos obrigatórios");
   const expected = ["lint", "types", "test", "build"];
   if (
@@ -606,14 +507,10 @@ export function validateConfig(c) {
         } else if (name === "VITE_SUPABASE_PROJECT_ID") {
           if (!["maintenance_test", "test_fixture"].includes(value))
             fail("Project ID deve ser um identificador sintético de teste");
-        } else if (
-          ["VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_PUBLISHABLE_KEY"].includes(
-            name,
-          )
-        ) {
+        } else if (["VITE_SUPABASE_ANON_KEY", "VITE_SUPABASE_PUBLISHABLE_KEY"].includes(name)) {
           if (
             !/^(?:sb_publishable_)?(?:test|example|fixture|local|maintenance)[A-Za-z0-9_.-]{0,128}$/.test(
-              value,
+              value
             )
           )
             fail("Chave pública deve ser um placeholder explícito de teste");
@@ -622,9 +519,7 @@ export function validateConfig(c) {
     }
     if (
       !["node", "npm", "bun"].includes(g.command[0]) ||
-      g.command.some((s) =>
-        ["--watch", "-w", "--fix", "--write", "--update-baseline"].includes(s),
-      )
+      g.command.some((s) => ["--watch", "-w", "--fix", "--write", "--update-baseline"].includes(s))
     )
       fail("Gate deve ser finito e não corretivo");
     if (
@@ -638,14 +533,10 @@ export function validateConfig(c) {
   const f = c.fix;
   if (
     !f ||
-    Object.keys(f).some(
-      (k) => !["roots", "eslintRules", "prettier", "exclude"].includes(k),
-    ) ||
+    Object.keys(f).some((k) => !["roots", "eslintRules", "prettier", "exclude"].includes(k)) ||
     !Array.isArray(f.roots) ||
     !f.roots.length ||
-    !f.roots.every(
-      (x) => x === "src" || (x.startsWith("src/") && relative(x)),
-    ) ||
+    !f.roots.every((x) => x === "src" || (x.startsWith("src/") && relative(x))) ||
     typeof f.prettier !== "boolean"
   )
     fail("Escopo de correção deve ficar em src");
@@ -667,10 +558,7 @@ export function validateConfig(c) {
     "object-curly-spacing",
     "array-bracket-spacing",
   ];
-  if (
-    !Array.isArray(f.eslintRules) ||
-    !f.eslintRules.every((x) => allowed.includes(x))
-  )
+  if (!Array.isArray(f.eslintRules) || !f.eslintRules.every((x) => allowed.includes(x)))
     fail("Regra ESLint não autorizada para correção");
   for (const key of ["timeoutMs", "maxFiles", "maxChangedLines"])
     if (!Number.isInteger(c[key]) || c[key] < 1) fail(`Limite ${key} inválido`);
@@ -694,17 +582,11 @@ export async function inspect(root, config) {
     if (hasApi) {
       const parsed = ts.readConfigFile(filename, ts.sys.readFile);
       if (parsed.error) fail(`Não foi possível ler tsconfig ${cfg}`);
-      const result = ts.parseJsonConfigFileContent(
-        parsed.config,
-        ts.sys,
-        path.dirname(filename),
-      );
+      const result = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(filename));
       if (result.errors.length) fail(`tsconfig inválido: ${cfg}`);
       fileNames = result.fileNames;
     } else {
-      const temporary = await mkdtemp(
-        path.join(tmpdir(), "maintenance-ts-list-"),
-      );
+      const temporary = await mkdtemp(path.join(tmpdir(), "maintenance-ts-list-"));
       try {
         const bin = path.join(tool(root, "typescript").dir, "bin/tsc");
         const result = await run(
@@ -724,24 +606,23 @@ export async function inspect(root, config) {
             "--listFilesOnly",
           ],
           root,
-          config.timeoutMs,
+          config.timeoutMs
         );
         if (result.code !== 0 || result.timedOut || result.overflow)
           fail(
-            `TypeScript CLI não conseguiu listar arquivos de ${cfg} (exit=${result.code}, timeout=${result.timedOut})`,
+            `TypeScript CLI não conseguiu listar arquivos de ${cfg} (exit=${result.code}, timeout=${result.timedOut})`
           );
         fileNames = result.output
           .split("\n")
           .map((f) => f.trim())
           .filter((f) => path.isAbsolute(f) && /\.[cm]?[jt]sx?$/.test(f));
-        if (!fileNames.length)
-          fail(`Projeto TypeScript vazio ou inválido: ${cfg}`);
+        if (!fileNames.length) fail(`Projeto TypeScript vazio ou inválido: ${cfg}`);
       } finally {
         await rm(temporary, { recursive: true, force: true });
       }
     }
     const source = fileNames.filter((f) =>
-      path.relative(root, f).replaceAll("\\", "/").startsWith("src/"),
+      path.relative(root, f).replaceAll("\\", "/").startsWith("src/")
     );
     coverage.push({
       config: cfg,
@@ -750,8 +631,7 @@ export async function inspect(root, config) {
       method: hasApi ? "api" : "cli",
     });
   }
-  if (!coverage.some((c) => c.sourceFiles > 0))
-    fail("tsconfigs não incluem nenhum arquivo src");
+  if (!coverage.some((c) => c.sourceFiles > 0)) fail("tsconfigs não incluem nenhum arquivo src");
   return { coverage, dependencies: await dependencyFingerprint(root) };
 }
 async function holdAdvisoryLock(file) {
@@ -769,7 +649,7 @@ async function holdAdvisoryLock(file) {
         "-e",
         'process.stdout.write("locked\\n");process.stdin.resume();',
       ],
-      { env: safeEnv(), stdio: ["pipe", "pipe", "pipe"] },
+      { env: safeEnv(), stdio: ["pipe", "pipe", "pipe"] }
     );
     let ready = false,
       closed = false,
@@ -781,10 +661,7 @@ async function holdAdvisoryLock(file) {
     child.once("error", () => {
       clearTimeout(timer);
       reject(
-        new MaintenanceError(
-          "failed",
-          "flock obrigatório para recuperar travas com segurança",
-        ),
+        new MaintenanceError("failed", "flock obrigatório para recuperar travas com segurança")
       );
     });
     child.stdout.setEncoding("utf8");
@@ -808,19 +685,15 @@ async function holdAdvisoryLock(file) {
         reject(
           new MaintenanceError(
             code === 75 ? "skipped_busy" : "failed",
-            code === 75
-              ? "Outra execução mantém a trava do processo"
-              : "Falha no processo de trava",
-          ),
+            code === 75 ? "Outra execução mantém a trava do processo" : "Falha no processo de trava"
+          )
         );
     });
   });
 }
 async function staleDirectory(directory) {
   try {
-    const owner = JSON.parse(
-      await readFile(path.join(directory, "owner.json"), "utf8"),
-    );
+    const owner = JSON.parse(await readFile(path.join(directory, "owner.json"), "utf8"));
     if (Number.isSafeInteger(owner.pid) && owner.pid > 1) {
       try {
         process.kill(owner.pid, 0);
@@ -830,8 +703,7 @@ async function staleDirectory(directory) {
       }
     }
   } catch (error) {
-    if (!["ENOENT", "SyntaxError"].includes(error.code || error.name))
-      throw error;
+    if (!["ENOENT", "SyntaxError"].includes(error.code || error.name)) throw error;
   }
   const info = await stat(directory).catch((error) => {
     if (error.code === "ENOENT") return null;
@@ -852,7 +724,7 @@ export async function acquire(directory) {
         if (!(await staleDirectory(current)))
           throw new MaintenanceError(
             "skipped_busy",
-            "Trava com dono vivo ou criação recente; consulte owner.json",
+            "Trava com dono vivo ou criação recente; consulte owner.json"
           );
         await rm(current, { recursive: true, force: true });
       }
@@ -864,7 +736,7 @@ export async function acquire(directory) {
         token,
         startedAt: new Date().toISOString(),
       }),
-      { mode: 0o600 },
+      { mode: 0o600 }
     );
     owned = true;
   } finally {
@@ -872,9 +744,7 @@ export async function acquire(directory) {
   }
   return async () => {
     try {
-      const owner = JSON.parse(
-        await readFile(path.join(directory, "owner.json"), "utf8"),
-      );
+      const owner = JSON.parse(await readFile(path.join(directory, "owner.json"), "utf8"));
       if (owner.pid !== process.pid || owner.token !== token)
         fail("Dono da trava mudou; limpeza interrompida");
       await rm(directory, { recursive: true, force: true });
