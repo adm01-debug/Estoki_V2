@@ -72,3 +72,7 @@ Thumbs.db
 # Python
 __pycache__/
 *.pyc
+
+# Ambiente e artefatos Graphify locais
+/.tools/graphify/
+/graphify-out/
