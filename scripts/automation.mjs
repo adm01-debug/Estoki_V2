@@ -303,7 +303,9 @@ export async function execute(
     const kill = (signal) => {
       try {
         process.kill(process.platform === "win32" ? child.pid : -child.pid, signal);
-      } catch {}
+      } catch {
+        // O processo já pode ter encerrado.
+      }
     };
     const finish = (code, message) => {
       if (finished) return;
@@ -607,6 +609,11 @@ async function runTests(ctx) {
   const env = { ...process.env };
   delete env.NODE_TEST_CONTEXT;
   delete env.NODE_TEST_REPORTER;
+  // Fixtures Git não podem herdar o índice/working tree do hook chamador.
+  for (const key of (await git(ctx.root, ["rev-parse", "--local-env-vars"])).stdout
+    .trim()
+    .split(/\r?\n/))
+    delete env[key];
   return execute([process.execPath, "--test", "--test-concurrency=1", ...files], {
     cwd: ctx.root,
     timeout: ctx.c.timeoutMs || 300000,
@@ -820,10 +827,7 @@ async function hook(ctx, args) {
     const r = await execute([...(viaSh ? ["sh"] : []), original, ...args.slice(1)], {
       cwd: ctx.root,
       timeout: ctx.c.timeoutMs || 300000,
-      env: {
-        ...process.env,
-        REPO_AUTOMATION_CHAINING: state.id + ":" + event,
-      },
+      env: { ...process.env, REPO_AUTOMATION_CHAINING: state.id + ":" + event },
     });
     if (r.code !== 0) return { ...r, status: "original_hook_failed" };
   }

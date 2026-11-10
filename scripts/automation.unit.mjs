@@ -113,9 +113,7 @@ process.exit(Number(process.env.FIXTURE_GRAPH_EXIT||0));\n`
         command: "node scripts/automation.mjs test",
       },
     ],
-    nightly: {
-      command: ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"],
-    },
+    nightly: { command: ["node", "scripts/automation.mjs", "nightly", "--ref", "origin/main"] },
     timeoutMs: 5000,
   };
   const save = () => write("scripts/automation.config.json", JSON.stringify(config, null, 2));
@@ -285,9 +283,7 @@ test("uninstall funciona se o config versionado foi removido e não apaga mudan�
 });
 
 test("commit real aciona ponte e conserva falha original antes de nossos testes", (t) => {
-  const f = fixture(t, {
-    originalHook: "printf original > fixture-original.log\nexit 7\n",
-  });
+  const f = fixture(t, { originalHook: "printf original > fixture-original.log\nexit 7\n" });
   f.install();
   f.write("src/source.txt", "novo\n");
   f.git("add", "src/source.txt");
@@ -422,10 +418,7 @@ test("snapshot aprovado atende pré-merge sem afirmar source/CI integrados", (t)
   for (const rel of ["scripts", ".github", "package.json", "graphify.local.json"])
     cpSync(join(f.root, rel), join(snapshot, rel), { recursive: true });
   f.write("package.json", '{"scripts":{}}');
-  const config = {
-    ...f.config,
-    snapshot: { root: snapshot, ref: "1".repeat(40) },
-  };
+  const config = { ...f.config, snapshot: { root: snapshot, ref: "1".repeat(40) } };
   const installed = join(store, "profiles/fixture.json");
   mkdirSync(dirname(installed), { recursive: true });
   writeFileSync(installed, JSON.stringify(config));
@@ -511,4 +504,46 @@ test("registro operacional manual não é executado por hooks ou nightly", (t) =
   });
   assert.equal(hook.status, 0, hook.stderr);
   assert.equal(existsSync(join(f.root, "fixture-legacy.log")), false);
+});
+
+test("commit com Git env absoluto preserva hook/partial staging e isola fixtures filhas", (t) => {
+  const f = fixture(t, {
+    originalHook: 'printf "%s" "$GIT_INDEX_FILE" > fixture-original-env.log\n',
+  });
+  f.install();
+  f.write(
+    "scripts/smoke.unit.mjs",
+    `import test from 'node:test';import assert from 'node:assert/strict';
+import{mkdtempSync,writeFileSync,rmSync}from'node:fs';import{tmpdir}from'node:os';import{join}from'node:path';import{execFileSync}from'node:child_process';
+test('isolamento Git',()=>{
+ for(const key of ['GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR'])assert.equal(process.env[key],undefined,key+' deve estar ausente só no filho');
+ const nested=mkdtempSync(join(tmpdir(),'automation-nested-git-'));
+ try{execFileSync('git',['init','-q',nested]);execFileSync('git',['-C',nested,'config','core.hooksPath','/dev/null']);writeFileSync(join(nested,'fixture.txt'),'isolado');execFileSync('git',['-C',nested,'add','fixture.txt']);assert.equal(execFileSync('git',['-C',nested,'diff','--cached','--name-only'],{encoding:'utf8'}).trim(),'fixture.txt');}
+ finally{rmSync(nested,{recursive:true,force:true});}
+});\n`
+  );
+  f.write(
+    "package.json",
+    JSON.stringify({ type: "module", scripts: f.config.aliases, fixture: true })
+  );
+  f.write("src/source.txt", "staged\n");
+  f.git("add", "package.json", "src/source.txt");
+  f.write("src/source.txt", "unstaged\n");
+  const gitDir = join(f.root, ".git"),
+    index = join(gitDir, "index");
+  const r = f.run("git", ["commit", "-m", "env Git isolado"], {
+    env: {
+      ...process.env,
+      HUSKY: "0",
+      GIT_DIR: gitDir,
+      GIT_WORK_TREE: f.root,
+      GIT_COMMON_DIR: gitDir,
+      GIT_INDEX_FILE: index,
+    },
+  });
+  assert.equal(r.status, 0, r.stderr + r.stdout);
+  assert.equal(text(join(f.root, "fixture-original-env.log")), index);
+  assert.equal(f.git("show", "HEAD:src/source.txt"), "staged");
+  assert.equal(text(join(f.root, "src/source.txt")), "unstaged\n");
+  assert.equal(f.git("diff", "--cached", "--name-only"), "");
 });

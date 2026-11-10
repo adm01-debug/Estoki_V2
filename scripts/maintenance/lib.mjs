@@ -543,7 +543,7 @@ export function validateConfig(c) {
   if (
     f.exclude !== undefined &&
     (!Array.isArray(f.exclude) ||
-      !f.exclude.every((file) => relative(file) && !/[*?\[\]{}]/.test(file)))
+      !f.exclude.every((file) => relative(file) && !/[*?{}[\]]/.test(file)))
   )
     fail("Exclusões devem ser caminhos relativos explícitos, sem globs");
   const allowed = [
