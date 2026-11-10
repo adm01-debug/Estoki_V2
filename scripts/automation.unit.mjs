@@ -2,19 +2,23 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
+  appendFileSync,
   chmodSync,
   cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  renameSync,
   rmSync,
+  statSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { execute, parseArgs, validateConfig } from "./automation.mjs";
+import { appendExclude, removeExclude, execute, parseArgs, validateConfig } from "./automation.mjs";
 
 const kit = dirname(fileURLToPath(import.meta.url));
 const text = (p) => readFileSync(p, "utf8");
@@ -267,7 +271,8 @@ test("install/uninstall idempotentes restauram hooksPath e exclusões anteriores
   assert.equal(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.cli("uninstall-hooks").status, 0);
   assert.equal(f.git("config", "core.hooksPath"), ".original-hooks");
-  assert.equal(text(exclude), before);
+  assert.ok(text(exclude).startsWith(before));
+  assert.equal(text(exclude).slice(before.length).trim(), "");
 });
 
 test("uninstall funciona se o config versionado foi removido e não apaga mudança de terceiro", (t) => {
@@ -546,4 +551,52 @@ test('isolamento Git',()=>{
   assert.equal(f.git("show", "HEAD:src/source.txt"), "staged");
   assert.equal(text(join(f.root, "src/source.txt")), "unstaged\n");
   assert.equal(f.git("diff", "--cached", "--name-only"), "");
+});
+
+test("info/exclude append e reversao preservam inode e linhas concorrentes", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "automation-exclude-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const file = join(dir, "exclude");
+  writeFileSync(file, "# contexto original\n*.local\n");
+  const inode = statSync(file).ino;
+  const addition = appendExclude(file, () => appendFileSync(file, "concurrent-before\n"));
+  appendFileSync(file, "concurrent-after\n");
+  assert.ok(text(file).includes("/.tools/repo-automation/"));
+  assert.equal(removeExclude(file, addition), true);
+  assert.equal(statSync(file).ino, inode);
+  assert.ok(text(file).startsWith("# contexto original\n*.local\nconcurrent-before\n"));
+  assert.ok(text(file).endsWith("concurrent-after\n"));
+  assert.equal(text(file).includes("/.tools/repo-automation/"), false);
+  assert.equal(removeExclude(file, addition), false);
+  assert.equal(removeExclude(join(dir, "missing"), addition), false);
+});
+
+test("info/exclude recusa symlink sem modificar destino em install ou reversao", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "automation-exclude-link-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const target = join(dir, "foreign"),
+    link = join(dir, "exclude");
+  writeFileSync(target, "conteudo alheio\n");
+  symlinkSync(target, link);
+  assert.throws(() => appendExclude(link), /ELOOP|symbolic|links/i);
+  assert.throws(() => removeExclude(link, "bloco proprio"), /ELOOP|symbolic|links/i);
+  assert.equal(text(target), "conteudo alheio\n");
+});
+
+test("info/exclude troca de inode durante leitura aborta sem tocar novo arquivo", (t) => {
+  const dir = mkdtempSync(join(tmpdir(), "automation-exclude-inode-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const file = join(dir, "exclude"),
+    old = join(dir, "old");
+  writeFileSync(file, "original\n");
+  assert.throws(
+    () =>
+      appendExclude(file, () => {
+        renameSync(file, old);
+        writeFileSync(file, "novo arquivo de terceiro\n");
+      }),
+    /mudou de identidade/
+  );
+  assert.equal(text(file), "novo arquivo de terceiro\n");
+  assert.equal(text(old), "original\n");
 });
