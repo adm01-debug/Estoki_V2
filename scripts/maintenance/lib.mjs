@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
+import { constants } from "node:fs";
 import {
   mkdir,
   mkdtemp,
@@ -86,10 +87,7 @@ export function run(command, cwd, timeoutMs = 120000, options = {}) {
       bytes = 0,
       timedOut = false,
       overflow = false;
-    const decoders = {
-      stdout: new StringDecoder("utf8"),
-      stderr: new StringDecoder("utf8"),
-    };
+    const decoders = { stdout: new StringDecoder("utf8"), stderr: new StringDecoder("utf8") };
     const kill = (signal) => {
       try {
         process.kill(-child.pid, signal);
@@ -249,6 +247,39 @@ const inside = (root, file) => {
     (!path.isAbsolute(relative) && relative !== ".." && !relative.startsWith(`..${path.sep}`))
   );
 };
+export async function readRegularDependency(file, expected) {
+  let handle;
+  try {
+    handle = await open(file, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  } catch {
+    throw new MaintenanceError(
+      "missing_dependencies",
+      "Arquivo de dependência local mudou ou não pode ser aberto com segurança"
+    );
+  }
+  try {
+    const before = await handle.stat();
+    if (!before.isFile() || before.ino !== expected.ino || before.dev !== expected.dev)
+      throw new MaintenanceError(
+        "missing_dependencies",
+        "Arquivo de dependência local foi substituído durante a inspeção"
+      );
+    const bytes = await handle.readFile();
+    const after = await handle.stat();
+    if (
+      before.size !== after.size ||
+      before.mtimeMs !== after.mtimeMs ||
+      before.ctimeMs !== after.ctimeMs
+    )
+      throw new MaintenanceError(
+        "missing_dependencies",
+        "Arquivo de dependência local mudou durante a leitura"
+      );
+    return { bytes, mode: before.mode };
+  } finally {
+    await handle.close();
+  }
+}
 async function directoryHash(root) {
   const entries = [];
   async function visit(file, relative) {
@@ -267,9 +298,10 @@ async function directoryHash(root) {
           );
         await visit(path.join(file, name), relative ? `${relative}/${name}` : name);
       }
-    } else if (info.isFile())
-      entries.push([relative, info.mode & 0o111, digest(await readFile(file))]);
-    else
+    } else if (info.isFile()) {
+      const content = await readRegularDependency(file, info);
+      entries.push([relative, content.mode & 0o111, digest(content.bytes)]);
+    } else
       throw new MaintenanceError(
         "missing_dependencies",
         "Entrada especial em dependência local não suportada"
@@ -368,11 +400,7 @@ export async function dependencyFingerprint(root) {
           );
       }
   }
-  return {
-    files,
-    ...dependencies,
-    hash: digest(JSON.stringify({ files, ...dependencies })),
-  };
+  return { files, ...dependencies, hash: digest(JSON.stringify({ files, ...dependencies })) };
 }
 export async function reuseDependencies(source, target) {
   const before = await dependencyFingerprint(source),
@@ -422,12 +450,7 @@ export async function reuseDependencies(source, target) {
   }
   await checkLinks(modulesReal);
   await symlink(await realpath(modules), path.join(target, "node_modules"), "dir");
-  return {
-    source,
-    hash: before.hash,
-    files: before.files,
-    local: before.local,
-  };
+  return { source, hash: before.hash, files: before.files, local: before.local };
 }
 export const localRequire = (root) => createRequire(path.join(root, "package.json"));
 export function tool(root, name) {
@@ -543,7 +566,7 @@ export function validateConfig(c) {
   if (
     f.exclude !== undefined &&
     (!Array.isArray(f.exclude) ||
-      !f.exclude.every((file) => relative(file) && !/[*?{}[\]]/.test(file)))
+      !f.exclude.every((file) => relative(file) && !/[*?[\]{}]/.test(file)))
   )
     fail("Exclusões devem ser caminhos relativos explícitos, sem globs");
   const allowed = [
@@ -585,6 +608,7 @@ export async function inspect(root, config) {
       const result = ts.parseJsonConfigFileContent(parsed.config, ts.sys, path.dirname(filename));
       if (result.errors.length) fail(`tsconfig inválido: ${cfg}`);
       fileNames = result.fileNames;
+      if (!fileNames.length) fail(`Projeto TypeScript vazio ou inválido: ${cfg}`);
     } else {
       const temporary = await mkdtemp(path.join(tmpdir(), "maintenance-ts-list-"));
       try {
@@ -731,11 +755,7 @@ export async function acquire(directory) {
     await mkdir(directory, { mode: 0o700 });
     await writeFile(
       path.join(directory, "owner.json"),
-      JSON.stringify({
-        pid: process.pid,
-        token,
-        startedAt: new Date().toISOString(),
-      }),
+      JSON.stringify({ pid: process.pid, token, startedAt: new Date().toISOString() }),
       { mode: 0o600 }
     );
     owned = true;

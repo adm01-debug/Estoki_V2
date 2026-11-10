@@ -51,20 +51,20 @@ Requirements: **Node.js 20+**, npm 10+, a Supabase project (or Lovable Cloud bac
 
 ## 📋 Scripts
 
-| Command                                 | Purpose                                                   |
-| --------------------------------------- | --------------------------------------------------------- |
-| `npm run dev`                           | Dev server (Vite, port 8080)                              |
-| `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`) |
-| `npm run lint` / `lint:fix`             | ESLint                                                    |
+| Command                                 | Purpose                                                     |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                           | Dev server (Vite, port 8080)                                |
+| `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`)   |
+| `npm run lint` / `lint:fix`             | ESLint                                                      |
 | `npm run typecheck`                     | TypeScript app + configuração Vite, com projetos explícitos |
-| `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                    |
-| `npm run test:e2e`                      | Playwright E2E                                            |
-| `npm run size`                          | Bundle budgets (size-limit)                               |
-| `npm run qa:rls`                        | RLS audit — every public table must have RLS + policy     |
-| `npm run audit:zod`                     | Zod coverage across Edge Functions                        |
-| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate          |
-| `npm run audit:deps`                    | Dependency advisories (registry-independent auditor)      |
-| `npm run qa:all`                        | Full local quality gate                                   |
+| `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                      |
+| `npm run test:e2e`                      | Playwright E2E                                              |
+| `npm run size`                          | Bundle budgets (size-limit)                                 |
+| `npm run qa:rls`                        | RLS audit — every public table must have RLS + policy       |
+| `npm run audit:zod`                     | Zod coverage across Edge Functions                          |
+| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate            |
+| `npm run audit:deps`                    | Dependency advisories (registry-independent auditor)        |
+| `npm run qa:all`                        | Full local quality gate                                     |
 
 ## 🔐 Security
 
