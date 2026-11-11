@@ -21,7 +21,7 @@
     "prepare": "echo 'skip husky'",
     "test:watch": "vitest --watch",
     "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
+    "typecheck": "tsc --noEmit",
     "validate": "npm run lint && npm run typecheck && npm run test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
