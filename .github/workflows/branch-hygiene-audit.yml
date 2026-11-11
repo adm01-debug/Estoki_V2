@@ -20,7 +20,7 @@ name: Branch Hygiene Audit
 
 on:
   schedule:
-    - cron: '56 7 * * 1' # segunda-feira, 07:56 UTC (fora do minuto 0)
+    - cron: "56 7 * * 1" # segunda-feira, 07:56 UTC (fora do minuto 0)
   workflow_dispatch: {}
 
 defaults:
@@ -69,7 +69,7 @@ jobs:
         # devolve `billable: {}` em repositorio publico (medido em 03/10/2026).
         env:
           GH_TOKEN: ${{ github.token }}
-          JANELA_DIAS: '7'
+          JANELA_DIAS: "7"
         run: |
           set -euo pipefail
           node scripts/ci/actions-kpi.mjs
@@ -143,7 +143,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-          LIMITE_PRS: '500'
+          LIMITE_PRS: "500"
         run: |
           set -euo pipefail
           RELATORIO="$RUNNER_TEMP/branch-hygiene.md"

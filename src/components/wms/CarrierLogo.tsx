@@ -3,16 +3,7 @@ import { cn } from "@/lib/utils";
 import { Truck } from "lucide-react";
 
 type CarrierType =
-  | "correios"
-  | "jadlog"
-  | "fedex"
-  | "dhl"
-  | "ups"
-  | "azul"
-  | "latam"
-  | "sedex"
-  | "pac"
-  | "other";
+  "correios" | "jadlog" | "fedex" | "dhl" | "ups" | "azul" | "latam" | "sedex" | "pac" | "other";
 interface CarrierLogoProps {
   carrier: CarrierType | string;
   size?: "sm" | "md" | "lg";
