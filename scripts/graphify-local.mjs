@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { createReadStream, constants } from "node:fs";
+import { createReadStream, constants, realpathSync } from "node:fs";
 import { createHash, randomUUID } from "node:crypto";
 import {
   readFile,
@@ -185,7 +185,7 @@ export function run(command, cwd, env, timeoutMs = 120000) {
 }
 function environment(extra = {}) {
   return {
-    PATH: `${path.dirname(process.execPath)}:${path.join(homedir(), ".local/bin")}:/usr/local/bin:/usr/bin:/bin`,
+    PATH: `${process.env.PATH ?? ""}${path.delimiter}${path.dirname(process.execPath)}${path.delimiter}${path.join(homedir(), ".local/bin")}${path.delimiter}/usr/local/bin${path.delimiter}/usr/bin${path.delimiter}/bin`,
     HOME: homedir(),
     LANG: "C.UTF-8",
     TZ: "America/Sao_Paulo",
@@ -620,7 +620,7 @@ async function generate(ctx, fp, expectedGraph) {
       );
       await execute([ctx.python, "scripts/graphify/run.py", "pilot", "--profile", "pilot"], {
         ...ctx.env,
-        PATH: `${shims}:${ctx.env.PATH}`,
+        PATH: `${shims}${path.delimiter}${ctx.env.PATH}`,
       });
       const runs = (await readdir(path.join(ctx.root, "graphify-out/pilot"))).filter(
         (n) => n.startsWith("execucao-") && !previous.has(n)
@@ -817,10 +817,10 @@ export async function main(args = process.argv.slice(2), options = {}) {
   const report = { version: 1, startedAt: new Date().toISOString(), status: "failed" };
   try {
     const parsed = parse(args),
-      root = await realpath(path.resolve(parsed.root || process.cwd()));
+      root = realpathSync.native(path.resolve(parsed.root || process.cwd()));
     report.action = parsed.action;
     report.root = root;
-    if ((await realpath(await git(root, ["rev-parse", "--show-toplevel"]))) !== root)
+    if (realpathSync.native(await git(root, ["rev-parse", "--show-toplevel"])) !== root)
       fail("--root deve apontar para a raiz Git");
     const config = validateConfig(
       await json(path.resolve(root, parsed.config || "graphify.local.json"))
@@ -839,7 +839,7 @@ export async function main(args = process.argv.slice(2), options = {}) {
     ctx.python = path.join(ctx.envRoot, "bin/python");
     ctx.binary = path.join(ctx.envRoot, "bin/graphify");
     ctx.env = environment({
-      PATH: `${ctx.envRoot}/bin:${path.dirname(process.execPath)}:/usr/local/bin:/usr/bin:/bin`,
+      PATH: `${ctx.envRoot}/bin${path.delimiter}${path.dirname(process.execPath)}${path.delimiter}/usr/local/bin${path.delimiter}/usr/bin${path.delimiter}/bin`,
     });
     ctx.graph = path.join(ctx.outputRoot, "graph.json");
     ctx.provenance = path.join(ctx.outputRoot, "graphify-local-provenance.json");

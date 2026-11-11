@@ -660,6 +660,14 @@
       "manual": ["node", "scripts/automation.mjs", "doctor", "--static"],
       "triggers": ["manual"],
       "reason": "Legado sem chamador literal no inventário; execução manual controlada após revisar parâmetros e ambiente. O dispatcher não executa esta operação. Arquivo TypeScript de apoio: a invocação manual verifica somente o inventário; execução operacional usa o chamador original e seu runtime."
+    },
+    {
+      "id": "legacy-158bfb803799545f",
+      "kind": "legacy",
+      "files": ["scripts/check-agents-integrity.mjs"],
+      "manual": ["node", "scripts/check-agents-integrity.mjs"],
+      "triggers": ["manual"],
+      "reason": "Legado mantido no fluxo existente; referências literais: docs/agentes/github-ci.md e AGENTS.md (guard de integridade das instruções para agentes). O dispatcher não executa esta operação."
     }
   ],
   "ci": [
