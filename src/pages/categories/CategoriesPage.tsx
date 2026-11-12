@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 type Categoria = {
   id: string;
+  codigo: string;
   nome: string;
   descricao: string | null;
   cor: string | null;
@@ -21,7 +22,13 @@ export default function CategoriesPage() {
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Categoria | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ nome: "", descricao: "", cor: "#3B82F6", icone: "Tag" });
+  const [form, setForm] = useState({
+    codigo: "",
+    nome: "",
+    descricao: "",
+    cor: "#3B82F6",
+    icone: "Tag",
+  });
 
   const { data: categorias = [], isLoading } = useQuery({
     queryKey: ["categorias"],
@@ -50,7 +57,7 @@ export default function CategoriesPage() {
       toast.success(editing ? "Categoria atualizada" : "Categoria criada");
       setShowForm(false);
       setEditing(null);
-      setForm({ nome: "", descricao: "", cor: "#3B82F6", icone: "Tag" });
+      setForm({ codigo: "", nome: "", descricao: "", cor: "#3B82F6", icone: "Tag" });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -72,6 +79,7 @@ export default function CategoriesPage() {
   const openEdit = (c: Categoria) => {
     setEditing(c);
     setForm({
+      codigo: c.codigo,
       nome: c.nome,
       descricao: c.descricao || "",
       cor: c.cor || "#3B82F6",
@@ -114,6 +122,12 @@ export default function CategoriesPage() {
               }}
               className="grid grid-cols-2 gap-3"
             >
+              <Input
+                placeholder="Código"
+                value={form.codigo}
+                onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+                required
+              />
               <Input
                 placeholder="Nome"
                 value={form.nome}

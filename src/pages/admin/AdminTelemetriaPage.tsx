@@ -433,7 +433,7 @@ export default function AdminTelemetriaPage() {
                   mode="single"
                   selected={customDateFrom}
                   onSelect={setCustomDateFrom}
-                  initialFocus
+                  autoFocus
                 />
               </PopoverContent>
             </Popover>
@@ -457,7 +457,7 @@ export default function AdminTelemetriaPage() {
                   mode="single"
                   selected={customDateTo}
                   onSelect={setCustomDateTo}
-                  initialFocus
+                  autoFocus
                 />
               </PopoverContent>
             </Popover>

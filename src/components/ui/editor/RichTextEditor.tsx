@@ -19,7 +19,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       }),
     ],
     content,
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }: { editor: { getHTML(): string } }) => {
       onChange(editor.getHTML());
     },
   });

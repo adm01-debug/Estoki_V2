@@ -19,8 +19,8 @@ interface OndasChartsProps {
   ondas: {
     status: string;
     prioridade: string;
-    total_tarefas?: number;
-    tarefas_concluidas?: number;
+    total_tarefas?: number | null;
+    tarefas_concluidas?: number | null;
   }[];
 }
 

@@ -17,6 +17,7 @@ import {
   PackageX,
   Clock,
   Archive,
+  type LucideIcon,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -58,7 +59,7 @@ const SEVERIDADE_CONFIG: Record<Severidade, { label: string; className: string; 
   },
 };
 
-const TIPO_ICONS: Record<TipoNotificacao | "alerta", any> = {
+const TIPO_ICONS: Record<TipoNotificacao | "alerta" | "default", LucideIcon> = {
   estoque_baixo: PackageX,
   triagem_pendente: Clock,
   recebimento: Package,
