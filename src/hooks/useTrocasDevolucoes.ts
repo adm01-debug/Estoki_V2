@@ -5,13 +5,7 @@ import type { TablesUpdate } from "@/integrations/supabase/types";
 
 export type TipoRegistro = "troca" | "devolucao";
 export type StatusRegistro =
-  | "aberto"
-  | "em_analise"
-  | "aprovado"
-  | "recusado"
-  | "em_transito"
-  | "recebido"
-  | "finalizado";
+  "aberto" | "em_analise" | "aprovado" | "recusado" | "em_transito" | "recebido" | "finalizado";
 export type MotivoTD =
   | "defeito"
   | "cor_errada"

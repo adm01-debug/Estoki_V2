@@ -7,10 +7,7 @@ type LoteInsert = Database["public"]["Tables"]["lotes"]["Insert"];
 type LoteUpdate = Database["public"]["Tables"]["lotes"]["Update"];
 
 export type BatchStatus =
-  | Database["public"]["Enums"]["status_recebimento"]
-  | "ativo"
-  | "vencido"
-  | "esgotado";
+  Database["public"]["Enums"]["status_recebimento"] | "ativo" | "vencido" | "esgotado";
 
 export interface Batch {
   id: string;

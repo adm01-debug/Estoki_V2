@@ -3,13 +3,14 @@
   "vite": [
     "https://github.com/advisories/GHSA-fx2h-pf6j-xcff",
     "https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
-    "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
+    "https://github.com/advisories/GHSA-4w7w-66w2-5vf9",
+    "https://github.com/advisories/GHSA-587h-7wmj-h5pm"
   ],
   "esbuild": ["https://github.com/advisories/GHSA-67mh-4wv8-2f99"],
-  "react-router": [
-    "https://github.com/advisories/GHSA-wrjc-x8rr-h8h6",
-    "https://github.com/advisories/GHSA-337j-9hxr-rhxg"
-  ],
-  "react-router-dom": ["https://github.com/advisories/GHSA-jjmj-jmhj-qwj2"],
-  "brace-expansion": ["https://github.com/advisories/GHSA-mh99-v99m-4gvg"]
+  "zod": ["https://github.com/advisories/GHSA-mrhx-c7xc-m3w5"],
+  "basic-ftp": ["https://github.com/advisories/GHSA-c475-qrg2-pj4r"],
+  "extract-zip": [
+    "https://github.com/advisories/GHSA-jmr9-qjv8-65gv",
+    "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3"
+  ]
 }
