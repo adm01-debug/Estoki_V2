@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { logger } from "@/utils/logger";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Rastreio {
   codigo: string;
@@ -54,7 +55,7 @@ export default function IntegracaoTransportadoras() {
   const [tab, setTab] = useState("rastrear");
   const [rastreando, setRastreando] = useState(false);
 
-  const { data: romaneios = [] } = useQuery({
+  const { data: romaneios = [], isLoading: loading } = useQuery({
     queryKey: ["romaneios-em-transito"],
     queryFn: fetchRomaneiosEmTransito,
     staleTime: 1000 * 60 * 2,
@@ -219,7 +220,12 @@ export default function IntegracaoTransportadoras() {
         </TabsContent>
 
         <TabsContent value="romaneios" className="mt-4 space-y-3">
-          {romaneios.length === 0 ? (
+          {loading ? (
+            // Carregando: esqueletos em vez de "nenhum romaneio" enquanto a busca não terminou.
+            Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-20 w-full rounded-lg" />
+            ))
+          ) : romaneios.length === 0 ? (
             <Card className="glass-card">
               <CardContent className="py-12 text-center">
                 <Truck className="mx-auto mb-3 h-12 w-12 text-muted-foreground/30" />
