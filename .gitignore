@@ -58,3 +58,25 @@ Thumbs.db
 # Misc
 .cache
 .temp
+
+# Contexto para agentes de IA: gerado por script e publicado na branch `contexto`,
+# nunca commitado na main (só `docs/contexto/regras/manual/`, que é escrito por humanos).
+/docs/contexto/00-INDEX.md
+/docs/contexto/codigo/
+/docs/contexto/supabase/
+/docs/contexto/regras/*
+!/docs/contexto/regras/manual/
+# Inventário auxiliar não versionado
+/inventario/estado/tabelas-uso.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Ambiente e artefatos Graphify locais
+/.tools/graphify/
+/graphify-out/
+
+# Estado local privado dos novos adaptadores de automação
+/.tools/repo-automation/
+/.tools/graphify/local-state/

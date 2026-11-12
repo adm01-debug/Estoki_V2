@@ -8,3 +8,14 @@ coverage
 pnpm-lock.yaml
 package-lock.json
 supabase/functions
+
+# Automação portada do Zapp Web V2: mantém a formatação da origem (aspas simples, 120 colunas)
+# para o diff com o upstream continuar legível. Lint (ESLint) continua valendo nessas pastas.
+scripts/ai-context
+scripts/db-audit
+scripts/inventario
+scripts/lib
+scripts/regras_negocio
+scripts/supabase_snapshot
+inventario/estado
+docs/contexto

@@ -1,0 +1,206 @@
+# docs:
+#   gatilho: push na main em supabase/migrations/**, cron semanal (segunda 06:13 UTC) e workflow_dispatch
+#   prova: supabase/schema-{catalog,manifest}.json e scripts/db-audit/grants-baseline.json refletem o banco
+#   falha: identidade do banco nao comprovada, SQL que nao roda, ou entrada invalida (exit 2)
+#   avisa: notifica-falha-main.yml abre issue; a proposta de atualizacao vem como PR
+# nao-e-bug:
+#   - sem-secret: sem DESTINO_URL o workflow fica verde com warning (no dispatch, falha)
+#   - pr-sem-auto-merge: a PR fica aberta de proposito - mudanca de catalogo/grants o dono revisa
+#   - primeira-geracao: enquanto os 3 artefatos nao existirem no repo, a PR os cria sem comparar
+name: Manifesto do banco (catalogo, manifesto e grants)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "scripts/db-audit/**"
+      - ".github/workflows/db-manifesto.yml"
+  schedule:
+    - cron: "13 6 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: db-manifesto
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ler-banco:
+    name: Ler o banco (somente leitura)
+    runs-on: ubuntu-latest
+    # O job que toca a credencial nao escreve no repo.
+    permissions:
+      contents: read
+    outputs:
+      gerou: ${{ steps.consultar.outputs.gerou }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Cliente PostgreSQL
+        run: bash scripts/ci/install-postgresql-client.sh
+
+      - name: Exigir credencial do banco oficial (identidade + TLS verify-full)
+        id: identidade
+        env:
+          DESTINO_URL: ${{ secrets.DESTINO_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DESTINO_URL:-}" ]; then
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "::error::DESTINO_URL ausente: o dispatch pediu a leitura do banco explicitamente."; exit 1
+            fi
+            echo "::warning::DESTINO_URL ausente: catalogo/manifesto/grants nao foram medidos."
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+          import {
+            carregarIdentidadeEsperada,
+            endurecerDestinoTls,
+            validarDestino,
+            validarSupabaseCa,
+          } from './scripts/db-audit/database-identity.mjs';
+          const identidade = carregarIdentidadeEsperada('scripts/db-audit/database-identity.json');
+          const erros = validarDestino(process.env.DESTINO_URL, identidade);
+          erros.push(...validarSupabaseCa());
+          const tls = endurecerDestinoTls(process.env.DESTINO_URL);
+          erros.push(...tls.erros);
+          for (const erro of erros) console.error('ERRO: ' + erro);
+          if (erros.length) process.exit(1);
+          console.log(`::add-mask::${tls.connectionString}`);
+          appendFileSync(process.env.GITHUB_ENV, `DESTINO_URL=${tls.connectionString}\n`);
+          appendFileSync(process.env.GITHUB_ENV, 'PGSSLMODE=verify-full\n');
+          console.log('OK: endpoint comprovado por fingerprint; TLS verify-full com CA Supabase pinada.');
+          NODE
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      # DESTINO_URL endurecido vem do GITHUB_ENV do passo acima: sem `env:` proprio aqui,
+      # que sobrescreveria com o secret cru, sem TLS. A credencial nunca entra no argv
+      # (psql-safe.mjs traduz a URL em PGHOST/PGUSER/PGPASSFILE).
+      - name: Consultar catalogo, manifesto e grants
+        id: consultar
+        if: steps.identidade.outputs.ok == 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p candidatos
+          node scripts/db-audit/psql-safe.mjs -X -v ON_ERROR_STOP=1 -At -f scripts/db-audit/catalog.sql > candidatos/schema-catalog.json
+          node scripts/db-audit/psql-safe.mjs -X -v ON_ERROR_STOP=1 -At -f scripts/db-audit/manifest.sql > candidatos/schema-manifest.json
+          node scripts/db-audit/psql-safe.mjs -X -v ON_ERROR_STOP=1 -At -f scripts/db-audit/grants-baseline.sql > candidatos/grants-baseline.json
+          for f in candidatos/*.json; do
+            test -s "$f"
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || { echo "::error::$f nao e JSON valido"; exit 2; }
+          done
+          echo "gerou=true" >> "$GITHUB_OUTPUT"
+
+      - name: Classificar divergencia (0=igual, 1=propor, 2=erro)
+        id: drift
+        if: steps.consultar.outputs.gerou == 'true'
+        run: |
+          set -euo pipefail
+          PROPOR=false
+          classificar() {
+            local comparador="$1" commitado="$2" candidato="$3"
+            if [ ! -f "$commitado" ]; then
+              echo "$commitado ainda nao existe no repo: primeira geracao."
+              PROPOR=true
+              return 0
+            fi
+            set +e
+            node "$comparador" "$candidato"
+            local codigo=$?
+            set -e
+            case "$codigo" in
+              0) echo "$commitado em dia." ;;
+              1) echo "$commitado divergente: vai para a PR."; PROPOR=true ;;
+              *) echo "::error::$comparador saiu com $codigo (entrada invalida ou identidade nao comprovada); nada sera proposto."; exit 2 ;;
+            esac
+          }
+          classificar scripts/db-audit/check-catalog-fresh.mjs supabase/schema-catalog.json candidatos/schema-catalog.json
+          classificar scripts/db-audit/check-manifest-fresh.mjs supabase/schema-manifest.json candidatos/schema-manifest.json
+          classificar scripts/db-audit/check-grants-fresh.mjs scripts/db-audit/grants-baseline.json candidatos/grants-baseline.json
+          echo "propor=$PROPOR" >> "$GITHUB_OUTPUT"
+
+      - name: Entregar os candidatos ao job sem credencial
+        if: steps.drift.outputs.propor == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: candidatos-banco
+          path: candidatos
+          if-no-files-found: error
+          retention-days: 1
+
+  propor:
+    name: Abrir PR com o artefato novo
+    needs: ler-banco
+    if: needs.ler-banco.outputs.gerou == 'true'
+    runs-on: ubuntu-latest
+    # Este job nao ve a credencial do banco.
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v7
+        id: baixar
+        continue-on-error: true
+        with:
+          name: candidatos-banco
+          path: candidatos
+      - name: Aplicar os candidatos
+        id: aplicar
+        run: |
+          set -euo pipefail
+          if [ ! -d candidatos ]; then echo "nada a propor"; echo "tem=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          mkdir -p supabase scripts/db-audit
+          cp candidatos/schema-catalog.json supabase/schema-catalog.json
+          cp candidatos/schema-manifest.json supabase/schema-manifest.json
+          cp candidatos/grants-baseline.json scripts/db-audit/grants-baseline.json
+          rm -rf candidatos
+          echo "tem=true" >> "$GITHUB_OUTPUT"
+      - name: Abrir PR
+        id: pr
+        if: steps.aplicar.outputs.tem == 'true'
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          base: main
+          branch: automation/db-manifesto
+          delete-branch: true
+          commit-message: "chore(db): atualiza catalogo, manifesto e grants do banco"
+          title: "chore(db): catalogo, manifesto e grants do banco"
+          labels: banco
+          add-paths: |
+            supabase/schema-catalog.json
+            supabase/schema-manifest.json
+            scripts/db-audit/grants-baseline.json
+          body: |
+            Gerado por `db-manifesto.yml` lendo o banco oficial em sessao somente leitura, com a
+            identidade do endpoint comprovada por fingerprint (`scripts/db-audit/database-identity.json`)
+            e TLS `verify-full` com CA pinada.
+
+            **Fica aberta de proposito.** Mudanca de catalogo ou de grants merece leitura humana:
+            compare o diff com a migration que a causou antes de mergear. Se nao houver migration
+            correspondente, alguem mudou o banco fora do repo.
+      - name: Destravar os checks da PR automatica
+        if: steps.pr.outputs.pull-request-number != ''
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const runs = await github.rest.actions.listWorkflowRunsForRepo({
+              owner: context.repo.owner, repo: context.repo.repo,
+              branch: 'automation/db-manifesto', status: 'action_required', per_page: 20,
+            });
+            for (const run of runs.data.workflow_runs) {
+              try { await github.rest.actions.approveWorkflowRun({ owner: context.repo.owner, repo: context.repo.repo, run_id: run.id }); }
+              catch (erro) { core.warning(`run ${run.id}: ${erro.message}`); }
+            }
