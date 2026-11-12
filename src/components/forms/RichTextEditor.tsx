@@ -12,7 +12,7 @@ export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEd
   const editor = useEditor({
     extensions: [StarterKit],
     content: value,
-    onUpdate: ({ editor }: { editor: { getHTML(): string } }) => onChange?.(editor.getHTML()),
+    onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
   });
   if (!editor) return null;
   return (

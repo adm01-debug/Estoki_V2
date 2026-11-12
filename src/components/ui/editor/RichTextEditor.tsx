@@ -1,6 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Placeholder } from "@tiptap/extensions";
 import { Toggle } from "@/components/ui/toggle";
 import { Bold, Italic, List, ListOrdered, Quote } from "lucide-react";
 
@@ -19,7 +19,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       }),
     ],
     content,
-    onUpdate: ({ editor }: { editor: { getHTML(): string } }) => {
+    onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
