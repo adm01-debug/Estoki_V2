@@ -24,7 +24,10 @@ export async function contarComentarios(gh, owner, repo, issueNumber) {
   let total = 0;
   let page = 1;
   for (;;) {
-    const lista = await gh('GET', `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100&page=${page}`);
+    const lista = await gh(
+      "GET",
+      `/repos/${owner}/${repo}/issues/${issueNumber}/comments?per_page=100&page=${page}`
+    );
     if (!Array.isArray(lista) || lista.length === 0) break;
     total += lista.length;
     if (lista.length < 100) break;
@@ -37,7 +40,10 @@ export async function contarComentarios(gh, owner, repo, issueNumber) {
  * Encontra a primeira issue aberta com o título e label dados.
  */
 export async function encontrarIssue(gh, owner, repo, label, title) {
-  const lista = await gh('GET', `/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open&per_page=10`);
+  const lista = await gh(
+    "GET",
+    `/repos/${owner}/${repo}/issues?labels=${encodeURIComponent(label)}&state=open&per_page=10`
+  );
   return Array.isArray(lista) ? (lista.find((i) => i.title === title) ?? null) : null;
 }
 
@@ -45,10 +51,10 @@ export async function encontrarIssue(gh, owner, repo, label, title) {
  * Garante que o label existe (ignora 422 se já existir).
  */
 async function garantirLabel(gh, owner, repo, label) {
-  await gh('POST', `/repos/${owner}/${repo}/labels`, {
+  await gh("POST", `/repos/${owner}/${repo}/labels`, {
     name: label,
-    color: 'e11d48',
-    description: 'Issue de alerta de guarda automático',
+    color: "e11d48",
+    description: "Issue de alerta de guarda automático",
   }).catch(() => {});
 }
 
@@ -69,15 +75,15 @@ export async function abrirOuRotacionar({ gh, owner, repo, label, title, body })
 
     if (total > LIMITE_COMENTARIOS) {
       // Rotação: fecha a issue saturada com resumo e abre nova.
-      await gh('POST', `/repos/${owner}/${repo}/issues/${existing.number}/comments`, {
+      await gh("POST", `/repos/${owner}/${repo}/issues/${existing.number}/comments`, {
         body: `⚠️ Esta issue atingiu ${total} comentários e está sendo rotacionada para manter legibilidade (política E51/W91).\n\nÚltimo alerta antes do fechamento:\n\n---\n\n${body}`,
       });
-      await gh('PATCH', `/repos/${owner}/${repo}/issues/${existing.number}`, {
-        state: 'closed',
-        state_reason: 'completed',
+      await gh("PATCH", `/repos/${owner}/${repo}/issues/${existing.number}`, {
+        state: "closed",
+        state_reason: "completed",
       });
       await garantirLabel(gh, owner, repo, label);
-      const nova = await gh('POST', `/repos/${owner}/${repo}/issues`, {
+      const nova = await gh("POST", `/repos/${owner}/${repo}/issues`, {
         title,
         body: `Continuação de #${existing.number} (fechada por atingir ${total} comentários — E51/W91).\n\n---\n\n${body}`,
         labels: [label],
@@ -86,14 +92,14 @@ export async function abrirOuRotacionar({ gh, owner, repo, label, title, body })
       return nova.number;
     }
 
-    await gh('POST', `/repos/${owner}/${repo}/issues/${existing.number}/comments`, { body });
+    await gh("POST", `/repos/${owner}/${repo}/issues/${existing.number}/comments`, { body });
     console.log(`Issue #${existing.number} atualizada com novo comentário.`);
     return existing.number;
   }
 
   // Não existe: cria.
   await garantirLabel(gh, owner, repo, label);
-  const nova = await gh('POST', `/repos/${owner}/${repo}/issues`, {
+  const nova = await gh("POST", `/repos/${owner}/${repo}/issues`, {
     title,
     body,
     labels: [label],
@@ -108,12 +114,12 @@ export async function abrirOuRotacionar({ gh, owner, repo, label, title, body })
 export async function fecharSeAberta(gh, owner, repo, label, title, mensagem) {
   const existing = await encontrarIssue(gh, owner, repo, label, title);
   if (!existing) return;
-  await gh('POST', `/repos/${owner}/${repo}/issues/${existing.number}/comments`, {
-    body: mensagem ?? '✅ Perímetro/guarda verificado sem divergência — fechando automaticamente.',
+  await gh("POST", `/repos/${owner}/${repo}/issues/${existing.number}/comments`, {
+    body: mensagem ?? "✅ Perímetro/guarda verificado sem divergência — fechando automaticamente.",
   });
-  await gh('PATCH', `/repos/${owner}/${repo}/issues/${existing.number}`, {
-    state: 'closed',
-    state_reason: 'completed',
+  await gh("PATCH", `/repos/${owner}/${repo}/issues/${existing.number}`, {
+    state: "closed",
+    state_reason: "completed",
   });
   console.log(`Issue #${existing.number} fechada.`);
 }

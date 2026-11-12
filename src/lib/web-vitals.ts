@@ -209,8 +209,7 @@ export function initWebVitals(): void {
  */
 export function getPerformanceSummary(): Record<string, unknown> {
   const nav = performance.getEntriesByType("navigation")[0] as
-    | PerformanceNavigationTiming
-    | undefined;
+    PerformanceNavigationTiming | undefined;
 
   return {
     domContentLoaded: nav ? nav.domContentLoadedEventEnd - nav.startTime : null,

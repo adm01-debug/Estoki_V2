@@ -27,7 +27,7 @@ export const LoadingFallback = forwardRef<HTMLDivElement>(function LoadingFallba
         </motion.h3>
         <motion.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.7 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="mx-auto max-w-[200px] text-sm leading-relaxed text-muted-foreground"
         >
