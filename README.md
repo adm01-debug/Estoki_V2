@@ -51,20 +51,20 @@ Requirements: **Node.js 20+**, npm 10+, a Supabase project (or Lovable Cloud bac
 
 ## 📋 Scripts
 
-| Command                                 | Purpose                                                   |
-| --------------------------------------- | --------------------------------------------------------- |
-| `npm run dev`                           | Dev server (Vite, port 8080)                              |
-| `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`) |
-| `npm run lint` / `lint:fix`             | ESLint                                                    |
-| `npm run typecheck`                     | `tsc --noEmit`                                            |
-| `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                    |
-| `npm run test:e2e`                      | Playwright E2E                                            |
-| `npm run size`                          | Bundle budgets (size-limit)                               |
-| `npm run qa:rls`                        | RLS audit — every public table must have RLS + policy     |
-| `npm run audit:zod`                     | Zod coverage across Edge Functions                        |
-| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate          |
-| `npm run audit:deps`                    | Dependency advisories (registry-independent auditor)      |
-| `npm run qa:all`                        | Full local quality gate                                   |
+| Command                                 | Purpose                                                     |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `npm run dev`                           | Dev server (Vite, port 8080)                                |
+| `npm run build`                         | Production build (`ANALYZE=true` emits `dist/stats.html`)   |
+| `npm run lint` / `lint:fix`             | ESLint                                                      |
+| `npm run typecheck`                     | TypeScript app + configuração Vite, com projetos explícitos |
+| `npm test` / `test:coverage`            | Vitest 3 (v8 coverage)                                      |
+| `npm run test:e2e`                      | Playwright E2E                                              |
+| `npm run size`                          | Bundle budgets (size-limit)                                 |
+| `npm run qa:rls`                        | RLS audit — every public table must have RLS + policy       |
+| `npm run audit:zod`                     | Zod coverage across Edge Functions                          |
+| `npm run i18n:check` / `i18n:hardcoded` | Locale parity + hardcoded-string regression gate            |
+| `npm run audit:deps`                    | Dependency advisories (registry-independent auditor)        |
+| `npm run qa:all`                        | Full local quality gate                                     |
 
 ## 🔐 Security
 
@@ -115,3 +115,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 📄 License
 
 Proprietary — ESTOKI © 2026. See [LICENSE](LICENSE).
+
+## Automação local sem IA
+
+O fluxo local e seus gatilhos estão em [docs/AUTOMACAO_LOCAL.md](docs/AUTOMACAO_LOCAL.md). `npm run automation:test` roda as suites de automação; `npm run automation:doctor` verifica a instalação local. O novo workflow testa contratos em PR/push para main; timer e hooks dependem do runtime local instalado, sem push automático.
+
+Validação inicial com rede isolada: o app tem 36 erros reais de TypeScript; o projeto node/Vite passou. O lint passou com 0 erros e 1.083 avisos. Os testes de app não iniciam porque Vitest 5 exige uma API ausente no Vite 5; o build falha porque Tailwind 4 está ligado ao plugin legado de PostCSS. Esses bloqueios herdados impedem a autocorreção validada; nenhum gate foi afrouxado para fabricar sucesso.
