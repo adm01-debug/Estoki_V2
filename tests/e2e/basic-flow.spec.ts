@@ -31,9 +31,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
     });
   });
 
-  test("Módulo: Recebimento - renderização do módulo", async ({
-    authenticatedPage: page,
-  }) => {
+  test("Módulo: Recebimento - renderização do módulo", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     const nav = page.locator("[data-tour='recebimento']").first();
@@ -50,9 +48,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("Módulo: Romaneios - verificação de entrega", async ({
-    authenticatedPage: page,
-  }) => {
+  test("Módulo: Romaneios - verificação de entrega", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
     const nav = page.locator("[data-tour='romaneios']").first();
@@ -65,9 +61,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
     ).toBeVisible({ timeout: 10_000 });
   });
 
-  test("Resiliência: Erro 404 e Navegação Segura", async ({
-    authenticatedPage: page,
-  }) => {
+  test("Resiliência: Erro 404 e Navegação Segura", async ({ authenticatedPage: page }) => {
     await page.goto("/rota-inexistente", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: "404" })).toBeVisible({ timeout: 8000 });
     const homeLink = page.getByRole("link", { name: "Return to Home" });

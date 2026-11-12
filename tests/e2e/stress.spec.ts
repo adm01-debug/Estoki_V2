@@ -36,9 +36,7 @@ test.describe("Testes de Carga e Estresse", () => {
     expect(duration).toBeLessThan(30_000);
   });
 
-  test("estabilidade sob erro de rede (abort das queries)", async ({
-    authenticatedPage: page,
-  }) => {
+  test("estabilidade sob erro de rede (abort das queries)", async ({ authenticatedPage: page }) => {
     await page.route("**/rest/v1/**", (route) => route.abort("failed"));
     await page.route("**/functions/v1/**", (route) => route.abort("failed"));
 

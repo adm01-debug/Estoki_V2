@@ -17,9 +17,9 @@ test.describe("Fluxo crítico: busca global (Ctrl+K)", () => {
   test.beforeEach(async ({ authenticatedPage: page }) => {
     await page.goto("/");
     // Garante que o GlobalSearch montou e registrou os handlers (Ctrl+K e open-global-search).
-    await expect(
-      page.getByRole("button", { name: /abrir busca global/i }).first()
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole("button", { name: /abrir busca global/i }).first()).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test("abre o dialog com Ctrl+K e fecha com Esc", async ({ authenticatedPage: page }) => {
@@ -35,7 +35,10 @@ test.describe("Fluxo crítico: busca global (Ctrl+K)", () => {
   test("abre o dialog pelo clique no gatilho e fecha com Esc", async ({
     authenticatedPage: page,
   }) => {
-    await page.getByRole("button", { name: /abrir busca global/i }).first().click();
+    await page
+      .getByRole("button", { name: /abrir busca global/i })
+      .first()
+      .click();
 
     await expect(searchInput(page)).toBeVisible({ timeout: 8000 });
 

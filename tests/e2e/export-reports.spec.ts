@@ -30,9 +30,9 @@ test.describe("Fluxo crítico: exportação de relatórios (admin)", () => {
     expect(resp?.status() ?? 200).toBeLessThan(500);
 
     // O guard de segurança renderiza o estado esperado para mock sem admin
-    await expect(
-      page.getByRole("heading", { name: "Acesso Negado" })
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("heading", { name: "Acesso Negado" })).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Não caiu no Error Boundary global
     await expect(page.locator("text=/Something went wrong/i")).toHaveCount(0);

@@ -39,6 +39,10 @@ const CONSOLE_OK_WHITELIST = [
   /WebSocket connection to 'wss:\/\/[\w-]+\.supabase\.co\/realtime\/v1\/websocket.*failed/i,
   /HTTP Authentication failed; no valid credentials/,
   /apikey=fake-anon-key/,
+  // Perfil/permissões são buscados com a anon key fake do ambiente mock:
+  // falham com "Invalid API key" e o app loga o erro no console — esperado.
+  /Erro ao buscar perfil do usuário/,
+  /Erro ao buscar permissões do usuário/,
 ];
 
 function isIgnorable(text: string): boolean {
