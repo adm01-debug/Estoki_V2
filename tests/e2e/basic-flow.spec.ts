@@ -1,4 +1,4 @@
-import { test, expect } from "./fixtures/auth";
+import { test, expect, clickNavByTour } from "./fixtures/auth";
 
 /**
  * Fluxos críticos do sistema WMS mapeados contra a UI real.
@@ -16,9 +16,8 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
   }) => {
     await page.goto("/");
 
-    // Navega pelo sidebar (rota real: /estoque → EstoquePage)
-    const nav = page.locator("[data-tour='estoque']").first();
-    await nav.click();
+    // Navega pela navegação real (sidebar desktop ou drawer mobile)
+    await clickNavByTour(page, "estoque");
     await expect(page).toHaveURL(/\/estoque$/);
 
     // A página monta sem cair no Error Boundary global nem em 404 —
@@ -34,8 +33,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
   test("Módulo: Recebimento - renderização do módulo", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
-    const nav = page.locator("[data-tour='recebimento']").first();
-    await nav.click();
+    await clickNavByTour(page, "recebimento");
     await expect(page).toHaveURL(/\/recebimento$/);
 
     // Renderização íntegra: breadcrumb do módulo aparece (não 404 nem boundary);
@@ -51,8 +49,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
   test("Módulo: Romaneios - verificação de entrega", async ({ authenticatedPage: page }) => {
     await page.goto("/");
 
-    const nav = page.locator("[data-tour='romaneios']").first();
-    await nav.click();
+    await clickNavByTour(page, "romaneios");
     await expect(page).toHaveURL(/\/romaneios$/);
 
     // Renderiza o módulo (não caiu no Error Boundary nem 404)

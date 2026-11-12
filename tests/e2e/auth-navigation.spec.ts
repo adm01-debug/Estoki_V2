@@ -1,4 +1,4 @@
-import { test, expect, injectSession } from "./fixtures/auth";
+import { test, expect, injectSession, clickNavByTour } from "./fixtures/auth";
 
 test.describe("Auth and Navigation Flow", () => {
   test("Redirect to login when unauthenticated", async ({ page }) => {
@@ -28,11 +28,11 @@ test.describe("Auth and Navigation Flow", () => {
     // 4. Verify we are in the dashboard
     await expect(page).toHaveURL(/\/dashboard|\//);
 
-    // 5. Navigate through sidebar (desktop aside; data-tour evita o dropdown do dashboard)
-    await page.click("aside [data-tour='estoque']");
+    // 5. Navega pela navegação real (sidebar desktop ou drawer/bottom-nav mobile)
+    await clickNavByTour(page, "estoque");
     await expect(page).toHaveURL(/.*estoque/);
 
-    await page.click("aside [data-tour='recebimento']");
+    await clickNavByTour(page, "recebimento");
     await expect(page).toHaveURL(/.*recebimento/);
 
     // 6. Test Logout (dropdown do UserMenu no header)

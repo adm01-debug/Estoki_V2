@@ -60,3 +60,22 @@ export const test = base.extend<AuthFixtures>({
 });
 
 export { expect };
+
+/**
+ * Navega até uma rota pelo data-tour, funcionando em desktop (sidebar aside
+ * sempre visível) e mobile (sidebar oculta; abre o drawer "Abrir menu").
+ * Não valida URL — o caller decide o assert.
+ */
+export async function clickNavByTour(page: Page, tour: string): Promise<void> {
+  // Abre o menu mobile primeiro se houver botão; em desktop o botão não existe.
+  const openMenu = page.getByRole("button", { name: "Abrir menu" });
+  if (await openMenu.count()) {
+    await openMenu.click();
+    // Espera o drawer (motion.aside) terminar a animação de entrada.
+    await page.waitForTimeout(400);
+  }
+  const link = page.locator(`[data-tour='${tour}']`).locator("visible=true").first();
+  await link.click();
+  // Fecha o drawer se abriu (overlay claro ou navegação fecha via handleNavigate).
+  await page.waitForTimeout(300);
+}
