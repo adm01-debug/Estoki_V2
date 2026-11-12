@@ -29,21 +29,21 @@
 // <txt>: um nome de branch protegida por linha.
 // Markdown no stdout; sempre exit 0 (informativo, não bloqueia a auditoria).
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 export const DIAS_MINIMOS = 7;
-export const SEMPRE_FORA = new Set(['main', 'HEAD']);
+export const SEMPRE_FORA = new Set(["main", "HEAD"]);
 
 // Subconjunto dos nomes que o git aceita, sem nada que o shell interprete.
 const NOME_SEGURO = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
 
 /** Devolve o motivo da recusa, ou null se o nome é seguro para ir ao comando. */
 export function motivoNomeInseguro(nome) {
-  if (typeof nome !== 'string' || nome === '') return 'nome vazio';
-  if (!NOME_SEGURO.test(nome)) return 'caractere fora de [A-Za-z0-9._/-] ou inicio invalido';
-  if (nome.includes('..') || nome.includes('//') || nome.endsWith('/') || nome.endsWith('.lock')) {
-    return 'forma de nome invalida para ref do git';
+  if (typeof nome !== "string" || nome === "") return "nome vazio";
+  if (!NOME_SEGURO.test(nome)) return "caractere fora de [A-Za-z0-9._/-] ou inicio invalido";
+  if (nome.includes("..") || nome.includes("//") || nome.endsWith("/") || nome.endsWith(".lock")) {
+    return "forma de nome invalida para ref do git";
   }
   return null;
 }
@@ -58,7 +58,13 @@ export function nomeVisivel(nome) {
  * @param {{ equivalentes: {branch: string, commitEpoch: number}[], prsAbertas: string[],
  *   protegidas: string[], agoraMs?: number, diasMinimos?: number }} entrada
  */
-export function selecionarPodaveis({ equivalentes, prsAbertas, protegidas, agoraMs = Date.now(), diasMinimos = DIAS_MINIMOS }) {
+export function selecionarPodaveis({
+  equivalentes,
+  prsAbertas,
+  protegidas,
+  agoraMs = Date.now(),
+  diasMinimos = DIAS_MINIMOS,
+}) {
   const comPr = new Set(prsAbertas);
   const protegida = new Set(protegidas);
   const corteMs = diasMinimos * 86_400_000;
@@ -66,13 +72,29 @@ export function selecionarPodaveis({ equivalentes, prsAbertas, protegidas, agora
   const fora = { principal: [], protegidas: [], comPr: [], recentes: [], recusadas: [] };
 
   for (const { branch, commitEpoch } of equivalentes) {
-    if (SEMPRE_FORA.has(branch)) { fora.principal.push(branch); continue; }
-    if (protegida.has(branch)) { fora.protegidas.push(branch); continue; }
+    if (SEMPRE_FORA.has(branch)) {
+      fora.principal.push(branch);
+      continue;
+    }
+    if (protegida.has(branch)) {
+      fora.protegidas.push(branch);
+      continue;
+    }
     const motivo = motivoNomeInseguro(branch);
-    if (motivo) { fora.recusadas.push({ branch, motivo }); continue; }
-    if (comPr.has(branch)) { fora.comPr.push(branch); continue; }
+    if (motivo) {
+      fora.recusadas.push({ branch, motivo });
+      continue;
+    }
+    if (comPr.has(branch)) {
+      fora.comPr.push(branch);
+      continue;
+    }
     // Epoch ausente/0/inválido: não dá para provar que é antiga -> fica de fora.
-    if (!Number.isFinite(commitEpoch) || commitEpoch <= 0 || agoraMs - commitEpoch * 1000 <= corteMs) {
+    if (
+      !Number.isFinite(commitEpoch) ||
+      commitEpoch <= 0 ||
+      agoraMs - commitEpoch * 1000 <= corteMs
+    ) {
       fora.recentes.push(branch);
       continue;
     }
@@ -82,80 +104,97 @@ export function selecionarPodaveis({ equivalentes, prsAbertas, protegidas, agora
   return { elegiveis, fora };
 }
 
-const REGRA = `Regra: patch-equivalente à \`main\` (zero commits únicos), último commit há mais de ${DIAS_MINIMOS} dias, `
-  + 'nenhuma PR aberta com a branch como head, fora de `main` e das branches protegidas, e nome só com `[A-Za-z0-9._/-]`. '
-  + '**Nada é apagado automaticamente** (W98): rodar o bloco é decisão do dono.';
+const REGRA =
+  `Regra: patch-equivalente à \`main\` (zero commits únicos), último commit há mais de ${DIAS_MINIMOS} dias, ` +
+  "nenhuma PR aberta com a branch como head, fora de `main` e das branches protegidas, e nome só com `[A-Za-z0-9._/-]`. " +
+  "**Nada é apagado automaticamente** (W98): rodar o bloco é decisão do dono.";
 
 export function relatorio({ elegiveis, fora }) {
-  const linhas = ['', '### Comando pronto para poda (W98)', '', REGRA, ''];
+  const linhas = ["", "### Comando pronto para poda (W98)", "", REGRA, ""];
   if (elegiveis.length) {
-    linhas.push(`${elegiveis.length} branch(es) elegível(is):`, '', '```sh');
+    linhas.push(`${elegiveis.length} branch(es) elegível(is):`, "", "```sh");
     for (const b of elegiveis) linhas.push(`git push origin --delete ${b}`);
-    linhas.push('```');
+    linhas.push("```");
   } else {
-    linhas.push('Nenhuma branch elegível para poda.');
+    linhas.push("Nenhuma branch elegível para poda.");
   }
   const resumo = [
-    ['com PR aberta', fora.comPr],
+    ["com PR aberta", fora.comPr],
     [`com commit nos últimos ${DIAS_MINIMOS} dias`, fora.recentes],
-    ['protegidas', fora.protegidas],
-    ['main', fora.principal],
+    ["protegidas", fora.protegidas],
+    ["main", fora.principal],
   ].filter(([, lista]) => lista.length);
   if (resumo.length || fora.recusadas.length) {
-    linhas.push('', 'Patch-equivalentes deixadas fora do comando:');
+    linhas.push("", "Patch-equivalentes deixadas fora do comando:");
     for (const [rotulo, lista] of resumo) linhas.push(`- ${rotulo}: ${lista.length}`);
     for (const { branch, motivo } of fora.recusadas) {
-      linhas.push(`- nome recusado: \`${nomeVisivel(branch)}\` (${motivo}); apagar à mão, depois de conferir`);
+      linhas.push(
+        `- nome recusado: \`${nomeVisivel(branch)}\` (${motivo}); apagar à mão, depois de conferir`
+      );
     }
   }
-  return `${linhas.join('\n')}\n`;
+  return `${linhas.join("\n")}\n`;
 }
 
 export function relatorioIndisponivel(motivo) {
-  return `\n### Comando pronto para poda (W98)\n\n${REGRA}\n\nComando não gerado: ${motivo}. `
-    + 'Sem essa informação não dá para provar que a branch está livre, então nenhuma entra no comando.\n';
+  return (
+    `\n### Comando pronto para poda (W98)\n\n${REGRA}\n\nComando não gerado: ${motivo}. ` +
+    "Sem essa informação não dá para provar que a branch está livre, então nenhuma entra no comando.\n"
+  );
 }
 
 /** Lê o TSV `<branch>\t<epoch>`; linha malformada vira epoch NaN (fica de fora). */
 export function lerEquivalentes(texto) {
-  return texto.split('\n').filter((l) => l !== '').map((linha) => {
-    const tab = linha.lastIndexOf('\t');
-    if (tab < 0) return { branch: linha, commitEpoch: Number.NaN };
-    const bruto = linha.slice(tab + 1).trim();
-    return { branch: linha.slice(0, tab), commitEpoch: bruto === '' ? Number.NaN : Number(bruto) };
-  });
+  return texto
+    .split("\n")
+    .filter((l) => l !== "")
+    .map((linha) => {
+      const tab = linha.lastIndexOf("\t");
+      if (tab < 0) return { branch: linha, commitEpoch: Number.NaN };
+      const bruto = linha.slice(tab + 1).trim();
+      return {
+        branch: linha.slice(0, tab),
+        commitEpoch: bruto === "" ? Number.NaN : Number(bruto),
+      };
+    });
 }
 
 export function lerPrsAbertas(texto, limite) {
   const dados = JSON.parse(texto);
-  if (!Array.isArray(dados)) throw new Error('a lista de PRs abertas não é um array');
+  if (!Array.isArray(dados)) throw new Error("a lista de PRs abertas não é um array");
   if (Number.isFinite(limite) && dados.length >= limite) {
-    throw new Error(`a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio`);
+    throw new Error(
+      `a lista de PRs abertas veio cheia (${dados.length} >= limite ${limite}); pode haver PR que não veio`
+    );
   }
   return dados.map((pr) => {
-    if (typeof pr?.headRefName !== 'string') throw new Error('PR sem headRefName');
+    if (typeof pr?.headRefName !== "string") throw new Error("PR sem headRefName");
     return pr.headRefName;
   });
 }
 
 export function lerProtegidas(texto) {
-  return texto.split('\n').map((l) => l.trim()).filter(Boolean);
+  return texto
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
 }
 
 function argumentos(argv) {
   const saida = {};
   for (let i = 0; i < argv.length; i += 2) {
     const chave = argv[i];
-    if (!chave?.startsWith('--') || argv[i + 1] === undefined) throw new Error(`argumento inválido: ${chave}`);
+    if (!chave?.startsWith("--") || argv[i + 1] === undefined)
+      throw new Error(`argumento inválido: ${chave}`);
     saida[chave.slice(2)] = argv[i + 1];
   }
-  for (const obrigatorio of ['equivalentes', 'prs', 'protegidas']) {
+  for (const obrigatorio of ["equivalentes", "prs", "protegidas"]) {
     if (!saida[obrigatorio]) throw new Error(`falta --${obrigatorio}`);
   }
   return saida;
 }
 
-export function executar(argv, ler = (p) => readFileSync(p, 'utf8'), agoraMs = Date.now()) {
+export function executar(argv, ler = (p) => readFileSync(p, "utf8"), agoraMs = Date.now()) {
   let args;
   try {
     args = argumentos(argv);
@@ -168,19 +207,33 @@ export function executar(argv, ler = (p) => readFileSync(p, 'utf8'), agoraMs = D
   try {
     equivalentes = lerEquivalentes(ler(args.equivalentes));
   } catch (erro) {
-    return { saida: relatorioIndisponivel(`lista de patch-equivalentes ilegível (${erro.message})`), aviso: erro.message };
+    return {
+      saida: relatorioIndisponivel(`lista de patch-equivalentes ilegível (${erro.message})`),
+      aviso: erro.message,
+    };
   }
   try {
-    prsAbertas = lerPrsAbertas(ler(args.prs), args['limite-prs'] === undefined ? Number.NaN : Number(args['limite-prs']));
+    prsAbertas = lerPrsAbertas(
+      ler(args.prs),
+      args["limite-prs"] === undefined ? Number.NaN : Number(args["limite-prs"])
+    );
   } catch (erro) {
-    return { saida: relatorioIndisponivel(`PRs abertas indisponíveis (${erro.message})`), aviso: erro.message };
+    return {
+      saida: relatorioIndisponivel(`PRs abertas indisponíveis (${erro.message})`),
+      aviso: erro.message,
+    };
   }
   try {
     protegidas = lerProtegidas(ler(args.protegidas));
   } catch (erro) {
-    return { saida: relatorioIndisponivel(`branches protegidas indisponíveis (${erro.message})`), aviso: erro.message };
+    return {
+      saida: relatorioIndisponivel(`branches protegidas indisponíveis (${erro.message})`),
+      aviso: erro.message,
+    };
   }
-  return { saida: relatorio(selecionarPodaveis({ equivalentes, prsAbertas, protegidas, agoraMs })) };
+  return {
+    saida: relatorio(selecionarPodaveis({ equivalentes, prsAbertas, protegidas, agoraMs })),
+  };
 }
 
 function main() {

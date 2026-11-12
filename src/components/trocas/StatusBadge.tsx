@@ -3,12 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 export type UIStatus =
-  | "pendente"
-  | "em_analise"
-  | "autorizado"
-  | "enviado"
-  | "concluido"
-  | "recusado";
+  "pendente" | "em_analise" | "autorizado" | "enviado" | "concluido" | "recusado";
 
 export const statusConfig: Record<
   UIStatus,
