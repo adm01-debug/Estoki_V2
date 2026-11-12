@@ -1,0 +1,260 @@
+# docs:
+#   gatilho: push na main nos caminhos que mudam o contexto, cron a cada 6 h e workflow_dispatch
+#   prova: os tres eixos de contexto (codigo, regras de negocio, banco vivo) refletem o HEAD da main
+#   falha: gerador quebrado, saida com cara de segredo, ou push na branch `contexto` rejeitado
+#   avisa: notifica-falha-main.yml abre issue
+# nao-e-bug:
+#   - banco-sem-secret: sem SUPABASE_DB_URL o eixo do banco fica verde com warning (no dispatch, falha)
+#   - branch-contexto-sem-pr: `contexto` e branch gerada (branch padrao + 1 commit); nunca abra PR dela
+name: Contexto para agentes de IA
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "supabase/**"
+      - "scripts/ai-context/**"
+      - "scripts/regras_negocio/**"
+      - "scripts/supabase_snapshot/**"
+      - "docs/contexto/regras/manual/**"
+      - "package.json"
+      - "tsconfig*.json"
+      - ".env.example"
+      - ".github/workflows/contexto.yml"
+  schedule:
+    # minuto 23: fora do minuto 0 (fila de agendamentos do GitHub). A cada 6 h, nao a cada 10 min:
+    # repo privado paga minuto de Actions e o push na main ja cobre a mudanca de codigo.
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Regerar tudo, mesmo que o manifesto ja seja do HEAD"
+        type: boolean
+        default: false
+
+concurrency:
+  group: contexto
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  BRANCH_CONTEXTO: contexto
+
+jobs:
+  gate:
+    name: Precisa regerar?
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      codigo: ${{ steps.decide.outputs.codigo }}
+      regras: ${{ steps.decide.outputs.regras }}
+      banco: ${{ steps.decide.outputs.banco }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - id: decide
+        name: Comparar manifesto publicado com o HEAD
+        env:
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force || 'false' }}
+          EVENTO: ${{ github.event_name }}
+        run: |
+          set -euo pipefail
+          HEAD_SHA=$(git rev-parse HEAD)
+          manifest_commit() {
+            git show "FETCH_HEAD:docs/contexto/$1/manifest.json" 2>/dev/null \
+              | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(String(JSON.parse(s).commit||""))}catch{process.stdout.write("")}})' \
+              || true
+          }
+          if git fetch -q --depth=1 origin "$BRANCH_CONTEXTO" 2>/dev/null; then
+            C=$(manifest_commit codigo); R=$(manifest_commit regras)
+          else
+            echo "branch $BRANCH_CONTEXTO ainda nao existe: primeira publicacao"; C=""; R=""
+          fi
+          precisa() { if [ "$FORCE" = "true" ] || [ "$1" != "$HEAD_SHA" ]; then echo true; else echo false; fi; }
+          echo "codigo=$(precisa "$C")" >> "$GITHUB_OUTPUT"
+          echo "regras=$(precisa "$R")" >> "$GITHUB_OUTPUT"
+          # O banco muda sem push: so vale a pena medir no cron e no dispatch.
+          if [ "$EVENTO" = "push" ]; then echo "banco=false" >> "$GITHUB_OUTPUT"; else echo "banco=true" >> "$GITHUB_OUTPUT"; fi
+
+  codigo:
+    name: Codigo
+    needs: gate
+    if: needs.gate.outputs.codigo == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # o baseline usa `git log` dos ultimos 90 dias
+          fetch-depth: 300
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: Testes do gerador
+        run: node --test scripts/ai-context/gerar.unit.mjs scripts/lib/seguranca-processo.test.mjs
+      - name: Gerar docs/contexto/codigo
+        run: node scripts/ai-context/gerar.mjs --out docs/contexto/codigo
+      - uses: actions/upload-artifact@v7
+        with:
+          name: contexto-codigo
+          path: docs/contexto/codigo
+          if-no-files-found: error
+          retention-days: 1
+
+  regras:
+    name: Regras de negocio
+    needs: gate
+    if: needs.gate.outputs.regras == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 60
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Testes do gerador
+        run: python3 scripts/regras_negocio/test_generate.py
+      - name: Gerar docs/contexto/regras
+        run: |
+          python3 scripts/regras_negocio/generate.py --repo . --out docs/contexto/regras \
+            --profile regras --schema-snapshot docs/contexto/supabase \
+            --index-path docs/contexto/00-INDEX.md --no-pointer
+      - uses: actions/upload-artifact@v7
+        with:
+          name: contexto-regras
+          path: docs/contexto/regras
+          if-no-files-found: error
+          retention-days: 1
+
+  banco:
+    name: Banco vivo
+    needs: gate
+    if: needs.gate.outputs.banco == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SNAPSHOT_DIR: docs/contexto/supabase
+      PGDUMP: "false"
+      GEN_TYPES: "false"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Dependencias
+        run: pip install --only-binary ":all:" -r scripts/supabase_snapshot/requirements.txt
+      - name: Recuperar o snapshot anterior (o CHANGELOG precisa do estado anterior)
+        run: |
+          set -euo pipefail
+          if git fetch -q --depth=1 origin "$BRANCH_CONTEXTO" 2>/dev/null; then
+            mkdir -p "$SNAPSHOT_DIR"
+            git archive FETCH_HEAD "$SNAPSHOT_DIR" 2>/dev/null | tar -x || echo "sem snapshot anterior na branch"
+          fi
+      - name: Snapshot do banco (sessao somente leitura)
+        id: snap
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_DB_URL:-}" ]; then
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "::error::SUPABASE_DB_URL ausente: o dispatch pediu o eixo do banco explicitamente."; exit 1
+            fi
+            echo "::warning::SUPABASE_DB_URL ausente: eixo do banco nao medido nesta execucao."
+            echo "gerou=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          python3 scripts/supabase_snapshot/snapshot.py
+          echo "gerou=true" >> "$GITHUB_OUTPUT"
+      - name: Nenhum segredo na saida publicada
+        if: steps.snap.outputs.gerou == 'true'
+        run: |
+          set -euo pipefail
+          if grep -rEl "eyJ[A-Za-z0-9_-]{20,}\.|sb_secret_|sb_publishable_|postgres(ql)?://[^:]+:[^@]+@" "$SNAPSHOT_DIR"; then
+            echo "::error::a saida do snapshot tem algo com cara de segredo; nada sera publicado."; exit 1
+          fi
+      - uses: actions/upload-artifact@v7
+        if: steps.snap.outputs.gerou == 'true'
+        with:
+          name: contexto-supabase
+          path: docs/contexto/supabase
+          if-no-files-found: error
+          retention-days: 1
+
+  publicar:
+    name: Publicar na branch contexto
+    needs: [gate, codigo, regras, banco]
+    if: ${{ !cancelled() && needs.gate.result == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Baixar o que foi gerado
+        uses: actions/download-artifact@v7
+        with:
+          pattern: contexto-*
+          path: ${{ runner.temp }}/artefatos
+      - name: Montar a branch gerada e publicar
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SRC=$(git rev-parse HEAD)
+          TMP="${{ runner.temp }}/artefatos"
+          git config user.name "contexto[bot]"
+          git config user.email "contexto[bot]@users.noreply.github.com"
+          HAS_OLD=0
+          git fetch -q --depth=1 origin "$BRANCH_CONTEXTO" 2>/dev/null && HAS_OLD=1 || true
+          git checkout -q --detach "$SRC"
+          # Comeca do que ja estava publicado e troca so as pastas que foram regeradas agora.
+          if [ "$HAS_OLD" = 1 ]; then
+            for d in codigo regras supabase; do
+              git checkout -q FETCH_HEAD -- "docs/contexto/$d" 2>/dev/null || true
+            done
+          fi
+          mkdir -p docs/contexto
+          for d in codigo regras supabase; do
+            if [ -d "$TMP/contexto-$d" ]; then rm -rf "docs/contexto/$d"; cp -r "$TMP/contexto-$d" "docs/contexto/$d"; fi
+          done
+          # `manual/` e humano e vive na main: sempre vem dela.
+          git checkout -q "$SRC" -- docs/contexto/regras/manual 2>/dev/null || true
+          python3 scripts/regras_negocio/indice.py --repo . --out docs/contexto/00-INDEX.md \
+            --head "$SRC" --remote "$GITHUB_REPOSITORY" \
+            --fonte "banco real=docs/contexto/supabase" \
+            --fonte "codigo=docs/contexto/codigo" \
+            --fonte "regras de negocio=docs/contexto/regras"
+          printf '%s\n' \
+            '# Contexto para agentes de IA (branch gerada)' '' \
+            'Branch `contexto` = branch padrao + 1 commit com a saida dos geradores. **Nunca abra PR' \
+            'daqui** e nunca edite a mao: o workflow `contexto.yml` reescreve esta branch.' \
+            'Comece em `docs/contexto/00-INDEX.md`.' > docs/contexto/README.md
+          # Sem isso a Vercel faria um preview deploy a cada publicacao desta branch.
+          printf '%s\n' '{"ignoreCommand":"exit 0","git":{"deploymentEnabled":{"contexto":false}}}' > vercel.json
+          git add -f -A docs/contexto vercel.json
+          if [ "$HAS_OLD" = 1 ] && git diff --quiet --cached FETCH_HEAD -- && [ "$(git rev-parse FETCH_HEAD^ 2>/dev/null || true)" = "$SRC" ]; then
+            echo "branch $BRANCH_CONTEXTO ja reflete este estado - nada a publicar"; exit 0
+          fi
+          git commit -q -m "chore(contexto): regenera contexto @ main $(git rev-parse --short "$SRC") [skip ci]"
+          git push -q --force "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY" "HEAD:refs/heads/$BRANCH_CONTEXTO"
+          echo "publicado em $BRANCH_CONTEXTO"
