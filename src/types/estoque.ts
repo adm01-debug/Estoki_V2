@@ -3,29 +3,13 @@
 export type StatusPosicao = "livre" | "ocupado" | "reservado" | "bloqueado";
 
 export type StatusRecebimento =
-  | "aguardando"
-  | "chegou"
-  | "conferencia"
-  | "divergencia"
-  | "ok"
-  | "finalizado";
+  "aguardando" | "chegou" | "conferencia" | "divergencia" | "ok" | "finalizado";
 
 export type StatusTriagem =
-  | "aguardando"
-  | "em_triagem"
-  | "aprovado"
-  | "ressalva"
-  | "reprovado"
-  | "conserto"
-  | "descarte";
+  "aguardando" | "em_triagem" | "aprovado" | "ressalva" | "reprovado" | "conserto" | "descarte";
 
 export type StatusItem =
-  | "aguardando"
-  | "recebido"
-  | "triagem"
-  | "aprovado"
-  | "armazenado"
-  | "separado";
+  "aguardando" | "recebido" | "triagem" | "aprovado" | "armazenado" | "separado";
 
 export type TipoMovimentacao =
   | "recebimento"

@@ -1,0 +1,8 @@
+{
+  "format_version": 1,
+  "connection_provider": "supabase-cloud",
+  "project_ref_sha256": "e1c9fb0d90c3c667ac6f4c84b486671f5386265fca22a766035731801bfe00b2",
+  "database": "postgres",
+  "schema": "public",
+  "server_major": 17
+}

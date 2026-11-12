@@ -9,12 +9,7 @@ export type StatusRegistro =
   | "finalizado"
   | "cancelado";
 export type UIStatus =
-  | "pendente"
-  | "em_analise"
-  | "autorizado"
-  | "enviado"
-  | "concluido"
-  | "cancelado";
+  "pendente" | "em_analise" | "autorizado" | "enviado" | "concluido" | "cancelado";
 export type MotivoTD =
   | "defeito"
   | "tamanho_errado"
