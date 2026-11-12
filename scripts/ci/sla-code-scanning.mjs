@@ -11,8 +11,8 @@
 //
 // Uso: node scripts/ci/sla-code-scanning.mjs < alertas.json  (markdown no stdout)
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
 export const SLA_DIAS = { alto: 14, baixo: 30 };
 
@@ -21,18 +21,20 @@ export const SLA_DIAS = { alto: 14, baixo: 30 };
 export function nivel(alerta) {
   const seg = alerta?.rule?.security_severity_level;
   if (seg) return String(seg).toLowerCase();
-  return alerta?.rule?.severity === 'error' ? 'high' : 'low';
+  return alerta?.rule?.severity === "error" ? "high" : "low";
 }
 
 export function avaliarSla(alertas, agoraMs = Date.now()) {
   const violacoes = [];
   for (const a of alertas) {
     const sev = nivel(a);
-    const prazo = sev === 'high' || sev === 'critical' ? SLA_DIAS.alto : SLA_DIAS.baixo;
+    const prazo = sev === "high" || sev === "critical" ? SLA_DIAS.alto : SLA_DIAS.baixo;
     const dias = Math.floor((agoraMs - new Date(a.created_at).getTime()) / 86_400_000);
     if (dias > prazo) {
-      const local = a.most_recent_instance?.location?.path ?? '?';
-      violacoes.push(`${sev.toUpperCase()} (${dias}d > ${prazo}d) — #${a.number}: ${a.rule?.id ?? '?'} em ${local}`);
+      const local = a.most_recent_instance?.location?.path ?? "?";
+      violacoes.push(
+        `${sev.toUpperCase()} (${dias}d > ${prazo}d) — #${a.number}: ${a.rule?.id ?? "?"} em ${local}`
+      );
     }
   }
   return { total: alertas.length, violacoes };
@@ -40,17 +42,17 @@ export function avaliarSla(alertas, agoraMs = Date.now()) {
 
 export function relatorio({ total, violacoes }) {
   const linhas = [
-    '',
-    '### 🔒 Code Scanning — SLA (W83)',
-    '',
+    "",
+    "### 🔒 Code Scanning — SLA (W83)",
+    "",
     `SLA: high/critical → ${SLA_DIAS.alto}d · medium/low → ${SLA_DIAS.baixo}d`,
-    '',
+    "",
     `Alertas abertos: ${total}`,
-    '',
+    "",
   ];
-  if (violacoes.length) linhas.push('⚠️ **Violações de SLA:**', '```', ...violacoes, '```');
-  else linhas.push('✅ Nenhuma violação de SLA.');
-  return `${linhas.join('\n')}\n`;
+  if (violacoes.length) linhas.push("⚠️ **Violações de SLA:**", "```", ...violacoes, "```");
+  else linhas.push("✅ Nenhuma violação de SLA.");
+  return `${linhas.join("\n")}\n`;
 }
 
 // Lê o JSON do stdin (`node sla-code-scanning.mjs < alertas.json`): o script não
@@ -58,13 +60,15 @@ export function relatorio({ total, violacoes }) {
 function main() {
   let alertas;
   try {
-    alertas = JSON.parse(readFileSync(0, 'utf8'));
+    alertas = JSON.parse(readFileSync(0, "utf8"));
   } catch {
     alertas = null;
   }
   if (!Array.isArray(alertas)) {
-    console.error('::warning::W83: a API não devolveu uma lista de alertas');
-    process.stdout.write('\n### ⚠️ Code Scanning — SLA (W83)\n\nNão foi possível consultar os alertas (permissão ou API).\n');
+    console.error("::warning::W83: a API não devolveu uma lista de alertas");
+    process.stdout.write(
+      "\n### ⚠️ Code Scanning — SLA (W83)\n\nNão foi possível consultar os alertas (permissão ou API).\n"
+    );
     return;
   }
   const r = avaliarSla(alertas);
