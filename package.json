@@ -180,7 +180,7 @@
     "@percy/cypress": "^3.1.9",
     "@playwright/test": "^1.63.0",
     "@sentry/vite-plugin": "^5.4.0",
-    "@size-limit/file": "^12.1.0",
+    "@size-limit/file": "^14.1.0",
     "@storybook/addon-essentials": "^7.6.0",
     "@storybook/react": "^10.6.0",
     "@tailwindcss/typography": "^0.5.16",
