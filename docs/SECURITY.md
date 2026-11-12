@@ -132,28 +132,36 @@ então `npm audit` retorna 404. Para não perder o gate, existe
 Scripts: `npm run audit:deps` e `npm run audit:deps:prod`. Job `deps` no
 `qa.yml` é bloqueante. Sem rede, o script sai com 0 (não trava o build).
 
-### Correções aplicadas
+### Correções aplicadas (fix QA gate 12/2026)
 
-| Pacote                                                                                                                                                     | Antes                      | Depois                   | Motivo                                                                        |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------- | ------------------------ | ----------------------------------------------------------------------------- |
-| `axios`                                                                                                                                                    | 1.16.1 (+1.6.0 transitivo) | 1.18.1 (override global) | 30+ advisories: SSRF, prototype pollution, vazamento de `Proxy-Authorization` |
-| `dompurify`                                                                                                                                                | 3.4.3                      | 3.4.12                   | bypasses de sanitização `IN_PLACE`, poluição de `ALLOWED_ATTR`                |
-| `react-router-dom`                                                                                                                                         | 6.30.1                     | 6.30.4                   | open redirect via `//`                                                        |
-| `serialize-javascript`                                                                                                                                     | 7.0.3                      | 7.0.7                    | DoS por exaustão de CPU                                                       |
-| `vitest`                                                                                                                                                   | 1.6.1                      | 3.2.6+                   | crítico GHSA-5xrq-8626-4rwp (Vitest UI)                                       |
-| `form-data` / `tmp` / `qs` / `ws` / `js-yaml` / `uuid` / `fast-uri` / `linkify-it` / `markdown-it` / `postcss` / `@babel/core` / `brace-expansion@1\|2\|5` | várias                     | patched                  | via `overrides` do npm                                                        |
+| Pacote                              | Antes              | Depois                         | Motivo                                                                               |
+| ----------------------------------- | ------------------ | ------------------------------ | ------------------------------------------------------------------------------------ |
+| `@capacitor/{core,android,ios,cli}` | 8.4.2/8.5.0        | 8.6.0                          | crítico GHSA-rvm3-566m-v7fv (remote content na origem do app)                        |
+| `axios`                             | 1.18.1             | 1.21.1                         | 7+ advisories high: SSRF, prototype pollution, DoS HTTP/2, redirect-bypass           |
+| `dompurify`                         | 3.4.12             | 3.4.17                         | crítico GHSA-cg2g-xh64-v4q7 (bypass SAFE_FOR_TEMPLATES) + GHSA-mrv2-3pqr-j5jr        |
+| `nanoid`                            | 5.1.11             | 5.1.16                         | alta GHSA-28wg-ghj8-5hjv (loop infinito em gerador não-seguro)                       |
+| `react-router-dom`                  | 7.18.1             | 7.18.5                         | alta GHSA-qwww-vcr4-c8h2 (CSRF bypass em modo RSC)                                   |
+| `handlebars`                        | 4.7.9              | 4.7.10 (override)              | 2 críticos: injeção JS via own-property check e AST type confusion                   |
+| `@xmldom/xmldom`                    | 0.9.10             | 0.9.12 (override)              | 11 advisories: ReDoS, injeção de nome de elemento/atributo, bypass requireWellFormed |
+| `browserslist`                      | 4.28.2             | 4.29.5 (override)              | memória ilimitada + crash/prototype write via stats não confiável                    |
+| `follow-redirects`                  | 1.16.0             | 1.16.3 (override)              | 3 advisories: vazamento de headers sensíveis/credenciais                             |
+| `source-map-js`                     | 1.2.1              | 1.2.2 (override)               | DoS por event-loop via source-map indexado                                           |
+| `js-yaml@3/@4`                      | 3.15.0/4.3.0       | 3.15.2/4.3.2 (override)        | CPU quadrática em `!!omap` e merge keys                                              |
+| `brace-expansion@1/@2/@5`           | 1.1.16/2.1.2/5.0.8 | 1.1.22/2.1.8/5.0.13 (override) | DoS por recursão/arrays intermediários (GHSA-rgw5/qhr7/6jf4)                         |
+| `fast-uri`                          | 3.1.4              | 3.1.9 (override)               | 6 advisories: SSRF via IPv6/percent-encoding, authority injection                    |
+| `nanoid@3` (transitivo)             | 3.3.16             | 3.3.20 (override)              | loop infinito quando size = 0                                                        |
 
 ### Advisories aceitos formalmente (`.dep-audit-allowlist.json`)
 
-- **`vite` 5.4.21** (3 advisories) e **`esbuild` 0.18/0.21** — todos exploram o
-  _dev server_, que nunca roda em produção (o artefato publicado é estático).
-  Não há correção na linha 5.x; a migração para Vite 6/7 está no backlog.
-- **`react-router` / `react-router-dom` 6.30.4** — as correções só existem em
-  v7.18. As rotas do app não passam URLs externas para `<Link>`/`useNavigate`
-  e `deserializeErrors()` pertence ao data-router SSR, não usado aqui.
-- **`brace-expansion` 1.1.16 / 2.1.2** — o fix existe apenas em 5.0.8, que muda
-  o formato de export e quebraria `minimatch@3`. Uso é exclusivamente
-  build-time, com padrões de glob escritos por desenvolvedores — sem entrada
-  controlada por atacante. Nenhuma linha entra no bundle do cliente.
+- **`vite` 5.4.21** (4 advisories, incl. GHSA-587h-7wmj-h5pm launch-editor) e **`esbuild` 0.18/0.21** — todos
+  exploram o _dev server_, que nunca roda em produção (o artefato publicado é estático).
+  Não há correção na linha 5.x (launch-editor só corrige em Vite 6.4+); a migração para Vite 6/7 está no backlog.
+- **`zod` 3.25.76** (GHSA-mrhx-c7xc-m3w5) — a correção exige Zod 4.6.6+ (major 4). O código não valida
+  coleções sobredimensionadas controladas por atacante; a migração para Zod 4 é PR dedicada.
+- **`basic-ftp` 5.3.1** (GHSA-c475-qrg2-pj4r) — correção só em 6.2.6+ (major para o `get-uri`, do qual o
+  `@capacitor/cli` (dev-only) depende). Ferramenta de build; sem entrada de atacante.
+- **`extract-zip` 2.0.1** (GHSA-jmr9-qjv8-65gv, GHSA-7pqw-9j4j-h8q3) — sem correção publicada (2.0.1 é o
+  latest). Usado pelo `cypress` (dev-only) para baixar binários oficiais de fonte controlada.
+  A caminho: cypress 14 usa outro resolvedor.
 
 Toda entrada da allowlist deve ser revisada a cada bump de major do tooling.
