@@ -45,7 +45,11 @@ const ROUTES: string[] = [
   "/governanca",
 ];
 
-const SUPABASE_AUTH_KEY = "sb-wrhidiguevvnqywlueps-auth-token";
+const SUPABASE_AUTH_KEY = (() => {
+  const url = process.env.VITE_SUPABASE_URL ?? "";
+  const projectRef = url ? new URL(url).hostname.split(".")[0] : "";
+  return projectRef ? `sb-${projectRef}-auth-token` : "";
+})();
 
 test.describe("Smoke: todas as rotas montam no preview/build", () => {
   test.beforeEach(async ({ page }) => {

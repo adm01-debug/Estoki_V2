@@ -7,11 +7,21 @@ import { test as base, expect, type Page } from "@playwright/test";
  * 1. Se `LOVABLE_BROWSER_SUPABASE_SESSION_JSON` e `LOVABLE_BROWSER_SUPABASE_STORAGE_KEY`
  *    estiverem definidos (execução via sandbox Lovable), injeta a sessão real no
  *    localStorage antes da navegação.
- * 2. Caso contrário, faz fallback para um token mock no storage key do projeto —
+ * 2. Caso contrário, faz fallback para um token mock na storage key do projeto —
  *    suficiente para hidratar o AuthContext em CI onde não há Supabase real.
+ *
+ * A storage key é derivada do VITE_SUPABASE_URL real (mesmo algoritmo do
+ * supabase-js: `sb-<project-ref>-auth-token`), para que a sessão mock seja
+ * encontrada independentemente do projeto Supabase usado no ambiente.
  */
 const SUPABASE_STORAGE_KEY =
-  process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ?? "sb-wrhidiguevvnqywlueps-auth-token";
+  process.env.LOVABLE_BROWSER_SUPABASE_STORAGE_KEY ??
+  (() => {
+    const url = process.env.VITE_SUPABASE_URL ?? "";
+    const hostname = url ? new URL(url).hostname : "";
+    const projectRef = hostname.split(".")[0];
+    return projectRef ? `sb-${projectRef}-auth-token` : "";
+  })();
 
 const MOCK_SESSION = JSON.stringify({
   access_token: "e2e-mock-access-token",
