@@ -211,7 +211,7 @@ jobs:
         with:
           python-version: "3.13"
       - name: Baixar o que foi gerado
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: contexto-*
           path: ${{ runner.temp }}/artefatos
