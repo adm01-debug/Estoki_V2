@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { exigirLinhaAfetada } from "@/lib/exigirLinhaAfetada";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,11 +51,12 @@ export default function CustomersPage() {
   const save = useMutation({
     mutationFn: async (payload: typeof form) => {
       if (editing) {
-        const { error } = await supabase
+        const resultado = await supabase
           .from("clientes")
           .update({ ...payload, ativo: true })
-          .eq("id", editing.id);
-        if (error) throw error;
+          .eq("id", editing.id)
+          .select("id");
+        exigirLinhaAfetada(resultado, "editar o cliente");
       } else {
         const { error } = await supabase.from("clientes").insert(payload);
         if (error) throw error;
@@ -82,8 +84,8 @@ export default function CustomersPage() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("clientes").delete().eq("id", id);
-      if (error) throw error;
+      const resultado = await supabase.from("clientes").delete().eq("id", id).select("id");
+      exigirLinhaAfetada(resultado, "remover o cliente");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["clientes"] });
