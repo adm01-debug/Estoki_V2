@@ -54,8 +54,8 @@ jobs:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
-          npx vercel deploy --prebuilt=false --token "$VERCEL_TOKEN" --yes \
-            --scope juca1 > /tmp/vercel.out 2>&1 || true
+          npx vercel deploy --token "$VERCEL_TOKEN" --yes \
+            --scope juca1 > /tmp/vercel.out 2>&1
           cat /tmp/vercel.out
       - name: Smoke test staging
         continue-on-error: true
@@ -80,7 +80,7 @@ jobs:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
-          npx vercel deploy --prod --prebuilt=false --token "$VERCEL_TOKEN" --yes > /tmp/vercel.out 2>&1 || true
+          npx vercel deploy --prod --token "$VERCEL_TOKEN" --yes > /tmp/vercel.out 2>&1
           cat /tmp/vercel.out
       - name: Smoke test production
         run: |
