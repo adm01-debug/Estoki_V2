@@ -70,10 +70,13 @@ jobs:
           commit-message: "chore(estado): atualiza inventario do estado real"
           title: "chore(estado): inventario do estado real"
           labels: inventario
+          # Banco nao entra no glob: sem SUPABASE_ACCESS_TOKEN o gerador pula o
+          # banco.json (ver topo do arquivo) e o add-paths literal quebrava com
+          # 'pathspec did not match'. O glob so paga o que existe e o .gitignore
+          # (.gitignore contem /inventario/estado/tabelas-uso.json) nao deixa arquivo solto
+          # entrar na PR.
           add-paths: |
-            inventario/estado/banco.json
-            inventario/estado/rotas.json
-            inventario/estado/edges.json
+            inventario/estado/*.json
           body: |
             Gerado por `inventario-estado.yml`. Nada escrito a mao: `scripts/inventario/*` lendo o
             codigo e o banco (somente leitura). Detalhe de cada arquivo em
