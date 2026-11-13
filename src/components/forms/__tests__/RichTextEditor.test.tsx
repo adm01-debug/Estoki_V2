@@ -23,7 +23,11 @@ describe("RichTextEditor (forms)", () => {
 describe("RichTextEditor (ui/editor)", () => {
   it("renderiza conteúdo, placeholder configurado e 5 controles", async () => {
     const { container } = render(
-      <UiRichTextEditor content="<p>Nota de recebimento</p>" onChange={vi.fn()} placeholder="Digite aqui" />
+      <UiRichTextEditor
+        content="<p>Nota de recebimento</p>"
+        onChange={vi.fn()}
+        placeholder="Digite aqui"
+      />
     );
     expect(await screen.findByText("Nota de recebimento")).toBeInTheDocument();
     expect(container.querySelectorAll("button")).toHaveLength(5);
