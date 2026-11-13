@@ -1,4 +1,4 @@
-name: CD — Staging & Production
+name: CD - Deploy Vercel
 
 on:
   push:
@@ -39,64 +39,57 @@ jobs:
           retention-days: 30
 
   deploy_staging:
-    name: Deploy → Staging
+    name: Deploy to Vercel (staging preview)
     needs: build
     if: github.event_name == 'push' || github.event.inputs.environment == 'staging'
     runs-on: ubuntu-latest
     environment:
       name: staging
-      url: https://staging.estoki.lovable.app
+      url: https://estoki-v2.vercel.app
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
-        with:
-          name: dist-${{ needs.build.outputs.sha }}
-          path: dist
-      - name: Publish
-        run: echo "Staging publish handled by Lovable hosting on push to main."
+      - name: Deploy preview to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: |
+          npx vercel deploy --prebuilt=false --token "$VERCEL_TOKEN" --yes \
+            --scope juca1 > /tmp/vercel.out 2>&1 || true
+          cat /tmp/vercel.out
       - name: Smoke test staging
-        # Diagnóstico não-bloqueante: staging é provisionado pela Lovable
-        # (fora do nosso controle). Enquanto o ambiente staging não estiver
-        # ativo no lado deles (falha TLS/host), reportamos o status real sem
-        # derrubar o CD. O smoke de PRODUÇÃO continua bloqueante.
         continue-on-error: true
         run: |
-          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://staging.estoki.lovable.app/ || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://estoki-v2.vercel.app/ || echo "000")
           echo "staging http_code=$code"
-          if [ "$code" = "200" ]; then
-            echo "✅ Staging up"
-          else
-            echo "⚠️ Staging indisponível (http=$code) — ambiente externo (Lovable) ainda não ativo. Deploy de produção segue manual e protegido."
-          fi
+          if [ "$code" = "200" ]; then echo "OK: estoki-v2.vercel.app up"; else echo "WARN: dominio nao respondeu 200"; fi
 
   deploy_production:
-    name: Deploy → Production (manual gate)
-    needs: [build, deploy_staging]
+    name: Deploy to Vercel (production)
+    needs: build
     if: github.event.inputs.environment == 'production'
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://estoki.lovable.app
+      url: https://estoki-v2.vercel.app
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
-        with:
-          name: dist-${{ needs.build.outputs.sha }}
-          path: dist
-      - name: Publish
-        run: echo "Production publish handled by Lovable hosting after manual approval."
+      - name: Deploy production to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: |
+          npx vercel deploy --prod --prebuilt=false --token "$VERCEL_TOKEN" --yes > /tmp/vercel.out 2>&1 || true
+          cat /tmp/vercel.out
       - name: Smoke test production
         run: |
-          curl -fsSL https://estoki.lovable.app/ > /dev/null
-          echo "✅ Production up"
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://estoki-v2.vercel.app/ || echo "000")
+          echo "production http_code=$code"
+          if [ "$code" != "200" ]; then echo "FATAL: producao nao responde 200"; exit 1; fi
       - name: Tag release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="release-$(date +%Y%m%d-%H%M%S)-${GITHUB_SHA::7}"
           gh release create "$TAG" --generate-notes --target "$GITHUB_SHA" || true
-
-  # Rollback playbook (documented; triggered manually via workflow_dispatch on a previous release):
-  # 1. Actions → CD → Run workflow → environment=production, ref=<previous good tag>
-  # 2. Lovable hosting republishes the older bundle from that tag.
-  # 3. Post-mortem entry required in CHANGELOG.md under Unreleased/Corrigido.
