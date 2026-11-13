@@ -10,6 +10,9 @@ interface RichTextEditorProps {
 }
 export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEditorProps) {
   const editor = useEditor({
+    // Tiptap 3 não re-renderiza a cada transação por padrão; a barra usa
+    // editor.isActive() e precisa refletir a formatação atual do cursor.
+    shouldRerenderOnTransaction: true,
     extensions: [StarterKit],
     content: value,
     onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
