@@ -1,4 +1,5 @@
-import { defineConfig, type PluginOption, type UserConfig } from "vite";
+import { defineConfig, loadEnv, type PluginOption, type UserConfig } from "vite";
+import { aliasSupabaseEnv } from "./src/config/supabaseEnvAlias";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
@@ -33,6 +34,11 @@ async function loadSentryPlugin(): Promise<PluginOption | null> {
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => {
+  // Vite lê as VITE_* de process.env DEPOIS de resolver esta função: preencher aqui basta.
+  Object.assign(
+    process.env,
+    aliasSupabaseEnv({ ...loadEnv(mode, process.cwd(), ""), ...process.env })
+  );
   const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
   const config: UserConfig = {
     server: {
