@@ -171,7 +171,7 @@ jobs:
       - name: Abrir PR
         id: pr
         if: steps.aplicar.outputs.tem == 'true'
-        uses: peter-evans/create-pull-request@v8.1.1
+        uses: peter-evans/create-pull-request@v8.1.2
         with:
           base: main
           branch: automation/db-manifesto
