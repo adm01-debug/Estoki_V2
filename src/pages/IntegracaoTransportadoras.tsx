@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { logger } from "@/utils/logger";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Rastreio {
   codigo: string;
@@ -52,6 +53,7 @@ export default function IntegracaoTransportadoras() {
   const [codigoRastreio, setCodigoRastreio] = useState("");
   const [rastreios, setRastreios] = useState<Rastreio[]>([]);
   const [tab, setTab] = useState("rastrear");
+  const [rastreando, setRastreando] = useState(false);
 
   const { data: romaneios = [], isLoading: loading } = useQuery({
     queryKey: ["romaneios-em-transito"],
@@ -103,43 +105,48 @@ export default function IntegracaoTransportadoras() {
       toast.error("Digite o código de rastreio");
       return;
     }
-    setLoading(true);
+    setRastreando(true);
+    try {
+      // Simulação - em produção integraria com API dos Correios/Jadlog/etc
+      await new Promise((r) => setTimeout(r, 1500));
 
-    // Simulação - em produção integraria com API dos Correios/Jadlog/etc
-    await new Promise((r) => setTimeout(r, 1500));
+      const eventos = simularRastreio(codigoRastreio);
+      const novoRastreio: Rastreio = {
+        codigo: codigoRastreio,
+        romaneioId: null,
+        romaneioCode: null,
+        status: eventos[0]?.status || "desconhecido",
+        eventos,
+      };
 
-    const eventos = simularRastreio(codigoRastreio);
-    const novoRastreio: Rastreio = {
-      codigo: codigoRastreio,
-      romaneioId: null,
-      romaneioCode: null,
-      status: eventos[0]?.status || "desconhecido",
-      eventos,
-    };
-
-    setRastreios((prev) => [novoRastreio, ...prev.filter((r) => r.codigo !== codigoRastreio)]);
-    setLoading(false);
-    toast.success("Rastreio atualizado!");
+      setRastreios((prev) => [novoRastreio, ...prev.filter((r) => r.codigo !== codigoRastreio)]);
+      toast.success("Rastreio atualizado!");
+    } finally {
+      setRastreando(false);
+    }
   };
 
   const rastrearRomaneio = async (romaneio: any) => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
+    setRastreando(true);
+    try {
+      await new Promise((r) => setTimeout(r, 1000));
 
-    const codigoFake = `BR${romaneio.codigo.replace(/\D/g, "")}${Date.now().toString().slice(-6)}BR`;
-    const eventos = simularRastreio(codigoFake);
+      const codigoFake = `BR${romaneio.codigo.replace(/\D/g, "")}${Date.now().toString().slice(-6)}BR`;
+      const eventos = simularRastreio(codigoFake);
 
-    const novoRastreio: Rastreio = {
-      codigo: codigoFake,
-      romaneioId: romaneio.id,
-      romaneioCode: romaneio.codigo,
-      status: eventos[0]?.status || "desconhecido",
-      eventos,
-    };
+      const novoRastreio: Rastreio = {
+        codigo: codigoFake,
+        romaneioId: romaneio.id,
+        romaneioCode: romaneio.codigo,
+        status: eventos[0]?.status || "desconhecido",
+        eventos,
+      };
 
-    setRastreios((prev) => [novoRastreio, ...prev]);
-    setLoading(false);
-    toast.success(`Rastreio do romaneio ${romaneio.codigo} atualizado`);
+      setRastreios((prev) => [novoRastreio, ...prev]);
+      toast.success(`Rastreio do romaneio ${romaneio.codigo} atualizado`);
+    } finally {
+      setRastreando(false);
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -203,9 +210,9 @@ export default function IntegracaoTransportadoras() {
                   onKeyDown={(e) => e.key === "Enter" && rastrear()}
                   className="flex-1"
                 />
-                <Button onClick={rastrear} disabled={loading}>
+                <Button onClick={rastrear} disabled={rastreando}>
                   <Search className="mr-2 h-4 w-4" />
-                  {loading ? "Buscando..." : "Rastrear"}
+                  {rastreando ? "Buscando..." : "Rastrear"}
                 </Button>
               </div>
             </CardContent>
@@ -213,7 +220,12 @@ export default function IntegracaoTransportadoras() {
         </TabsContent>
 
         <TabsContent value="romaneios" className="mt-4 space-y-3">
-          {romaneios.length === 0 ? (
+          {loading ? (
+            // Carregando: esqueletos em vez de "nenhum romaneio" enquanto a busca não terminou.
+            Array.from({ length: 3 }, (_, i) => (
+              <Skeleton key={i} className="h-20 w-full rounded-lg" />
+            ))
+          ) : romaneios.length === 0 ? (
             <Card className="glass-card">
               <CardContent className="py-12 text-center">
                 <Truck className="mx-auto mb-3 h-12 w-12 text-muted-foreground/30" />

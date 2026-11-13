@@ -1,6 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
+import { Placeholder } from "@tiptap/extensions";
 import { Toggle } from "@/components/ui/toggle";
 import { Bold, Italic, List, ListOrdered, Quote } from "lucide-react";
 
@@ -12,6 +12,9 @@ interface RichTextEditorProps {
 
 export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
   const editor = useEditor({
+    // Tiptap 3 não re-renderiza a cada transação por padrão; a barra usa
+    // editor.isActive() e precisa refletir a formatação atual do cursor.
+    shouldRerenderOnTransaction: true,
     extensions: [
       StarterKit,
       Placeholder.configure({

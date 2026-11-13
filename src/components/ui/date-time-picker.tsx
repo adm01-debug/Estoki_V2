@@ -48,12 +48,7 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              initialFocus
-            />
+            <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} autoFocus />
           </PopoverContent>
         </Popover>
         <div className="relative w-32">

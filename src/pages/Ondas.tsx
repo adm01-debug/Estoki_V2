@@ -358,7 +358,7 @@ export default function OndasPage() {
                                 </Button>
                               )}
                             </div>
-                            {onda.total_tarefas > 0 && (
+                            {(onda.total_tarefas ?? 0) > 0 && (
                               <div className="space-y-1">
                                 <div className="flex justify-between text-xs text-muted-foreground">
                                   <span className="flex items-center gap-1">
