@@ -81,7 +81,11 @@ jobs:
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          git fetch origin main --quiet
+
+          # Sem fetch: o actions/checkout (fetch-depth: 0) ja baixou todas as refs,
+          # e `persist-credentials: false` remove o extraheader de auth do checkout ?
+          # um fetch aqui rodaria anonimo e quebraria o passo (E90: erro 128 no runner).
+          # `git cherry` e' offline num clone completo; basta as refs estarem locais.
 
           # $RUNNER_TEMP sobrevive entre passos (cada `run:` e' um shell novo);
           # `mktemp` sozinho nao — o caminho morreria com o shell do passo 1.
