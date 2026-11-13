@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { exigirLinhaAfetada } from "@/lib/exigirLinhaAfetada";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,11 +43,12 @@ export default function CategoriesPage() {
   const save = useMutation({
     mutationFn: async (payload: typeof form) => {
       if (editing) {
-        const { error } = await supabase
+        const resultado = await supabase
           .from("categorias")
           .update({ ...payload, ativo: true })
-          .eq("id", editing.id);
-        if (error) throw error;
+          .eq("id", editing.id)
+          .select("id");
+        exigirLinhaAfetada(resultado, "editar a categoria");
       } else {
         const { error } = await supabase.from("categorias").insert(payload);
         if (error) throw error;
@@ -64,8 +66,8 @@ export default function CategoriesPage() {
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("categorias").delete().eq("id", id);
-      if (error) throw error;
+      const resultado = await supabase.from("categorias").delete().eq("id", id).select("id");
+      exigirLinhaAfetada(resultado, "remover a categoria");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["categorias"] });
