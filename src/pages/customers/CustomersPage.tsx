@@ -10,9 +10,8 @@ import { toast } from "sonner";
 
 type Cliente = {
   id: string;
-  codigo: string;
   nome: string;
-  cnpj_cpf: string | null;
+  cpf_cnpj: string | null;
   email: string | null;
   telefone: string | null;
   endereco: string | null;
@@ -28,9 +27,8 @@ export default function CustomersPage() {
   const [editing, setEditing] = useState<Cliente | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
-    codigo: "",
     nome: "",
-    cnpj_cpf: "",
+    cpf_cnpj: "",
     email: "",
     telefone: "",
     endereco: "",
@@ -68,9 +66,8 @@ export default function CustomersPage() {
       setShowForm(false);
       setEditing(null);
       setForm({
-        codigo: "",
         nome: "",
-        cnpj_cpf: "",
+        cpf_cnpj: "",
         email: "",
         telefone: "",
         endereco: "",
@@ -96,15 +93,14 @@ export default function CustomersPage() {
 
   const filtered = clientes.filter(
     (c) =>
-      c.nome.toLowerCase().includes(search.toLowerCase()) || (c.cnpj_cpf || "").includes(search)
+      c.nome.toLowerCase().includes(search.toLowerCase()) || (c.cpf_cnpj || "").includes(search)
   );
 
   const openEdit = (c: Cliente) => {
     setEditing(c);
     setForm({
-      codigo: c.codigo,
       nome: c.nome,
-      cnpj_cpf: c.cnpj_cpf || "",
+      cpf_cnpj: c.cpf_cnpj || "",
       email: c.email || "",
       telefone: c.telefone || "",
       endereco: c.endereco || "",
@@ -150,12 +146,6 @@ export default function CustomersPage() {
               className="grid grid-cols-2 gap-3"
             >
               <Input
-                placeholder="Código"
-                value={form.codigo}
-                onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-                required
-              />
-              <Input
                 placeholder="Nome"
                 value={form.nome}
                 onChange={(e) => setForm({ ...form, nome: e.target.value })}
@@ -163,8 +153,8 @@ export default function CustomersPage() {
               />
               <Input
                 placeholder="CPF/CNPJ"
-                value={form.cnpj_cpf}
-                onChange={(e) => setForm({ ...form, cnpj_cpf: e.target.value })}
+                value={form.cpf_cnpj}
+                onChange={(e) => setForm({ ...form, cpf_cnpj: e.target.value })}
               />
               <Input
                 placeholder="Email"
@@ -232,7 +222,7 @@ export default function CustomersPage() {
                     <Users className="h-5 w-5 text-primary" />
                     <div>
                       <h3 className="font-semibold">{c.nome}</h3>
-                      <p className="text-xs text-muted-foreground">{c.cnpj_cpf}</p>
+                      <p className="text-xs text-muted-foreground">{c.cpf_cnpj}</p>
                     </div>
                   </div>
                   <div className="flex gap-1">

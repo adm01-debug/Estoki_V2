@@ -17,7 +17,7 @@ describe("SerialsPage", () => {
       data: [
         {
           id: "1",
-          codigo: "SN-001",
+          numero_serial: "SN-001",
           produto_id: null,
           lote_id: null,
           status: "disponivel",
@@ -25,7 +25,7 @@ describe("SerialsPage", () => {
         },
         {
           id: "2",
-          codigo: "SN-002",
+          numero_serial: "SN-002",
           produto_id: null,
           lote_id: null,
           status: "expedido",
@@ -48,11 +48,11 @@ describe("SerialsPage", () => {
     );
   }
 
-  it("consulta serial_numbers ordenando pela coluna real `codigo`", async () => {
+  it("consulta serial_numbers ordenando pela coluna real `numero_serial`", async () => {
     renderPage();
     expect(await screen.findByText("SN-001")).toBeInTheDocument();
     expect(supabase.from).toHaveBeenCalledWith("serial_numbers");
-    expect(order).toHaveBeenCalledWith("codigo");
+    expect(order).toHaveBeenCalledWith("numero_serial");
   });
 
   it("busca filtra pelo código e pelo nome do produto", async () => {

@@ -10,7 +10,7 @@ import { Hash, Search } from "lucide-react";
 // de série é `codigo` (não existe `numero_serial` nem `posicao_id`).
 type Serial = {
   id: string;
-  codigo: string;
+  numero_serial: string;
   produto_id: string | null;
   lote_id: string | null;
   status: string;
@@ -37,7 +37,7 @@ export default function SerialsPage() {
       const { data, error } = await supabase
         .from("serial_numbers")
         .select("*, produtos(nome)")
-        .order("codigo");
+        .order("numero_serial");
       if (error) throw error;
       return (data ?? []) as Serial[];
     },
@@ -45,7 +45,7 @@ export default function SerialsPage() {
 
   const filtered = serials.filter(
     (s) =>
-      s.codigo.toLowerCase().includes(search.toLowerCase()) ||
+      s.numero_serial.toLowerCase().includes(search.toLowerCase()) ||
       (s.produtos?.nome || "").toLowerCase().includes(search.toLowerCase())
   );
 
@@ -82,7 +82,7 @@ export default function SerialsPage() {
                     <Hash className="h-4 w-4 text-primary" />
                     <Badge variant={cfg.variant}>{cfg.label}</Badge>
                   </div>
-                  <p className="font-mono text-sm font-semibold">{s.codigo}</p>
+                  <p className="font-mono text-sm font-semibold">{s.numero_serial}</p>
                   {s.produtos?.nome && (
                     <p className="text-xs text-muted-foreground">{s.produtos.nome}</p>
                   )}
