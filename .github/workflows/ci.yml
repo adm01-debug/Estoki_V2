@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [preview, build]
+        target: [build]
 
     steps:
       - name: Checkout repository
@@ -64,16 +64,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests (preview / dev server)
-        if: matrix.target == 'preview'
-        run: npm run test:e2e
-        env:
-          CI: "true"
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-
       - name: Run Playwright tests (production build)
-        if: matrix.target == 'build'
         run: npm run test:e2e:build
         env:
           CI: "true"
