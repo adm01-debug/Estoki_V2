@@ -16,7 +16,7 @@ type Armazem = {
   cidade: string | null;
   estado: string | null;
   cep: string | null;
-  capacidade_total_kg: number | null;
+  capacidade_total: number | null;
   ativo: boolean;
 };
 
@@ -32,7 +32,7 @@ export default function WarehousesPage() {
     cidade: "",
     estado: "",
     cep: "",
-    capacidade_total_kg: 0,
+    capacidade_total: 0,
   });
 
   const { data: armazens = [], isLoading } = useQuery({
@@ -70,7 +70,7 @@ export default function WarehousesPage() {
         cidade: "",
         estado: "",
         cep: "",
-        capacidade_total_kg: 0,
+        capacidade_total: 0,
       });
     },
     onError: (e: Error) => toast.error(e.message),
@@ -103,7 +103,7 @@ export default function WarehousesPage() {
       cidade: a.cidade || "",
       estado: a.estado || "",
       cep: a.cep || "",
-      capacidade_total_kg: a.capacidade_total_kg || 0,
+      capacidade_total: a.capacidade_total || 0,
     });
     setShowForm(true);
   };
@@ -181,8 +181,8 @@ export default function WarehousesPage() {
               <Input
                 type="number"
                 placeholder="Capacidade (kg)"
-                value={form.capacidade_total_kg}
-                onChange={(e) => setForm({ ...form, capacidade_total_kg: Number(e.target.value) })}
+                value={form.capacidade_total}
+                onChange={(e) => setForm({ ...form, capacidade_total: Number(e.target.value) })}
               />
               <div className="col-span-2 flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
@@ -239,7 +239,7 @@ export default function WarehousesPage() {
                     {a.endereco}, {a.cidade}/{a.estado}
                   </p>
                   <p>CEP: {a.cep}</p>
-                  <p>Capacidade: {a.capacidade_total_kg?.toLocaleString("pt-BR")} kg</p>
+                  <p>Capacidade: {a.capacidade_total?.toLocaleString("pt-BR")} kg</p>
                 </div>
               </CardContent>
             </Card>

@@ -11,47 +11,44 @@ export type Database = {
       armazens: {
         Row: {
           ativo: boolean;
-          capacidade_total_kg: number | null;
-          capacidade_total_m3: number | null;
+          capacidade_total: number | null;
           cep: string | null;
           cidade: string | null;
           codigo: string;
           created_at: string;
-          descricao: string | null;
           endereco: string | null;
           estado: string | null;
           id: string;
           nome: string;
+          responsavel_id: string | null;
           updated_at: string;
         };
         Insert: {
           ativo?: boolean;
-          capacidade_total_kg?: number | null;
-          capacidade_total_m3?: number | null;
+          capacidade_total?: number | null;
           cep?: string | null;
           cidade?: string | null;
           codigo: string;
           created_at?: string;
-          descricao?: string | null;
           endereco?: string | null;
           estado?: string | null;
           id?: string;
           nome: string;
+          responsavel_id?: string | null;
           updated_at?: string;
         };
         Update: {
           ativo?: boolean;
-          capacidade_total_kg?: number | null;
-          capacidade_total_m3?: number | null;
+          capacidade_total?: number | null;
           cep?: string | null;
           cidade?: string | null;
           codigo?: string;
           created_at?: string;
-          descricao?: string | null;
           endereco?: string | null;
           estado?: string | null;
           id?: string;
           nome?: string;
+          responsavel_id?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -59,7 +56,6 @@ export type Database = {
       categorias: {
         Row: {
           ativo: boolean;
-          codigo: string;
           cor: string | null;
           created_at: string;
           descricao: string | null;
@@ -70,7 +66,6 @@ export type Database = {
         };
         Insert: {
           ativo?: boolean;
-          codigo: string;
           cor?: string | null;
           created_at?: string;
           descricao?: string | null;
@@ -81,7 +76,6 @@ export type Database = {
         };
         Update: {
           ativo?: boolean;
-          codigo?: string;
           cor?: string | null;
           created_at?: string;
           descricao?: string | null;
@@ -97,19 +91,13 @@ export type Database = {
           ativo: boolean;
           cep: string | null;
           cidade: string | null;
-          cnpj_cpf: string | null;
-          codigo: string;
-          contato_email: string | null;
-          contato_nome: string | null;
-          contato_telefone: string | null;
+          cpf_cnpj: string | null;
           created_at: string;
           email: string | null;
           endereco: string | null;
           estado: string | null;
           id: string;
           nome: string;
-          nome_fantasia: string | null;
-          observacoes: string | null;
           telefone: string | null;
           updated_at: string;
         };
@@ -117,19 +105,13 @@ export type Database = {
           ativo?: boolean;
           cep?: string | null;
           cidade?: string | null;
-          cnpj_cpf?: string | null;
-          codigo: string;
-          contato_email?: string | null;
-          contato_nome?: string | null;
-          contato_telefone?: string | null;
+          cpf_cnpj?: string | null;
           created_at?: string;
           email?: string | null;
           endereco?: string | null;
           estado?: string | null;
           id?: string;
           nome: string;
-          nome_fantasia?: string | null;
-          observacoes?: string | null;
           telefone?: string | null;
           updated_at?: string;
         };
@@ -137,19 +119,13 @@ export type Database = {
           ativo?: boolean;
           cep?: string | null;
           cidade?: string | null;
-          cnpj_cpf?: string | null;
-          codigo?: string;
-          contato_email?: string | null;
-          contato_nome?: string | null;
-          contato_telefone?: string | null;
+          cpf_cnpj?: string | null;
           created_at?: string;
           email?: string | null;
           endereco?: string | null;
           estado?: string | null;
           id?: string;
           nome?: string;
-          nome_fantasia?: string | null;
-          observacoes?: string | null;
           telefone?: string | null;
           updated_at?: string;
         };
@@ -157,40 +133,31 @@ export type Database = {
       };
       serial_numbers: {
         Row: {
-          codigo: string;
           created_at: string;
-          data_fabricacao: string | null;
-          data_validade: string | null;
           id: string;
           lote_id: string | null;
-          nf_entrada: string | null;
-          observacoes: string | null;
+          numero_serial: string;
+          posicao_id: string | null;
           produto_id: string | null;
           status: string;
           updated_at: string;
         };
         Insert: {
-          codigo: string;
           created_at?: string;
-          data_fabricacao?: string | null;
-          data_validade?: string | null;
           id?: string;
           lote_id?: string | null;
-          nf_entrada?: string | null;
-          observacoes?: string | null;
+          numero_serial: string;
+          posicao_id?: string | null;
           produto_id?: string | null;
           status?: string;
           updated_at?: string;
         };
         Update: {
-          codigo?: string;
           created_at?: string;
-          data_fabricacao?: string | null;
-          data_validade?: string | null;
           id?: string;
           lote_id?: string | null;
-          nf_entrada?: string | null;
-          observacoes?: string | null;
+          numero_serial?: string;
+          posicao_id?: string | null;
           produto_id?: string | null;
           status?: string;
           updated_at?: string;
