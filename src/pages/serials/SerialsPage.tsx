@@ -6,13 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Hash, Search } from "lucide-react";
 
+// Colunas reais de public.serial_numbers (migration 20260520120000): o número
+// de série é `codigo` (não existe `numero_serial` nem `posicao_id`).
 type Serial = {
   id: string;
-  numero_serial: string;
+  codigo: string;
   produto_id: string | null;
   lote_id: string | null;
-  posicao_id: string | null;
   status: string;
+  produtos?: { nome: string } | null;
 };
 
 const STATUS_LABELS: Record<
@@ -35,15 +37,15 @@ export default function SerialsPage() {
       const { data, error } = await supabase
         .from("serial_numbers")
         .select("*, produtos(nome)")
-        .order("numero_serial");
+        .order("codigo");
       if (error) throw error;
-      return data;
+      return (data ?? []) as Serial[];
     },
   });
 
   const filtered = serials.filter(
-    (s: any) =>
-      s.numero_serial.toLowerCase().includes(search.toLowerCase()) ||
+    (s) =>
+      s.codigo.toLowerCase().includes(search.toLowerCase()) ||
       (s.produtos?.nome || "").toLowerCase().includes(search.toLowerCase())
   );
 
@@ -80,7 +82,7 @@ export default function SerialsPage() {
                     <Hash className="h-4 w-4 text-primary" />
                     <Badge variant={cfg.variant}>{cfg.label}</Badge>
                   </div>
-                  <p className="font-mono text-sm font-semibold">{s.numero_serial}</p>
+                  <p className="font-mono text-sm font-semibold">{s.codigo}</p>
                   {s.produtos?.nome && (
                     <p className="text-xs text-muted-foreground">{s.produtos.nome}</p>
                   )}
