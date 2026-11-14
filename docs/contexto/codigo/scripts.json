@@ -1,0 +1,901 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 74,
+ "scripts": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "descricao": "Simulação de cenários do gerador: monta centenas de repositórios sintéticos (variantes de SQL, rotas, menus, edges, workflows, monorepo, Python, arquivos corrompidos, fuzz) e confere:",
+   "linhas": 173,
+   "env": [
+    "A",
+    "K",
+    "NODE_ENV",
+    "SCRIPT_ONLY",
+    "SRK",
+    "SUPABASE_URL",
+    "VITE_A",
+    "VITE_C",
+    "VITE_FEATURE_X",
+    "X"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "descricao": "Gera o contexto de projeto para agentes de IA (padrão: inventario/ia/*). Zero dependências. Node >= 18. Genérico: funciona em qualquer repositório.",
+   "linhas": 924,
+   "env": [
+    "AI_CONTEXT_DIR",
+    "AI_CONTEXT_PUBLICACAO",
+    "AI_CONTEXT_ROOT"
+   ],
+   "npm_scripts": [
+    "contexto:ia"
+   ],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/apply_rls_helper.cjs",
+   "descricao": "O Supabase CLI nao aceita multi-statement via --query, mas DO block funciona. O problema e' o tamanho/quoting via shell. Vamos usar --file que envia como arquivo.",
+   "linhas": 27,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/audit-zod.mjs",
+   "descricao": "* Audit Zod — varre supabase/functions/*//*index.ts e lista quais Edge",
+   "linhas": 65,
+   "env": [],
+   "npm_scripts": [
+    "audit:zod"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "descricao": null,
+   "linhas": 992,
+   "env": [
+    "REPO_AUTOMATION_CHAINING"
+   ],
+   "npm_scripts": [
+    "automation:doctor",
+    "automation:test",
+    "automation:check",
+    "automation:heal",
+    "automation:nightly",
+    "automation:graph",
+    "automation:status",
+    "automation:install-hooks",
+    "automation:uninstall-hooks"
+   ],
+   "workflows": [
+    "automation-local.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-agents-integrity.mjs",
+   "descricao": "* Garante que as instrucoes para agentes nao foram apagadas ou esvaziadas por outra sessao.",
+   "linhas": 205,
+   "env": [
+    "AGENTS_MD_ALLOW_NO_BASE",
+    "AGENTS_MD_BASE"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/check-eventos-triagem.cjs",
+   "descricao": "Verificar schema",
+   "linhas": 17,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/actions-kpi.mjs",
+   "descricao": "E79: KPI de uso do GitHub Actions, para o branch-hygiene-audit semanal. Medido antes de escrever (03/10/2026): a API devolve `run_started_at` e",
+   "linhas": 271,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_API_URL",
+    "GITHUB_REPOSITORY",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN",
+    "JANELA_DIAS"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.mjs",
+   "descricao": "W98 — comando pronto de poda de branches (usado pelo branch-hygiene-audit.yml). O plano oferecia duas saídas: apagar sozinho ou só gerar o comando. Apagar é",
+   "linhas": 246,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/bump-toolchain.mjs",
+   "descricao": "* W40: Verifica se há versão mais nova das ferramentas em .github/toolchain.json.",
+   "linhas": 170,
+   "env": [
+    "GH_TOKEN",
+    "GITHUB_STEP_SUMMARY",
+    "GITHUB_TOKEN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/install-postgresql-client.sh",
+   "descricao": "GitHub-hosted runners incluem repositorios de terceiros (Chrome, Microsoft, etc.). Um espelho inconsistente nesses repositorios nao pode impedir jobs que",
+   "linhas": 37,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "db-manifesto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/issue-rotativa.mjs",
+   "descricao": "* W91 / E51 — política de rotação de issue de alerta.",
+   "linhas": 126,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/sla-code-scanning.mjs",
+   "descricao": "W83 — SLA dos alertas abertos de Code Scanning (usado pelo branch-hygiene-audit.yml). high/critical → 14 dias; medium/low → 30 dias. Violação → exit 1.",
+   "linhas": 83,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "branch-hygiene-audit.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/ci/workflow-test-support.mjs",
+   "descricao": "Leitores restritos ao formato em blocos dos workflows deste repositorio. Nao sao um parser YAML geral: formatos nao reconhecidos falham nos contratos.",
+   "linhas": 177,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/create_cadastros_rls.sql",
+   "descricao": null,
+   "linhas": 58,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/create_cadastros_tables.sql",
+   "descricao": null,
+   "linhas": 7,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/catalog.sql",
+   "descricao": null,
+   "linhas": 88,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/check-catalog-fresh.mjs",
+   "descricao": "* Confere se supabase/schema-catalog.json ainda reflete o banco.",
+   "linhas": 177,
+   "env": [
+    "CATALOG_IDENTITY_PATH",
+    "CATALOG_PATH",
+    "DESTINO_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/check-grants-fresh.mjs",
+   "descricao": "* Confere se scripts/db-audit/grants-baseline.json ainda reflete o banco.",
+   "linhas": 103,
+   "env": [
+    "GRANTS_BASELINE_PATH"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/check-manifest-fresh.mjs",
+   "descricao": "* Compara supabase/schema-manifest.json com uma geracao fresca do banco oficial.",
+   "linhas": 115,
+   "env": [
+    "CATALOG_IDENTITY_PATH",
+    "DESTINO_URL",
+    "MANIFEST_PATH"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/database-identity.mjs",
+   "descricao": null,
+   "linhas": 202,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/diff.mjs",
+   "descricao": "* Diffa duas saidas v2 de manifest.sql.",
+   "linhas": 53,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/grants-baseline.sql",
+   "descricao": null,
+   "linhas": 40,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/manifest-lib.mjs",
+   "descricao": null,
+   "linhas": 99,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/manifest.sql",
+   "descricao": null,
+   "linhas": 384,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/psql-environment.mjs",
+   "descricao": "libpq does not expand a URI supplied through the PGDATABASE default. Callers must validate project identity/TLS before calling this transport.",
+   "linhas": 136,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/db-audit/psql-safe.mjs",
+   "descricao": "* Proxy transparente para psql: nunca poe a connection string no argv",
+   "linhas": 59,
+   "env": [
+    "DESTINO_URL",
+    "PSQL_BIN"
+   ],
+   "npm_scripts": [],
+   "workflows": [
+    "db-manifesto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/dep-audit.mjs",
+   "descricao": "* Auditoria de dependências independente do proxy de registro.",
+   "linhas": 136,
+   "env": [
+    "NPM_ADVISORY_REGISTRY"
+   ],
+   "npm_scripts": [
+    "audit:deps",
+    "audit:deps:prod"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "descricao": null,
+   "linhas": 1076,
+   "env": [
+    "PATH"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/i18n-check.mjs",
+   "descricao": "* i18n Check — verifica paridade de chaves entre os arquivos de tradução",
+   "linhas": 50,
+   "env": [],
+   "npm_scripts": [
+    "i18n:check"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/i18n-hardcoded-check.mjs",
+   "descricao": "* i18n Hardcoded Check — detecta strings PT-BR hard-coded em JSX (fora de t()).",
+   "linhas": 90,
+   "env": [],
+   "npm_scripts": [
+    "i18n:hardcoded"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/banco.sql",
+   "descricao": null,
+   "linhas": 143,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-banco.mjs",
+   "descricao": "* Inventario do banco oficial -> inventario/estado/banco.json (fonte de consulta dos agentes).",
+   "linhas": 306,
+   "env": [
+    "INVENTARIO_PERMITIR_OUTRO_PROJETO",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_API_URL",
+    "SUPABASE_PROJECT_REF"
+   ],
+   "npm_scripts": [
+    "inventario:banco"
+   ],
+   "workflows": [
+    "inventario-estado.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-repo.mjs",
+   "descricao": "Inventario gerado do lado do repositorio (sem acesso ao banco):  - edge functions: linhas, segredos lidos (Deno.env.get) e quem as invoca (src, migrations, outras edges, e2e, CI)",
+   "linhas": 87,
+   "env": [],
+   "npm_scripts": [
+    "inventario:edges"
+   ],
+   "workflows": [
+    "inventario-estado.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/gerar-rotas.mjs",
+   "descricao": "* Inventario das rotas do front -> inventario/estado/rotas.json (fonte de consulta dos agentes).",
+   "linhas": 298,
+   "env": [],
+   "npm_scripts": [
+    "inventario:rotas",
+    "inventario:rotas:check"
+   ],
+   "workflows": [
+    "inventario-estado.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/inventario/mudou-conteudo.mjs",
+   "descricao": "* O inventario mudou de verdade? Compara cada arquivo de inventario/estado/ com a versao do",
+   "linhas": 84,
+   "env": [],
+   "npm_scripts": [
+    "inventario:mudou"
+   ],
+   "workflows": [
+    "inventario-estado.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/lib/seguranca-processo.mjs",
+   "descricao": "* Utilidades compartilhadas pelos scripts de auditoria/CI.",
+   "linhas": 101,
+   "env": [
+    "PATH"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "descricao": null,
+   "linhas": 783,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "descricao": null,
+   "linhas": 720,
+   "env": [
+    "XDG_STATE_HOME"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/run.sh",
+   "descricao": null,
+   "linhas": 16,
+   "env": [],
+   "npm_scripts": [
+    "maintenance:doctor",
+    "maintenance:check",
+    "maintenance:heal"
+   ],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/maintenance/typecheck.mjs",
+   "descricao": null,
+   "linhas": 87,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "descricao": "* P2 #24 — Guarda anti-regressão contra TODOs residuais em migrations.",
+   "linhas": 48,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-all.cjs",
+   "descricao": "descobrir schema real via tentativa de insert e observação do erro ou via select com limit",
+   "linhas": 42,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-cols.cjs",
+   "descricao": "descobrir schema via erros de insert",
+   "linhas": 59,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-empty.cjs",
+   "descricao": "descobrir via query no information_schema (funciona via PostgREST em alguns casos) alternativa: tentar insert {} e ver se funciona",
+   "linhas": 41,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-full.cjs",
+   "descricao": null,
+   "linhas": 41,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-full2.cjs",
+   "descricao": "pegar primeiros profiles pra usar como FK",
+   "linhas": 42,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/probe-triagem.cjs",
+   "descricao": null,
+   "linhas": 20,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/qa-report.mjs",
+   "descricao": "* QA Report — agrega os resultados dos jobs (lint/typecheck/test/build/",
+   "linhas": 56,
+   "env": [
+    "QA_BUILD_STATUS",
+    "QA_LINT_STATUS",
+    "QA_RLS_STATUS",
+    "QA_SECURITY_STATUS",
+    "QA_SIZE_STATUS",
+    "QA_TEST_STATUS",
+    "QA_TYPECHECK_STATUS"
+   ],
+   "npm_scripts": [
+    "qa:report"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "descricao": null,
+   "linhas": 2138,
+   "env": [],
+   "npm_scripts": [
+    "contexto:regras"
+   ],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "descricao": null,
+   "linhas": 237,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/regras_negocio/publish.sh",
+   "descricao": "Publica docs/ai-context gerados: commit + push na branch padrão, ou PR quando a branch é protegida. Variáveis:",
+   "linhas": 195,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/rls-audit.mjs",
+   "descricao": "* RLS Audit — varre supabase/migrations/*.sql e falha se alguma tabela",
+   "linhas": 80,
+   "env": [],
+   "npm_scripts": [
+    "qa:rls"
+   ],
+   "workflows": [
+    "qa.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/rls-fix-profile-update.sql",
+   "descricao": null,
+   "linhas": 7,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/rls-fix-users.sql",
+   "descricao": null,
+   "linhas": 6,
+   "env": [],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-app-tables.cjs",
+   "descricao": null,
+   "linhas": 377,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-aprovacoes.cjs",
+   "descricao": null,
+   "linhas": 105,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-cadastros.cjs",
+   "descricao": null,
+   "linhas": 196,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-conferencia.cjs",
+   "descricao": null,
+   "linhas": 87,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-curva-abc.cjs",
+   "descricao": "Distribuição ABC:   A: top 20% — giro alto (>100), alto valor",
+   "linhas": 87,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-db-service.cjs",
+   "descricao": "* Script de Seed - Versão com Service Role",
+   "linhas": 392,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-db.cjs",
+   "descricao": "* Script de Seed - Popula o banco com dados fictícios para teste",
+   "linhas": 285,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-expedicao.cjs",
+   "descricao": null,
+   "linhas": 100,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-inventario-geral.cjs",
+   "descricao": null,
+   "linhas": 71,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-kpis.cjs",
+   "descricao": null,
+   "linhas": 136,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-others-v2.cjs",
+   "descricao": null,
+   "linhas": 723,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-others-v3.cjs",
+   "descricao": null,
+   "linhas": 815,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-others.cjs",
+   "descricao": null,
+   "linhas": 679,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-putaway.cjs",
+   "descricao": "Reset putaway-related rows so we don't pile duplicates on re-runs",
+   "linhas": 124,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-qualidade.cjs",
+   "descricao": null,
+   "linhas": 73,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-triagens.cjs",
+   "descricao": null,
+   "linhas": 128,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/seed-trocas.cjs",
+   "descricao": null,
+   "linhas": 145,
+   "env": [
+    "SERVICE_ROLE_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "descricao": "Somente leitura no banco (sessão read-only, statement_timeout, lock_timeout). Nunca grava linhas de tabelas, valores de segredos, chaves, senhas ou DSN.",
+   "linhas": 1791,
+   "env": [],
+   "npm_scripts": [
+    "contexto:banco"
+   ],
+   "workflows": [
+    "contexto.yml"
+   ],
+   "orfao": false
+  },
+  {
+   "arquivo": "scripts/test-db-connection.ts",
+   "descricao": "* Script de teste de conexão com banco de dados",
+   "linhas": 112,
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "npm_scripts": [],
+   "workflows": [],
+   "orfao": false
+  }
+ ]
+}

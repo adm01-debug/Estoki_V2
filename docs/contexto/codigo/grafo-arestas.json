@@ -1,0 +1,5768 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "arestas": {
+  "scripts/ai-context/cenarios.mjs": [
+   "src/hooks/index.ts",
+   "src/types/index.ts"
+  ],
+  "scripts/db-audit/check-catalog-fresh.mjs": [
+   "scripts/db-audit/database-identity.mjs",
+   "scripts/lib/seguranca-processo.mjs"
+  ],
+  "scripts/db-audit/check-grants-fresh.mjs": [
+   "scripts/lib/seguranca-processo.mjs"
+  ],
+  "scripts/db-audit/check-manifest-fresh.mjs": [
+   "scripts/db-audit/database-identity.mjs",
+   "scripts/db-audit/manifest-lib.mjs",
+   "scripts/lib/seguranca-processo.mjs"
+  ],
+  "scripts/db-audit/diff.mjs": [
+   "scripts/db-audit/manifest-lib.mjs"
+  ],
+  "scripts/db-audit/psql-safe.mjs": [
+   "scripts/db-audit/psql-environment.mjs"
+  ],
+  "scripts/maintenance/run.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
+  "scripts/maintenance/typecheck.mjs": [
+   "scripts/maintenance/lib.mjs"
+  ],
+  "src/App.tsx": [
+   "src/components/common/AppProviders.tsx",
+   "src/components/common/GlobalLoadingBar.tsx",
+   "src/components/common/RouteErrorBoundary.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/features/dashboard/pages/DashboardPage.tsx",
+   "src/pages/Dashboard.tsx",
+   "src/pages/DashboardOperacional.tsx",
+   "src/pages/Hub.tsx",
+   "src/routes/adminRoutes.tsx",
+   "src/routes/analyticsRoutes.tsx",
+   "src/routes/featureRoutes.tsx",
+   "src/routes/publicRoutes.tsx",
+   "src/routes/wmsRoutes.tsx"
+  ],
+  "src/components/BulkActionsBar.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/hooks/useBulkActions.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/DataImporter.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useImportData.ts"
+  ],
+  "src/components/DuplicateButton.tsx": [
+   "src/components/ui/button.tsx",
+   "src/hooks/useDuplicate.ts"
+  ],
+  "src/components/ExportDropdown.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/hooks/useExportData.ts"
+  ],
+  "src/components/ImportExport/ExportButton.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/sentry.ts"
+  ],
+  "src/components/ImportExport/ExportSection.tsx": [
+   "src/components/ImportExport/types.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/components/ImportExport/ImportResultsCard.tsx": [
+   "src/components/ImportExport/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/ImportExport/ImportSection.tsx": [
+   "src/components/ImportExport/ImportResultsCard.tsx",
+   "src/components/ImportExport/TemplateCard.tsx",
+   "src/components/ImportExport/types.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/components/ImportExport/TemplateCard.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/InfiniteScrollList.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/MFAEnroll.tsx": [
+   "src/components/forms/OTPInput.tsx",
+   "src/components/ui/alert.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useMFA.ts"
+  ],
+  "src/components/MFAVerify.tsx": [
+   "src/components/forms/OTPInput.tsx",
+   "src/components/ui/alert.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useMFA.ts"
+  ],
+  "src/components/NavLink.tsx": [
+   "src/hooks/useRoutePreload.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/SavedFiltersDropdown.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/hooks/useSavedFilters.ts"
+  ],
+  "src/components/SearchInput.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/VersionHistory.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/hooks/useVersions.ts"
+  ],
+  "src/components/a11y/SkipLinks.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/admin/AuditoriaEnterpriseViewer.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx"
+  ],
+  "src/components/admin/telemetry/TelemetryCharts.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/alertas/AlertasConfigTable.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/alertas/AlertasHistoricoTable.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/alertas/AlertasResumoCards.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/analytics/abc/ABCActionsList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts"
+  ],
+  "src/components/analytics/abc/ABCCharts.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/analytics/abc/ABCProductList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts"
+  ],
+  "src/components/analytics/abc/ABCStatsCards.tsx": [
+   "src/components/ui/card.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts"
+  ],
+  "src/components/armazenamento/ArmazenamentoItemCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/armazenamento/PosicaoStatusBadge.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/armazenamento/SugestaoCard.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/armazenamento/WarehouseVisualMap.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/auth/LoginForm.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/auth/PasswordStrengthMeter.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/auth/ProtectedRoute.tsx": [
+   "src/contexts/AuthContext.tsx"
+  ],
+  "src/components/camera/PhotoCapture.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/camera/index.ts": [
+   "src/components/camera/PhotoCapture.tsx"
+  ],
+  "src/components/charts/AlertasCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/EstoqueCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/GamificacaoCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/Heatmap.tsx": [
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/charts/LotesCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/ModuleCharts.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/charts/MovimentacaoCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/OndasCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/RecebimentoCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/RomaneiosCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/charts/SimpleBarChart.tsx": [
+   "src/components/charts/chartStyles.ts"
+  ],
+  "src/components/charts/Treemap.tsx": [
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/charts/TriagemCharts.tsx": [
+   "src/components/charts/chartStyles.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/charts/WMSModuleCharts.tsx": [
+   "src/components/charts/AlertasCharts.tsx",
+   "src/components/charts/EstoqueCharts.tsx",
+   "src/components/charts/GamificacaoCharts.tsx",
+   "src/components/charts/LotesCharts.tsx",
+   "src/components/charts/MovimentacaoCharts.tsx",
+   "src/components/charts/OndasCharts.tsx",
+   "src/components/charts/RecebimentoCharts.tsx",
+   "src/components/charts/RomaneiosCharts.tsx",
+   "src/components/charts/TriagemCharts.tsx"
+  ],
+  "src/components/charts/index.ts": [
+   "src/components/charts/SimpleBarChart.tsx",
+   "src/components/charts/SimpleLineChart.tsx",
+   "src/components/charts/SimplePieChart.tsx"
+  ],
+  "src/components/common/AppProviders.tsx": [
+   "src/components/common/ErrorBoundary.tsx",
+   "src/components/common/KeyboardShortcuts.tsx",
+   "src/components/pwa/InstallPrompt.tsx",
+   "src/components/pwa/UpdatePrompt.tsx",
+   "src/components/ui/sonner.tsx",
+   "src/components/ui/toaster.tsx",
+   "src/contexts/AppContext.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/contexts/NotificationContext.tsx",
+   "src/contexts/ThemeContext.tsx",
+   "src/contexts/TransitionContext.tsx",
+   "src/features/analytics/components/PerformanceMonitor.tsx"
+  ],
+  "src/components/common/AsyncStates.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/common/Breadcrumbs.tsx": [
+   "src/components/molecules/navigation/BackButton.tsx",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/components/common/EmptyState.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/ErrorBoundary.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/config/error-handler.ts",
+   "src/lib/sentry.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/components/common/ErrorFallback.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/common/GlobalSearch.tsx": [
+   "src/components/common/GlobalSearchDialog.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/common/GlobalSearchDialog.tsx": [
+   "src/components/common/PageSkeleton.tsx",
+   "src/components/ui/command.tsx",
+   "src/hooks/useDebounce.ts",
+   "src/hooks/useHaptics.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/common/KeyboardShortcuts.tsx": [
+   "src/components/ui/keyboard-shortcuts-help.tsx",
+   "src/hooks/use-keyboard-shortcuts.ts"
+  ],
+  "src/components/common/LanguageSwitcher.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/i18n/index.ts"
+  ],
+  "src/components/common/LeaveGuard.tsx": [
+   "src/components/ui/confirmation-dialog.tsx",
+   "src/hooks/useUnsavedChanges.ts"
+  ],
+  "src/components/common/LoadingSpinner.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/ModuleErrorBoundary.tsx": [
+   "src/components/common/ErrorBoundary.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/common/OnboardingTour.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/hooks/useLocalStorage.ts"
+  ],
+  "src/components/common/OnlineIndicator.tsx": [
+   "src/hooks/useOnlineStatus.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/PageSkeleton.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/PresenceAvatars.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/RouteErrorBoundary.tsx": [
+   "src/components/common/ErrorBoundary.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/common/RouteLoadingFallback.tsx": [
+   "src/components/common/LoadingFallback.tsx",
+   "src/components/common/PageSkeleton.tsx"
+  ],
+  "src/components/common/SavedFiltersManager.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/common/SearchInput.tsx": [
+   "src/components/ui/input.tsx"
+  ],
+  "src/components/common/ShortcutsHUD.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useKeyboardShortcuts.ts"
+  ],
+  "src/components/common/SkeletonLoader.tsx": [
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/common/SkipLink.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/StepProgress.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/UnsavedChangesDialog.tsx": [
+   "src/components/ui/alert-dialog.tsx"
+  ],
+  "src/components/common/WMSStatusBadge.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/common/index.ts": [
+   "src/components/common/ErrorBoundary.tsx",
+   "src/components/common/KeyboardShortcuts.tsx",
+   "src/components/common/LoadingFallback.tsx",
+   "src/components/common/LoadingSpinner.tsx",
+   "src/components/common/OnlineIndicator.tsx",
+   "src/components/common/SkipLink.tsx"
+  ],
+  "src/components/conferencia/AssinaturaConferenciaDialog.tsx": [
+   "src/components/conferencia/AssinaturaDigital.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/conferencia/AssinaturaDigital.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/conferencia/BalancaCard.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useBalanca.ts"
+  ],
+  "src/components/conferencia/ConferenciaForm.tsx": [
+   "src/components/conferencia/types.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/features/quality/components/VolumeContagem.tsx"
+  ],
+  "src/components/conferencia/conferenciaHelpers.ts": [
+   "src/components/conferencia/types.ts"
+  ],
+  "src/components/conferencia/types.ts": [
+   "src/features/quality/components/VolumeContagem.tsx"
+  ],
+  "src/components/configuracoes/AlertasConfigCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/switch.tsx"
+  ],
+  "src/components/configuracoes/EstoqueConfigCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/separator.tsx"
+  ],
+  "src/components/configuracoes/PreferenciasCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/switch.tsx"
+  ],
+  "src/components/dashboard/DashboardActivityFeed.tsx": [
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useAuditLog.ts",
+   "src/lib/utils.ts",
+   "src/services/auditService.ts"
+  ],
+  "src/components/dashboard/DashboardCharts.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/DashboardKPIs.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/features/dashboard/hooks/useDashboard.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/DashboardSkeleton.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/dashboard/DynamicAIInsights.tsx": [
+   "src/features/dashboard/hooks/useDashboard.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/components/dashboard/KPICard.tsx": [
+   "src/components/dashboard/Sparkline.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/MenuButton.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/ProgressRing.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/QuickActionButton.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/Sparkline.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/SystemHealthHUD.tsx": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/dashboard/index.ts": [
+   "src/components/dashboard/KPICard.tsx"
+  ],
+  "src/components/data/BulkActionsBar.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/data/CalendarFull.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/data/DataGrid.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/data/DataImporter.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/table.tsx",
+   "src/lib/csvImporter.ts",
+   "src/lib/excelImporter.ts"
+  ],
+  "src/components/data/DataTable.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/data/EditableTable.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/data/ExportDropdown.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/components/data/Gallery.tsx": [
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/data/ImageZoom.tsx": [
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/data/InfoItem.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/data/Lightbox.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/data/PivotTable.tsx": [
+   "src/components/ui/select.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/data/Timeline.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/data/TreeTable.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/data/VirtualizedTable.tsx": [
+   "src/components/ui/table.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/data/index.ts": [
+   "src/components/data/BulkActionsBar.tsx",
+   "src/components/data/DataImporter.tsx",
+   "src/components/data/ExportDropdown.tsx"
+  ],
+  "src/components/display/AvatarGroup.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/display/Blockquote.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/Clock.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/CodeBlock.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/CompanyCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/separator.tsx"
+  ],
+  "src/components/display/Counter.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/Highlight.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/Kbd.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/OptimizedImage.tsx": [
+   "src/components/ui/skeleton.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/Stat.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/display/StatCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/display/Timeline.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/display/UserCard.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/divergencias/DivergenciasDetalhes.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/divergencias/DivergenciasFiltros.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/divergencias/DivergenciasFornecedores.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/divergencias/DivergenciasKPIs.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/divergencias/DivergenciasVisaoGeral.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/dnd/Draggable.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dnd/Droppable.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dnd/KanbanBoard.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/dnd/Sortable.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/etiquetas/EtiquetaPreview.tsx": [
+   "src/components/etiquetas/etiquetaUtils.ts",
+   "src/components/etiquetas/types.ts"
+  ],
+  "src/components/etiquetas/GeradorEtiquetas.tsx": [
+   "src/components/etiquetas/EtiquetaPreview.tsx",
+   "src/components/etiquetas/pdfGenerators.ts",
+   "src/components/etiquetas/types.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/hooks/use-toast.ts"
+  ],
+  "src/components/etiquetas/pdfGenerators.ts": [
+   "src/components/etiquetas/etiquetaUtils.ts",
+   "src/components/etiquetas/types.ts"
+  ],
+  "src/components/export/ExportButton.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/export.ts"
+  ],
+  "src/components/export/index.ts": [
+   "src/components/export/ExportButton.tsx"
+  ],
+  "src/components/feedback/Alert.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/Banner.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/Celebration.tsx": [
+   "src/components/feedback/Confetti.tsx",
+   "src/components/feedback/Fireworks.tsx"
+  ],
+  "src/components/feedback/EmptyState.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/ErrorState.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/LoadingOverlay.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/Message.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/Toast.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/feedback/index.ts": [
+   "src/components/feedback/Alert.tsx",
+   "src/components/feedback/Toast.tsx"
+  ],
+  "src/components/filters/FilterBar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx"
+  ],
+  "src/components/filters/SavedFiltersDropdown.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useSavedFilters.ts"
+  ],
+  "src/components/filters/index.ts": [
+   "src/components/filters/SavedFiltersDropdown.tsx"
+  ],
+  "src/components/forms/Autocomplete.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/CEPInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/CNPJInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/CPFInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/CheckboxGroup.tsx": [
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/CodeEditor.tsx": [
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/forms/ColorInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/slider.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "src/components/forms/ColorPicker.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/Combobox.tsx": [
+   "src/components/ui/command.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/CurrencyInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/DatePicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/DateRangePicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/DateTimePicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/EmojiPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/FileDropzone.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/forms/FilePreview.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/forms/FileUpload.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/FormField.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/IconPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/ImageCropper.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/slider.tsx"
+  ],
+  "src/components/forms/ImageUpload.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/JsonEditor.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/forms/MarkdownEditor.tsx": [
+   "src/components/ui/tabs.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/forms/MonthPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/MultiSelect.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/checkbox.tsx"
+  ],
+  "src/components/forms/NumberInput.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/OTPInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/PasswordInput.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/PhoneInput.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/RadioGroup.tsx": [
+   "src/components/ui/label.tsx",
+   "src/components/ui/radio-group.tsx"
+  ],
+  "src/components/forms/RangeSlider.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/Rating.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/RatingInput.tsx": [
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/RichTextEditor.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/forms/SearchInput.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/forms/SelectField.tsx": [
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/SignaturePad.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/SwitchCard.tsx": [
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/TagInput.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/input.tsx"
+  ],
+  "src/components/forms/TextareaCounter.tsx": [
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/forms/TextareaField.tsx": [
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/forms/TimePicker.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/TransferList.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/scroll-area.tsx"
+  ],
+  "src/components/forms/WeekPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/YearPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx"
+  ],
+  "src/components/forms/index.ts": [
+   "src/components/forms/Autocomplete.tsx",
+   "src/components/forms/CEPInput.tsx",
+   "src/components/forms/CNPJInput.tsx",
+   "src/components/forms/CPFInput.tsx",
+   "src/components/forms/CheckboxGroup.tsx",
+   "src/components/forms/CodeEditor.tsx",
+   "src/components/forms/ColorInput.tsx",
+   "src/components/forms/ColorPicker.tsx",
+   "src/components/forms/Combobox.tsx",
+   "src/components/forms/CurrencyInput.tsx",
+   "src/components/forms/DatePicker.tsx",
+   "src/components/forms/DateRangePicker.tsx",
+   "src/components/forms/DateTimePicker.tsx",
+   "src/components/forms/EmojiPicker.tsx",
+   "src/components/forms/FileDropzone.tsx",
+   "src/components/forms/FilePreview.tsx",
+   "src/components/forms/FileUpload.tsx",
+   "src/components/forms/FormField.tsx",
+   "src/components/forms/IconPicker.tsx",
+   "src/components/forms/ImageCropper.tsx",
+   "src/components/forms/ImageUpload.tsx",
+   "src/components/forms/JsonEditor.tsx",
+   "src/components/forms/MarkdownEditor.tsx",
+   "src/components/forms/MonthPicker.tsx",
+   "src/components/forms/MultiSelect.tsx",
+   "src/components/forms/NumberInput.tsx",
+   "src/components/forms/OTPInput.tsx",
+   "src/components/forms/PasswordInput.tsx",
+   "src/components/forms/PhoneInput.tsx",
+   "src/components/forms/RadioGroup.tsx",
+   "src/components/forms/RangeSlider.tsx",
+   "src/components/forms/Rating.tsx",
+   "src/components/forms/RatingInput.tsx",
+   "src/components/forms/RichTextEditor.tsx",
+   "src/components/forms/SearchInput.tsx",
+   "src/components/forms/SelectField.tsx",
+   "src/components/forms/SignaturePad.tsx",
+   "src/components/forms/SwitchCard.tsx",
+   "src/components/forms/TagInput.tsx",
+   "src/components/forms/TextareaCounter.tsx",
+   "src/components/forms/TextareaField.tsx",
+   "src/components/forms/TimePicker.tsx",
+   "src/components/forms/TransferList.tsx",
+   "src/components/forms/WeekPicker.tsx",
+   "src/components/forms/YearPicker.tsx"
+  ],
+  "src/components/fornecedores/DashboardFornecedores.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useFornecedores.ts"
+  ],
+  "src/components/fornecedores/FornecedoresCriticos.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useFornecedores.ts"
+  ],
+  "src/components/fornecedores/FornecedoresKPICards.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/fornecedores/FornecedoresRanking.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useFornecedores.ts"
+  ],
+  "src/components/fornecedores/FornecedoresVisaoGeral.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useFornecedores.ts"
+  ],
+  "src/components/gamificacao/AchievementBadge.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/gamificacao/ConquistaNotificacoes.tsx": [
+   "src/hooks/use-toast.ts",
+   "src/hooks/useConquistas.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/components/gamificacao/ConquistasSystem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/useConquistas.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/gamificacao/DailyChallenge.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress-bar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/gamificacao/DesafiosDiarios.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/hooks/useDesafiosDiarios.ts"
+  ],
+  "src/components/gamificacao/GamificacaoLoja.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/gamificacao/PlacarLideres.tsx": [
+   "src/components/gamificacao/placar/Podium.tsx",
+   "src/components/gamificacao/placar/RankingItem.tsx",
+   "src/components/gamificacao/placar/placarHelpers.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useRanking.ts"
+  ],
+  "src/components/gamificacao/StreakCounter.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/gamificacao/StreakIndicator.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/gamificacao/StreakSystem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/hooks/useStreaks.ts"
+  ],
+  "src/components/gamificacao/XPBar.tsx": [
+   "src/components/ui/progress-bar.tsx"
+  ],
+  "src/components/gamificacao/index.ts": [
+   "src/components/gamificacao/AchievementBadge.tsx",
+   "src/components/gamificacao/DailyChallenge.tsx",
+   "src/components/gamificacao/StreakCounter.tsx",
+   "src/components/gamificacao/XPBar.tsx"
+  ],
+  "src/components/gamificacao/placar/Podium.tsx": [
+   "src/components/gamificacao/placar/placarHelpers.ts",
+   "src/components/ui/avatar.tsx",
+   "src/hooks/useRanking.ts"
+  ],
+  "src/components/gamificacao/placar/RankingItem.tsx": [
+   "src/components/gamificacao/placar/placarHelpers.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/hooks/useRanking.ts"
+  ],
+  "src/components/governanca/CheckpointsTab.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useGovernanca.ts"
+  ],
+  "src/components/governanca/CustodiaTab.tsx": [
+   "src/components/governanca/GovernancaHelpers.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useGovernanca.ts"
+  ],
+  "src/components/governanca/GovernancaHelpers.ts": [
+   "src/components/ui/badge.tsx"
+  ],
+  "src/components/governanca/OcorrenciasTab.tsx": [
+   "src/components/governanca/GovernancaHelpers.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useGovernanca.ts"
+  ],
+  "src/components/ia/PrevisaoDemandaIA.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/lib/ai-invoke.ts"
+  ],
+  "src/components/inventario/CicloCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/hooks/useInventarioCiclico.ts"
+  ],
+  "src/components/inventario/InventarioConfigTab.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx"
+  ],
+  "src/components/inventario/InventarioDashboardTab.tsx": [
+   "src/components/ui/card.tsx",
+   "src/hooks/useInventarioCiclico.ts"
+  ],
+  "src/components/inventario/NovoCicloDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useInventarioCiclico.ts"
+  ],
+  "src/components/inventario/StatusCicloCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/kanban/KanbanCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/kanban/KanbanColumn.tsx": [
+   "src/components/kanban/LoteCard.tsx",
+   "src/components/kanban/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/kanban/LoteCard.tsx": [
+   "src/components/kanban/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/kanban/LoteDetailDialog.tsx": [
+   "src/components/kanban/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/separator.tsx"
+  ],
+  "src/components/kanban/constants.ts": [
+   "src/components/kanban/types.ts"
+  ],
+  "src/components/kanban/useKanbanData.ts": [
+   "src/components/kanban/constants.ts",
+   "src/components/kanban/types.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/kpi/KPICard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/kpi/KPIGrid.tsx": [
+   "src/components/kpi/KPICard.tsx",
+   "src/components/ui/skeleton-card.tsx"
+  ],
+  "src/components/kpi/index.ts": [
+   "src/components/kpi/KPIGrid.tsx"
+  ],
+  "src/components/kpis-page/KPICharts.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/kpis-page/KPIMetaDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/features/analytics/hooks/useKPIsOperacionais.ts"
+  ],
+  "src/components/kpis-page/KPIMetasTable.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx",
+   "src/features/analytics/hooks/useKPIsOperacionais.ts"
+  ],
+  "src/components/kpis/AlertIndicator.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/kpis/KPICardWithAlert.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/kpis/KPITrendIndicator.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/AppLayout.tsx": [
+   "src/components/common/Breadcrumbs.tsx",
+   "src/components/common/GlobalLoadingBar.tsx",
+   "src/components/common/OnboardingTour.tsx",
+   "src/components/common/ShortcutsHUD.tsx",
+   "src/components/layout/AuthLoading.tsx",
+   "src/components/organisms/layout/Header.tsx",
+   "src/components/organisms/layout/MobileNavigation.tsx",
+   "src/components/organisms/layout/Sidebar.tsx",
+   "src/components/telemetry/PerformanceHUD.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useAppLayoutState.ts",
+   "src/hooks/useSwipeBack.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/AspectRatio.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Breadcrumbs.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Divider.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Flex.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Header.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/button.tsx",
+   "src/contexts/AuthContext.tsx"
+  ],
+  "src/components/layout/Masonry.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/MobileNavigation.tsx": [
+   "src/components/layout/sidebar/index.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/PageContainer.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/PageHeader.tsx": [
+   "src/components/common/Breadcrumbs.tsx",
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/layout/PageTransition.tsx": [
+   "src/hooks/usePageTransition.ts",
+   "src/lib/transitions/types.ts"
+  ],
+  "src/components/layout/ResizablePanel.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/ScrollAreaCustom.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/SidebarContent.tsx": [
+   "src/components/layout/sidebar/index.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/hooks/useRoutePreload.ts",
+   "src/hooks/useSidebarFavorites.ts"
+  ],
+  "src/components/layout/SimpleSidebar.tsx": [
+   "src/config/menu.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Space.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/SplitPane.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/Stack.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/header/Header.tsx": [
+   "src/components/common/Breadcrumbs.tsx",
+   "src/components/common/GlobalSearch.tsx",
+   "src/components/common/LanguageSwitcher.tsx",
+   "src/components/layout/header/UserMenu.tsx",
+   "src/components/notifications/NotificationCenter.tsx",
+   "src/components/theme/ThemeToggle.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/useOnlineStatus.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/header/UserMenu.tsx": [
+   "src/components/layout/sidebar/sidebarNavData.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/index.ts": [
+   "src/components/layout/Footer.tsx",
+   "src/components/layout/Header.tsx",
+   "src/components/layout/SimpleSidebar.tsx"
+  ],
+  "src/components/layout/sidebar/SidebarAccordionGroup.tsx": [
+   "src/components/layout/sidebar/SidebarNavButton.tsx",
+   "src/components/layout/sidebar/sidebarNavData.ts",
+   "src/components/ui/collapsible.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/sidebar/SidebarFooter.tsx": [
+   "src/components/layout/sidebar/SidebarNavButton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/useRoutePreload.ts"
+  ],
+  "src/components/layout/sidebar/SidebarHeader.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/sidebar/SidebarNavButton.tsx": [
+   "src/components/layout/sidebar/sidebarNavData.ts",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/useHaptics.ts",
+   "src/hooks/useSound.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/sidebar/SidebarUserInfo.tsx": [
+   "src/components/layout/sidebar/sidebarNavData.ts",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/layout/sidebar/index.ts": [
+   "src/components/layout/sidebar/SidebarAccordionGroup.tsx",
+   "src/components/layout/sidebar/SidebarFooter.tsx",
+   "src/components/layout/sidebar/SidebarHeader.tsx",
+   "src/components/layout/sidebar/SidebarNavButton.tsx",
+   "src/components/layout/sidebar/SidebarSectionLabel.tsx",
+   "src/components/layout/sidebar/SidebarUserInfo.tsx",
+   "src/components/layout/sidebar/sidebarNavData.ts"
+  ],
+  "src/components/maps/MapCluster.tsx": [
+   "src/components/ui/badge.tsx"
+  ],
+  "src/components/maps/MapPopup.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/mobile/BottomNav.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/mobile/SwipeableListItem.tsx": [
+   "src/hooks/useTouchGestures.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/mobile/index.ts": [
+   "src/components/mobile/BottomNav.tsx",
+   "src/components/mobile/PullToRefresh.tsx"
+  ],
+  "src/components/molecules/navigation/BackButton.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/molecules/navigation/PersistentStepper.tsx": [
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/components/movimentacao/MovimentacaoDetalhesForm.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/textarea.tsx"
+  ],
+  "src/components/movimentacao/MovimentacaoHistorico.tsx": [
+   "src/components/movimentacao/movimentacaoHelpers.ts",
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/movimentacao/MovimentacaoTipoSelector.tsx": [
+   "src/components/movimentacao/movimentacaoHelpers.ts",
+   "src/components/ui/label.tsx",
+   "src/components/ui/radio-group.tsx",
+   "src/lib/utils.ts",
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/movimentacao/movimentacaoHelpers.ts": [
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/navigation/ContextMenu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/navigation/Navbar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/navigation/Spotlight.tsx": [
+   "src/components/ui/command.tsx",
+   "src/components/ui/dialog.tsx"
+  ],
+  "src/components/navigation/Stepper.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/navigation/Steps.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/navigation/Wizard.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/components/notifications/NotificacoesGlobais.tsx": [
+   "src/hooks/useNotificacoes.ts",
+   "src/hooks/usePushNotifications.ts"
+  ],
+  "src/components/notifications/NotificationBell.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/notifications/NotificationCenter.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/separator.tsx",
+   "src/contexts/NotificationContext.tsx",
+   "src/lib/utils.ts",
+   "src/types/notifications.ts"
+  ],
+  "src/components/notifications/index.ts": [
+   "src/components/notifications/NotificationBell.tsx"
+  ],
+  "src/components/ocupacao/KPICard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ocupacao/OcupacaoToolbar.tsx": [
+   "src/components/ocupacao/types.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ocupacao/PosicaoDetalhePanel.tsx": [
+   "src/components/ocupacao/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ocupacao/RackView.tsx": [
+   "src/components/ocupacao/types.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/onboarding/OnboardingTour.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ondas/NovoOndaDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/organisms/layout/Header.tsx": [
+   "src/components/common/GlobalSearch.tsx",
+   "src/components/common/LanguageSwitcher.tsx",
+   "src/components/common/PresenceAvatars.tsx",
+   "src/components/common/WMSStatusBadge.tsx",
+   "src/components/layout/header/UserMenu.tsx",
+   "src/components/molecules/navigation/BackButton.tsx",
+   "src/components/notifications/NotificationCenter.tsx",
+   "src/components/theme/ThemeToggle.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/organisms/layout/MobileNavigation.tsx": [
+   "src/components/layout/sidebar/index.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/components/organisms/layout/Sidebar.tsx": [
+   "src/components/layout/sidebar/index.ts",
+   "src/components/ui/input.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/hooks/useRoutePreload.ts",
+   "src/hooks/useSidebarFavorites.ts"
+  ],
+  "src/components/print/PrintButton.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/print/PrintFooter.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/print/PrintHeader.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/print/PrintLayout.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/print/PrintPreview.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/print/index.ts": [
+   "src/components/print/PrintButton.tsx",
+   "src/components/print/PrintFooter.tsx",
+   "src/components/print/PrintHeader.tsx",
+   "src/components/print/PrintLayout.tsx",
+   "src/components/print/PrintPreview.tsx"
+  ],
+  "src/components/produtividade/ProdutividadeCharts.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/produtividade/ProdutividadeDetalhes.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/components/produtividade/ProdutividadeFilters.tsx": [
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/produtividade/ProdutividadeKPIs.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/produtividade/ProdutividadeRanking.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/produtos/BulkImportDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/label.tsx",
+   "src/hooks/useProdutos.ts"
+  ],
+  "src/components/produtos/ProductCardAvancado.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/components/produtos/ProductGrid.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/types/product.ts"
+  ],
+  "src/components/produtos/ProdutoDetailDialog.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/types/product.ts"
+  ],
+  "src/components/produtos/ProdutoFormDialog.tsx": [
+   "src/components/produtos/produtoSchema.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/produtos/ProdutosList.tsx": [
+   "src/components/ui/card.tsx",
+   "src/types/product.ts"
+  ],
+  "src/components/produtos/ProdutosStats.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/pwa/InstallPrompt.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/pwa/UpdatePrompt.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/pwa/index.ts": [
+   "src/components/pwa/InstallPrompt.tsx",
+   "src/components/pwa/UpdatePrompt.tsx"
+  ],
+  "src/components/rastreabilidade/BuscaProdutoTab.tsx": [
+   "src/components/rastreabilidade/constants.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/rastreabilidade/MovimentacaoCard.tsx": [
+   "src/components/rastreabilidade/constants.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/rastreabilidade/RastreabilidadeKPIs.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/rastreabilidade/constants.ts": [
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/relatorios/RelatorioFilters.tsx": [
+   "src/components/rastreabilidade/constants.ts",
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/relatorios/RelatorioTable.tsx": [
+   "src/components/relatorios/RelatorioFilters.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/table.tsx",
+   "src/types/movimentacao.ts"
+  ],
+  "src/components/relatorios/ReportFilters.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/romaneios/NovoRomaneioDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/components/romaneios/RomaneioDetalhesDialog.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/table.tsx",
+   "src/features/shipping/hooks/useRomaneios.ts"
+  ],
+  "src/components/scanner/BarcodeScanner.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/components/scanner/QRScanner.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/scanner/ScannerOCR.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/scanner/index.ts": [
+   "src/components/scanner/BarcodeScanner.tsx"
+  ],
+  "src/components/search/AdvancedSearch.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/search/index.ts": [
+   "src/components/search/AdvancedSearch.tsx"
+  ],
+  "src/components/security/AccessControl.tsx": [
+   "src/components/security/GeoBlockingManager.tsx",
+   "src/components/security/PasswordResetApproval.tsx",
+   "src/components/security/PermissionsManager.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useAuth.ts",
+   "src/hooks/usePermissions.ts"
+  ],
+  "src/components/security/ActiveSessions.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/useAuth.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/security/DeviceManagement.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/switch.tsx",
+   "src/hooks/useAuth.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/security/GeoBlockingManager.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useGeoWhitelist.ts"
+  ],
+  "src/components/security/MFASettings.tsx": [
+   "src/components/MFAEnroll.tsx",
+   "src/components/security/PasskeySettings.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/hooks/useAuth.ts",
+   "src/hooks/useMFA.ts"
+  ],
+  "src/components/security/PasskeySettings.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/hooks/useWebAuthn.ts"
+  ],
+  "src/components/security/PasswordResetApproval.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/usePasswordResetRequests.ts"
+  ],
+  "src/components/security/PermissionsManager.tsx": [
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/alert.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/usePermissions.ts"
+  ],
+  "src/components/security/SecurityAlerts.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/hooks/useAuth.ts",
+   "src/hooks/usePushNotifications.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/security/SecurityOverview.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/hooks/useAuth.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/components/tarefas/NovaTarefaDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/types/tarefas.ts"
+  ],
+  "src/components/tarefas/TarefaCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/types/tarefas.ts"
+  ],
+  "src/components/tarefas/TarefaCharts.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/tarefas/TarefaStats.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/telemetry/PerformanceHUD.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts",
+   "src/utils/performance.ts"
+  ],
+  "src/components/telemetry/TelemetryOffenders.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/telemetry/TelemetryStatsCards.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/telemetry/TelemetryTable.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/templates/BasePageTemplate.tsx": [
+   "src/components/common/Breadcrumbs.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/theme/ThemeProvider.tsx": [
+   "src/contexts/ThemeContext.tsx"
+  ],
+  "src/components/theme/ThemeToggle.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/contexts/ThemeContext.tsx"
+  ],
+  "src/components/trocas-page/DetalheRegistroDialog.tsx": [
+   "src/components/trocas/index.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/components/trocas-page/NovoRegistroDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/components/trocas/RegistroCard.tsx": [
+   "src/components/trocas/index.ts",
+   "src/components/ui/card.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/components/trocas/StatusBadge.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/trocas/TipoBadge.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/trocas/TrocaRegistroItem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/components/trocas/TrocasCharts.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/trocas/TrocasKPIs.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/trocas/WorkflowProgress.tsx": [
+   "src/components/trocas/StatusBadge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/trocas/index.ts": [
+   "src/components/trocas/RegistroCard.tsx",
+   "src/components/trocas/StatusBadge.tsx",
+   "src/components/trocas/TipoBadge.tsx",
+   "src/components/trocas/WorkflowProgress.tsx"
+  ],
+  "src/components/ui/accordion-custom.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/accordion.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/alert-dialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/alert.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/avatar-group.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/avatar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/badge.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/breadcrumb.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/button.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/calendar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/card.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/carousel.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/chart.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/checkbox.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/command.tsx": [
+   "src/components/ui/dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/confirm-dialog.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/confirmation-dialog.tsx": [
+   "src/components/ui/alert-dialog.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/context-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/copy-button.tsx": [
+   "src/components/ui/button.tsx",
+   "src/hooks/useClipboard.ts"
+  ],
+  "src/components/ui/data-table-advanced.tsx": [
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/data-table/DataTablePagination.tsx",
+   "src/components/ui/data-table/DataTableToolbar.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/use-data-table.ts",
+   "src/hooks/use-export.ts",
+   "src/lib/utils.ts",
+   "src/types/data-table.ts"
+  ],
+  "src/components/ui/data-table.tsx": [
+   "src/components/ui/empty-state.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/ui/data-table/DataTablePagination.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/components/ui/data-table/DataTableToolbar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/types/data-table.ts"
+  ],
+  "src/components/ui/date-range-picker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/date-time-picker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/dialog.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/drawer.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/dropdown-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/editor/RichTextEditor.tsx": [
+   "src/components/ui/toggle.tsx"
+  ],
+  "src/components/ui/empty-state.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/file-upload.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/filter-panel.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/form.tsx": [
+   "src/components/ui/label.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/hover-card.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/input-otp.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/input.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/kanban/KanbanBoard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/components/ui/keyboard-shortcuts-help.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/hooks/use-keyboard-shortcuts.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/label.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/loading-patterns.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/loading-skeleton.tsx": [
+   "src/components/ui/skeleton.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/loading-spinner.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/menubar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/modal.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/navigation-menu.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/page-header.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/pagination.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/popover.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/progress-bar.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/progress-steps.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/progress.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/radio-group.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/resizable.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/scroll-area.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/search-input.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/hooks/useDebounce.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/select.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/separator.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sheet.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sidebar.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/hooks/use-mobile.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/skeleton-card.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx"
+  ],
+  "src/components/ui/skeleton.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/slider.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/sonner.tsx": [
+   "src/contexts/ThemeContext.tsx"
+  ],
+  "src/components/ui/spinner.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/stat-card.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/stats-card.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/status-badge.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/constants/status.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/switch.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/table.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/tabs-custom.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/tabs.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/textarea.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/timeline.tsx": [
+   "src/lib/formatters.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/toast.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/toaster.tsx": [
+   "src/components/ui/toast.tsx",
+   "src/hooks/use-toast.ts"
+  ],
+  "src/components/ui/toggle-group.tsx": [
+   "src/components/ui/toggle.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/toggle.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/tooltip-icon.tsx": [
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/components/ui/tooltip.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/ui/use-toast.ts": [
+   "src/hooks/use-toast.ts"
+  ],
+  "src/components/user/UserMenu.tsx": [
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/dropdown-menu.tsx"
+  ],
+  "src/components/user/index.ts": [
+   "src/components/user/UserMenu.tsx"
+  ],
+  "src/components/versioning/VersionHistory.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/hooks/useEntityVersions.ts"
+  ],
+  "src/components/versioning/index.ts": [
+   "src/components/versioning/VersionHistory.tsx"
+  ],
+  "src/components/wms/BarcodeDisplay.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/BatchInfo.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/wms/ExpirationWarning.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/BinGrid.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/table.tsx"
+  ],
+  "src/components/wms/CarrierLogo.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/CycleCountCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/ExpirationWarning.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/InventoryCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/LocationPicker.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/command.tsx",
+   "src/components/ui/popover.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/PackingSlip.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/separator.tsx"
+  ],
+  "src/components/wms/PickList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/ProductCard.tsx": [
+   "src/components/display/OptimizedImage.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/PutawayList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/QualityStatus.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/ReorderAlert.tsx": [
+   "src/components/ui/alert.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/SerialNumber.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/ShipmentTracker.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/StockLevelIndicator.tsx": [
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/components/wms/WarehouseMap.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/config/analytics.ts": [
+   "src/config/environment.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/config/api-client.ts": [
+   "src/config/environment.ts"
+  ],
+  "src/config/bitrix24-client.ts": [
+   "src/config/environment.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/config/error-handler.ts": [
+   "src/config/environment.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/config/feature-flags.tsx": [
+   "src/config/environment.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/config/index.ts": [
+   "src/config/analytics.ts",
+   "src/config/api-client.ts",
+   "src/config/bitrix24-client.ts",
+   "src/config/environment.ts",
+   "src/config/error-handler.ts",
+   "src/config/feature-flags.tsx",
+   "src/utils/logger.ts"
+  ],
+  "src/contexts/AuthContext.tsx": [
+   "src/integrations/supabase/client.ts",
+   "src/services/authService.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/contexts/NotificationContext.tsx": [
+   "src/components/notification/notificationHelpers.ts",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useNotificationOperations.ts",
+   "src/hooks/useNotificationRealtime.ts",
+   "src/hooks/usePushNotifications.ts",
+   "src/types/notifications.ts"
+  ],
+  "src/contexts/TransitionContext.tsx": [
+   "src/lib/transitions/registry.ts",
+   "src/lib/transitions/types.ts"
+  ],
+  "src/contexts/index.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/contexts/ThemeContext.tsx",
+   "src/contexts/ToastContext.tsx"
+  ],
+  "src/features/analytics/components/PerformanceMonitor.tsx": [
+   "src/features/analytics/services/performanceService.ts"
+  ],
+  "src/features/analytics/hooks/useCurvaABC.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/hooks/useDemandForecast.ts": [
+   "src/lib/ai-invoke.ts"
+  ],
+  "src/features/analytics/hooks/useKPIsOperacionais.ts": [
+   "src/features/analytics/hooks/useKPIsOperacionais/index.ts",
+   "src/features/analytics/hooks/useKPIsOperacionais/types.ts"
+  ],
+  "src/features/analytics/hooks/useKPIsOperacionais/index.ts": [
+   "src/features/analytics/hooks/useKPIsOperacionais/types.ts",
+   "src/features/analytics/hooks/useKPIsOperacionais/utils.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/hooks/useKPIsOperacionais/utils.ts": [
+   "src/features/analytics/hooks/useKPIsOperacionais/types.ts"
+  ],
+  "src/features/analytics/hooks/useOperationalLive.ts": [
+   "src/features/analytics/hooks/useRealtimeKPIs.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/hooks/useRealtimeKPIs.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/pages/ABCAnalysisPage.tsx": [
+   "src/components/analytics/abc/ABCActionsList.tsx",
+   "src/components/analytics/abc/ABCCharts.tsx",
+   "src/components/analytics/abc/ABCProductList.tsx",
+   "src/components/analytics/abc/ABCStatsCards.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts"
+  ],
+  "src/features/analytics/pages/DemandForecastPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/features/analytics/hooks/useDemandForecast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/pages/KPIsPage.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/kpis-page/KPICharts.tsx",
+   "src/components/kpis-page/KPIMetaDialog.tsx",
+   "src/components/kpis-page/KPIMetasTable.tsx",
+   "src/components/kpis/KPICardWithAlert.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/analytics/hooks/useKPIAlerts.ts",
+   "src/features/analytics/hooks/useKPIsOperacionais.ts",
+   "src/features/analytics/hooks/useRealtimeKPIs.ts"
+  ],
+  "src/features/analytics/pages/OperationalMonitorPage.tsx": [
+   "src/components/common/PageSkeleton.tsx",
+   "src/components/common/SEO.tsx",
+   "src/features/analytics/hooks/useOperationalLive.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/analytics/pages/RealtimeDashboardPage.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/analytics/services/performanceService.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/features/dashboard/components/IndexAtividade.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/statusColors.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/dashboard/components/IndexHero.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dropdown-menu.tsx"
+  ],
+  "src/features/dashboard/components/IndexKPIs.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/dashboard/components/IndexOcupacaoCard.tsx": [
+   "src/components/dashboard/ProgressRing.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/dashboard/components/IndexOperations.tsx": [
+   "src/components/dashboard/MenuButton.tsx"
+  ],
+  "src/features/dashboard/components/IndexQuickStats.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/dashboard/components/SystemHealthMonitor.tsx": [
+   "src/lib/utils.ts"
+  ],
+  "src/features/dashboard/hooks/useAtividadeRecente.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/features/dashboard/hooks/useDashboard.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts",
+   "src/utils/performance.ts"
+  ],
+  "src/features/dashboard/pages/DashboardPage.tsx": [
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/features/analytics/hooks/useRealtimeKPIs.ts",
+   "src/features/dashboard/components/IndexAtividade.tsx",
+   "src/features/dashboard/components/IndexHero.tsx",
+   "src/features/dashboard/components/IndexKPIs.tsx",
+   "src/features/dashboard/components/IndexOcupacaoCard.tsx",
+   "src/features/dashboard/components/IndexOperations.tsx",
+   "src/features/dashboard/components/IndexQuickStats.tsx",
+   "src/features/dashboard/components/SystemHealthMonitor.tsx",
+   "src/features/dashboard/hooks/useAtividadeRecente.ts",
+   "src/features/dashboard/hooks/useDashboard.ts",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/features/receiving/hooks/useRecebimentos.ts"
+  ],
+  "src/features/inventory/components/AlertaPerdaLogistica.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/features/inventory/components/BoxForm.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/input.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/inventory/components/EstoqueFilterSheet.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/sheet.tsx",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/EstoqueMapaTab.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/EstoqueStatsCards.tsx": [
+   "src/components/dashboard/ProgressRing.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/inventory/components/EstoqueToolbar.tsx": [
+   "src/components/DataImporter.tsx",
+   "src/components/SavedFiltersDropdown.tsx",
+   "src/components/SearchInput.tsx",
+   "src/components/ui/button.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/excelImporter.ts",
+   "src/lib/wmsSchemas.ts"
+  ],
+  "src/features/inventory/components/MapaCalorOcupacao.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/features/inventory/components/NovaPosicaoDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/inventory/components/BoxForm.tsx",
+   "src/features/inventory/components/PortaPaleteForm.tsx"
+  ],
+  "src/features/inventory/components/PortaPaleteForm.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/input.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/inventory/components/PosicaoCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/separator.tsx",
+   "src/components/ui/status-badge.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/PosicaoDetalhesDialog.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/features/inventory/components/posicao-detalhes/LoteInfoCard.tsx",
+   "src/features/inventory/components/posicao-detalhes/PosicaoActions.tsx",
+   "src/features/inventory/components/posicao-detalhes/PosicaoInfoCard.tsx",
+   "src/features/inventory/components/posicao-detalhes/ProdutoInfoCard.tsx",
+   "src/features/inventory/components/posicao-detalhes/types.ts",
+   "src/features/inventory/hooks/usePosicaoDetalhes.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts",
+   "src/types/inventory.ts"
+  ],
+  "src/features/inventory/components/PosicaoGrid.tsx": [
+   "src/components/ui/loading-skeleton.tsx",
+   "src/features/inventory/components/PosicaoCard.tsx"
+  ],
+  "src/features/inventory/components/WarehouseMap.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/inventory/components/cyclic/InventoryFilters.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx"
+  ],
+  "src/features/inventory/components/cyclic/InventoryStats.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/features/inventory/components/cyclic/SelectionToolbar.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/features/inventory/components/estoque-page/EstoqueVirtualList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts",
+   "src/types/inventory.ts"
+  ],
+  "src/features/inventory/components/index.ts": [
+   "src/features/inventory/components/NovaPosicaoDialog.tsx",
+   "src/features/inventory/components/PosicaoCard.tsx",
+   "src/features/inventory/components/PosicaoDetalhesDialog.tsx",
+   "src/features/inventory/components/PosicaoGrid.tsx"
+  ],
+  "src/features/inventory/components/inventory-page/InventoryActionCards.tsx": [
+   "src/components/ui/card.tsx"
+  ],
+  "src/features/inventory/components/inventory-page/InventorySessionList.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/inventory-page/InventoryStats.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/posicao-detalhes/LoteInfoCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/separator.tsx",
+   "src/features/inventory/components/posicao-detalhes/types.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/posicao-detalhes/PosicaoActions.tsx": [
+   "src/components/ui/button.tsx",
+   "src/features/inventory/hooks/useEstoque.ts"
+  ],
+  "src/features/inventory/components/posicao-detalhes/PosicaoInfoCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/features/inventory/hooks/useEstoque.ts"
+  ],
+  "src/features/inventory/components/posicao-detalhes/ProdutoInfoCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/separator.tsx",
+   "src/features/inventory/components/posicao-detalhes/types.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/inventory/components/posicao-detalhes/types.ts": [
+   "src/features/inventory/hooks/useEstoque.ts"
+  ],
+  "src/features/inventory/hooks/useEstoque.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/services/inventoryService.ts",
+   "src/types/inventory.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/features/inventory/hooks/usePosicaoDetalhes.ts": [
+   "src/features/inventory/components/posicao-detalhes/types.ts",
+   "src/integrations/supabase/client.ts",
+   "src/types/inventory.ts"
+  ],
+  "src/features/inventory/pages/EstoquePage.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/EmptyState.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/etiquetas/GeradorEtiquetas.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/inventory/components/AlertaPerdaLogistica.tsx",
+   "src/features/inventory/components/EstoqueFilterSheet.tsx",
+   "src/features/inventory/components/EstoqueMapaTab.tsx",
+   "src/features/inventory/components/EstoqueStatsCards.tsx",
+   "src/features/inventory/components/MapaCalorOcupacao.tsx",
+   "src/features/inventory/components/NovaPosicaoDialog.tsx",
+   "src/features/inventory/components/PosicaoDetalhesDialog.tsx",
+   "src/features/inventory/components/estoque-page/EstoqueVirtualList.tsx",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/hooks/useAuditLog.ts",
+   "src/lib/utils.ts",
+   "src/types/inventory.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/inventory/types/index.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/features/picking/hooks/usePicking.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/features/picking/services/pickingService.ts",
+   "src/features/picking/types/index.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/picking/pages/PickingPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/features/picking/hooks/usePicking.ts"
+  ],
+  "src/features/picking/services/pickingService.ts": [
+   "src/features/picking/types/index.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/features/quality/components/AmostragemAutomatica.tsx": [
+   "src/features/quality/components/AmostragemProgresso.tsx",
+   "src/features/quality/components/AmostragemSelecao.tsx",
+   "src/features/quality/components/DefeitoHistorico.tsx",
+   "src/features/quality/components/amostragemUtils.ts"
+  ],
+  "src/features/quality/components/AmostragemProgresso.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx"
+  ],
+  "src/features/quality/components/AmostragemSelecao.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/features/quality/components/amostragemUtils.ts"
+  ],
+  "src/features/quality/components/DefeitoHistorico.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/lib/utils.ts",
+   "src/types/estoque.ts"
+  ],
+  "src/features/quality/components/FotosLoteObrigatorias.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/hooks/useTriagemFotos.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/TriagemCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/status-badge.tsx",
+   "src/lib/utils.ts",
+   "src/utils/date.ts"
+  ],
+  "src/features/quality/components/TriagemTimer.tsx": [
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/VolumeContagem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/formulario/ChecklistCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/progress.tsx",
+   "src/features/quality/components/formulario/constants.ts"
+  ],
+  "src/features/quality/components/formulario/RepairControlWorkflow.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/formulario/ResultadoInspecaoCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/formulario/TriagemHeaderCard.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/formulario/TriagemStatsCards.tsx": [
+   "src/components/ui/card.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/components/formulario/VisualDefectTagging.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/quality/components/formulario/triagemHelpers.ts": [
+   "src/features/quality/components/formulario/constants.ts",
+   "src/utils/date.ts"
+  ],
+  "src/features/quality/components/index.ts": [
+   "src/features/quality/components/TriagemCard.tsx"
+  ],
+  "src/features/quality/components/triagem-page/QuickScanner.tsx": [
+   "src/components/scanner/QRScanner.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/hooks/useScanner.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/quality/components/triagem-page/TriagemListItem.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/features/quality/components/formulario/triagemHelpers.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/quality/hooks/useTriagens.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/services/qualityService.ts"
+  ],
+  "src/features/quality/pages/DashboardTriador.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useConquistas.ts",
+   "src/hooks/useDesafiosDiarios.ts",
+   "src/hooks/useGamificacao.ts",
+   "src/hooks/useProdutividade.ts",
+   "src/hooks/useRanking.ts",
+   "src/hooks/useStreaks.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/features/quality/pages/FormularioTriagem.tsx": [
+   "src/components/common/LeaveGuard.tsx",
+   "src/components/common/StepProgress.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/features/quality/components/AmostragemAutomatica.tsx",
+   "src/features/quality/components/DefeitoHistorico.tsx",
+   "src/features/quality/components/FotosLoteObrigatorias.tsx",
+   "src/features/quality/components/VolumeContagem.tsx",
+   "src/features/quality/components/formulario/ChecklistCard.tsx",
+   "src/features/quality/components/formulario/RepairControlWorkflow.tsx",
+   "src/features/quality/components/formulario/ResultadoInspecaoCard.tsx",
+   "src/features/quality/components/formulario/TriagemHeaderCard.tsx",
+   "src/features/quality/components/formulario/VisualDefectTagging.tsx",
+   "src/features/quality/components/formulario/constants.ts",
+   "src/features/quality/hooks/useTriagens.ts",
+   "src/hooks/useTriagemFotos.ts",
+   "src/hooks/useTriagemTimer.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/quality/pages/TriagemPage.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/mobile/SwipeableListItem.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/features/quality/components/AmostragemAutomatica.tsx",
+   "src/features/quality/components/formulario/TriagemStatsCards.tsx",
+   "src/features/quality/components/formulario/triagemHelpers.ts",
+   "src/features/quality/components/triagem-page/QuickScanner.tsx",
+   "src/features/quality/components/triagem-page/TriagemListItem.tsx",
+   "src/features/quality/hooks/useTriagens.ts",
+   "src/hooks/useTouchGestures.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/quality/types/index.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/features/receiving/components/ImportarNFDialog.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/table.tsx",
+   "src/features/receiving/hooks/useRecebimentos.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/parseNFXML.ts"
+  ],
+  "src/features/receiving/components/NovoRecebimentoDialog.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/features/receiving/components/novo-recebimento/FormFields.tsx",
+   "src/features/receiving/components/novo-recebimento/types.ts",
+   "src/features/receiving/hooks/useRecebimentos.ts",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/receiving/components/RecebimentoCard.tsx": [
+   "src/components/ui/card.tsx",
+   "src/components/ui/status-badge.tsx",
+   "src/utils/date.ts"
+  ],
+  "src/features/receiving/components/index.ts": [
+   "src/features/receiving/components/RecebimentoCard.tsx"
+  ],
+  "src/features/receiving/components/novo-recebimento/FormFields.tsx": [
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/features/receiving/components/novo-recebimento/types.ts"
+  ],
+  "src/features/receiving/hooks/useRecebimentos.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/services/receivingService.ts"
+  ],
+  "src/features/receiving/pages/ConferenciaRecebimento.tsx": [
+   "src/components/common/LeaveGuard.tsx",
+   "src/components/conferencia/BalancaCard.tsx",
+   "src/components/conferencia/ConferenciaForm.tsx",
+   "src/components/conferencia/conferenciaHelpers.ts",
+   "src/components/conferencia/types.ts",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/molecules/navigation/PersistentStepper.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/features/receiving/hooks/useRecebimentos.ts",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/features/receiving/pages/RecebimentoPage.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/AsyncStates.tsx",
+   "src/components/common/EmptyState.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/receiving/components/ImportarNFDialog.tsx",
+   "src/features/receiving/components/NovoRecebimentoDialog.tsx",
+   "src/features/receiving/hooks/useRecebimentos.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/features/receiving/types/index.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/features/receiving/utils/receivingUtils.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/features/shipping/components/ExpedicaoTimeline.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/shipping/components/VolumeChecklist.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/tooltip.tsx"
+  ],
+  "src/features/shipping/hooks/useRomaneios.ts": [
+   "src/features/shipping/services/shippingService.ts",
+   "src/features/shipping/types/index.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/features/shipping/pages/ShippingPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/shipping/components/ExpedicaoTimeline.tsx",
+   "src/features/shipping/components/VolumeChecklist.tsx",
+   "src/features/shipping/hooks/useRomaneios.ts"
+  ],
+  "src/features/shipping/services/shippingService.ts": [
+   "src/features/shipping/types/index.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/guards/AuthGuard.tsx": [
+   "src/contexts/AuthContext.tsx"
+  ],
+  "src/guards/PermissionGuard.tsx": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/guards/RoleGuard.tsx": [
+   "src/contexts/AuthContext.tsx"
+  ],
+  "src/guards/index.ts": [
+   "src/guards/AuthGuard.tsx",
+   "src/guards/PermissionGuard.tsx",
+   "src/guards/RoleGuard.tsx"
+  ],
+  "src/hoc/index.ts": [
+   "src/hoc/withAnalytics.tsx",
+   "src/hoc/withAuth.tsx",
+   "src/hoc/withErrorHandler.tsx",
+   "src/hoc/withLoading.tsx"
+  ],
+  "src/hoc/withAnalytics.tsx": [
+   "src/hooks/useAnalytics.ts"
+  ],
+  "src/hoc/withAuth.tsx": [
+   "src/components/ui/spinner.tsx",
+   "src/hooks/useAuth.ts"
+  ],
+  "src/hoc/withErrorHandler.tsx": [
+   "src/components/feedback/ErrorState.tsx"
+  ],
+  "src/hoc/withLoading.tsx": [
+   "src/components/ui/spinner.tsx"
+  ],
+  "src/hooks/index.ts": [
+   "src/hooks/use-data-table.ts",
+   "src/hooks/use-export.ts",
+   "src/hooks/use-keyboard-shortcuts.ts",
+   "src/hooks/useAsync.ts",
+   "src/hooks/useClickOutside.ts",
+   "src/hooks/useClipboard.ts",
+   "src/hooks/useDebounce.ts",
+   "src/hooks/useEventListener.ts",
+   "src/hooks/useInterval.ts",
+   "src/hooks/useLocalStorage.ts",
+   "src/hooks/useMediaQuery.ts",
+   "src/hooks/useOnlineStatus.ts",
+   "src/hooks/usePrevious.ts",
+   "src/hooks/useTable.ts",
+   "src/hooks/useThrottle.ts",
+   "src/hooks/useToggle.ts"
+  ],
+  "src/hooks/use-data-table.ts": [
+   "src/types/data-table.ts"
+  ],
+  "src/hooks/use-export.ts": [
+   "src/config/analytics.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/use-mobile.ts": [
+   "src/hooks/useMediaQuery.ts"
+  ],
+  "src/hooks/use-toast.ts": [
+   "src/components/ui/toast.tsx"
+  ],
+  "src/hooks/useABCAnalysis.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useAdjustments.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useAnalytics.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useAppLayoutState.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/usePushNotifications.ts",
+   "src/lib/prefetch.ts"
+  ],
+  "src/hooks/useAuditLog.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/types.ts",
+   "src/services/auditService.ts"
+  ],
+  "src/hooks/useAuth.ts": [
+   "src/contexts/AuthContext.tsx"
+  ],
+  "src/hooks/useAuthorization.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useBalanca.ts": [
+   "src/types/web-serial.d.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useBattery.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useBulkActions.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useCRUD.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useChannel.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useClickAway.ts": [
+   "src/hooks/useClickOutside.ts"
+  ],
+  "src/hooks/useClipboardAdvanced.ts": [
+   "src/hooks/use-toast.ts"
+  ],
+  "src/hooks/useConquistas.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useCurrentTenant.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useDebouncedValue.ts": [
+   "src/hooks/useDebounce.ts"
+  ],
+  "src/hooks/useDesafiosDiarios.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useDivergencias.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useDuplicate.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/hooks/useEntityVersions.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useExperiment.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useExport.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/csvImporter.ts",
+   "src/lib/excelImporter.ts"
+  ],
+  "src/hooks/useFEFO.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useFornecedores.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useFulltextSearch.ts": [
+   "src/hooks/useDebouncedValue.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/hooks/useGamificacao.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useGeoWhitelist.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useGestaoTarefasPage.ts": [
+   "src/hooks/useTarefas.ts",
+   "src/types/tarefas.ts"
+  ],
+  "src/hooks/useGovernanca.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useHaptics.ts": [
+   "src/utils/haptics.ts"
+  ],
+  "src/hooks/useInfiniteScroll.tsx": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useInventarioCiclico.ts": [
+   "src/hooks/useInventarioCiclico/index.ts",
+   "src/hooks/useInventarioCiclico/types.ts"
+  ],
+  "src/hooks/useInventarioCiclico/index.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useInventarioCiclico/types.ts",
+   "src/hooks/useInventarioCiclico/utils.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useInventarioCiclico/utils.ts": [
+   "src/hooks/useInventarioCiclico/types.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useInventoryCount.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useLIFO.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useLeadTime.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useMFA.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useMovimentacoes.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/services/movimentacaoService.ts",
+   "src/types/movimentacao.ts"
+  ],
+  "src/hooks/useMutation.ts": [
+   "src/hooks/use-toast.ts"
+  ],
+  "src/hooks/useNotificacoes.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useNotificationOperations.ts": [
+   "src/components/notification/notificationHelpers.ts",
+   "src/integrations/supabase/client.ts",
+   "src/types/notifications.ts"
+  ],
+  "src/hooks/useNotificationRealtime.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useNotifications.ts": [
+   "src/hooks/use-toast.ts"
+  ],
+  "src/hooks/useOfflineCache.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useOrders.ts": [
+   "src/hooks/useCRUD.ts"
+  ],
+  "src/hooks/usePageTransition.ts": [
+   "src/contexts/TransitionContext.tsx",
+   "src/hooks/useReducedMotion.ts",
+   "src/lib/transitions/presets.ts",
+   "src/lib/transitions/registry.ts",
+   "src/lib/transitions/types.ts"
+  ],
+  "src/hooks/usePageView.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/usePasswordResetRequests.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/usePermission.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/usePermissions.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/usePresence.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useProdutividade.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useProdutos.ts": [
+   "src/hooks/useAuditLog.ts",
+   "src/integrations/supabase/client.ts",
+   "src/services/productService.ts",
+   "src/types/product.ts"
+  ],
+  "src/hooks/useProfiler.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/usePushNotifications.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/usePutaway.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useQualityControl.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useRanking.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useRealtime.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useRealtimeToast.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useReorderPoint.ts": [
+   "src/hooks/useLeadTime.ts",
+   "src/hooks/useSafetyStock.ts"
+  ],
+  "src/hooks/useRoutePreload.ts": [
+   "src/lib/prefetch.ts"
+  ],
+  "src/hooks/useSafeState.ts": [
+   "src/hooks/useMounted.ts"
+  ],
+  "src/hooks/useSafetyStock.ts": [
+   "src/hooks/useLeadTime.ts"
+  ],
+  "src/hooks/useSavedFilters.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useScanner.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/ai-invoke.ts"
+  ],
+  "src/hooks/useSoftDelete.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useStock.ts": [
+   "src/hooks/useCRUD.ts"
+  ],
+  "src/hooks/useStreaks.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useSubscription.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useTarefas.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useTelemetry.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useTracking.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/hooks/useTriagemFotos.ts": [
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useTrocasDevolucoes.ts": [
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/hooks/useVersioning.ts": [
+   "src/hooks/useVersions.ts"
+  ],
+  "src/hooks/useVersions.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useWebAuthn.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/hooks/useWhyDidYouUpdate.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/i18n/index.ts": [
+   "src/i18n/locales/en.json",
+   "src/i18n/locales/es.json",
+   "src/i18n/locales/pt-BR.json"
+  ],
+  "src/integrations/lovable/index.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/integrations/supabase/client.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/lib/ai-invoke.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/lib/circuit-breaker.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/lib/api.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/circuit-breaker.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/lib/crud/index.ts": [
+   "src/components/BulkActionsBar.tsx",
+   "src/components/DataImporter.tsx",
+   "src/components/DuplicateButton.tsx",
+   "src/components/SavedFiltersDropdown.tsx",
+   "src/components/SearchInput.tsx",
+   "src/components/VersionHistory.tsx",
+   "src/hooks/useBulkActions.ts",
+   "src/hooks/useCRUD.ts",
+   "src/hooks/useDebouncedValue.ts",
+   "src/hooks/useDuplicate.ts",
+   "src/hooks/useFulltextSearch.ts",
+   "src/hooks/useInfiniteScroll.tsx",
+   "src/hooks/useSavedFilters.ts",
+   "src/hooks/useSoftDelete.ts",
+   "src/hooks/useVersioning.ts",
+   "src/lib/csvImporter.ts",
+   "src/lib/excelImporter.ts"
+  ],
+  "src/lib/excelImporter.ts": [
+   "src/lib/csvImporter.ts"
+  ],
+  "src/lib/featureFlags.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/healthcheck.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/index.ts": [
+   "src/lib/api.ts",
+   "src/lib/export.ts",
+   "src/lib/rateLimiter.ts",
+   "src/lib/storage.ts",
+   "src/lib/utils.ts",
+   "src/lib/validations.ts",
+   "src/lib/validators.ts",
+   "src/lib/web-vitals.ts"
+  ],
+  "src/lib/init.ts": [
+   "src/config/analytics.ts",
+   "src/config/error-handler.ts",
+   "src/config/index.ts",
+   "src/lib/register-sw.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/lib/monitoring.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/lib/performance.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/lib/prefetch.ts": [
+   "src/features/analytics/pages/ABCAnalysisPage.tsx",
+   "src/features/analytics/pages/KPIsPage.tsx",
+   "src/features/analytics/pages/RealtimeDashboardPage.tsx",
+   "src/features/dashboard/pages/DashboardPage.tsx",
+   "src/features/inventory/pages/EstoquePage.tsx",
+   "src/features/picking/pages/PickingPage.tsx",
+   "src/features/quality/pages/TriagemPage.tsx",
+   "src/features/receiving/pages/RecebimentoPage.tsx",
+   "src/features/shipping/pages/ShippingPage.tsx",
+   "src/pages/Dashboard.tsx",
+   "src/pages/DashboardOperacional.tsx",
+   "src/pages/GestaoTarefas.tsx",
+   "src/pages/Lotes.tsx",
+   "src/pages/Posicoes.tsx",
+   "src/pages/Produtos.tsx",
+   "src/pages/Relatorios.tsx",
+   "src/pages/Romaneios.tsx",
+   "src/pages/Scanner.tsx"
+  ],
+  "src/lib/rateLimit.ts": [
+   "src/lib/rateLimiter.ts"
+  ],
+  "src/lib/realtime.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/register-sw.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/lib/schemas/index.ts": [
+   "src/lib/schemas/adjustmentSchema.ts",
+   "src/lib/schemas/authFormSchemas.ts",
+   "src/lib/schemas/carrierSchema.ts",
+   "src/lib/schemas/customerSchema.ts",
+   "src/lib/schemas/cycleCountSchema.ts",
+   "src/lib/schemas/inventorySchema.ts",
+   "src/lib/schemas/locationSchema.ts",
+   "src/lib/schemas/lotSchema.ts",
+   "src/lib/schemas/orderFormSchema.ts",
+   "src/lib/schemas/orderSchema.ts",
+   "src/lib/schemas/packingSchema.ts",
+   "src/lib/schemas/pickingSchema.ts",
+   "src/lib/schemas/productFormSchema.ts",
+   "src/lib/schemas/productSchema.ts",
+   "src/lib/schemas/qualitySchema.ts",
+   "src/lib/schemas/receivingFormSchema.ts",
+   "src/lib/schemas/receivingSchema.ts",
+   "src/lib/schemas/serialSchema.ts",
+   "src/lib/schemas/settingsFormSchemas.ts",
+   "src/lib/schemas/shipmentSchema.ts",
+   "src/lib/schemas/supplierSchema.ts",
+   "src/lib/schemas/transferSchema.ts",
+   "src/lib/schemas/userSchema.ts",
+   "src/lib/schemas/warehouseSchema.ts",
+   "src/lib/schemas/waveSchema.ts"
+  ],
+  "src/lib/sentry.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/lib/state-machines.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/lib/storage.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/supabase.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/lib/transitions/index.ts": [
+   "src/lib/transitions/easings.ts",
+   "src/lib/transitions/presets.ts",
+   "src/lib/transitions/registry.ts",
+   "src/lib/transitions/types.ts"
+  ],
+  "src/lib/transitions/presets.ts": [
+   "src/lib/transitions/easings.ts",
+   "src/lib/transitions/types.ts"
+  ],
+  "src/lib/transitions/registry.ts": [
+   "src/lib/transitions/types.ts"
+  ],
+  "src/lib/web-vitals.ts": [
+   "src/utils/logger.ts"
+  ],
+  "src/lib/webVitals.ts": [
+   "src/lib/web-vitals.ts"
+  ],
+  "src/main.tsx": [
+   "src/App.tsx",
+   "src/config/error-handler.ts",
+   "src/i18n/index.ts",
+   "src/index.css",
+   "src/lib/prefetch.ts",
+   "src/lib/register-sw.ts",
+   "src/lib/sentry.ts",
+   "src/lib/web-vitals.ts"
+  ],
+  "src/middleware/index.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/AjustesEstoque.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/useAdjustments.ts"
+  ],
+  "src/pages/AlertasInteligentes.tsx": [
+   "src/components/alertas/AlertasConfigTable.tsx",
+   "src/components/alertas/AlertasHistoricoTable.tsx",
+   "src/components/alertas/AlertasResumoCards.tsx",
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/analytics/hooks/useKPIAlerts.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/AprovacaoMovimentacoes.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/components/ui/textarea.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/Armazenamento.tsx": [
+   "src/components/armazenamento/ArmazenamentoItemCard.tsx",
+   "src/components/armazenamento/SugestaoCard.tsx",
+   "src/components/armazenamento/WarehouseVisualMap.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useMovimentacoes.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/AssistenteIA.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/page-header.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/ai-invoke.ts"
+  ],
+  "src/pages/Auth.tsx": [
+   "src/components/auth/BrandingContent.tsx",
+   "src/components/auth/LoginForm.tsx",
+   "src/components/auth/authSchema.ts",
+   "src/components/common/SEO.tsx",
+   "src/components/ui/button.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/lovable/index.ts"
+  ],
+  "src/pages/Automacoes.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/page-header.tsx",
+   "src/components/ui/switch.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/pages/ConferenciaRecebimento.tsx": [
+   "src/features/receiving/pages/ConferenciaRecebimento.tsx"
+  ],
+  "src/pages/Configuracoes.tsx": [
+   "src/components/common/LeaveGuard.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/configuracoes/AlertasConfigCard.tsx",
+   "src/components/configuracoes/EstoqueConfigCard.tsx",
+   "src/components/configuracoes/PreferenciasCard.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/contexts/ThemeContext.tsx",
+   "src/hooks/use-toast.ts"
+  ],
+  "src/pages/CurvaABC.tsx": [
+   "src/features/analytics/pages/ABCAnalysisPage.tsx"
+  ],
+  "src/pages/Dashboard.tsx": [
+   "src/components/common/ModuleErrorBoundary.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/dashboard/DashboardActivityFeed.tsx",
+   "src/components/dashboard/DashboardCharts.tsx",
+   "src/components/dashboard/DashboardKPIs.tsx",
+   "src/components/dashboard/DashboardSkeleton.tsx",
+   "src/components/dashboard/DynamicAIInsights.tsx",
+   "src/components/dashboard/SystemHealthHUD.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/features/analytics/hooks/useRealtimeKPIs.ts",
+   "src/features/dashboard/hooks/useDashboard.ts",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useKeyboardShortcuts.ts",
+   "src/lib/utils.ts",
+   "src/utils/dashboardExport.ts",
+   "src/utils/haptics.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/pages/DashboardOperacional.tsx": [
+   "src/features/analytics/pages/OperationalMonitorPage.tsx"
+  ],
+  "src/pages/DashboardPage.tsx": [
+   "src/components/display/StatCard.tsx",
+   "src/components/ui/card.tsx",
+   "src/services/orderService.ts",
+   "src/services/productService.ts"
+  ],
+  "src/pages/DashboardTempoReal.tsx": [
+   "src/features/analytics/pages/RealtimeDashboardPage.tsx"
+  ],
+  "src/pages/DashboardTrocas.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/trocas/TrocaRegistroItem.tsx",
+   "src/components/trocas/TrocasCharts.tsx",
+   "src/components/trocas/TrocasKPIs.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/pages/EndereçamentoAutomatico.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/Error.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/pages/Estoque.tsx": [
+   "src/features/inventory/pages/EstoquePage.tsx"
+  ],
+  "src/pages/Etiquetas.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/etiquetas/EtiquetaPreview.tsx",
+   "src/components/etiquetas/etiquetaUtils.ts",
+   "src/components/etiquetas/pdfGenerators.ts",
+   "src/components/etiquetas/types.ts",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/checkbox.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/FornecedoresAvancado.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/Gamificacao.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/gamificacao/ConquistasSystem.tsx",
+   "src/components/gamificacao/DesafiosDiarios.tsx",
+   "src/components/gamificacao/GamificacaoLoja.tsx",
+   "src/components/gamificacao/PlacarLideres.tsx",
+   "src/components/gamificacao/StreakSystem.tsx",
+   "src/components/gamificacao/XPBar.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useConquistas.ts",
+   "src/hooks/useDesafiosDiarios.ts",
+   "src/hooks/useGamificacao.ts",
+   "src/hooks/useStreaks.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/GestaoTarefas.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/tarefas/NovaTarefaDialog.tsx",
+   "src/components/tarefas/TarefaCard.tsx",
+   "src/components/tarefas/TarefaCharts.tsx",
+   "src/components/tarefas/TarefaStats.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/kanban/KanbanBoard.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useGestaoTarefasPage.ts",
+   "src/types/tarefas.ts"
+  ],
+  "src/pages/Governanca.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/governanca/CheckpointsTab.tsx",
+   "src/components/governanca/CustodiaTab.tsx",
+   "src/components/governanca/OcorrenciasTab.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "src/pages/Hub.tsx": [
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/ImportExport.tsx": [
+   "src/components/ImportExport/ExportSection.tsx",
+   "src/components/ImportExport/ImportSection.tsx",
+   "src/components/ui/page-header.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "src/pages/IntegracaoTransportadoras.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/pages/InventarioCiclico.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/inventario/CicloCard.tsx",
+   "src/components/inventario/InventarioConfigTab.tsx",
+   "src/components/inventario/InventarioDashboardTab.tsx",
+   "src/components/inventario/NovoCicloDialog.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/features/inventory/components/cyclic/InventoryFilters.tsx",
+   "src/features/inventory/components/cyclic/InventoryStats.tsx",
+   "src/features/inventory/components/cyclic/SelectionToolbar.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useInventarioCiclico.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/KPIsOperacionais.tsx": [
+   "src/features/analytics/pages/KPIsPage.tsx"
+  ],
+  "src/pages/KanbanPipeline.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/kanban/KanbanColumn.tsx",
+   "src/components/kanban/LoteDetailDialog.tsx",
+   "src/components/kanban/useKanbanData.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useHead.ts"
+  ],
+  "src/pages/Lotes.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/copy-button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/ModoOffline.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/switch.tsx",
+   "src/hooks/useOfflineCache.ts",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts",
+   "src/utils/haptics.ts"
+  ],
+  "src/pages/Movimentacao.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/types/movimentacao.ts"
+  ],
+  "src/pages/OcupacaoVisual.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ocupacao/KPICard.tsx",
+   "src/components/ocupacao/OcupacaoToolbar.tsx",
+   "src/components/ocupacao/PosicaoDetalhePanel.tsx",
+   "src/components/ocupacao/RackView.tsx",
+   "src/components/ocupacao/types.ts",
+   "src/components/ui/card.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/Ondas.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ondas/NovoOndaDialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/Posicoes.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/dashboard/ProgressRing.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/features/inventory/components/NovaPosicaoDialog.tsx",
+   "src/features/inventory/components/PosicaoDetalhesDialog.tsx",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/lib/utils.ts",
+   "src/types/inventory.ts"
+  ],
+  "src/pages/PrevisaoDemandaIA.tsx": [
+   "src/features/analytics/pages/DemandForecastPage.tsx"
+  ],
+  "src/pages/Produtividade.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/produtividade/ProdutividadeCharts.tsx",
+   "src/components/produtividade/ProdutividadeDetalhes.tsx",
+   "src/components/produtividade/ProdutividadeFilters.tsx",
+   "src/components/produtividade/ProdutividadeKPIs.tsx",
+   "src/components/produtividade/ProdutividadeRanking.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useProdutividade.ts"
+  ],
+  "src/pages/Produtos.tsx": [
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/produtos/BulkImportDialog.tsx",
+   "src/components/produtos/ProductGrid.tsx",
+   "src/components/produtos/ProdutoDetailDialog.tsx",
+   "src/components/produtos/ProdutoFormDialog.tsx",
+   "src/components/produtos/ProdutosStats.tsx",
+   "src/components/produtos/produtoSchema.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/hooks/useDebounce.ts",
+   "src/hooks/useProdutos.ts",
+   "src/types/product.ts"
+  ],
+  "src/pages/Rastreabilidade.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/rastreabilidade/BuscaProdutoTab.tsx",
+   "src/components/rastreabilidade/MovimentacaoCard.tsx",
+   "src/components/rastreabilidade/constants.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useMovimentacoes.ts"
+  ],
+  "src/pages/Recebimento.tsx": [
+   "src/features/receiving/pages/RecebimentoPage.tsx"
+  ],
+  "src/pages/RelatorioDivergencias.tsx": [
+   "src/components/divergencias/DivergenciasDetalhes.tsx",
+   "src/components/divergencias/DivergenciasFiltros.tsx",
+   "src/components/divergencias/DivergenciasFornecedores.tsx",
+   "src/components/divergencias/DivergenciasKPIs.tsx",
+   "src/components/divergencias/DivergenciasVisaoGeral.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useDivergencias.ts"
+  ],
+  "src/pages/RelatorioFornecedores.tsx": [
+   "src/components/fornecedores/DashboardFornecedores.tsx",
+   "src/components/fornecedores/FornecedoresCriticos.tsx",
+   "src/components/fornecedores/FornecedoresKPICards.tsx",
+   "src/components/fornecedores/FornecedoresRanking.tsx",
+   "src/components/fornecedores/FornecedoresVisaoGeral.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useFornecedores.ts"
+  ],
+  "src/pages/Relatorios.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/relatorios/RelatorioFilters.tsx",
+   "src/components/relatorios/RelatorioTable.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useAuditLog.ts",
+   "src/hooks/useMovimentacoes.ts",
+   "src/lib/utils.ts",
+   "src/types/movimentacao.ts",
+   "src/utils/exportExcel.ts"
+  ],
+  "src/pages/RelatoriosAgendados.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/switch.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/Romaneios.tsx": [
+   "src/components/charts/WMSModuleCharts.tsx",
+   "src/components/common/AsyncStates.tsx",
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/romaneios/NovoRomaneioDialog.tsx",
+   "src/components/romaneios/RomaneioDetalhesDialog.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/progress.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/tooltip.tsx",
+   "src/features/shipping/hooks/useRomaneios.ts",
+   "src/lib/validations.ts"
+  ],
+  "src/pages/Scanner.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/scanner/QRScanner.tsx",
+   "src/components/scanner/ScannerOCR.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useScanner.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/Seguranca.tsx": [
+   "src/components/security/AccessControl.tsx",
+   "src/components/security/ActiveSessions.tsx",
+   "src/components/security/DeviceManagement.tsx",
+   "src/components/security/MFASettings.tsx",
+   "src/components/security/SecurityAlerts.tsx",
+   "src/components/security/SecurityOverview.tsx",
+   "src/components/ui/tabs.tsx"
+  ],
+  "src/pages/Triagem.tsx": [
+   "src/features/quality/pages/TriagemPage.tsx"
+  ],
+  "src/pages/TrocasDevolucoes.tsx": [
+   "src/components/common/SEO.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/trocas-page/DetalheRegistroDialog.tsx",
+   "src/components/trocas-page/NovoRegistroDialog.tsx",
+   "src/components/trocas/index.ts",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useTrocasDevolucoes.ts"
+  ],
+  "src/pages/TwoFactorAuth.tsx": [
+   "src/components/MFAVerify.tsx",
+   "src/hooks/useMFA.ts"
+  ],
+  "src/pages/Unauthorized.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/pages/admin/AdminTelemetriaPage.tsx": [
+   "src/components/admin/telemetry/TelemetryCharts.tsx",
+   "src/components/telemetry/TelemetryOffenders.tsx",
+   "src/components/telemetry/TelemetryStatsCards.tsx",
+   "src/components/telemetry/TelemetryTable.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/calendar.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/popover.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/admin/ApiPortalPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/admin/AuditLogPage.tsx": [
+   "src/components/ImportExport/ExportButton.tsx",
+   "src/components/admin/AuditoriaEnterpriseViewer.tsx",
+   "src/components/data/VirtualizedTable.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dialog.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/useAuditLog.ts",
+   "src/hooks/useExport.ts",
+   "src/services/auditService.ts"
+  ],
+  "src/pages/admin/AuditLogs.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/table.tsx",
+   "src/services/auditService.ts"
+  ],
+  "src/pages/admin/AuditoriaCriticaPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/admin/BackendHealthPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/admin/CircuitBreakersPage.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/lib/ai-invoke.ts",
+   "src/lib/circuit-breaker.ts"
+  ],
+  "src/pages/admin/IntegrationsPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/admin/RolesPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/admin/SettingsPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/switch.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/use-toast.ts"
+  ],
+  "src/pages/admin/SimulationPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/components/ui/scroll-area.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/admin/UsersPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/dropdown-menu.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/table.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/alerts/AlertsPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/auth/ForgotPassword.tsx": [
+   "src/components/auth/BrandingContent.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/auth/Login.tsx": [
+   "src/components/auth/BrandingContent.tsx",
+   "src/components/auth/LoginForm.tsx",
+   "src/components/auth/authSchema.ts",
+   "src/components/ui/button.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/lovable/index.ts"
+  ],
+  "src/pages/auth/ResetPassword.tsx": [
+   "src/components/auth/BrandingContent.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/hooks/use-toast.ts",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/auth/VerifyEmail.tsx": [
+   "src/components/auth/BrandingContent.tsx"
+  ],
+  "src/pages/categories/CategoriesPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/exigirLinhaAfetada.ts"
+  ],
+  "src/pages/customers/CustomerDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/customers/CustomersPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/exigirLinhaAfetada.ts"
+  ],
+  "src/pages/cycle-count/CycleCountPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/error/ForbiddenPage.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/pages/error/NotFoundPage.tsx": [
+   "src/components/ui/button.tsx"
+  ],
+  "src/pages/help/HelpPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/templates/BasePageTemplate.tsx",
+   "src/components/ui/accordion.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx"
+  ],
+  "src/pages/inventory/InventoryPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/button.tsx",
+   "src/features/inventory/components/inventory-page/InventoryActionCards.tsx",
+   "src/features/inventory/components/inventory-page/InventorySessionList.tsx",
+   "src/features/inventory/components/inventory-page/InventoryStats.tsx",
+   "src/hooks/useInventoryCount.ts"
+  ],
+  "src/pages/inventory/StockMovementsPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useMovimentacoes.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/locations/LocationDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/locations/LocationsPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/lots/LotDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/lots/LotsPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/notifications/NotificationsPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/select.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/components/ui/tabs.tsx",
+   "src/hooks/useNotificacoes.ts",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/orders/OrderDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/orders/OrdersPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/kanban/KanbanBoard.tsx",
+   "src/services/orderService.ts"
+  ],
+  "src/pages/picking/PickingPage.tsx": [
+   "src/features/picking/pages/PickingPage.tsx"
+  ],
+  "src/pages/products/ProductDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/products/ProductsPage.tsx": [
+   "src/components/data/DataGrid.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/input.tsx",
+   "src/services/productService.ts",
+   "src/types/product.ts"
+  ],
+  "src/pages/profile/ProfilePage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/avatar.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/label.tsx",
+   "src/contexts/AuthContext.tsx",
+   "src/lib/utils.ts"
+  ],
+  "src/pages/putaway/PutawayPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/usePutaway.ts"
+  ],
+  "src/pages/quality/QualityPage.tsx": [
+   "src/components/layout/AppLayout.tsx",
+   "src/components/layout/PageTransition.tsx",
+   "src/components/ui/badge.tsx",
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/components/ui/skeleton.tsx",
+   "src/hooks/useQualityControl.ts"
+  ],
+  "src/pages/receiving/ReceivingPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/reports/InventoryReportPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/reports/MovementReportPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/reports/ReportsPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/reports/TurnoverReportPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/reports/ValuationReportPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/serials/SerialsPage.tsx": [
+   "src/components/ui/badge.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/pages/shipping/ShippingPage.tsx": [
+   "src/features/shipping/pages/ShippingPage.tsx"
+  ],
+  "src/pages/suppliers/SupplierDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/suppliers/SuppliersPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/warehouses/WarehouseDetailPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx"
+  ],
+  "src/pages/warehouses/WarehousesPage.tsx": [
+   "src/components/ui/button.tsx",
+   "src/components/ui/card.tsx",
+   "src/components/ui/input.tsx",
+   "src/integrations/supabase/client.ts",
+   "src/lib/exigirLinhaAfetada.ts"
+  ],
+  "src/plugins/example-plugin.ts": [
+   "src/plugins/sdk.ts"
+  ],
+  "src/plugins/registry.ts": [
+   "src/plugins/sdk.ts"
+  ],
+  "src/routes/adminRoutes.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/common/RouteErrorBoundary.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/pages/Governanca.tsx",
+   "src/pages/Seguranca.tsx",
+   "src/pages/admin/AdminTelemetriaPage.tsx",
+   "src/pages/admin/ApiPortalPage.tsx",
+   "src/pages/admin/AuditLogPage.tsx",
+   "src/pages/admin/AuditoriaCriticaPage.tsx",
+   "src/pages/admin/BackendHealthPage.tsx",
+   "src/pages/admin/CircuitBreakersPage.tsx",
+   "src/pages/admin/IntegrationsPage.tsx",
+   "src/pages/admin/RolesPage.tsx",
+   "src/pages/admin/SettingsPage.tsx",
+   "src/pages/admin/SimulationPage.tsx",
+   "src/pages/admin/UsersPage.tsx"
+  ],
+  "src/routes/analyticsRoutes.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/common/RouteErrorBoundary.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/features/analytics/pages/KPIsPage.tsx",
+   "src/pages/AlertasInteligentes.tsx",
+   "src/pages/DashboardTrocas.tsx",
+   "src/pages/Produtividade.tsx",
+   "src/pages/Rastreabilidade.tsx",
+   "src/pages/RelatorioDivergencias.tsx",
+   "src/pages/RelatorioFornecedores.tsx",
+   "src/pages/Relatorios.tsx",
+   "src/pages/TrocasDevolucoes.tsx"
+  ],
+  "src/routes/featureRoutes.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/common/LoadingFallback.tsx",
+   "src/components/common/RouteErrorBoundary.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/features/analytics/pages/DemandForecastPage.tsx",
+   "src/features/analytics/pages/RealtimeDashboardPage.tsx",
+   "src/pages/AprovacaoMovimentacoes.tsx",
+   "src/pages/AssistenteIA.tsx",
+   "src/pages/Automacoes.tsx",
+   "src/pages/Configuracoes.tsx",
+   "src/pages/EndereçamentoAutomatico.tsx",
+   "src/pages/Etiquetas.tsx",
+   "src/pages/FornecedoresAvancado.tsx",
+   "src/pages/Gamificacao.tsx",
+   "src/pages/ImportExport.tsx",
+   "src/pages/IntegracaoTransportadoras.tsx",
+   "src/pages/ModoOffline.tsx",
+   "src/pages/NotFound.tsx",
+   "src/pages/RelatoriosAgendados.tsx",
+   "src/pages/categories/CategoriesPage.tsx",
+   "src/pages/customers/CustomerDetailPage.tsx",
+   "src/pages/customers/CustomersPage.tsx",
+   "src/pages/help/HelpPage.tsx",
+   "src/pages/notifications/NotificationsPage.tsx",
+   "src/pages/orders/OrderDetailPage.tsx",
+   "src/pages/orders/OrdersPage.tsx",
+   "src/pages/profile/ProfilePage.tsx",
+   "src/pages/serials/SerialsPage.tsx",
+   "src/pages/warehouses/WarehouseDetailPage.tsx",
+   "src/pages/warehouses/WarehousesPage.tsx"
+  ],
+  "src/routes/publicRoutes.tsx": [
+   "src/components/common/LoadingFallback.tsx",
+   "src/pages/Auth.tsx",
+   "src/pages/TwoFactorAuth.tsx",
+   "src/pages/Unauthorized.tsx",
+   "src/pages/auth/ForgotPassword.tsx",
+   "src/pages/auth/Login.tsx",
+   "src/pages/auth/ResetPassword.tsx",
+   "src/pages/auth/VerifyEmail.tsx"
+  ],
+  "src/routes/wmsRoutes.tsx": [
+   "src/components/auth/ProtectedRoute.tsx",
+   "src/components/common/LoadingFallback.tsx",
+   "src/components/common/RouteErrorBoundary.tsx",
+   "src/components/common/RouteLoadingFallback.tsx",
+   "src/features/analytics/pages/ABCAnalysisPage.tsx",
+   "src/features/inventory/pages/EstoquePage.tsx",
+   "src/features/picking/pages/PickingPage.tsx",
+   "src/features/quality/pages/DashboardTriador.tsx",
+   "src/features/quality/pages/FormularioTriagem.tsx",
+   "src/features/quality/pages/TriagemPage.tsx",
+   "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+   "src/features/receiving/pages/RecebimentoPage.tsx",
+   "src/features/shipping/pages/ShippingPage.tsx",
+   "src/pages/AjustesEstoque.tsx",
+   "src/pages/Armazenamento.tsx",
+   "src/pages/GestaoTarefas.tsx",
+   "src/pages/InventarioCiclico.tsx",
+   "src/pages/KanbanPipeline.tsx",
+   "src/pages/Lotes.tsx",
+   "src/pages/Movimentacao.tsx",
+   "src/pages/OcupacaoVisual.tsx",
+   "src/pages/Ondas.tsx",
+   "src/pages/Posicoes.tsx",
+   "src/pages/Produtos.tsx",
+   "src/pages/Romaneios.tsx",
+   "src/pages/Scanner.tsx",
+   "src/pages/inventory/InventoryPage.tsx",
+   "src/pages/inventory/StockMovementsPage.tsx",
+   "src/pages/putaway/PutawayPage.tsx",
+   "src/pages/quality/QualityPage.tsx"
+  ],
+  "src/services/abcService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/alertService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/analyticsService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/auditService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/authService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/backupService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/barcodeService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/batchService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/services/categoryService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/customerService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/gamificacaoService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/index.ts": [
+   "src/services/abcService.ts",
+   "src/services/alertService.ts",
+   "src/services/analyticsService.ts",
+   "src/services/auditService.ts",
+   "src/services/authService.ts",
+   "src/services/backupService.ts",
+   "src/services/barcodeService.ts",
+   "src/services/batchService.ts",
+   "src/services/categoryService.ts",
+   "src/services/customerService.ts",
+   "src/services/gamificacaoService.ts",
+   "src/services/inventoryService.ts",
+   "src/services/locationService.ts",
+   "src/services/lotService.ts",
+   "src/services/movimentacaoService.ts",
+   "src/services/notificacaoService.ts",
+   "src/services/orderService.ts",
+   "src/services/productService.ts",
+   "src/services/qualityService.ts",
+   "src/services/receivingService.ts",
+   "src/services/relatorioService.ts",
+   "src/services/stockService.ts",
+   "src/services/supplierService.ts",
+   "src/services/warehouseService.ts"
+  ],
+  "src/services/inventoryService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/types/inventory.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/locationService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/lotService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/movimentacaoService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/types/movimentacao.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/notificacaoService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/orderService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/integrations/supabase/types.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/productService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/types/product.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/qualityService.ts": [
+   "src/integrations/supabase/client.ts",
+   "src/utils/logger.ts"
+  ],
+  "src/services/receivingService.ts": [
+   "src/features/receiving/types/index.ts",
+   "src/features/receiving/utils/receivingUtils.ts",
+   "src/integrations/supabase/client.ts",
+   "src/utils/performance.ts"
+  ],
+  "src/services/relatorioService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/stockService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/supplierService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/services/warehouseService.ts": [
+   "src/integrations/supabase/client.ts"
+  ],
+  "src/types/index.ts": [
+   "src/types/gamificacao.ts",
+   "src/types/movimentacao.ts",
+   "src/types/posicao.ts",
+   "src/types/recebimento.ts",
+   "src/types/triagem.ts",
+   "src/types/usuario.ts"
+  ],
+  "src/types/inventory.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/types/movimentacao.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/types/product.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/types/tarefas.ts": [
+   "src/integrations/supabase/types.ts"
+  ],
+  "src/utils/dashboardExport.ts": [
+   "src/features/dashboard/hooks/useDashboard.ts"
+  ],
+  "src/utils/index.ts": [
+   "src/utils/accessibility.ts",
+   "src/utils/date.ts",
+   "src/utils/haptics.ts",
+   "src/utils/logger.ts",
+   "src/utils/money.ts",
+   "src/utils/number.ts"
+  ],
+  "src/utils/logger.ts": [
+   "src/config/environment.ts"
+  ],
+  "src/utils/performance.ts": [
+   "src/utils/logger.ts"
+  ],
+  "supabase/functions/_shared/agv_test.ts": [
+   "supabase/functions/_shared/agv.ts"
+  ],
+  "supabase/functions/_shared/bulk.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/_shared/erp_test.ts": [
+   "supabase/functions/_shared/erp.ts"
+  ],
+  "supabase/functions/_shared/forecast_test.ts": [
+   "supabase/functions/_shared/forecast.ts"
+  ],
+  "supabase/functions/_shared/inventory_test.ts": [
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/_shared/prometheus_test.ts": [
+   "supabase/functions/_shared/logger.ts",
+   "supabase/functions/_shared/prometheus.ts"
+  ],
+  "supabase/functions/_shared/rate-limit.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/_shared/shared_test.ts": [
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/_shared/tsp_test.ts": [
+   "supabase/functions/_shared/tsp.ts"
+  ],
+  "supabase/functions/abc-analysis/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/adjust-inventory/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/agv-dispatch/index.ts": [
+   "supabase/functions/_shared/agv.ts",
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-assistant/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-classification/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-classify/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-completion/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-embedding/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-sentiment/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-summarize/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/ai-translate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-expiration/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-monitor/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-pending-orders/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-productivity/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-quality/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-sla-breach/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alert-stock-low/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/alerta-divergencia-fornecedor/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/analytics/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/audit-log/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-2fa-setup/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-2fa-verify/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-change-password/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-login/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-logout/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/auth-refresh-token/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-register/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-reset-password/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-session-list/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-session-revoke/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-social-login/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/auth-verify-email/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/backup-database/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/batch-import/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/batch-processor/index.ts": [
+   "supabase/functions/_shared/bulk.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/boleto-generate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/broadcast-event/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/bulk-delete/index.ts": [
+   "supabase/functions/_shared/bulk.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/bulk-insert/index.ts": [
+   "supabase/functions/_shared/bulk.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/bulk-update/index.ts": [
+   "supabase/functions/_shared/bulk.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/bulk-upsert/index.ts": [
+   "supabase/functions/_shared/bulk.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cache-invalidate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cache/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/calculate-kpis/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/calculate-shipping/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cancel-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-book/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-label/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-quote-correios/index.ts": [
+   "supabase/functions/_shared/correios.ts",
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-quote-jadlog/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-quote/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-rates-cache/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-track/contract_test.ts": [
+   "supabase/functions/_shared/schemas.ts",
+   "supabase/functions/carrier-track/index.ts"
+  ],
+  "supabase/functions/carrier-track/index.ts": [
+   "supabase/functions/_shared/correios.ts",
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/carrier-webhooks/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/check-expiration/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/check-permission/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/check-reorder/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/cleanup-old-data/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cleanup-sessions/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/complete-job/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-customer/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/create-lot/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-payment-intent/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-purchase-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-sales-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-shipment/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/create-subscription/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cron-daily/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/cron-weekly/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/cte-import/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/cycle-count/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/danfe-generate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/dashboard-stats/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/data-migration/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/db-alert-monitor/contract_test.ts": [
+   "supabase/functions/db-alert-monitor/index.ts"
+  ],
+  "supabase/functions/db-alert-monitor/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/logger.ts"
+  ],
+  "supabase/functions/delete-file/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/demand-forecast/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/forecast.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/download-file/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/edi-process/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/expiration-check/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/export-data/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/export-pdf/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/export-products/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/external-db-bridge/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-barcode/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-csv/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-excel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-pdf-report/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-pick-list/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-putaway-list/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-report/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/generate-sku/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/gerar-desafios-diarios/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/get-permissions/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/health-check/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/health/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/import-csv/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/import-data/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/import-products/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-accounting/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/integration-amazon/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-correios/index.ts": [
+   "supabase/functions/_shared/correios.ts",
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-ecommerce/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/integration-erp/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/integration-ifood/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-marketplace/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/integration-mercado-livre/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-rappi/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-sap/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/erp.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/integration-totvs/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/erp.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-batch-adjust/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-count/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-reconcile/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-release/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-reserve/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-snapshot/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-sync/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-transfer/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/inventory-valuation/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/invoice-generate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/kpi-calculator/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/label-print/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/location-utilization/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/lot-tracking/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/merge-pdfs/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/metrics/index.ts": [
+   "supabase/functions/_shared/logger.ts",
+   "supabase/functions/_shared/prometheus.ts"
+  ],
+  "supabase/functions/nfe-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-correct/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-distribution/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-import/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-manifest/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-process/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/nfe-validate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/notification-email/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/notification-push/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/notification-sms/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/notification-whatsapp/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/notifications/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/notify-slack/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/notify-user/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/packing-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/packing-confirm/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/packing-repack/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/packing-split/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/packing-start/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/parse-excel/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/parse-pdf/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/payment-create/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-assign/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-batch/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-confirm/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-optimize/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts",
+   "supabase/functions/_shared/tsp.ts"
+  ],
+  "supabase/functions/picking-skip/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/picking-split/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/pix-generate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/previsao-demanda/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/print-label/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/process-queue/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/process-sales-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/push-notification/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/quality-inspection/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/queue-add/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/queue-job/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/queue-process/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/queue-retry/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/rate-limit/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/rate-limiter/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receive-purchase-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-confirm/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-create/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-inspect/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-putaway/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/receiving-reject/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/register-serial/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/release-stock/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/reorder-check/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/reorder-suggestions/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/report-custom/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-daily/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-export-excel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-export-pdf/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-inventory-accuracy/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-inventory/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-monthly/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-picking-performance/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-receiving/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-shipping/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-supplier-performance/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-turnover/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/report-valuation/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/report-weekly/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/reports/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/reserve-stock/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/return-order/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/safety-stock/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scan-barcode/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scanner-ocr/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/schedule-task/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scheduler-cleanup/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scheduler-daily-tasks/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scheduler-reports/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/scheduler-sync/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/search-locations/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/search-orders/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/search-products/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/send-email-alert/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/send-email/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/send-push/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/send-sms/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/send-whatsapp/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-label/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-manifest/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-pod/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-rate/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/shipping-track-webhook/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/stock-alert/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/stock-movement/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/stripe-webhook/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/sync-external-api/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/sync-inventory/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/track-shipment/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/transfer-stock/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/upload-file/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/upload-image/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/upload-multiple/index.ts": [
+   "supabase/functions/_shared/cors.ts"
+  ],
+  "supabase/functions/validate-data/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/validate-ean/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/warehouse-metrics/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/wave-cancel/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/wave-merge/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/wave-optimize/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts",
+   "supabase/functions/_shared/tsp.ts"
+  ],
+  "supabase/functions/wave-planning/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/wave-release/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/wave-split/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webauthn-auth-options/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webauthn-auth-verify/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webauthn-register-options/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webauthn-register-verify/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webhook-handler/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/rate-limit.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "supabase/functions/webhook-receiver/index.ts": [
+   "supabase/functions/_shared/cors.ts",
+   "supabase/functions/_shared/schemas.ts"
+  ],
+  "vite.config.ts": [
+   "src/config/supabaseEnvAlias.ts"
+  ]
+ }
+}

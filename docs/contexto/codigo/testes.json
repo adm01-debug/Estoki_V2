@@ -1,0 +1,1467 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "frameworks": [
+  "vitest",
+  "playwright",
+  "cypress"
+ ],
+ "total": 84,
+ "por_tipo": {
+  "contrato": 23,
+  "e2e": 10,
+  "pytest": 2,
+  "unit": 49
+ },
+ "onde_ficam": [
+  {
+   "padrao": "co-localizado (*.test)",
+   "arquivos": 42
+  },
+  {
+   "padrao": "co-localizado (__tests__)",
+   "arquivos": 17
+  },
+  {
+   "padrao": "outro",
+   "arquivos": 15
+  },
+  {
+   "padrao": "tests/",
+   "arquivos": 10
+  }
+ ],
+ "arquivos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.unit.mjs",
+   "tipo": "unit",
+   "linhas": 361,
+   "testa": [
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/lib/supabase.ts"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/automation.unit.mjs",
+   "tipo": "unit",
+   "linhas": 603,
+   "testa": [
+    "scripts/automation.mjs"
+   ],
+   "casos": 32
+  },
+  {
+   "arquivo": "scripts/ci/actions-kpi.unit.mjs",
+   "tipo": "unit",
+   "linhas": 276,
+   "testa": [
+    "scripts/ci/actions-kpi.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 13
+  },
+  {
+   "arquivo": "scripts/ci/branch-podaveis.unit.mjs",
+   "tipo": "unit",
+   "linhas": 229,
+   "testa": [
+    "scripts/ci/branch-podaveis.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 16
+  },
+  {
+   "arquivo": "scripts/ci/install-postgresql-client.unit.mjs",
+   "tipo": "unit",
+   "linhas": 39,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/ci/issue-rotativa.unit.mjs",
+   "tipo": "unit",
+   "linhas": 238,
+   "testa": [
+    "scripts/ci/issue-rotativa.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/ci/sla-code-scanning.unit.mjs",
+   "tipo": "unit",
+   "linhas": 109,
+   "testa": [
+    "scripts/ci/sla-code-scanning.mjs",
+    "scripts/ci/workflow-test-support.mjs"
+   ],
+   "casos": 7
+  },
+  {
+   "arquivo": "scripts/db-audit/check-catalog-fresh.test.mjs",
+   "tipo": "unit",
+   "linhas": 245,
+   "testa": [
+    "scripts/db-audit/database-identity.mjs"
+   ],
+   "casos": 18
+  },
+  {
+   "arquivo": "scripts/db-audit/check-grants-fresh.test.mjs",
+   "tipo": "unit",
+   "linhas": 158,
+   "testa": [],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/db-audit/check-manifest-fresh.test.mjs",
+   "tipo": "unit",
+   "linhas": 221,
+   "testa": [
+    "scripts/db-audit/database-identity.mjs",
+    "scripts/db-audit/manifest-lib.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/db-audit/database-identity.test.mjs",
+   "tipo": "unit",
+   "linhas": 159,
+   "testa": [
+    "scripts/db-audit/database-identity.mjs"
+   ],
+   "casos": 15
+  },
+  {
+   "arquivo": "scripts/db-audit/diff.test.mjs",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "scripts/db-audit/manifest-lib.mjs"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "scripts/db-audit/psql-environment.test.mjs",
+   "tipo": "unit",
+   "linhas": 151,
+   "testa": [
+    "scripts/db-audit/psql-environment.mjs"
+   ],
+   "casos": 11
+  },
+  {
+   "arquivo": "scripts/db-audit/psql-safe.test.mjs",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [],
+   "casos": 7
+  },
+  {
+   "arquivo": "scripts/graphify-local.unit.mjs",
+   "tipo": "unit",
+   "linhas": 463,
+   "testa": [
+    "scripts/graphify-local.mjs"
+   ],
+   "casos": 24
+  },
+  {
+   "arquivo": "scripts/lib/seguranca-processo.test.mjs",
+   "tipo": "unit",
+   "linhas": 122,
+   "testa": [
+    "scripts/lib/seguranca-processo.mjs"
+   ],
+   "casos": 10
+  },
+  {
+   "arquivo": "scripts/maintenance/maintenance.unit.mjs",
+   "tipo": "unit",
+   "linhas": 887,
+   "testa": [
+    "scripts/maintenance/lib.mjs",
+    "scripts/maintenance/run.mjs"
+   ],
+   "casos": 44
+  },
+  {
+   "arquivo": "scripts/regras_negocio/test_generate.py",
+   "tipo": "pytest",
+   "linhas": 164,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/test_snapshot.py",
+   "tipo": "pytest",
+   "linhas": 878,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/components/forms/__tests__/RichTextEditor.test.tsx",
+   "tipo": "unit",
+   "linhas": 47,
+   "testa": [
+    "src/components/forms/RichTextEditor.tsx",
+    "src/components/ui/editor/RichTextEditor.tsx"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/components/ImportExport/__tests__/ExportButton.error.test.tsx",
+   "tipo": "unit",
+   "linhas": 52,
+   "testa": [
+    "src/components/ImportExport/ExportButton.tsx",
+    "src/lib/sentry.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/components/ImportExport/__tests__/ExportButton.test.tsx",
+   "tipo": "unit",
+   "linhas": 75,
+   "testa": [
+    "src/components/ImportExport/ExportButton.tsx"
+   ],
+   "casos": 6
+  },
+  {
+   "arquivo": "src/components/produtos/__tests__/ProductGrid.test.tsx",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/components/produtos/ProductGrid.tsx"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/config/__tests__/supabaseEnvAlias.test.ts",
+   "tipo": "unit",
+   "linhas": 56,
+   "testa": [
+    "src/config/supabaseEnvAlias.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/features/dashboard/hooks/__tests__/useDashboard.test.tsx",
+   "tipo": "unit",
+   "linhas": 59,
+   "testa": [
+    "src/features/dashboard/hooks/useDashboard.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/features/picking/services/pickingService.test.ts",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [
+    "src/features/picking/services/pickingService.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/features/shipping/services/shippingService.test.ts",
+   "tipo": "unit",
+   "linhas": 66,
+   "testa": [
+    "src/features/shipping/services/shippingService.ts",
+    "src/integrations/supabase/client.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/lib/__tests__/exigirLinhaAfetada.test.ts",
+   "tipo": "unit",
+   "linhas": 29,
+   "testa": [
+    "src/lib/exigirLinhaAfetada.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "src/pages/__tests__/ProdutosPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 92,
+   "testa": [
+    "src/hooks/useProdutos.ts",
+    "src/pages/Produtos.tsx"
+   ],
+   "casos": 1
+  },
+  {
+   "arquivo": "src/pages/auth/__tests__/Auth.test.tsx",
+   "tipo": "unit",
+   "linhas": 74,
+   "testa": [
+    "src/contexts/AuthContext.tsx",
+    "src/integrations/supabase/client.ts",
+    "src/pages/Auth.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/pages/categories/__tests__/CategoriesPage.rls.test.tsx",
+   "tipo": "unit",
+   "linhas": 80,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/pages/categories/CategoriesPage.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/pages/serials/__tests__/SerialsPage.test.tsx",
+   "tipo": "unit",
+   "linhas": 68,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/pages/serials/SerialsPage.tsx"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "src/plugins/__tests__/registry.test.ts",
+   "tipo": "unit",
+   "linhas": 91,
+   "testa": [
+    "src/plugins/registry.ts",
+    "src/plugins/sdk.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/movimentacaoService.test.ts",
+   "tipo": "unit",
+   "linhas": 116,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/movimentacaoService.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "src/services/__tests__/qualityService.test.ts",
+   "tipo": "unit",
+   "linhas": 72,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/qualityService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/receivingService.test.ts",
+   "tipo": "unit",
+   "linhas": 81,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/receivingService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/services/__tests__/stockService.test.ts",
+   "tipo": "unit",
+   "linhas": 86,
+   "testa": [
+    "src/integrations/supabase/client.ts",
+    "src/services/stockService.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "src/test/setup.tsx",
+   "tipo": "unit",
+   "linhas": 60,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "src/utils/__tests__/logger.test.ts",
+   "tipo": "unit",
+   "linhas": 23,
+   "testa": [
+    "src/utils/logger.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/adjust-inventory/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 72,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/ai-assistant/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 17,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/ai-classification/ai-classification.test.ts",
+   "tipo": "unit",
+   "linhas": 27,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/alert-monitor/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 22,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/auth-2fa-verify/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 40,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/auth-login/auth-login.test.ts",
+   "tipo": "unit",
+   "linhas": 27,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/auth-login/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 21,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/auth-refresh-token/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 26,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/auth-register/auth-register.test.ts",
+   "tipo": "unit",
+   "linhas": 34,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/auth-register/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 24,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/auth-reset-password/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 14,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/boleto-generate/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 30,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/bulk-delete/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 29,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/calculate-shipping/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 75,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/carrier-book/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 33,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/carrier-quote-correios/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 24,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/carrier-quote/carrier-quote.test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/carrier-track/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 25,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/create-sales-order/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 44,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/create-shipment/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 44,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/create-shipment/create-shipment.test.ts",
+   "tipo": "unit",
+   "linhas": 29,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/health-check/index.test.ts",
+   "tipo": "unit",
+   "linhas": 166,
+   "testa": [],
+   "casos": 15
+  },
+  {
+   "arquivo": "supabase/functions/inventory-reserve/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 26,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/inventory-reserve/inventory-reserve.test.ts",
+   "tipo": "unit",
+   "linhas": 28,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/inventory-transfer/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 49,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/nfe-import/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 26,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/nfe-import/nfe-import.test.ts",
+   "tipo": "unit",
+   "linhas": 39,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/picking-confirm/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 53,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/pix-generate/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 31,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 4
+  },
+  {
+   "arquivo": "supabase/functions/stock-movement/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 33,
+   "testa": [
+    "supabase/functions/_shared/schemas.ts"
+   ],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/tests/abc-analysis_test.ts",
+   "tipo": "unit",
+   "linhas": 33,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "supabase/functions/tests/simulation_test.ts",
+   "tipo": "unit",
+   "linhas": 73,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "supabase/functions/tests/webhook-handler_test.ts",
+   "tipo": "unit",
+   "linhas": 40,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "supabase/functions/webhook-handler/contract.test.ts",
+   "tipo": "contrato",
+   "linhas": 78,
+   "testa": [],
+   "casos": 5
+  },
+  {
+   "arquivo": "supabase/functions/webhook-handler/index.test.ts",
+   "tipo": "unit",
+   "linhas": 37,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/a11y-smoke.spec.ts",
+   "tipo": "e2e",
+   "linhas": 46,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/auth-flow.spec.ts",
+   "tipo": "e2e",
+   "linhas": 29,
+   "testa": [],
+   "casos": 3
+  },
+  {
+   "arquivo": "tests/e2e/auth-navigation.spec.ts",
+   "tipo": "e2e",
+   "linhas": 70,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/basic-flow.spec.ts",
+   "tipo": "e2e",
+   "linhas": 72,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/export-reports.spec.ts",
+   "tipo": "e2e",
+   "linhas": 41,
+   "testa": [],
+   "casos": 1
+  },
+  {
+   "arquivo": "tests/e2e/fixtures/auth.ts",
+   "tipo": "e2e",
+   "linhas": 206,
+   "testa": [],
+   "casos": 0
+  },
+  {
+   "arquivo": "tests/e2e/global-search.spec.ts",
+   "tipo": "e2e",
+   "linhas": 67,
+   "testa": [],
+   "casos": 4
+  },
+  {
+   "arquivo": "tests/e2e/routes-smoke.spec.ts",
+   "tipo": "e2e",
+   "linhas": 105,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/stress.spec.ts",
+   "tipo": "e2e",
+   "linhas": 53,
+   "testa": [],
+   "casos": 2
+  },
+  {
+   "arquivo": "tests/e2e/wms-flow.spec.ts",
+   "tipo": "e2e",
+   "linhas": 159,
+   "testa": [],
+   "casos": 4
+  }
+ ],
+ "sql": [],
+ "cobertura_por_arquivo": {
+  "scripts/automation.mjs": 1,
+  "scripts/ci/actions-kpi.mjs": 1,
+  "scripts/ci/branch-podaveis.mjs": 1,
+  "scripts/ci/issue-rotativa.mjs": 1,
+  "scripts/ci/sla-code-scanning.mjs": 1,
+  "scripts/ci/workflow-test-support.mjs": 3,
+  "scripts/db-audit/database-identity.mjs": 3,
+  "scripts/db-audit/manifest-lib.mjs": 2,
+  "scripts/db-audit/psql-environment.mjs": 1,
+  "scripts/graphify-local.mjs": 1,
+  "scripts/lib/seguranca-processo.mjs": 1,
+  "scripts/maintenance/lib.mjs": 1,
+  "scripts/maintenance/run.mjs": 1,
+  "src/components/ImportExport/ExportButton.tsx": 2,
+  "src/components/auth/ProtectedRoute.tsx": 1,
+  "src/components/forms/RichTextEditor.tsx": 1,
+  "src/components/produtos/ProductGrid.tsx": 1,
+  "src/components/ui/editor/RichTextEditor.tsx": 1,
+  "src/config/supabaseEnvAlias.ts": 1,
+  "src/contexts/AuthContext.tsx": 1,
+  "src/features/dashboard/hooks/useDashboard.ts": 1,
+  "src/features/picking/services/pickingService.ts": 1,
+  "src/features/shipping/services/shippingService.ts": 1,
+  "src/hooks/useProdutos.ts": 1,
+  "src/integrations/supabase/client.ts": 10,
+  "src/lib/exigirLinhaAfetada.ts": 1,
+  "src/lib/sentry.ts": 1,
+  "src/lib/supabase.ts": 1,
+  "src/pages/Auth.tsx": 1,
+  "src/pages/Produtos.tsx": 1,
+  "src/pages/categories/CategoriesPage.tsx": 1,
+  "src/pages/serials/SerialsPage.tsx": 1,
+  "src/plugins/registry.ts": 1,
+  "src/plugins/sdk.ts": 1,
+  "src/services/movimentacaoService.ts": 1,
+  "src/services/qualityService.ts": 1,
+  "src/services/receivingService.ts": 1,
+  "src/services/stockService.ts": 1,
+  "src/utils/logger.ts": 1,
+  "supabase/functions/_shared/schemas.ts": 29
+ },
+ "sem_teste": {
+  "telas": [
+   "src/components/common/LoadingFallback.tsx",
+   "src/components/layout/AppLayout.tsx",
+   "src/features/analytics/pages/ABCAnalysisPage.tsx",
+   "src/features/analytics/pages/DemandForecastPage.tsx",
+   "src/features/analytics/pages/KPIsPage.tsx",
+   "src/features/analytics/pages/RealtimeDashboardPage.tsx",
+   "src/features/dashboard/pages/DashboardPage.tsx",
+   "src/features/inventory/pages/EstoquePage.tsx",
+   "src/features/picking/pages/PickingPage.tsx",
+   "src/features/quality/pages/DashboardTriador.tsx",
+   "src/features/quality/pages/FormularioTriagem.tsx",
+   "src/features/quality/pages/TriagemPage.tsx",
+   "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+   "src/features/receiving/pages/RecebimentoPage.tsx",
+   "src/features/shipping/pages/ShippingPage.tsx",
+   "src/pages/AjustesEstoque.tsx",
+   "src/pages/AlertasInteligentes.tsx",
+   "src/pages/AprovacaoMovimentacoes.tsx",
+   "src/pages/Armazenamento.tsx",
+   "src/pages/AssistenteIA.tsx",
+   "src/pages/Automacoes.tsx",
+   "src/pages/Configuracoes.tsx",
+   "src/pages/Dashboard.tsx",
+   "src/pages/DashboardOperacional.tsx",
+   "src/pages/DashboardTrocas.tsx",
+   "src/pages/EndereçamentoAutomatico.tsx",
+   "src/pages/Etiquetas.tsx",
+   "src/pages/FornecedoresAvancado.tsx",
+   "src/pages/Gamificacao.tsx",
+   "src/pages/GestaoTarefas.tsx",
+   "src/pages/Governanca.tsx",
+   "src/pages/Hub.tsx",
+   "src/pages/ImportExport.tsx",
+   "src/pages/IntegracaoTransportadoras.tsx",
+   "src/pages/InventarioCiclico.tsx",
+   "src/pages/KanbanPipeline.tsx",
+   "src/pages/Lotes.tsx",
+   "src/pages/ModoOffline.tsx",
+   "src/pages/Movimentacao.tsx",
+   "src/pages/NotFound.tsx",
+   "src/pages/OcupacaoVisual.tsx",
+   "src/pages/Ondas.tsx",
+   "src/pages/Posicoes.tsx",
+   "src/pages/Produtividade.tsx",
+   "src/pages/Rastreabilidade.tsx",
+   "src/pages/RelatorioDivergencias.tsx",
+   "src/pages/RelatorioFornecedores.tsx",
+   "src/pages/Relatorios.tsx",
+   "src/pages/RelatoriosAgendados.tsx",
+   "src/pages/Romaneios.tsx",
+   "src/pages/Scanner.tsx",
+   "src/pages/Seguranca.tsx",
+   "src/pages/TrocasDevolucoes.tsx",
+   "src/pages/TwoFactorAuth.tsx",
+   "src/pages/Unauthorized.tsx",
+   "src/pages/admin/AdminTelemetriaPage.tsx",
+   "src/pages/admin/ApiPortalPage.tsx",
+   "src/pages/admin/AuditLogPage.tsx",
+   "src/pages/admin/AuditoriaCriticaPage.tsx",
+   "src/pages/admin/BackendHealthPage.tsx",
+   "src/pages/admin/CircuitBreakersPage.tsx",
+   "src/pages/admin/IntegrationsPage.tsx",
+   "src/pages/admin/RolesPage.tsx",
+   "src/pages/admin/SettingsPage.tsx",
+   "src/pages/admin/SimulationPage.tsx",
+   "src/pages/admin/UsersPage.tsx",
+   "src/pages/auth/ForgotPassword.tsx",
+   "src/pages/auth/Login.tsx",
+   "src/pages/auth/ResetPassword.tsx",
+   "src/pages/auth/VerifyEmail.tsx",
+   "src/pages/customers/CustomerDetailPage.tsx",
+   "src/pages/customers/CustomersPage.tsx",
+   "src/pages/help/HelpPage.tsx",
+   "src/pages/inventory/InventoryPage.tsx",
+   "src/pages/inventory/StockMovementsPage.tsx",
+   "src/pages/notifications/NotificationsPage.tsx",
+   "src/pages/orders/OrderDetailPage.tsx",
+   "src/pages/orders/OrdersPage.tsx",
+   "src/pages/profile/ProfilePage.tsx",
+   "src/pages/putaway/PutawayPage.tsx",
+   "src/pages/quality/QualityPage.tsx",
+   "src/pages/warehouses/WarehouseDetailPage.tsx",
+   "src/pages/warehouses/WarehousesPage.tsx"
+  ],
+  "hooks": [
+   "scripts/ai-context/cenarios.mjs",
+   "src/components/gamificacao/ConquistaNotificacoes.tsx",
+   "src/components/kanban/useKanbanData.ts",
+   "src/components/onboarding/OnboardingTour.tsx",
+   "src/components/ui/confirmation-dialog.tsx",
+   "src/components/ui/form.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/use-toast.ts",
+   "src/config/error-handler.ts",
+   "src/config/feature-flags.tsx",
+   "src/config/index.ts",
+   "src/contexts/AppContext.tsx",
+   "src/contexts/index.ts",
+   "src/contexts/NotificationContext.tsx",
+   "src/contexts/ThemeContext.tsx",
+   "src/contexts/ToastContext.tsx",
+   "src/contexts/TransitionContext.tsx",
+   "src/features/analytics/hooks/useCurvaABC.ts",
+   "src/features/analytics/hooks/useDemandForecast.ts",
+   "src/features/analytics/hooks/useKPIAlerts.ts",
+   "src/features/analytics/hooks/useKPIsOperacionais.ts",
+   "src/features/analytics/hooks/useKPIsOperacionais/index.ts",
+   "src/features/analytics/hooks/useOperationalLive.ts",
+   "src/features/analytics/hooks/useRealtimeKPIs.ts",
+   "src/features/dashboard/hooks/useAtividadeRecente.ts",
+   "src/features/inventory/hooks/useEstoque.ts",
+   "src/features/inventory/hooks/usePosicaoDetalhes.ts",
+   "src/features/picking/hooks/usePicking.ts",
+   "src/features/quality/components/FotosLoteObrigatorias.tsx",
+   "src/features/quality/hooks/useTriagens.ts",
+   "src/features/receiving/hooks/useRecebimentos.ts",
+   "src/features/shipping/hooks/useRomaneios.ts",
+   "src/guards/index.ts",
+   "src/guards/PermissionGuard.tsx",
+   "src/hooks/index.ts",
+   "src/hooks/use-data-table.ts",
+   "src/hooks/use-export.ts",
+   "src/hooks/use-keyboard-shortcuts.ts",
+   "src/hooks/use-mobile.ts",
+   "src/hooks/use-toast.ts",
+   "src/hooks/useABCAnalysis.ts",
+   "src/hooks/useAbortController.ts",
+   "src/hooks/useABTest.ts",
+   "src/hooks/useAdjustments.ts",
+   "src/hooks/useAnalytics.ts",
+   "src/hooks/useAnimation.ts",
+   "src/hooks/useAnimationFrame.ts",
+   "src/hooks/useAppLayoutState.ts",
+   "src/hooks/useAriaDescribedBy.ts",
+   "src/hooks/useAriaHidden.ts",
+   "src/hooks/useAriaLabel.ts",
+   "src/hooks/useAriaLive.tsx",
+   "src/hooks/useArray.ts",
+   "src/hooks/useAsync.ts",
+   "src/hooks/useAsyncCallback.ts",
+   "src/hooks/useAudio.ts",
+   "src/hooks/useAuditLog.ts",
+   "src/hooks/useAuth.ts",
+   "src/hooks/useAuthorization.ts",
+   "src/hooks/useBalanca.ts",
+   "src/hooks/useBarcodePrint.ts",
+   "src/hooks/useBarcodeScanner.ts",
+   "src/hooks/useBattery.ts",
+   "src/hooks/useBlobUrl.ts",
+   "src/hooks/useBroadcast.ts",
+   "src/hooks/useBulkActions.ts",
+   "src/hooks/useCache.ts",
+   "src/hooks/useCamera.ts",
+   "src/hooks/useCarrierIntegration.ts",
+   "src/hooks/useChannel.ts",
+   "src/hooks/useCheckboxState.ts",
+   "src/hooks/useClickAway.ts",
+   "src/hooks/useClickOutside.ts",
+   "src/hooks/useClipboard.ts",
+   "src/hooks/useClipboardAdvanced.ts",
+   "src/hooks/useClock.ts",
+   "src/hooks/useColorScheme.ts",
+   "src/hooks/useCompass.ts",
+   "src/hooks/useConfirmation.ts",
+   "src/hooks/useConflictResolution.ts",
+   "src/hooks/useConquistas.ts",
+   "src/hooks/useContextMenu.ts",
+   "src/hooks/useController.ts",
+   "src/hooks/useCookie.ts",
+   "src/hooks/useCookies.ts",
+   "src/hooks/useCopyToClipboard.ts",
+   "src/hooks/useCountdown.ts",
+   "src/hooks/useCounter.ts",
+   "src/hooks/useCRUD.ts",
+   "src/hooks/useCurrentTenant.ts",
+   "src/hooks/useDarkMode.ts",
+   "src/hooks/useDebounce.ts",
+   "src/hooks/useDebouncedValue.ts",
+   "src/hooks/useDebugLog.ts",
+   "src/hooks/useDebugState.ts",
+   "src/hooks/useDeferredValue.ts",
+   "src/hooks/useDesafiosDiarios.ts",
+   "src/hooks/useDeviceMotion.ts",
+   "src/hooks/useDeviceOrientationHook.ts",
+   "src/hooks/useDevtools.ts",
+   "src/hooks/useDivergencias.ts",
+   "src/hooks/useDocumentTitle.ts",
+   "src/hooks/useDocumentVisibility.ts",
+   "src/hooks/useDoubleClick.ts",
+   "src/hooks/useDuplicate.ts",
+   "src/hooks/useEffectOnce.ts",
+   "src/hooks/useElementSize.ts",
+   "src/hooks/useEntityVersions.ts",
+   "src/hooks/useErrorBoundaryState.ts",
+   "src/hooks/useEventListener.ts",
+   "src/hooks/useEventSource.ts",
+   "src/hooks/useExperiment.ts",
+   "src/hooks/useExpiration.ts",
+   "src/hooks/useExport.ts",
+   "src/hooks/useExportData.ts",
+   "src/hooks/useFavicon.ts",
+   "src/hooks/useFeatureFlag.ts",
+   "src/hooks/useFEFO.ts",
+   "src/hooks/useFetch.ts",
+   "src/hooks/useFieldArray.ts",
+   "src/hooks/useFIFO.ts",
+   "src/hooks/useFileDownload.ts",
+   "src/hooks/useFileDrop.ts",
+   "src/hooks/useFileReader.ts",
+   "src/hooks/useFirstRender.ts",
+   "src/hooks/useFocus.ts",
+   "src/hooks/useFocusReturn.ts",
+   "src/hooks/useFocusWithin.ts",
+   "src/hooks/useForceUpdate.ts",
+   "src/hooks/useForm.ts",
+   "src/hooks/useFormContext.tsx",
+   "src/hooks/useFormState.ts",
+   "src/hooks/useFornecedores.ts",
+   "src/hooks/useFullscreen.ts",
+   "src/hooks/useFulltextSearch.ts",
+   "src/hooks/useGamificacao.ts",
+   "src/hooks/useGeoDistance.ts",
+   "src/hooks/useGeofencing.ts",
+   "src/hooks/useGeolocation.ts",
+   "src/hooks/useGeoWhitelist.ts",
+   "src/hooks/useGestaoTarefasPage.ts",
+   "src/hooks/useGovernanca.ts",
+   "src/hooks/useHaptics.ts",
+   "src/hooks/useHead.ts",
+   "src/hooks/useHistory.ts",
+   "src/hooks/useHover.ts",
+   "src/hooks/useIdle.ts",
+   "src/hooks/useIdleCallback.ts",
+   "src/hooks/useImage.ts",
+   "src/hooks/useImagePreload.ts",
+   "src/hooks/useImmerState.ts",
+   "src/hooks/useImportData.ts",
+   "src/hooks/useIndexedDB.ts",
+   "src/hooks/useInfiniteQuery.ts",
+   "src/hooks/useInfiniteScroll.tsx",
+   "src/hooks/useInput.ts",
+   "src/hooks/useIntersectionObserver.ts",
+   "src/hooks/useInterval.ts",
+   "src/hooks/useInventarioCiclico.ts",
+   "src/hooks/useInventarioCiclico/index.ts",
+   "src/hooks/useInventoryCount.ts",
+   "src/hooks/useInView.ts",
+   "src/hooks/useIsFirstRender.ts",
+   "src/hooks/useIsMounted.ts",
+   "src/hooks/useKeyboardShortcuts.ts",
+   "src/hooks/useKeyPress.ts",
+   "src/hooks/useLabelPrint.ts",
+   "src/hooks/useLatest.ts",
+   "src/hooks/useLazyLoad.ts",
+   "src/hooks/useLeadTime.ts",
+   "src/hooks/useLifecycles.ts",
+   "src/hooks/useLIFO.ts",
+   "src/hooks/useList.ts",
+   "src/hooks/useLocalStorage.ts",
+   "src/hooks/useLockBodyScroll.ts",
+   "src/hooks/useLogger.ts",
+   "src/hooks/useLongPress.ts",
+   "src/hooks/useLotTracking.ts",
+   "src/hooks/useMap.ts",
+   "src/hooks/useMeasure.ts",
+   "src/hooks/useMediaDevices.ts",
+   "src/hooks/useMediaQuery.ts",
+   "src/hooks/useMediaRecorder.ts",
+   "src/hooks/useMeta.ts",
+   "src/hooks/useMFA.ts",
+   "src/hooks/useMicrophone.ts",
+   "src/hooks/useMotionTemplate.ts",
+   "src/hooks/useMotionValue.ts",
+   "src/hooks/useMounted.ts",
+   "src/hooks/useMovimentacoes.ts",
+   "src/hooks/useMutation.ts",
+   "src/hooks/useNavigationGuard.ts",
+   "src/hooks/useNotificacoes.ts",
+   "src/hooks/useNotificationChannel.ts",
+   "src/hooks/useNotificationOperations.ts",
+   "src/hooks/useNotificationPermission.ts",
+   "src/hooks/useNotificationRealtime.ts",
+   "src/hooks/useNotifications.ts",
+   "src/hooks/useNow.ts",
+   "src/hooks/useObject.ts",
+   "src/hooks/useObjectUrl.ts",
+   "src/hooks/useOffline.ts",
+   "src/hooks/useOfflineCache.ts",
+   "src/hooks/useOnlineStatus.ts",
+   "src/hooks/useOptimisticUpdate.ts",
+   "src/hooks/useOrders.ts",
+   "src/hooks/useOrientation.ts",
+   "src/hooks/usePageTransition.ts",
+   "src/hooks/usePageView.ts",
+   "src/hooks/usePageVisibility.ts",
+   "src/hooks/usePasswordResetRequests.ts",
+   "src/hooks/usePermission.ts",
+   "src/hooks/usePermissions.ts",
+   "src/hooks/usePickingOptimization.ts",
+   "src/hooks/usePortal.ts",
+   "src/hooks/usePreferredLanguage.ts",
+   "src/hooks/usePresence.ts",
+   "src/hooks/usePresenceAnimation.ts",
+   "src/hooks/usePreventScroll.ts",
+   "src/hooks/usePrevious.ts",
+   "src/hooks/usePrint.ts",
+   "src/hooks/usePrinter.ts",
+   "src/hooks/useProdutividade.ts",
+   "src/hooks/useProfiler.ts",
+   "src/hooks/useProfiler.tsx",
+   "src/hooks/usePromise.ts",
+   "src/hooks/usePushNotifications.ts",
+   "src/hooks/usePushSubscription.ts",
+   "src/hooks/usePutaway.ts",
+   "src/hooks/useQRCode.ts",
+   "src/hooks/useQualityControl.ts",
+   "src/hooks/useQuery.ts",
+   "src/hooks/useQueue.ts",
+   "src/hooks/useRadioState.ts",
+   "src/hooks/useRaf.ts",
+   "src/hooks/useRanking.ts",
+   "src/hooks/useRealtime.ts",
+   "src/hooks/useRealtimeToast.ts",
+   "src/hooks/useReducedMotion.ts",
+   "src/hooks/useReducerWithMiddleware.ts",
+   "src/hooks/useRefreshOnFocus.ts",
+   "src/hooks/useRefreshToken.ts",
+   "src/hooks/useRenderCount.ts",
+   "src/hooks/useReorderPoint.ts",
+   "src/hooks/useRequest.ts",
+   "src/hooks/useResizeObserver.ts",
+   "src/hooks/useRetry.ts",
+   "src/hooks/useRFID.ts",
+   "src/hooks/useRoles.ts",
+   "src/hooks/useRoutePreload.ts",
+   "src/hooks/useRoving.ts",
+   "src/hooks/useSafeState.ts",
+   "src/hooks/useSafetyStock.ts",
+   "src/hooks/useSavedFilters.ts",
+   "src/hooks/useScanner.ts",
+   "src/hooks/useScreenCapture.ts",
+   "src/hooks/useScript.ts",
+   "src/hooks/useScroll.ts",
+   "src/hooks/useScrollLock.ts",
+   "src/hooks/useScrollPosition.ts",
+   "src/hooks/useScrollProgress.ts",
+   "src/hooks/useScrollTo.ts",
+   "src/hooks/useSelectState.ts",
+   "src/hooks/useSerialTracking.ts",
+   "src/hooks/useSet.ts",
+   "src/hooks/useShare.ts",
+   "src/hooks/useShippingLabel.ts",
+   "src/hooks/useSidebarFavorites.ts",
+   "src/hooks/useSliderState.ts",
+   "src/hooks/useSoftDelete.ts",
+   "src/hooks/useSound.ts",
+   "src/hooks/useSpeechRecognition.ts",
+   "src/hooks/useSpeechSynthesis.ts",
+   "src/hooks/useSpring.ts",
+   "src/hooks/useSSE.ts",
+   "src/hooks/useStack.ts",
+   "src/hooks/useStock.ts",
+   "src/hooks/useStockLevel.ts",
+   "src/hooks/useStopwatch.ts",
+   "src/hooks/useStreaks.ts",
+   "src/hooks/useStyleSheet.ts",
+   "src/hooks/useSubscription.ts",
+   "src/hooks/useSwipeBack.ts",
+   "src/hooks/useSWR.ts",
+   "src/hooks/useTable.ts",
+   "src/hooks/useTarefas.ts",
+   "src/hooks/useTelemetry.ts",
+   "src/hooks/useTextareaState.ts",
+   "src/hooks/useThrottle.ts",
+   "src/hooks/useTimeAgo.ts",
+   "src/hooks/useTimeout.ts",
+   "src/hooks/useTimeoutFn.ts",
+   "src/hooks/useTimer.ts",
+   "src/hooks/useToggle.ts",
+   "src/hooks/useTouchGestures.ts",
+   "src/hooks/useTracking.ts",
+   "src/hooks/useTransition.ts",
+   "src/hooks/useTrapFocus.ts",
+   "src/hooks/useTriagemFotos.ts",
+   "src/hooks/useTriagemTimer.ts",
+   "src/hooks/useTrocasDevolucoes.ts",
+   "src/hooks/useUndo.ts",
+   "src/hooks/useUnmount.ts",
+   "src/hooks/useUnsavedChanges.ts",
+   "src/hooks/useUpdateEffect.ts",
+   "src/hooks/useVelocity.ts",
+   "src/hooks/useVersioning.ts",
+   "src/hooks/useVersions.ts",
+   "src/hooks/useVibration.ts",
+   "src/hooks/useVideo.ts",
+   "src/hooks/useWakeLock.ts",
+   "src/hooks/useWatch.ts",
+   "src/hooks/useWatchPosition.ts",
+   "src/hooks/useWaveManagement.ts",
+   "src/hooks/useWebAuthn.ts",
+   "src/hooks/useWebSocket.ts",
+   "src/hooks/useWeightScale.ts",
+   "src/hooks/useWhyDidYouUpdate.ts",
+   "src/hooks/useWindowSize.ts",
+   "src/lib/crud/index.ts",
+   "src/utils/performance.ts"
+  ],
+  "edges": [
+   "abc-analysis",
+   "agv-dispatch",
+   "ai-classify",
+   "ai-completion",
+   "ai-embedding",
+   "ai-sentiment",
+   "ai-summarize",
+   "ai-translate",
+   "alert-expiration",
+   "alert-pending-orders",
+   "alert-productivity",
+   "alert-quality",
+   "alert-sla-breach",
+   "alert-stock-low",
+   "alerta-divergencia-fornecedor",
+   "analytics",
+   "audit-log",
+   "auth-2fa-setup",
+   "auth-change-password",
+   "auth-logout",
+   "auth-session-list",
+   "auth-session-revoke",
+   "auth-social-login",
+   "auth-verify-email",
+   "backend-health",
+   "backup-database",
+   "batch-import",
+   "batch-processor",
+   "broadcast-event",
+   "bulk-insert",
+   "bulk-update",
+   "bulk-upsert",
+   "cache",
+   "cache-invalidate",
+   "calculate-kpis",
+   "cancel-order",
+   "carrier-cancel",
+   "carrier-label",
+   "carrier-quote-jadlog",
+   "carrier-rates-cache",
+   "carrier-webhooks",
+   "check-expiration",
+   "check-permission",
+   "check-reorder",
+   "cleanup-old-data",
+   "cleanup-sessions",
+   "complete-job",
+   "create-customer",
+   "create-lot",
+   "create-payment-intent",
+   "create-purchase-order",
+   "create-subscription",
+   "cron-daily",
+   "cron-weekly",
+   "cte-import",
+   "cycle-count",
+   "danfe-generate",
+   "dashboard-stats",
+   "data-migration",
+   "db-alert-monitor",
+   "delete-file",
+   "demand-forecast",
+   "download-file",
+   "edi-process",
+   "expiration-check",
+   "export-data",
+   "export-pdf",
+   "export-products",
+   "external-db-bridge",
+   "generate-barcode",
+   "generate-csv",
+   "generate-excel",
+   "generate-pdf-report",
+   "generate-pick-list",
+   "generate-putaway-list",
+   "generate-report",
+   "generate-sku",
+   "gerar-desafios-diarios",
+   "get-permissions",
+   "health",
+   "import-csv",
+   "import-data",
+   "import-products",
+   "integration-accounting",
+   "integration-amazon",
+   "integration-correios",
+   "integration-ecommerce",
+   "integration-erp",
+   "integration-ifood",
+   "integration-marketplace",
+   "integration-mercado-livre",
+   "integration-rappi",
+   "integration-sap",
+   "integration-totvs",
+   "inventory-batch-adjust",
+   "inventory-count",
+   "inventory-reconcile",
+   "inventory-release",
+   "inventory-snapshot",
+   "inventory-sync",
+   "inventory-valuation",
+   "invoice-generate",
+   "kpi-calculator",
+   "label-print",
+   "location-utilization",
+   "lot-tracking",
+   "merge-pdfs",
+   "metrics",
+   "migrate-helper",
+   "nfe-cancel",
+   "nfe-correct",
+   "nfe-distribution",
+   "nfe-manifest",
+   "nfe-process",
+   "nfe-validate",
+   "notification-email",
+   "notification-push",
+   "notification-sms",
+   "notification-whatsapp",
+   "notifications",
+   "notify-slack",
+   "notify-user",
+   "packing-cancel",
+   "packing-confirm",
+   "packing-repack",
+   "packing-split",
+   "packing-start",
+   "parse-excel",
+   "parse-pdf",
+   "payment-create",
+   "picking-assign",
+   "picking-batch",
+   "picking-cancel",
+   "picking-optimize",
+   "picking-skip",
+   "picking-split",
+   "previsao-demanda",
+   "print-label",
+   "process-queue",
+   "process-sales-order",
+   "push-notification",
+   "quality-inspection",
+   "queue-add",
+   "queue-job",
+   "queue-process",
+   "queue-retry",
+   "rate-limit",
+   "rate-limiter",
+   "receive-purchase-order",
+   "receiving-cancel",
+   "receiving-confirm",
+   "receiving-create",
+   "receiving-inspect",
+   "receiving-putaway",
+   "receiving-reject",
+   "register-serial",
+   "release-stock",
+   "reorder-check",
+   "reorder-suggestions",
+   "report-custom",
+   "report-daily",
+   "report-export-excel",
+   "report-export-pdf",
+   "report-inventory",
+   "report-inventory-accuracy",
+   "report-monthly",
+   "report-picking-performance",
+   "report-receiving",
+   "report-shipping",
+   "report-supplier-performance",
+   "report-turnover",
+   "report-valuation",
+   "report-weekly",
+   "reserve-stock",
+   "return-order",
+   "safety-stock",
+   "scan-barcode",
+   "scanner-ocr",
+   "schedule-task",
+   "scheduler-cleanup",
+   "scheduler-daily-tasks",
+   "scheduler-reports",
+   "scheduler-sync",
+   "search-locations",
+   "search-orders",
+   "search-products",
+   "send-email",
+   "send-email-alert",
+   "send-push",
+   "send-sms",
+   "send-whatsapp",
+   "shipping-cancel",
+   "shipping-label",
+   "shipping-manifest",
+   "shipping-pod",
+   "shipping-rate",
+   "shipping-track-webhook",
+   "simulation-test",
+   "stock-alert",
+   "stripe-webhook",
+   "sync-external-api",
+   "sync-inventory",
+   "track-shipment",
+   "transfer-stock",
+   "upload-file",
+   "upload-image",
+   "upload-multiple",
+   "validate-data",
+   "validate-ean",
+   "warehouse-metrics",
+   "wave-cancel",
+   "wave-merge",
+   "wave-optimize",
+   "wave-planning",
+   "wave-release",
+   "wave-split",
+   "webauthn-auth-options",
+   "webauthn-auth-verify",
+   "webauthn-register-options",
+   "webauthn-register-verify",
+   "webhook-receiver"
+  ],
+  "servicos": [
+   "src/services/abcService.ts",
+   "src/services/alertService.ts",
+   "src/services/analyticsService.ts",
+   "src/services/auditService.ts",
+   "src/services/authService.ts",
+   "src/services/backupService.ts",
+   "src/services/barcodeService.ts",
+   "src/services/batchService.ts",
+   "src/services/categoryService.ts",
+   "src/services/customerService.ts",
+   "src/services/gamificacaoService.ts",
+   "src/services/inventoryService.ts",
+   "src/services/locationService.ts",
+   "src/services/lotService.ts",
+   "src/services/notificacaoService.ts",
+   "src/services/orderService.ts",
+   "src/services/productService.ts",
+   "src/services/relatorioService.ts",
+   "src/services/supplierService.ts",
+   "src/services/warehouseService.ts"
+  ]
+ }
+}

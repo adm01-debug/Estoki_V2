@@ -1,0 +1,602 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "nos": 1570,
+ "arestas": 3544,
+ "hubs": [
+  {
+   "arquivo": "src/components/ui/button.tsx",
+   "importado_por": 268
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "importado_por": 257
+  },
+  {
+   "arquivo": "supabase/functions/_shared/cors.ts",
+   "importado_por": 241
+  },
+  {
+   "arquivo": "supabase/functions/_shared/schemas.ts",
+   "importado_por": 240
+  },
+  {
+   "arquivo": "src/components/ui/card.tsx",
+   "importado_por": 229
+  },
+  {
+   "arquivo": "src/components/ui/badge.tsx",
+   "importado_por": 172
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "importado_por": 166
+  },
+  {
+   "arquivo": "src/components/ui/input.tsx",
+   "importado_por": 112
+  },
+  {
+   "arquivo": "src/components/ui/label.tsx",
+   "importado_por": 60
+  },
+  {
+   "arquivo": "src/utils/logger.ts",
+   "importado_por": 56
+  },
+  {
+   "arquivo": "src/components/layout/AppLayout.tsx",
+   "importado_por": 53
+  },
+  {
+   "arquivo": "src/components/ui/select.tsx",
+   "importado_por": 48
+  },
+  {
+   "arquivo": "src/components/ui/progress.tsx",
+   "importado_por": 44
+  },
+  {
+   "arquivo": "src/components/ui/dialog.tsx",
+   "importado_por": 42
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "importado_por": 40
+  },
+  {
+   "arquivo": "src/components/ui/skeleton.tsx",
+   "importado_por": 39
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "importado_por": 38
+  },
+  {
+   "arquivo": "src/components/ui/tabs.tsx",
+   "importado_por": 35
+  },
+  {
+   "arquivo": "src/components/ui/tooltip.tsx",
+   "importado_por": 35
+  },
+  {
+   "arquivo": "src/components/common/SEO.tsx",
+   "importado_por": 31
+  },
+  {
+   "arquivo": "src/components/ui/table.tsx",
+   "importado_por": 28
+  },
+  {
+   "arquivo": "src/components/layout/PageTransition.tsx",
+   "importado_por": 25
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "importado_por": 25
+  },
+  {
+   "arquivo": "src/components/ui/popover.tsx",
+   "importado_por": 21
+  },
+  {
+   "arquivo": "src/components/ui/dropdown-menu.tsx",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/components/ui/scroll-area.tsx",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/components/ui/textarea.tsx",
+   "importado_por": 18
+  },
+  {
+   "arquivo": "src/components/ui/avatar.tsx",
+   "importado_por": 15
+  },
+  {
+   "arquivo": "src/utils/haptics.ts",
+   "importado_por": 15
+  },
+  {
+   "arquivo": "src/components/ui/checkbox.tsx",
+   "importado_por": 13
+  },
+  {
+   "arquivo": "src/components/ui/switch.tsx",
+   "importado_por": 12
+  },
+  {
+   "arquivo": "src/types/movimentacao.ts",
+   "importado_por": 12
+  },
+  {
+   "arquivo": "src/components/ui/separator.tsx",
+   "importado_por": 11
+  },
+  {
+   "arquivo": "supabase/functions/_shared/rate-limit.ts",
+   "importado_por": 11
+  },
+  {
+   "arquivo": "src/components/charts/chartStyles.ts",
+   "importado_por": 10
+  },
+  {
+   "arquivo": "src/components/common/RouteLoadingFallback.tsx",
+   "importado_por": 10
+  },
+  {
+   "arquivo": "src/components/ui/calendar.tsx",
+   "importado_por": 9
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useEstoque.ts",
+   "importado_por": 9
+  },
+  {
+   "arquivo": "src/components/charts/WMSModuleCharts.tsx",
+   "importado_por": 8
+  },
+  {
+   "arquivo": "src/components/templates/BasePageTemplate.tsx",
+   "importado_por": 8
+  }
+ ],
+ "ciclos": {
+  "total": 2,
+  "maiores": [
+   {
+    "tamanho": 23,
+    "arquivos": [
+     "src/components/layout/AppLayout.tsx",
+     "src/components/layout/sidebar/SidebarFooter.tsx",
+     "src/components/layout/sidebar/index.ts",
+     "src/components/organisms/layout/MobileNavigation.tsx",
+     "src/components/organisms/layout/Sidebar.tsx",
+     "src/features/analytics/pages/ABCAnalysisPage.tsx",
+     "src/features/analytics/pages/KPIsPage.tsx",
+     "src/features/inventory/pages/EstoquePage.tsx",
+     "src/features/picking/pages/PickingPage.tsx",
+     "src/features/quality/pages/TriagemPage.tsx",
+     "src/features/receiving/pages/RecebimentoPage.tsx",
+     "src/features/shipping/pages/ShippingPage.tsx"
+    ]
+   },
+   {
+    "tamanho": 2,
+    "arquivos": [
+     "src/components/trocas/RegistroCard.tsx",
+     "src/components/trocas/index.ts"
+    ]
+   }
+  ]
+ },
+ "orfaos": [
+  "src/components/ExportDropdown.tsx",
+  "src/components/InfiniteScrollList.tsx",
+  "src/components/NavLink.tsx",
+  "src/components/a11y/Announce.tsx",
+  "src/components/a11y/FocusScope.tsx",
+  "src/components/a11y/FocusTrap.tsx",
+  "src/components/a11y/LiveRegion.tsx",
+  "src/components/a11y/SkipLinks.tsx",
+  "src/components/a11y/VisuallyHidden.tsx",
+  "src/components/armazenamento/PosicaoStatusBadge.tsx",
+  "src/components/auth/PasswordStrengthMeter.tsx",
+  "src/components/camera/index.ts",
+  "src/components/charts/Funnel.tsx",
+  "src/components/charts/Gauge.tsx",
+  "src/components/charts/Heatmap.tsx",
+  "src/components/charts/ModuleCharts.tsx",
+  "src/components/charts/Radar.tsx",
+  "src/components/charts/RadialBar.tsx",
+  "src/components/charts/Sankey.tsx",
+  "src/components/charts/Sparkline.tsx",
+  "src/components/charts/Treemap.tsx",
+  "src/components/charts/index.ts",
+  "src/components/common/ErrorFallback.tsx",
+  "src/components/common/SavedFiltersManager.tsx",
+  "src/components/common/SearchInput.tsx",
+  "src/components/common/SkeletonLoader.tsx",
+  "src/components/common/UnsavedChangesDialog.tsx",
+  "src/components/common/index.ts",
+  "src/components/conferencia/AssinaturaConferenciaDialog.tsx",
+  "src/components/dashboard/QuickActionButton.tsx",
+  "src/components/dashboard/index.ts",
+  "src/components/data/CalendarFull.tsx",
+  "src/components/data/DataTable.tsx",
+  "src/components/data/EditableTable.tsx",
+  "src/components/data/Gallery.tsx",
+  "src/components/data/ImageZoom.tsx",
+  "src/components/data/InfiniteScroll.tsx",
+  "src/components/data/InfoItem.tsx",
+  "src/components/data/Lightbox.tsx",
+  "src/components/data/PivotTable.tsx",
+  "src/components/data/Timeline.tsx",
+  "src/components/data/TreeTable.tsx",
+  "src/components/data/TreeView.tsx",
+  "src/components/data/VirtualGrid.tsx",
+  "src/components/data/VirtualList.tsx",
+  "src/components/data/index.ts",
+  "src/components/display/AvatarGroup.tsx",
+  "src/components/display/Blockquote.tsx",
+  "src/components/display/Clock.tsx",
+  "src/components/display/CodeBlock.tsx",
+  "src/components/display/CompanyCard.tsx",
+  "src/components/display/Counter.tsx",
+  "src/components/display/Highlight.tsx",
+  "src/components/display/Kbd.tsx",
+  "src/components/display/QRCode.tsx",
+  "src/components/display/Stat.tsx",
+  "src/components/display/Timeline.tsx",
+  "src/components/display/UserCard.tsx",
+  "src/components/dnd/DragHandle.tsx",
+  "src/components/dnd/Draggable.tsx",
+  "src/components/dnd/Droppable.tsx",
+  "src/components/dnd/KanbanBoard.tsx",
+  "src/components/dnd/Sortable.tsx",
+  "src/components/export/index.ts",
+  "src/components/feedback/Banner.tsx",
+  "src/components/feedback/Celebration.tsx",
+  "src/components/feedback/EmptyState.tsx",
+  "src/components/feedback/LoadingOverlay.tsx",
+  "src/components/feedback/Message.tsx",
+  "src/components/feedback/index.ts",
+  "src/components/filters/FilterBar.tsx",
+  "src/components/filters/index.ts",
+  "src/components/forms/index.ts",
+  "src/components/gamificacao/ConquistaNotificacoes.tsx",
+  "src/components/gamificacao/StreakIndicator.tsx",
+  "src/components/gamificacao/index.ts",
+  "src/components/ia/PrevisaoDemandaIA.tsx",
+  "src/components/inventario/StatusCicloCard.tsx",
+  "src/components/kanban/KanbanCard.tsx",
+  "src/components/kpi/index.ts",
+  "src/components/kpis/AlertIndicator.tsx",
+  "src/components/kpis/KPITrendIndicator.tsx",
+  "src/components/layout/AspectRatio.tsx",
+  "src/components/layout/Breadcrumbs.tsx",
+  "src/components/layout/Divider.tsx",
+  "src/components/layout/Flex.tsx",
+  "src/components/layout/Masonry.tsx",
+  "src/components/layout/MobileNavigation.tsx",
+  "src/components/layout/PageContainer.tsx",
+  "src/components/layout/PageHeader.tsx",
+  "src/components/layout/ResizablePanel.tsx",
+  "src/components/layout/ScrollAreaCustom.tsx",
+  "src/components/layout/SidebarContent.tsx",
+  "src/components/layout/Space.tsx",
+  "src/components/layout/SplitPane.tsx",
+  "src/components/layout/Stack.tsx",
+  "src/components/layout/header/Header.tsx",
+  "src/components/layout/index.ts",
+  "src/components/maps/MapCluster.tsx",
+  "src/components/maps/MapContainer.tsx",
+  "src/components/maps/MapMarker.tsx",
+  "src/components/maps/MapPopup.tsx",
+  "src/components/maps/MapRoute.tsx",
+  "src/components/mobile/index.ts",
+  "src/components/movimentacao/MovimentacaoDetalhesForm.tsx",
+  "src/components/movimentacao/MovimentacaoHistorico.tsx",
+  "src/components/movimentacao/MovimentacaoTipoSelector.tsx",
+  "src/components/navigation/ContextMenu.tsx",
+  "src/components/navigation/Navbar.tsx",
+  "src/components/navigation/Spotlight.tsx",
+  "src/components/navigation/Stepper.tsx",
+  "src/components/navigation/Steps.tsx",
+  "src/components/navigation/Wizard.tsx",
+  "src/components/notifications/NotificacoesGlobais.tsx",
+  "src/components/notifications/index.ts",
+  "src/components/onboarding/OnboardingTour.tsx",
+  "src/components/print/index.ts",
+  "src/components/produtos/ProductCardAvancado.tsx",
+  "src/components/produtos/ProdutosList.tsx",
+  "src/components/pwa/index.ts",
+  "src/components/rastreabilidade/RastreabilidadeKPIs.tsx",
+  "src/components/relatorios/ReportFilters.tsx",
+  "src/components/scanner/index.ts",
+  "src/components/search/index.ts",
+  "src/components/theme/ThemeProvider.tsx",
+  "src/components/ui/accordion-custom.tsx",
+  "src/components/ui/aspect-ratio.tsx",
+  "src/components/ui/avatar-group.tsx",
+  "src/components/ui/breadcrumb.tsx",
+  "src/components/ui/carousel.tsx",
+  "src/components/ui/chart.tsx",
+  "src/components/ui/confirm-dialog.tsx",
+  "src/components/ui/context-menu.tsx",
+  "src/components/ui/countdown.tsx",
+  "src/components/ui/data-table-advanced.tsx",
+  "src/components/ui/data-table.tsx",
+  "src/components/ui/date-range-picker.tsx",
+  "src/components/ui/date-time-picker.tsx",
+  "src/components/ui/drawer.tsx",
+  "src/components/ui/editor/RichTextEditor.tsx",
+  "src/components/ui/file-upload.tsx",
+  "src/components/ui/filter-panel.tsx",
+  "src/components/ui/hover-card.tsx",
+  "src/components/ui/input-otp.tsx",
+  "src/components/ui/loading-patterns.tsx",
+  "src/components/ui/loading-spinner.tsx",
+  "src/components/ui/menubar.tsx",
+  "src/components/ui/modal.tsx",
+  "src/components/ui/navigation-menu.tsx",
+  "src/components/ui/pagination.tsx",
+  "src/components/ui/progress-steps.tsx",
+  "src/components/ui/resizable.tsx",
+  "src/components/ui/search-input.tsx",
+  "src/components/ui/sidebar.tsx",
+  "src/components/ui/stat-card.tsx",
+  "src/components/ui/stats-card.tsx",
+  "src/components/ui/tabs-custom.tsx",
+  "src/components/ui/timeline.tsx",
+  "src/components/ui/toggle-group.tsx",
+  "src/components/ui/tooltip-icon.tsx",
+  "src/components/ui/use-toast.ts",
+  "src/components/user/index.ts",
+  "src/components/versioning/index.ts",
+  "src/components/wms/BarcodeDisplay.tsx",
+  "src/components/wms/BatchInfo.tsx",
+  "src/components/wms/BinGrid.tsx",
+  "src/components/wms/CarrierLogo.tsx",
+  "src/components/wms/CycleCountCard.tsx",
+  "src/components/wms/InventoryCard.tsx",
+  "src/components/wms/LocationPicker.tsx",
+  "src/components/wms/PackingSlip.tsx",
+  "src/components/wms/PickList.tsx",
+  "src/components/wms/ProductCard.tsx",
+  "src/components/wms/PutawayList.tsx",
+  "src/components/wms/QualityStatus.tsx",
+  "src/components/wms/ReorderAlert.tsx",
+  "src/components/wms/SerialNumber.tsx",
+  "src/components/wms/ShipmentTracker.tsx",
+  "src/components/wms/StockLevelIndicator.tsx",
+  "src/components/wms/WarehouseMap.tsx",
+  "src/constants/api.ts",
+  "src/constants/app.ts",
+  "src/constants/index.ts",
+  "src/constants/routes.ts",
+  "src/contexts/index.ts",
+  "src/features/inventory/components/EstoqueToolbar.tsx",
+  "src/features/inventory/components/WarehouseMap.tsx",
+  "src/features/inventory/components/index.ts",
+  "src/features/quality/components/TriagemTimer.tsx",
+  "src/features/quality/components/index.ts",
+  "src/features/receiving/components/index.ts",
+  "src/guards/index.ts",
+  "src/hoc/index.ts",
+  "src/hooks/useABCAnalysis.ts",
+  "src/hooks/useABTest.ts",
+  "src/hooks/useAbortController.ts",
+  "src/hooks/useAnimation.ts",
+  "src/hooks/useAnimationFrame.ts",
+  "src/hooks/useAriaDescribedBy.ts",
+  "src/hooks/useAriaHidden.ts",
+  "src/hooks/useAriaLabel.ts",
+  "src/hooks/useAriaLive.tsx",
+  "src/hooks/useArray.ts",
+  "src/hooks/useAsyncCallback.ts",
+  "src/hooks/useAudio.ts",
+  "src/hooks/useAuthorization.ts",
+  "src/hooks/useBarcodePrint.ts",
+  "src/hooks/useBarcodeScanner.ts",
+  "src/hooks/useBattery.ts",
+  "src/hooks/useBlobUrl.ts",
+  "src/hooks/useBroadcast.ts",
+  "src/hooks/useCache.ts",
+  "src/hooks/useCamera.ts",
+  "src/hooks/useCarrierIntegration.ts",
+  "src/hooks/useChannel.ts",
+  "src/hooks/useCheckboxState.ts",
+  "src/hooks/useClickAway.ts",
+  "src/hooks/useClipboardAdvanced.ts",
+  "src/hooks/useClock.ts",
+  "src/hooks/useColorScheme.ts",
+  "src/hooks/useCompass.ts",
+  "src/hooks/useConfirmation.ts",
+  "src/hooks/useConflictResolution.ts",
+  "src/hooks/useContextMenu.ts",
+  "src/hooks/useController.ts",
+  "src/hooks/useCookie.ts",
+  "src/hooks/useCookies.ts",
+  "src/hooks/useCopyToClipboard.ts",
+  "src/hooks/useCountdown.ts",
+  "src/hooks/useCounter.ts",
+  "src/hooks/useCurrentTenant.ts",
+  "src/hooks/useDarkMode.ts",
+  "src/hooks/useDebugLog.ts",
+  "src/hooks/useDebugState.ts",
+  "src/hooks/useDeferredValue.ts",
+  "src/hooks/useDeviceMotion.ts",
+  "src/hooks/useDeviceOrientationHook.ts",
+  "src/hooks/useDevtools.ts",
+  "src/hooks/useDocumentTitle.ts",
+  "src/hooks/useDocumentVisibility.ts",
+  "src/hooks/useDoubleClick.ts",
+  "src/hooks/useEffectOnce.ts",
+  "src/hooks/useElementSize.ts",
+  "src/hooks/useErrorBoundaryState.ts",
+  "src/hooks/useEventSource.ts",
+  "src/hooks/useExperiment.ts",
+  "src/hooks/useExpiration.ts",
+  "src/hooks/useFEFO.ts",
+  "src/hooks/useFIFO.ts",
+  "src/hooks/useFavicon.ts",
+  "src/hooks/useFeatureFlag.ts",
+  "src/hooks/useFetch.ts",
+  "src/hooks/useFieldArray.ts",
+  "src/hooks/useFileDownload.ts",
+  "src/hooks/useFileDrop.ts",
+  "src/hooks/useFileReader.ts",
+  "src/hooks/useFirstRender.ts",
+  "src/hooks/useFocus.ts",
+  "src/hooks/useFocusReturn.ts",
+  "src/hooks/useFocusWithin.ts",
+  "src/hooks/useForceUpdate.ts",
+  "src/hooks/useForm.ts",
+  "src/hooks/useFormContext.tsx",
+  "src/hooks/useFormState.ts",
+  "src/hooks/useFullscreen.ts",
+  "src/hooks/useGeoDistance.ts",
+  "src/hooks/useGeofencing.ts",
+  "src/hooks/useGeolocation.ts",
+  "src/hooks/useHistory.ts",
+  "src/hooks/useHover.ts",
+  "src/hooks/useIdle.ts",
+  "src/hooks/useIdleCallback.ts",
+  "src/hooks/useImage.ts",
+  "src/hooks/useImagePreload.ts",
+  "src/hooks/useImmerState.ts",
+  "src/hooks/useInView.ts",
+  "src/hooks/useIndexedDB.ts",
+  "src/hooks/useInfiniteQuery.ts",
+  "src/hooks/useInput.ts",
+  "src/hooks/useIntersectionObserver.ts",
+  "src/hooks/useIsFirstRender.ts",
+  "src/hooks/useIsMounted.ts",
+  "src/hooks/useKeyPress.ts",
+  "src/hooks/useLIFO.ts",
+  "src/hooks/useLabelPrint.ts",
+  "src/hooks/useLatest.ts",
+  "src/hooks/useLazyLoad.ts",
+  "src/hooks/useLifecycles.ts",
+  "src/hooks/useList.ts",
+  "src/hooks/useLockBodyScroll.ts",
+  "src/hooks/useLogger.ts",
+  "src/hooks/useLongPress.ts",
+  "src/hooks/useLotTracking.ts",
+  "src/hooks/useMap.ts",
+  "src/hooks/useMeasure.ts",
+  "src/hooks/useMediaDevices.ts",
+  "src/hooks/useMediaRecorder.ts",
+  "src/hooks/useMeta.ts",
+  "src/hooks/useMicrophone.ts",
+  "src/hooks/useMotionTemplate.ts"
+ ],
+ "modulos_mais_acoplados": [
+  {
+   "modulo": "components/ui",
+   "depende_de": 5,
+   "importado_por": 90
+  },
+  {
+   "modulo": "lib",
+   "depende_de": 11,
+   "importado_por": 54
+  },
+  {
+   "modulo": "pages",
+   "depende_de": 46,
+   "importado_por": 2
+  },
+  {
+   "modulo": "hooks",
+   "depende_de": 11,
+   "importado_por": 34
+  },
+  {
+   "modulo": "integrations/supabase",
+   "depende_de": 0,
+   "importado_por": 34
+  },
+  {
+   "modulo": "components/layout",
+   "depende_de": 11,
+   "importado_por": 17
+  },
+  {
+   "modulo": "contexts",
+   "depende_de": 7,
+   "importado_por": 16
+  },
+  {
+   "modulo": "utils",
+   "depende_de": 2,
+   "importado_por": 21
+  },
+  {
+   "modulo": "routes",
+   "depende_de": 22,
+   "importado_por": 0
+  },
+  {
+   "modulo": "components/common",
+   "depende_de": 11,
+   "importado_por": 10
+  },
+  {
+   "modulo": "features/inventory",
+   "depende_de": 14,
+   "importado_por": 5
+  },
+  {
+   "modulo": "features/quality",
+   "depende_de": 14,
+   "importado_por": 4
+  },
+  {
+   "modulo": "features/receiving",
+   "depende_de": 12,
+   "importado_por": 5
+  },
+  {
+   "modulo": "features/analytics",
+   "depende_de": 9,
+   "importado_por": 7
+  },
+  {
+   "modulo": "features/dashboard",
+   "depende_de": 11,
+   "importado_por": 4
+  },
+  {
+   "modulo": "types",
+   "depende_de": 1,
+   "importado_por": 14
+  },
+  {
+   "modulo": "services",
+   "depende_de": 4,
+   "importado_por": 10
+  },
+  {
+   "modulo": "pages/admin",
+   "depende_de": 11,
+   "importado_por": 1
+  },
+  {
+   "modulo": "components/dashboard",
+   "depende_de": 7,
+   "importado_por": 3
+  },
+  {
+   "modulo": "components/organisms",
+   "depende_de": 9,
+   "importado_por": 1
+  }
+ ],
+ "arestas_em": "docs/contexto/codigo/grafo-arestas.json"
+}

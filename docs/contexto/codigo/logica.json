@@ -1,0 +1,4617 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 163,
+ "por_camada": {
+  "config": 8,
+  "contexts": 1,
+  "integrations": 3,
+  "lib": 107,
+  "middleware": 1,
+  "python": 3,
+  "services": 25,
+  "stores": 1,
+  "utils": 14
+ },
+ "arquivos": [
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "camada": "python",
+   "exports": [
+    "analyze_code_file",
+    "balanced",
+    "detect_stack",
+    "dir_tree",
+    "extract_html_constraints",
+    "extract_zod",
+    "files_cell",
+    "git",
+    "header",
+    "is_app_code",
+    "is_archived_sql",
+    "is_test_file",
+    "llm_synthesis",
+    "log",
+    "main",
+    "md_table",
+    "op_from_chain",
+    "read_text",
+    "redact",
+    "rel",
+    "render_access",
+    "render_architecture",
+    "render_changes",
+    "render_database",
+    "render_database_pointer",
+    "render_dataflow",
+    "render_features",
+    "render_glossary",
+    "render_index",
+    "render_integrations",
+    "render_modules",
+    "render_overview",
+    "render_rules",
+    "squash",
+    "stable_hash",
+    "strip_sql_comments",
+    "trunc",
+    "upsert_pointer",
+    "walk_repo"
+   ],
+   "linhas": 2138,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "AI_CONTEXT_INDEX",
+    "AI_CONTEXT_MODEL",
+    "AI_CONTEXT_PROFILE",
+    "AI_CONTEXT_SCHEMA_SNAPSHOT",
+    "ANTHROPIC_API_KEY"
+   ],
+   "externos": [
+    "__future__",
+    "argparse",
+    "collections",
+    "datetime",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/regras_negocio/indice.py",
+   "camada": "python",
+   "exports": [
+    "entry_file",
+    "git",
+    "main",
+    "parse_dt",
+    "producer_health",
+    "read_manifest"
+   ],
+   "linhas": 237,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "__future__",
+    "argparse",
+    "datetime",
+    "json",
+    "pathlib",
+    "re",
+    "subprocess",
+    "sys"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "camada": "python",
+   "exports": [
+    "api",
+    "api_section",
+    "approx",
+    "banner",
+    "build_function_callers",
+    "callers_status_table",
+    "code",
+    "diff_fingerprints",
+    "dumps",
+    "env_int",
+    "excluded_sql",
+    "fingerprints",
+    "get_columns",
+    "get_constraints",
+    "get_cron",
+    "get_cron_runs",
+    "get_db_stats",
+    "get_extensions",
+    "get_foreign",
+    "get_functions",
+    "get_grants",
+    "get_index_stats",
+    "get_indexes",
+    "get_lints",
+    "get_migrations",
+    "get_policies",
+    "get_queues",
+    "get_realtime",
+    "get_roles",
+    "get_schemas",
+    "get_sequences",
+    "get_server",
+    "get_storage",
+    "get_table_stats",
+    "get_tables",
+    "get_triggers",
+    "get_types",
+    "get_vault",
+    "get_views",
+    "get_webhooks",
+    "group",
+    "has_ext",
+    "has_table",
+    "human_bytes",
+    "introspect_api",
+    "introspect_db",
+    "is_caller_source",
+    "jsonable",
+    "log",
+    "main",
+    "md_cell",
+    "md_table",
+    "prepare_output_directory",
+    "q",
+    "record_error",
+    "redact",
+    "render_readme",
+    "render_relationships",
+    "render_simple",
+    "render_stats",
+    "render_tables",
+    "run_gen_types",
+    "run_pg_dump",
+    "rx_name_keys",
+    "scan_code_files",
+    "scrub",
+    "scrub_value",
+    "section",
+    "sha",
+    "slug",
+    "sql_without_routine_declarations",
+    "update_changelog",
+    "uslug",
+    "valid_previous_snapshot",
+    "write"
+   ],
+   "linhas": 1791,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "CODE_SCAN_DIRS",
+    "GEN_TYPES",
+    "PGDUMP",
+    "PGDUMP_SCHEMAS",
+    "REPO_ROOT",
+    "SNAPSHOT_DIR",
+    "SNAPSHOT_EXCLUDE_SCHEMAS",
+    "SNAPSHOT_INCLUDE_SCHEMAS",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_URL",
+    "SUPABASE_PROJECT_REF",
+    "SUPABASE_SNAPSHOT_PUBLICACAO"
+   ],
+   "externos": [
+    "__future__",
+    "datetime",
+    "decimal",
+    "hashlib",
+    "json",
+    "os",
+    "pathlib",
+    "psycopg",
+    "re",
+    "shutil",
+    "subprocess",
+    "sys",
+    "typing",
+    "urllib"
+   ],
+   "rotas_http": 0,
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/config/analytics.ts",
+   "camada": "config",
+   "exports": [
+    "EventAction",
+    "EventCategory",
+    "analytics",
+    "initPerformanceTracking",
+    "trackEvent"
+   ],
+   "export_default": "analytics",
+   "linhas": 244,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "config",
+    "hooks",
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/api-client.ts",
+   "camada": "config",
+   "exports": [
+    "ApiClient",
+    "apiClient"
+   ],
+   "export_default": null,
+   "linhas": 267,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "config"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/bitrix24-client.ts",
+   "camada": "config",
+   "exports": [
+    "Bitrix24Client",
+    "SPA_CONFIG",
+    "bitrix24",
+    "expedicao",
+    "lalamove"
+   ],
+   "export_default": "bitrix24",
+   "linhas": 293,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "config"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/environment.ts",
+   "camada": "config",
+   "exports": [
+    "Environment",
+    "envConfig",
+    "isDevelopment",
+    "isProduction",
+    "isStaging",
+    "validateConfig"
+   ],
+   "export_default": "envConfig",
+   "linhas": 128,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_API_URL",
+    "VITE_APP_ENV",
+    "VITE_BITRIX24_WEBHOOK_URL",
+    "VITE_CORREIOS_API_KEY",
+    "VITE_ENABLE_GAMIFICATION",
+    "VITE_ENABLE_OFFLINE_MODE",
+    "VITE_ENABLE_PWA",
+    "VITE_GA_TRACKING_ID",
+    "VITE_NFE_CERTIFICATE_PATH",
+    "VITE_SENTRY_DSN",
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [
+    "ENABLE_GAMIFICATION",
+    "ENABLE_OFFLINE_MODE",
+    "ENABLE_PWA"
+   ],
+   "papeis": [],
+   "usado_por": 7,
+   "usado_por_modulos": [
+    "config",
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/error-handler.ts",
+   "camada": "config",
+   "exports": [
+    "AppError",
+    "ErrorCode",
+    "createAppError",
+    "isAppError",
+    "logError",
+    "setupGlobalErrorHandler",
+    "useErrorHandler"
+   ],
+   "export_default": null,
+   "linhas": 203,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/common",
+    "config",
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/index.ts",
+   "camada": "config",
+   "exports": [
+    "APP_CONFIG",
+    "ApiClient",
+    "Bitrix24Client",
+    "ErrorCode",
+    "EventAction",
+    "EventCategory",
+    "SPA_CONFIG",
+    "analytics",
+    "apiClient",
+    "bitrix24",
+    "createAppError",
+    "debugFeatureFlags",
+    "envConfig",
+    "expedicao",
+    "getFeatureFlags",
+    "initPerformanceTracking",
+    "initializeApp",
+    "isAppError",
+    "isDevelopment",
+    "isFeatureEnabled",
+    "isProduction",
+    "isStaging",
+    "lalamove",
+    "logError",
+    "setUserContext",
+    "setupGlobalErrorHandler",
+    "trackEvent",
+    "useErrorHandler",
+    "useFeatureFlag",
+    "validateConfig",
+    "withFeatureFlag"
+   ],
+   "export_default": null,
+   "linhas": 92,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/menu.ts",
+   "camada": "config",
+   "exports": [
+    "getActiveMenuItem",
+    "menuItems"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "lucide-react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/layout"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/config/supabaseEnvAlias.ts",
+   "camada": "config",
+   "exports": [
+    "aliasSupabaseEnv"
+   ],
+   "export_default": null,
+   "linhas": 23,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/contexts/index.ts",
+   "camada": "contexts",
+   "exports": [
+    "AuthProvider",
+    "ThemeProvider",
+    "ToastProvider",
+    "useAuth",
+    "useTheme",
+    "useToast"
+   ],
+   "export_default": null,
+   "linhas": 4,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/lovable/index.ts",
+   "camada": "integrations",
+   "exports": [
+    "lovable"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@lovable.dev/cloud-auth-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "pages",
+    "pages/auth"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/client.ts",
+   "camada": "integrations",
+   "exports": [
+    "supabase"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 156,
+   "usado_por_modulos": [
+    "components/ImportExport",
+    "components/common",
+    "components/conferencia",
+    "components/dashboard",
+    "components/gamificacao",
+    "components/kanban",
+    "components/ocupacao",
+    "components/ondas",
+    "components/produtos",
+    "components/scanner",
+    "components/security",
+    "contexts",
+    "features/analytics",
+    "features/dashboard",
+    "features/inventory",
+    "features/picking",
+    "features/quality",
+    "features/receiving",
+    "features/shipping",
+    "guards",
+    "hooks",
+    "hooks/useInventarioCiclico",
+    "integrations/lovable",
+    "lib",
+    "middleware",
+    "pages",
+    "pages/admin",
+    "pages/auth",
+    "pages/categories",
+    "pages/customers",
+    "pages/serials",
+    "pages/warehouses",
+    "services"
+   ],
+   "coberto_por_testes": 10,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "camada": "integrations",
+   "exports": [
+    "CompositeTypes",
+    "Constants",
+    "Database",
+    "Enums",
+    "Json",
+    "Tables",
+    "TablesInsert",
+    "TablesUpdate"
+   ],
+   "export_default": null,
+   "linhas": 4761,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 25,
+   "usado_por_modulos": [
+    "components/ImportExport",
+    "features/inventory",
+    "features/quality",
+    "features/receiving",
+    "features/shipping",
+    "hooks",
+    "integrations/supabase",
+    "lib",
+    "services",
+    "types"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/a11y.ts",
+   "camada": "lib",
+   "exports": [
+    "announceToScreenReader",
+    "generateA11yId",
+    "handleListKeyboard",
+    "prefersReducedMotion",
+    "trapFocus"
+   ],
+   "export_default": null,
+   "linhas": 97,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/ai-invoke.ts",
+   "camada": "lib",
+   "exports": [
+    "AiInvokeResult",
+    "aiInvoke",
+    "getAiBreakerStats"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components/ia",
+    "features/analytics",
+    "hooks",
+    "pages",
+    "pages/admin"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/analytics.ts",
+   "camada": "lib",
+   "exports": [
+    "initAnalytics",
+    "trackEvent",
+    "trackPageView"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "VITE_GA_ID"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/api.ts",
+   "camada": "lib",
+   "exports": [
+    "apiCreate",
+    "apiDelete",
+    "apiGet",
+    "apiGetById",
+    "apiUpdate"
+   ],
+   "export_default": null,
+   "linhas": 57,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/arrays.ts",
+   "camada": "lib",
+   "exports": [
+    "arraysLib"
+   ],
+   "export_default": "arraysLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/backup.ts",
+   "camada": "lib",
+   "exports": [
+    "backupToLocalStorage",
+    "clearBackup",
+    "exportToJSON",
+    "restoreFromLocalStorage"
+   ],
+   "export_default": null,
+   "linhas": 32,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/cache.ts",
+   "camada": "lib",
+   "exports": [
+    "cache"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/calculators.ts",
+   "camada": "lib",
+   "exports": [
+    "calculatorsLib"
+   ],
+   "export_default": "calculatorsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/circuit-breaker.ts",
+   "camada": "lib",
+   "exports": [
+    "CircuitBreaker",
+    "CircuitBreakerError",
+    "circuits"
+   ],
+   "export_default": null,
+   "linhas": 182,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib",
+    "pages/admin"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/color.ts",
+   "camada": "lib",
+   "exports": [
+    "colorLib"
+   ],
+   "export_default": "colorLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/constants.ts",
+   "camada": "lib",
+   "exports": [
+    "constantsLib"
+   ],
+   "export_default": "constantsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/converters.ts",
+   "camada": "lib",
+   "exports": [
+    "convertersLib"
+   ],
+   "export_default": "convertersLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/crud/index.ts",
+   "camada": "lib",
+   "exports": [
+    "BulkActionsBar",
+    "DataImporter",
+    "DuplicateButton",
+    "SavedFiltersDropdown",
+    "SearchInput",
+    "VersionHistory",
+    "downloadExcel",
+    "generateCSVTemplate",
+    "importCSV",
+    "importExcel",
+    "useBulkActions",
+    "useCRUD",
+    "useDebouncedValue",
+    "useDuplicate",
+    "useFulltextSearch",
+    "useInfiniteScroll",
+    "useSavedFilters",
+    "useSoftDelete",
+    "useVersioning"
+   ],
+   "export_default": null,
+   "linhas": 25,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/crypto.ts",
+   "camada": "lib",
+   "exports": [
+    "cryptoLib"
+   ],
+   "export_default": "cryptoLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/csvImporter.ts",
+   "camada": "lib",
+   "exports": [
+    "ImportOptions",
+    "ImportResult",
+    "downloadCSV",
+    "generateCSVTemplate",
+    "importCSV",
+    "validateCSVHeaders"
+   ],
+   "export_default": null,
+   "linhas": 123,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "papaparse",
+    "zod"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/data",
+    "hooks",
+    "lib",
+    "lib/crud"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/dates.ts",
+   "camada": "lib",
+   "exports": [
+    "datesLib"
+   ],
+   "export_default": "datesLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/encryption.ts",
+   "camada": "lib",
+   "exports": [
+    "decryptData",
+    "encryptData"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/env.ts",
+   "camada": "lib",
+   "exports": [
+    "env",
+    "validateEnv"
+   ],
+   "export_default": null,
+   "linhas": 25,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV",
+    "MODE",
+    "PROD",
+    "VITE_GA_ID",
+    "VITE_SENTRY_DSN",
+    "VITE_SUPABASE_ANON_KEY",
+    "VITE_SUPABASE_URL"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/errors.ts",
+   "camada": "lib",
+   "exports": [
+    "errorsLib"
+   ],
+   "export_default": "errorsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/events.ts",
+   "camada": "lib",
+   "exports": [
+    "eventsLib"
+   ],
+   "export_default": "eventsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/excelImporter.ts",
+   "camada": "lib",
+   "exports": [
+    "ExcelImportOptions",
+    "downloadExcel",
+    "generateExcelTemplate",
+    "getExcelSheets",
+    "importExcel"
+   ],
+   "export_default": null,
+   "linhas": 158,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs",
+    "zod"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "components/data",
+    "features/inventory",
+    "hooks",
+    "lib/crud"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/exigirLinhaAfetada.ts",
+   "camada": "lib",
+   "exports": [
+    "exigirLinhaAfetada"
+   ],
+   "export_default": null,
+   "linhas": 17,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "pages/categories",
+    "pages/customers",
+    "pages/warehouses"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/export.ts",
+   "camada": "lib",
+   "exports": [
+    "exportToCSV",
+    "exportToJSON",
+    "printContent"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "components/export",
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/featureFlags.ts",
+   "camada": "lib",
+   "exports": [
+    "FeatureFlag",
+    "FeatureFlagsConfig",
+    "featureFlags"
+   ],
+   "export_default": "featureFlags",
+   "linhas": 159,
+   "tabelas": [
+    "feature_flags"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/file.ts",
+   "camada": "lib",
+   "exports": [
+    "fileLib"
+   ],
+   "export_default": "fileLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/formatters.ts",
+   "camada": "lib",
+   "exports": [
+    "capitalize",
+    "formatCEP",
+    "formatCNPJ",
+    "formatCPF",
+    "formatCurrency",
+    "formatDate",
+    "formatDateTime",
+    "formatDimensions",
+    "formatFileSize",
+    "formatNumber",
+    "formatPercent",
+    "formatPhone",
+    "formatRelativeTime",
+    "formatWeight",
+    "slugify",
+    "titleCase",
+    "truncate"
+   ],
+   "export_default": null,
+   "linhas": 154,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "components/ui"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/healthcheck.ts",
+   "camada": "lib",
+   "exports": [
+    "HealthStatus",
+    "checkHealth"
+   ],
+   "export_default": null,
+   "linhas": 26,
+   "tabelas": [
+    "posicoes_estoque"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/helpers.ts",
+   "camada": "lib",
+   "exports": [
+    "helpersLib"
+   ],
+   "export_default": "helpersLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/image.ts",
+   "camada": "lib",
+   "exports": [
+    "imageLib"
+   ],
+   "export_default": "imageLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/index.ts",
+   "camada": "lib",
+   "exports": [
+    "cn",
+    "getPerformanceSummary",
+    "initWebVitals",
+    "rateLimiter"
+   ],
+   "export_default": null,
+   "linhas": 9,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/init.ts",
+   "camada": "lib",
+   "exports": [
+    "initializeApp",
+    "isOnline",
+    "isRunningAsPWA",
+    "onConnectivityChange"
+   ],
+   "export_default": "initializeApp",
+   "linhas": 92,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "PROD"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/logger.ts",
+   "camada": "lib",
+   "exports": [
+    "createLogger",
+    "logger"
+   ],
+   "export_default": null,
+   "linhas": 187,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV",
+    "PROD"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/masks.ts",
+   "camada": "lib",
+   "exports": [
+    "maskCEP",
+    "maskCNPJ",
+    "maskCPF",
+    "maskCurrency",
+    "maskPhone"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/monitoring.ts",
+   "camada": "lib",
+   "exports": [
+    "initMonitoring",
+    "logError",
+    "trackEvent"
+   ],
+   "export_default": null,
+   "linhas": 41,
+   "tabelas": [],
+   "rpcs": [
+    "log_audit_event"
+   ],
+   "edges": [],
+   "env": [
+    "DEV",
+    "PROD",
+    "VITE_SENTRY_DSN"
+   ],
+   "externos": [
+    "@sentry/react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/numbers.ts",
+   "camada": "lib",
+   "exports": [
+    "numbersLib"
+   ],
+   "export_default": "numbersLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/objects.ts",
+   "camada": "lib",
+   "exports": [
+    "objectsLib"
+   ],
+   "export_default": "objectsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/offlineQueue.ts",
+   "camada": "lib",
+   "exports": [
+    "offlineQueue"
+   ],
+   "export_default": null,
+   "linhas": 52,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/parsers.ts",
+   "camada": "lib",
+   "exports": [
+    "parsersLib"
+   ],
+   "export_default": "parsersLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/pdf.ts",
+   "camada": "lib",
+   "exports": [
+    "downloadPDF",
+    "generatePDF",
+    "generateTablePDF"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/performance.ts",
+   "camada": "lib",
+   "exports": [
+    "measurePerformance",
+    "reportWebVitals"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/prefetch.ts",
+   "camada": "lib",
+   "exports": [
+    "prefetchCriticalRoutes",
+    "prefetchRoute"
+   ],
+   "export_default": null,
+   "linhas": 60,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "hooks"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/print.ts",
+   "camada": "lib",
+   "exports": [
+    "printElement",
+    "printTable"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/queryClient.ts",
+   "camada": "lib",
+   "exports": [
+    "clearCache",
+    "invalidateAllQueries",
+    "queryClient"
+   ],
+   "export_default": null,
+   "linhas": 24,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@tanstack/react-query"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/queue.ts",
+   "camada": "lib",
+   "exports": [
+    "queueLib"
+   ],
+   "export_default": "queueLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/rateLimit.ts",
+   "camada": "lib",
+   "exports": [
+    "clearRateLimit",
+    "rateLimit",
+    "rateLimiter"
+   ],
+   "export_default": null,
+   "linhas": 9,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/rateLimiter.ts",
+   "camada": "lib",
+   "exports": [
+    "rateLimiter"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/realtime.ts",
+   "camada": "lib",
+   "exports": [
+    "createRealtimeChannel",
+    "removeChannel"
+   ],
+   "export_default": null,
+   "linhas": 18,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "@supabase/supabase-js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/register-sw.ts",
+   "camada": "lib",
+   "exports": [
+    "registerServiceWorker",
+    "requestNotificationPermission",
+    "subscribeToPush",
+    "unregisterServiceWorker"
+   ],
+   "export_default": "registerServiceWorker",
+   "linhas": 148,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV",
+    "PROD",
+    "VITE_VAPID_PUBLIC_KEY"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/retry.ts",
+   "camada": "lib",
+   "exports": [
+    "withRetry"
+   ],
+   "export_default": null,
+   "linhas": 36,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/sanitize.ts",
+   "camada": "lib",
+   "exports": [
+    "escapeHTML",
+    "escapeRegex",
+    "sanitizeFilename",
+    "sanitizeHTML",
+    "sanitizeJSON",
+    "sanitizePath",
+    "sanitizeSQL",
+    "sanitizeURL",
+    "stripTags"
+   ],
+   "export_default": null,
+   "linhas": 136,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "dompurify"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas.ts",
+   "camada": "lib",
+   "exports": [
+    "schemasLib"
+   ],
+   "export_default": "schemasLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/adjustmentSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Adjustment",
+    "adjustmentCreateSchema",
+    "adjustmentSchema"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/authFormSchemas.ts",
+   "camada": "lib",
+   "exports": [
+    "ForgotPasswordForm",
+    "LoginForm",
+    "RegisterForm",
+    "ResetPasswordForm",
+    "forgotPasswordFormSchema",
+    "loginFormSchema",
+    "registerFormSchema",
+    "resetPasswordFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 46,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/carrierSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Carrier",
+    "carrierCreateSchema",
+    "carrierSchema"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/customerSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Customer",
+    "customerCreateSchema",
+    "customerSchema"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/cycleCountFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "CycleCountFormData",
+    "CycleCountItem",
+    "cycleCountFormSchema",
+    "cycleCountItemSchema"
+   ],
+   "export_default": null,
+   "linhas": 39,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/cycleCountSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "CycleCount",
+    "cycleCountCreateSchema",
+    "cycleCountItemSchema",
+    "cycleCountSchema"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/index.ts",
+   "camada": "lib",
+   "exports": [],
+   "export_default": null,
+   "linhas": 29,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/inventoryFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "InventoryAdjustmentItem",
+    "InventoryFormData",
+    "InventoryTransferFormData",
+    "inventoryAdjustmentItemSchema",
+    "inventoryFormSchema",
+    "inventoryTransferFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/inventorySchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Inventory",
+    "InventoryAdjust",
+    "inventoryAdjustSchema",
+    "inventorySchema"
+   ],
+   "export_default": null,
+   "linhas": 32,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/locationSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Location",
+    "LocationCreate",
+    "LocationUpdate",
+    "locationCreateSchema",
+    "locationSchema",
+    "locationUpdateSchema"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/lotSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Lot",
+    "lotCreateSchema",
+    "lotSchema"
+   ],
+   "export_default": null,
+   "linhas": 23,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/orderFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "AddressForm",
+    "OrderForm",
+    "OrderItemForm",
+    "addressFormSchema",
+    "orderFormSchema",
+    "orderItemFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 38,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/orderSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Order",
+    "OrderCreate",
+    "OrderItem",
+    "OrderUpdate",
+    "orderCreateSchema",
+    "orderItemSchema",
+    "orderSchema",
+    "orderUpdateSchema"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/packingFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Package",
+    "PackingFormData",
+    "PackingItem",
+    "packageSchema",
+    "packingFormSchema",
+    "packingItemSchema"
+   ],
+   "export_default": null,
+   "linhas": 51,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/packingSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Packing",
+    "packageSchema",
+    "packingCreateSchema",
+    "packingSchema"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/pickingFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "PickingBatchFormData",
+    "PickingFormData",
+    "PickingItem",
+    "pickingBatchFormSchema",
+    "pickingFormSchema",
+    "pickingItemSchema"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/pickingSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Picking",
+    "pickingCreateSchema",
+    "pickingItemSchema",
+    "pickingSchema"
+   ],
+   "export_default": null,
+   "linhas": 43,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/productFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "ProductForm",
+    "productFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/productSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Product",
+    "ProductCreate",
+    "ProductUpdate",
+    "productCreateSchema",
+    "productSchema",
+    "productUpdateSchema"
+   ],
+   "export_default": null,
+   "linhas": 49,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/qualitySchema.ts",
+   "camada": "lib",
+   "exports": [
+    "QualityInspection",
+    "qualityCreateSchema",
+    "qualityInspectionSchema"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/receivingFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "ReceivingConfirmForm",
+    "ReceivingForm",
+    "ReceivingItemForm",
+    "receivingConfirmFormSchema",
+    "receivingFormSchema",
+    "receivingItemFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 36,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/receivingSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Receiving",
+    "receivingCreateSchema",
+    "receivingItemSchema",
+    "receivingSchema"
+   ],
+   "export_default": null,
+   "linhas": 44,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/serialSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Serial",
+    "serialCreateSchema",
+    "serialSchema"
+   ],
+   "export_default": null,
+   "linhas": 27,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/settingsFormSchemas.ts",
+   "camada": "lib",
+   "exports": [
+    "CompanySettingsForm",
+    "PasswordChangeForm",
+    "PreferencesForm",
+    "ProfileForm",
+    "companySettingsFormSchema",
+    "passwordChangeFormSchema",
+    "preferencesFormSchema",
+    "profileFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 53,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 4,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/shipmentFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "ShipmentAddress",
+    "ShipmentFormData",
+    "shipmentAddressSchema",
+    "shipmentFormSchema"
+   ],
+   "export_default": null,
+   "linhas": 48,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/shipmentSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Shipment",
+    "shipmentCreateSchema",
+    "shipmentSchema"
+   ],
+   "export_default": null,
+   "linhas": 43,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/supplierSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Supplier",
+    "supplierCreateSchema",
+    "supplierSchema"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/transferSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Transfer",
+    "transferCreateSchema",
+    "transferItemSchema",
+    "transferSchema"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/userSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "User",
+    "UserCreate",
+    "UserUpdate",
+    "userCreateSchema",
+    "userSchema",
+    "userUpdateSchema"
+   ],
+   "export_default": null,
+   "linhas": 40,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/warehouseSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Warehouse",
+    "WarehouseCreate",
+    "WarehouseUpdate",
+    "warehouseCreateSchema",
+    "warehouseSchema",
+    "warehouseUpdateSchema"
+   ],
+   "export_default": null,
+   "linhas": 50,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 9,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/schemas/waveFormSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "WaveFormData",
+    "WaveOptimizationData",
+    "WaveOrder",
+    "waveFormSchema",
+    "waveOptimizationSchema",
+    "waveOrderSchema"
+   ],
+   "export_default": null,
+   "linhas": 45,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/schemas/waveSchema.ts",
+   "camada": "lib",
+   "exports": [
+    "Wave",
+    "waveCreateSchema",
+    "waveSchema"
+   ],
+   "export_default": null,
+   "linhas": 33,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 1,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib/schemas"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/security.ts",
+   "camada": "lib",
+   "exports": [
+    "hashString",
+    "sanitizeInput",
+    "validateCNPJ",
+    "validateCPF",
+    "validateEmail"
+   ],
+   "export_default": null,
+   "linhas": 58,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/sentry.ts",
+   "camada": "lib",
+   "exports": [
+    "addBreadcrumb",
+    "captureException",
+    "clearUser",
+    "initSentry",
+    "setUser"
+   ],
+   "export_default": null,
+   "linhas": 89,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV",
+    "MODE",
+    "PROD",
+    "VITE_APP_VERSION",
+    "VITE_SENTRY_DSN"
+   ],
+   "externos": [
+    "@sentry/react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/ImportExport",
+    "components/common"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/serviceWorker.ts",
+   "camada": "lib",
+   "exports": [],
+   "export_default": null,
+   "linhas": 136,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/state-machines.ts",
+   "camada": "lib",
+   "exports": [
+    "assertTransition",
+    "canTransition",
+    "getNextStatuses",
+    "isTerminal"
+   ],
+   "export_default": null,
+   "linhas": 143,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/statusColors.ts",
+   "camada": "lib",
+   "exports": [
+    "StatusVariant",
+    "getStatusClasses",
+    "getStatusLabel",
+    "getVariantClasses"
+   ],
+   "export_default": null,
+   "linhas": 74,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "features/dashboard"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/storage.ts",
+   "camada": "lib",
+   "exports": [
+    "deleteFile",
+    "generateFileName",
+    "getPublicUrl",
+    "listFiles",
+    "uploadFile"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/strings.ts",
+   "camada": "lib",
+   "exports": [
+    "stringsLib"
+   ],
+   "export_default": "stringsLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/supabase.ts",
+   "camada": "lib",
+   "exports": [
+    "supabase"
+   ],
+   "export_default": "supabase",
+   "linhas": 5,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 1,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/transitions/easings.ts",
+   "camada": "lib",
+   "exports": [
+    "easings",
+    "springs"
+   ],
+   "export_default": null,
+   "linhas": 15,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "framer-motion"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib/transitions"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/transitions/index.ts",
+   "camada": "lib",
+   "exports": [],
+   "export_default": null,
+   "linhas": 5,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/transitions/presets.ts",
+   "camada": "lib",
+   "exports": [
+    "presets",
+    "reducedMotionPreset"
+   ],
+   "export_default": null,
+   "linhas": 85,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "lib/transitions"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/transitions/registry.ts",
+   "camada": "lib",
+   "exports": [
+    "defaultRouteMap",
+    "resolveRouteTransition"
+   ],
+   "export_default": null,
+   "linhas": 34,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "contexts",
+    "hooks",
+    "lib/transitions"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/transitions/types.ts",
+   "camada": "lib",
+   "exports": [
+    "RouteTransitionMap",
+    "TransitionConfig",
+    "TransitionContextValue",
+    "TransitionName",
+    "TransitionPreset"
+   ],
+   "export_default": null,
+   "linhas": 36,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "framer-motion"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 6,
+   "usado_por_modulos": [
+    "components/layout",
+    "contexts",
+    "hooks",
+    "lib/transitions"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/types.ts",
+   "camada": "lib",
+   "exports": [
+    "typesLib"
+   ],
+   "export_default": "typesLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/utils.ts",
+   "camada": "lib",
+   "exports": [
+    "cn"
+   ],
+   "export_default": null,
+   "linhas": 7,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "clsx",
+    "tailwind-merge"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 257,
+   "usado_por_modulos": [
+    "components",
+    "components/a11y",
+    "components/analytics",
+    "components/armazenamento",
+    "components/auth",
+    "components/charts",
+    "components/common",
+    "components/dashboard",
+    "components/data",
+    "components/display",
+    "components/dnd",
+    "components/feedback",
+    "components/forms",
+    "components/gamificacao",
+    "components/inventario",
+    "components/kpi",
+    "components/kpis",
+    "components/layout",
+    "components/mobile",
+    "components/molecules",
+    "components/movimentacao",
+    "components/navigation",
+    "components/notifications",
+    "components/ocupacao",
+    "components/onboarding",
+    "components/organisms",
+    "components/print",
+    "components/produtividade",
+    "components/relatorios",
+    "components/scanner",
+    "components/search",
+    "components/telemetry",
+    "components/templates",
+    "components/trocas",
+    "components/ui",
+    "components/wms",
+    "features/analytics",
+    "features/dashboard",
+    "features/inventory",
+    "features/quality",
+    "features/receiving",
+    "lib",
+    "pages",
+    "pages/admin",
+    "pages/inventory",
+    "pages/notifications",
+    "pages/profile"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/uuid.ts",
+   "camada": "lib",
+   "exports": [
+    "uuidLib"
+   ],
+   "export_default": "uuidLib",
+   "linhas": 6,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/validation.ts",
+   "camada": "lib",
+   "exports": [
+    "validate",
+    "validationRules"
+   ],
+   "export_default": null,
+   "linhas": 35,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/validations.ts",
+   "camada": "lib",
+   "exports": [
+    "MovimentacaoFormData",
+    "ProdutoFormData",
+    "RomaneioFormData",
+    "extractZodErrors",
+    "movimentacaoSchema",
+    "produtoSchema",
+    "romaneioSchema",
+    "validateForm"
+   ],
+   "export_default": null,
+   "linhas": 92,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 2,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "lib",
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/validations/index.ts",
+   "camada": "lib",
+   "exports": [
+    "Alerta",
+    "Estoque",
+    "InventarioCiclo",
+    "Lote",
+    "PosicaoEstoque",
+    "Produto",
+    "Recebimento",
+    "Romaneio",
+    "RomaneioItem",
+    "Tarefa",
+    "Triagem",
+    "TrocaDevolucao",
+    "Usuario",
+    "alertaSchema",
+    "estoqueSchema",
+    "inventarioCicloSchema",
+    "loteSchema",
+    "posicaoEstoqueSchema",
+    "produtoSchema",
+    "recebimentoSchema",
+    "romaneioItemSchema",
+    "romaneioSchema",
+    "tarefaSchema",
+    "triagemSchema",
+    "trocaDevolucaoSchema",
+    "usuarioSchema"
+   ],
+   "export_default": null,
+   "linhas": 169,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 13,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/validators.ts",
+   "camada": "lib",
+   "exports": [
+    "isNotEmpty",
+    "isPositiveNumber",
+    "isValidCEP",
+    "isValidCNPJ",
+    "isValidCPF",
+    "isValidDate",
+    "isValidEAN13",
+    "isValidEmail",
+    "isValidPassword",
+    "isValidPhone",
+    "isValidURL"
+   ],
+   "export_default": null,
+   "linhas": 103,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/web-vitals.ts",
+   "camada": "lib",
+   "exports": [
+    "getPerformanceSummary",
+    "initWebVitals"
+   ],
+   "export_default": null,
+   "linhas": 242,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [
+    "DEV"
+   ],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "lib"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/lib/websocket.ts",
+   "camada": "lib",
+   "exports": [
+    "wsManager"
+   ],
+   "export_default": null,
+   "linhas": 43,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/webVitals.ts",
+   "camada": "lib",
+   "exports": [
+    "getPerformanceSummary",
+    "initWebVitals",
+    "measurePageLoad",
+    "reportWebVitals"
+   ],
+   "export_default": null,
+   "linhas": 11,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/lib/wmsSchemas.ts",
+   "camada": "lib",
+   "exports": [
+    "inventarioSchema",
+    "movimentacaoSchema",
+    "produtoEstoqueSchema",
+    "wmsFilterConfigs",
+    "wmsImportTemplates"
+   ],
+   "export_default": null,
+   "linhas": 78,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "zod"
+   ],
+   "zod_schemas": 3,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "features/inventory"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/middleware/index.ts",
+   "camada": "middleware",
+   "exports": [
+    "adminMiddleware",
+    "authMiddleware"
+   ],
+   "export_default": "(anônimo)",
+   "linhas": 25,
+   "tabelas": [
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [
+    "admin"
+   ],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/abcService.ts",
+   "camada": "services",
+   "exports": [
+    "ABCAnalysisResult",
+    "abcService"
+   ],
+   "export_default": null,
+   "linhas": 66,
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/alertService.ts",
+   "camada": "services",
+   "exports": [
+    "Alert",
+    "alertService"
+   ],
+   "export_default": null,
+   "linhas": 69,
+   "tabelas": [
+    "notificacoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/analyticsService.ts",
+   "camada": "services",
+   "exports": [
+    "analyticsService"
+   ],
+   "export_default": null,
+   "linhas": 30,
+   "tabelas": [
+    "analytics_events"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/auditService.ts",
+   "camada": "services",
+   "exports": [
+    "AuditAction",
+    "AuditFilter",
+    "AuditLogEntry",
+    "auditService"
+   ],
+   "export_default": null,
+   "linhas": 99,
+   "tabelas": [
+    "audit_log"
+   ],
+   "rpcs": [
+    "log_audit_event"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 5,
+   "usado_por_modulos": [
+    "components/dashboard",
+    "hooks",
+    "pages/admin",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/authService.ts",
+   "camada": "services",
+   "exports": [
+    "AppRole",
+    "Profile",
+    "authService"
+   ],
+   "export_default": null,
+   "linhas": 88,
+   "tabelas": [
+    "profiles",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "contexts",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/backupService.ts",
+   "camada": "services",
+   "exports": [
+    "backupService"
+   ],
+   "export_default": null,
+   "linhas": 27,
+   "tabelas": [
+    "backups"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/barcodeService.ts",
+   "camada": "services",
+   "exports": [
+    "barcodeService"
+   ],
+   "export_default": null,
+   "linhas": 59,
+   "tabelas": [
+    "produtos"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/batchService.ts",
+   "camada": "services",
+   "exports": [
+    "Batch",
+    "BatchStatus",
+    "batchService"
+   ],
+   "export_default": null,
+   "linhas": 101,
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/categoryService.ts",
+   "camada": "services",
+   "exports": [
+    "categoryService"
+   ],
+   "export_default": null,
+   "linhas": 41,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/customerService.ts",
+   "camada": "services",
+   "exports": [
+    "customerService"
+   ],
+   "export_default": null,
+   "linhas": 41,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/gamificacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "gamificacaoService"
+   ],
+   "export_default": null,
+   "linhas": 159,
+   "tabelas": [
+    "conquistas_definicoes",
+    "conquistas_usuarios",
+    "desafios_diarios",
+    "desafios_usuarios",
+    "gamificacao_usuarios",
+    "xp_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/index.ts",
+   "camada": "services",
+   "exports": [],
+   "export_default": null,
+   "linhas": 25,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/inventoryService.ts",
+   "camada": "services",
+   "exports": [
+    "inventoryService"
+   ],
+   "export_default": null,
+   "linhas": 155,
+   "tabelas": [
+    "posicao_status_log",
+    "posicoes_estoque"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "features/inventory",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/locationService.ts",
+   "camada": "services",
+   "exports": [
+    "Location",
+    "locationService"
+   ],
+   "export_default": null,
+   "linhas": 76,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/lotService.ts",
+   "camada": "services",
+   "exports": [
+    "lotService"
+   ],
+   "export_default": null,
+   "linhas": 29,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/movimentacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "movimentacaoService"
+   ],
+   "export_default": null,
+   "linhas": 139,
+   "tabelas": [
+    "rastreamento_historico"
+   ],
+   "rpcs": [
+    "move_stock"
+   ],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "hooks",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/notificacaoService.ts",
+   "camada": "services",
+   "exports": [
+    "notificacaoService"
+   ],
+   "export_default": null,
+   "linhas": 56,
+   "tabelas": [
+    "notificacoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/orderService.ts",
+   "camada": "services",
+   "exports": [
+    "orderService"
+   ],
+   "export_default": null,
+   "linhas": 101,
+   "tabelas": [
+    "order_items",
+    "orders"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "pages",
+    "pages/orders",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/productService.ts",
+   "camada": "services",
+   "exports": [
+    "productService"
+   ],
+   "export_default": null,
+   "linhas": 104,
+   "tabelas": [
+    "produtos",
+    "rastreamento_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "hooks",
+    "pages",
+    "pages/products",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/qualityService.ts",
+   "camada": "services",
+   "exports": [
+    "qualityService"
+   ],
+   "export_default": null,
+   "linhas": 63,
+   "tabelas": [
+    "eventos_triagem"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "features/quality",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/receivingService.ts",
+   "camada": "services",
+   "exports": [
+    "receivingService"
+   ],
+   "export_default": null,
+   "linhas": 72,
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 2,
+   "usado_por_modulos": [
+    "features/receiving",
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/relatorioService.ts",
+   "camada": "services",
+   "exports": [
+    "relatorioService"
+   ],
+   "export_default": null,
+   "linhas": 71,
+   "tabelas": [
+    "eventos_triagem",
+    "posicoes_estoque",
+    "rastreamento_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/stockService.ts",
+   "camada": "services",
+   "exports": [
+    "StockMovement",
+    "stockService"
+   ],
+   "export_default": null,
+   "linhas": 111,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/supplierService.ts",
+   "camada": "services",
+   "exports": [
+    "supplierService"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/services/warehouseService.ts",
+   "camada": "services",
+   "exports": [
+    "warehouseService"
+   ],
+   "export_default": null,
+   "linhas": 31,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/stores/index.ts",
+   "camada": "stores",
+   "exports": [
+    "appStore",
+    "createStore"
+   ],
+   "export_default": "(anônimo)",
+   "linhas": 32,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/accessibility.ts",
+   "camada": "utils",
+   "exports": [
+    "announceToScreenReader",
+    "generateA11yId",
+    "getIconButtonProps",
+    "prefersReducedMotion",
+    "srOnlyStyle",
+    "trapFocus"
+   ],
+   "export_default": null,
+   "linhas": 102,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/dashboardExport.ts",
+   "camada": "utils",
+   "exports": [
+    "exportDashboardToPDF"
+   ],
+   "export_default": null,
+   "linhas": 120,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "jspdf"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/date.ts",
+   "camada": "utils",
+   "exports": [
+    "addDays",
+    "diffInDays",
+    "endOfDay",
+    "formatDate",
+    "formatDateTime",
+    "formatRelativeTime",
+    "isSameDay",
+    "startOfDay"
+   ],
+   "export_default": null,
+   "linhas": 90,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 4,
+   "usado_por_modulos": [
+    "features/quality",
+    "features/receiving",
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/dateUtils.ts",
+   "camada": "utils",
+   "exports": [
+    "formatFriendlyDate",
+    "getDaysSince",
+    "getStockAgeColor"
+   ],
+   "export_default": null,
+   "linhas": 33,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/utils/exportExcel.ts",
+   "camada": "utils",
+   "exports": [
+    "exportMultipleSheetsToExcel",
+    "exportToExcel"
+   ],
+   "export_default": null,
+   "linhas": 94,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "exceljs"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "pages"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/formatters.ts",
+   "camada": "utils",
+   "exports": [
+    "capitalizar",
+    "formatarCNPJ",
+    "formatarCPF",
+    "formatarCodigoLote",
+    "formatarData",
+    "formatarDataCurta",
+    "formatarDataHora",
+    "formatarDiaSemana",
+    "formatarDuracao",
+    "formatarHora",
+    "formatarMinutos",
+    "formatarMoeda",
+    "formatarNome",
+    "formatarNumero",
+    "formatarNumeroCompacto",
+    "formatarPercentual",
+    "formatarQuantidade",
+    "formatarSegundos",
+    "formatarStatus",
+    "formatarTelefone",
+    "formatarTempoRelativo",
+    "formatarVariacao",
+    "getCorStatus",
+    "isVazio",
+    "truncarTexto",
+    "valorOuFallback"
+   ],
+   "export_default": null,
+   "linhas": 364,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "date-fns"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  },
+  {
+   "arquivo": "src/utils/haptics.ts",
+   "camada": "utils",
+   "exports": [
+    "haptics"
+   ],
+   "export_default": null,
+   "linhas": 42,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 15,
+   "usado_por_modulos": [
+    "components/common",
+    "components/dashboard",
+    "components/molecules",
+    "components/organisms",
+    "features/inventory",
+    "features/quality",
+    "features/receiving",
+    "hooks",
+    "pages",
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/index.ts",
+   "camada": "utils",
+   "exports": [],
+   "export_default": null,
+   "linhas": 7,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/logger.ts",
+   "camada": "utils",
+   "exports": [
+    "logger"
+   ],
+   "export_default": "logger",
+   "linhas": 69,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 55,
+   "usado_por_modulos": [
+    "components/ImportExport",
+    "components/gamificacao",
+    "components/scanner",
+    "config",
+    "contexts",
+    "features/analytics",
+    "features/dashboard",
+    "features/inventory",
+    "features/picking",
+    "features/quality",
+    "features/receiving",
+    "features/shipping",
+    "hooks",
+    "lib",
+    "pages",
+    "services",
+    "utils"
+   ],
+   "coberto_por_testes": 1,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/money.ts",
+   "camada": "utils",
+   "exports": [
+    "addMoney",
+    "formatMoney",
+    "multiplyMoney",
+    "toDecimal"
+   ],
+   "export_default": null,
+   "linhas": 20,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "decimal.js"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/number.ts",
+   "camada": "utils",
+   "exports": [
+    "clamp",
+    "formatBytes",
+    "formatCompact",
+    "formatCurrency",
+    "formatNumber",
+    "formatPercent",
+    "percentage",
+    "roundTo"
+   ],
+   "export_default": null,
+   "linhas": 79,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "utils"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/parseNFXML.ts",
+   "camada": "utils",
+   "exports": [
+    "NFeDestinatario",
+    "NFeEmitente",
+    "NFeParsed",
+    "NFeProduto",
+    "NFeTransporte",
+    "extractProdutosFromNFe",
+    "nfeToRecebimento",
+    "parseNFeXML",
+    "validateNFeXML"
+   ],
+   "export_default": null,
+   "linhas": 348,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 1,
+   "usado_por_modulos": [
+    "features/receiving"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/performance.ts",
+   "camada": "utils",
+   "exports": [
+    "performanceService",
+    "usePerformance"
+   ],
+   "export_default": null,
+   "linhas": 83,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [
+    "react"
+   ],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 3,
+   "usado_por_modulos": [
+    "components/telemetry",
+    "features/dashboard",
+    "services"
+   ],
+   "coberto_por_testes": 0,
+   "orfao": false
+  },
+  {
+   "arquivo": "src/utils/validators.ts",
+   "camada": "utils",
+   "exports": [
+    "ResultadoValidacao",
+    "combinarValidacoes",
+    "criarValidacao",
+    "validarCEP",
+    "validarCNPJ",
+    "validarCPF",
+    "validarChecklistCompleto",
+    "validarCodigoLote",
+    "validarData",
+    "validarDataFutura",
+    "validarDataNoPeriodo",
+    "validarDataPassada",
+    "validarEAN13",
+    "validarEmail",
+    "validarInteiro",
+    "validarIntervalo",
+    "validarNumeroNaoNegativo",
+    "validarNumeroPositivo",
+    "validarPercentual",
+    "validarPosicaoEstoque",
+    "validarQuantidadeTriagem",
+    "validarTamanhoMaximo",
+    "validarTamanhoMinimo",
+    "validarTelefone",
+    "validarTextoObrigatorio"
+   ],
+   "export_default": null,
+   "linhas": 344,
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "env": [],
+   "externos": [],
+   "zod_schemas": 0,
+   "flags": [],
+   "papeis": [],
+   "usado_por": 0,
+   "usado_por_modulos": [],
+   "coberto_por_testes": 0,
+   "orfao": true
+  }
+ ]
+}

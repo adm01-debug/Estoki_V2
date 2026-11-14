@@ -1,0 +1,96 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (71)",
+   "src/features (13)",
+   "src/components (2)"
+  ],
+  "componentes": [
+   "src/components (468)",
+   "src/pages (93)",
+   "src/features (67)"
+  ],
+  "hooks": [
+   "src/hooks (286)",
+   "src/features (16)",
+   "src/components (7)"
+  ],
+  "servicos_logica": [
+   "src/lib (107)",
+   "src/services (25)",
+   "src/utils (14)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (42)",
+   "co-localizado (__tests__) (17)",
+   "outro (15)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/db-audit (11)",
+   "scripts/ci (7)",
+   "scripts/inventario (5)"
+  ],
+  "docs": [
+   "docs (9)",
+   "(raiz) (7)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (87%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (95%)",
+  "edge_functions": "kebab-case (97%)",
+  "tabelas": "snake_case (79%)"
+ },
+ "barrels_index": 31,
+ "extensao_componentes": [
+  ".tsx (645)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "@/components/": "src/components/",
+   "@/hooks/": "src/hooks/",
+   "@/lib/": "src/lib/",
+   "@/services/": "src/services/",
+   "@/types/": "src/types/",
+   "@/utils/": "src/utils/",
+   "@/contexts/": "src/contexts/",
+   "@/guards/": "src/guards/",
+   "@/hoc/": "src/hoc/",
+   "@/workers/": "src/workers/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "conventional commits (observado)",
+  "exemplos": [
+   "fix: rewrites SPA no vercel.json (rotas retas dão 200 em produção) (#102)",
+   "fix(e2e): elimina flaky da rota /estoque no firefox (2º child no DialogTrigger) (#103)",
+   "fix(test): stub getClientRects/getBoundingClientRect de Range/Text no setup do Vitest (#101)",
+   "fix(cadastros): alinha front ao schema real do banco (numero_serial, cpf_cnpj, capacidade_total) (#100)",
+   "fix(rls): edição/remoção bloqueada pela RLS não mostra mais \"sucesso\" (#99)"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": true,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.paths.json"
+  ]
+ }
+}

@@ -1,0 +1,1332 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "f06b8d0e1bb5c94dec33c44e700797aa1e767385",
+  "branch": "main",
+  "data_commit": "2026-11-14T09:13:09-03:00",
+  "remote": "https://github.com/adm01-debug/Estoki_V2",
+  "ultimos_commits": [
+   {
+    "sha": "f06b8d0e",
+    "data": "2026-11-14",
+    "assunto": "fix: rewrites SPA no vercel.json (rotas retas dão 200 em produção) (#102)"
+   },
+   {
+    "sha": "c7a225c5",
+    "data": "2026-11-14",
+    "assunto": "fix(e2e): elimina flaky da rota /estoque no firefox (2º child no DialogTrigger) (#103)"
+   },
+   {
+    "sha": "01b00ccd",
+    "data": "2026-11-13",
+    "assunto": "fix(test): stub getClientRects/getBoundingClientRect de Range/Text no setup do Vitest (#101)"
+   },
+   {
+    "sha": "6d12224e",
+    "data": "2026-11-13",
+    "assunto": "fix(cadastros): alinha front ao schema real do banco (numero_serial, cpf_cnpj, capacidade_total) (#100)"
+   },
+   {
+    "sha": "abc2b0bd",
+    "data": "2026-11-13",
+    "assunto": "fix(rls): edição/remoção bloqueada pela RLS não mostra mais \"sucesso\" (#99)"
+   },
+   {
+    "sha": "901c5da4",
+    "data": "2026-11-13",
+    "assunto": "fix(build): produção sem Supabase — aceitar as variáveis da integração Vercel (#98)"
+   },
+   {
+    "sha": "659405f5",
+    "data": "2026-11-13",
+    "assunto": "fix(seriais): a tela consultava a coluna inexistente numero_serial (#97)"
+   },
+   {
+    "sha": "eaed9fed",
+    "data": "2026-11-13",
+    "assunto": "fix(types): tsc 36 → 0, Tiptap alinhado em 3.31.3 e romaneios (#95)"
+   },
+   {
+    "sha": "6aedeabd",
+    "data": "2026-11-13",
+    "assunto": "fix(cd): concede permissao contents:write ao job de producao para criar release tag (#94)"
+   },
+   {
+    "sha": "5e2d4509",
+    "data": "2026-11-13",
+    "assunto": "fix(cd): remove flag --prebuilt que falhava no deploy CLI do Vercel (#93)"
+   },
+   {
+    "sha": "8635a414",
+    "data": "2026-11-13",
+    "assunto": "infra(cd): migra CD de Lovable para Vercel (deploy via token + smoke do dominio real) (#92)"
+   },
+   {
+    "sha": "ee5bf11d",
+    "data": "2026-11-13",
+    "assunto": "build(deps): bump actions/download-artifact from 7 to 8 (#74)"
+   },
+   {
+    "sha": "c1e08c2d",
+    "data": "2026-11-13",
+    "assunto": "build(deps): bump actions/setup-python from 6 to 7 (#73)"
+   },
+   {
+    "sha": "db85b5f0",
+    "data": "2026-11-13",
+    "assunto": "build(deps): bump peter-evans/create-pull-request from 8.1.1 to 8.1.2 (#72)"
+   },
+   {
+    "sha": "cdd2498c",
+    "data": "2026-11-13",
+    "assunto": "fix(inventario-estado): add-paths vira glob; sem banco.json o literal quebrava (#85)"
+   },
+   {
+    "sha": "95d8a498",
+    "data": "2026-11-13",
+    "assunto": "fix(branch-hygiene): remove fetch anonimo que quebrava o passo de relatorio (#84)"
+   },
+   {
+    "sha": "16531b2d",
+    "data": "2026-11-13",
+    "assunto": "fix(cd): smoke do staging vira diagnóstico não-bloqueante (#80)"
+   },
+   {
+    "sha": "21038f2a",
+    "data": "2026-11-13",
+    "assunto": "fix(ci): remove alvo preview (dev server) do E2E; roda so no bundle de producao (#89)"
+   },
+   {
+    "sha": "fa35a7c7",
+    "data": "2026-11-13",
+    "assunto": "Merge pull request #87 from adm01-debug/automation/inventario-estado"
+   },
+   {
+    "sha": "b43187ad",
+    "data": "2026-11-13",
+    "assunto": "chore(estado): atualiza inventario do estado real"
+   },
+   {
+    "sha": "d9beccc7",
+    "data": "2026-11-12",
+    "assunto": "build(deps): bump @dnd-kit/sortable from 8.0.0 to 10.0.0 (#59)"
+   },
+   {
+    "sha": "1ddcf07c",
+    "data": "2026-11-12",
+    "assunto": "build(deps): bump @sentry/react from 8.55.2 to 11.4.0 (#53)"
+   },
+   {
+    "sha": "7179d2a1",
+    "data": "2026-11-12",
+    "assunto": "build(deps): bump react-helmet-async from 2.0.5 to 3.0.0 (#54)"
+   },
+   {
+    "sha": "808fccae",
+    "data": "2026-11-12",
+    "assunto": "chore: resolve conflito da PR 58 com a main atual (bump globals 17) (#58)"
+   },
+   {
+    "sha": "23ab7f56",
+    "data": "2026-11-12",
+    "assunto": "build(deps-dev): bump @size-limit/file from 12.1.0 to 14.1.0 (#51)"
+   }
+  ],
+  "arquivos_mudados_7d": 157,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "package.json",
+    "mudancas": 16
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 14
+   },
+   {
+    "pasta": ".github/workflows/cd.yml",
+    "mudancas": 6
+   },
+   {
+    "pasta": "docs/estado/scripts-autonomos.md",
+    "mudancas": 4
+   },
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 4
+   },
+   {
+    "pasta": "src/pages/categories",
+    "mudancas": 4
+   },
+   {
+    "pasta": "src/pages/serials",
+    "mudancas": 4
+   },
+   {
+    "pasta": ".github/workflows/branch-hygiene-audit.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/ci.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/contexto.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/db-manifesto.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/inventario-estado.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".github/workflows/qa.yml",
+    "mudancas": 3
+   },
+   {
+    "pasta": ".gitignore",
+    "mudancas": 3
+   },
+   {
+    "pasta": "src/integrations/supabase",
+    "mudancas": 3
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "package.json",
+    "mudancas": 38
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 36
+   },
+   {
+    "arquivo": ".github/workflows/cd.yml",
+    "mudancas": 11
+   },
+   {
+    "arquivo": ".github/workflows/qa.yml",
+    "mudancas": 8
+   },
+   {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 6
+   },
+   {
+    "arquivo": "ESTADO_ATUAL.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/estado/EVIDENCIAS.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "docs/estado/scripts-autonomos.md",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/categories/CategoriesPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/customers/CustomersPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": "src/pages/warehouses/WarehousesPage.tsx",
+    "mudancas": 4
+   },
+   {
+    "arquivo": ".github/workflows/branch-hygiene-audit.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/contexto.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/db-manifesto.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": ".github/workflows/inventario-estado.yml",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "src/pages/serials/SerialsPage.tsx",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "tests/e2e/fixtures/auth.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "tests/e2e/wms-flow.spec.ts",
+    "mudancas": 3
+   },
+   {
+    "arquivo": "AGENTS.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "README.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "README_PT.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "docs/SECURITY.md",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "inventario/estado/edges.json",
+    "mudancas": 2
+   },
+   {
+    "arquivo": "scripts/ci/actions-kpi.mjs",
+    "mudancas": 2
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "adm01-debug",
+    "commits": 28
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 12
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 1926,
+  "arquivos_codigo": 1654,
+  "linhas_codigo": 161275,
+  "rotas": 86,
+  "rotas_http_backend": 11,
+  "vistas_por_id": 0,
+  "itens_menu": 70,
+  "modulos": 124,
+  "componentes": 645,
+  "hooks": 324,
+  "edge_functions": 249,
+  "tabelas": 101,
+  "migrations": 163,
+  "cron_jobs": 0,
+  "testes": 84,
+  "workflows": 9,
+  "scripts": 74,
+  "docs_md": 37
+ },
+ "por_pasta": {
+  "capacitor.config.ts": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 50
+  },
+  "playwright.config.ts": {
+   "arquivos": 1,
+   "linhas": 82
+  },
+  "postcss.config.js": {
+   "arquivos": 1,
+   "linhas": 7
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1458
+  },
+  "scripts/apply_rls_helper.cjs": {
+   "arquivos": 1,
+   "linhas": 27
+  },
+  "scripts/audit-zod.mjs": {
+   "arquivos": 1,
+   "linhas": 65
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 992
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 603
+  },
+  "scripts/check-agents-integrity.mjs": {
+   "arquivos": 1,
+   "linhas": 205
+  },
+  "scripts/check-eventos-triagem.cjs": {
+   "arquivos": 1,
+   "linhas": 17
+  },
+  "scripts/ci": {
+   "arquivos": 11,
+   "linhas": 1964
+  },
+  "scripts/db-audit": {
+   "arquivos": 15,
+   "linhas": 2059
+  },
+  "scripts/dep-audit.mjs": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1076
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 463
+  },
+  "scripts/i18n-check.mjs": {
+   "arquivos": 1,
+   "linhas": 50
+  },
+  "scripts/i18n-hardcoded-check.mjs": {
+   "arquivos": 1,
+   "linhas": 90
+  },
+  "scripts/inventario": {
+   "arquivos": 4,
+   "linhas": 775
+  },
+  "scripts/lib": {
+   "arquivos": 2,
+   "linhas": 223
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2477
+  },
+  "scripts/migrations-todo-check.mjs": {
+   "arquivos": 1,
+   "linhas": 48
+  },
+  "scripts/probe-all.cjs": {
+   "arquivos": 1,
+   "linhas": 42
+  },
+  "scripts/probe-cols.cjs": {
+   "arquivos": 1,
+   "linhas": 59
+  },
+  "scripts/probe-empty.cjs": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/probe-full.cjs": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/probe-full2.cjs": {
+   "arquivos": 1,
+   "linhas": 42
+  },
+  "scripts/probe-triagem.cjs": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "scripts/qa-report.mjs": {
+   "arquivos": 1,
+   "linhas": 56
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/rls-audit.mjs": {
+   "arquivos": 1,
+   "linhas": 80
+  },
+  "scripts/seed-app-tables.cjs": {
+   "arquivos": 1,
+   "linhas": 377
+  },
+  "scripts/seed-aprovacoes.cjs": {
+   "arquivos": 1,
+   "linhas": 105
+  },
+  "scripts/seed-cadastros.cjs": {
+   "arquivos": 1,
+   "linhas": 196
+  },
+  "scripts/seed-conferencia.cjs": {
+   "arquivos": 1,
+   "linhas": 87
+  },
+  "scripts/seed-curva-abc.cjs": {
+   "arquivos": 1,
+   "linhas": 87
+  },
+  "scripts/seed-db-service.cjs": {
+   "arquivos": 1,
+   "linhas": 392
+  },
+  "scripts/seed-db.cjs": {
+   "arquivos": 1,
+   "linhas": 285
+  },
+  "scripts/seed-expedicao.cjs": {
+   "arquivos": 1,
+   "linhas": 100
+  },
+  "scripts/seed-inventario-geral.cjs": {
+   "arquivos": 1,
+   "linhas": 71
+  },
+  "scripts/seed-kpis.cjs": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "scripts/seed-others-v2.cjs": {
+   "arquivos": 1,
+   "linhas": 723
+  },
+  "scripts/seed-others-v3.cjs": {
+   "arquivos": 1,
+   "linhas": 815
+  },
+  "scripts/seed-others.cjs": {
+   "arquivos": 1,
+   "linhas": 679
+  },
+  "scripts/seed-putaway.cjs": {
+   "arquivos": 1,
+   "linhas": 124
+  },
+  "scripts/seed-qualidade.cjs": {
+   "arquivos": 1,
+   "linhas": 73
+  },
+  "scripts/seed-triagens.cjs": {
+   "arquivos": 1,
+   "linhas": 128
+  },
+  "scripts/seed-trocas.cjs": {
+   "arquivos": 1,
+   "linhas": 145
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "scripts/test-db-connection.ts": {
+   "arquivos": 1,
+   "linhas": 112
+  },
+  "src/App.tsx": {
+   "arquivos": 1,
+   "linhas": 80
+  },
+  "src/components": {
+   "arquivos": 520,
+   "linhas": 47096
+  },
+  "src/config": {
+   "arquivos": 10,
+   "linhas": 1596
+  },
+  "src/constants": {
+   "arquivos": 5,
+   "linhas": 368
+  },
+  "src/contexts": {
+   "arquivos": 7,
+   "linhas": 549
+  },
+  "src/features": {
+   "arquivos": 105,
+   "linhas": 16515
+  },
+  "src/guards": {
+   "arquivos": 4,
+   "linhas": 225
+  },
+  "src/hoc": {
+   "arquivos": 5,
+   "linhas": 223
+  },
+  "src/hooks": {
+   "arquivos": 288,
+   "linhas": 15522
+  },
+  "src/i18n": {
+   "arquivos": 1,
+   "linhas": 34
+  },
+  "src/integrations": {
+   "arquivos": 3,
+   "linhas": 4824
+  },
+  "src/lib": {
+   "arquivos": 108,
+   "linhas": 5259
+  },
+  "src/main.tsx": {
+   "arquivos": 1,
+   "linhas": 53
+  },
+  "src/middleware": {
+   "arquivos": 1,
+   "linhas": 25
+  },
+  "src/pages": {
+   "arquivos": 110,
+   "linhas": 17572
+  },
+  "src/plugins": {
+   "arquivos": 4,
+   "linhas": 287
+  },
+  "src/routes": {
+   "arquivos": 5,
+   "linhas": 1031
+  },
+  "src/services": {
+   "arquivos": 29,
+   "linhas": 2199
+  },
+  "src/stores": {
+   "arquivos": 1,
+   "linhas": 32
+  },
+  "src/test": {
+   "arquivos": 1,
+   "linhas": 60
+  },
+  "src/types": {
+   "arquivos": 26,
+   "linhas": 1980
+  },
+  "src/utils": {
+   "arquivos": 15,
+   "linhas": 1818
+  },
+  "supabase/functions": {
+   "arquivos": 305,
+   "linhas": 19570
+  },
+  "tailwind.config.ts": {
+   "arquivos": 1,
+   "linhas": 132
+  },
+  "tests/e2e": {
+   "arquivos": 10,
+   "linhas": 848
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 215
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 51
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 4761
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1076
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 992
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 924
+  },
+  {
+   "arquivo": "scripts/seed-others-v3.cjs",
+   "linhas": 815
+  },
+  {
+   "arquivo": "supabase/functions/_shared/schemas.ts",
+   "linhas": 806
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 783
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 735
+  },
+  {
+   "arquivo": "scripts/seed-others-v2.cjs",
+   "linhas": 723
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "linhas": 720
+  },
+  {
+   "arquivo": "src/features/quality/pages/TriagemPage.tsx",
+   "linhas": 700
+  },
+  {
+   "arquivo": "scripts/seed-others.cjs",
+   "linhas": 679
+  },
+  {
+   "arquivo": "src/features/quality/pages/DashboardTriador.tsx",
+   "linhas": 662
+  },
+  {
+   "arquivo": "src/features/quality/pages/FormularioTriagem.tsx",
+   "linhas": 639
+  },
+  {
+   "arquivo": "src/features/inventory/pages/EstoquePage.tsx",
+   "linhas": 559
+  },
+  {
+   "arquivo": "src/pages/admin/AuditoriaCriticaPage.tsx",
+   "linhas": 552
+  },
+  {
+   "arquivo": "src/pages/Armazenamento.tsx",
+   "linhas": 534
+  },
+  {
+   "arquivo": "src/pages/Romaneios.tsx",
+   "linhas": 522
+  },
+  {
+   "arquivo": "src/pages/Relatorios.tsx",
+   "linhas": 519
+  },
+  {
+   "arquivo": "src/pages/Etiquetas.tsx",
+   "linhas": 510
+  },
+  {
+   "arquivo": "src/pages/admin/AdminTelemetriaPage.tsx",
+   "linhas": 476
+  },
+  {
+   "arquivo": "src/pages/notifications/NotificationsPage.tsx",
+   "linhas": 464
+  },
+  {
+   "arquivo": "src/pages/admin/BackendHealthPage.tsx",
+   "linhas": 448
+  }
+ ],
+ "qualidade": {
+  "any": 447,
+  "console_log": 327,
+  "ts_ignore": 0,
+  "eslint_disable": 1,
+  "todos": 7,
+  "arquivos_acima_500_linhas": 22
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 6,
+   "tipo": "TODO",
+   "texto": "/FIXME/XXX/HACK/PENDING) em"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 9,
+   "tipo": "TODO",
+   "texto": "in ...\") são"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 17,
+   "tipo": "TODO",
+   "texto": "|FIXME|XXX|HACK|PENDING)\\b/;"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 47,
+   "tipo": "TODO",
+   "texto": "residual acionável.`);"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [],
+  "edges_orfas": [
+   "abc-analysis",
+   "adjust-inventory",
+   "agv-dispatch",
+   "ai-assistant",
+   "ai-classification",
+   "ai-classify",
+   "ai-completion",
+   "ai-embedding",
+   "ai-sentiment",
+   "ai-summarize",
+   "ai-translate",
+   "alert-expiration",
+   "alert-monitor",
+   "alert-pending-orders",
+   "alert-productivity",
+   "alert-quality",
+   "alert-sla-breach",
+   "alert-stock-low",
+   "analytics",
+   "audit-log",
+   "auth-2fa-setup",
+   "auth-2fa-verify",
+   "auth-change-password",
+   "auth-login",
+   "auth-logout",
+   "auth-refresh-token",
+   "auth-register",
+   "auth-reset-password",
+   "auth-session-list",
+   "auth-session-revoke",
+   "auth-social-login",
+   "auth-verify-email",
+   "backend-health",
+   "backup-database",
+   "batch-import",
+   "batch-processor",
+   "boleto-generate",
+   "broadcast-event",
+   "bulk-delete",
+   "bulk-insert",
+   "bulk-update",
+   "bulk-upsert",
+   "cache",
+   "cache-invalidate",
+   "calculate-kpis",
+   "calculate-shipping",
+   "cancel-order",
+   "carrier-book",
+   "carrier-cancel",
+   "carrier-label",
+   "carrier-quote",
+   "carrier-quote-correios",
+   "carrier-quote-jadlog",
+   "carrier-rates-cache",
+   "carrier-track",
+   "carrier-webhooks",
+   "check-expiration",
+   "check-permission",
+   "check-reorder",
+   "cleanup-old-data",
+   "cleanup-sessions",
+   "complete-job",
+   "create-customer",
+   "create-lot",
+   "create-payment-intent",
+   "create-purchase-order",
+   "create-sales-order",
+   "create-shipment",
+   "create-subscription",
+   "cron-daily",
+   "cron-weekly",
+   "cte-import",
+   "cycle-count",
+   "danfe-generate",
+   "dashboard-stats",
+   "data-migration",
+   "db-alert-monitor",
+   "delete-file",
+   "demand-forecast",
+   "download-file",
+   "edi-process",
+   "export-data",
+   "export-pdf",
+   "export-products",
+   "external-db-bridge",
+   "generate-barcode",
+   "generate-csv",
+   "generate-excel",
+   "generate-pdf-report",
+   "generate-pick-list",
+   "generate-putaway-list",
+   "generate-report",
+   "generate-sku",
+   "get-permissions",
+   "health",
+   "health-check",
+   "import-csv",
+   "import-data",
+   "import-products",
+   "integration-accounting",
+   "integration-amazon",
+   "integration-correios",
+   "integration-ecommerce",
+   "integration-erp",
+   "integration-ifood",
+   "integration-marketplace",
+   "integration-mercado-livre",
+   "integration-rappi",
+   "integration-sap",
+   "integration-totvs",
+   "inventory-batch-adjust",
+   "inventory-count",
+   "inventory-reconcile",
+   "inventory-release",
+   "inventory-reserve",
+   "inventory-snapshot",
+   "inventory-sync",
+   "inventory-transfer",
+   "inventory-valuation",
+   "invoice-generate",
+   "kpi-calculator",
+   "label-print",
+   "location-utilization",
+   "lot-tracking",
+   "merge-pdfs",
+   "metrics",
+   "nfe-cancel",
+   "nfe-correct",
+   "nfe-distribution",
+   "nfe-import",
+   "nfe-manifest",
+   "nfe-process",
+   "nfe-validate",
+   "notification-email",
+   "notification-push",
+   "notification-sms",
+   "notification-whatsapp",
+   "notifications",
+   "notify-slack",
+   "notify-user",
+   "packing-cancel",
+   "packing-confirm",
+   "packing-repack",
+   "packing-split",
+   "packing-start",
+   "parse-excel",
+   "parse-pdf",
+   "payment-create",
+   "picking-assign",
+   "picking-batch",
+   "picking-cancel",
+   "picking-confirm",
+   "picking-optimize",
+   "picking-skip",
+   "picking-split",
+   "pix-generate",
+   "previsao-demanda",
+   "print-label",
+   "process-queue",
+   "process-sales-order",
+   "push-notification",
+   "quality-inspection",
+   "queue-add",
+   "queue-job",
+   "queue-retry",
+   "rate-limit",
+   "rate-limiter",
+   "receive-purchase-order",
+   "receiving-cancel",
+   "receiving-confirm",
+   "receiving-create",
+   "receiving-inspect",
+   "receiving-putaway",
+   "receiving-reject",
+   "register-serial",
+   "release-stock",
+   "reorder-check",
+   "reorder-suggestions",
+   "report-custom",
+   "report-daily",
+   "report-export-excel",
+   "report-export-pdf",
+   "report-inventory",
+   "report-inventory-accuracy",
+   "report-monthly",
+   "report-picking-performance",
+   "report-receiving",
+   "report-shipping",
+   "report-supplier-performance",
+   "report-turnover",
+   "report-valuation",
+   "report-weekly",
+   "reports",
+   "reserve-stock",
+   "return-order",
+   "safety-stock",
+   "scan-barcode",
+   "schedule-task",
+   "scheduler-cleanup",
+   "scheduler-daily-tasks",
+   "scheduler-reports",
+   "scheduler-sync",
+   "search-locations",
+   "search-orders",
+   "search-products",
+   "send-email",
+   "send-push",
+   "send-sms",
+   "send-whatsapp",
+   "shipping-cancel",
+   "shipping-label",
+   "shipping-manifest",
+   "shipping-pod",
+   "shipping-rate",
+   "shipping-track-webhook",
+   "simulation-test",
+   "stripe-webhook",
+   "sync-external-api",
+   "sync-inventory",
+   "tests",
+   "track-shipment",
+   "transfer-stock",
+   "upload-file",
+   "upload-image",
+   "upload-multiple",
+   "validate-data",
+   "validate-ean",
+   "warehouse-metrics",
+   "wave-cancel",
+   "wave-merge",
+   "wave-optimize",
+   "wave-planning",
+   "wave-release",
+   "wave-split",
+   "webhook-handler",
+   "webhook-receiver"
+  ],
+  "edges_chamadas_sem_pasta": [],
+  "tabelas_sem_rls": [],
+  "tabelas_usadas_sem_definicao": [
+   "activity_logs",
+   "ai_logs",
+   "ajustes_inventario",
+   "alerts",
+   "backups",
+   "boletos",
+   "cache_entries",
+   "categories",
+   "cron_logs",
+   "edi_documents",
+   "files",
+   "images",
+   "integration_logs",
+   "inventory_reservations",
+   "invoices",
+   "location_stock",
+   "lot_tracking",
+   "lots",
+   "merged_documents",
+   "nfe",
+   "packings",
+   "payments",
+   "pick_list_items",
+   "pick_lists",
+   "picking_routes",
+   "picking_waves",
+   "pix_payments",
+   "produtos_estoque",
+   "receiving_documents",
+   "reorder_suggestions",
+   "sales_orders",
+   "sessions",
+   "shipments",
+   "shipping_labels",
+   "shipping_manifests",
+   "stock_alerts",
+   "stock_balances",
+   "stock_transfers",
+   "suppliers",
+   "temp_files",
+   "temp_tokens",
+   "units_of_measure",
+   "user_sessions"
+  ],
+  "tabelas_com_drift_migration_vs_types": [
+   "armazens",
+   "audit_log",
+   "categorias",
+   "clientes",
+   "nfe_documents",
+   "nfe_items",
+   "saved_filters",
+   "serial_numbers"
+  ],
+  "rpcs_sem_definicao": [
+   "decrease_location_stock",
+   "get_inventory_summary",
+   "get_min_stock_threshold",
+   "get_reorder_point",
+   "recalculate_weekly_stats"
+  ],
+  "componentes_orfaos": [
+   "src/components/a11y/Announce.tsx",
+   "src/components/a11y/FocusScope.tsx",
+   "src/components/a11y/FocusTrap.tsx",
+   "src/components/a11y/LiveRegion.tsx",
+   "src/components/a11y/SkipLinks.tsx",
+   "src/components/a11y/VisuallyHidden.tsx",
+   "src/components/armazenamento/PosicaoStatusBadge.tsx",
+   "src/components/auth/PasswordStrengthMeter.tsx",
+   "src/components/charts/Funnel.tsx",
+   "src/components/charts/Gauge.tsx",
+   "src/components/charts/Heatmap.tsx",
+   "src/components/charts/ModuleCharts.tsx",
+   "src/components/charts/Radar.tsx",
+   "src/components/charts/RadialBar.tsx",
+   "src/components/charts/Sankey.tsx",
+   "src/components/charts/Sparkline.tsx",
+   "src/components/charts/Treemap.tsx",
+   "src/components/common/ErrorFallback.tsx",
+   "src/components/common/SavedFiltersManager.tsx",
+   "src/components/common/SearchInput.tsx",
+   "src/components/common/SkeletonLoader.tsx",
+   "src/components/common/UnsavedChangesDialog.tsx",
+   "src/components/conferencia/AssinaturaConferenciaDialog.tsx",
+   "src/components/dashboard/QuickActionButton.tsx",
+   "src/components/data/CalendarFull.tsx",
+   "src/components/data/DataTable.tsx",
+   "src/components/data/EditableTable.tsx",
+   "src/components/data/Gallery.tsx",
+   "src/components/data/ImageZoom.tsx",
+   "src/components/data/InfiniteScroll.tsx",
+   "src/components/data/InfoItem.tsx",
+   "src/components/data/Lightbox.tsx",
+   "src/components/data/PivotTable.tsx",
+   "src/components/data/Timeline.tsx",
+   "src/components/data/TreeTable.tsx",
+   "src/components/data/TreeView.tsx",
+   "src/components/data/VirtualGrid.tsx",
+   "src/components/data/VirtualList.tsx",
+   "src/components/display/AvatarGroup.tsx",
+   "src/components/display/Blockquote.tsx",
+   "src/components/display/Clock.tsx",
+   "src/components/display/CodeBlock.tsx",
+   "src/components/display/CompanyCard.tsx",
+   "src/components/display/Counter.tsx",
+   "src/components/display/Highlight.tsx",
+   "src/components/display/Kbd.tsx",
+   "src/components/display/QRCode.tsx",
+   "src/components/display/Stat.tsx",
+   "src/components/display/Timeline.tsx",
+   "src/components/display/UserCard.tsx",
+   "src/components/dnd/Draggable.tsx",
+   "src/components/dnd/DragHandle.tsx",
+   "src/components/dnd/Droppable.tsx",
+   "src/components/dnd/KanbanBoard.tsx",
+   "src/components/dnd/Sortable.tsx",
+   "src/components/ExportDropdown.tsx",
+   "src/components/feedback/Banner.tsx",
+   "src/components/feedback/Celebration.tsx",
+   "src/components/feedback/EmptyState.tsx",
+   "src/components/feedback/LoadingOverlay.tsx",
+   "src/components/feedback/Message.tsx",
+   "src/components/filters/FilterBar.tsx",
+   "src/components/gamificacao/ConquistaNotificacoes.tsx",
+   "src/components/gamificacao/StreakIndicator.tsx",
+   "src/components/ia/PrevisaoDemandaIA.tsx",
+   "src/components/InfiniteScrollList.tsx",
+   "src/components/inventario/StatusCicloCard.tsx",
+   "src/components/kanban/KanbanCard.tsx",
+   "src/components/kpis/AlertIndicator.tsx",
+   "src/components/kpis/KPITrendIndicator.tsx",
+   "src/components/layout/AspectRatio.tsx",
+   "src/components/layout/Breadcrumbs.tsx",
+   "src/components/layout/Divider.tsx",
+   "src/components/layout/Flex.tsx",
+   "src/components/layout/header/Header.tsx",
+   "src/components/layout/Masonry.tsx",
+   "src/components/layout/MobileNavigation.tsx",
+   "src/components/layout/PageContainer.tsx",
+   "src/components/layout/PageHeader.tsx",
+   "src/components/layout/ResizablePanel.tsx",
+   "src/components/layout/ScrollAreaCustom.tsx",
+   "src/components/layout/SidebarContent.tsx",
+   "src/components/layout/Space.tsx",
+   "src/components/layout/SplitPane.tsx",
+   "src/components/layout/Stack.tsx",
+   "src/components/maps/MapCluster.tsx",
+   "src/components/maps/MapContainer.tsx",
+   "src/components/maps/MapMarker.tsx",
+   "src/components/maps/MapPopup.tsx",
+   "src/components/maps/MapRoute.tsx",
+   "src/components/movimentacao/MovimentacaoDetalhesForm.tsx",
+   "src/components/movimentacao/MovimentacaoHistorico.tsx",
+   "src/components/movimentacao/MovimentacaoTipoSelector.tsx",
+   "src/components/navigation/ContextMenu.tsx",
+   "src/components/navigation/Navbar.tsx",
+   "src/components/navigation/Spotlight.tsx",
+   "src/components/navigation/Stepper.tsx",
+   "src/components/navigation/Steps.tsx",
+   "src/components/navigation/Wizard.tsx",
+   "src/components/NavLink.tsx",
+   "src/components/onboarding/OnboardingTour.tsx",
+   "src/components/produtos/ProductCardAvancado.tsx",
+   "src/components/produtos/ProdutosList.tsx",
+   "src/components/rastreabilidade/RastreabilidadeKPIs.tsx",
+   "src/components/relatorios/ReportFilters.tsx",
+   "src/components/theme/ThemeProvider.tsx",
+   "src/components/ui/accordion-custom.tsx",
+   "src/components/ui/avatar-group.tsx",
+   "src/components/ui/breadcrumb.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/chart.tsx",
+   "src/components/ui/confirm-dialog.tsx",
+   "src/components/ui/context-menu.tsx",
+   "src/components/ui/countdown.tsx",
+   "src/components/ui/data-table-advanced.tsx",
+   "src/components/ui/data-table.tsx",
+   "src/components/ui/date-range-picker.tsx",
+   "src/components/ui/date-time-picker.tsx",
+   "src/components/ui/drawer.tsx",
+   "src/components/ui/editor/RichTextEditor.tsx",
+   "src/components/ui/file-upload.tsx",
+   "src/components/ui/filter-panel.tsx",
+   "src/components/ui/hover-card.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/loading-patterns.tsx",
+   "src/components/ui/loading-spinner.tsx",
+   "src/components/ui/menubar.tsx",
+   "src/components/ui/modal.tsx",
+   "src/components/ui/navigation-menu.tsx",
+   "src/components/ui/pagination.tsx",
+   "src/components/ui/progress-steps.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/stat-card.tsx",
+   "src/components/ui/stats-card.tsx",
+   "src/components/ui/tabs-custom.tsx",
+   "src/components/ui/timeline.tsx",
+   "src/components/ui/toggle-group.tsx",
+   "src/components/ui/tooltip-icon.tsx",
+   "src/components/wms/BarcodeDisplay.tsx",
+   "src/components/wms/BatchInfo.tsx",
+   "src/components/wms/BinGrid.tsx",
+   "src/components/wms/CarrierLogo.tsx",
+   "src/components/wms/CycleCountCard.tsx",
+   "src/components/wms/InventoryCard.tsx",
+   "src/components/wms/LocationPicker.tsx",
+   "src/components/wms/PackingSlip.tsx",
+   "src/components/wms/PickList.tsx",
+   "src/components/wms/ProductCard.tsx",
+   "src/components/wms/PutawayList.tsx",
+   "src/components/wms/QualityStatus.tsx",
+   "src/components/wms/ReorderAlert.tsx",
+   "src/components/wms/SerialNumber.tsx",
+   "src/components/wms/ShipmentTracker.tsx",
+   "src/components/wms/StockLevelIndicator.tsx",
+   "src/components/wms/WarehouseMap.tsx",
+   "src/features/inventory/components/EstoqueToolbar.tsx",
+   "src/features/inventory/components/WarehouseMap.tsx",
+   "src/features/quality/components/TriagemTimer.tsx",
+   "src/hooks/useFormContext.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "Alert",
+   "AvatarGroup",
+   "Breadcrumbs",
+   "BulkActionsBar",
+   "CardSkeleton",
+   "ContextMenu",
+   "DashboardPage",
+   "DashboardSkeleton",
+   "DataImporter",
+   "DataTable",
+   "DateRangePicker",
+   "DateTimePicker",
+   "EmptyState",
+   "ErrorState",
+   "ExportButton",
+   "ExportDropdown",
+   "FileUpload",
+   "FormField",
+   "FormSkeleton",
+   "Header",
+   "InventoryStats",
+   "KPICard",
+   "KanbanBoard",
+   "KanbanColumn",
+   "ListSkeleton",
+   "LoadingSpinner",
+   "MobileNavigation",
+   "PageHeader",
+   "PrevisaoDemandaIA",
+   "RadioGroup",
+   "ResizablePanel",
+   "RichTextEditor",
+   "SavedFiltersDropdown",
+   "ScrollArea",
+   "SearchInput",
+   "Sidebar",
+   "SidebarContent",
+   "SidebarHeader",
+   "Skeleton",
+   "SkipLinks",
+   "Sparkline",
+   "StatCard",
+   "StatusBadge",
+   "TableSkeleton",
+   "ThemeProvider",
+   "Timeline",
+   "Toast",
+   "ToastProvider",
+   "Toaster",
+   "UserMenu",
+   "VersionHistory",
+   "WarehouseMap"
+  ],
+  "scripts_orfaos": [],
+  "env_usadas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "PROD",
+   "VITE_BITRIX24_WEBHOOK_URL"
+  ],
+  "ciclos_de_import": 2,
+  "possiveis_segredos_no_codigo": [
+   "supabase/functions/health-check/index.test.ts:10"
+  ]
+ },
+ "erros_do_gerador": []
+}
