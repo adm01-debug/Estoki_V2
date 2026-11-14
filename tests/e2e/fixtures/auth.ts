@@ -35,7 +35,32 @@ const MOCK_SESSION = JSON.stringify({
   },
 });
 
+/**
+ * Torna os testes determinísticos com sessão mock: sem backend real, as
+ * queries PostgREST/edge functions do mock falham com retry (tanstack-query
+ * `retry: 1` + backoff) e a UI fica presa no PageLoader por ~16s em runner
+ * lento — enquanto os asserts usam timeout de 10s (causa-raiz do flaky do
+ * basic-flow/wms-flow). O abort falha cada tentativa em milissegundos e expõe
+ * o estado de erro próprio de cada página (validação de resiliência mantida).
+ *
+ * Registrado no `injectSession`, cobre a fixture `authenticatedPage` e os
+ * specs que injetam a sessão manualmente. O route handler roda antes de toda
+ * navegação; handlers registrados depois (ex.: stress.spec) têm prioridade
+ * LIFO e chamam abort também — mesmo efeito, sem conflito.
+ */
+function mockSupabaseNetwork(page: Page): void {
+  page.route("**/rest/v1/**", (route) => route.abort("failed"));
+  page.route("**/functions/v1/**", (route) => route.abort("failed"));
+  // O logout (POST /auth/v1/logout) também não deve depender do backend real:
+  // responde 200 imediato para o fluxo "Sair" navegar sem travar no assert de URL.
+  page.route("**/auth/v1/logout", (route) =>
+    route.fulfill({ status: 200, contentType: "application/json", body: "{}" })
+  );
+}
+
 export async function injectSession(page: Page): Promise<void> {
+  mockSupabaseNetwork(page);
+
   const sessionJson = process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON ?? MOCK_SESSION;
 
   // Precisa estabelecer a origem antes de escrever no localStorage.
