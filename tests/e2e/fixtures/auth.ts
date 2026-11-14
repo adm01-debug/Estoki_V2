@@ -87,7 +87,8 @@ function stubNavigatorLocks(page: Page): void {
     try {
       // query() é usado pelo supabase apenas em log de debug; mantém o original
       // se disponível, senão um valor vazio suficiente.
-      navigator.locks.query = navigator.locks.query ?? (() => Promise.resolve({ held: [], pending: [] }));
+      navigator.locks.query =
+        navigator.locks.query ?? (() => Promise.resolve({ held: [], pending: [] }));
     } catch {
       /* navegador sem query — irrelevante para o fluxo de teste */
     }
