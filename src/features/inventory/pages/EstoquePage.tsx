@@ -257,8 +257,7 @@ export default function EstoquePage() {
               }}
             >
               <NovaPosicaoDialog onSuccess={handleRefresh}>
-                <Button className="hidden" />{" "}
-                {/* Button ghost para manter o trigger se necessário, mas aqui usaremos o action do EmptyState se possível */}
+                <Button className="hidden" />
               </NovaPosicaoDialog>
             </EmptyState>
           </div>
