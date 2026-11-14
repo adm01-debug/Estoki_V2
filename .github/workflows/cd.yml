@@ -54,9 +54,13 @@ jobs:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
+          set +e
           npx vercel deploy --token "$VERCEL_TOKEN" --yes \
             --scope juca1 > /tmp/vercel.out 2>&1
+          rc=$?
+          set -e
           cat /tmp/vercel.out
+          exit $rc
       - name: Smoke test staging
         continue-on-error: true
         run: |
@@ -82,8 +86,12 @@ jobs:
           VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
+          set +e
           npx vercel deploy --prod --token "$VERCEL_TOKEN" --yes > /tmp/vercel.out 2>&1
+          rc=$?
+          set -e
           cat /tmp/vercel.out
+          exit $rc
       - name: Smoke test production
         run: |
           code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://estoki-v2.vercel.app/ || echo "000")
