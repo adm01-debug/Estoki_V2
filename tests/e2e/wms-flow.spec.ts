@@ -143,12 +143,12 @@ test("WMS: fluxo picking → expedição (navegação sequencial)", async ({
   await page.goto("/picking", { waitUntil: "domcontentloaded", timeout: 20_000 });
   // O título do Header fica oculto em viewports pequenas (hidden sm:block);
   // o breadcrumb é o shell estável e visível em todas as viewports.
-  const bc = page.getByRole("navigation", { name: /breadcrumb/i });
+  const bc = page.getByRole("navigation", { name: /breadcrumb/i }).first();
   await expect(bc).toBeVisible({ timeout: 15_000 });
   await expect(bc.getByText("Picking", { exact: true })).toBeVisible();
 
   await page.goto("/expedicao", { waitUntil: "domcontentloaded", timeout: 20_000 });
-  const bc2 = page.getByRole("navigation", { name: /breadcrumb/i });
+  const bc2 = page.getByRole("navigation", { name: /breadcrumb/i }).first();
   await expect(bc2).toBeVisible({ timeout: 15_000 });
   await expect(bc2.getByText("Expedição", { exact: true })).toBeVisible();
 

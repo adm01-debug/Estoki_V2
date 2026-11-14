@@ -22,7 +22,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
 
     // A página monta sem cair no Error Boundary global nem em 404 —
     // com ou sem dados, o breadcrumb "Estoque" está presente no shell.
-    await expect(page.getByRole("navigation", { name: /breadcrumb/i })).toBeVisible({
+    await expect(page.getByRole("navigation", { name: /breadcrumb/i }).first()).toBeVisible({
       timeout: 10_000,
     });
     await expect(page.getByText("Estoque", { exact: true }).first()).toBeVisible({
@@ -38,7 +38,7 @@ test.describe("E2E: Fluxos Críticos do Sistema WMS", () => {
 
     // Renderização íntegra: breadcrumb do módulo aparece (não 404 nem boundary);
     // com query falhando (sem dados), a UI expõe estado de erro com retry.
-    await expect(page.getByRole("navigation", { name: /breadcrumb/i })).toBeVisible({
+    await expect(page.getByRole("navigation", { name: /breadcrumb/i }).first()).toBeVisible({
       timeout: 10_000,
     });
     await expect(
