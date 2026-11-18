@@ -21,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "npm"
 
       # Nao depende de node_modules: roda antes do install e sobrevive a quebra do `npm ci`. Por isso
