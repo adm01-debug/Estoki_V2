@@ -52,12 +52,12 @@ export const authService = {
 
       if (error) {
         logger.error("Erro ao buscar permissões do usuário", error, { userId });
-        return "operador"; // Default role or null depending on security policy
+        throw error;
       }
-      return (data?.role as AppRole) || "operador";
+      return (data?.role as AppRole) || null;
     } catch (e) {
       logger.error("Exceção ao buscar role", e);
-      return "operador";
+      return null;
     }
   },
 

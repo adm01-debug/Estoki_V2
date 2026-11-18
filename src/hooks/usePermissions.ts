@@ -58,9 +58,9 @@ export function usePermissions() {
         .select("role")
         .eq("user_id", user.id)
         .single();
-      setUserRole(data?.role || "operador");
+      setUserRole(data?.role || null);
     } catch (error) {
-      setUserRole("operador");
+      setUserRole(null);
     }
   }, [user?.id]);
 
