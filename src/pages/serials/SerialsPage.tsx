@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Hash, Search } from "lucide-react";
 
-// Colunas reais de public.serial_numbers (migration 20260520120000): o número
-// de série é `codigo` (não existe `numero_serial` nem `posicao_id`).
+// Coluna real de public.serial_numbers (provada no banco): numero_serial. Nao existe codigo.
 type Serial = {
   id: string;
   numero_serial: string;
