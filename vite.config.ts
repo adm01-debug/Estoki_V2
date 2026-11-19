@@ -33,12 +33,25 @@ async function loadSentryPlugin(): Promise<PluginOption | null> {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig(async ({ mode }) => {
+export default defineConfig(async ({ mode, command }) => {
   // Vite lê as VITE_* de process.env DEPOIS de resolver esta função: preencher aqui basta.
   Object.assign(
     process.env,
     aliasSupabaseEnv({ ...loadEnv(mode, process.cwd(), ""), ...process.env })
   );
+  // Falha rápido: build sem as envs do Supabase gera bundle quebrado silenciosamente
+  // (o throw em src/integrations/supabase/client.ts derruba o grafo e deixa re-exports
+  // órfãos tipo "Export 'Activity' is not defined"). Um guard aqui transforma o erro em
+  // falha clara de build em vez de pageerror silencioso (era o que dava CI falso-verde).
+  if (
+    command === "build" &&
+    (!process.env.VITE_SUPABASE_URL || !process.env.VITE_SUPABASE_ANON_KEY)
+  ) {
+    throw new Error(
+      "[ESTOKI] Build sem as envs do Supabase (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY). " +
+        "Configure o .env local (copie de .env.example) ou injete os secrets no workflow."
+    );
+  }
   const sentryPlugin = mode === "production" ? await loadSentryPlugin() : null;
   const config: UserConfig = {
     server: {
