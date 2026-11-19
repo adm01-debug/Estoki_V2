@@ -62,7 +62,7 @@ for (const file of walk(ROOT)) {
 if (UPDATE) {
   writeFileSync(
     BASELINE,
-    JSON.stringify({ total, generatedAt: new Date().toISOString() }, null, 2)
+    JSON.stringify({ total, generatedAt: new Date().toISOString() }, null, 2) + "\n"
   );
   console.log(
     `[i18n-hardcoded] baseline atualizado: ${total} ocorrências em ${Object.keys(perFile).length} arquivos.`
