@@ -95,7 +95,7 @@ jobs:
           # o baseline usa `git log` dos ultimos 90 dias
           fetch-depth: 300
           persist-credentials: false
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: "22"
       - name: Testes do gerador
