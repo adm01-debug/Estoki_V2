@@ -28,9 +28,9 @@ export default defineConfig({
       // Coverage gate — valores reais medidos (12/2026); sobe 5pp por rodada até 70/60/60/70.
       thresholds: {
         lines: 6,
-        branches: 7,
+        branches: 8,
         functions: 5,
-        statements: 5,
+        statements: 6,
       },
     },
     // Dummy Supabase credentials so the auto-generated client (which calls
