@@ -185,5 +185,6 @@ jobs:
           [ "${{ steps.test.outcome }}"      = "success" ] || fail "unit tests"
           [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
           [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
+          [ "${{ steps.i18n_hard.outcome }}" = "success" ] || fail "i18n hardcoded"
           [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
           echo "✅ Quality gate aprovado"
