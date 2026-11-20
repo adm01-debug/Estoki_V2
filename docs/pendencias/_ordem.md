@@ -12,7 +12,7 @@
 
 1. **BANCO-01 — 20 edge functions deployadas com .from() para tabela inexistente** — ✔ EXECUTADO (20/11/2026): 20 deploys mortos removidos (100→80), source preservado em supabase/functions/. Ver docs/pendencias/BANCO-01-functions-tabelas-inexistentes.md.
 2. **FRONT-01 — 34 páginas órfãs (sem rota)** — ✔ EXECUTADO (20/11/2026): 34/34 removidas com prova (varredura completa de imports no src/ incl. relativos e alias); OperationalMonitorPage excluída da lista por ter consumidor real (/monitor). typecheck+lint+testes+build verdes. Ver docs/pendencias/FRONT-01-paginas-orfas.md. · src/pages/
-3. **CICD-01 — Cobertura gate baixo (6/7/5/5)** — audit dizia 12/12/25; config atual abaixou. Subir thresholds por rodada no padrão comentado no próprio config. · itest.config.ts
+3. **CICD-01 — Cobertura gate baixo (6/7/5/5)** — ✔ EXECUTADO (20/11/2026): thresholds 6/8/5/6 via medição real (antes 6/7/5/5), PR #135 mergeada, CI 100% verde. Ver docs/pendencias/CICD-01-cobertura-gate.md. · vitest.config.ts
 4. **AUTO-01 — cron.job 0 jobs** — 10+ funções de alerta/expiração/limpeza existem (lert-*, check-expiration, cron-daily, cron-weekly) mas nenhum agendamento ativo. Definir quais sobem e com qual cadência. · Supabase cron
 5. **QUAL-01 — Math.random (47), TODO (11), MOCK (10) em src/** — riscos 🟡9 do audit. Triar: hardcode de teste? aleatoriedade real? · src/
 6. **QUAL-02 — Swagger/OpenAPI para Edge Functions** — item pendente explícito do src/docs/REPORTE_AUDITORIA_ENTERPRISE.md. · supabase/functions/
