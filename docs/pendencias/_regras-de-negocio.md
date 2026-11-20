@@ -1,7 +1,9 @@
 ﻿# Regras de negócio — Estoki_V2 (mapa de camadas)
+
 Levantado na Fase 0 (baseline 20/11/2026) a partir das camadas de serviço e features. Cada item do backlog (Fase 2) referencia este mapa; regras finas (validações por campo, status transitórios) serão detalhadas por feature conforme executada.
 
 ## Domínio principal: WMS (armazém)
+
 1. **Recebimento** — notas/mercadorias entram no armazém; gera conferência de recebimento e movimentação de entrada. (features/receiving)
 2. **Qualidade/Triagem** — após receber, itens passam por triagem/inspeção; caminhos aprovado/recusado definem destino do estoque. (features/quality)
 3. **Contagem cíclica (cycle count)** — auditoria física de estoque em pontos do armazém; divergência pode gerar ajuste. (src/pages/cycle-count + service)
@@ -18,12 +20,14 @@ Levantado na Fase 0 (baseline 20/11/2026) a partir das camadas de serviço e fea
 14. **Auth/Perfil/Backup** — autenticação de usuários; backup do schema e restore. (services: auth, backup)
 
 ## Camadas
+
 - **Front:** React SPA — src/pages + src/features/*/pages + rotas (wms/admin/analytics/feature/public). 120 arquivos de página; 35 órfãos (FRONT-01).
-- **Serviços front:** src/services/*.ts (24) + src/features/*/services (3). Chamam Supabase via .from().
+- **Serviços front:** src/services/_.ts (24) + src/features/_/services (3). Chamam Supabase via .from().
 - **Backend:** Edge Functions Supabase — 100 deployadas (limite do plano), 250 dirs locais. 20 com .from() para tabelas inexistentes (BANCO-01).
 - **Banco:** PostgreSQL + Postgres (Supabase) — 86 tabelas public, RLS 100% ativo (250 policies), 56 triggers. Produção vazia (só desafios_diarios com dados). 30+ triggers de auditoria do schema EN em análise (BANCO-01/02).
 
 ## Regras transversais
+
 - **RLS:** toda tabela tem policy; serviço cliente usa anon/key (publishable), sem bypass por função exceto service_role onde necessário.
 - **Migração:** somente aditiva (constraint aditiva; nunca drop quebrável) — ver docs/pendencias/_linha-de-base.md.
 - **Zero regressão:** antes de fechar item, typecheck + lint + testes; CI main continua verde.

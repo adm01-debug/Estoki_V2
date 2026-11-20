@@ -1,4 +1,5 @@
 ﻿# AUTO-01 — Produção sem automação agendada (cron.job = 0)
+
 - **Origem:** ESTADO_ATUAL.md 🔴3 (audit: 1 job update-profile-nome-daily-v3; 16/08/2026).
 - **Estado real (20/11/2026):** cron.job retorna **0 jobs** em produção. Existem 10+ funções de alerta/rotina deployadas: alert-expiration, alert-monitor, alert-pending-orders, alert-productivity, alert-quality, alert-sla-breach, alert-stock-low, check-expiration, cron-daily, cron-weekly, cleanup-old-data, cleanup-sessions, db-alert-monitor. Nenhuma está agendada.
 - **O que falta:** decisão de quais agendamentos sobem (job + trigger) e com qual cadência; revisar payload/campos antes de criar cron. Migration aditiva.

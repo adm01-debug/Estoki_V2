@@ -1,4 +1,5 @@
 ﻿# FRONT-01 — 35 páginas órfãs (sem rota)
+
 - **Origem:** ESTADO_ATUAL.md 🟡8 (24 páginas órfãs, audit 16/08/2026).
 - **Estado real (20/11/2026):** **35 páginas** em src/pages/** e src/features/*/pages/** sem rota registrada (0 referência de import nos 6 arquivos de rota: App, wmsRoutes, adminRoutes, analyticsRoutes, featureRoutes, publicRoutes). Método: parse de todos os import(...)/rom/import "" dos route files, resolução de @/ e relativo, contra os 120 arquivos de página em disco.
   - **Duplicatas com versão feature (provável legado):** src/pages/ConferenciaRecebimento (vs src/features/receiving/pages/ConferenciaRecebimento), src/pages/Recebimento (vs eatures/receiving/pages/RecebimentoPage), src/pages/Triagem (vs eatures/quality/pages/TriagemPage), src/pages/Estoque (vs eatures/inventory/pages/EstoquePage), src/pages/picking/PickingPage (vs eatures/picking/pages/PickingPage), src/pages/shipping/ShippingPage (vs eatures/shipping/pages/ShippingPage).
