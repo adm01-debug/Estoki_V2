@@ -1,0 +1,35 @@
+﻿# _ordem.md — Backlog verificado (Fase 1)
+
+> Gerado em 2026-11-20. Estado real conferido no código (main @ 94df929c) e no banco de produção (ookjbflsnoefnsixrspc), NÃO no que o documento de auditoria afirma.
+
+## Ordem de execução (fundação → dependentes)
+
+### Já resolvidos nesta sessão (não entram no backlog)
+
+- **RLS-audit/CI** — PR #131 mergeada: lint local passou a bater com CI (0 errors; antes 12731 falsos por .vercel/). CI main verde.
+
+### Backlog (gap real, código/banco em produção)
+
+1. **BANCO-01 — 20 edge functions deployadas com .from() para tabela inexistente** — schema EN refactor pela metade. Nenhuma é referenciada pelo app (0 imports). Corrigir ou descomissionar com DDL/DML. Está deployada (consome slot do limite de 100). · supabase/functions/
+2. **FRONT-01 — 35 páginas órfãs (sem rota)** — duplicatas de features (src/pages/Recebimento vs src/features/receiving/pages/RecebimentoPage) e legadas. Rotear, remover ou documentar; nenhuma funcionalidade pode ser perdida. · src/pages/
+3. **CICD-01 — Cobertura gate baixo (6/7/5/5)** — audit dizia 12/12/25; config atual abaixou. Subir thresholds por rodada no padrão comentado no próprio config. · itest.config.ts
+4. **AUTO-01 — cron.job 0 jobs** — 10+ funções de alerta/expiração/limpeza existem (lert-*, check-expiration, cron-daily, cron-weekly) mas nenhum agendamento ativo. Definir quais sobem e com qual cadência. · Supabase cron
+5. **QUAL-01 — Math.random (47), TODO (11), MOCK (10) em src/** — riscos 🟡9 do audit. Triar: hardcode de teste? aleatoriedade real? · src/
+6. **QUAL-02 — Swagger/OpenAPI para Edge Functions** — item pendente explícito do src/docs/REPORTE_AUDITORIA_ENTERPRISE.md. · supabase/functions/
+7. **DOC-01 — ESTADO_ATUAL.md e docs/estado defasados (16/08/2026)** — atualizar com o estado real medido (Fase 0). · ESTADO_ATUAL.md
+
+### Itens OBSOLETOS (auditoria defasada — já resolvidos)
+
+- **🔴1 Migrations sem controle** — supabase_migrations.schema_migrations existe.
+- **🔴4 CI quebrado (0/8)** — CI verde (8/8 em 20/11/2026).
+- **🟠7 Workflow morto github/** — diretório removido.
+- **🟡10 Tabelas sem consumidor** — 0 tabelas sem referência em código.
+
+### Itens AGUARDANDO HUMANO (decisão / credencial / produção)
+
+- **SEC-01 — Rotacionar o Management token sbp\_...** — foi exposto em chat/.env local (aparou na conversa). Tem poder de deploy/delete de functions.
+- **SEC-02 — Conferir publishable key ativa no Vercel** — a sb_publishable_... retornou 401 em momento anterior; confirmar qual o Vercel injeta para o Simulador de Stress.
+
+## Regras herdadas (repo)
+
+- Migration aditiva somente. Nunca DROP/TRUNCATE massa em dados existentes. Toda mudança em branch própria claude/<tipo>-<slug>-<AAMMDD-HHMM> com PR. Regra 8 (workflows/infra) exige aprovação do dono para merge.
