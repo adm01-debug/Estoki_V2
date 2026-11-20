@@ -13,6 +13,7 @@ export default tseslint.config(
       "coverage/**",
       "**/*.min.js",
       "public/**",
+      ".vercel/**",
       "supabase/functions/**",
     ],
   },
