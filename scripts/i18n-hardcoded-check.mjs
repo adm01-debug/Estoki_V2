@@ -18,6 +18,7 @@ const UPDATE = process.argv.includes("--update");
 
 const ALLOWED_TAGS = /^(script|style|code|pre)$/i;
 const PT_HINT = /[áéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ]|\b(de|da|do|para|com|sem|não|é|em|os|as|um|uma|por)\b/i;
+const PT_WORDS = /\b(buscar|nenhum|nenhuma|todos|todas|produto|produtos|tipo|total|fornecedor|fornecedores|quantidade|data|exportar|zona|encontrado|encontrados|encontrada|estoque|carregando|carregar|ativo|itens|lote|lotes|alertas|filtro|filtros|pendentes|selecione|motivo|triagem|triagens|erro|capacidade|recebimento|recebimentos|nova|novo|cancelar|pedido|pedidos|detalhes|valor|alerta|acesso|registrado|destino|unidade|voltar|principal|tarefas|tarefa|operador|romaneio|romaneios|busca|salvar|salvos|negado|baixa|abrir|etiquetas|etiqueta|volume|volumes|origem|opcional|validade|entrada|importar|importando|prevista|dispositivos|conferidos|conferido|atividade|recente|recentes|filtrar|conquistas|desafios|modo|dados|funciona|clientes|integridade|separados|separado|palete|classe|quando|trocas|deu|errado|duplicar|produtividade|rastreabilidade|ponto|picking|confirmar|livres|lentas|entidade|acuracidade|inicial|meu|nome|concluido|concluida|excluir|renomear|inserir|registrar|adicionar|editar|visualizar|limpar|saldo)\b/i;
 const IGNORE = /^[\s\d\W]*$/;
 
 function walk(dir, out = []) {
@@ -45,7 +46,7 @@ for (const file of walk(ROOT)) {
   const push = (txt) => {
     const t = txt.trim();
     if (!t || IGNORE.test(t)) return;
-    if (!PT_HINT.test(t)) return;
+    if (!PT_HINT.test(t) && !PT_WORDS.test(t)) return;
     // Skip if looks like a t('...') already, or an import
     if (/^\{.*\}$/.test(t)) return;
     count++;
