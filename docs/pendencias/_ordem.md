@@ -10,7 +10,7 @@
 
 ### Backlog (gap real, código/banco em produção)
 
-1. **BANCO-01 — 20 edge functions deployadas com .from() para tabela inexistente** — schema EN refactor pela metade. Nenhuma é referenciada pelo app (0 imports). Corrigir ou descomissionar com DDL/DML. Está deployada (consome slot do limite de 100). · supabase/functions/
+1. **BANCO-01 — 20 edge functions deployadas com .from() para tabela inexistente** — ✔ EXECUTADO (20/11/2026): 20 deploys mortos removidos (100→80), source preservado em supabase/functions/. Ver docs/pendencias/BANCO-01-functions-tabelas-inexistentes.md.
 2. **FRONT-01 — 35 páginas órfãs (sem rota)** — duplicatas de features (src/pages/Recebimento vs src/features/receiving/pages/RecebimentoPage) e legadas. Rotear, remover ou documentar; nenhuma funcionalidade pode ser perdida. · src/pages/
 3. **CICD-01 — Cobertura gate baixo (6/7/5/5)** — audit dizia 12/12/25; config atual abaixou. Subir thresholds por rodada no padrão comentado no próprio config. · itest.config.ts
 4. **AUTO-01 — cron.job 0 jobs** — 10+ funções de alerta/expiração/limpeza existem (lert-*, check-expiration, cron-daily, cron-weekly) mas nenhum agendamento ativo. Definir quais sobem e com qual cadência. · Supabase cron
