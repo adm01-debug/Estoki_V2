@@ -89,7 +89,8 @@ export default function PrevisaoDemandaIA() {
     const estoqueAtual = (estoque || []).reduce((s, e) => s + e.quantidade, 0);
 
     // Usar giro mensal como base
-    const giro = produto.giro_mensal || Math.floor(Math.random() * 50 + 10);
+    // Fallback conservador (30 un/mês = 1 un/dia) quando giro não informado em produtos
+    const giro = produto.giro_mensal ?? 30;
     const consumoDiario = giro / 30;
 
     // Variação sazonal simples
@@ -127,7 +128,7 @@ export default function PrevisaoDemandaIA() {
         estoque: Math.max(0, Math.round(estoqueProj)),
         previsao: produto.estoque_minimo || 0,
       });
-      estoqueProj -= consumoAjustado * (0.8 + Math.random() * 0.4);
+      estoqueProj -= consumoAjustado;
     }
 
     return {

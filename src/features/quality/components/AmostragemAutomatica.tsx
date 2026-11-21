@@ -9,13 +9,19 @@ import {
 } from "./amostragemUtils";
 import { AmostragemProgresso } from "./AmostragemProgresso";
 import { AmostragemSelecao } from "./AmostragemSelecao";
-import { mockHistoricoDefeitos } from "./DefeitoHistorico";
+import { derivaHistoricoDefeitos } from "./DefeitoHistorico";
 import { toast } from "sonner";
 import { Sparkles, ShieldCheck } from "lucide-react";
 
 interface AmostragemAutomaticaProps {
   tamanhoLote: number;
   sku?: string;
+  triagens?: Array<{
+    resultado?: string | null;
+    data_fim?: string | null;
+    observacoes?: string | null;
+    lotes?: { produtos?: { sku?: string } | null } | null;
+  }>;
   onConfirmarAmostra: (
     tamanhoAmostra: number,
     metodo: string,
@@ -28,6 +34,7 @@ interface AmostragemAutomaticaProps {
 export function AmostragemAutomatica({
   tamanhoLote,
   sku,
+  triagens = [],
   onConfirmarAmostra,
   itensVerificados = 0,
   defeitosEncontrados = 0,
@@ -40,10 +47,10 @@ export function AmostragemAutomatica({
   );
 
   useEffect(() => {
-    if (sku && mockHistoricoDefeitos[sku]) {
-      const hist = mockHistoricoDefeitos[sku];
+    if (sku) {
+      const hist = derivaHistoricoDefeitos(triagens, sku);
 
-      // Fast-Track Platinum: 100% clean history for 30 days (mocked as totalTriagens >= 10 and no history)
+      // Fast-Track Platinum: 100% clean history for 30 days (>= 10 triagens sem falhas)
       if (hist.totalTriagens >= 10 && hist.historico.length === 0) {
         setMetodoSelecionado("aql_reduzido");
         toast("🚀 Fast-Track Platinum Ativado", {
@@ -76,7 +83,7 @@ export function AmostragemAutomatica({
         }
       }
     }
-  }, [sku]);
+  }, [sku, triagens]);
 
   const calculos = useMemo(() => {
     const raizQuadrada = calcularAmostraRaizQuadrada(tamanhoLote);

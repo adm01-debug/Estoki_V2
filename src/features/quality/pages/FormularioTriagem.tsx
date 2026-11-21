@@ -21,7 +21,7 @@ import { useTriagens } from "../hooks/useTriagens";
 import { useTriagemTimer } from "@/hooks/useTriagemTimer";
 import { useTriagemFotos, FotoTriagem } from "@/hooks/useTriagemFotos";
 import { AmostragemAutomatica } from "../components/AmostragemAutomatica";
-import { DefeitoHistorico, mockHistoricoDefeitos } from "../components/DefeitoHistorico";
+import { DefeitoHistorico, derivaHistoricoDefeitos } from "../components/DefeitoHistorico";
 import { FotosLoteObrigatorias } from "../components/FotosLoteObrigatorias";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -90,7 +90,7 @@ export default function FormularioTriagem() {
         const found = triagens.find((t) => t.id === id);
         if (found) {
           setTriagem(found);
-          // Mock volumes based on quantity if not present
+          // Deriva volumes de conferência a partir da quantidade do lote (50 itens por volume)
           const qty =
             (found as any)?.lotes?.quantidade_inicial || (found as any)?.quantidade_total || 100;
           const totalVolumes = Math.ceil(qty / 50) || 1; // Example: 50 items per box
@@ -373,6 +373,7 @@ export default function FormularioTriagem() {
                       <AmostragemAutomatica
                         tamanhoLote={quantidadeTotal}
                         sku={triagem?.produto_sku}
+                        triagens={triagens}
                         onConfirmarAmostra={() => setAmostragemConfirmada(true)}
                       />
                     )}
@@ -391,12 +392,14 @@ export default function FormularioTriagem() {
               >
                 <ChecklistCard checklist={checklist} onChecklistChange={handleChecklistChange} />
 
-                {triagem?.produto_sku && mockHistoricoDefeitos[triagem.produto_sku] && (
+                {triagem?.produto_sku && triagens.length > 0 && (
                   <DefeitoHistorico
                     sku={triagem.produto_sku}
                     produto={triagem.produto_nome || "Produto"}
-                    historico={mockHistoricoDefeitos[triagem.produto_sku].historico}
-                    totalTriagens={mockHistoricoDefeitos[triagem.produto_sku].totalTriagens}
+                    historico={derivaHistoricoDefeitos(triagens, triagem.produto_sku).historico}
+                    totalTriagens={
+                      derivaHistoricoDefeitos(triagens, triagem.produto_sku).totalTriagens
+                    }
                   />
                 )}
               </motion.div>

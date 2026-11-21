@@ -47,10 +47,11 @@ export default function ProdutividadePage() {
         ? ["Manhã", "Tarde"]
         : Array.from({ length: Math.min(dias, 7) }, (_, i) => `Dia ${i + 1}`);
 
-    return labels.map((label, i) => ({
+    // Distribui a média real do período por dia (sem inventar variação)
+    return labels.map((label) => ({
       periodo: label,
-      triagens: metricasGerais.totalTriagens / labels.length + Math.floor(Math.random() * 10 - 5),
-      tarefas: metricasGerais.totalTarefas / labels.length + Math.floor(Math.random() * 5 - 2),
+      triagens: Math.round(metricasGerais.totalTriagens / labels.length),
+      tarefas: Math.round(metricasGerais.totalTarefas / labels.length),
     }));
   }, [periodo, metricasGerais]);
 

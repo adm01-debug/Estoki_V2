@@ -14,8 +14,6 @@ interface PosicaoSugerida {
   rua: string;
   nivelNumero: number;
   coluna: number;
-  ocupacaoAtual?: number;
-  capacidadeMax?: number;
 }
 
 interface WarehouseVisualMapProps {
