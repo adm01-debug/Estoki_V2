@@ -59,7 +59,7 @@ jobs:
         run: |
           set +e
           npx vercel deploy --token "$VERCEL_TOKEN" --yes \
-            --scope juca1 > /tmp/vercel.out 2>&1
+            > /tmp/vercel.out 2>&1
           rc=$?
           set -e
           cat /tmp/vercel.out
