@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Scale, Wifi, WifiOff } from "lucide-react";
-import { useBalanca } from "@/hooks/useBalanca";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import type { useBalanca as UseBalancaHook } from "@/hooks/useBalanca";
 
 interface BalancaCardProps {
   onPesoCapturado: (peso: number) => void;
+  balanca: ReturnType<UseBalancaHook>;
 }
 
-export function BalancaCard({ onPesoCapturado }: BalancaCardProps) {
+export function BalancaCard({ onPesoCapturado, balanca }: BalancaCardProps) {
   const { toast } = useToast();
   const {
     conectada: balancaConectada,
@@ -18,7 +19,7 @@ export function BalancaCard({ onPesoCapturado }: BalancaCardProps) {
     conectar: conectarBalanca,
     desconectar: desconectarBalanca,
     erro: erroBalanca,
-  } = useBalanca();
+  } = balanca;
 
   useEffect(() => {
     if (leituraBalanca && leituraBalanca.estavel) {
