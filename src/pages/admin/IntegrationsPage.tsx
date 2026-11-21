@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,13 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
-type IntegrationKind =
-  | "sap"
-  | "totvs"
-  | "amazon"
-  | "mercado-livre"
-  | "ifood"
-  | "rappi";
+type IntegrationKind = "sap" | "totvs" | "amazon" | "mercado-livre" | "ifood" | "rappi";
 
 interface IntegrationDef {
   kind: IntegrationKind;
@@ -55,7 +43,7 @@ const INTEGRACOES: IntegrationDef[] = [
     kind: "amazon",
     name: "Amazon SP-API",
     fn: "integration-amazon",
-    action: "get_items",
+    action: "list_catalog_items",
     desc: "Selling Partner API — itens",
     urlLabel: "Marketplace endpoint",
     credLabel: "Access token",
@@ -65,7 +53,7 @@ const INTEGRACOES: IntegrationDef[] = [
     kind: "mercado-livre",
     name: "Mercado Livre",
     fn: "integration-mercado-livre",
-    action: "get_products",
+    action: "list_items",
     desc: "Sincroniza produtos via ml_item_id",
     urlLabel: "Base URL da API",
     credLabel: "Access token",
@@ -91,7 +79,9 @@ const INTEGRACOES: IntegrationDef[] = [
 ];
 
 export default function IntegrationsPage() {
-  const [creds, setCreds] = useState<Record<string, { url: string; cred: string; key: string }>>({});
+  const [creds, setCreds] = useState<Record<string, { url: string; cred: string; key: string }>>(
+    {}
+  );
   const [testing, setTesting] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, { ok: boolean; detail: string }>>({});
 
@@ -119,11 +109,17 @@ export default function IntegrationsPage() {
       if (error) throw error;
       const d = (data ?? {}) as { success?: boolean; error?: string; data?: unknown; ok?: boolean };
       if (d.success === true || d.ok === true) {
-        setResults((r) => ({ ...r, [def.kind]: { ok: true, detail: "Conexão OK — integração respondeu." } }));
+        setResults((r) => ({
+          ...r,
+          [def.kind]: { ok: true, detail: "Conexão OK — integração respondeu." },
+        }));
         toast({ title: `${def.name}`, description: "Integração funcional e respondendo." });
       } else {
         const msg = d.error ?? JSON.stringify(d);
-        setResults((r) => ({ ...r, [def.kind]: { ok: false, detail: `Integração respondeu mas retornou: ${msg}` } }));
+        setResults((r) => ({
+          ...r,
+          [def.kind]: { ok: false, detail: `Integração respondeu mas retornou: ${msg}` },
+        }));
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -138,8 +134,8 @@ export default function IntegrationsPage() {
       <div>
         <h1 className="text-2xl font-bold">Integrações</h1>
         <p className="text-muted-foreground">
-          Conecte o Estoki a ERPs (SAP / TOTVS) e marketplaces (Amazon, Mercado Livre, iFood, Rappi).
-          Preencha os dados da API e clique em <strong>Testar conexão</strong>.
+          Conecte o Estoki a ERPs (SAP / TOTVS) e marketplaces (Amazon, Mercado Livre, iFood,
+          Rappi). Preencha os dados da API e clique em <strong>Testar conexão</strong>.
         </p>
       </div>
 
@@ -153,7 +149,9 @@ export default function IntegrationsPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">{def.name}</CardTitle>
-                  <Badge variant={res?.ok === false ? "destructive" : res?.ok ? "default" : "secondary"}>
+                  <Badge
+                    variant={res?.ok === false ? "destructive" : res?.ok ? "default" : "secondary"}
+                  >
                     {res?.ok === false ? "Falha" : res?.ok ? "Ativo" : "Não testado"}
                   </Badge>
                 </div>
@@ -166,7 +164,9 @@ export default function IntegrationsPage() {
                     id={`${def.kind}-url`}
                     placeholder="https://..."
                     value={cfg.url}
-                    onChange={(e) => setCreds((c) => ({ ...c, [def.kind]: { ...cfg, url: e.target.value } }))}
+                    onChange={(e) =>
+                      setCreds((c) => ({ ...c, [def.kind]: { ...cfg, url: e.target.value } }))
+                    }
                   />
                 </div>
                 <div className="space-y-1">
@@ -176,7 +176,9 @@ export default function IntegrationsPage() {
                     type="password"
                     placeholder="chave / token"
                     value={cfg.cred}
-                    onChange={(e) => setCreds((c) => ({ ...c, [def.kind]: { ...cfg, cred: e.target.value } }))}
+                    onChange={(e) =>
+                      setCreds((c) => ({ ...c, [def.kind]: { ...cfg, cred: e.target.value } }))
+                    }
                   />
                 </div>
                 {def.needsKey && (
@@ -186,7 +188,9 @@ export default function IntegrationsPage() {
                       id={`${def.kind}-key`}
                       placeholder="ex.: ATVPDKIKX0DER"
                       value={cfg.key}
-                      onChange={(e) => setCreds((c) => ({ ...c, [def.kind]: { ...cfg, key: e.target.value } }))}
+                      onChange={(e) =>
+                        setCreds((c) => ({ ...c, [def.kind]: { ...cfg, key: e.target.value } }))
+                      }
                     />
                   </div>
                 )}
@@ -194,7 +198,9 @@ export default function IntegrationsPage() {
                   {busy ? "Testando…" : "Testar conexão"}
                 </Button>
                 {res && (
-                  <p className={`text-sm ${res.ok ? "text-emerald-600" : "text-destructive"}`}>{res.detail}</p>
+                  <p className={`text-sm ${res.ok ? "text-emerald-600" : "text-destructive"}`}>
+                    {res.detail}
+                  </p>
                 )}
               </CardContent>
             </Card>
