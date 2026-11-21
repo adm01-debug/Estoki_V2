@@ -20,6 +20,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useBalanca } from "@/hooks/useBalanca";
 import { useRecebimentos } from "../hooks/useRecebimentos";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +37,7 @@ export default function ConferenciaRecebimento() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { recebimentos, isLoading } = useRecebimentos();
+  const balanca = useBalanca();
 
   const [recebimento, setRecebimento] = useState<Recebimento | null>(null);
   const [quantidadeConferida, setQuantidadeConferida] = useState(0);
@@ -278,7 +280,7 @@ export default function ConferenciaRecebimento() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <BalancaCard onPesoCapturado={setPesoConferido} />
+          <BalancaCard onPesoCapturado={setPesoConferido} balanca={balanca} />
           <Card className="border-primary/20 bg-primary/5">
             <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2 text-sm font-medium">
@@ -380,8 +382,8 @@ export default function ConferenciaRecebimento() {
           handleVolumeConfirm={handleVolumeConfirm}
           handleVolumeIntegrityChange={handleVolumeIntegrityChange}
           handleVolumeHandoff={handleVolumeHandoff}
-          balancaConectada={false} // Simulado ou passado via props se necessário
-          leituraBalanca={null}
+          balancaConectada={balanca.conectada}
+          leituraBalanca={balanca.leitura}
         />
 
         <div className="flex gap-3 pt-4">
