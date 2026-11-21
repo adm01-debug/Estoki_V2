@@ -24,3 +24,12 @@
 - **Validação real (produção):** lotes reais só vencem em 2027+ (threshold 365 → 0 alertas, correto e sem espúrio); lote de teste com validade em 10 dias → execução criou 1 alerta (severidade critico, FK lote válida), 2ª execução dedup 0 novos/1 pending_dup; caminho do cron validado via `net.http_post` (pg_net) → function → alerta gravado. Dados de teste removidos (0 resíduos).
 - **Cron ativo:** `alert-expiration-daily` @07:00 (jobid 10) com `days_threshold:30` — idempotente, migration versionada `20261121130000_AUTO01_alert-expiration-cron.sql`.
 - **Pendente:** `alertas_config` vazio — thresholds reorder/min_stock por produto; alertas de estoque máximo/posição ociosa/divergência dependem do fluxo de inventário ser alimentado.
+
+## Estado geral dos alertas (verificado 21/11/2026)
+
+- **4 crons ativos em produção**: db-health-check (@hourly, jobid 4), reorder-check-daily (06:30, jobid 7), stock-alert-daily (06:45, jobid 9), alert-expiration-daily (07:00, jobid 10).
+- **alertas_historico ativos**: 10 `estoque_minimo` + 14 `sistema`, fonte stock-alert/validade, com dedup (pending_dup=0 em repetições).
+- **reorder_suggestions**: 1 pendente (TEST-SKU-001), gerado pelo reorder-check via cron.
+- **FK products.supplier_id->suppliers**: criada (migration `20261121170237`, PR #152 mergeada). suppliers continua vazia (0 linhas) — cadastro é dado de negócio.
+- **alert-stock-low (disco, NÃO deployada)**: duplica exatamente o papel do stock-alert (estoque baixo + ponto de pedido, enums PT) — **desnecessária**, mantida como referência histórica.
+- **alertas_config (tabela existe, 0 linhas)**: não-populada; estoque usa estoque_minimo/ponto_pedido dos produtos. Ligar config só quando houver regra por produto além dos thresholds.
