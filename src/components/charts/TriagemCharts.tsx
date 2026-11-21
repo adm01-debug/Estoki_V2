@@ -27,7 +27,6 @@ interface TriagemChartsProps {
     resultado?: string | null;
     data_fim?: string | null;
     created_at: string;
-    defeito_categoria?: string;
   }[];
 }
 
@@ -62,36 +61,71 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
   );
 
   const trendData = useMemo(() => {
-    // Generate last 7 days trend
-    const labels = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-    return labels.map((l) => ({
-      name: l,
-      performance: 85 + Math.random() * 10,
-      volume: 20 + Math.random() * 50,
-    }));
-  }, []);
+    // Tendência real dos últimos 7 dias, derivada das triagens registradas
+    const hoje = new Date();
+    const dias: { name: string; performance: number; volume: number }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const dia = new Date(hoje);
+      dia.setDate(dia.getDate() - i);
+      dia.setHours(0, 0, 0, 0);
+      const diaSeguinte = new Date(dia);
+      diaSeguinte.setDate(diaSeguinte.getDate() + 1);
+      const doDia = items.filter((it) => {
+        const d = new Date(it.created_at);
+        return d >= dia && d < diaSeguinte;
+      });
+      const aprovadas = doDia.filter((it) => it.resultado === "aprovado").length;
+      dias.push({
+        name: dia.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", ""),
+        performance: doDia.length > 0 ? Math.round((aprovadas / doDia.length) * 100) : 0,
+        volume: doDia.length,
+      });
+    }
+    return dias;
+  }, [items]);
 
-  const supplierData = useMemo(
-    () => [
-      { name: "Global Tech", score: 98, status: "Platinum" },
-      { name: "LogisPrime", score: 92, status: "Gold" },
-      { name: "ElectroVix", score: 75, status: "Audit" },
-      { name: "FastParts", score: 99, status: "Platinum" },
-    ],
-    []
-  );
+  const totalReal = items.length;
+  const aprovadasReal = items.filter((it) => it.resultado === "aprovado").length;
+  const aprovacaoReal = totalReal > 0 ? Math.round((aprovadasReal / totalReal) * 100) : 0;
 
-  const defectData = useMemo(() => {
-    const cats: Record<string, number> = {
-      Funcional: 12,
-      Estético: 8,
-      Embalagem: 5,
-      Incompleto: 3,
+  const statusData = useMemo(() => {
+    const total = items.length || 1;
+    const contagem: Record<string, number> = {};
+    for (const it of items) {
+      const r = it.resultado || "pendente";
+      contagem[r] = (contagem[r] || 0) + 1;
+    }
+    const labels: Record<string, { label: string; threshold: 90 }> = {
+      aprovado: { label: "Aprovado", threshold: 90 },
+      reprovado: { label: "Reprovado", threshold: 90 },
+      parcial: { label: "Parcial", threshold: 90 },
+      conserto: { label: "Em conserto", threshold: 90 },
+      pendente: { label: "Em aberto", threshold: 90 },
     };
+    return Object.entries(contagem).map(([chave, valor]) => {
+      const meta = labels[chave] || { label: chave, threshold: 90 as const };
+      return {
+        name: meta.label,
+        score: Math.round((valor / total) * 100),
+        status: chave,
+      };
+    });
+  }, [items]);
+
+  // Pareto de falhas reais: não-aprovações por tipo de resultado
+  const defectData = useMemo(() => {
+    const cats: Record<string, number> = {};
+    for (const it of items) {
+      const r = it.resultado;
+      if (r === "reprovado" || r === "parcial") {
+        cats[r === "parcial" ? "Parcial" : "Reprovado"] =
+          (cats[r === "parcial" ? "Parcial" : "Reprovado"] || 0) + 1;
+      }
+    }
     return Object.entries(cats)
       .map(([name, value]) => ({ name, value }))
       .sort((a, b) => b.value - a.value);
-  }, []);
+  }, [items]);
 
   return (
     <div className="space-y-4">
@@ -116,11 +150,12 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
                 variant="outline"
                 className="h-5 rounded-full border-success/20 bg-success/5 text-[10px] font-black uppercase tracking-tighter text-success"
               >
-                OEE: 96.8%
+                Aprovação: {aprovacaoReal}%
               </Badge>
             </div>
             <p className="mt-1 text-[11px] font-bold text-muted-foreground">
-              Análise preditiva baseada em 2.4k inspeções/mês.
+              {totalReal} triagem{totalReal === 1 ? "" : "s"} registrada{totalReal === 1 ? "" : "s"}{" "}
+              no período.
             </p>
           </div>
         </div>
@@ -238,11 +273,11 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
         <Card className={chartCardClass + " col-span-1 md:col-span-1"}>
           <CardHeader className="pb-2">
             <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              Índice de Fornecedores
+              Distribuição por Status
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {supplierData.map((s, idx) => (
+            {statusData.map((s, idx) => (
               <div key={idx} className="group flex cursor-help items-center justify-between">
                 <div className="space-y-0.5">
                   <p className="text-[11px] font-black tracking-tight">{s.name}</p>
@@ -260,13 +295,13 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
                   variant="outline"
                   className={cn(
                     "h-5 text-[8px] font-black uppercase",
-                    s.status === "Platinum"
+                    s.status === "aprovado"
                       ? "border-primary/20 bg-primary/5 text-primary"
                       : "border-border"
                   )}
                 >
-                  {s.status === "Platinum" && <ShieldCheck className="mr-1 h-2 w-2" />}
-                  {s.status}
+                  {s.status === "aprovado" && <ShieldCheck className="mr-1 h-2 w-2" />}
+                  {s.name}
                 </Badge>
               </div>
             ))}
