@@ -2,6 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 
+import { SCANNER_OCR_PROMPT } from "../_shared/prompts.ts";
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
@@ -40,29 +42,7 @@ serve(async (req) => {
             content: [
               {
                 type: "text",
-                text: `Analise esta imagem e extraia TODOS os textos visíveis. 
-Se for uma nota fiscal ou documento comercial, identifique:
-- Número do documento
-- Data
-- CNPJ/CPF
-- Valores
-- Itens/Produtos com quantidades
-- Códigos de barras (se visíveis os números)
-
-Responda em JSON válido com a estrutura:
-{
-  "tipo_documento": "nf" | "etiqueta" | "codigo_barras" | "outro",
-  "textos_extraidos": ["texto1", "texto2"],
-  "dados_estruturados": {
-    "numero_documento": "",
-    "data": "",
-    "cnpj": "",
-    "valor_total": 0,
-    "itens": [{"descricao": "", "quantidade": 0, "valor": 0}],
-    "codigos": [""]
-  },
-  "confianca": 0-100
-}`,
+                text: SCANNER_OCR_PROMPT,
               },
               {
                 type: "image_url",
