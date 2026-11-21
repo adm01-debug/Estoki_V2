@@ -17,7 +17,7 @@
 5. **EST01 — backbone para alertas de estoque (schema deve ser criado)** — ✔ EXECUTADO (21/11/2026): migration aditiva aplicada em produção (colunas reorder/current_stock/min_stock em products; tabelas suppliers, reorder_suggestions, stock_alerts; RPCs get_reorder_point/get_min_stock_threshold). PR #138 aguardando merge (regra 8). Ver docs/pendencias/EST01-stock-alert-backbone.md. · banco
 6. **QUAL-01 — Math.random (47), TODO (11), MOCK (10) em src/** — riscos 🟡9 do audit. Triar: hardcode de teste? aleatoriedade real? · src/
 7. **QUAL-02 — Swagger/OpenAPI para Edge Functions** — item pendente explícito do src/docs/REPORTE_AUDITORIA_ENTERPRISE.md. · supabase/functions/
-8. **DOC-01 — ESTADO_ATUAL.md e docs/estado defasados (16/08/2026)** — atualizar com o estado real medido (Fase 0). · ESTADO_ATUAL.md
+8. **DOC-01 — ESTADO_ATUAL.md e docs/estado defasados (16/08/2026)** — ✅ EXECUTADO (21/11/2026): seção “Atualização 21/11/2026” no ESTADO_ATUAL.md + nota em EVIDENCIAS.md, histórico preservado; link para _linha-de-base.md. · ESTADO_ATUAL.md
 
 ### Itens OBSOLETOS (auditoria defasada — já resolvidos)
 
