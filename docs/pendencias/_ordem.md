@@ -18,6 +18,7 @@
 6. **QUAL-01 — Math.random (47), TODO (11), MOCK (10) em src/** — riscos 🟡9 do audit. Triar: hardcode de teste? aleatoriedade real? · src/
 7. **QUAL-02 — Swagger/OpenAPI para Edge Functions** — item pendente explícito do src/docs/REPORTE_AUDITORIA_ENTERPRISE.md. · supabase/functions/
 8. **DOC-01 — ESTADO_ATUAL.md e docs/estado defasados (16/08/2026)** — atualizar com o estado real medido (Fase 0). · ESTADO_ATUAL.md
+
 ### Itens OBSOLETOS (auditoria defasada — já resolvidos)
 
 - **🔴1 Migrations sem controle** — supabase_migrations.schema_migrations existe.

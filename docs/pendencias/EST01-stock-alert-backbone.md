@@ -9,16 +9,19 @@
 - **Critério de aceite:** migration aditiva aplicada, tabelas/colunas/RPCs presentes, RLS coerente.
 
 ## O que foi feito (21/11/2026)
+
 - **products**: +10 colunas aditivas com default (supplier_id, current_stock=0, reorder_point=0, reorder_quantity=0, min_stock=0, safety_stock=0, avg_daily_sales=0, min_order_qty=1, active=true, category). Nada existente alterado.
 - **Novas tabelas**: suppliers, reorder_suggestions (unique product_id), stock_alerts — com RLS + grants conservadores.
 - **Novas RPCs**: get_reorder_point (default 10), get_min_stock_threshold (default 5), STABLE, grants authenticated/service_role.
 - **Backfill**: current_stock=stock_quantity nos 21 produtos (baseline: 0 baixos, 0 zerados).
 
 ## Verificação real (evidência)
+
 - **No ROLLBACK:** migration validada em transação completa (tabelas criadas e revertidas, colunas revertidas — `[]`).
 - **Aplicada em produção:** reorder_suggestions/stock_alerts/suppliers existem; 5 colunas confirmadas; RPCs get_reorder_point/get_min_stock_threshold existem e respondem 10/5.
 - **RPCs chamadas:** `select get_reorder_point()` → 10; `get_min_stock_threshold()` → 5.
 
 ## Estado
+
 - **PR #138:** migration versionada. **Regra 8 (DDL produção) → PR aberta para decisão do dono.**
 - **Pendente de negócio:** definir reorder_point/min_stock por produto antes de ligar o cron de alerta (senão alertas espúrios — hoje todos=0, então 0 alertas, seguro).
