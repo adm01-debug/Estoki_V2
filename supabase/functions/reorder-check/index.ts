@@ -15,10 +15,13 @@ serve(async (req) => {
     // Buscar produtos abaixo do ponto de reposição
     const { data: products } = await supabase
       .from("products")
-      .select("*, supplier:supplier_id(id, name, email, lead_time_days)")
-      .lte("current_stock", supabase.raw("reorder_point"));
+      .select("*, supplier:supplier_id(id, name, email, lead_time_days)");
 
-    const suggestions = (products || []).map((p) => {
+    const belowReorder = (products || []).filter(
+      (p) => (p.current_stock ?? 0) <= (p.reorder_point ?? 0)
+    );
+
+    const suggestions = belowReorder.map((p) => {
       const safetyStock = p.safety_stock || 10;
       const avgDailySales = p.avg_daily_sales || 5;
       const leadTime = p.supplier?.lead_time_days || 7;
