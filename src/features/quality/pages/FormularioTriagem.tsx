@@ -90,7 +90,7 @@ export default function FormularioTriagem() {
         const found = triagens.find((t) => t.id === id);
         if (found) {
           setTriagem(found);
-          // Mock volumes based on quantity if not present
+          // Deriva volumes de conferência a partir da quantidade do lote (50 itens por volume)
           const qty =
             (found as any)?.lotes?.quantidade_inicial || (found as any)?.quantidade_total || 100;
           const totalVolumes = Math.ceil(qty / 50) || 1; // Example: 50 items per box

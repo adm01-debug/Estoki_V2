@@ -37,8 +37,6 @@ interface PosicaoSugerida {
   rua: string;
   nivelNumero: number;
   coluna: number;
-  ocupacaoAtual?: number;
-  capacidadeMax?: number;
 }
 
 interface ItemArmazenar {
@@ -127,8 +125,6 @@ const calcularSugestoes = (posicoes: PosicaoEstoque[], item: ItemArmazenar): Pos
         rua: parsed.rua,
         nivelNumero: parsed.nivel,
         coluna: parsed.coluna,
-        capacidadeMax: 1000, // mock
-        ocupacaoAtual: 0, // mock
       } as PosicaoSugerida;
     })
     .sort((a, b) => b.score - a.score);

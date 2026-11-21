@@ -1,28 +1,37 @@
 import { motion } from "framer-motion";
 import { Activity, ShieldCheck, Database, Wifi, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 export function SystemHealthMonitor() {
-  const [latency, setLatency] = useState<number>(18);
-  const [lastSync, setLastSync] = useState(new Date());
+  const { data: snapshots, isLoading } = useQuery({
+    queryKey: ["db-health-snapshots"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("db_health_snapshots")
+        .select("wal_bytes, xact_commit, xact_rollback, deadlocks, created_at")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 2,
+  });
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLatency((prev) => {
-        const next = prev + (Math.random() > 0.5 ? 1 : -1);
-        return Math.min(Math.max(next, 15), 35);
-      });
-      if (Math.random() > 0.7) setLastSync(new Date());
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  const last = snapshots?.[0];
+  const integrates = snapshots?.length ?? 0;
+  const integradas = snapshots?.reduce((acc, s) => acc + (Number(s.xact_commit) || 0), 0) || 0;
+  const falhas = snapshots?.reduce((acc, s) => acc + (Number(s.xact_rollback) || 0), 0) || 0;
+  const integridade =
+    integrates > 0 ? Math.min(Math.round((integradas / Math.max(integradas + falhas, 1)) * 100), 100) : 0;
+  const linkOk = !isLoading && snapshots !== undefined;
 
   const stats = [
-    { label: "Status", value: "Operacional", icon: ShieldCheck, color: "text-success" },
-    { label: "Latência", value: `${latency}ms`, icon: Activity, color: "text-primary" },
-    { label: "Sync", value: "Ativo", icon: Wifi, color: "text-blue-500" },
-    { label: "Integridade", value: "100%", icon: Database, color: "text-indigo-500" },
+    { label: "Status", value: linkOk ? "Operacional" : "Verificando...", icon: ShieldCheck, color: "text-success" },
+    { label: "Operações", value: last ? `${Number(last.xact_commit) || 0} commits` : "-", icon: Activity, color: "text-primary" },
+    { label: "Sync", value: integrates ? "Ativo" : "Sem histórico", icon: Wifi, color: "text-blue-500" },
+    { label: "Integridade", value: `${integridade}%`, icon: Database, color: "text-indigo-500" },
   ];
 
   return (
@@ -64,11 +73,13 @@ export function SystemHealthMonitor() {
         <Clock className="h-3 w-3" />
         <span className="text-[10px] font-medium tracking-tight">
           Última sincronização:{" "}
-          {lastSync.toLocaleTimeString("pt-BR", {
+          {(last?.created_at
+        ? new Date(last.created_at).toLocaleTimeString("pt-BR", {
             hour: "2-digit",
             minute: "2-digit",
             second: "2-digit",
-          })}
+          })
+        : "-")}
         </span>
       </div>
     </motion.div>
