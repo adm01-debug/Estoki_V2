@@ -24,13 +24,30 @@ export function SystemHealthMonitor() {
   const integradas = snapshots?.reduce((acc, s) => acc + (Number(s.xact_commit) || 0), 0) || 0;
   const falhas = snapshots?.reduce((acc, s) => acc + (Number(s.xact_rollback) || 0), 0) || 0;
   const integridade =
-    integrates > 0 ? Math.min(Math.round((integradas / Math.max(integradas + falhas, 1)) * 100), 100) : 0;
+    integrates > 0
+      ? Math.min(Math.round((integradas / Math.max(integradas + falhas, 1)) * 100), 100)
+      : 0;
   const linkOk = !isLoading && snapshots !== undefined;
 
   const stats = [
-    { label: "Status", value: linkOk ? "Operacional" : "Verificando...", icon: ShieldCheck, color: "text-success" },
-    { label: "Operações", value: last ? `${Number(last.xact_commit) || 0} commits` : "-", icon: Activity, color: "text-primary" },
-    { label: "Sync", value: integrates ? "Ativo" : "Sem histórico", icon: Wifi, color: "text-blue-500" },
+    {
+      label: "Status",
+      value: linkOk ? "Operacional" : "Verificando...",
+      icon: ShieldCheck,
+      color: "text-success",
+    },
+    {
+      label: "Operações",
+      value: last ? `${Number(last.xact_commit) || 0} commits` : "-",
+      icon: Activity,
+      color: "text-primary",
+    },
+    {
+      label: "Sync",
+      value: integrates ? "Ativo" : "Sem histórico",
+      icon: Wifi,
+      color: "text-blue-500",
+    },
     { label: "Integridade", value: `${integridade}%`, icon: Database, color: "text-indigo-500" },
   ];
 
@@ -73,13 +90,13 @@ export function SystemHealthMonitor() {
         <Clock className="h-3 w-3" />
         <span className="text-[10px] font-medium tracking-tight">
           Última sincronização:{" "}
-          {(last?.created_at
-        ? new Date(last.created_at).toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })
-        : "-")}
+          {last?.created_at
+            ? new Date(last.created_at).toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })
+            : "-"}
         </span>
       </div>
     </motion.div>
