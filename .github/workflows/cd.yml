@@ -59,6 +59,7 @@ jobs:
         run: |
           set +e
           npx vercel deploy --token "$VERCEL_TOKEN" --yes \
+            --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" \
             > /tmp/vercel.out 2>&1
           rc=$?
           set -e
@@ -90,7 +91,8 @@ jobs:
           VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
         run: |
           set +e
-          npx vercel deploy --prod --token "$VERCEL_TOKEN" --yes > /tmp/vercel.out 2>&1
+          npx vercel deploy --prod --token "$VERCEL_TOKEN" --yes \
+            --scope "$VERCEL_ORG_ID" --project "$VERCEL_PROJECT_ID" > /tmp/vercel.out 2>&1
           rc=$?
           set -e
           cat /tmp/vercel.out
