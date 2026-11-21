@@ -17,3 +17,10 @@
 - **Validação real em produção (deploy confirmado):** execução #1 criou 10 alertas (estoque_minimo/critico, FK produto válida); execução #2 com dedup 0 novas + 10 pending_dup (sem duplicatas); count banco = 10 por fonte stock-alert. RLS select authenticated — visível na UI Central de Alertas.
 - **Cron ativo:** `stock-alert` @06:45 (jobid 9) — continua agendado e agora produz alertas consumíveis pela UI.
 - **Pendente:** `alertas_config` vazio — thresholds reorder/min_stock por produto ainda não definidos; alertas de validade (`vencimento_proximo`) dependem de blend com `lotes.data_validade` + `quantidade_atual>0`.
+
+## Atualização 21/11/2026 — alerta de validade (vencimento_proximo) ativo
+
+- **alert-expiration reescrito (PR #149, mergeada 21/11, commit b6fac326):** recupera o trabalho de outro agente (escrito contra schema EN inexistente `location_stock`/`alerts`) — agora lê `lotes` (schema PT, inclui `quantidade_atual`) e grava em `alertas_historico` com enums PT (`vencimento_proximo`, severidade `urgente`/`critico`/`aviso`, status `ativo`), dedup por lote+status ativo.
+- **Validação real (produção):** lotes reais só vencem em 2027+ (threshold 365 → 0 alertas, correto e sem espúrio); lote de teste com validade em 10 dias → execução criou 1 alerta (severidade critico, FK lote válida), 2ª execução dedup 0 novos/1 pending_dup; caminho do cron validado via `net.http_post` (pg_net) → function → alerta gravado. Dados de teste removidos (0 resíduos).
+- **Cron ativo:** `alert-expiration-daily` @07:00 (jobid 10) com `days_threshold:30` — idempotente, migration versionada `20261121130000_AUTO01_alert-expiration-cron.sql`.
+- **Pendente:** `alertas_config` vazio — thresholds reorder/min_stock por produto; alertas de estoque máximo/posição ociosa/divergência dependem do fluxo de inventário ser alimentado.
