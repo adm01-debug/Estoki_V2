@@ -91,21 +91,24 @@ serve(async (req) => {
     }
 
     await supabase
+    try {
+      await supabase
       .from("integration_logs")
       .insert({
-        integration: "ifood",
-        action,
-        request: { action, data },
-        response: result,
-        created_at: new Date().toISOString(),
-      })
-      .catch(() => {});
+      integration: "ifood",
+      action,
+      request: { action, data },
+      response: result,
+      created_at: new Date().toISOString(),
+      });
+    } catch { /* best-effort: log nao pode quebrar a integracao */ }
+
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ success: false, error: error.message }), {
+    return new Response(JSON.stringify({ success: false, error: String((error as Error)?.message ?? error) }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       status: 400,
     });
