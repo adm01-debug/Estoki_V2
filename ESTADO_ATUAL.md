@@ -9,6 +9,48 @@
 
 ---
 
+## 🔄 Atualização 21/11/2026 — estado real medido (Fase 1 do backlog)
+
+> Documento original acima reflete a auditoria de 16/08/2026. Esta seção anexa o estado real medido
+> na sessão de 20–21/11/2026 (código `main` + banco de produção, verificado em vez de presumido).
+> O histórico original foi preservado para auditoria; a fonte de verdade para **agentes futuros** é
+> esta seção + [`docs/pendencias/_linha-de-base.md`](docs/pendencias/_linha-de-base.md) +
+> [`docs/pendencias/_ordem.md`](docs/pendencias/_ordem.md). Nada aqui foi escrito à mão: cada
+> afirmação tem comando/medição própria na sessão, registrada nos docs de execução linkados.
+
+| # | Risco (auditoria 16/08)                    | Estado real (21/11/2026)                              | Veredito                                             | Prova (doc de execução)                                       |
+|---| ------------------------------------------ | ----------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------- |
+| 🔴1 | Migrations sem controle (`42P01`)          | `supabase_migrations.schema_migrations` **existe**    | ✅ RESOLVIDO                                          | `_linha-de-base.md` (verificado via MCP read-only)            |
+| 🔴2 | 52 fns p/ tabela inexistente               | **20 deploys mortos removidos** (100→80) + `reorder-check` corrigida e **deployada**; tabelas de EST01 criadas (`suppliers`, `reorder_suggestions`, `stock_alerts`) | ✅ RESOLVIDO (gap morto removido; backbone criado) | `BANCO-01-*.md` + `EST01-*.md`                                |
+| 🔴3 | Automações sem disparo (0 jobs)            | **2 crons ativos em produção**: `db-health-check` (jobid 4, @hourly) e `reorder-check-daily` (jobid 7, @06:30) | 🔄 PARCIAL (núcleo ativo; `cron-weekly`/alertas dependem de decisão/retensão) | `AUTO-01-*.md` + `EST01-*.md`                |
+| 🔴4 | CI quebrado (0/8)                          | **CI verde**: run mais recente de `main` `completed/success`; pipeline e gates de PR verdes (incl. PR #139 100% verde) | ✅ RESOLVIDO                                        | `CICD-01-*.md` + runs GitHub                                   |
+| 🟠5 | Gate de cobertura falso (12/12/25)         | thresholds reais **6/8/5/6** (PR #135)                | 🟡 CONFIRMADO/baixo (ambicionar mais depois)          | `CICD-01-*.md`                                                  |
+| 🟠6 | Documentação defasada                      | **este documento** atualizado                         | ✅ RESOLVIDO                                           | este diff                                                    |
+| 🟠7 | Workflow morto `github/`                   | diretório removido                                    | ✅ RESOLVIDO                                          | `git log` (hard): removido em sessão anterior                  |
+| 🟡8 | Páginas órfãs (24/108)                     | **34/34 removidas** com prova de varredura completa   | ✅ RESOLVIDO                                           | `FRONT-01-paginas-orfas.md`                                    |
+| 🟡9 | Math.random/TODO/mock                      | **47 Math.random · 11 TODO · 10 MOCK** em `src/`      | 🔄 AGUARDANDO triagem (QUAL-01 no backlog)            | `QUAL-01-mathrandom-todo-mock.md`                              |
+| 🟡10 | 10 tabelas sem consumidor                  | 0 tabelas sem referência em código                    | ✅ OBSOLETO                                            | `_linha-de-base.md`                                             |
+
+**Números que mudaram (medição direta 21/11/2026):**
+
+- Edge Functions com `index.ts`: **248**; deployadas em produção: **80** (100→80 após BANCO-01).
+- Páginas em `src/pages` + subpastas: **76 arquivos** (após FRONT-01, 0 órfãs).
+- Migrations: **166** arquivos; cron ativo: **2 jobs** (db-health-check, reorder-check-daily).
+- Coverage gate (`vitest.config.ts`): **6/8/5/6**.
+- Backbone EST01: 10 colunas novas em `products`, 3 tabelas novas, 2 RPCs (`get_reorder_point`,
+  `get_min_stock_threshold`); **thresholds aplicados em produção** (min_stock 12% piso 5;
+  `reorder_point = min_stock + 10` — 21 produtos); roda `reorder-check-daily` @06:30 UTC.
+- PRs: **#137 e #138 mergeadas**; **#139 aberta** (fix + cron EST01, CI 100% verde, **aguardando
+  aprovação regra 8**).
+
+**Pendências abertas (decisão humana ou item em aberto da Fase 2):** QUAL-01 (triagem de risco 🟡9),
+QUAL-02 (OpenAPI das functions), SEC-01 (rotacionar token management exposto no chat), SEC-02
+(confirmar publishable key no Vercel), multi-tenant Fase 2, ERPs SAP/TOTVS, picking por voz, builder
+de relatórios, dashboard multi-filial, integrar ERPs, e o roadmap Q1–Q4 2025 a reconciliar. O que é
+plano futuro × o que é gap real está separado em [`docs/pendencias/_ordem.md`](docs/pendencias/_ordem.md).
+
+---
+
 ## Veredito em uma tela
 
 O ESTOKI V2 é, na prática, **dois sistemas sobrepostos com maturidade muito diferente**:

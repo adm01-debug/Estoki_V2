@@ -3,6 +3,9 @@
 Anexo de [`ESTADO_ATUAL.md`](../../ESTADO_ATUAL.md). Data: 16/08/2026.
 Todas as consultas ao banco de produção foram executadas com `read_only:true`. Nada foi alterado.
 
+> 🔄 **Atualização 21/11/2026:** o estado real medido (Fase 1 do backlog) está em [`docs/pendencias/_linha-de-base.md`](../../docs/pendencias/_linha-de-base.md) e na seção “Atualização 21/11/2026” do ESTADO_ATUAL.md. Resumo das deltas: migrations sob controle, CI verde, 0 páginas órfãs, cobertura 6/8/5/6, 2 crons ativos, EST01 aplicado em produção (thresholds + reorder-check). Este arquivo permanece como evidência histórica da auditoria de 16/08/2026.
+
+
 ---
 
 ## 1. Dimensão medida do sistema
