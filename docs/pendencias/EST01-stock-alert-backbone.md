@@ -23,5 +23,8 @@
 
 ## Estado
 
-- **PR #138:** migration versionada. **Regra 8 (DDL produção) → PR aberta para decisão do dono.**
-- **Pendente de negócio:** definir reorder_point/min_stock por produto antes de ligar o cron de alerta (senão alertas espúrios — hoje todos=0, então 0 alertas, seguro).
+- **PR #138 mergeada (21/11):** migration versionada + cron aplicados. **Regra 8 (DDL produção) → aprovado pelo dono.**
+- **Thresholds definidos (regra conservadora 12%/35%):** min_stock = 12% do estoque (piso 5); reorder_point = min_stock + 10. Aplicado nos 21 produtos (nenhum produto real abaixo → 0 alertas espúrios; só TEST-SKU-001, sku de teste, abaixo).
+- **reorder-check deployada e testada de ponta a ponta (21/11):** sugestão para TEST-SKU-001 (stock 10 ≤ reorder 11, qty 35) persistida em reorder_suggestions (status pending). Corrigidos 2 bugs da função: `supabase.raw()` inexistente (filtro em memória) e embed de supplier exigia FK ausente (busca em mapa separado). PR #139.
+- **Cron ativo:** `reorder-check-daily` @06:30 (job id 7) chama a edge function via pg_net.http_post (status 200 validado). Migration idempotente versionada.
+- **Pendente:** adicionar FK products.supplier_id→suppliers (embed do PostgREST reativa); ligar alert-stock-low (depende de location_stock/alerts inexistentes).
