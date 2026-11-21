@@ -18,6 +18,7 @@ interface IntegrationDef {
   urlLabel: string;
   credLabel: string;
   needsKey?: boolean;
+  hasUrl?: boolean;
 }
 
 const INTEGRACOES: IntegrationDef[] = [
@@ -48,6 +49,7 @@ const INTEGRACOES: IntegrationDef[] = [
     urlLabel: "Marketplace endpoint",
     credLabel: "Access token",
     needsKey: true,
+    hasUrl: false,
   },
   {
     kind: "mercado-livre",
@@ -57,6 +59,7 @@ const INTEGRACOES: IntegrationDef[] = [
     desc: "Sincroniza produtos via ml_item_id",
     urlLabel: "Base URL da API",
     credLabel: "Access token",
+    hasUrl: false,
   },
   {
     kind: "ifood",
@@ -66,6 +69,7 @@ const INTEGRACOES: IntegrationDef[] = [
     desc: "Pedidos e cardápio",
     urlLabel: "Base URL da API",
     credLabel: "Access token",
+    hasUrl: false,
   },
   {
     kind: "rappi",
@@ -75,6 +79,7 @@ const INTEGRACOES: IntegrationDef[] = [
     desc: "Pedidos e entregas",
     urlLabel: "Base URL da API",
     credLabel: "API key",
+    hasUrl: false,
   },
 ];
 
@@ -91,18 +96,21 @@ export default function IntegrationsPage() {
     setResults((r) => ({ ...r, [def.kind]: { ok: true, detail: "Conectando…" } }));
     const body: Record<string, unknown> = {
       action: def.action,
-      config: { base_url: cfg.url },
       data: { limit: 1 },
     };
+    if (def.hasUrl !== false) body.config = { base_url: cfg.url };
+    // SAP/TOTVS: handler recebe config { base_url, credencial }.
     if (def.kind === "sap") body.config = { base_url: cfg.url, session_id: cfg.cred };
     if (def.kind === "totvs") body.config = { base_url: cfg.url, token: cfg.cred };
+    // Marketplaces: handler recebe credentials (endpoint fixo na function).
     if (def.kind === "amazon") {
-      body.config = { base_url: cfg.url, access_token: cfg.cred, marketplace_id: cfg.key };
+      body.credentials = { access_token: cfg.cred };
+      body.marketplace_id = cfg.key;
     }
     if (def.kind === "mercado-livre" || def.kind === "ifood") {
-      body.config = { base_url: cfg.url, access_token: cfg.cred };
+      body.credentials = { access_token: cfg.cred };
     }
-    if (def.kind === "rappi") body.config = { base_url: cfg.url, api_key: cfg.cred };
+    if (def.kind === "rappi") body.credentials = { api_key: cfg.cred };
 
     try {
       const { data, error } = await supabase.functions.invoke(def.fn, { body });
@@ -164,17 +172,19 @@ export default function IntegrationsPage() {
                 <CardDescription>{def.desc}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div className="space-y-1">
-                  <Label htmlFor={`${def.kind}-url`}>{def.urlLabel}</Label>
-                  <Input
-                    id={`${def.kind}-url`}
-                    placeholder="https://..."
-                    value={cfg.url}
-                    onChange={(e) =>
-                      setCreds((c) => ({ ...c, [def.kind]: { ...cfg, url: e.target.value } }))
-                    }
-                  />
-                </div>
+                {def.hasUrl !== false && (
+                  <div className="space-y-1">
+                    <Label htmlFor={`${def.kind}-url`}>{def.urlLabel}</Label>
+                    <Input
+                      id={`${def.kind}-url`}
+                      placeholder="https://..."
+                      value={cfg.url}
+                      onChange={(e) =>
+                        setCreds((c) => ({ ...c, [def.kind]: { ...cfg, url: e.target.value } }))
+                      }
+                    />
+                  </div>
+                )}
                 <div className="space-y-1">
                   <Label htmlFor={`${def.kind}-cred`}>{def.credLabel}</Label>
                   <Input
