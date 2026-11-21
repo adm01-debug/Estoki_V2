@@ -152,7 +152,13 @@ export default function IntegrationsPage() {
                   <Badge
                     variant={res?.ok === false ? "destructive" : res?.ok ? "default" : "secondary"}
                   >
-                    {res?.ok === false ? "Falha" : res?.ok ? "Ativo" : "Não testado"}
+                    {busy
+                      ? "Testando…"
+                      : res?.ok === false
+                        ? "Falha"
+                        : res?.ok
+                          ? "Ativo"
+                          : "Não testado"}
                   </Badge>
                 </div>
                 <CardDescription>{def.desc}</CardDescription>
