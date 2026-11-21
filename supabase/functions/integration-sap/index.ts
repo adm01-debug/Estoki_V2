@@ -117,16 +117,18 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase
+    try {
+      await supabase
       .from("integration_logs")
       .insert({
-        integration: "sap_b1",
-        action,
-        request: { action, data },
-        response: result,
-        created_at: new Date().toISOString(),
-      })
-      .catch(() => {});
+      integration: "sap_b1",
+      action,
+      request: { action, data },
+      response: result,
+      created_at: new Date().toISOString(),
+      });
+    } catch { /* best-effort: log nao pode quebrar a integracao */ }
+
 
     return new Response(JSON.stringify({ success: true, data: result }), {
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
