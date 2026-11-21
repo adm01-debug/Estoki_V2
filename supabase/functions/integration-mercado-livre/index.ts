@@ -114,7 +114,6 @@ serve(async (req) => {
     }
 
     // Log da integração
-    await supabase
     try {
       await supabase
       .from("integration_logs")

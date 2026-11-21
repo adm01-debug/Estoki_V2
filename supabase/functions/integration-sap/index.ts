@@ -117,7 +117,6 @@ serve(async (req) => {
         throw new Error(`Ação desconhecida: ${action}`);
     }
 
-    await supabase
     try {
       await supabase
       .from("integration_logs")
