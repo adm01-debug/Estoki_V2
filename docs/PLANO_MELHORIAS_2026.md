@@ -49,9 +49,9 @@ Checklist vivo derivado da auditoria exaustiva do repositório. Execução 1 ite
 - [x] **32. `CHANGELOG.md` unificado** — ✅ criado seguindo Keep a Changelog + SemVer (2026-07-15).
 - [x] **33. E2E smoke** — ✅ Job Playwright (`routes-smoke.spec.ts`) + audit-zod + i18n-check adicionados ao `.github/workflows/qa.yml` (2026-07-15).
 - [ ] **34. `eslint-plugin-i18next`** bloqueando strings hardcoded.
-- [ ] **35. Externalizar prompt IA** de `scanner-ocr`.
-- [ ] **36. Picking por voz** (Web Speech API PoC).
-- [ ] **37. Builder de relatórios** personalizáveis (drag-and-drop).
+- [x] **35. Externalizar prompt IA** de `scanner-ocr`. — ✅ (2026-11-21) PR #159 mergeada: prompt movido para `supabase/functions/_shared/prompts.ts` (`SCANNER_OCR_PROMPT`), contrato inalterado.
+- [x] **36. Picking por voz** (Web Speech API PoC). — ✅ (2026-11-21) PR #156 mergeada: hook `useSpeechRecognition.ts` corrigido (`isSupported` state real, `lang pt-BR`, interimResults, onend) e ligado ao scan de produtos no PickingPage (botão mic).
+- [x] **37. Builder de relatórios** personalizáveis (drag-and-drop). — ✅ (2026-11-21) PR #158 mergeada: aba Movimentações com reordenação dnd-kit (Sortable), toggle mostrar/ocultar e persistência em localStorage (`estoki:relatorio-widgets`).
 - [ ] **38. Dashboard gerencial multi-filial** validado.
 
 ---
