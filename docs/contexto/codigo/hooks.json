@@ -1,0 +1,6804 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "total": 324,
+ "hooks": [
+  {
+   "arquivo": "scripts/ai-context/cenarios.mjs",
+   "hooks_exportados": [
+    "useA",
+    "useB",
+    "useC",
+    "useX"
+   ],
+   "linhas": 173,
+   "dominio": null,
+   "tabelas": [
+    "fantasma",
+    "so_teste",
+    "t",
+    "t1",
+    "tx"
+   ],
+   "rpcs": [
+    "r1"
+   ],
+   "edges": [
+    "tick"
+   ],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/gamificacao/ConquistaNotificacoes.tsx",
+   "hooks_exportados": [
+    "useConquistaNotificacoes"
+   ],
+   "linhas": 271,
+   "dominio": "components/gamificacao",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/kanban/useKanbanData.ts",
+   "hooks_exportados": [
+    "useKanbanData"
+   ],
+   "linhas": 80,
+   "dominio": "components/kanban",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useMemo",
+    "useQuery",
+    "useState"
+   ],
+   "canais_realtime": [
+    "kanban-lotes-realtime"
+   ],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/KanbanPipeline.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/onboarding/OnboardingTour.tsx",
+   "hooks_exportados": [
+    "useOnboardingTour"
+   ],
+   "linhas": 202,
+   "dominio": "components/onboarding",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/confirmation-dialog.tsx",
+   "hooks_exportados": [
+    "useConfirmation"
+   ],
+   "linhas": 139,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/common/LeaveGuard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/form.tsx",
+   "hooks_exportados": [
+    "useFormField"
+   ],
+   "linhas": 168,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useFormContext",
+    "useId"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/produtos/ProdutoFormDialog.tsx",
+    "src/features/inventory/components/BoxForm.tsx",
+    "src/features/inventory/components/PortaPaleteForm.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "hooks_exportados": [
+    "useSidebar"
+   ],
+   "linhas": 735,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useIsMobile",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/components/ui/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 4,
+   "dominio": "components/ui",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/config/error-handler.ts",
+   "hooks_exportados": [
+    "useErrorHandler"
+   ],
+   "linhas": 203,
+   "dominio": "config",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/common/ErrorBoundary.tsx",
+    "src/config/index.ts",
+    "src/lib/init.ts",
+    "src/main.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/config/feature-flags.tsx",
+   "hooks_exportados": [
+    "useFeatureFlag"
+   ],
+   "linhas": 248,
+   "dominio": "config",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/config/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/config/index.ts",
+   "hooks_exportados": [
+    "useErrorHandler",
+    "useFeatureFlag"
+   ],
+   "linhas": 92,
+   "dominio": "config",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/lib/init.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/AppContext.tsx",
+   "hooks_exportados": [
+    "useApp"
+   ],
+   "linhas": 61,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/common/AppProviders.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/AuthContext.tsx",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 178,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 39,
+   "usado_por_arquivos": [
+    "src/components/auth/ProtectedRoute.tsx",
+    "src/components/common/AppProviders.tsx",
+    "src/components/common/PresenceAvatars.tsx",
+    "src/components/common/SavedFiltersManager.tsx",
+    "src/components/gamificacao/GamificacaoLoja.tsx",
+    "src/components/layout/AppLayout.tsx",
+    "src/components/layout/Header.tsx",
+    "src/contexts/NotificationContext.tsx",
+    "src/contexts/index.ts",
+    "src/features/dashboard/pages/DashboardPage.tsx",
+    "src/features/picking/hooks/usePicking.ts",
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/guards/AuthGuard.tsx",
+    "src/guards/PermissionGuard.tsx",
+    "src/guards/RoleGuard.tsx",
+    "src/hooks/useAdjustments.ts",
+    "src/hooks/useAppLayoutState.ts",
+    "src/hooks/useAuditLog.ts",
+    "src/hooks/useAuth.ts",
+    "src/hooks/useConquistas.ts",
+    "src/hooks/useDesafiosDiarios.ts",
+    "src/hooks/useGovernanca.ts",
+    "src/hooks/useInventarioCiclico/index.ts",
+    "src/hooks/useMovimentacoes.ts",
+    "src/hooks/useNotificacoes.ts",
+    "src/hooks/useOfflineCache.ts",
+    "src/hooks/usePermission.ts",
+    "src/hooks/usePermissions.ts",
+    "src/hooks/usePutaway.ts",
+    "src/hooks/useRanking.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/contexts/index.ts",
+   "hooks_exportados": [
+    "useAuth",
+    "useTheme",
+    "useToast"
+   ],
+   "linhas": 4,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/NotificationContext.tsx",
+   "hooks_exportados": [
+    "useNotifications"
+   ],
+   "linhas": 186,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useContext",
+    "useEffect",
+    "useNotificationOperations",
+    "useNotificationRealtime",
+    "usePushNotifications",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/common/AppProviders.tsx",
+    "src/components/notifications/NotificationCenter.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/ThemeContext.tsx",
+   "hooks_exportados": [
+    "useTheme"
+   ],
+   "linhas": 31,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/common/AppProviders.tsx",
+    "src/components/theme/ThemeProvider.tsx",
+    "src/components/theme/ThemeToggle.tsx",
+    "src/components/ui/sonner.tsx",
+    "src/contexts/index.ts",
+    "src/pages/Configuracoes.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/ToastContext.tsx",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 43,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/contexts/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/contexts/TransitionContext.tsx",
+   "hooks_exportados": [
+    "useTransitionContext"
+   ],
+   "linhas": 46,
+   "dominio": "contexts",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/common/AppProviders.tsx",
+    "src/hooks/usePageTransition.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useCurvaABC.ts",
+   "hooks_exportados": [
+    "useCurvaABC"
+   ],
+   "linhas": 262,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "lotes",
+    "produtos",
+    "rastreamento_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/analytics/abc/ABCActionsList.tsx",
+    "src/components/analytics/abc/ABCCharts.tsx",
+    "src/components/analytics/abc/ABCProductList.tsx",
+    "src/components/analytics/abc/ABCStatsCards.tsx",
+    "src/features/analytics/pages/ABCAnalysisPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useDemandForecast.ts",
+   "hooks_exportados": [
+    "useDemandForecast"
+   ],
+   "linhas": 100,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/analytics/pages/DemandForecastPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts",
+   "hooks_exportados": [
+    "useKPIAlerts"
+   ],
+   "linhas": 185,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/analytics/pages/KPIsPage.tsx",
+    "src/pages/AlertasInteligentes.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts",
+   "hooks_exportados": [],
+   "linhas": 3,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/kpis-page/KPIMetaDialog.tsx",
+    "src/components/kpis-page/KPIMetasTable.tsx",
+    "src/features/analytics/pages/KPIsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useKPIsOperacionais/index.ts",
+   "hooks_exportados": [
+    "useKPIsOperacionais"
+   ],
+   "linhas": 185,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "metas_kpi",
+    "metricas_operacionais"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/analytics/hooks/useKPIsOperacionais.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useOperationalLive.ts",
+   "hooks_exportados": [
+    "useOperationalLive"
+   ],
+   "linhas": 176,
+   "dominio": "features/analytics",
+   "tabelas": [
+    "alertas_historico",
+    "eventos_picking",
+    "eventos_triagem",
+    "lotes",
+    "posicoes_estoque",
+    "tarefas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useRealtimeKPIs"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/analytics/pages/OperationalMonitorPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts",
+   "hooks_exportados": [
+    "useRealtimeKPIs"
+   ],
+   "linhas": 142,
+   "dominio": "features/analytics",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useQueryClient",
+    "useRef"
+   ],
+   "canais_realtime": [
+    "kpi-realtime-updates"
+   ],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/features/analytics/hooks/useOperationalLive.ts",
+    "src/features/analytics/pages/KPIsPage.tsx",
+    "src/features/dashboard/pages/DashboardPage.tsx",
+    "src/pages/Dashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts",
+   "hooks_exportados": [
+    "useAtividadeRecente"
+   ],
+   "linhas": 213,
+   "dominio": "features/dashboard",
+   "tabelas": [
+    "eventos_triagem",
+    "lotes",
+    "rastreamento_historico",
+    "tarefas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/dashboard/pages/DashboardPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/dashboard/hooks/useDashboard.ts",
+   "hooks_exportados": [
+    "useDashboard"
+   ],
+   "linhas": 268,
+   "dominio": "features/dashboard",
+   "tabelas": [
+    "estoque_posicao",
+    "eventos_triagem",
+    "lotes",
+    "metricas_dashboard",
+    "posicoes_estoque",
+    "rastreamento_historico"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/dashboard/DashboardKPIs.tsx",
+    "src/components/dashboard/DynamicAIInsights.tsx",
+    "src/features/dashboard/pages/DashboardPage.tsx",
+    "src/pages/Dashboard.tsx",
+    "src/utils/dashboardExport.ts"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/useEstoque.ts",
+   "hooks_exportados": [
+    "useEstoque"
+   ],
+   "linhas": 154,
+   "dominio": "features/inventory",
+   "tabelas": [
+    "posicoes_estoque"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useMutation",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [
+    "inventory-changes-${Math.random().toString(36).slice(2)}"
+   ],
+   "usado_por": 9,
+   "usado_por_arquivos": [
+    "src/features/dashboard/pages/DashboardPage.tsx",
+    "src/features/inventory/components/EstoqueFilterSheet.tsx",
+    "src/features/inventory/components/EstoqueMapaTab.tsx",
+    "src/features/inventory/components/posicao-detalhes/PosicaoActions.tsx",
+    "src/features/inventory/components/posicao-detalhes/PosicaoInfoCard.tsx",
+    "src/features/inventory/components/posicao-detalhes/types.ts",
+    "src/features/inventory/pages/EstoquePage.tsx",
+    "src/pages/Armazenamento.tsx",
+    "src/pages/Posicoes.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts",
+   "hooks_exportados": [
+    "usePosicaoDetalhes"
+   ],
+   "linhas": 83,
+   "dominio": "features/inventory",
+   "tabelas": [
+    "estoque_posicao",
+    "posicao_status_log"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/inventory/components/PosicaoDetalhesDialog.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/picking/hooks/usePicking.ts",
+   "hooks_exportados": [
+    "usePicking"
+   ],
+   "linhas": 82,
+   "dominio": "features/picking",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [
+    "picking-tasks-changes"
+   ],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/picking/pages/PickingPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/quality/components/FotosLoteObrigatorias.tsx",
+   "hooks_exportados": [
+    "useTriagemFotos"
+   ],
+   "linhas": 255,
+   "dominio": "features/quality",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/quality/pages/FormularioTriagem.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/quality/hooks/useTriagens.ts",
+   "hooks_exportados": [
+    "useTriagens"
+   ],
+   "linhas": 71,
+   "dominio": "features/quality",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [
+    "triagem-changes"
+   ],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/quality/pages/FormularioTriagem.tsx",
+    "src/features/quality/pages/TriagemPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/receiving/hooks/useRecebimentos.ts",
+   "hooks_exportados": [
+    "useRecebimentos"
+   ],
+   "linhas": 69,
+   "dominio": "features/receiving",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [
+    "receiving-changes"
+   ],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/features/dashboard/pages/DashboardPage.tsx",
+    "src/features/receiving/components/ImportarNFDialog.tsx",
+    "src/features/receiving/components/NovoRecebimentoDialog.tsx",
+    "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+    "src/features/receiving/pages/RecebimentoPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/features/shipping/hooks/useRomaneios.ts",
+   "hooks_exportados": [
+    "useRomaneios"
+   ],
+   "linhas": 86,
+   "dominio": "features/shipping",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [
+    "romaneios-changes"
+   ],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/romaneios/RomaneioDetalhesDialog.tsx",
+    "src/features/shipping/pages/ShippingPage.tsx",
+    "src/pages/Romaneios.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/guards/index.ts",
+   "hooks_exportados": [
+    "usePermission"
+   ],
+   "linhas": 14,
+   "dominio": "guards",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/guards/PermissionGuard.tsx",
+   "hooks_exportados": [
+    "usePermission"
+   ],
+   "linhas": 120,
+   "dominio": "guards",
+   "tabelas": [],
+   "rpcs": [
+    "get_current_user_permissions"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useQuery",
+    "useUserPermissions"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/guards/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/index.ts",
+   "hooks_exportados": [
+    "useArrowNavigation",
+    "useAsync",
+    "useBreakpoint",
+    "useClickOutside",
+    "useClipboard",
+    "useDataTable",
+    "useDebounce",
+    "useDebouncedCallback",
+    "useDisclosure",
+    "useEventListener",
+    "useExport",
+    "useInterval",
+    "useKeyboardShortcut",
+    "useKeyboardShortcuts",
+    "useLocalStorage",
+    "useMediaQuery",
+    "useOnlineStatus",
+    "usePrevious",
+    "useTable",
+    "useThrottle",
+    "useThrottledValue",
+    "useTimeout",
+    "useToggle",
+    "useUserPreferences"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "scripts/ai-context/cenarios.mjs"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-data-table.ts",
+   "hooks_exportados": [
+    "useDataTable"
+   ],
+   "linhas": 155,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ui/data-table-advanced.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-export.ts",
+   "hooks_exportados": [
+    "useExport"
+   ],
+   "linhas": 300,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ui/data-table-advanced.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-keyboard-shortcuts.ts",
+   "hooks_exportados": [
+    "useArrowNavigation",
+    "useKeyboardShortcut",
+    "useKeyboardShortcuts"
+   ],
+   "linhas": 192,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/common/KeyboardShortcuts.tsx",
+    "src/components/ui/keyboard-shortcuts-help.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-mobile.ts",
+   "hooks_exportados": [
+    "useIsMobile",
+    "useMobile"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMediaQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ui/sidebar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/use-toast.ts",
+   "hooks_exportados": [
+    "useToast"
+   ],
+   "linhas": 187,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 38,
+   "usado_por_arquivos": [
+    "src/components/conferencia/BalancaCard.tsx",
+    "src/components/etiquetas/GeradorEtiquetas.tsx",
+    "src/components/gamificacao/ConquistaNotificacoes.tsx",
+    "src/components/inventario/NovoCicloDialog.tsx",
+    "src/components/ui/toaster.tsx",
+    "src/components/ui/use-toast.ts",
+    "src/features/inventory/components/BoxForm.tsx",
+    "src/features/inventory/components/PortaPaleteForm.tsx",
+    "src/features/inventory/hooks/useEstoque.ts",
+    "src/features/quality/hooks/useTriagens.ts",
+    "src/features/receiving/components/NovoRecebimentoDialog.tsx",
+    "src/features/receiving/hooks/useRecebimentos.ts",
+    "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+    "src/hooks/useAdjustments.ts",
+    "src/hooks/useClipboardAdvanced.ts",
+    "src/hooks/useFornecedores.ts",
+    "src/hooks/useInventarioCiclico/index.ts",
+    "src/hooks/useMovimentacoes.ts",
+    "src/hooks/useMutation.ts",
+    "src/hooks/useNotifications.ts",
+    "src/hooks/useProdutividade.ts",
+    "src/hooks/useQualityControl.ts",
+    "src/hooks/useRealtimeToast.ts",
+    "src/hooks/useTarefas.ts",
+    "src/hooks/useTriagemFotos.ts",
+    "src/hooks/useTrocasDevolucoes.ts",
+    "src/pages/Armazenamento.tsx",
+    "src/pages/Auth.tsx",
+    "src/pages/Configuracoes.tsx",
+    "src/pages/Dashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useABCAnalysis.ts",
+   "hooks_exportados": [
+    "useABCAnalysis"
+   ],
+   "linhas": 67,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAbortController.ts",
+   "hooks_exportados": [
+    "useAbortController"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useABTest.ts",
+   "hooks_exportados": [
+    "useABTest"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAdjustments.ts",
+   "hooks_exportados": [
+    "useAdjustments"
+   ],
+   "linhas": 108,
+   "dominio": "hooks",
+   "tabelas": [
+    "ajustes_estoque"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/AjustesEstoque.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAnalytics.ts",
+   "hooks_exportados": [
+    "useAnalytics"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hoc/withAnalytics.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAnimation.ts",
+   "hooks_exportados": [
+    "useAnimation"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAnimationFrame.ts",
+   "hooks_exportados": [
+    "useAnimationFrame"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAppLayoutState.ts",
+   "hooks_exportados": [
+    "useAppLayoutState"
+   ],
+   "linhas": 101,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useLocation",
+    "useNavigate",
+    "usePushNotifications",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAriaDescribedBy.ts",
+   "hooks_exportados": [
+    "useAriaDescribedBy"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useId",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAriaHidden.ts",
+   "hooks_exportados": [
+    "useAriaHidden"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAriaLabel.ts",
+   "hooks_exportados": [
+    "useAriaLabel"
+   ],
+   "linhas": 9,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useId",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAriaLive.tsx",
+   "hooks_exportados": [
+    "useAriaLive"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useArray.ts",
+   "hooks_exportados": [
+    "useArray"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAsync.ts",
+   "hooks_exportados": [
+    "useAsync"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAsyncCallback.ts",
+   "hooks_exportados": [
+    "useAsyncCallback"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAudio.ts",
+   "hooks_exportados": [
+    "useAudio"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAuditLog.ts",
+   "hooks_exportados": [
+    "useAuditLog"
+   ],
+   "linhas": 104,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/dashboard/DashboardActivityFeed.tsx",
+    "src/features/inventory/pages/EstoquePage.tsx",
+    "src/hooks/useProdutos.ts",
+    "src/pages/Relatorios.tsx",
+    "src/pages/admin/AuditLogPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAuth.ts",
+   "hooks_exportados": [
+    "useAuth"
+   ],
+   "linhas": 4,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 7,
+   "usado_por_arquivos": [
+    "src/components/security/AccessControl.tsx",
+    "src/components/security/ActiveSessions.tsx",
+    "src/components/security/DeviceManagement.tsx",
+    "src/components/security/MFASettings.tsx",
+    "src/components/security/SecurityAlerts.tsx",
+    "src/components/security/SecurityOverview.tsx",
+    "src/hoc/withAuth.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useAuthorization.ts",
+   "hooks_exportados": [
+    "useAuthorization"
+   ],
+   "linhas": 45,
+   "dominio": "hooks",
+   "tabelas": [
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBalanca.ts",
+   "hooks_exportados": [
+    "useBalanca"
+   ],
+   "linhas": 213,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/conferencia/BalancaCard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBarcodePrint.ts",
+   "hooks_exportados": [
+    "useBarcodePrint"
+   ],
+   "linhas": 31,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBarcodeScanner.ts",
+   "hooks_exportados": [
+    "useBarcodeScanner"
+   ],
+   "linhas": 31,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBattery.ts",
+   "hooks_exportados": [
+    "useBattery"
+   ],
+   "linhas": 68,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBlobUrl.ts",
+   "hooks_exportados": [
+    "useBlobUrl"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBroadcast.ts",
+   "hooks_exportados": [
+    "useBroadcast"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useBulkActions.ts",
+   "hooks_exportados": [
+    "useBulkActions"
+   ],
+   "linhas": 234,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMutation",
+    "useQueryClient",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/BulkActionsBar.tsx",
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCache.ts",
+   "hooks_exportados": [
+    "useCache"
+   ],
+   "linhas": 51,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCamera.ts",
+   "hooks_exportados": [
+    "useCamera"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCarrierIntegration.ts",
+   "hooks_exportados": [
+    "useCarrierIntegration"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useChannel.ts",
+   "hooks_exportados": [
+    "useChannel"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCheckboxState.ts",
+   "hooks_exportados": [
+    "useCheckboxState"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClickAway.ts",
+   "hooks_exportados": [
+    "useClickAway"
+   ],
+   "linhas": 2,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClickOutside.ts",
+   "hooks_exportados": [
+    "useClickOutside"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/hooks/useClickAway.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClipboard.ts",
+   "hooks_exportados": [
+    "useClipboard"
+   ],
+   "linhas": 56,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/ui/copy-button.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClipboardAdvanced.ts",
+   "hooks_exportados": [
+    "useClipboardAdvanced"
+   ],
+   "linhas": 35,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useClock.ts",
+   "hooks_exportados": [
+    "useClock"
+   ],
+   "linhas": 10,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useColorScheme.ts",
+   "hooks_exportados": [
+    "useColorScheme"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCompass.ts",
+   "hooks_exportados": [
+    "useCompass"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useConfirmation.ts",
+   "hooks_exportados": [
+    "useConfirmation"
+   ],
+   "linhas": 37,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useConflictResolution.ts",
+   "hooks_exportados": [
+    "useConflictResolution"
+   ],
+   "linhas": 22,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useConquistas.ts",
+   "hooks_exportados": [
+    "useConquistas"
+   ],
+   "linhas": 183,
+   "dominio": "hooks",
+   "tabelas": [
+    "conquistas_definicoes",
+    "conquistas_usuarios"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/gamificacao/ConquistaNotificacoes.tsx",
+    "src/components/gamificacao/ConquistasSystem.tsx",
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/pages/Gamificacao.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useContextMenu.ts",
+   "hooks_exportados": [
+    "useContextMenu"
+   ],
+   "linhas": 33,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useController.ts",
+   "hooks_exportados": [
+    "useController"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCookie.ts",
+   "hooks_exportados": [
+    "useCookie"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCookies.ts",
+   "hooks_exportados": [
+    "useCookies"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCopyToClipboard.ts",
+   "hooks_exportados": [
+    "useCopyToClipboard"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCountdown.ts",
+   "hooks_exportados": [
+    "useCountdown"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCounter.ts",
+   "hooks_exportados": [
+    "useCounter"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCRUD.ts",
+   "hooks_exportados": [
+    "useCRUD"
+   ],
+   "linhas": 234,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/hooks/useOrders.ts",
+    "src/hooks/useStock.ts",
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useCurrentTenant.ts",
+   "hooks_exportados": [
+    "useCurrentTenant",
+    "useUserTenants"
+   ],
+   "linhas": 51,
+   "dominio": "hooks",
+   "tabelas": [
+    "tenant_members"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDarkMode.ts",
+   "hooks_exportados": [
+    "useDarkMode"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDebounce.ts",
+   "hooks_exportados": [
+    "useDebounce",
+    "useDebouncedCallback"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/common/GlobalSearchDialog.tsx",
+    "src/components/ui/search-input.tsx",
+    "src/hooks/index.ts",
+    "src/hooks/useDebouncedValue.ts",
+    "src/pages/Produtos.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDebouncedValue.ts",
+   "hooks_exportados": [
+    "useDebouncedValue"
+   ],
+   "linhas": 2,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/useFulltextSearch.ts",
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDebugLog.ts",
+   "hooks_exportados": [
+    "useDebugLog"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDebugState.ts",
+   "hooks_exportados": [
+    "useDebugState"
+   ],
+   "linhas": 6,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useDebugValue"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDeferredValue.ts",
+   "hooks_exportados": [
+    "useDeferredValue"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDesafiosDiarios.ts",
+   "hooks_exportados": [
+    "useDesafiosDiarios"
+   ],
+   "linhas": 230,
+   "dominio": "hooks",
+   "tabelas": [
+    "desafios_diarios",
+    "desafios_usuarios"
+   ],
+   "rpcs": [
+    "collect_challenge_reward"
+   ],
+   "edges": [
+    "gerar-desafios-diarios"
+   ],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/gamificacao/DesafiosDiarios.tsx",
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/pages/Gamificacao.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDeviceMotion.ts",
+   "hooks_exportados": [
+    "useDeviceMotion"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDeviceOrientationHook.ts",
+   "hooks_exportados": [
+    "useDeviceOrientation"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDevtools.ts",
+   "hooks_exportados": [
+    "useDevtools"
+   ],
+   "linhas": 10,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDivergencias.ts",
+   "hooks_exportados": [
+    "useDivergencias"
+   ],
+   "linhas": 348,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [
+    "alerta-divergencia-fornecedor"
+   ],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/RelatorioDivergencias.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDocumentTitle.ts",
+   "hooks_exportados": [
+    "useDocumentTitle"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDocumentVisibility.ts",
+   "hooks_exportados": [
+    "useDocumentVisibility"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDoubleClick.ts",
+   "hooks_exportados": [
+    "useDoubleClick"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useDuplicate.ts",
+   "hooks_exportados": [
+    "useDuplicate"
+   ],
+   "linhas": 165,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/DuplicateButton.tsx",
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useEffectOnce.ts",
+   "hooks_exportados": [
+    "useEffectOnce"
+   ],
+   "linhas": 7,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useElementSize.ts",
+   "hooks_exportados": [
+    "useElementSize"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useLayoutEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useEntityVersions.ts",
+   "hooks_exportados": [
+    "useEntityVersions"
+   ],
+   "linhas": 126,
+   "dominio": "hooks",
+   "tabelas": [
+    "entity_versions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/versioning/VersionHistory.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useErrorBoundaryState.ts",
+   "hooks_exportados": [
+    "useErrorBoundaryState"
+   ],
+   "linhas": 8,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useEventListener.ts",
+   "hooks_exportados": [
+    "useEventListener"
+   ],
+   "linhas": 22,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useEventSource.ts",
+   "hooks_exportados": [
+    "useEventSource"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useExperiment.ts",
+   "hooks_exportados": [
+    "useExperiment"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useExpiration.ts",
+   "hooks_exportados": [
+    "useExpiration"
+   ],
+   "linhas": 33,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useExport.ts",
+   "hooks_exportados": [
+    "useTableExport"
+   ],
+   "linhas": 234,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/admin/AuditLogPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useExportData.ts",
+   "hooks_exportados": [
+    "useExportData"
+   ],
+   "linhas": 141,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/ExportDropdown.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFavicon.ts",
+   "hooks_exportados": [
+    "useFavicon"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFeatureFlag.ts",
+   "hooks_exportados": [
+    "useFeatureFlag"
+   ],
+   "linhas": 8,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFEFO.ts",
+   "hooks_exportados": [
+    "useFEFO"
+   ],
+   "linhas": 49,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFetch.ts",
+   "hooks_exportados": [
+    "useFetch"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFieldArray.ts",
+   "hooks_exportados": [
+    "useFieldArray"
+   ],
+   "linhas": 39,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFIFO.ts",
+   "hooks_exportados": [
+    "useFIFO"
+   ],
+   "linhas": 44,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFileDownload.ts",
+   "hooks_exportados": [
+    "useFileDownload"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFileDrop.ts",
+   "hooks_exportados": [
+    "useFileDrop"
+   ],
+   "linhas": 30,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFileReader.ts",
+   "hooks_exportados": [
+    "useFileReader"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFirstRender.ts",
+   "hooks_exportados": [
+    "useFirstRender"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFocus.ts",
+   "hooks_exportados": [
+    "useFocus"
+   ],
+   "linhas": 8,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFocusReturn.ts",
+   "hooks_exportados": [
+    "useFocusReturn"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFocusWithin.ts",
+   "hooks_exportados": [
+    "useFocusWithin"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useForceUpdate.ts",
+   "hooks_exportados": [
+    "useForceUpdate"
+   ],
+   "linhas": 6,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useForm.ts",
+   "hooks_exportados": [
+    "useForm"
+   ],
+   "linhas": 65,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFormContext.tsx",
+   "hooks_exportados": [
+    "useFormContext"
+   ],
+   "linhas": 42,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useContext",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFormState.ts",
+   "hooks_exportados": [
+    "useFormState"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFornecedores.ts",
+   "hooks_exportados": [
+    "useFornecedores"
+   ],
+   "linhas": 224,
+   "dominio": "hooks",
+   "tabelas": [
+    "eventos_triagem",
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 5,
+   "usado_por_arquivos": [
+    "src/components/fornecedores/DashboardFornecedores.tsx",
+    "src/components/fornecedores/FornecedoresCriticos.tsx",
+    "src/components/fornecedores/FornecedoresRanking.tsx",
+    "src/components/fornecedores/FornecedoresVisaoGeral.tsx",
+    "src/pages/RelatorioFornecedores.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFullscreen.ts",
+   "hooks_exportados": [
+    "useFullscreen"
+   ],
+   "linhas": 43,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useFulltextSearch.ts",
+   "hooks_exportados": [
+    "useFulltextSearch",
+    "useSearchHighlight"
+   ],
+   "linhas": 132,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useDebouncedValue",
+    "useMemo",
+    "useQuery",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGamificacao.ts",
+   "hooks_exportados": [
+    "useGamificacao"
+   ],
+   "linhas": 74,
+   "dominio": "hooks",
+   "tabelas": [
+    "conquistas_definicoes",
+    "gamificacao_usuarios"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [
+    "gamificacao-realtime"
+   ],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/pages/Gamificacao.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGeoDistance.ts",
+   "hooks_exportados": [
+    "useGeoDistance"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGeofencing.ts",
+   "hooks_exportados": [
+    "useGeofencing"
+   ],
+   "linhas": 33,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGeolocation.ts",
+   "hooks_exportados": [
+    "useGeolocation"
+   ],
+   "linhas": 41,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGeoWhitelist.ts",
+   "hooks_exportados": [
+    "useGeoWhitelist"
+   ],
+   "linhas": 134,
+   "dominio": "hooks",
+   "tabelas": [
+    "geo_whitelist"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/security/GeoBlockingManager.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGestaoTarefasPage.ts",
+   "hooks_exportados": [
+    "useGestaoTarefasPage"
+   ],
+   "linhas": 134,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useState",
+    "useTarefas"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/GestaoTarefas.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useGovernanca.ts",
+   "hooks_exportados": [
+    "useCheckpointsZona",
+    "useCustodiaTransferencias",
+    "useOcorrenciasPerda"
+   ],
+   "linhas": 285,
+   "dominio": "hooks",
+   "tabelas": [
+    "checkpoints_zona",
+    "custodia_transferencias",
+    "ocorrencias_perda"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/governanca/CheckpointsTab.tsx",
+    "src/components/governanca/CustodiaTab.tsx",
+    "src/components/governanca/OcorrenciasTab.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useHaptics.ts",
+   "hooks_exportados": [
+    "useHaptics"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/common/GlobalSearchDialog.tsx",
+    "src/components/layout/sidebar/SidebarNavButton.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useHead.ts",
+   "hooks_exportados": [
+    "useHead"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/KanbanPipeline.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useHistory.ts",
+   "hooks_exportados": [
+    "useHistory"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useHover.ts",
+   "hooks_exportados": [
+    "useHover"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIdle.ts",
+   "hooks_exportados": [
+    "useIdle"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIdleCallback.ts",
+   "hooks_exportados": [
+    "useIdleCallback"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useImage.ts",
+   "hooks_exportados": [
+    "useImage"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useImagePreload.ts",
+   "hooks_exportados": [
+    "useImagePreload"
+   ],
+   "linhas": 10,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useImmerState.ts",
+   "hooks_exportados": [
+    "useImmerState"
+   ],
+   "linhas": 13,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useImportData.ts",
+   "hooks_exportados": [
+    "useImportData"
+   ],
+   "linhas": 190,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/DataImporter.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIndexedDB.ts",
+   "hooks_exportados": [
+    "useIndexedDB"
+   ],
+   "linhas": 44,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInfiniteQuery.ts",
+   "hooks_exportados": [
+    "useInfiniteQuery"
+   ],
+   "linhas": 13,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useTanstackInfiniteQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInfiniteScroll.tsx",
+   "hooks_exportados": [
+    "useInfiniteScroll"
+   ],
+   "linhas": 162,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useInfiniteQuery",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInput.ts",
+   "hooks_exportados": [
+    "useInput"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIntersectionObserver.ts",
+   "hooks_exportados": [
+    "useIntersectionObserver"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInterval.ts",
+   "hooks_exportados": [
+    "useInterval",
+    "useTimeout"
+   ],
+   "linhas": 32,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInventarioCiclico.ts",
+   "hooks_exportados": [],
+   "linhas": 3,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/inventario/CicloCard.tsx",
+    "src/components/inventario/InventarioDashboardTab.tsx",
+    "src/components/inventario/NovoCicloDialog.tsx",
+    "src/pages/InventarioCiclico.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInventarioCiclico/index.ts",
+   "hooks_exportados": [
+    "useInventarioCiclico"
+   ],
+   "linhas": 266,
+   "dominio": "hooks/useInventarioCiclico",
+   "tabelas": [
+    "inventario_ciclos",
+    "inventario_contagens"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useInventarioCiclico.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInventoryCount.ts",
+   "hooks_exportados": [
+    "useInventoryCount"
+   ],
+   "linhas": 57,
+   "dominio": "hooks",
+   "tabelas": [
+    "inventario_contagens"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMemo",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/inventory/InventoryPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useInView.ts",
+   "hooks_exportados": [
+    "useInView"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIsFirstRender.ts",
+   "hooks_exportados": [
+    "useIsFirstRender"
+   ],
+   "linhas": 9,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useIsMounted.ts",
+   "hooks_exportados": [
+    "useIsMounted"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useKeyboardShortcuts.ts",
+   "hooks_exportados": [
+    "useKeyboardShortcuts"
+   ],
+   "linhas": 137,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useNavigate"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/common/ShortcutsHUD.tsx",
+    "src/pages/Dashboard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useKeyPress.ts",
+   "hooks_exportados": [
+    "useHotkey",
+    "useKeyPress"
+   ],
+   "linhas": 46,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLabelPrint.ts",
+   "hooks_exportados": [
+    "useLabelPrint"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLatest.ts",
+   "hooks_exportados": [
+    "useLatest"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLayoutEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLazyLoad.ts",
+   "hooks_exportados": [
+    "useLazyLoad"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLeadTime.ts",
+   "hooks_exportados": [
+    "useLeadTime"
+   ],
+   "linhas": 54,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/useReorderPoint.ts",
+    "src/hooks/useSafetyStock.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLifecycles.ts",
+   "hooks_exportados": [
+    "useLifecycles"
+   ],
+   "linhas": 8,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLIFO.ts",
+   "hooks_exportados": [
+    "useLIFO"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useList.ts",
+   "hooks_exportados": [
+    "useList"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLocalStorage.ts",
+   "hooks_exportados": [
+    "useLocalStorage"
+   ],
+   "linhas": 79,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/common/OnboardingTour.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLockBodyScroll.ts",
+   "hooks_exportados": [
+    "useLockBodyScroll"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLogger.ts",
+   "hooks_exportados": [
+    "useLogger"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLongPress.ts",
+   "hooks_exportados": [
+    "useLongPress"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useLotTracking.ts",
+   "hooks_exportados": [
+    "useLotTracking"
+   ],
+   "linhas": 35,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMap.ts",
+   "hooks_exportados": [
+    "useMap"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMeasure.ts",
+   "hooks_exportados": [
+    "useMeasure"
+   ],
+   "linhas": 46,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLayoutEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMediaDevices.ts",
+   "hooks_exportados": [
+    "useMediaDevices"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMediaQuery.ts",
+   "hooks_exportados": [
+    "useBreakpoint",
+    "useMediaQuery",
+    "useUserPreferences"
+   ],
+   "linhas": 74,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts",
+    "src/hooks/use-mobile.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMediaRecorder.ts",
+   "hooks_exportados": [
+    "useMediaRecorder"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMeta.ts",
+   "hooks_exportados": [
+    "useMeta"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMFA.ts",
+   "hooks_exportados": [
+    "useMFA"
+   ],
+   "linhas": 226,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/MFAEnroll.tsx",
+    "src/components/MFAVerify.tsx",
+    "src/components/security/MFASettings.tsx",
+    "src/pages/TwoFactorAuth.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMicrophone.ts",
+   "hooks_exportados": [
+    "useMicrophone"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMotionTemplate.ts",
+   "hooks_exportados": [
+    "useMotionTemplate"
+   ],
+   "linhas": 10,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMotionValue.ts",
+   "hooks_exportados": [
+    "useMotionValue"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMounted.ts",
+   "hooks_exportados": [
+    "useMounted"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useSafeState.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMovimentacoes.ts",
+   "hooks_exportados": [
+    "useMovimentacoes"
+   ],
+   "linhas": 170,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [
+    "movements-changes"
+   ],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/pages/Armazenamento.tsx",
+    "src/pages/Rastreabilidade.tsx",
+    "src/pages/Relatorios.tsx",
+    "src/pages/inventory/StockMovementsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useMutation.ts",
+   "hooks_exportados": [
+    "useMutation"
+   ],
+   "linhas": 55,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNavigationGuard.ts",
+   "hooks_exportados": [
+    "useNavigationGuard"
+   ],
+   "linhas": 51,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBlocker",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotificacoes.ts",
+   "hooks_exportados": [
+    "useNotificacoes"
+   ],
+   "linhas": 286,
+   "dominio": "hooks",
+   "tabelas": [
+    "alertas_historico",
+    "notificacoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [
+    "alertas_changes",
+    "notificacoes_changes"
+   ],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/notifications/NotificacoesGlobais.tsx",
+    "src/pages/notifications/NotificationsPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotificationChannel.ts",
+   "hooks_exportados": [
+    "useNotificationChannel"
+   ],
+   "linhas": 30,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotificationOperations.ts",
+   "hooks_exportados": [
+    "useNotificationOperations"
+   ],
+   "linhas": 168,
+   "dominio": "hooks",
+   "tabelas": [
+    "alertas_historico",
+    "notificacoes",
+    "tarefas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/contexts/NotificationContext.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotificationPermission.ts",
+   "hooks_exportados": [
+    "useNotificationPermission"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotificationRealtime.ts",
+   "hooks_exportados": [
+    "useNotificationRealtime"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [
+    "realtime_alertas",
+    "realtime_notificacoes"
+   ],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/contexts/NotificationContext.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNotifications.ts",
+   "hooks_exportados": [
+    "useNotifications"
+   ],
+   "linhas": 53,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useNow.ts",
+   "hooks_exportados": [
+    "useNow"
+   ],
+   "linhas": 10,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useObject.ts",
+   "hooks_exportados": [
+    "useObject"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useObjectUrl.ts",
+   "hooks_exportados": [
+    "useObjectUrl"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOffline.ts",
+   "hooks_exportados": [
+    "useOffline"
+   ],
+   "linhas": 56,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOfflineCache.ts",
+   "hooks_exportados": [
+    "useOfflineCache"
+   ],
+   "linhas": 82,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/ModoOffline.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOnlineStatus.ts",
+   "hooks_exportados": [
+    "useOnlineStatus"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/common/OnlineIndicator.tsx",
+    "src/components/layout/header/Header.tsx",
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOptimisticUpdate.ts",
+   "hooks_exportados": [
+    "useOptimisticUpdate"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOrders.ts",
+   "hooks_exportados": [
+    "useOrders"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useList"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useOrientation.ts",
+   "hooks_exportados": [
+    "useOrientation"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePageTransition.ts",
+   "hooks_exportados": [
+    "usePageTransition"
+   ],
+   "linhas": 55,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLocation",
+    "useMemo",
+    "useReducedMotion",
+    "useTransitionContext"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/PageTransition.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePageView.ts",
+   "hooks_exportados": [
+    "usePageView"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useLocation"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePageVisibility.ts",
+   "hooks_exportados": [
+    "usePageVisibility"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePasswordResetRequests.ts",
+   "hooks_exportados": [
+    "usePasswordResetRequests"
+   ],
+   "linhas": 182,
+   "dominio": "hooks",
+   "tabelas": [
+    "password_reset_requests"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/security/PasswordResetApproval.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePermission.ts",
+   "hooks_exportados": [
+    "usePermission"
+   ],
+   "linhas": 59,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [
+    "get_current_user_permissions"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePermissions.ts",
+   "hooks_exportados": [
+    "usePermissions"
+   ],
+   "linhas": 225,
+   "dominio": "hooks",
+   "tabelas": [
+    "permissions",
+    "role_permissions",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/security/AccessControl.tsx",
+    "src/components/security/PermissionsManager.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePickingOptimization.ts",
+   "hooks_exportados": [
+    "usePickingOptimization"
+   ],
+   "linhas": 39,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePortal.ts",
+   "hooks_exportados": [
+    "usePortal"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePreferredLanguage.ts",
+   "hooks_exportados": [
+    "usePreferredLanguage"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePresence.ts",
+   "hooks_exportados": [
+    "usePresence"
+   ],
+   "linhas": 23,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePresenceAnimation.ts",
+   "hooks_exportados": [
+    "usePresenceAnimation"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePreventScroll.ts",
+   "hooks_exportados": [
+    "usePreventScroll"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePrevious.ts",
+   "hooks_exportados": [
+    "usePrevious"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePrint.ts",
+   "hooks_exportados": [
+    "usePrint"
+   ],
+   "linhas": 35,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePrinter.ts",
+   "hooks_exportados": [
+    "usePrinter"
+   ],
+   "linhas": 35,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useProdutividade.ts",
+   "hooks_exportados": [
+    "useProdutividade"
+   ],
+   "linhas": 294,
+   "dominio": "hooks",
+   "tabelas": [
+    "eventos_triagem",
+    "gamificacao_usuarios",
+    "profiles",
+    "tarefas",
+    "user_roles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/pages/Produtividade.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useProdutos.ts",
+   "hooks_exportados": [
+    "useProdutos"
+   ],
+   "linhas": 127,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuditLog",
+    "useEffect",
+    "useMemo",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [
+    "products-changes"
+   ],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/produtos/BulkImportDialog.tsx",
+    "src/pages/Produtos.tsx"
+   ],
+   "coberto_por_testes": 1
+  },
+  {
+   "arquivo": "src/hooks/useProfiler.ts",
+   "hooks_exportados": [
+    "useProfiler"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useProfiler.tsx",
+   "hooks_exportados": [
+    "useProfiler"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePromise.ts",
+   "hooks_exportados": [
+    "usePromise"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePushNotifications.ts",
+   "hooks_exportados": [
+    "usePushNotifications"
+   ],
+   "linhas": 145,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/notifications/NotificacoesGlobais.tsx",
+    "src/components/security/SecurityAlerts.tsx",
+    "src/contexts/NotificationContext.tsx",
+    "src/hooks/useAppLayoutState.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePushSubscription.ts",
+   "hooks_exportados": [
+    "usePushSubscription"
+   ],
+   "linhas": 26,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/usePutaway.ts",
+   "hooks_exportados": [
+    "usePutaway"
+   ],
+   "linhas": 108,
+   "dominio": "hooks",
+   "tabelas": [
+    "rastreamento_historico",
+    "tarefas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/putaway/PutawayPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useQRCode.ts",
+   "hooks_exportados": [
+    "useQRCode"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useQualityControl.ts",
+   "hooks_exportados": [
+    "useQualityControl"
+   ],
+   "linhas": 59,
+   "dominio": "hooks",
+   "tabelas": [
+    "inspecoes_qualidade",
+    "lotes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/pages/quality/QualityPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useQuery.ts",
+   "hooks_exportados": [
+    "useQuery"
+   ],
+   "linhas": 46,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useQueue.ts",
+   "hooks_exportados": [
+    "useQueue"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRadioState.ts",
+   "hooks_exportados": [
+    "useRadioState"
+   ],
+   "linhas": 8,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRaf.ts",
+   "hooks_exportados": [
+    "useRaf"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRanking.ts",
+   "hooks_exportados": [
+    "useRanking"
+   ],
+   "linhas": 121,
+   "dominio": "hooks",
+   "tabelas": [
+    "conquistas_usuarios",
+    "gamificacao_usuarios",
+    "profiles"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/gamificacao/PlacarLideres.tsx",
+    "src/components/gamificacao/placar/Podium.tsx",
+    "src/components/gamificacao/placar/RankingItem.tsx",
+    "src/features/quality/pages/DashboardTriador.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRealtime.ts",
+   "hooks_exportados": [
+    "useRealtime"
+   ],
+   "linhas": 32,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useQueryClient",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRealtimeToast.ts",
+   "hooks_exportados": [
+    "useRealtimeToast"
+   ],
+   "linhas": 44,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useToast"
+   ],
+   "canais_realtime": [
+    "${table}-toast"
+   ],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useReducedMotion.ts",
+   "hooks_exportados": [
+    "useReducedMotion"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/usePageTransition.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useReducerWithMiddleware.ts",
+   "hooks_exportados": [
+    "useReducerWithMiddleware"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useReducer"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRefreshOnFocus.ts",
+   "hooks_exportados": [
+    "useRefreshOnFocus"
+   ],
+   "linhas": 17,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRefreshToken.ts",
+   "hooks_exportados": [
+    "useRefreshToken"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRenderCount.ts",
+   "hooks_exportados": [
+    "useRenderCount"
+   ],
+   "linhas": 7,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useReorderPoint.ts",
+   "hooks_exportados": [
+    "useReorderPoint"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLeadTime",
+    "useQuery",
+    "useSafetyStock"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRequest.ts",
+   "hooks_exportados": [
+    "useRequest"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useResizeObserver.ts",
+   "hooks_exportados": [
+    "useResizeObserver"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLayoutEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRetry.ts",
+   "hooks_exportados": [
+    "useRetry"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRFID.ts",
+   "hooks_exportados": [
+    "useRFID"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRoles.ts",
+   "hooks_exportados": [
+    "useRoles"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRoutePreload.ts",
+   "hooks_exportados": [
+    "useRoutePreload"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 4,
+   "usado_por_arquivos": [
+    "src/components/NavLink.tsx",
+    "src/components/layout/SidebarContent.tsx",
+    "src/components/layout/sidebar/SidebarFooter.tsx",
+    "src/components/organisms/layout/Sidebar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useRoving.ts",
+   "hooks_exportados": [
+    "useRoving"
+   ],
+   "linhas": 42,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSafeState.ts",
+   "hooks_exportados": [
+    "useSafeState"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMounted",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSafetyStock.ts",
+   "hooks_exportados": [
+    "useSafetyStock"
+   ],
+   "linhas": 34,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useLeadTime",
+    "useQuery"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useReorderPoint.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSavedFilters.ts",
+   "hooks_exportados": [
+    "useSavedFilters"
+   ],
+   "linhas": 191,
+   "dominio": "hooks",
+   "tabelas": [
+    "saved_filters"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/SavedFiltersDropdown.tsx",
+    "src/components/filters/SavedFiltersDropdown.tsx",
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScanner.ts",
+   "hooks_exportados": [
+    "useScanner"
+   ],
+   "linhas": 328,
+   "dominio": "hooks",
+   "tabelas": [
+    "lotes",
+    "posicoes_estoque"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/quality/components/triagem-page/QuickScanner.tsx",
+    "src/pages/Scanner.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScreenCapture.ts",
+   "hooks_exportados": [
+    "useScreenCapture"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScript.ts",
+   "hooks_exportados": [
+    "useScript"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScroll.ts",
+   "hooks_exportados": [
+    "useScroll"
+   ],
+   "linhas": 89,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScrollLock.ts",
+   "hooks_exportados": [
+    "useScrollLock"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useLayoutEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScrollPosition.ts",
+   "hooks_exportados": [
+    "useScrollDirection",
+    "useScrollPosition"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScrollProgress.ts",
+   "hooks_exportados": [
+    "useScroll"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useScrollTo.ts",
+   "hooks_exportados": [
+    "useScrollTo"
+   ],
+   "linhas": 31,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSelectState.ts",
+   "hooks_exportados": [
+    "useSelectState"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSerialTracking.ts",
+   "hooks_exportados": [
+    "useSerialTracking"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSet.ts",
+   "hooks_exportados": [
+    "useSet"
+   ],
+   "linhas": 32,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useShare.ts",
+   "hooks_exportados": [
+    "useShare"
+   ],
+   "linhas": 13,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useShippingLabel.ts",
+   "hooks_exportados": [
+    "useShippingLabel"
+   ],
+   "linhas": 32,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSidebarFavorites.ts",
+   "hooks_exportados": [
+    "useSidebarFavorites"
+   ],
+   "linhas": 38,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/layout/SidebarContent.tsx",
+    "src/components/organisms/layout/Sidebar.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSliderState.ts",
+   "hooks_exportados": [
+    "useSliderState"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSoftDelete.ts",
+   "hooks_exportados": [
+    "useSoftDelete"
+   ],
+   "linhas": 61,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSound.ts",
+   "hooks_exportados": [
+    "useSound"
+   ],
+   "linhas": 35,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/sidebar/SidebarNavButton.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSpeechRecognition.ts",
+   "hooks_exportados": [
+    "useSpeechRecognition"
+   ],
+   "linhas": 25,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSpeechSynthesis.ts",
+   "hooks_exportados": [
+    "useSpeechSynthesis"
+   ],
+   "linhas": 13,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSpring.ts",
+   "hooks_exportados": [
+    "useSpring"
+   ],
+   "linhas": 22,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSSE.ts",
+   "hooks_exportados": [
+    "useSSE"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStack.ts",
+   "hooks_exportados": [
+    "useStack"
+   ],
+   "linhas": 28,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStock.ts",
+   "hooks_exportados": [
+    "useStock"
+   ],
+   "linhas": 22,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useList"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStockLevel.ts",
+   "hooks_exportados": [
+    "useStockLevel"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStopwatch.ts",
+   "hooks_exportados": [
+    "useStopwatch"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStreaks.ts",
+   "hooks_exportados": [
+    "useStreaks"
+   ],
+   "linhas": 140,
+   "dominio": "hooks",
+   "tabelas": [
+    "streaks_historico",
+    "streaks_usuarios"
+   ],
+   "rpcs": [
+    "registrar_checkin_diario"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/gamificacao/StreakSystem.tsx",
+    "src/features/quality/pages/DashboardTriador.tsx",
+    "src/pages/Gamificacao.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useStyleSheet.ts",
+   "hooks_exportados": [
+    "useStyleSheet"
+   ],
+   "linhas": 16,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSubscription.ts",
+   "hooks_exportados": [
+    "useSubscription"
+   ],
+   "linhas": 49,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSwipeBack.ts",
+   "hooks_exportados": [
+    "useSwipeBack"
+   ],
+   "linhas": 51,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useNavigate",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/layout/AppLayout.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useSWR.ts",
+   "hooks_exportados": [
+    "useSWR"
+   ],
+   "linhas": 29,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTable.ts",
+   "hooks_exportados": [
+    "useTable"
+   ],
+   "linhas": 139,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTarefas.ts",
+   "hooks_exportados": [
+    "useTarefas"
+   ],
+   "linhas": 57,
+   "dominio": "hooks",
+   "tabelas": [
+    "tarefas"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/useGestaoTarefasPage.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTelemetry.ts",
+   "hooks_exportados": [
+    "useTelemetry"
+   ],
+   "linhas": 44,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [
+    "log_audit_event"
+   ],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTextareaState.ts",
+   "hooks_exportados": [
+    "useTextareaState"
+   ],
+   "linhas": 12,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useThrottle.ts",
+   "hooks_exportados": [
+    "useThrottle",
+    "useThrottledValue"
+   ],
+   "linhas": 86,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTimeAgo.ts",
+   "hooks_exportados": [
+    "useTimeAgo"
+   ],
+   "linhas": 32,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTimeout.ts",
+   "hooks_exportados": [
+    "useTimeout"
+   ],
+   "linhas": 14,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTimeoutFn.ts",
+   "hooks_exportados": [
+    "useTimeoutFn"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTimer.ts",
+   "hooks_exportados": [
+    "useTimer"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useToggle.ts",
+   "hooks_exportados": [
+    "useDisclosure",
+    "useToggle"
+   ],
+   "linhas": 21,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/hooks/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTouchGestures.ts",
+   "hooks_exportados": [
+    "useLongPress",
+    "usePinchZoom",
+    "usePullToRefresh",
+    "useSwipeGesture"
+   ],
+   "linhas": 278,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/mobile/SwipeableListItem.tsx",
+    "src/features/quality/pages/TriagemPage.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTracking.ts",
+   "hooks_exportados": [
+    "useTracking"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTransition.ts",
+   "hooks_exportados": [
+    "useTransitionState"
+   ],
+   "linhas": 16,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTrapFocus.ts",
+   "hooks_exportados": [
+    "useTrapFocus"
+   ],
+   "linhas": 27,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTriagemFotos.ts",
+   "hooks_exportados": [
+    "useTriagemFotos"
+   ],
+   "linhas": 170,
+   "dominio": "hooks",
+   "tabelas": [
+    "eventos_triagem"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useAuth",
+    "useCallback",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/features/quality/components/FotosLoteObrigatorias.tsx",
+    "src/features/quality/pages/FormularioTriagem.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTriagemTimer.ts",
+   "hooks_exportados": [
+    "useTriagemTimer"
+   ],
+   "linhas": 107,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/features/quality/pages/FormularioTriagem.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useTrocasDevolucoes.ts",
+   "hooks_exportados": [
+    "useTrocasDevolucoes"
+   ],
+   "linhas": 275,
+   "dominio": "hooks",
+   "tabelas": [
+    "trocas_devolucoes"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect",
+    "useState",
+    "useToast"
+   ],
+   "canais_realtime": [],
+   "usado_por": 6,
+   "usado_por_arquivos": [
+    "src/components/trocas-page/DetalheRegistroDialog.tsx",
+    "src/components/trocas-page/NovoRegistroDialog.tsx",
+    "src/components/trocas/RegistroCard.tsx",
+    "src/components/trocas/TrocaRegistroItem.tsx",
+    "src/pages/DashboardTrocas.tsx",
+    "src/pages/TrocasDevolucoes.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useUndo.ts",
+   "hooks_exportados": [
+    "useUndo"
+   ],
+   "linhas": 40,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useUnmount.ts",
+   "hooks_exportados": [
+    "useUnmount"
+   ],
+   "linhas": 7,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useUnsavedChanges.ts",
+   "hooks_exportados": [
+    "useUnsavedChanges"
+   ],
+   "linhas": 30,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useBlocker",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/common/LeaveGuard.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useUpdateEffect.ts",
+   "hooks_exportados": [
+    "useUpdateEffect"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useVelocity.ts",
+   "hooks_exportados": [
+    "useVelocity"
+   ],
+   "linhas": 15,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect",
+    "useRef",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useVersioning.ts",
+   "hooks_exportados": [
+    "useVersioning"
+   ],
+   "linhas": 3,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/lib/crud/index.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useVersions.ts",
+   "hooks_exportados": [
+    "useVersions"
+   ],
+   "linhas": 56,
+   "dominio": "hooks",
+   "tabelas": [
+    "entity_versions"
+   ],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useMutation",
+    "useQuery",
+    "useQueryClient"
+   ],
+   "canais_realtime": [],
+   "usado_por": 2,
+   "usado_por_arquivos": [
+    "src/components/VersionHistory.tsx",
+    "src/hooks/useVersioning.ts"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useVibration.ts",
+   "hooks_exportados": [
+    "useVibration"
+   ],
+   "linhas": 18,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useVideo.ts",
+   "hooks_exportados": [
+    "useVideo"
+   ],
+   "linhas": 19,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWakeLock.ts",
+   "hooks_exportados": [
+    "useWakeLock"
+   ],
+   "linhas": 36,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWatch.ts",
+   "hooks_exportados": [
+    "useWatch"
+   ],
+   "linhas": 11,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWatchPosition.ts",
+   "hooks_exportados": [
+    "useWatchPosition"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWaveManagement.ts",
+   "hooks_exportados": [
+    "useWaveManagement"
+   ],
+   "linhas": 53,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useMemo"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWebAuthn.ts",
+   "hooks_exportados": [
+    "useWebAuthn"
+   ],
+   "linhas": 286,
+   "dominio": "hooks",
+   "tabelas": [
+    "passkey_credentials"
+   ],
+   "rpcs": [],
+   "edges": [
+    "webauthn-auth-options",
+    "webauthn-auth-verify",
+    "webauthn-register-options",
+    "webauthn-register-verify"
+   ],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 1,
+   "usado_por_arquivos": [
+    "src/components/security/PasskeySettings.tsx"
+   ],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWebSocket.ts",
+   "hooks_exportados": [
+    "useWebSocket"
+   ],
+   "linhas": 22,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWeightScale.ts",
+   "hooks_exportados": [
+    "useWeightScale"
+   ],
+   "linhas": 31,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useCallback",
+    "useState"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWhyDidYouUpdate.ts",
+   "hooks_exportados": [
+    "useWhyDidYouUpdate"
+   ],
+   "linhas": 20,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/hooks/useWindowSize.ts",
+   "hooks_exportados": [
+    "useWindowSize"
+   ],
+   "linhas": 24,
+   "dominio": "hooks",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/lib/crud/index.ts",
+   "hooks_exportados": [
+    "useBulkActions",
+    "useCRUD",
+    "useDebouncedValue",
+    "useDuplicate",
+    "useFulltextSearch",
+    "useInfiniteScroll",
+    "useSavedFilters",
+    "useSoftDelete",
+    "useVersioning"
+   ],
+   "linhas": 25,
+   "dominio": "lib/crud",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [],
+   "canais_realtime": [],
+   "usado_por": 0,
+   "usado_por_arquivos": [],
+   "coberto_por_testes": 0
+  },
+  {
+   "arquivo": "src/utils/performance.ts",
+   "hooks_exportados": [
+    "usePerformance"
+   ],
+   "linhas": 83,
+   "dominio": "utils",
+   "tabelas": [],
+   "rpcs": [],
+   "edges": [],
+   "hooks_internos": [
+    "useEffect"
+   ],
+   "canais_realtime": [],
+   "usado_por": 3,
+   "usado_por_arquivos": [
+    "src/components/telemetry/PerformanceHUD.tsx",
+    "src/features/dashboard/hooks/useDashboard.ts",
+    "src/services/receivingService.ts"
+   ],
+   "coberto_por_testes": 0
+  }
+ ]
+}

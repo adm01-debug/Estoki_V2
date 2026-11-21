@@ -1,0 +1,96 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (71)",
+   "src/features (13)",
+   "src/components (2)"
+  ],
+  "componentes": [
+   "src/components (468)",
+   "src/pages (71)",
+   "src/features (67)"
+  ],
+  "hooks": [
+   "src/hooks (286)",
+   "src/features (16)",
+   "src/components (7)"
+  ],
+  "servicos_logica": [
+   "src/lib (107)",
+   "src/services (25)",
+   "src/utils (14)"
+  ],
+  "testes": [
+   "co-localizado (*.test) (42)",
+   "co-localizado (__tests__) (18)",
+   "outro (15)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/db-audit (11)",
+   "scripts/ci (7)",
+   "scripts/inventario (5)"
+  ],
+  "docs": [
+   "docs (9)",
+   "(raiz) (7)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (87%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (95%)",
+  "edge_functions": "kebab-case (97%)",
+  "tabelas": "snake_case (79%)"
+ },
+ "barrels_index": 31,
+ "extensao_componentes": [
+  ".tsx (623)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "@/components/": "src/components/",
+   "@/hooks/": "src/hooks/",
+   "@/lib/": "src/lib/",
+   "@/services/": "src/services/",
+   "@/types/": "src/types/",
+   "@/utils/": "src/utils/",
+   "@/contexts/": "src/contexts/",
+   "@/guards/": "src/guards/",
+   "@/hoc/": "src/hoc/",
+   "@/workers/": "src/workers/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "conventional commits (observado)",
+  "exemplos": [
+   "fix(estoque): FK products.supplier_id -> suppliers (EST01) (#152)",
+   "docs: fecha status de pendencias AUTO-01/EST01/QUAL-01/QUAL-02 (#151)",
+   "docs: (#150)",
+   "fix: alert-expiration no schema PT real (lotes) + cron diario (#149)",
+   "docs: fecha AUTO-01 - stock-alert ativo em alertas_historico (#148)"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": true,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.paths.json"
+  ]
+ }
+}
