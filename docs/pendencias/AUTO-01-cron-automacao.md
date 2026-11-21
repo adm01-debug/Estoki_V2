@@ -10,3 +10,10 @@
 - **Raio de impacto:** nenhum dado existente é alterado; apenas inserções aditivas de monitoramento (1 snapshot/hora).
 - **Critério de aceite:** crons documentados e ativos com verificação de execução (job log). ✅ ATIVO E VERIFICADO.
 - **Estado:** EXECUTADO (parcial — apenas monitor de saúde; demais dependem de dependências inexistentes ou decisão de negócio).
+
+## Atualização 21/11/2026 — alertas de estoque individuais ativos (EST01 fechado)
+
+- **stock-alert reescrito (PR #147, mergeada 21/11, commit 80e5d4a7):** passa a ler o schema real em produção — `produtos` (PT) + `estoque_posicao.quantidade` (soma em memória) — em vez do `products` (EN) inexistente, e grava em `alertas_historico` (a tabela que a Central de Alertas consome) com enums PT (`estoque_minimo`/`ponto_pedido`, severidade `aviso`/`critico`, status `ativo`).
+- **Validação real em produção (deploy confirmado):** execução #1 criou 10 alertas (estoque_minimo/critico, FK produto válida); execução #2 com dedup 0 novas + 10 pending_dup (sem duplicatas); count banco = 10 por fonte stock-alert. RLS select authenticated — visível na UI Central de Alertas.
+- **Cron ativo:** `stock-alert` @06:45 (jobid 9) — continua agendado e agora produz alertas consumíveis pela UI.
+- **Pendente:** `alertas_config` vazio — thresholds reorder/min_stock por produto ainda não definidos; alertas de validade (`vencimento_proximo`) dependem de blend com `lotes.data_validade` + `quantidade_atual>0`.
