@@ -117,9 +117,7 @@
     },
     "/adjust-inventory": {
       "post": {
-        "tags": [
-          "Estoque"
-        ],
+        "tags": ["Estoque"],
         "summary": "Registra ajuste de estoque com auditoria",
         "requestBody": {
           "required": true,
@@ -207,9 +205,7 @@
     },
     "/ai-assistant": {
       "post": {
-        "tags": [
-          "IA"
-        ],
+        "tags": ["IA"],
         "summary": "Consulta o assistente IA operacional",
         "requestBody": {
           "required": true,
@@ -1310,9 +1306,7 @@
     },
     "/auth-login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Autentica um usuário",
         "requestBody": {
           "required": true,
@@ -1457,9 +1451,7 @@
     },
     "/auth-register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Cria um novo usuário",
         "requestBody": {
           "required": true,
@@ -1763,9 +1755,7 @@
     },
     "/backend-health": {
       "get": {
-        "tags": [
-          "Observabilidade"
-        ],
+        "tags": ["Observabilidade"],
         "summary": "Snapshot de saúde do backend",
         "responses": {
           "200": {
@@ -1938,9 +1928,7 @@
     },
     "/boleto-generate": {
       "post": {
-        "tags": [
-          "Pagamentos"
-        ],
+        "tags": ["Pagamentos"],
         "summary": "Gera boleto bancário",
         "requestBody": {
           "required": true,
@@ -2393,9 +2381,7 @@
     },
     "/calculate-shipping": {
       "post": {
-        "tags": [
-          "Shipping"
-        ],
+        "tags": ["Shipping"],
         "summary": "Calcula prazo e valor de frete",
         "requestBody": {
           "required": true,
@@ -2848,9 +2834,7 @@
     },
     "/carrier-track": {
       "get": {
-        "tags": [
-          "Shipping"
-        ],
+        "tags": ["Shipping"],
         "summary": "Rastreia um objeto",
         "parameters": [
           {
@@ -2867,12 +2851,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": [
-                "correios",
-                "jadlog",
-                "totalexpress",
-                "loggi"
-              ]
+              "enum": ["correios", "jadlog", "totalexpress", "loggi"]
             }
           }
         ],
@@ -6179,9 +6158,7 @@
     },
     "/inventory-reserve": {
       "post": {
-        "tags": [
-          "Estoque"
-        ],
+        "tags": ["Estoque"],
         "summary": "Reserva estoque para um pedido",
         "requestBody": {
           "required": true,
@@ -7019,9 +6996,7 @@
     },
     "/nfe-import": {
       "post": {
-        "tags": [
-          "Recebimento"
-        ],
+        "tags": ["Recebimento"],
         "summary": "Importa XML de NF-e",
         "requestBody": {
           "required": true,
@@ -8179,9 +8154,7 @@
     },
     "/picking-confirm": {
       "post": {
-        "tags": [
-          "Picking"
-        ],
+        "tags": ["Picking"],
         "summary": "Confirma item coletado numa onda",
         "requestBody": {
           "required": true,
@@ -8364,9 +8337,7 @@
     },
     "/pix-generate": {
       "post": {
-        "tags": [
-          "Pagamentos"
-        ],
+        "tags": ["Pagamentos"],
         "summary": "Gera cobrança PIX",
         "requestBody": {
           "required": true,
@@ -11843,9 +11814,7 @@
     },
     "/stock-movement": {
       "post": {
-        "tags": [
-          "Estoque"
-        ],
+        "tags": ["Estoque"],
         "summary": "Movimenta lote entre posições",
         "requestBody": {
           "required": true,
@@ -13177,9 +13146,7 @@
       },
       "Error": {
         "type": "object",
-        "required": [
-          "error"
-        ],
+        "required": ["error"],
         "properties": {
           "error": {
             "type": "string"
@@ -13195,10 +13162,7 @@
       },
       "AuthLoginInput": {
         "type": "object",
-        "required": [
-          "email",
-          "password"
-        ],
+        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string",
@@ -13212,11 +13176,7 @@
       },
       "AuthRegisterInput": {
         "type": "object",
-        "required": [
-          "email",
-          "password",
-          "nome"
-        ],
+        "required": ["email", "password", "nome"],
         "properties": {
           "email": {
             "type": "string",
@@ -13248,11 +13208,7 @@
       },
       "AdjustInventoryInput": {
         "type": "object",
-        "required": [
-          "produto_id",
-          "quantidade_nova",
-          "motivo"
-        ],
+        "required": ["produto_id", "quantidade_nova", "motivo"],
         "properties": {
           "produto_id": {
             "type": "string",
@@ -13273,11 +13229,7 @@
       },
       "StockMovementInput": {
         "type": "object",
-        "required": [
-          "lote_id",
-          "quantidade",
-          "tipo_evento"
-        ],
+        "required": ["lote_id", "quantidade", "tipo_evento"],
         "properties": {
           "lote_id": {
             "type": "string",
@@ -13305,10 +13257,7 @@
       },
       "ReserveInput": {
         "type": "object",
-        "required": [
-          "order_id",
-          "itens"
-        ],
+        "required": ["order_id", "itens"],
         "properties": {
           "order_id": {
             "type": "string",
@@ -13333,9 +13282,7 @@
       },
       "NfeImportInput": {
         "type": "object",
-        "required": [
-          "xml"
-        ],
+        "required": ["xml"],
         "properties": {
           "xml": {
             "type": "string"
@@ -13344,11 +13291,7 @@
       },
       "PickingConfirmInput": {
         "type": "object",
-        "required": [
-          "onda_id",
-          "item_id",
-          "quantidade"
-        ],
+        "required": ["onda_id", "item_id", "quantidade"],
         "properties": {
           "onda_id": {
             "type": "string",
@@ -13365,11 +13308,7 @@
       },
       "ShippingQuoteInput": {
         "type": "object",
-        "required": [
-          "cep_origem",
-          "cep_destino",
-          "peso"
-        ],
+        "required": ["cep_origem", "cep_destino", "peso"],
         "properties": {
           "cep_origem": {
             "type": "string"
@@ -13390,10 +13329,7 @@
       },
       "PixGenerateInput": {
         "type": "object",
-        "required": [
-          "valor",
-          "descricao"
-        ],
+        "required": ["valor", "descricao"],
         "properties": {
           "valor": {
             "type": "number",
@@ -13410,11 +13346,7 @@
       },
       "BoletoGenerateInput": {
         "type": "object",
-        "required": [
-          "valor",
-          "vencimento",
-          "pagador"
-        ],
+        "required": ["valor", "vencimento", "pagador"],
         "properties": {
           "valor": {
             "type": "number"
@@ -13430,9 +13362,7 @@
       },
       "AiAssistantInput": {
         "type": "object",
-        "required": [
-          "prompt"
-        ],
+        "required": ["prompt"],
         "properties": {
           "prompt": {
             "type": "string",
