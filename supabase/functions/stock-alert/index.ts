@@ -12,32 +12,49 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Buscar produtos com estoque baixo
-    const { data: lowStock } = await supabase
+    // Buscar todos os produtos com estoque (min_stock é coluna real de products)
+    const { data: products, error } = await supabase
       .from("products")
       .select("id, name, sku, current_stock, min_stock, category")
-      .lt("current_stock", supabase.rpc("get_min_stock_threshold"));
+      .order("name");
+    if (error) throw error;
 
-    // Buscar produtos sem estoque
-    const { data: outOfStock } = await supabase
-      .from("products")
-      .select("id, name, sku, category")
-      .eq("current_stock", 0);
+    // Filtro em memória: supabase.rpc()/raw() não existem no supabase-js v2
+    const lowStock = (products || []).filter(
+      (p) => p.min_stock != null && p.min_stock > 0 && p.current_stock < p.min_stock
+    );
+    const outOfStock = (products || []).filter((p) => p.current_stock === 0);
 
-    // Criar alertas
+    // Não duplicar: considerar apenas o último alerta aberto por produto+tipo
+    const { data: pending } = await supabase
+      .from("stock_alerts")
+      .select("product_id, type, created_at")
+      .eq("status", "open")
+      .order("created_at", { ascending: false });
+    const lastOpen = new Map();
+    for (const a of pending || []) {
+      const key = `${a.product_id}|${a.type}`;
+      if (!lastOpen.has(key)) lastOpen.set(key, a.created_at);
+    }
+
+    // Criar alertas (sem duplicar abertos)
     const alerts = [
-      ...(lowStock || []).map((p) => ({
-        product_id: p.id,
-        type: "low_stock",
-        message: `Estoque baixo: ${p.name} (${p.current_stock}/${p.min_stock})`,
-        severity: "warning",
-      })),
-      ...(outOfStock || []).map((p) => ({
-        product_id: p.id,
-        type: "out_of_stock",
-        message: `Sem estoque: ${p.name}`,
-        severity: "critical",
-      })),
+      ...(lowStock || [])
+        .filter((p) => lastOpen.get(`${p.id}|low_stock`) == null)
+        .map((p) => ({
+          product_id: p.id,
+          type: "low_stock",
+          message: `Estoque baixo: ${p.name} (${p.current_stock}/${p.min_stock})`,
+          severity: "warning",
+        })),
+      ...(outOfStock || [])
+        .filter((p) => lastOpen.get(`${p.id}|out_of_stock`) == null)
+        .map((p) => ({
+          product_id: p.id,
+          type: "out_of_stock",
+          message: `Sem estoque: ${p.name}`,
+          severity: "critical",
+        })),
     ];
 
     if (alerts.length > 0) {
@@ -48,8 +65,8 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         alerts_created: alerts.length,
-        low_stock: lowStock?.length || 0,
-        out_of_stock: outOfStock?.length || 0,
+        low_stock: lowStock.length,
+        out_of_stock: outOfStock.length,
       }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
