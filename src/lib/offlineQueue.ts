@@ -21,7 +21,7 @@ class OfflineQueue<T> {
 
   add(action: string, data: T): string {
     const queue = this.getQueue();
-    const id = Math.random().toString(36).slice(2);
+    const id = crypto.randomUUID();
     queue.push({ id, action, data, timestamp: Date.now(), retries: 0 });
     this.saveQueue(queue);
     return id;
