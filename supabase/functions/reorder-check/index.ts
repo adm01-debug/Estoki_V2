@@ -13,15 +13,27 @@ serve(async (req) => {
     );
 
     // Buscar produtos abaixo do ponto de reposição
+    const { data: suppliers } = await supabase
+      .from("suppliers")
+      .select("id, name, email, lead_time_days");
+    const supplierMap = (suppliers || []).reduce((m, s) => {
+      m[s.id] = s;
+      return m;
+    }, {});
+
     const { data: products } = await supabase
       .from("products")
-      .select("*, supplier:supplier_id(id, name, email, lead_time_days)")
-      .lte("current_stock", supabase.raw("reorder_point"));
+      .select("*");
 
-    const suggestions = (products || []).map((p) => {
+    const belowReorder = (products || []).filter(
+      (p) => (p.current_stock ?? 0) <= (p.reorder_point ?? 0)
+    );
+
+    const suggestions = belowReorder.map((p) => {
+      const supplier = supplierMap[p.supplier_id];
       const safetyStock = p.safety_stock || 10;
       const avgDailySales = p.avg_daily_sales || 5;
-      const leadTime = p.supplier?.lead_time_days || 7;
+      const leadTime = supplier?.lead_time_days || 7;
       const suggestedQty = Math.ceil(avgDailySales * leadTime + safetyStock - p.current_stock);
 
       return {
@@ -31,8 +43,8 @@ serve(async (req) => {
         current_stock: p.current_stock,
         reorder_point: p.reorder_point,
         suggested_quantity: Math.max(suggestedQty, p.min_order_qty || 1),
-        supplier_id: p.supplier?.id,
-        supplier_name: p.supplier?.name,
+        supplier_id: supplier?.id,
+        supplier_name: supplier?.name,
         estimated_delivery: new Date(Date.now() + leadTime * 86400000).toISOString().split("T")[0],
       };
     });
