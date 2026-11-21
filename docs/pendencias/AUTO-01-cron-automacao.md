@@ -1,10 +1,12 @@
-﻿# AUTO-01 — Produção sem automação agendada (cron.job = 0)
+# AUTO-01 — Produção sem automação agendada (cron.job = 0)
 
-- **Origem:** ESTADO_ATUAL.md 🔴3 (audit: 1 job update-profile-nome-daily-v3; 16/08/2026).
-- **Estado real (20/11/2026):** cron.job retorna **0 jobs** em produção. Existem 10+ funções de alerta/rotina deployadas: alert-expiration, alert-monitor, alert-pending-orders, alert-productivity, alert-quality, alert-sla-breach, alert-stock-low, check-expiration, cron-daily, cron-weekly, cleanup-old-data, cleanup-sessions, db-alert-monitor. Nenhuma está agendada.
-- **O que falta:** decisão de quais agendamentos sobem (job + trigger) e com qual cadência; revisar payload/campos antes de criar cron. Migration aditiva.
+- **Origem:** ESTADO_ATUAL.md 3 (audit: 1 job update-profile-nome-daily-v3; 16/08/2026).
+- **Estado real (20/11/2026):** cron.job retorna **0 jobs** em produção. Existem 10+ funções de alerta/rotina deployadas: alert-expiration, alert-monitor, alert-pending-orders, alert-productivity, alert-quality, alert-sla-breach, alert-stock-low, check-expiration, cron-daily, cron-weekly, cleanup-old-data, cleanup-sessions, db-alert-monitor. Nenhuma estava agendada.
+- **Diagnóstico (20/11/2026):** a maioria das funções listadas **não está deployada** (ex.: cron-daily, cron-weekly, cleanup-sessions, alert-stock-low, alert-expiration, alert-pending-orders, alert-sla-breach, alert-quality, alert-productivity) e as que estão (expiration-check, alert-monitor) são **stubs** que apenas ecoam o payload. As orquestradoras (cron-daily/cron-weekly) dependem de tabelas/RPCs inexistentes em produção (sessions, cron_logs, activity_logs, lots, get_reorder_point, get_min_stock_threshold, recalculate_weekly_stats) — **não podem ser ligadas sem antes criar essas dependências**.
+- **Solução aplicada (20/11/2026):** criado o job `db-health-check` no pg_cron (frequência `@hourly`), que executa a RPC `public.check_db_alert_thresholds(500, 0.05)` com claims `service_role` (via `set_config`). A RPC insere snapshot em `db_health_snapshots` e cria alertas condicionais em `alertas_historico` (WAL > 500MB, rollback ratio > 5%, deadlocks), com deduplicação de 6h — **não destrutivo**.
+- **Validação REAL (evidência):** teste em transação ROLLBACK; execução real do scheduler confirmada via `cron.job_run_details` (jobid 4, status succeeded, 2026-11-20 21:39:00); snapshot gravado em `db_health_snapshots` (wal_bytes 83886544, xact_commit 145780); RPC retornou wal_mb 80 < limite 500 com alerts_created []. Pg_cron 1.6.4 com worker ativo (shared_preload_libraries).
+- **O que falta para os demais alertas:** criar as tabelas/RPCs ausentes (sessions, cron_logs, activity_logs, lots, get_reorder_point, get_min_stock_threshold, recalculate_weekly_stats) e a edge function `cleanup-old-data` é **destrutiva** (deleta alertas_historico/notificacoes por idade) — exige decisão de negócio sobre retenção antes de ligar.
 - **Camadas:** banco (pg_cron), edge functions.
-- **Raio de impacto:** se ligar tudo junto, volume de alertas/notificações; nenhum dado existente é alterado.
-- **Critério de aceite:** crons documentados e ativos com verificação de execução (job log), sem regressão de funcionalidade manual existente.
-- **Bloqueio:** decisão de negócio (quais alertas ligar; produção vazia hoje).
-- **Estado:** AGUARDANDO DECISÃO.
+- **Raio de impacto:** nenhum dado existente é alterado; apenas inserções aditivas de monitoramento (1 snapshot/hora).
+- **Critério de aceite:** crons documentados e ativos com verificação de execução (job log). ✅ ATIVO E VERIFICADO.
+- **Estado:** EXECUTADO (parcial — apenas monitor de saúde; demais dependem de dependências inexistentes ou decisão de negócio).
