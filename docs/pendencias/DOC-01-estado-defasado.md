@@ -7,4 +7,4 @@
 - **Raio de impacto:** confiabilidade do doc para futuros agentes/auditorias; zero código.
 - **Critério de aceite:** doc reflete estado real (main @ 94df929c → 7d0945e); histórico preservado.
 - **Bloqueio:** nenhum.
-- **Estado:** AGUARDANDO EXECUÇÃO.
+- **Estado:** ✅ EXECUTADO (21/11/2026) — ESTADO_ATUAL.md e EVIDENCIAS.md atualizados com o estado real medido (Fase 1); ver PR de DOC-01. Histórico 16/08 preservado como seção original.
