@@ -20,12 +20,14 @@ ALTER TABLE public.products
   ADD COLUMN IF NOT EXISTS erp_product_id text,
   ADD COLUMN IF NOT EXISTS external_ref text;
 
--- RLS / grants conservadores (padrao do repo)
-ALTER TABLE public.integration_logs ENABLE ROW LEVEL SECURITY;
-
--- leitura para autenticados (auditoria), escrita apenas service_role
-CREATE POLICY "integration_logs_read_authenticated" ON public.integration_logs
-  FOR SELECT TO authenticated USING (true);
+-- 3. RLS / grants conservadores (padrao do repo)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='integration_logs') THEN
+    EXECUTE 'ALTER TABLE public.integration_logs ENABLE ROW LEVEL SECURITY';
+    EXECUTE 'CREATE POLICY "integration_logs_read_authenticated" ON public.integration_logs FOR SELECT TO authenticated USING (true)';
+  END IF;
+END $$;
 
 GRANT SELECT ON public.integration_logs TO authenticated;
 GRANT ALL ON public.integration_logs TO service_role;
