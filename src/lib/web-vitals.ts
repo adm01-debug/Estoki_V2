@@ -30,7 +30,7 @@ function getRating(name: string, value: number): WebVitalMetric["rating"] {
 }
 
 function generateId(): string {
-  return `v${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  return `v${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
 /**

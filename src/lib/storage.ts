@@ -25,6 +25,6 @@ export async function listFiles(bucket: string, folder: string): Promise<string[
 export function generateFileName(originalName: string): string {
   const ext = originalName.split(".").pop();
   const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(7);
-  return `${timestamp}-${random}.${ext}`;
+  const suffix = crypto.randomUUID().slice(0, 8);
+  return `${timestamp}-${suffix}.${ext}`;
 }
