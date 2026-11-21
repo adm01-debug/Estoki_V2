@@ -42,8 +42,13 @@ import {
   PackageSearch,
   Clock,
   Download,
+  GripVertical,
+  LayoutDashboard,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { Sortable } from "@/components/dnd/Sortable";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import type { TipoMovimentacao } from "@/types/movimentacao";
 import { RelatorioFilters, tipoLabels } from "@/components/relatorios/RelatorioFilters";
@@ -72,6 +77,55 @@ export default function RelatoriosPage() {
   const [exportando, setExportando] = useState(false);
   const [comparar, setComparar] = useState(false);
   const [reportTab, setReportTab] = useState("movimentacoes");
+  const [widgets, setWidgets] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("estoki:relatorio-widgets");
+      if (saved) {
+        const parsed = JSON.parse(saved) as string[];
+        const defaults = ["kpis", "evolucao", "porTipo", "tabela"];
+        if (parsed.length > 0) return defaults.filter((w) => parsed.includes(w));
+      }
+    } catch {
+      /* localStorage indisponível — usa padrão */
+    }
+    return ["kpis", "evolucao", "porTipo", "tabela"];
+  });
+
+  const WIDGET_OPCOES: Array<{ id: string; label: string }> = [
+    { id: "kpis", label: "KPIs do Período" },
+    { id: "evolucao", label: "Evolução Diária" },
+    { id: "porTipo", label: "Por Tipo" },
+    { id: "tabela", label: "Tabela Analítica" },
+  ];
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const widgetToggle = useCallback((id: string) => {
+    setWidgets((prev) => {
+      const next = prev.includes(id) ? prev.filter((w) => w !== id) : [...prev, id];
+      try {
+        localStorage.setItem("estoki:relatorio-widgets", JSON.stringify(next));
+      } catch {
+        /* ignora */
+      }
+      return next;
+    });
+  }, []);
+
+  const widgetReorder = useCallback((activeId: string, overId: string) => {
+    setWidgets((prev) => {
+      const from = prev.indexOf(activeId);
+      const to = prev.indexOf(overId);
+      if (from === -1 || to === -1) return prev;
+      const next = arrayMove(prev, from, to);
+      try {
+        localStorage.setItem("estoki:relatorio-widgets", JSON.stringify(next));
+      } catch {
+        /* ignora */
+      }
+      return next;
+    });
+  }, []);
 
   const dadosFiltrados = useMemo(
     () =>
@@ -279,17 +333,40 @@ export default function RelatoriosPage() {
               setDataFim={setDataFim}
             />
 
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-muted-foreground">KPIs do Período</h2>
-              <Button
-                variant={comparar ? "default" : "outline"}
-                size="sm"
-                onClick={() => setComparar(!comparar)}
-              >
-                <GitCompareArrows className="mr-2 h-4 w-4" />
-                {comparar ? "Comparando" : "Comparar período anterior"}
-              </Button>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <LayoutDashboard className="h-4 w-4" />
+                Personalizar relatório
+              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  variant={comparar ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setComparar(!comparar)}
+                >
+                  <GitCompareArrows className="mr-2 h-4 w-4" />
+                  {comparar ? "Comparando" : "Comparar período anterior"}
+                </Button>
+                <div className="flex flex-wrap gap-1">
+                  {WIDGET_OPCOES.map((opcao) => (
+                    <Button
+                      key={opcao.id}
+                      variant={widgets.includes(opcao.id) ? "default" : "outline"}
+                      size="sm"
+                      className="h-8"
+                      onClick={() => widgetToggle(opcao.id)}
+                    >
+                      {opcao.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
+            <p className="-mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+              <GripVertical className="h-3.5 w-3.5" />
+              Arraste os widgets para reordenar ou use os botões para mostrar/ocultar.{" "}
+              {widgets.length}/4 visíveis.
+            </p>
 
             {comparar && dadosPeriodoAnterior && (
               <p className="-mt-4 text-xs text-muted-foreground">
@@ -297,159 +374,184 @@ export default function RelatoriosPage() {
               </p>
             )}
 
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-              {[
-                {
-                  label: "Total",
-                  value: kpis.totalMovimentacoes,
-                  prev: dadosPeriodoAnterior?.totalMovimentacoes,
-                  icon: ArrowRightLeft,
-                  color: "primary",
-                },
-                {
-                  label: "Entradas",
-                  value: kpis.totalEntradas,
-                  prev: dadosPeriodoAnterior?.totalEntradas,
-                  icon: TrendingUp,
-                  color: "green-500",
-                },
-                {
-                  label: "Saídas",
-                  value: kpis.totalSaidas,
-                  prev: dadosPeriodoAnterior?.totalSaidas,
-                  icon: TrendingDown,
-                  color: "red-500",
-                },
-                {
-                  label: "Média/Dia",
-                  value: Number(kpis.mediaDiaria.toFixed(1)),
-                  prev: dadosPeriodoAnterior
-                    ? Number(dadosPeriodoAnterior.mediaDiaria.toFixed(1))
-                    : undefined,
-                  icon: BarChart3,
-                  color: "blue-500",
-                },
-              ].map((kpi) => {
-                const delta = comparar && kpi.prev != null ? calcDelta(kpi.value, kpi.prev) : null;
-                return (
-                  <Card key={kpi.label}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className={`rounded-lg p-2 bg-${kpi.color}/10`}>
-                          <kpi.icon className={`h-5 w-5 text-${kpi.color}`} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs text-muted-foreground">{kpi.label}</p>
-                          <p className="text-2xl font-bold">{kpi.value}</p>
-                          {delta !== null && (
-                            <div
-                              className={cn(
-                                "mt-0.5 flex items-center gap-1 text-xs",
-                                delta >= 0 ? "text-green-600" : "text-red-600"
-                              )}
-                            >
-                              {delta >= 0 ? (
-                                <TrendingUp className="h-3 w-3" />
-                              ) : (
-                                <TrendingDown className="h-3 w-3" />
-                              )}
-                              {delta >= 0 ? "+" : ""}
-                              {delta.toFixed(1)}%
-                              <span className="ml-1 text-muted-foreground">vs ant.</span>
-                            </div>
-                          )}
-                        </div>
+            <div className="flex flex-col gap-4">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={widgetReorder}
+              >
+                <SortableContext items={widgets} strategy={verticalListSortingStrategy}>
+                  {widgets.includes("kpis") && (
+                    <Sortable id="kpis">
+                      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                        {[
+                          {
+                            label: "Total",
+                            value: kpis.totalMovimentacoes,
+                            prev: dadosPeriodoAnterior?.totalMovimentacoes,
+                            icon: ArrowRightLeft,
+                            color: "primary",
+                          },
+                          {
+                            label: "Entradas",
+                            value: kpis.totalEntradas,
+                            prev: dadosPeriodoAnterior?.totalEntradas,
+                            icon: TrendingUp,
+                            color: "green-500",
+                          },
+                          {
+                            label: "Saídas",
+                            value: kpis.totalSaidas,
+                            prev: dadosPeriodoAnterior?.totalSaidas,
+                            icon: TrendingDown,
+                            color: "red-500",
+                          },
+                          {
+                            label: "Média/Dia",
+                            value: Number(kpis.mediaDiaria.toFixed(1)),
+                            prev: dadosPeriodoAnterior
+                              ? Number(dadosPeriodoAnterior.mediaDiaria.toFixed(1))
+                              : undefined,
+                            icon: BarChart3,
+                            color: "blue-500",
+                          },
+                        ].map((kpi) => {
+                          const delta =
+                            comparar && kpi.prev != null ? calcDelta(kpi.value, kpi.prev) : null;
+                          return (
+                            <Card key={kpi.label}>
+                              <CardContent className="p-4">
+                                <div className="flex items-center gap-3">
+                                  <div className={`rounded-lg p-2 bg-${kpi.color}/10`}>
+                                    <kpi.icon className={`h-5 w-5 text-${kpi.color}`} />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <p className="text-xs text-muted-foreground">{kpi.label}</p>
+                                    <p className="text-2xl font-bold">{kpi.value}</p>
+                                    {delta !== null && (
+                                      <div
+                                        className={cn(
+                                          "mt-0.5 flex items-center gap-1 text-xs",
+                                          delta >= 0 ? "text-green-600" : "text-red-600"
+                                        )}
+                                      >
+                                        {delta >= 0 ? (
+                                          <TrendingUp className="h-3 w-3" />
+                                        ) : (
+                                          <TrendingDown className="h-3 w-3" />
+                                        )}
+                                        {delta >= 0 ? "+" : ""}
+                                        {delta.toFixed(1)}%
+                                        <span className="ml-1 text-muted-foreground">vs ant.</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                       </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    </Sortable>
+                  )}
+                  {widgets.includes("evolucao") && (
+                    <Sortable id="evolucao">
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-base">Evolução Diária</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[250px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <AreaChart data={dadosEvolucao}>
+                                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                                <XAxis
+                                  dataKey="data"
+                                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                                />
+                                <YAxis
+                                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+                                />
+                                <Tooltip />
+                                <Legend />
+                                <Area
+                                  type="monotone"
+                                  dataKey="entradas"
+                                  name="Entradas"
+                                  stackId="1"
+                                  stroke={CHART_COLORS.entradas}
+                                  fill={CHART_COLORS.entradas}
+                                  fillOpacity={0.6}
+                                />
+                                <Area
+                                  type="monotone"
+                                  dataKey="saidas"
+                                  name="Saídas"
+                                  stackId="2"
+                                  stroke={CHART_COLORS.saidas}
+                                  fill={CHART_COLORS.saidas}
+                                  fillOpacity={0.6}
+                                />
+                                <Line
+                                  type="monotone"
+                                  dataKey="meta"
+                                  name="Meta Diária"
+                                  stroke="#94a3b8"
+                                  strokeDasharray="5 5"
+                                  dot={false}
+                                />
+                              </AreaChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Sortable>
+                  )}
+                  {widgets.includes("porTipo") && (
+                    <Sortable id="porTipo">
+                      <Card>
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-base">Por Tipo</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="h-[250px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <RechartsPieChart>
+                                <Pie
+                                  data={dadosPorTipo}
+                                  dataKey="quantidade"
+                                  nameKey="tipo"
+                                  cx="50%"
+                                  cy="50%"
+                                  outerRadius={80}
+                                  label
+                                >
+                                  {dadosPorTipo.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={entry.cor} />
+                                  ))}
+                                </Pie>
+                                <Tooltip />
+                                <Legend />
+                              </RechartsPieChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Sortable>
+                  )}
+                  {widgets.includes("tabela") && (
+                    <Sortable id="tabela">
+                      <RelatorioTable
+                        dados={dadosFiltrados}
+                        exportando={exportando}
+                        onExportPDF={handleExportPDF}
+                        onExportExcel={handleExportExcel}
+                      />
+                    </Sortable>
+                  )}
+                </SortableContext>
+              </DndContext>
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Evolução Diária</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[250px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={dadosEvolucao}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                        <XAxis
-                          dataKey="data"
-                          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                        />
-                        <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }} />
-                        <Tooltip />
-                        <Legend />
-                        <Area
-                          type="monotone"
-                          dataKey="entradas"
-                          name="Entradas"
-                          stackId="1"
-                          stroke={CHART_COLORS.entradas}
-                          fill={CHART_COLORS.entradas}
-                          fillOpacity={0.6}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="saidas"
-                          name="Saídas"
-                          stackId="2"
-                          stroke={CHART_COLORS.saidas}
-                          fill={CHART_COLORS.saidas}
-                          fillOpacity={0.6}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="meta"
-                          name="Meta Diária"
-                          stroke="#94a3b8"
-                          strokeDasharray="5 5"
-                          dot={false}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-base">Por Tipo</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[250px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RechartsPieChart>
-                        <Pie
-                          data={dadosPorTipo}
-                          dataKey="quantidade"
-                          nameKey="tipo"
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          label
-                        >
-                          {dadosPorTipo.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.cor} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                        <Legend />
-                      </RechartsPieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <RelatorioTable
-              dados={dadosFiltrados}
-              exportando={exportando}
-              onExportPDF={handleExportPDF}
-              onExportExcel={handleExportExcel}
-            />
           </TabsContent>
 
           <TabsContent value="estoque" className="mt-6 space-y-6">
