@@ -20,62 +20,80 @@ interface DefeitoHistoricoProps {
   className?: string;
 }
 
-// Dados mockados de histórico
-export const mockHistoricoDefeitos: Record<
-  string,
-  { historico: HistoricoDefeito[]; totalTriagens: number }
-> = {
-  "MOCHILA-EXEC-PRETA": {
-    totalTriagens: 12,
-    historico: [
-      {
-        tipo: "costura",
-        label: "Costura defeituosa",
-        emoji: "🧵",
-        ocorrencias: 8,
-        ultimaOcorrencia: new Date("2025-12-10"),
-        percentualLotes: 66.7,
-      },
-      {
-        tipo: "mancha",
-        label: "Mancha/Sujeira",
-        emoji: "🟤",
-        ocorrencias: 4,
-        ultimaOcorrencia: new Date("2025-12-05"),
-        percentualLotes: 33.3,
-      },
-      {
-        tipo: "componente_faltando",
-        label: "Componente faltando",
-        emoji: "❓",
-        ocorrencias: 2,
-        ultimaOcorrencia: new Date("2025-11-28"),
-        percentualLotes: 16.7,
-      },
-    ],
-  },
-  "CANETA-METAL-PRATA": {
-    totalTriagens: 8,
-    historico: [
-      {
-        tipo: "arranhao",
-        label: "Arranhão/Risco",
-        emoji: "🔍",
-        ocorrencias: 5,
-        ultimaOcorrencia: new Date("2025-12-14"),
-        percentualLotes: 62.5,
-      },
-      {
-        tipo: "quebra",
-        label: "Quebra/Rachadura",
-        emoji: "💔",
-        ocorrencias: 3,
-        ultimaOcorrencia: new Date("2025-12-12"),
-        percentualLotes: 37.5,
-      },
-    ],
-  },
+// Defeitos possíveis derivados do checklist de inspeção (eventos_triagem)
+const DEFEITOS_PADRAO: Record<string, { label: string; emoji: string }> = {
+  cor_diferente: { label: "Cor diferente", emoji: "🎨" },
+  tamanho_errado: { label: "Tamanho errado", emoji: "📏" },
+  mancha: { label: "Mancha/Sujeira", emoji: "🟤" },
+  avaria: { label: "Avaria visível", emoji: "💥" },
+  embalagem: { label: "Embalagem danificada", emoji: "📦" },
+  componente_faltando: { label: "Componente faltando", emoji: "❓" },
+  funcionalidade: { label: "Funcionalidade comprometida", emoji: "⚙️" },
+  outro: { label: "Outro defeito", emoji: "⚠️" },
 };
+
+const NORMALIZA_OBS: Array<{ chaves: string[]; tipo: keyof typeof DEFEITOS_PADRAO }> = [
+  { chaves: ["cor", "color"], tipo: "cor_diferente" },
+  { chaves: ["tamanho", "dimens"], tipo: "tamanho_errado" },
+  { chaves: ["suj", "mancha", "sujeira"], tipo: "mancha" },
+  { chaves: ["avaria", "danific", "quebra", "risc"], tipo: "avaria" },
+  { chaves: ["embalagem"], tipo: "embalagem" },
+  { chaves: ["faltando", "incomplet", "componente"], tipo: "componente_faltando" },
+  { chaves: ["funcion", "teste"], tipo: "funcionalidade" },
+];
+
+// Deriva histórico real de defeitos das triagens registradas para o produto (via SKU do lote).
+export function derivaHistoricoDefeitos(
+  triagens: Array<{
+    resultado?: string | null;
+    data_fim?: string | null;
+    observacoes?: string | null;
+    lotes?: { produtos?: { sku?: string } | null } | null;
+  }>,
+  sku: string
+): { historico: HistoricoDefeito[]; totalTriagens: number } {
+  const doProduto = triagens.filter((t) => t.lotes?.produtos?.sku === sku);
+  const totalTriagens = doProduto.length;
+  const contagem = new Map<string, { ocorrencias: number; ultima: Date | null }>();
+
+  for (const t of doProduto) {
+    // Só falhas contam como defeito histórico
+    const falhou =
+      t.resultado === "reprovado" ||
+      t.resultado === "parcial" ||
+      t.resultado === "conserto" ||
+      t.resultado === "ressalva";
+    if (!falhou) continue;
+
+    const obs = (t.observacoes || "").toLowerCase();
+    let tipo: keyof typeof DEFEITOS_PADRAO = "outro";
+    for (const regra of NORMALIZA_OBS) {
+      if (regra.chaves.some((k) => obs.includes(k))) {
+        tipo = regra.tipo;
+        break;
+      }
+    }
+
+    const entry = contagem.get(tipo) || { ocorrencias: 0, ultima: null };
+    entry.ocorrencias += 1;
+    const data = t.data_fim ? new Date(t.data_fim) : null;
+    if (data && (!entry.ultima || data > entry.ultima)) entry.ultima = data;
+    contagem.set(tipo, entry);
+  }
+
+  const historico: HistoricoDefeito[] = Array.from(contagem.entries())
+    .map(([tipo, c]) => ({
+      tipo: tipo as TipoDefeito,
+      label: DEFEITOS_PADRAO[tipo].label,
+      emoji: DEFEITOS_PADRAO[tipo].emoji,
+      ocorrencias: c.ocorrencias,
+      ultimaOcorrencia: c.ultima || new Date(),
+      percentualLotes: Math.round((c.ocorrencias / (totalTriagens || 1)) * 1000) / 10,
+    }))
+    .sort((a, b) => b.percentualLotes - a.percentualLotes);
+
+  return { historico, totalTriagens };
+}
 
 export function DefeitoHistorico({
   sku,
