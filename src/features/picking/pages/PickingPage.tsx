@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -16,8 +16,11 @@ import {
   ChevronRight,
   Search,
   ArrowLeft,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import { usePicking } from "../hooks/usePicking";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import type { PickingTask } from "../hooks/usePicking";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -30,6 +33,21 @@ export default function PickingPage() {
   const [scannedCode, setScannedCode] = useState("");
   const [confirmQty, setConfirmQty] = useState<number | "">("");
   const [searchTerm, setSearchTerm] = useState("");
+  const {
+    transcript,
+    isListening,
+    start: startVoice,
+    stop: stopVoice,
+    isSupported: isSpeechSupported,
+  } = useSpeechRecognition();
+
+  // Preenche o scan com o que foi ditado enquanto escuta
+  useEffect(() => {
+    if (transcript.trim()) {
+      setScannedCode(transcript.trim());
+      stopVoice();
+    }
+  }, [transcript, stopVoice]);
 
   const filteredTasks = (tasks as PickingTask[]).filter(
     (t) =>
@@ -111,6 +129,23 @@ export default function PickingPage() {
                         onClick={() => setScannedCode("PROD-SCAN-OK")}
                       >
                         <Scan className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={isListening ? stopVoice : startVoice}
+                        disabled={!isSpeechSupported}
+                        title={
+                          isSpeechSupported
+                            ? "Validar por voz"
+                            : "Voz não suportada neste navegador"
+                        }
+                      >
+                        {isListening ? (
+                          <MicOff className="h-4 w-4 text-destructive" />
+                        ) : (
+                          <Mic className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
