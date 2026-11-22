@@ -103,7 +103,7 @@ jobs:
         id: e2e
         run: |
           npx playwright install --with-deps chromium
-          npx playwright test tests/e2e/routes-smoke.spec.ts --reporter=list
+          npx playwright test tests/e2e/routes-smoke.spec.ts --project=chromium --reporter=list
         env:
           VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
