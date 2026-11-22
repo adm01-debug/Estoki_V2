@@ -19,23 +19,23 @@
 
 ## 1. Problemas críticos, por impacto no negócio
 
-| # | Problema | Evidência | Efeito | Etapa |
-|---|---|---|---|---|
-| 1 | Função **pública** devolve a chave `service_role` e a URL do banco a quem souber uma senha fixa versionada no repo | `supabase/config.toml:3-4` (`verify_jwt=false`), `supabase/functions/migrate-helper/index.ts:5` (chave hardcoded) e `:24-30` (ação `credentials` retorna `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_DB_URL`) | Qualquer pessoa com o repo (ou com o deploy) obtém acesso total ao banco, bypassando RLS. Deploy em produção **NÃO VERIFICADO** (Management API recusou o token da sessão) | E-001 |
-| 2 | O gate de **typecheck do CI não checa nada** | `package.json:24` roda `tsc --noEmit` sobre `tsconfig.json` que tem `"files": []` + `references` (sem `-b` nada é compilado); usado em `ci.yml:34`, `cd.yml:34`, `qa.yml:47` | Erros de tipo entram em `main` com CI verde; o "0 erros" de `docs/pendencias/_linha-de-base.md` é artefato disso | E-002 |
-| 3 | **Picking nunca conclui**: front grava `"concluido"`/`"cancelado"`, enum do banco só tem `concluida`/`cancelada` | `src/features/picking/hooks/usePicking.ts:78-79`, `pickingService.ts:43,56`, `PickingPage.tsx:54` × `supabase/migrations/20251216160741_…sql:5` e `20260513191848_…sql:5-6` | Operação central do WMS quebrada em produção; tarefas concluídas por outro fluxo continuam listadas | E-119 |
-| 4 | Scanner do picking é **falso** e qualquer código confirma a coleta | `PickingPage.tsx:129` `setScannedCode("PROD-SCAN-OK")`; `handleConfirm :65-78` não compara SKU nem quantidade | Separação errada sem bloqueio; acuracidade fictícia | E-120 |
-| 5 | **Conferência de recebimento inacessível** (rotas `/recebimento/:id` e `/recebimento/conferencia/:id` não existem) e validação por scan/voz é simulada | `RecebimentoPage.tsx:269,380` × `wmsRoutes.tsx:70,100`; `ConferenciaRecebimento.tsx:130-138,194-197` | Fluxo de recebimento pela metade; "validação física obrigatória" é só um toast | E-126, E-127 |
-| 6 | **Triagem**: rota `/triagem/:id` não existe (404 ao criar/abrir) e o laudo descarta quantidades/checklist/volumes | `TriagemPage.tsx:193,659` × `wmsRoutes.tsx:60,286`; `FormularioTriagem.tsx:159-163` | Qualidade não registra o que o operador preencheu | E-132, E-133 |
-| 7 | **Webhooks sem autenticação nem assinatura**; `webhook-handler` aceita tudo se `WEBHOOK_SECRET` não estiver definido | `stripe-webhook`, `webhook-receiver`, `shipping-track-webhook` (sem `stripe-signature`/HMAC, `GenericPayloadSchema`); `webhook-handler/index.ts:28-33` | Qualquer origem injeta eventos/alertas | E-027–E-040 |
-| 8 | Dados **fabricados exibidos como reais** em telas operacionais: mapa de calor, alertas "2 CRÍTICOS", KPIs/tendências do dashboard, checklist e timeline da expedição, fila de putaway, rastreio simulado gravado em `shipments` | `MapaCalorOcupacao.tsx:7-12`, `AlertaPerdaLogistica.tsx:8-25`, `DashboardPage.tsx:64-65,98-123`, `VolumeChecklist.tsx:31-48`, `ExpedicaoTimeline.tsx:32-73`, `Armazenamento.tsx:160-183`, `carrier-track/index.ts:29,72-79` | Decisões tomadas sobre números inventados | E-135, E-138–E-140, E-146, E-152, E-153, E-161, E-162 |
-| 9 | **Gestão de usuários, cargos e configurações do admin não funciona** (botões sem handler, listas hardcoded, "Salvar" só dá toast) | `UsersPage.tsx:132-135,191-200`; `RolesPage.tsx:8-33`; `SettingsPage.tsx:13-18` | Admin acredita ter salvo/alterado algo que não aconteceu | E-163–E-165 |
-| 10 | Nenhum teste Deno roda em lugar nenhum (44 arquivos) e Deno não está instalado | sem script `deno` em `package.json`; nenhum workflow; `vitest.config.ts:14-15` exclui `supabase/**` | Os contratos existentes não protegem nada | E-003–E-006 |
-| 11 | **Erro de validação sem formato único**: 145 funções devolvem `{success:false,error,details}`, ~51 `{error,details}`, 6 formatos no total; 400 em 199 funções, **422 em 0**; 165 funções devolvem 400 em exceção interna | `_shared/schemas.ts:791-805`, `_shared/validation.ts:17` (0 importadores), `abc-analysis/index.ts:12`, `ai-assistant/index.ts:15`, `stripe-webhook/index.ts:27` | Front não consegue tratar erro de campo (hoje nenhum ponto lê `error.context`) | E-013–E-026 |
-| 12 | **96 funções** validam com `GenericPayloadSchema` (`z.record(z.unknown())`) e `audit-zod` conta isso como 100% de cobertura | `_shared/schemas.ts:733`; `scripts/audit-zod.mjs:36-45` | Cobertura Zod é métrica vazia | E-008, E-069–E-118 |
-| 13 | Contraste do botão primário **2,85:1** (WCAG AA exige 4,5:1); 102/133 botões-ícone sem nome acessível; 143/197 inputs sem rótulo | `src/index.css:27-28,91-92`; `ui/page-header.tsx:32`; `ondas/NovoOndaDialog.tsx:82` | Sistema inacessível para baixa visão e leitor de tela | E-170–E-172 |
-| 14 | `types.ts` **defasado** (18/11): sem `suppliers`, `reorder_suggestions`, `stock_alerts`, RPC WMS38; services acessam tabelas inexistentes (`products`, `warehouses`, `location_stock`) com cast | `git log -1 src/integrations/supabase/types.ts`; `stockService.ts:4,59`; `warehouseService.ts` | Código compila contra schema imaginado | E-007, E-186 |
-| 15 | `Dockerfile` não builda (`npm ci --only=production` sem `vite`/`typescript`; `nginx.conf` inexistente; Node 18 × CI Node 22) | `Dockerfile:5,10,43`; `ls nginx.conf` → inexistente | Nenhum deploy por container é possível | E-009 |
+| #   | Problema                                                                                                                                                                                                                        | Evidência                                                                                                                                                                                                                   | Efeito                                                                                                                                                                     | Etapa                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 1   | Função **pública** devolve a chave `service_role` e a URL do banco a quem souber uma senha fixa versionada no repo                                                                                                              | `supabase/config.toml:3-4` (`verify_jwt=false`), `supabase/functions/migrate-helper/index.ts:5` (chave hardcoded) e `:24-30` (ação `credentials` retorna `SUPABASE_SERVICE_ROLE_KEY` e `SUPABASE_DB_URL`)                   | Qualquer pessoa com o repo (ou com o deploy) obtém acesso total ao banco, bypassando RLS. Deploy em produção **NÃO VERIFICADO** (Management API recusou o token da sessão) | E-001                                                 |
+| 2   | O gate de **typecheck do CI não checa nada**                                                                                                                                                                                    | `package.json:24` roda `tsc --noEmit` sobre `tsconfig.json` que tem `"files": []` + `references` (sem `-b` nada é compilado); usado em `ci.yml:34`, `cd.yml:34`, `qa.yml:47`                                                | Erros de tipo entram em `main` com CI verde; o "0 erros" de `docs/pendencias/_linha-de-base.md` é artefato disso                                                           | E-002                                                 |
+| 3   | **Picking nunca conclui**: front grava `"concluido"`/`"cancelado"`, enum do banco só tem `concluida`/`cancelada`                                                                                                                | `src/features/picking/hooks/usePicking.ts:78-79`, `pickingService.ts:43,56`, `PickingPage.tsx:54` × `supabase/migrations/20251216160741_…sql:5` e `20260513191848_…sql:5-6`                                                 | Operação central do WMS quebrada em produção; tarefas concluídas por outro fluxo continuam listadas                                                                        | E-119                                                 |
+| 4   | Scanner do picking é **falso** e qualquer código confirma a coleta                                                                                                                                                              | `PickingPage.tsx:129` `setScannedCode("PROD-SCAN-OK")`; `handleConfirm :65-78` não compara SKU nem quantidade                                                                                                               | Separação errada sem bloqueio; acuracidade fictícia                                                                                                                        | E-120                                                 |
+| 5   | **Conferência de recebimento inacessível** (rotas `/recebimento/:id` e `/recebimento/conferencia/:id` não existem) e validação por scan/voz é simulada                                                                          | `RecebimentoPage.tsx:269,380` × `wmsRoutes.tsx:70,100`; `ConferenciaRecebimento.tsx:130-138,194-197`                                                                                                                        | Fluxo de recebimento pela metade; "validação física obrigatória" é só um toast                                                                                             | E-126, E-127                                          |
+| 6   | **Triagem**: rota `/triagem/:id` não existe (404 ao criar/abrir) e o laudo descarta quantidades/checklist/volumes                                                                                                               | `TriagemPage.tsx:193,659` × `wmsRoutes.tsx:60,286`; `FormularioTriagem.tsx:159-163`                                                                                                                                         | Qualidade não registra o que o operador preencheu                                                                                                                          | E-132, E-133                                          |
+| 7   | **Webhooks sem autenticação nem assinatura**; `webhook-handler` aceita tudo se `WEBHOOK_SECRET` não estiver definido                                                                                                            | `stripe-webhook`, `webhook-receiver`, `shipping-track-webhook` (sem `stripe-signature`/HMAC, `GenericPayloadSchema`); `webhook-handler/index.ts:28-33`                                                                      | Qualquer origem injeta eventos/alertas                                                                                                                                     | E-027–E-040                                           |
+| 8   | Dados **fabricados exibidos como reais** em telas operacionais: mapa de calor, alertas "2 CRÍTICOS", KPIs/tendências do dashboard, checklist e timeline da expedição, fila de putaway, rastreio simulado gravado em `shipments` | `MapaCalorOcupacao.tsx:7-12`, `AlertaPerdaLogistica.tsx:8-25`, `DashboardPage.tsx:64-65,98-123`, `VolumeChecklist.tsx:31-48`, `ExpedicaoTimeline.tsx:32-73`, `Armazenamento.tsx:160-183`, `carrier-track/index.ts:29,72-79` | Decisões tomadas sobre números inventados                                                                                                                                  | E-135, E-138–E-140, E-146, E-152, E-153, E-161, E-162 |
+| 9   | **Gestão de usuários, cargos e configurações do admin não funciona** (botões sem handler, listas hardcoded, "Salvar" só dá toast)                                                                                               | `UsersPage.tsx:132-135,191-200`; `RolesPage.tsx:8-33`; `SettingsPage.tsx:13-18`                                                                                                                                             | Admin acredita ter salvo/alterado algo que não aconteceu                                                                                                                   | E-163–E-165                                           |
+| 10  | Nenhum teste Deno roda em lugar nenhum (44 arquivos) e Deno não está instalado                                                                                                                                                  | sem script `deno` em `package.json`; nenhum workflow; `vitest.config.ts:14-15` exclui `supabase/**`                                                                                                                         | Os contratos existentes não protegem nada                                                                                                                                  | E-003–E-006                                           |
+| 11  | **Erro de validação sem formato único**: 145 funções devolvem `{success:false,error,details}`, ~51 `{error,details}`, 6 formatos no total; 400 em 199 funções, **422 em 0**; 165 funções devolvem 400 em exceção interna        | `_shared/schemas.ts:791-805`, `_shared/validation.ts:17` (0 importadores), `abc-analysis/index.ts:12`, `ai-assistant/index.ts:15`, `stripe-webhook/index.ts:27`                                                             | Front não consegue tratar erro de campo (hoje nenhum ponto lê `error.context`)                                                                                             | E-013–E-026                                           |
+| 12  | **96 funções** validam com `GenericPayloadSchema` (`z.record(z.unknown())`) e `audit-zod` conta isso como 100% de cobertura                                                                                                     | `_shared/schemas.ts:733`; `scripts/audit-zod.mjs:36-45`                                                                                                                                                                     | Cobertura Zod é métrica vazia                                                                                                                                              | E-008, E-069–E-118                                    |
+| 13  | Contraste do botão primário **2,85:1** (WCAG AA exige 4,5:1); 102/133 botões-ícone sem nome acessível; 143/197 inputs sem rótulo                                                                                                | `src/index.css:27-28,91-92`; `ui/page-header.tsx:32`; `ondas/NovoOndaDialog.tsx:82`                                                                                                                                         | Sistema inacessível para baixa visão e leitor de tela                                                                                                                      | E-170–E-172                                           |
+| 14  | `types.ts` **defasado** (18/11): sem `suppliers`, `reorder_suggestions`, `stock_alerts`, RPC WMS38; services acessam tabelas inexistentes (`products`, `warehouses`, `location_stock`) com cast                                 | `git log -1 src/integrations/supabase/types.ts`; `stockService.ts:4,59`; `warehouseService.ts`                                                                                                                              | Código compila contra schema imaginado                                                                                                                                     | E-007, E-186                                          |
+| 15  | `Dockerfile` não builda (`npm ci --only=production` sem `vite`/`typescript`; `nginx.conf` inexistente; Node 18 × CI Node 22)                                                                                                    | `Dockerfile:5,10,43`; `ls nginx.conf` → inexistente                                                                                                                                                                         | Nenhum deploy por container é possível                                                                                                                                     | E-009                                                 |
 
 ## 2. Riscos identificados
 
@@ -49,27 +49,27 @@
 
 ## 3. Números medidos (comando ou arquivo citado nas etapas)
 
-| Métrica | Valor |
-|---|---|
-| Edge Functions / com body / com Zod / com `GenericPayloadSchema` | 248 / 209 / 209 / **96** |
-| Formatos distintos de erro de validação / funções com 422 | 6 / **0** |
-| Funções com `withLogging` / `methodGuard` / `rateLimit` | 2 / 0 / 11 |
-| Testes Deno existentes / executados em CI | 44 / **0** |
-| Webhooks / com assinatura / com idempotência / com versão | 5 / 0 / 0 / 0 |
-| Funções invocadas pelo front (nomes únicos) | 18 |
-| Botões-ícone sem nome acessível / inputs sem rótulo / `<th>` sem `scope` | 102 de 133 / 143 de 197 / 155 de 156 |
-| Contraste `--primary` × branco | 2,85:1 |
-| Páginas com título/SEO | 34 de 87 |
-| `<form>` / com `react-hook-form` | 9 / 3 |
-| `.tsx` usando `t()` / chaves por locale / strings PT hardcoded (baseline) | 2 de 640 / 178 / 1312 |
-| `.from(` / `select("*")` / `.limit(` / `.range(` em `src/` | 344 / 131 / 59 / 7 |
-| Arquivos acessando banco fora de `services` | 89 |
-| `any` fora de `types.ts` / `console.*` | 308 / 103 |
-| Hooks em `src/hooks` / sem importador (heurística) | 285 / ~207 |
-| `h-screen`/`100vh` vs `dvh` | 54 vs 5 |
-| Cores de paleta crua / sem variante `dark:` | 1078 / 660 |
-| Mutations sem `onError` (arquivos) / fetch manual com `useEffect` | 14 / 33 |
-| Rotas sem `ProtectedRoute` em `feature`/`wms` | 44 |
+| Métrica                                                                   | Valor                                |
+| ------------------------------------------------------------------------- | ------------------------------------ |
+| Edge Functions / com body / com Zod / com `GenericPayloadSchema`          | 248 / 209 / 209 / **96**             |
+| Formatos distintos de erro de validação / funções com 422                 | 6 / **0**                            |
+| Funções com `withLogging` / `methodGuard` / `rateLimit`                   | 2 / 0 / 11                           |
+| Testes Deno existentes / executados em CI                                 | 44 / **0**                           |
+| Webhooks / com assinatura / com idempotência / com versão                 | 5 / 0 / 0 / 0                        |
+| Funções invocadas pelo front (nomes únicos)                               | 18                                   |
+| Botões-ícone sem nome acessível / inputs sem rótulo / `<th>` sem `scope`  | 102 de 133 / 143 de 197 / 155 de 156 |
+| Contraste `--primary` × branco                                            | 2,85:1                               |
+| Páginas com título/SEO                                                    | 34 de 87                             |
+| `<form>` / com `react-hook-form`                                          | 9 / 3                                |
+| `.tsx` usando `t()` / chaves por locale / strings PT hardcoded (baseline) | 2 de 640 / 178 / 1312                |
+| `.from(` / `select("*")` / `.limit(` / `.range(` em `src/`                | 344 / 131 / 59 / 7                   |
+| Arquivos acessando banco fora de `services`                               | 89                                   |
+| `any` fora de `types.ts` / `console.*`                                    | 308 / 103                            |
+| Hooks em `src/hooks` / sem importador (heurística)                        | 285 / ~207                           |
+| `h-screen`/`100vh` vs `dvh`                                               | 54 vs 5                              |
+| Cores de paleta crua / sem variante `dark:`                               | 1078 / 660                           |
+| Mutations sem `onError` (arquivos) / fetch manual com `useEffect`         | 14 / 33                              |
+| Rotas sem `ProtectedRoute` em `feature`/`wms`                             | 44                                   |
 
 ---
 
@@ -99,7 +99,7 @@
 
 **E-011 · E2E: `baseURL` derivado do `webServer`** — Problema: `playwright.config.ts:27` usa `VITE_APP_URL || 5173` e `.env.example` traz `VITE_APP_URL=http://localhost:8080` enquanto `:76` sobe o servidor em 5173 (`vite.config.ts:40` dev = 8080). · Ação: `PW_BASE_URL` próprio com default `http://localhost:5173`; documentar em `README`. · Arquivos: `playwright.config.ts`, `.env.example`, `README.md`. · Aceite: `npm run test:e2e` com `.env` copiado do exemplo encontra o servidor.
 
-**E-012 · Gate de cobertura: subir 5 pp e incluir `src/hooks/**`** — Problema: thresholds 6/8/5/6 (`vitest.config.ts`) e cobertura só mede `services`/`lib`; `hooks/` (288 arquivos) fora. · Ação: incluir `src/hooks/**` e `src/features/**/hooks/**` no `coverage.include`, medir, fixar thresholds reais + 5 pp; repetir a cada 3 PRs de teste. · Arquivos: `vitest.config.ts`. · Aceite: `npm run test:coverage` verde com novos limites.
+**E-012 · Gate de cobertura: subir 5 pp e incluir `src/hooks/**`** — Problema: thresholds 6/8/5/6 (`vitest.config.ts`) e cobertura só mede `services`/`lib`; `hooks/`(288 arquivos) fora. · Ação: incluir`src/hooks/**`e`src/features/**/hooks/\*\*`no`coverage.include`, medir, fixar thresholds reais + 5 pp; repetir a cada 3 PRs de teste. · Arquivos: `vitest.config.ts`. · Aceite: `npm run test:coverage` verde com novos limites.
 
 ### F1 · Formato único de erro de validação (422) (E-013 → E-026)
 
@@ -173,7 +173,7 @@
 
 **E-046 · Smoke test pós-deploy dos webhooks** — Problema: deploy manual sem verificação. · Ação: `scripts/smoke-webhooks.mjs` que envia payload assinado com segredo de teste para cada webhook em produção (ação `ping` que não persiste) e confere 200 + envelope; rodar no `cd.yml` (⚠️ regra 8) ou à mão pós-deploy. · Arquivos: `scripts/smoke-webhooks.mjs`. · Aceite: saída verde contra produção após deploy.
 
-**E-047 · Alinhar `Bitrix24` ao modelo de webhooks** — Problema: `src/config/bitrix24-client.ts:11` tem URL com token no código (módulo morto); `environment.ts:68-77` lê `VITE_BITRIX24_WEBHOOK_URL`/`VITE_CORREIOS_API_KEY` (VITE_* é público). · Ação: apagar `bitrix24-client.ts`, remover as `VITE_*` sensíveis de `.env.example` e `environment.ts`; integração Bitrix (se desejada) vira Edge Function `integration-bitrix` com segredo server-side. Rotação do token: dono (⚠️ regra 8). · Arquivos: `src/config/bitrix24-client.ts`, `src/config/index.ts:47`, `src/config/environment.ts`, `.env.example`. · Aceite: `grep -rn "bitrix" src` → 0; `grep VITE_CORREIOS .env.example` → 0.
+**E-047 · Alinhar `Bitrix24` ao modelo de webhooks** — Problema: `src/config/bitrix24-client.ts:11` tem URL com token no código (módulo morto); `environment.ts:68-77` lê `VITE_BITRIX24_WEBHOOK_URL`/`VITE_CORREIOS_API_KEY` (VITE*\* é público). · Ação: apagar `bitrix24-client.ts`, remover as `VITE*\*`sensíveis de`.env.example`e`environment.ts`; integração Bitrix (se desejada) vira Edge Function `integration-bitrix`com segredo server-side. Rotação do token: dono (⚠️ regra 8). · Arquivos:`src/config/bitrix24-client.ts`, `src/config/index.ts:47`, `src/config/environment.ts`, `.env.example`. · Aceite: `grep -rn "bitrix" src`→ 0;`grep VITE_CORREIOS .env.example` → 0.
 
 **E-048 · Contrato de CORS dos webhooks** — Problema: `_shared/cors.ts:20` devolve `ALLOWED_ORIGINS[0]` para origem desconhecida (em vez de recusar). · Ação: webhooks não precisam de CORS de browser: responder sem `Access-Control-Allow-Origin` (ou `null`) e 405 em OPTIONS não-preflight; manter `getCorsHeaders` só nas funções chamadas pelo front. · Arquivos: 5 `index.ts`, `_shared/cors.ts` (origem desconhecida → sem header). · Aceite: contract test verifica ausência do header.
 
@@ -218,6 +218,7 @@
 **E-067 · Teste e2e de versão com o emissor real (Stripe CLI)** — Ação: documentar `stripe listen --forward-to` contra ambiente local e `stripe trigger payment_intent.succeeded`; script `scripts/smoke-stripe.sh`. · Arquivos: `scripts/smoke-stripe.sh`, `docs/webhooks/stripe-webhook.md`. · Aceite: evento de teste chega e aparece no painel E-042.
 
 **E-068 · Versionamento também no envelope de erro** — Ação: envelope de erro (E-013) carrega `contract_version` resolvida; teste garante que erro 422 em v1 e v2 têm o mesmo shape externo. · Arquivos: `_shared/http.ts`, `error_contract_test.ts`. · Aceite: teste.
+
 ### F4 · Contratos das 18 funções que o front chama (E-069 → E-090)
 
 > Prioridade 1 porque são as únicas com chamador comprovado no front (`grep -rn "functions.invoke(" src` → 12 pontos, 18 nomes) e porque duas estão com contrato **divergente hoje**.
@@ -323,6 +324,7 @@
 **E-117 · `verify_jwt` auditado por função** ⚠️ regra 8 (superfície) — Problema: `config.toml` declara `verify_jwt=false` para `migrate-helper` (E-001), `reorder-check` e `stock-alert` — as duas últimas são chamadas por cron. · Ação: cron passa a autenticar por `X-Cron-Key` (E-099) e as duas voltam a `verify_jwt=true`; documentar no `docs/agentes/edge-functions.md` que apenas webhooks assinados ficam públicos. · Arquivos: `supabase/config.toml`, 2 `index.ts`, docs. · Aceite: chamada anônima a `reorder-check` → 401.
 
 **E-118 · Arquivar funções sem chamador e sem deploy** — Problema: `inventario/estado/edges.json` lista grande parte das 248 como `sem_chamador_no_repo`; 43 tabelas pressupostas nunca existiram. · Ação: mover para `supabase/functions/_archive/<fn>/` (fora do deploy) as não deployadas, sem chamador e que referenciam tabela inexistente; registrar a lista na PR; nada é apagado nesta etapa. · Arquivos: `supabase/functions/_archive/**`, `docs/contratos/INVENTARIO.md`. · Aceite: contagem de funções ativas cai para o conjunto com chamador/deploy; `deno test` continua verde.
+
 ### F6 · Fluxos quebrados e dado fabricado, por domínio (E-119 → E-162)
 
 > Cada etapa aqui tem evidência de leitura de código. "Dado fabricado" = valor inventado no front
@@ -429,6 +431,7 @@
 **E-161 · Hooks de hardware e cálculo simulados** — Problema: `useRFID.ts:18-35`, `useWeightScale.ts:13-17`, `useCarrierIntegration.ts:14-25` e `useBarcodePrint.ts` devolvem dado aleatório sem nenhum consumidor; `useBalanca.ts:179-188` expõe `simularLeitura` que marca a balança como conectada com peso aleatório **estável** e é usado na conferência (`ConferenciaRecebimento.tsx:40`); `useReorderPoint.ts:16` e `useSafetyStock.ts:18-19` usam demanda diária fixa = 10; `useLeadTime.ts:20-30` consulta sem `.limit`/filial; `Armazenamento.tsx:160-183` injeta fila de putaway com SKUs inventados e a exibe como "Fila de Roteirização Otimizada" (`:413-432`). · Ação: apagar os 4 hooks sem uso; remover `simularLeitura` do retorno público (ou guardar com `import.meta.env.DEV`); calcular demanda a partir de movimentações reais ou apagar os 3 hooks de reposição; alimentar a fila de putaway com tarefas reais ou esconder o card. · Arquivos: os 9 citados. · Aceite: `grep -rn "Math.random" src --include=*.ts --include=*.tsx | grep -v __tests__` só retorna usos inofensivos (ids de UI), listados na PR.
 
 **E-162 · Geradores aleatórios com risco de colisão e tendência fabricada** — Problema: `barcodeService.ts:40-56` gera EAN-13 aleatório sem checar `produtos.barcode`; `NovoOndaDialog.tsx:34` monta `codigo` com `Date.now()+random` no mount e insere sem unicidade no banco; `ModuleCharts.tsx:291-309` exporta `generateDailyTrend` com `Math.random()` (arquivo inteiro sem importador — os gráficos usam `WMSModuleCharts.tsx`); `RealtimeDashboardPage.tsx:139-149` fabrica 8 pontos de eixo horário como fallback; `useExperiment.ts`/`useABTest.ts` duplicam sorteio de variante sem consumidor. · Ação: checar unicidade (ou gerar no banco com sequence/`UNIQUE` + tratar 23505 — ⚠️ regra 8); recomputar o código ao abrir o dialog; apagar `ModuleCharts.tsx` e os dois hooks de experimento; no dashboard em tempo real, mostrar estado vazio em vez de eixo inventado. · Arquivos: os 6 citados. · Aceite: dois usuários criando onda ao mesmo tempo não colidem.
+
 ### F7 · Administração, permissões e segurança da aplicação (E-163 → E-169)
 
 **E-163 · Gestão de usuários: implementar ou remover a tela** — Problema: `src/pages/admin/UsersPage.tsx:132-135` ("Convidar Usuário") e `:191-200` ("Editar", "Alterar Cargo", "Desativar") não têm `onClick`; a coluna Status é fixa em `ativo` (`:59,177-181`); o único acesso ao banco é leitura (`:50-53`) com `select("*")` sem `.limit` e join em memória (`:56-58`). · Ação: Edge Function de convite (auth admin), update em `user_roles` com checagem de papel, desativação por `ativo:false`; `select` de colunas com `.limit(500)` + `.range()` e busca server-side; o que não for implementado nesta PR sai da tela. · Arquivos: `src/pages/admin/UsersPage.tsx`, `supabase/functions/admin-invite-user/index.ts` (+ contract test), `src/services/userAdminService.ts`. · Aceite: alterar cargo reflete em `user_roles` (query na PR).
@@ -497,30 +500,30 @@
 
 ## 5. Ordem sugerida de execução (lotes)
 
-| Lote | Etapas | Por quê primeiro |
-|---|---|---|
-| 1 | E-001, E-002, E-007, E-009, E-010, E-187 (parte de cabeçalhos) | Segredo exposto, gate falso-verde e build quebrado — nada é confiável antes disso |
-| 2 | E-003 → E-006, E-013 → E-016 | Infra de teste e o envelope de erro; sem isso as 190 etapas não têm como ser verificadas |
-| 3 | E-119 → E-124, E-126 → E-131, E-132 → E-137 | Os três fluxos operacionais quebrados (picking, recebimento, triagem) |
-| 4 | E-017 → E-026, E-027 → E-050 | 422 em todo lugar e webhooks com assinatura/idempotência |
-| 5 | E-138 → E-145, E-146 → E-151 | Estoque e expedição: dado fabricado e fluxos pela metade |
-| 6 | E-152 → E-162 | Dashboards, cadastros, pedidos e os hooks simulados |
-| 7 | E-163 → E-169 | Administração, permissões e segurança da aplicação |
-| 8 | E-069 → E-090, E-051 → E-068 | Contratos das funções chamadas pelo front e versionamento v1/v2 |
-| 9 | E-170 → E-185 | Acessibilidade, estados de tela, formulários, i18n e SEO |
-| 10 | E-091 → E-118, E-186, E-188 → E-190 | Contratos do restante das 248, tipos, autorização de rotas, performance e limpeza |
+| Lote | Etapas                                                         | Por quê primeiro                                                                         |
+| ---- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 1    | E-001, E-002, E-007, E-009, E-010, E-187 (parte de cabeçalhos) | Segredo exposto, gate falso-verde e build quebrado — nada é confiável antes disso        |
+| 2    | E-003 → E-006, E-013 → E-016                                   | Infra de teste e o envelope de erro; sem isso as 190 etapas não têm como ser verificadas |
+| 3    | E-119 → E-124, E-126 → E-131, E-132 → E-137                    | Os três fluxos operacionais quebrados (picking, recebimento, triagem)                    |
+| 4    | E-017 → E-026, E-027 → E-050                                   | 422 em todo lugar e webhooks com assinatura/idempotência                                 |
+| 5    | E-138 → E-145, E-146 → E-151                                   | Estoque e expedição: dado fabricado e fluxos pela metade                                 |
+| 6    | E-152 → E-162                                                  | Dashboards, cadastros, pedidos e os hooks simulados                                      |
+| 7    | E-163 → E-169                                                  | Administração, permissões e segurança da aplicação                                       |
+| 8    | E-069 → E-090, E-051 → E-068                                   | Contratos das funções chamadas pelo front e versionamento v1/v2                          |
+| 9    | E-170 → E-185                                                  | Acessibilidade, estados de tela, formulários, i18n e SEO                                 |
+| 10   | E-091 → E-118, E-186, E-188 → E-190                            | Contratos do restante das 248, tipos, autorização de rotas, performance e limpeza        |
 
 ## 6. Como medir que o plano está andando
 
-| Indicador | Hoje | Alvo |
-|---|---|---|
-| Funções com schema específico (não `GenericPayloadSchema`) | 152 de 248 | 248 |
-| Funções com erro de validação 422 padronizado | 0 | 100% das que recebem body |
-| Contract tests executados em CI | 0 | 1 por função deployada |
-| Webhooks com assinatura e idempotência | 0 de 5 | 5 de 5 |
-| Telas com dado fabricado exibido como real | ≥ 18 componentes | 0 |
-| Botões/menus sem handler em tela viva | ≥ 35 | 0 |
-| Páginas com loading+erro+vazio | 20 de 87 | 87 |
-| Violações axe `critical`/`serious` em 8 rotas | NÃO MEDIDO | 0 |
-| Queries sem `.limit`/`.range` | 285 de 344 | baseline decrescente |
-| `any` fora de `types.ts` | 308 | < 100 |
+| Indicador                                                  | Hoje             | Alvo                      |
+| ---------------------------------------------------------- | ---------------- | ------------------------- |
+| Funções com schema específico (não `GenericPayloadSchema`) | 152 de 248       | 248                       |
+| Funções com erro de validação 422 padronizado              | 0                | 100% das que recebem body |
+| Contract tests executados em CI                            | 0                | 1 por função deployada    |
+| Webhooks com assinatura e idempotência                     | 0 de 5           | 5 de 5                    |
+| Telas com dado fabricado exibido como real                 | ≥ 18 componentes | 0                         |
+| Botões/menus sem handler em tela viva                      | ≥ 35             | 0                         |
+| Páginas com loading+erro+vazio                             | 20 de 87         | 87                        |
+| Violações axe `critical`/`serious` em 8 rotas              | NÃO MEDIDO       | 0                         |
+| Queries sem `.limit`/`.range`                              | 285 de 344       | baseline decrescente      |
+| `any` fora de `types.ts`                                   | 308              | < 100                     |
