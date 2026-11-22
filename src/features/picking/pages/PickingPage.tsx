@@ -51,7 +51,7 @@ export default function PickingPage() {
 
   const filteredTasks = (tasks as PickingTask[]).filter(
     (t) =>
-      t.status !== "concluido" &&
+      t.status !== "concluida" &&
       (t.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.posicao_origem_codigo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.produto_id?.toLowerCase().includes(searchTerm.toLowerCase()))

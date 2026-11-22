@@ -64,7 +64,7 @@ export function usePutaway() {
         updates.data_inicio = new Date().toISOString();
         updates.operador_id = user?.id;
       }
-      if (status === "concluido") {
+      if (status === "concluida") {
         updates.data_conclusao = new Date().toISOString();
         updates.quantidade_executada = qty;
       }
@@ -74,7 +74,7 @@ export function usePutaway() {
       if (error) throw error;
 
       // Se concluiu, atualizar estoque
-      if (status === "concluido" && qty) {
+      if (status === "concluida" && qty) {
         // A lógica de movimentação real de estoque costuma ser feita via RPC ou trigger
         // mas vamos registrar uma movimentação no log pelo menos
         const task = tasks.find((t) => t.id === taskId);
@@ -102,6 +102,6 @@ export function usePutaway() {
     isLoading,
     startTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "em_andamento" }),
     finishTask: (taskId: string, qty: number) =>
-      updateTaskStatus.mutate({ taskId, status: "concluido", qty }),
+      updateTaskStatus.mutate({ taskId, status: "concluida", qty }),
   };
 }

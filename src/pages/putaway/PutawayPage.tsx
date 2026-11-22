@@ -30,7 +30,7 @@ export default function PutawayPage() {
 
   const filteredTasks = tasks.filter(
     (t) =>
-      t.status !== "concluido" &&
+      t.status !== "concluida" &&
       (t.produto_nome?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         t.posicao_destino_codigo?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
