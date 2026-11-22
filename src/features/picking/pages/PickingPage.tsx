@@ -156,7 +156,6 @@ export default function PickingPage() {
                             toast.error("Código não corresponde ao produto desta tarefa");
                           }
                         }}
-                        title="Validar código escaneado"
                       >
                         <Scan className="h-4 w-4" />
                       </Button>
