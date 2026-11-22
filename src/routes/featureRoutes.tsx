@@ -14,6 +14,9 @@ const SerialsPage = lazy(() => import("@/pages/serials/SerialsPage"));
 const CategoriesPage = lazy(() => import("@/pages/categories/CategoriesPage"));
 const WarehousesPage = lazy(() => import("@/pages/warehouses/WarehousesPage"));
 const WarehouseDetailPage = lazy(() => import("@/pages/warehouses/WarehouseDetailPage"));
+const MultiWarehouseDashboardPage = lazy(
+  () => import("@/features/multiWarehouse/pages/MultiWarehouseDashboardPage")
+);
 
 // User & Misc
 const Configuracoes = lazy(() => import("@/pages/Configuracoes"));
@@ -106,6 +109,16 @@ export const featureRoutes = (
         <RouteErrorBoundary>
           <Suspense fallback={<RouteLoadingFallback type="table" />}>
             <WarehousesPage />
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="dashboard-gerencial"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <MultiWarehouseDashboardPage />
           </Suspense>
         </RouteErrorBoundary>
       }
