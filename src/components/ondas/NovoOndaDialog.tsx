@@ -31,7 +31,7 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
     zona_alvo: string;
     rota: string;
   }>({
-    codigo: `ON-${Math.floor(1000 + Math.random() * 9000)}`,
+    codigo: `ON-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`,
     descricao: "",
     prioridade: "media",
     zona_alvo: "",

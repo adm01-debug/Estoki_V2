@@ -69,14 +69,21 @@ serve(async (req) => {
     }
 
     const currentStatus = events[events.length - 1].status;
-    await supabase
-      .from("shipments")
-      .update({
-        status: currentStatus,
-        last_tracking_update: new Date().toISOString(),
-        tracking_events: events,
-      })
-      .eq("tracking_number", tracking_number);
+
+    // Persistencia opcional: se a tabela shipments nao existir (ex.: schema antigo),
+    // o rastreio ainda assim deve responder. Nunca deixar um 500 derrubar o tracking.
+    try {
+      await supabase
+        .from("shipments")
+        .update({
+          status: currentStatus,
+          last_tracking_update: new Date().toISOString(),
+          tracking_events: events,
+        })
+        .eq("tracking_number", tracking_number);
+    } catch (persistErr) {
+      console.error("[carrier-track] persist failed (non-fatal):", persistErr);
+    }
 
     return new Response(
       JSON.stringify({
@@ -90,6 +97,7 @@ serve(async (req) => {
       { headers }
     );
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers });
+    const msg = error instanceof Error ? error.message : String(error);
+    return new Response(JSON.stringify({ error: msg }), { status: 500, headers });
   }
 });

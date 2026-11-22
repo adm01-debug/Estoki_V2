@@ -62,42 +62,47 @@ export default function IntegracaoTransportadoras() {
     gcTime: 1000 * 60 * 10,
   });
 
-  const simularRastreio = (codigo: string): RastreioEvento[] => {
-    const agora = new Date();
-    const eventos: RastreioEvento[] = [];
-    const statusList = [
-      { desc: "Objeto postado", status: "postado", horasAtras: 72 },
-      { desc: "Objeto em trânsito - por favor aguarde", status: "transito", horasAtras: 48 },
-      {
-        desc: "Objeto em trânsito - transferido para unidade de distribuição",
-        status: "transito",
-        horasAtras: 24,
-      },
-      { desc: "Objeto saiu para entrega ao destinatário", status: "entrega", horasAtras: 4 },
-    ];
+  interface CarrierTrackEvent {
+    date: string;
+    status: string;
+    description: string;
+    location: string;
+  }
 
-    if (Math.random() > 0.3) {
-      statusList.push({
-        desc: "Objeto entregue ao destinatário",
-        status: "entregue",
-        horasAtras: 1,
-      });
-    }
-
-    statusList.forEach((s) => {
-      const d = new Date(agora.getTime() - s.horasAtras * 3600000);
-      eventos.push({
+  const converterEventos = (events: CarrierTrackEvent[]): RastreioEvento[] =>
+    events.map((ev) => {
+      const d = new Date(ev.date);
+      return {
         data: d.toLocaleDateString("pt-BR"),
         hora: d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-        local: ["São Paulo/SP", "Campinas/SP", "Curitiba/PR", "Rio de Janeiro/RJ"][
-          Math.floor(Math.random() * 4)
-        ],
-        descricao: s.desc,
-        status: s.status,
-      });
+        local: ev.location || "N/D",
+        descricao: ev.description || ev.status,
+        status: ev.status,
+      };
     });
 
-    return eventos.reverse();
+  const buscarRastreio = async (codigo: string): Promise<Rastreio> => {
+    const { data, error } = await supabase.functions.invoke<{
+      success: boolean;
+      mode: "real" | "simulated";
+      tracking_number: string;
+      current_status: string;
+      events: CarrierTrackEvent[];
+    }>("carrier-track", {
+      body: { tracking_number: codigo, carrier: "auto" },
+    });
+
+    if (error || !data?.success) {
+      throw new Error(error?.message || "Falha ao consultar o rastreio");
+    }
+
+    return {
+      codigo: data.tracking_number || codigo,
+      romaneioId: null,
+      romaneioCode: null,
+      status: data.current_status || "desconhecido",
+      eventos: converterEventos(data.events || []),
+    };
   };
 
   const rastrear = async () => {
@@ -107,20 +112,12 @@ export default function IntegracaoTransportadoras() {
     }
     setRastreando(true);
     try {
-      // Simulação - em produção integraria com API dos Correios/Jadlog/etc
-      await new Promise((r) => setTimeout(r, 1500));
-
-      const eventos = simularRastreio(codigoRastreio);
-      const novoRastreio: Rastreio = {
-        codigo: codigoRastreio,
-        romaneioId: null,
-        romaneioCode: null,
-        status: eventos[0]?.status || "desconhecido",
-        eventos,
-      };
-
+      const novoRastreio = await buscarRastreio(codigoRastreio);
       setRastreios((prev) => [novoRastreio, ...prev.filter((r) => r.codigo !== codigoRastreio)]);
       toast.success("Rastreio atualizado!");
+    } catch (err) {
+      logger.error("Erro ao consultar rastreio:", err);
+      toast.error("Não foi possível consultar este código. Tente novamente.");
     } finally {
       setRastreando(false);
     }
@@ -129,21 +126,14 @@ export default function IntegracaoTransportadoras() {
   const rastrearRomaneio = async (romaneio: any) => {
     setRastreando(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-
-      const codigoFake = `BR${romaneio.codigo.replace(/\D/g, "")}${Date.now().toString().slice(-6)}BR`;
-      const eventos = simularRastreio(codigoFake);
-
-      const novoRastreio: Rastreio = {
-        codigo: codigoFake,
-        romaneioId: romaneio.id,
-        romaneioCode: romaneio.codigo,
-        status: eventos[0]?.status || "desconhecido",
-        eventos,
-      };
-
+      const novoRastreio = await buscarRastreio(romaneio.codigo);
+      novoRastreio.romaneioId = romaneio.id;
+      novoRastreio.romaneioCode = romaneio.codigo;
       setRastreios((prev) => [novoRastreio, ...prev]);
       toast.success(`Rastreio do romaneio ${romaneio.codigo} atualizado`);
+    } catch (err) {
+      logger.error("Erro ao rastrear romaneio:", err);
+      toast.error(`Falha ao rastrear romaneio ${romaneio.codigo}`);
     } finally {
       setRastreando(false);
     }
@@ -152,6 +142,7 @@ export default function IntegracaoTransportadoras() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "entregue":
+      case "delivered":
         return (
           <Badge className="border-success/30 bg-success/20 text-success">
             <CheckCircle2 className="mr-1 h-3 w-3" />
@@ -159,6 +150,7 @@ export default function IntegracaoTransportadoras() {
           </Badge>
         );
       case "entrega":
+      case "out_for_delivery":
         return (
           <Badge className="border-info/30 bg-info/20 text-info">
             <Truck className="mr-1 h-3 w-3" />
@@ -166,6 +158,7 @@ export default function IntegracaoTransportadoras() {
           </Badge>
         );
       case "transito":
+      case "in_transit":
         return (
           <Badge className="border-warning/30 bg-warning/20 text-warning">
             <RefreshCw className="mr-1 h-3 w-3" />
@@ -173,6 +166,7 @@ export default function IntegracaoTransportadoras() {
           </Badge>
         );
       case "postado":
+      case "posted":
         return (
           <Badge className="bg-muted text-muted-foreground">
             <Package className="mr-1 h-3 w-3" />
