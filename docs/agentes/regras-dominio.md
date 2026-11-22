@@ -66,6 +66,13 @@ Fase 1**: existem `tenants`, `tenant_members` (papéis `owner|admin|member`) e h
 hook `useCurrentTenant()`. A **Fase 2 (coluna `tenant_id` nas ~15 tabelas raiz + RLS por tenant) está
 pendente** — ou seja, **hoje não presuma isolamento por tenant** ao escrever query ou policy.
 
+**Multi-filial (WMS38) já existe e é aditivo**: `posicoes_estoque`, `lotes`, `orders` e `tarefas` têm
+`warehouse_id UUID` nullable com FK para `armazens(id) ON DELETE SET NULL`, backfill histórico no
+`ARM-01` e índice por filial. A visão gerencial vem da RPC `get_multi_warehouse_dashboard()`
+(SECURITY DEFINER, exige `admin` ou `supervisor`) consumida por `/dashboard-gerencial`. **Filial não é
+tenant**: `warehouse_id` segmenta operação dentro do mesmo tenant, não isola dado entre clientes —
+não confunda os dois conceitos em policy nova.
+
 ## Armadilhas de interpretação de dado
 
 1. **Dado semeado × dado operacional nunca foi separado** (`ESTADO_ATUAL.md:238`). Há 17 scripts

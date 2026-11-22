@@ -91,6 +91,7 @@ export const sidebarGroups: SidebarGroup[] = [
       { path: "/posicoes", icon: Warehouse, label: "Posições" },
       { path: "/categorias", icon: FolderTree, label: "Categorias" },
       { path: "/armazens", icon: Building2, label: "Armazéns" },
+      { path: "/dashboard-gerencial", icon: Building2, label: "Dashboard Multi-Filial" },
       { path: "/clientes", icon: Users, label: "Clientes" },
       { path: "/seriais", icon: QrCode, label: "Seriais" },
       { path: "/etiquetas", icon: Tag, label: "Etiquetas QR" },
