@@ -99,7 +99,7 @@ export function useImportData<T>(options: UseImportDataOptions<T>) {
           success.push(schema.parse(row));
         } catch (error) {
           if (error instanceof z.ZodError) {
-            error.errors.forEach((err) => {
+            error.issues.forEach((err) => {
               errors.push({
                 row: index + 2,
                 field: err.path.join("."),

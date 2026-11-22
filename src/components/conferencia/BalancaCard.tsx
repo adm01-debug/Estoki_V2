@@ -7,7 +7,7 @@ import type { useBalanca as UseBalancaHook } from "@/hooks/useBalanca";
 
 interface BalancaCardProps {
   onPesoCapturado: (peso: number) => void;
-  balanca: ReturnType<UseBalancaHook>;
+  balanca: ReturnType<typeof UseBalancaHook>;
 }
 
 export function BalancaCard({ onPesoCapturado, balanca }: BalancaCardProps) {

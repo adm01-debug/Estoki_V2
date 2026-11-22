@@ -25,7 +25,8 @@ export function useMultiWarehouseDashboard() {
   const query = useQuery({
     queryKey: ["multi-warehouse-dashboard"],
     queryFn: async (): Promise<FilialResumo[]> => {
-      const { data, error } = await supabase.rpc("get_multi_warehouse_dashboard");
+      // RPC existe em produção; types.ts gerado está desatualizado (ver E-007)
+      const { data, error } = await supabase.rpc("get_multi_warehouse_dashboard" as never);
       if (error) {
         logger.error("Erro ao carregar dashboard multi-filial", error);
         throw error;

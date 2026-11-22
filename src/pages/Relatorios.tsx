@@ -46,7 +46,14 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Sortable } from "@/components/dnd/Sortable";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
@@ -112,7 +119,11 @@ export default function RelatoriosPage() {
     });
   }, []);
 
-  const widgetReorder = useCallback((activeId: string, overId: string) => {
+  const widgetReorder = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const activeId = String(active.id);
+    const overId = String(over.id);
     setWidgets((prev) => {
       const from = prev.indexOf(activeId);
       const to = prev.indexOf(overId);
