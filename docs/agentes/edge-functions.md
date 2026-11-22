@@ -4,7 +4,7 @@ Ler antes de criar, alterar ou debugar qualquer função em `supabase/functions/
 
 ## Panorama
 
-- `supabase/functions/` tem **250 diretórios**: **248 funções** (as que têm `index.ts`) + `_shared/` +
+- `supabase/functions/` tem **249 diretórios**: **247 funções** (as que têm `index.ts`) + `_shared/` +
   `tests/`, que só guarda três `*_test.ts` e não é função.
 - Maiores grupos por prefixo: `report-*` 14 · `auth-*` 12 · `integration-*` 11 · `inventory-*` 9 ·
   `carrier-*` 9 · `generate-*` 8 · `ai-*` 8 · `picking-*` 7 · `nfe-*` 7 · `create-*` 7 · `alert-*` 7 ·
@@ -21,24 +21,27 @@ Ler antes de criar, alterar ou debugar qualquer função em `supabase/functions/
 ```toml
 project_id = "ookjbflsnoefnsixrspc"
 
-[functions.migrate-helper]
+[functions.reorder-check]
+verify_jwt = false
+
+[functions.stock-alert]
 verify_jwt = false
 ```
 
-Só isso. Logo: **as outras 248 funções herdam `verify_jwt = true`** (qualquer JWT válido entra; a
-plataforma não checa papel), e **`migrate-helper` é pública, sem auth de plataforma** — trate-a como
-superfície exposta.
+Só isso. Logo: **as outras 247 funções herdam `verify_jwt = true`** (qualquer JWT válido entra; a
+plataforma não checa papel). `reorder-check` e `stock-alert` são chamadas por agendamento externo com
+Service Role, por isso desativam a verificação de JWT da plataforma.
 
-## Padrão canônico (medido sobre os 248 `index.ts`)
+## Padrão canônico (medido sobre os 247 `index.ts`)
 
 | Traço                                                    | Quantas       |
 | -------------------------------------------------------- | ------------- |
-| importam `../_shared/cors.ts`                            | 239 / 248     |
-| importam `_shared/schemas.ts` ou `_shared/validation.ts` | 207 / 248     |
+| importam `../_shared/cors.ts`                            | 239 / 247     |
+| importam `_shared/schemas.ts` ou `_shared/validation.ts` | 207 / 247     |
 | importam Zod direto de `deno.land`/`esm.sh`              | 11            |
-| usam `SUPABASE_SERVICE_ROLE_KEY`                         | **201 / 248** |
-| casam `auth.getUser` ou `Authorization` no texto         | **36 / 248**  |
-| **leem o header `Authorization` da requisição**          | **21 / 248**  |
+| usam `SUPABASE_SERVICE_ROLE_KEY`                         | **201 / 247** |
+| casam `auth.getUser` ou `Authorization` no texto         | **36 / 247**  |
+| **leem o header `Authorization` da requisição**          | **21 / 247**  |
 
 Referência mais completa: `supabase/functions/auth-login/index.ts:1-43`. A sequência é:
 
@@ -51,8 +54,8 @@ Referência mais completa: `supabase/functions/auth-login/index.ts:1-43`. A sequ
 6. Cliente Supabase criado **por request**.
 7. `try/catch` devolvendo `{ error: error.message }`.
 
-**Risco estrutural a respeitar:** autenticação de usuário é a exceção (35/248), enquanto service_role —
-que **bypassa RLS** — é a regra (201/248). Em `supabase/functions/adjust-inventory/index.ts:22-24` a
+**Risco estrutural a respeitar:** autenticação de usuário é a exceção (35/247), enquanto service_role —
+que **bypassa RLS** — é a regra (201/247). Em `supabase/functions/adjust-inventory/index.ts:22-24` a
 checagem de usuário está **comentada** e a função grava em `estoque_posicao`/`ajustes_inventario` com
 service_role. Ao tocar numa função que usa service_role, confira se existe guard de papel/tenant no
 corpo; se não existir, não piore — e registre na PR.
