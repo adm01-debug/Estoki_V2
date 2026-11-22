@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { highestRole } from "@/utils/role";
 
 interface Permission {
   id: string;
@@ -53,12 +54,8 @@ export function usePermissions() {
   const fetchUserRole = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .single();
-      setUserRole(data?.role || null);
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      setUserRole(highestRole((data ?? []).map((r) => r.role)));
     } catch (error) {
       setUserRole(null);
     }
