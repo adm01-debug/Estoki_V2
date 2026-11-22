@@ -69,7 +69,7 @@ export async function importExcel<T>(
       success.push(validated);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        error.errors.forEach((err) => {
+        error.issues.forEach((err) => {
           errors.push({ row: i + 1, field: err.path.join("."), error: err.message });
         });
       }

@@ -28,7 +28,7 @@ const LoginPage = () => {
     const result = loginSchema.safeParse({ email, password });
     if (!result.success) {
       const errs: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         if (err.path[0]) errs[err.path[0].toString()] = err.message;
       });
       setErrors(errs);

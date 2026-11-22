@@ -16,10 +16,10 @@ const msg = {
 // ── Movimentação ──
 export const movimentacaoSchema = z.object({
   tipo: z.enum(["armazenamento", "separacao", "saida_transporte", "devolucao", "ajuste_estoque"], {
-    required_error: "Selecione o tipo de movimentação",
+    error: "Selecione o tipo de movimentação",
   }),
   localizacao: z.string().trim().max(50, msg.max(50)).optional(),
-  quantidade: z.number({ required_error: msg.required }).int().min(1, msg.positive),
+  quantidade: z.number({ error: msg.required }).int().min(1, msg.positive),
   descricao: z.string().trim().min(3, msg.min(3)).max(500, msg.max(500)),
 });
 
@@ -69,7 +69,7 @@ export type RomaneioFormData = z.infer<typeof romaneioSchema>;
 // ── Helper: extract field errors from ZodError ──
 export function extractZodErrors(err: z.ZodError): Record<string, string> {
   const errors: Record<string, string> = {};
-  err.errors.forEach((e) => {
+  err.issues.forEach((e) => {
     const key = e.path[0];
     if (key && !errors[String(key)]) {
       errors[String(key)] = e.message;

@@ -29,7 +29,7 @@ const rectStub = () => ({
   y: 0,
   toJSON: () => ({}),
 });
-for (const proto of [window.Range?.prototype, window.Text?.prototype]) {
+for (const proto of [window.Range?.prototype, window.Text?.prototype] as any[]) {
   if (proto && typeof proto.getClientRects !== "function") {
     Object.defineProperty(proto, "getClientRects", {
       writable: true,
