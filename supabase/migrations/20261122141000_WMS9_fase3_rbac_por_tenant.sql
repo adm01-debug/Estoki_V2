@@ -60,5 +60,38 @@ AS $function$
   )
 $function$;
 
+-- 4. Simetria owner/admin: quem e owner ou admin em tenant_members administra
+-- o tenant. Sem isso o owner do tenant (adm01@) autentica, le tudo, mas nao
+-- escreve nada - porque tem 0 linhas em user_roles.
+INSERT INTO public.user_roles (user_id, role, tenant_id)
+SELECT m.user_id, 'admin'::public.app_role, m.tenant_id
+FROM public.tenant_members m
+WHERE m.papel IN ('owner', 'admin')
+ON CONFLICT DO NOTHING;
+
+CREATE OR REPLACE FUNCTION public.sync_member_role_to_user_roles()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
+AS $function$
+BEGIN
+  IF NEW.papel IN ('owner', 'admin') THEN
+    INSERT INTO public.user_roles (user_id, role, tenant_id)
+    VALUES (NEW.user_id, 'admin'::public.app_role, NEW.tenant_id)
+    ON CONFLICT DO NOTHING;
+  ELSIF TG_OP = 'UPDATE' AND OLD.papel IN ('owner', 'admin') THEN
+    DELETE FROM public.user_roles
+    WHERE user_id = NEW.user_id AND role = 'admin' AND tenant_id = NEW.tenant_id;
+  END IF;
+  RETURN NEW;
+END
+$function$;
+
+DROP TRIGGER IF EXISTS trg_sync_member_role ON public.tenant_members;
+CREATE TRIGGER trg_sync_member_role
+  AFTER INSERT OR UPDATE OF papel ON public.tenant_members
+  FOR EACH ROW EXECUTE FUNCTION public.sync_member_role_to_user_roles();
+
 COMMENT ON COLUMN public.user_roles.tenant_id IS
   'Tenant onde a role vale (WMS-9 fase 3). NULL = global, vale em todos.';
