@@ -75,7 +75,7 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     refetch,
     startTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "em_andamento" }),
     finishTask: (taskId: string, qty: number) =>
-      updateTaskStatus.mutate({ taskId, status: "concluido", qty }),
-    cancelTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "cancelado" }),
+      updateTaskStatus.mutate({ taskId, status: "concluida", qty }),
+    cancelTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "cancelada" }),
   };
 }

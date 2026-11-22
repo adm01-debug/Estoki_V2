@@ -40,7 +40,7 @@ export const pickingService = {
       updates.data_inicio = new Date().toISOString();
       updates.operador_id = userId;
     }
-    if (status === "concluido") {
+    if (status === "concluida") {
       updates.data_conclusao = new Date().toISOString();
       updates.quantidade_executada = qty;
     }
@@ -53,7 +53,7 @@ export const pickingService = {
     }
 
     // Se concluiu, registrar evento de picking
-    if (status === "concluido" && qty) {
+    if (status === "concluida" && qty) {
       const { data: task } = await supabase.from("tarefas").select("*").eq("id", taskId).single();
 
       if (task) {
