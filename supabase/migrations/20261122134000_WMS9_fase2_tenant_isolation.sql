@@ -39,10 +39,13 @@ AS $function$
   SELECT COALESCE(public.current_tenant_id(), public.default_tenant_id())
 $function$;
 
-REVOKE ALL ON FUNCTION public.default_tenant_id() FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.effective_tenant_id() FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.default_tenant_id() TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.effective_tenant_id() TO authenticated, service_role;
+-- anon executa: as tabelas tem INSERT/UPDATE/DELETE granted para anon e o
+-- DEFAULT precisa rodar no INSERT anonimo (o predicado da RESTRICTIVE tambem).
+-- Revogar de anon trocaria o comportamento de escrita atual por um erro 42501.
+REVOKE ALL ON FUNCTION public.default_tenant_id() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.effective_tenant_id() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.default_tenant_id() TO authenticated, anon, service_role;
+GRANT EXECUTE ON FUNCTION public.effective_tenant_id() TO authenticated, anon, service_role;
 
 -- 2. Coluna, backfill, indice e policy, tabela a tabela
 DO $do$
