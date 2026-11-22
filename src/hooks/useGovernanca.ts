@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { normalizeOcorrenciaStatus } from "@/components/governanca/GovernancaHelpers";
 
 // ── Cadeia de Custódia ──
 export function useCustodiaTransferencias() {
@@ -186,7 +187,10 @@ export function useOcorrenciasPerda() {
         .order("created_at", { ascending: false })
         .limit(200);
       if (error) throw error;
-      return data;
+      return (data ?? []).map((o) => ({
+        ...o,
+        status: normalizeOcorrenciaStatus(o.status),
+      }));
     },
   });
 
@@ -261,7 +265,10 @@ export function useOcorrenciasPerda() {
         .from("ocorrencias_perda")
         .select("status, tipo, valor_prejuizo, zona_detectada");
       if (error) throw error;
-      const items = data || [];
+      const items = (data || []).map((o) => ({
+        ...o,
+        status: normalizeOcorrenciaStatus(o.status),
+      }));
       return {
         total: items.length,
         abertas: items.filter((o) => o.status === "aberto").length,
