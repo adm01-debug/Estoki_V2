@@ -27,18 +27,20 @@ Não há `vercel.json` nem `netlify.toml` no repo. `package.json:42` tem um `dep
 ## Como o deploy acontece
 
 - **Push em `main`** → `cd.yml`: job `build` (lint, typecheck, test, build, `size-limit`, artefato
-  `dist-<sha>`) → `deploy_staging` (baixa o artefato, smoke `curl` em staging). **Na prática o `cd.yml`
-  está morto desde a quebra do `npm ci`:** o último run (#197, 03/10/2026, `main` @811ae01) falhou no step
-  `Run npm ci` do job `build`, e `deploy_staging`/`deploy_production` não rodaram. O que de fato reage a
-  push hoje é a integração GitHub→Vercel (deployments `Preview`, hoje `BLOCKED`/`FAILURE`). Trate todo
-  merge como ato de produção mesmo assim.
-- **Produção** só por `workflow_dispatch` com `environment=production`: smoke + `gh release create
-release-AAAAMMDD-HHMMSS-<sha7>`. O environment `Production` **não tem revisor obrigatório** (ver
-  `docs/agentes/github-ci.md`) — o "gate manual" é só o fato de precisar disparar à mão. **E esse caminho
-  provavelmente nunca executaria:** `deploy_production` tem `needs: [build, deploy_staging]` sem
-  `if: always()`, e num dispatch de produção o `deploy_staging` é _skipped_ (`cd.yml:44`), o que o Actions
-  propaga ao dependente. Consistente com o estado real: 0 runs de `workflow_dispatch`, 0 releases e 0 tags
-  no repo. **NÃO VERIFICADO por disparo** — não disparei nada.
+  `dist-<sha>`) → `deploy_staging` (smoke `curl` em `https://estoki-v2.vercel.app`). O `build` está
+  verde; o que decidia o vermelho era o `vercel deploy` do `deploy_staging`.
+- **O deploy real é a integração Git nativa GitHub→Vercel**, não o `cd.yml`. Todo push em `main` gera
+  deployment `production` e todo push em branch/PR gera `preview`, ambos `source=git`. Evidência
+  (`GET /v6/deployments`): `ecbe999c` → `estoki-v2-h3seu3k11-juca1.vercel.app` `target=production`
+  `READY` (22/11 12:55Z). O `vercel deploy --token` do workflow é um caminho **redundante**.
+- **`VERCEL_TOKEN` do secret do Actions está inválido** e é write-only (não recuperável). Desde a
+  correção em `cd.yml` (branch `claude/fix-cd-vercel-token-native-*`), o step detecta token ausente
+  **ou** a mensagem `The token provided via the --token option is not valid`, emite `::warning::` e sai
+  com `0` — o run não fica mais vermelho por causa de um caminho que não é o de produção. Qualquer outro
+  erro do `vercel deploy` continua falhando o job. **O smoke test não foi afrouxado.**
+  Para restaurar o caminho CLI: gerar um token em Vercel → Account Settings → Tokens (escopo team
+  `juca1`) e rodar `gh secret set VERCEL_TOKEN --repo adm01-debug/Estoki_V2`. Um token de login OAuth da
+  CLI (`vca_*`, expira em ~1h) **não serve**.
 - **Rollback** está documentado como comentário no fim do `cd.yml`: re-rodar o dispatch apontando para a
   tag boa anterior; a hospedagem republica aquele bundle; exige registro em `CHANGELOG.md`.
 - **Edge functions não têm deploy automático.** Nenhum workflow roda `supabase functions deploy` — ver
@@ -46,8 +48,9 @@ release-AAAAMMDD-HHMMSS-<sha7>`. O environment `Production` **não tem revisor o
 
 ## Integração GitHub → Vercel
 
-É o **único** caminho que reage a push hoje (o `cd.yml` morre no `npm ci`). Cada branch gera um
-deployment e a PR recebe dois checks da Vercel (`Vercel Agent Review`, `Vercel Preview Comments`), mais um
+É o **caminho que efetivamente publica** hoje (o `cd.yml` é redundante e o `VERCEL_TOKEN` está inválido,
+ver acima). Cada branch gera um deployment e a PR recebe dois checks da Vercel (`Vercel Agent Review`,
+`Vercel Preview Comments`), mais um
 status `Vercel`. Estado observado nesta sessão: deployments recentes `BLOCKED`, e os 119 deployments do
 GitHub mais novos são `Preview` com `FAILURE`. O status `Vercel` nas PRs #60/#61 falha com
 `GitHub couldn't verify an account for the commit` — é vínculo entre o e-mail do autor do commit e a conta
