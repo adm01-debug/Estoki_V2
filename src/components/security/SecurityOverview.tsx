@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { highestRole } from "@/utils/role";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -59,12 +60,8 @@ export const SecurityOverview: React.FC = () => {
     queryKey: ["user-role", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .single();
-      return data?.role || "operador";
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      return highestRole((data ?? []).map((r) => r.role)) || "operador";
     },
     enabled: !!user?.id,
   });

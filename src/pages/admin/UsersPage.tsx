@@ -36,6 +36,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
+import { highestRole } from "@/utils/role";
 
 interface UserProfile {
   id: string;
@@ -53,9 +54,16 @@ async function fetchUsers(): Promise<UserProfile[]> {
   const { data: roles, error: rError } = await supabase.from("user_roles").select("user_id, role");
   if (rError) throw rError;
 
+  const rolesByUser = new Map<string, string[]>();
+  for (const r of roles || []) {
+    const list = rolesByUser.get(r.user_id) ?? [];
+    list.push(r.role);
+    rolesByUser.set(r.user_id, list);
+  }
+
   return (profiles || []).map((p) => ({
     ...p,
-    role: roles?.find((r) => r.user_id === p.id)?.role || "operador",
+    role: highestRole(rolesByUser.get(p.id) ?? []) || "operador",
     status: "ativo" as const,
   }));
 }

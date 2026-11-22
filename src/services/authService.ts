@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
+import { highestRole } from "@/utils/role";
 
 export type AppRole = "operador" | "supervisor" | "admin";
 
@@ -47,14 +48,13 @@ export const authService = {
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userId)
-        .maybeSingle();
+        .eq("user_id", userId);
 
       if (error) {
         logger.error("Erro ao buscar permissões do usuário", error, { userId });
         throw error;
       }
-      return (data?.role as AppRole) || null;
+      return (highestRole((data ?? []).map((r) => r.role)) as AppRole) || null;
     } catch (e) {
       logger.error("Exceção ao buscar role", e);
       return null;
