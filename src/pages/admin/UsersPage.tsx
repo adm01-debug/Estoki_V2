@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -20,11 +20,9 @@ import {
   Shield,
   Mail,
   CheckCircle2,
-  XCircle,
   MoreVertical,
   Edit,
   Trash2,
-  UserCheck,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -33,10 +31,24 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
-import { highestRole } from "@/utils/role";
+import { highestRole, type AppRoleValue } from "@/utils/role";
 
 interface UserProfile {
   id: string;
@@ -70,6 +82,10 @@ async function fetchUsers(): Promise<UserProfile[]> {
 
 export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [roleUser, setRoleUser] = useState<UserProfile | null>(null);
+  const [selectedRole, setSelectedRole] = useState<AppRoleValue>("operador");
+  const [savingRole, setSavingRole] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     data: users = [],
@@ -82,6 +98,44 @@ export default function UsersPage() {
     gcTime: 1000 * 60 * 30,
     retry: false,
   });
+
+  const openRoleDialog = (user: UserProfile) => {
+    setRoleUser(user);
+    setSelectedRole((user.role as AppRoleValue) ?? "operador");
+  };
+
+  const handleAssignRole = async () => {
+    if (!roleUser) return;
+    setSavingRole(true);
+    try {
+      const { data: existing, error: existingError } = await supabase
+        .from("user_roles")
+        .select("id, role")
+        .eq("user_id", roleUser.id)
+        .eq("role", selectedRole);
+
+      if (existingError) throw existingError;
+
+      if (existing && existing.length > 0) {
+        toast({ title: "Cargo já atribuído", description: "Este usuário já possui este cargo." });
+      } else {
+        const { error: insertError } = await supabase.from("user_roles").insert({
+          user_id: roleUser.id,
+          role: selectedRole,
+        });
+        if (insertError) throw insertError;
+        toast({ title: "Cargo atribuído", description: "Cargo atribuído com sucesso." });
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["users-list"] });
+      setRoleUser(null);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Erro ao atribuir cargo.";
+      toast({ title: "Erro", description: message, variant: "destructive" });
+    } finally {
+      setSavingRole(false);
+    }
+  };
 
   if (error) {
     return (
@@ -199,7 +253,10 @@ export default function UsersPage() {
                               <DropdownMenuItem className="gap-2">
                                 <Edit className="h-4 w-4" /> Editar
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="gap-2 text-primary">
+                              <DropdownMenuItem
+                                className="gap-2 text-primary"
+                                onSelect={() => openRoleDialog(user)}
+                              >
                                 <Shield className="h-4 w-4" /> Alterar Cargo
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
@@ -224,6 +281,39 @@ export default function UsersPage() {
             </CardContent>
           </Card>
         </div>
+
+        <Dialog open={!!roleUser} onOpenChange={(open) => !open && setRoleUser(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Alterar Cargo</DialogTitle>
+              <DialogDescription>
+                Defina o nível de acesso de {roleUser?.nome || roleUser?.email || "este usuário"}.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <Select
+                value={selectedRole}
+                onValueChange={(value) => setSelectedRole(value as AppRoleValue)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione o cargo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="operador">Operador</SelectItem>
+                  <SelectItem value="supervisor">Supervisor</SelectItem>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                className="w-full"
+                onClick={handleAssignRole}
+                disabled={savingRole || !roleUser}
+              >
+                {savingRole ? "Salvando..." : "Salvar Cargo"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </PageTransition>
     </AppLayout>
   );
