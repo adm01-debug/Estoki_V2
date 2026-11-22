@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -62,6 +62,20 @@ export default function PickingPage() {
     setActiveTask(task);
   };
 
+  const isScannedCodeFromTask = useMemo(() => {
+    if (!activeTask || !scannedCode.trim()) return false;
+    const code = scannedCode.trim().toLowerCase();
+    const candidates = [
+      activeTask.produto_sku,
+      activeTask.produto_barcode,
+      activeTask.produto_id,
+      activeTask.posicao_origem_codigo,
+    ]
+      .filter(Boolean)
+      .map((v) => String(v).toLowerCase());
+    return candidates.includes(code);
+  }, [activeTask, scannedCode]);
+
   const handleConfirm = useCallback(() => {
     if (!activeTask) return;
 
@@ -71,11 +85,16 @@ export default function PickingPage() {
       return;
     }
 
+    if (!isScannedCodeFromTask) {
+      toast.error("Código escaneado não corresponde ao produto da tarefa");
+      return;
+    }
+
     finishTask(activeTask.id, qty);
     setActiveTask(null);
     setScannedCode("");
     setConfirmQty("");
-  }, [activeTask, confirmQty, finishTask]);
+  }, [activeTask, confirmQty, finishTask, isScannedCodeFromTask]);
 
   if (activeTask) {
     return (
@@ -126,7 +145,18 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
-                        onClick={() => setScannedCode("PROD-SCAN-OK")}
+                        onClick={() => {
+                          if (!scannedCode.trim()) {
+                            toast.error("Escaneie ou digite o código do produto");
+                            return;
+                          }
+                          if (isScannedCodeFromTask) {
+                            toast.success("Código confere com o produto da tarefa");
+                          } else {
+                            toast.error("Código não corresponde ao produto desta tarefa");
+                          }
+                        }}
+                        title="Validar código escaneado"
                       >
                         <Scan className="h-4 w-4" />
                       </Button>
@@ -148,6 +178,23 @@ export default function PickingPage() {
                         )}
                       </Button>
                     </div>
+                    {scannedCode.trim() && (
+                      <p
+                        className={
+                          isScannedCodeFromTask
+                            ? "text-xs font-medium text-green-600"
+                            : "text-xs font-medium text-destructive"
+                        }
+                      >
+                        {isScannedCodeFromTask
+                          ? "Código confere com o produto da tarefa"
+                          : `Código não confere. Esperado: ${
+                              activeTask.produto_sku ||
+                              activeTask.produto_barcode ||
+                              activeTask.produto_id
+                            }`}
+                      </p>
+                    )}
                   </div>
 
                   <div className="space-y-2">
@@ -169,7 +216,7 @@ export default function PickingPage() {
               <Button
                 className="h-12 w-full text-lg"
                 onClick={handleConfirm}
-                disabled={!confirmQty || !scannedCode}
+                disabled={!confirmQty || !isScannedCodeFromTask}
               >
                 <CheckCircle2 className="mr-2 h-5 w-5" /> Confirmar Coleta
               </Button>
