@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Building2,
   Warehouse,
@@ -76,6 +77,7 @@ function KpiCard({
 
 export default function MultiWarehouseDashboardPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { filiais, loading, error, refetch, isRefetching } = useMultiWarehouseDashboard();
 
   const resumo = useMemo(() => totais(filiais), [filiais]);
@@ -86,10 +88,17 @@ export default function MultiWarehouseDashboardPage() {
     [filiais]
   );
 
+  const seo = (
+    <SEO
+      title={t("dashboard.multiWarehouse.seoTitle")}
+      description={t("dashboard.multiWarehouse.seoDescription")}
+    />
+  );
+
   if (loading) {
     return (
       <>
-        <SEO title="Dashboard Gerencial | Estoki" description="Visao comparativa por filial" />
+        {seo}
         <div className="container mx-auto space-y-6 p-6">
           <Skeleton className="h-10 w-80" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -106,25 +115,25 @@ export default function MultiWarehouseDashboardPage() {
   if (error) {
     return (
       <>
-        <SEO title="Dashboard Gerencial | Estoki" description="Visao comparativa por filial" />
+        {seo}
         <div className="container mx-auto p-6">
           <Card className="border-destructive/40">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <AlertCircle className="h-5 w-5" aria-hidden="true" />
-                Nao foi possivel carregar o dashboard gerencial
+                {t("dashboard.multiWarehouse.errorTitle")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                {error.message || "Erro desconhecido ao consultar as filiais."}
+                {error.message || t("dashboard.multiWarehouse.errorUnknown")}
               </p>
               <p className="text-sm text-muted-foreground">
-                Esta visao exige perfil de administrador ou supervisor.
+                {t("dashboard.multiWarehouse.errorPermission")}
               </p>
               <Button onClick={() => void refetch()} variant="outline">
                 <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
-                Tentar novamente
+                {t("dashboard.multiWarehouse.retry")}
               </Button>
             </CardContent>
           </Card>
@@ -136,17 +145,17 @@ export default function MultiWarehouseDashboardPage() {
   if (filiais.length === 0) {
     return (
       <>
-        <SEO title="Dashboard Gerencial | Estoki" description="Visao comparativa por filial" />
+        {seo}
         <div className="container mx-auto p-6">
           <Card>
             <CardContent className="flex flex-col items-center gap-3 py-12 text-center">
               <Building2 className="h-10 w-10 text-muted-foreground" aria-hidden="true" />
-              <h2 className="text-lg font-semibold">Nenhuma filial cadastrada</h2>
+              <h2 className="text-lg font-semibold">{t("dashboard.multiWarehouse.emptyTitle")}</h2>
               <p className="max-w-md text-sm text-muted-foreground">
-                Cadastre um armazem para acompanhar a operacao por filial.
+                {t("dashboard.multiWarehouse.emptyDescription")}
               </p>
               <Button onClick={() => navigate("/armazens")}>
-                Ir para Armazens
+                {t("dashboard.multiWarehouse.goToWarehouses")}
                 <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </Button>
             </CardContent>
@@ -158,16 +167,16 @@ export default function MultiWarehouseDashboardPage() {
 
   return (
     <>
-      <SEO title="Dashboard Gerencial | Estoki" description="Visao comparativa por filial" />
+      {seo}
       <div className="container mx-auto space-y-6 p-6">
         <header className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
               <Building2 className="h-6 w-6 text-primary" aria-hidden="true" />
-              Dashboard Gerencial Multi-Filial
+              {t("dashboard.multiWarehouse.title")}
             </h1>
             <p className="text-sm text-muted-foreground">
-              Comparativo consolidado de estoque, ocupacao e operacao entre as filiais.
+              {t("dashboard.multiWarehouse.subtitle")}
             </p>
           </div>
           <Button variant="outline" onClick={() => void refetch()} disabled={isRefetching}>
@@ -175,33 +184,46 @@ export default function MultiWarehouseDashboardPage() {
               className={`mr-2 h-4 w-4 ${isRefetching ? "animate-spin" : ""}`}
               aria-hidden="true"
             />
-            Atualizar
+            {t("dashboard.multiWarehouse.refresh")}
           </Button>
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
-            titulo="Filiais"
+            titulo={t("dashboard.multiWarehouse.branches")}
             valor={formatNumber(filiais.length)}
-            detalhe={`${filiaisAtivas} ativas${filiaisSemDados > 0 ? ` - ${filiaisSemDados} sem dados` : ""}`}
+            detalhe={[
+              t("dashboard.multiWarehouse.branchesActive", { active: filiaisAtivas }),
+              filiaisSemDados > 0
+                ? t("dashboard.multiWarehouse.branchesNoData", { count: filiaisSemDados })
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" - ")}
             icon={Building2}
           />
           <KpiCard
-            titulo="Ocupacao global"
+            titulo={t("dashboard.multiWarehouse.globalOccupancy")}
             valor={formatPercent(taxaGlobal)}
-            detalhe={`${formatNumber(resumo.ocupadas)} de ${formatNumber(resumo.posicoes)} posicoes`}
+            detalhe={t("dashboard.multiWarehouse.occupancyDetail", {
+              occupied: formatNumber(resumo.ocupadas),
+              total: formatNumber(resumo.posicoes),
+            })}
             icon={Warehouse}
           />
           <KpiCard
-            titulo="Estoque consolidado"
+            titulo={t("dashboard.multiWarehouse.consolidatedStock")}
             valor={formatNumber(resumo.quantidade)}
-            detalhe={`${formatNumber(resumo.lotes)} lotes`}
+            detalhe={t("dashboard.multiWarehouse.lotsDetail", { count: resumo.lotes })}
             icon={Layers}
           />
           <KpiCard
-            titulo="Pendencias operacionais"
+            titulo={t("dashboard.multiWarehouse.operationalPendings")}
             valor={formatNumber(resumo.pedidosPendentes + resumo.tarefasAbertas)}
-            detalhe={`${formatNumber(resumo.pedidosPendentes)} pedidos - ${formatNumber(resumo.tarefasAbertas)} tarefas`}
+            detalhe={t("dashboard.multiWarehouse.pendingsDetail", {
+              orders: formatNumber(resumo.pedidosPendentes),
+              tasks: formatNumber(resumo.tarefasAbertas),
+            })}
             icon={ListTodo}
           />
         </div>
@@ -215,44 +237,52 @@ export default function MultiWarehouseDashboardPage() {
                     <CardTitle className="text-base">{filial.nome}</CardTitle>
                     <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="h-3 w-3" aria-hidden="true" />
-                      {filial.cidade || "Sem cidade"}
+                      {filial.cidade || t("dashboard.multiWarehouse.noCity")}
                       {filial.estado ? ` / ${filial.estado}` : ""}
                     </p>
                   </div>
                   <Badge variant={filial.ativo ? "default" : "secondary"}>
-                    {filial.ativo ? "Ativa" : "Inativa"}
+                    {filial.ativo
+                      ? t("dashboard.multiWarehouse.active")
+                      : t("dashboard.multiWarehouse.inactive")}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent className="flex flex-1 flex-col gap-3">
                 <div>
                   <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Ocupacao</span>
+                    <span>{t("dashboard.multiWarehouse.occupancy")}</span>
                     <span className="font-medium text-foreground">
                       {formatPercent(filial.taxa_ocupacao)}
                     </span>
                   </div>
                   <Progress value={Math.min(filial.taxa_ocupacao, 100)} className="h-2" />
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {formatNumber(filial.posicoes_ocupadas)} / {formatNumber(filial.total_posicoes)}{" "}
-                    posicoes
+                    {t("dashboard.multiWarehouse.positionsDetail", {
+                      occupied: formatNumber(filial.posicoes_ocupadas),
+                      total: formatNumber(filial.total_posicoes),
+                    })}
                   </p>
                 </div>
                 <dl className="grid grid-cols-2 gap-2 text-xs">
                   <div>
-                    <dt className="text-muted-foreground">Lotes</dt>
+                    <dt className="text-muted-foreground">{t("dashboard.multiWarehouse.lots")}</dt>
                     <dd className="font-semibold">{formatNumber(filial.total_lotes)}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">Unidades</dt>
+                    <dt className="text-muted-foreground">{t("dashboard.multiWarehouse.units")}</dt>
                     <dd className="font-semibold">{formatNumber(filial.quantidade_estoque)}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">Pedidos pendentes</dt>
+                    <dt className="text-muted-foreground">
+                      {t("dashboard.multiWarehouse.pendingOrders")}
+                    </dt>
                     <dd className="font-semibold">{formatNumber(filial.orders_pendentes)}</dd>
                   </div>
                   <div>
-                    <dt className="text-muted-foreground">Tarefas abertas</dt>
+                    <dt className="text-muted-foreground">
+                      {t("dashboard.multiWarehouse.openTasks")}
+                    </dt>
                     <dd className="font-semibold">{formatNumber(filial.tarefas_abertas)}</dd>
                   </div>
                 </dl>
@@ -262,7 +292,7 @@ export default function MultiWarehouseDashboardPage() {
                   className="mt-auto justify-between"
                   onClick={() => navigate(`/armazens/${filial.armazem_id}`)}
                 >
-                  Ver filial
+                  {t("dashboard.multiWarehouse.viewBranch")}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </CardContent>
@@ -274,22 +304,36 @@ export default function MultiWarehouseDashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <ShoppingCart className="h-4 w-4" aria-hidden="true" />
-              Comparativo consolidado
+              {t("dashboard.multiWarehouse.comparative")}
             </CardTitle>
           </CardHeader>
           <CardContent className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Filial</TableHead>
-                  <TableHead>Local</TableHead>
-                  <TableHead className="text-right">Posicoes</TableHead>
-                  <TableHead className="text-right">Ocupadas</TableHead>
-                  <TableHead className="text-right">Ocupacao</TableHead>
-                  <TableHead className="text-right">Lotes</TableHead>
-                  <TableHead className="text-right">Unidades</TableHead>
-                  <TableHead className="text-right">Pedidos pend.</TableHead>
-                  <TableHead className="text-right">Tarefas abertas</TableHead>
+                  <TableHead>{t("dashboard.multiWarehouse.colBranch")}</TableHead>
+                  <TableHead>{t("dashboard.multiWarehouse.colLocation")}</TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colPositions")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colOccupied")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colOccupancy")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colLots")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colUnits")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colPendingOrders")}
+                  </TableHead>
+                  <TableHead className="text-right">
+                    {t("dashboard.multiWarehouse.colOpenTasks")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
