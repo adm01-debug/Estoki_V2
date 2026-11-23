@@ -3,7 +3,7 @@ import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
 import { romaneioSchema, validateForm } from "@/lib/validations";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { PageLoader } from "@/components/common/AsyncStates";
+import { PageLoader, ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,6 +92,7 @@ export default function RomaneiosPage() {
     atualizarStatus,
     confirmarRomaneio,
     registrarEntrega,
+    error,
     refetch,
   } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
@@ -160,6 +161,13 @@ export default function RomaneiosPage() {
     return (
       <AppLayout title="Romaneios" showBack>
         <PageLoader message="Carregando romaneios..." />
+      </AppLayout>
+    );
+
+  if (error)
+    return (
+      <AppLayout showBack>
+        <ErrorState onRetry={() => refetch()} />
       </AppLayout>
     );
 
