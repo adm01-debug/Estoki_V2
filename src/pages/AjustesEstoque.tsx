@@ -66,10 +66,18 @@ export default function AjustesEstoquePage() {
   });
 
   // New Adjustment Form State
-  const [newAdj, setNewAdj] = useState({
+  const [newAdj, setNewAdj] = useState<{
+    produto_id: string;
+    lote_id: string | null;
+    posicao_id: string | null;
+    quantidade_anterior: number;
+    quantidade_nova: number;
+    motivo: string;
+    observacoes: string;
+  }>({
     produto_id: "",
-    lote_id: "",
-    posicao_id: "",
+    lote_id: null,
+    posicao_id: null,
     quantidade_anterior: 0,
     quantidade_nova: 0,
     motivo: "correcao",
@@ -80,12 +88,23 @@ export default function AjustesEstoquePage() {
     if (!newAdj.produto_id) {
       return;
     }
-    await createAdjustment.mutateAsync(newAdj as any);
+    if (isNaN(newAdj.quantidade_anterior) || isNaN(newAdj.quantidade_nova)) {
+      return;
+    }
+    await createAdjustment.mutateAsync({
+      produto_id: newAdj.produto_id,
+      lote_id: newAdj.lote_id,
+      posicao_id: newAdj.posicao_id,
+      quantidade_anterior: newAdj.quantidade_anterior,
+      quantidade_nova: newAdj.quantidade_nova,
+      motivo: newAdj.motivo,
+      observacoes: newAdj.observacoes,
+    });
     setIsDialogOpen(false);
     setNewAdj({
       produto_id: "",
-      lote_id: "",
-      posicao_id: "",
+      lote_id: null,
+      posicao_id: null,
       quantidade_anterior: 0,
       quantidade_nova: 0,
       motivo: "correcao",

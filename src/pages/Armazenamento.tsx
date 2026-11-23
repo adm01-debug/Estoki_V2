@@ -10,6 +10,7 @@ import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import {
   ArrowRight,
   AlertTriangle,
+  AlertCircle,
   MapPin,
   Loader2,
   QrCode,
@@ -247,16 +248,17 @@ const ArmazenamentoPage = () => {
 
     setConfirmando(true);
     try {
-      if (item.produtoId) {
-        const success = await registrarEntrada(
-          item.produtoId,
-          item.quantidade,
-          posicaoSelecionada.codigo,
-          item.loteId,
-          `Armazenamento inteligente - SKU: ${item.sku}`
-        );
-        if (!success) throw new Error("Falha");
+      if (!item.produtoId) {
+        throw new Error("Item sem produto associado");
       }
+      const success = await registrarEntrada(
+        item.produtoId,
+        item.quantidade,
+        posicaoSelecionada.codigo,
+        item.loteId,
+        `Armazenamento inteligente - SKU: ${item.sku}`
+      );
+      if (!success) throw new Error("Falha");
 
       const endTime = Date.now();
       const timeInSeconds = Math.round((endTime - startTime) / 1000);
@@ -294,6 +296,22 @@ const ArmazenamentoPage = () => {
         </div>
       </AppLayout>
     );
+
+  if (!item.produtoId) {
+    return (
+      <AppLayout title="Armazenamento" showBack>
+        <div className="flex h-96 flex-col items-center justify-center gap-4 p-4 text-center">
+          <AlertCircle className="h-12 w-12 text-muted-foreground" />
+          <p className="font-medium text-muted-foreground">
+            Nenhum produto selecionado para armazenar.
+          </p>
+          <Button variant="outline" onClick={() => navigate("/putaway")}>
+            Ir para o Putaway
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Inbound Putaway Excellence" showBack>
