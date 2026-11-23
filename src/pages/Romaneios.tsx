@@ -94,6 +94,7 @@ export default function RomaneiosPage() {
     registrarEntrega,
     error,
     refetch,
+    criandoRomaneio,
   } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
@@ -532,6 +533,7 @@ export default function RomaneiosPage() {
           formErrors={formErrors}
           onFieldChange={handleFieldChange}
           onSubmit={handleCriarRomaneio}
+          isSubmitting={criandoRomaneio}
         />
         <RomaneioDetalhesDialog
           romaneio={romaneioSelecionado}

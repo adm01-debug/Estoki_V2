@@ -29,6 +29,7 @@ interface NovoRomaneioDialogProps {
   formErrors: Record<string, string>;
   onFieldChange: (field: string, value: string) => void;
   onSubmit: () => void;
+  isSubmitting?: boolean;
 }
 
 export function NovoRomaneioDialog({
@@ -38,7 +39,10 @@ export function NovoRomaneioDialog({
   formErrors,
   onFieldChange,
   onSubmit,
+  isSubmitting,
 }: NovoRomaneioDialogProps) {
+  const buttonProps = { onClick: onSubmit, disabled: isSubmitting };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -116,7 +120,7 @@ export function NovoRomaneioDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={onSubmit}>Criar Romaneio</Button>
+          <Button {...buttonProps}>Criar Romaneio</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

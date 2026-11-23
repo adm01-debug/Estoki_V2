@@ -91,6 +91,7 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     refetch,
     createRomaneio: createRomaneioMutation.mutate,
     criarRomaneio: createRomaneioMutation.mutate,
+    criandoRomaneio: createRomaneioMutation.isPending,
     updateStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
     confirmarRomaneio: (id: string) => confirmarRomaneioMutation.mutate(id),
