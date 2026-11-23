@@ -7,7 +7,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Warehouse, Bell, ShieldCheck, Database, Cpu, Save, Globe, Loader2 } from "lucide-react";
+import {
+  Settings,
+  Warehouse,
+  Bell,
+  ShieldCheck,
+  Database,
+  Cpu,
+  Save,
+  Globe,
+  Loader2,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -65,7 +75,11 @@ export default function AdminSettingsPage() {
       const msg = err instanceof Error ? err.message : "Erro ao salvar";
       // Se a tabela nao existe ainda, avisa de forma amigavel
       if (msg.includes("does not exist") || msg.includes("42P01")) {
-        toast({ title: "Configuracoes salvas localmente", description: "Migracao pendente para persistencia permanente.", variant: "destructive" });
+        toast({
+          title: "Configuracoes salvas localmente",
+          description: "Migracao pendente para persistencia permanente.",
+          variant: "destructive",
+        });
       } else {
         toast({ title: "Erro ao salvar", description: msg, variant: "destructive" });
       }
@@ -114,7 +128,9 @@ export default function AdminSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Identidade do Armazem</CardTitle>
-                  <CardDescription>Configure as informacoes basicas da sua operacao.</CardDescription>
+                  <CardDescription>
+                    Configure as informacoes basicas da sua operacao.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -148,7 +164,9 @@ export default function AdminSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Regras de Operacao</CardTitle>
-                  <CardDescription>Defina como o fluxo de mercadorias deve se comportar.</CardDescription>
+                  <CardDescription>
+                    Defina como o fluxo de mercadorias deve se comportar.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
@@ -198,7 +216,9 @@ export default function AdminSettingsPage() {
                   <CardDescription>Configuracao de alertas e avisos do sistema.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">Configuracoes de notificacao disponiveis em breve.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Configuracoes de notificacao disponiveis em breve.
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -210,7 +230,9 @@ export default function AdminSettingsPage() {
                   <CardDescription>Configuracoes de acesso e autenticacao.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">Configuracoes de seguranca disponiveis em breve.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Configuracoes de seguranca disponiveis em breve.
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -219,7 +241,9 @@ export default function AdminSettingsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Manutencao de Dados</CardTitle>
-                  <CardDescription>Ferramentas criticas para administracao do banco.</CardDescription>
+                  <CardDescription>
+                    Ferramentas criticas para administracao do banco.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3 rounded-lg border border-red-500/10 bg-red-500/5 p-4">
@@ -233,11 +257,18 @@ export default function AdminSettingsPage() {
                       <Button variant="destructive" size="sm" disabled>
                         Limpar Cache Global
                       </Button>
-                      <Button variant="outline" size="sm" className="border-red-500/20 text-red-500" disabled>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-500/20 text-red-500"
+                        disabled
+                      >
                         Resetar Operacoes
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">Acoes criticas disponiveis apos confirmacao dupla (em desenvolvimento).</p>
+                    <p className="text-xs text-muted-foreground">
+                      Acoes criticas disponiveis apos confirmacao dupla (em desenvolvimento).
+                    </p>
                   </div>
                 </CardContent>
               </Card>

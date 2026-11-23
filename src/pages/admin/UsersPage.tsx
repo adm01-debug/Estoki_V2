@@ -123,7 +123,7 @@ export default function UsersPage() {
       });
       if (insertError) throw insertError;
 
-      toast({ title: "Cargo alterado", description: Papel atualizado para . });
+      toast({ title: "Cargo alterado", description: `Papel atualizado para ${selectedRole}.` });
       await queryClient.invalidateQueries({ queryKey: ["users-list"] });
       setRoleUser(null);
     } catch (err: unknown) {
