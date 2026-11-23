@@ -68,6 +68,16 @@ export const wmsRoutes = (
       }
     />
     <Route
+      path="triagem/:id"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="form" />}>
+            <FormularioTriagem />
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
       path="recebimento"
       element={
         <RouteErrorBoundary>

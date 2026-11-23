@@ -227,6 +227,23 @@ export default function FormularioTriagem() {
     );
   }
 
+  if (!id) {
+    return (
+      <AppLayout title="Triagem" showBack>
+        <div className="p-4 text-center">
+          <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-amber-500" />
+          <h2 className="text-xl font-bold">Nenhuma triagem selecionada</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Abra uma triagem pela lista de triagens para preencher o laudo.
+          </p>
+          <Button onClick={() => navigate("/triagem")} className="mt-4">
+            Ir para a lista
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
+
   if (!triagem) {
     return (
       <AppLayout title="Triagem" showBack>
