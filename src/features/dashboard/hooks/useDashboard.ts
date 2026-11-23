@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import { performanceService } from "@/utils/performance";
+import { startOfDay } from "@/utils/date";
 
 export interface DashboardKPIs {
   totalPosicoes: number;
@@ -50,6 +51,16 @@ interface PostgrestCountResponse {
   error: any;
 }
 
+/**
+ * Data no formato aceito por colunas DATE, no fuso LOCAL do usuario.
+ * `toISOString()` usa UTC e devolveria o dia seguinte a partir das 21h (BRT).
+ */
+function formatDataLocal(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
+}
+
 async function getCount(query: PromiseLike<PostgrestCountResponse>): Promise<number> {
   try {
     const { count, error } = await query;
@@ -77,12 +88,14 @@ export const useDashboard = () => {
     queryFn: async () => {
       const startTime = performance.now();
       try {
-        const hoje = new Date().toISOString().split("T")[0];
+        const inicioDoDia = startOfDay(new Date());
+        const inicioDoDiaISO = inicioDoDia.toISOString();
+        const hoje = formatDataLocal(inicioDoDia);
 
         const [
           totalPosicoes,
           posicoesOcupadas,
-          totalTriagens,
+          triagensHoje,
           triagensPendentes,
           entradasHoje,
           saidasHoje,
@@ -97,7 +110,12 @@ export const useDashboard = () => {
               .select("id", { count: "exact", head: true })
               .eq("status", "ocupado")
           ),
-          getCount(supabase.from("eventos_triagem").select("id", { count: "exact", head: true })),
+          getCount(
+            supabase
+              .from("eventos_triagem")
+              .select("id", { count: "exact", head: true })
+              .gte("created_at", inicioDoDiaISO)
+          ),
           getCount(
             supabase
               .from("eventos_triagem")
@@ -109,12 +127,14 @@ export const useDashboard = () => {
               .from("lotes")
               .select("id", { count: "exact", head: true })
               .eq("status", "recebido")
+              .gte("data_recebimento", hoje)
           ),
           getCount(
             supabase
               .from("lotes")
               .select("id", { count: "exact", head: true })
               .eq("status", "conferido")
+              .gte("data_conferencia", inicioDoDiaISO)
           ),
           supabase.from("posicoes_estoque").select("porta_palete, status").limit(2000),
           supabase
@@ -179,14 +199,14 @@ export const useDashboard = () => {
         const { data: metricasData } = await supabase
           .from("metricas_dashboard")
           .select("data, tipo, valor")
-          .gte("data", seteDiasAtras.toISOString().split("T")[0])
+          .gte("data", formatDataLocal(seteDiasAtras))
           .order("data", { ascending: true });
 
         const movimentacoes7dias: Movimentacao7Dias[] = [];
         for (let i = 6; i >= 0; i--) {
           const d = new Date();
           d.setDate(d.getDate() - i);
-          const dataStr = d.toISOString().split("T")[0];
+          const dataStr = formatDataLocal(d);
           const diaLabel = d.toLocaleDateString("pt-BR", { weekday: "short" });
           const entradas =
             metricasData
@@ -237,7 +257,7 @@ export const useDashboard = () => {
           giroMedio,
           entradasHoje,
           saidasHoje,
-          triagensHoje: totalTriagens,
+          triagensHoje,
           triagensPendentes,
         };
 

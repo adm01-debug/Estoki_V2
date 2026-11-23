@@ -87,7 +87,7 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">
-                  Triagens Concluídas
+                  Triagens Hoje
                 </p>
                 <p className="mt-1 text-3xl font-black leading-none text-blue-700">
                   {safeKpis.triagensHoje}
