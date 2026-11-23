@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +44,7 @@ import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
 import { VolumeChecklist } from "../components/VolumeChecklist";
 
 export default function ShippingPage() {
-  const { romaneios, loading, atualizarStatus } = useRomaneios();
+  const { romaneios, loading, error, refetch, atualizarStatus } = useRomaneios();
   const [searchTerm, setSearchTerm] = useState("");
 
   const getStatusBadge = (status: StatusRomaneio) => {
@@ -217,6 +218,8 @@ export default function ShippingPage() {
                     <Skeleton key={i} className="h-48 w-full" />
                   ))}
                 </div>
+              ) : error ? (
+                <ErrorState onRetry={() => refetch()} />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {filteredRomaneios.map((r: any) => (
