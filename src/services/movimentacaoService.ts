@@ -74,32 +74,34 @@ export const movimentacaoService = {
       }
     } else if (input.produto_id && toPosicaoId) {
       // Fallback: upsert direto em estoque_posicao (sem lote)
-      const { error: upsertErr } = await supabase
-        .from("estoque_posicao")
-        .upsert(
-          {
-            produto_id: input.produto_id,
-            posicao_id: toPosicaoId,
-            quantidade: input.quantidade,
-            lote_id: null,
-          },
-          { onConflict: "produto_id,posicao_id" }
-        );
+      const { error: upsertErr } = await supabase.from("estoque_posicao").upsert(
+        {
+          produto_id: input.produto_id,
+          posicao_id: toPosicaoId,
+          quantidade: input.quantidade,
+          lote_id: null,
+        },
+        { onConflict: "produto_id,posicao_id" }
+      );
       if (upsertErr) {
         logger.error("Erro no upsert de estoque_posicao", upsertErr, { input });
         throw upsertErr;
       }
       // Registra no historico para trilha de auditoria
-      await supabase.from("rastreamento_historico").insert([{
-        produto_id: input.produto_id as any,
-        posicao_id: toPosicaoId as any,
-        tipo_evento: input.tipo as any,
-        quantidade: input.quantidade as any,
-        descricao: input.descricao as any,
-        operador_id: input.operador_id as any,
-      }]);
+      await supabase.from("rastreamento_historico").insert([
+        {
+          produto_id: input.produto_id as any,
+          posicao_id: toPosicaoId as any,
+          tipo_evento: input.tipo as any,
+          quantidade: input.quantidade as any,
+          descricao: input.descricao as any,
+          operador_id: input.operador_id as any,
+        },
+      ]);
     } else {
-      throw new Error("produto_id + posicao ou lote_id são obrigatórios para registrar movimentação");
+      throw new Error(
+        "produto_id + posicao ou lote_id são obrigatórios para registrar movimentação"
+      );
     }
   },
 

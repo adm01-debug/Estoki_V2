@@ -78,17 +78,15 @@ export function usePutaway() {
         const task = tasks.find((t) => t.id === taskId);
         if (task && task.produto_id && task.posicao_destino_id) {
           // Atualiza estoque real
-          const { error: upsertErr } = await supabase
-            .from("estoque_posicao")
-            .upsert(
-              {
-                produto_id: task.produto_id,
-                posicao_id: task.posicao_destino_id,
-                quantidade: qty,
-                lote_id: null,
-              },
-              { onConflict: "produto_id,posicao_id" }
-            );
+          const { error: upsertErr } = await supabase.from("estoque_posicao").upsert(
+            {
+              produto_id: task.produto_id,
+              posicao_id: task.posicao_destino_id,
+              quantidade: qty,
+              lote_id: null,
+            },
+            { onConflict: "produto_id,posicao_id" }
+          );
           if (upsertErr) throw upsertErr;
 
           // Remove do estoque origem, se houver
@@ -104,20 +102,25 @@ export function usePutaway() {
               if (novaQtd <= 0) {
                 await supabase.from("estoque_posicao").delete().eq("id", estoqueOrigem.id);
               } else {
-                await supabase.from("estoque_posicao").update({ quantidade: novaQtd }).eq("id", estoqueOrigem.id);
+                await supabase
+                  .from("estoque_posicao")
+                  .update({ quantidade: novaQtd })
+                  .eq("id", estoqueOrigem.id);
               }
             }
           }
 
           // Trilha de auditoria
-          await supabase.from("rastreamento_historico").insert([{
-            produto_id: task.produto_id as any,
-            posicao_id: task.posicao_destino_id as any,
-            tipo_evento: "entrada_estoque" as any,
-            quantidade: qty as any,
-            descricao: `Armazenamento via tarefa ${task.id}` as any,
-            operador_id: user?.id as any,
-          }]);
+          await supabase.from("rastreamento_historico").insert([
+            {
+              produto_id: task.produto_id as any,
+              posicao_id: task.posicao_destino_id as any,
+              tipo_evento: "entrada_estoque" as any,
+              quantidade: qty as any,
+              descricao: `Armazenamento via tarefa ${task.id}` as any,
+              operador_id: user?.id as any,
+            },
+          ]);
         }
       }
     },

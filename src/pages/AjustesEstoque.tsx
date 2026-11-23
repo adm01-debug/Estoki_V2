@@ -59,10 +59,7 @@ export default function AjustesEstoquePage() {
   const { data: produtos = [] } = useQuery({
     queryKey: ["produtos-select"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("produtos")
-        .select("id, nome, sku")
-        .order("nome");
+      const { data, error } = await supabase.from("produtos").select("id, nome, sku").order("nome");
       if (error) throw error;
       return data as { id: string; nome: string; sku: string }[];
     },
@@ -85,7 +82,15 @@ export default function AjustesEstoquePage() {
     }
     await createAdjustment.mutateAsync(newAdj as any);
     setIsDialogOpen(false);
-    setNewAdj({ produto_id: "", lote_id: "", posicao_id: "", quantidade_anterior: 0, quantidade_nova: 0, motivo: "correcao", observacoes: "" });
+    setNewAdj({
+      produto_id: "",
+      lote_id: "",
+      posicao_id: "",
+      quantidade_anterior: 0,
+      quantidade_nova: 0,
+      motivo: "correcao",
+      observacoes: "",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -224,7 +229,10 @@ export default function AjustesEstoquePage() {
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancelar
                     </Button>
-                    <Button onClick={handleCreate} disabled={createAdjustment.isPending || !newAdj.produto_id}>
+                    <Button
+                      onClick={handleCreate}
+                      disabled={createAdjustment.isPending || !newAdj.produto_id}
+                    >
                       Enviar para Aprovação
                     </Button>
                   </DialogFooter>
