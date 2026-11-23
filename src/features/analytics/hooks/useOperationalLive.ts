@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useRealtimeKPIs } from "./useRealtimeKPIs";
+import { startOfDay } from "@/utils/date";
 
 export interface LiveOperationalData {
   // Picking
@@ -38,51 +39,103 @@ export interface ActivityItem {
   operador?: string;
 }
 
-const today = () => new Date().toISOString().split("T")[0];
+const hojeLocal = () => {
+  const agora = new Date();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${agora.getFullYear()}-${mes}-${dia}`;
+};
 
+// Tudo abaixo conta no servidor (head + count): baixar a tabela inteira e contar no
+// cliente truncava silenciosamente em 1000 linhas.
 export function useOperationalLive() {
   const realtimeStatus = useRealtimeKPIs({ showToasts: false });
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["operational-live", today()],
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["operational-live", hojeLocal()],
     queryFn: async (): Promise<LiveOperationalData> => {
-      const todayStr = today();
+      const inicioDoDia = startOfDay(new Date()).toISOString();
 
-      const [
-        pickingRes,
-        triagemRes,
-        lotesRes,
-        tarefasRes,
-        posicoesRes,
-        alertasRes,
-        atividadeTriagemRes,
-        atividadePickingRes,
-      ] = await Promise.all([
-        // Picking events today
+      const responses = await Promise.all([
+        // Picking de hoje
         supabase
           .from("eventos_picking")
-          .select("id, correto, data_fim")
-          .gte("data_inicio", `${todayStr}T00:00:00`),
-        // Triagem events today
+          .select("id", { count: "exact", head: true })
+          .gte("data_inicio", inicioDoDia)
+          .is("data_fim", null),
+        supabase
+          .from("eventos_picking")
+          .select("id", { count: "exact", head: true })
+          .gte("data_inicio", inicioDoDia)
+          .not("data_fim", "is", null),
+        supabase
+          .from("eventos_picking")
+          .select("id", { count: "exact", head: true })
+          .gte("data_inicio", inicioDoDia)
+          .not("data_fim", "is", null)
+          .eq("correto", true),
+        // Triagem de hoje
         supabase
           .from("eventos_triagem")
-          .select("id, resultado, data_fim, operador_id")
-          .gte("data_inicio", `${todayStr}T00:00:00`),
-        // Lotes by status
-        supabase.from("lotes").select("id, status"),
-        // Tarefas by status
-        supabase.from("tarefas").select("id, status"),
-        // Posições
-        supabase.from("posicoes_estoque").select("id, status"),
+          .select("id", { count: "exact", head: true })
+          .gte("data_inicio", inicioDoDia),
+        supabase
+          .from("eventos_triagem")
+          .select("id", { count: "exact", head: true })
+          .gte("data_inicio", inicioDoDia)
+          .eq("resultado", "aprovado"),
+        // Lotes por status
+        supabase
+          .from("lotes")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "aguardando"),
+        supabase
+          .from("lotes")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "conferido"),
+        supabase
+          .from("lotes")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "divergencia"),
+        // Tarefas por status
+        supabase
+          .from("tarefas")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "pendente"),
+        supabase
+          .from("tarefas")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "em_andamento"),
+        supabase
+          .from("tarefas")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "concluida"),
+        // Posicoes
+        supabase.from("posicoes_estoque").select("id", { count: "exact", head: true }),
+        supabase
+          .from("posicoes_estoque")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "ocupado"),
+        supabase
+          .from("posicoes_estoque")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "livre"),
         // Alertas ativos
-        supabase.from("alertas_historico").select("id, severidade, status").eq("status", "ativo"),
-        // Recent triage
+        supabase
+          .from("alertas_historico")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "ativo"),
+        supabase
+          .from("alertas_historico")
+          .select("id", { count: "exact", head: true })
+          .eq("status", "ativo")
+          .eq("severidade", "critico"),
+        // Atividade recente
         supabase
           .from("eventos_triagem")
           .select("id, resultado, data_fim, operador_id")
           .order("created_at", { ascending: false })
           .limit(5),
-        // Recent picking
         supabase
           .from("eventos_picking")
           .select("id, correto, data_fim, operador_id")
@@ -90,37 +143,55 @@ export function useOperationalLive() {
           .limit(5),
       ]);
 
-      const pickingData = pickingRes.data || [];
-      const triagemData = triagemRes.data || [];
-      const lotesData = lotesRes.data || [];
-      const tarefasData = tarefasRes.data || [];
-      const posicoesData = posicoesRes.data || [];
-      const alertasData = alertasRes.data || [];
+      const falha = responses.find((r) => r.error);
+      if (falha && falha.error) throw new Error(falha.error.message);
 
-      const pickingEmAndamento = pickingData.filter((p) => !p.data_fim).length;
-      const pickingConcluidos = pickingData.filter((p) => p.data_fim).length;
-      const pickingCorretos = pickingData.filter((p) => p.correto === true).length;
+      const [
+        pickingEmAndamentoRes,
+        pickingConcluidosRes,
+        pickingCorretosRes,
+        triagensHojeRes,
+        triagensAprovadasRes,
+        lotesAguardandoRes,
+        lotesConferidosRes,
+        lotesDivergenciaRes,
+        tarefasPendentesRes,
+        tarefasEmExecucaoRes,
+        tarefasConcluidasRes,
+        totalPosicoesRes,
+        posicoesOcupadasRes,
+        posicoesLivresRes,
+        alertasAtivosRes,
+        alertasCriticosRes,
+        atividadeTriagemRes,
+        atividadePickingRes,
+      ] = responses;
+
+      const pickingEmAndamento = pickingEmAndamentoRes.count ?? 0;
+      const pickingConcluidos = pickingConcluidosRes.count ?? 0;
+      const pickingCorretos = pickingCorretosRes.count ?? 0;
       const pickingAcuracidade =
         pickingConcluidos > 0 ? (pickingCorretos / pickingConcluidos) * 100 : 100;
 
-      const triagensAprovadas = triagemData.filter((t) => t.resultado === "aprovado").length;
-      const taxaAprovacao =
-        triagemData.length > 0 ? (triagensAprovadas / triagemData.length) * 100 : 100;
+      const triagensHoje = triagensHojeRes.count ?? 0;
+      const triagensAprovadas = triagensAprovadasRes.count ?? 0;
+      const taxaAprovacao = triagensHoje > 0 ? (triagensAprovadas / triagensHoje) * 100 : 100;
 
-      const lotesAguardando = lotesData.filter((l) => l.status === "aguardando").length;
-      const lotesConferidos = lotesData.filter((l) => l.status === "conferido").length;
-      const lotesDivergencia = lotesData.filter((l) => l.status === "divergencia").length;
+      const lotesAguardando = lotesAguardandoRes.count ?? 0;
+      const lotesConferidos = lotesConferidosRes.count ?? 0;
+      const lotesDivergencia = lotesDivergenciaRes.count ?? 0;
 
-      const tarefasPendentes = tarefasData.filter((t) => t.status === "pendente").length;
-      const tarefasEmExecucao = tarefasData.filter((t) => t.status === "em_andamento").length;
-      const tarefasConcluidas = tarefasData.filter((t) => t.status === "concluida").length;
+      const tarefasPendentes = tarefasPendentesRes.count ?? 0;
+      const tarefasEmExecucao = tarefasEmExecucaoRes.count ?? 0;
+      const tarefasConcluidas = tarefasConcluidasRes.count ?? 0;
 
-      const posicaoOcupadas = posicoesData.filter((p) => p.status === "ocupado").length;
-      const posicaoLivres = posicoesData.filter((p) => p.status === "livre").length;
-      const totalPosicoes = posicoesData.length;
+      const posicaoOcupadas = posicoesOcupadasRes.count ?? 0;
+      const posicaoLivres = posicoesLivresRes.count ?? 0;
+      const totalPosicoes = totalPosicoesRes.count ?? 0;
       const taxaOcupacao = totalPosicoes > 0 ? (posicaoOcupadas / totalPosicoes) * 100 : 0;
 
-      const alertasCriticos = alertasData.filter((a) => a.severidade === "critico").length;
+      const alertasAtivos = alertasAtivosRes.count ?? 0;
+      const alertasCriticos = alertasCriticosRes.count ?? 0;
 
       // Build activity feed
       const atividadeRecente: ActivityItem[] = [
@@ -146,7 +217,7 @@ export function useOperationalLive() {
         pickingEmAndamento,
         pickingConcluidos,
         pickingAcuracidade,
-        triagensHoje: triagemData.length,
+        triagensHoje,
         triagensAprovadas,
         taxaAprovacao,
         lotesAguardando,
@@ -158,7 +229,7 @@ export function useOperationalLive() {
         posicaoOcupadas,
         posicaoLivres,
         taxaOcupacao,
-        alertasAtivos: alertasData.length,
+        alertasAtivos,
         alertasCriticos,
         atividadeRecente,
       };
@@ -170,6 +241,7 @@ export function useOperationalLive() {
     data: data ?? null,
     isLoading,
     error,
+    refetch,
     realtimeStatus,
   };
 }

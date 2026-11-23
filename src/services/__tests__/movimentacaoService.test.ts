@@ -14,6 +14,8 @@ function chain(overrides: Record<string, any> = {}) {
   const base: any = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
+    gte: vi.fn().mockReturnThis(),
+    lte: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
     range: vi.fn(),
     ...overrides,
@@ -56,6 +58,31 @@ describe("movimentacaoService", () => {
       quantidade: 5,
     });
     expect(mock.range).toHaveBeenCalledWith(10, 19);
+  });
+
+  it("getAll recorta por período quando dataInicio/dataFim são informadas", async () => {
+    const mock = chain({
+      range: vi.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+    });
+    (supabase.from as any).mockReturnValue(mock);
+    await movimentacaoService.getAll({
+      pageSize: 500,
+      dataInicio: new Date("2026-10-24T00:00:00-03:00"),
+      dataFim: new Date("2026-11-23T23:59:59-03:00"),
+    });
+    expect(mock.gte).toHaveBeenCalledWith("created_at", "2026-10-24T03:00:00.000Z");
+    expect(mock.lte).toHaveBeenCalledWith("created_at", "2026-11-24T02:59:59.000Z");
+    expect(mock.range).toHaveBeenCalledWith(0, 499);
+  });
+
+  it("getAll sem período não filtra por data", async () => {
+    const mock = chain({
+      range: vi.fn().mockResolvedValue({ data: [], error: null, count: 0 }),
+    });
+    (supabase.from as any).mockReturnValue(mock);
+    await movimentacaoService.getAll();
+    expect(mock.gte).not.toHaveBeenCalled();
+    expect(mock.lte).not.toHaveBeenCalled();
   });
 
   it("getAll lança erro do banco", async () => {

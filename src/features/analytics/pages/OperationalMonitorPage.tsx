@@ -2,6 +2,7 @@ import { memo } from "react";
 import { SEO } from "@/components/common/SEO";
 import { useOperationalLive, type ActivityItem } from "../hooks/useOperationalLive";
 import { DashboardSkeleton } from "@/components/common/PageSkeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { cn } from "@/lib/utils";
 import {
   Activity,
@@ -189,7 +190,15 @@ function SectionTitle({ children, icon }: { children: React.ReactNode; icon: Rea
 
 // ── Main Page ──
 export default function DashboardOperacional() {
-  const { data, isLoading, realtimeStatus } = useOperationalLive();
+  const { data, isLoading, error, refetch, realtimeStatus } = useOperationalLive();
+
+  if (error && !data) {
+    return (
+      <div className="mx-auto max-w-xl p-6">
+        <ErrorState message={error.message} onRetry={() => refetch()} />
+      </div>
+    );
+  }
 
   if (isLoading || !data) return <DashboardSkeleton />;
 
