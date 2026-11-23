@@ -177,4 +177,113 @@ describe("shippingService", () => {
     expect(romaneio.itens[1].status).toBe("recusado");
     expect(romaneio.entregas_realizadas).toBe(1);
   });
+
+  it("should create romaneio with items, totals and delivery order", async () => {
+    const calls: { table: string; payload: any }[] = [];
+
+    (supabase.from as any).mockImplementation((table: string) => ({
+      insert: vi.fn((payload: any) => {
+        calls.push({ table, payload });
+        if (table === "romaneio_itens") return Promise.resolve({ error: null });
+        return {
+          select: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: { id: "new-id" }, error: null }),
+        };
+      }),
+    }));
+
+    await shippingService.criarRomaneio({ motorista: "João", placa_veiculo: "ABC-1234" } as any, [
+      { cliente: "Cliente A", endereco_entrega: "Rua 1", quantidade: 3, peso_kg: 10 },
+      { cliente: "Cliente B", endereco_entrega: "Rua 2", quantidade: 2, peso_kg: 5 },
+    ]);
+
+    const header = calls.find((c) => c.table === "romaneios")?.payload;
+    expect(header.total_entregas).toBe(2);
+    expect(header.total_volumes).toBe(5);
+    expect(header.total_peso_kg).toBe(15);
+
+    const itens = calls.find((c) => c.table === "romaneio_itens")?.payload;
+    expect(itens).toHaveLength(2);
+    expect(itens[0]).toMatchObject({ romaneio_id: "new-id", ordem_entrega: 1, peso_kg: 10 });
+    expect(itens[1]).toMatchObject({ ordem_entrega: 2, peso_kg: 5 });
+  });
+
+  it("should delete the romaneio when item insert fails", async () => {
+    const deleted: string[] = [];
+
+    (supabase.from as any).mockImplementation((table: string) => {
+      if (table === "romaneio_itens") {
+        return { insert: vi.fn().mockResolvedValue({ error: new Error("items failed") }) };
+      }
+      return {
+        insert: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: "new-id" }, error: null }),
+        delete: vi.fn(() => ({
+          eq: vi.fn((_col: string, value: string) => {
+            deleted.push(value);
+            return Promise.resolve({ error: null });
+          }),
+        })),
+      };
+    });
+
+    await expect(
+      shippingService.criarRomaneio({ motorista: "João", placa_veiculo: "ABC-1234" } as any, [
+        { cliente: "Cliente A", endereco_entrega: "Rua 1", quantidade: 1 },
+      ])
+    ).rejects.toThrow("items failed");
+
+    expect(deleted).toEqual(["new-id"]);
+  });
+
+  it("should refuse to confirm a romaneio without items", async () => {
+    (supabase.from as any).mockImplementation(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi
+        .fn()
+        .mockResolvedValue({ data: { status: "rascunho", total_entregas: 0 }, error: null }),
+    }));
+
+    await expect(shippingService.confirmarRomaneio("rom-1")).rejects.toThrow(
+      "Adicione ao menos um item ao romaneio antes de confirmar"
+    );
+  });
+
+  it("should confirm a romaneio that has items", async () => {
+    const updates: any[] = [];
+    let call = 0;
+
+    (supabase as any).auth = {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: "user-1" } }, error: null }),
+    };
+
+    (supabase.from as any).mockImplementation(() => {
+      call += 1;
+      if (call === 1) {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi
+            .fn()
+            .mockResolvedValue({ data: { status: "rascunho", total_entregas: 2 }, error: null }),
+        };
+      }
+      const inner: any = {
+        eq: () => inner,
+        select: vi.fn().mockResolvedValue({ data: [{ id: "rom-1" }], error: null }),
+      };
+      return {
+        update: vi.fn((payload: any) => {
+          updates.push(payload);
+          return inner;
+        }),
+      };
+    });
+
+    await shippingService.confirmarRomaneio("rom-1");
+
+    expect(updates[0]).toMatchObject({ status: "confirmado", responsavel_id: "user-1" });
+  });
 });

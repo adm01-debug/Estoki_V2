@@ -1,6 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
-import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
+import type {
+  Romaneio,
+  RomaneioInput,
+  RomaneioItemInput,
+  StatusRomaneio,
+  StatusEntrega,
+} from "../types";
 import type { TablesUpdate } from "@/integrations/supabase/types";
 
 const ENTREGA_CONCLUIDA: StatusEntrega[] = ["entregue", "parcial"];
@@ -107,8 +113,11 @@ export const shippingService = {
     });
   },
 
-  async criarRomaneio(input: RomaneioInput): Promise<Romaneio> {
+  async criarRomaneio(input: RomaneioInput, itens: RomaneioItemInput[] = []): Promise<Romaneio> {
     const codigo = `ROM-${Date.now().toString(36).toUpperCase()}`;
+    const totalVolumes = itens.reduce((acc, item) => acc + (item.quantidade || 0), 0);
+    const totalPeso = itens.reduce((acc, item) => acc + (item.peso_kg || 0), 0);
+
     const { data, error } = await supabase
       .from("romaneios")
       .insert({
@@ -120,6 +129,9 @@ export const shippingService = {
         rota: input.rota,
         observacoes: input.observacoes,
         status: "rascunho",
+        total_entregas: itens.length,
+        total_volumes: totalVolumes,
+        total_peso_kg: totalPeso,
       })
       .select()
       .single();
@@ -128,25 +140,72 @@ export const shippingService = {
       logger.error("Erro ao criar romaneio", error);
       throw error;
     }
+
+    if (itens.length > 0) {
+      const { error: itensError } = await supabase.from("romaneio_itens").insert(
+        itens.map((item, index) => ({
+          romaneio_id: data.id,
+          cliente: item.cliente,
+          endereco_entrega: item.endereco_entrega,
+          telefone_cliente: item.telefone_cliente || null,
+          quantidade: item.quantidade,
+          peso_kg: item.peso_kg ?? null,
+          nf_saida: item.nf_saida || null,
+          observacoes: item.observacoes || null,
+          ordem_entrega: index + 1,
+        }))
+      );
+
+      if (itensError) {
+        logger.error("Erro ao inserir itens do romaneio", itensError, { romaneioId: data.id });
+        await supabase.from("romaneios").delete().eq("id", data.id);
+        throw itensError;
+      }
+    }
+
     return data as any;
   },
 
   async confirmarRomaneio(id: string): Promise<void> {
+    const { data: atual, error: fetchError } = await supabase
+      .from("romaneios")
+      .select("status, total_entregas")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) {
+      logger.error("Erro ao buscar romaneio para confirmar", fetchError, { id });
+      throw fetchError;
+    }
+    if (!atual) {
+      throw new Error("Romaneio não encontrado");
+    }
+    if (atual.status !== "rascunho") {
+      throw new Error("Somente romaneios em rascunho podem ser confirmados");
+    }
+    if ((atual.total_entregas || 0) <= 0) {
+      throw new Error("Adicione ao menos um item ao romaneio antes de confirmar");
+    }
+
     const {
       data: { user },
       error: userError,
     } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Nao autenticado");
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("romaneios")
       .update({ status: "confirmado", responsavel_id: user.id })
       .eq("id", id)
-      .eq("status", "rascunho");
+      .eq("status", "rascunho")
+      .select("id");
 
     if (error) {
       logger.error("Erro ao confirmar romaneio", error, { id });
       throw error;
+    }
+    if (!data || data.length === 0) {
+      throw new Error("Romaneio já foi alterado por outro usuário; tente novamente");
     }
   },
 

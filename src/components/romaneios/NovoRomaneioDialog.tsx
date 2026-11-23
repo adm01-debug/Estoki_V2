@@ -15,6 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Plus, Trash2 } from "lucide-react";
+
+export interface RomaneioItemDraft {
+  cliente: string;
+  endereco_entrega: string;
+  quantidade: string;
+  peso_kg: string;
+}
 
 interface NovoRomaneioDialogProps {
   open: boolean;
@@ -28,6 +36,11 @@ interface NovoRomaneioDialogProps {
   };
   formErrors: Record<string, string>;
   onFieldChange: (field: string, value: string) => void;
+  itens: RomaneioItemDraft[];
+  itemErrors: Record<string, string>;
+  onItemChange: (index: number, field: keyof RomaneioItemDraft, value: string) => void;
+  onAddItem: () => void;
+  onRemoveItem: (index: number) => void;
   onSubmit: () => void;
   isSubmitting?: boolean;
 }
@@ -38,6 +51,11 @@ export function NovoRomaneioDialog({
   novoRomaneio,
   formErrors,
   onFieldChange,
+  itens,
+  itemErrors,
+  onItemChange,
+  onAddItem,
+  onRemoveItem,
   onSubmit,
   isSubmitting,
 }: NovoRomaneioDialogProps) {
@@ -45,7 +63,7 @@ export function NovoRomaneioDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Novo Romaneio</DialogTitle>
         </DialogHeader>
@@ -114,6 +132,94 @@ export function NovoRomaneioDialog({
               onChange={(e) => onFieldChange("rota", e.target.value)}
               placeholder="Descrição da rota"
             />
+          </div>
+          <div className="space-y-3 rounded-lg border p-3">
+            <div className="flex items-center justify-between">
+              <Label>Itens da entrega *</Label>
+              <Button type="button" variant="outline" size="sm" onClick={onAddItem}>
+                <Plus className="mr-1 h-3 w-3" />
+                Adicionar item
+              </Button>
+            </div>
+            {itens.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Adicione ao menos um destinatário: o romaneio só pode ser confirmado com itens.
+              </p>
+            )}
+            {itens.map((item, index) => (
+              <div key={index} className="space-y-2 rounded-md bg-muted/40 p-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold">Item {index + 1}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => onRemoveItem(index)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="col-span-2">
+                    <Label>Destinatário *</Label>
+                    <Input
+                      value={item.cliente}
+                      onChange={(e) => onItemChange(index, "cliente", e.target.value)}
+                      placeholder="Nome do cliente"
+                      className={itemErrors[`${index}.cliente`] ? "border-destructive" : ""}
+                      maxLength={200}
+                    />
+                    {itemErrors[`${index}.cliente`] && (
+                      <p className="mt-1 text-xs text-destructive">
+                        {itemErrors[`${index}.cliente`]}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label>Volumes *</Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      value={item.quantidade}
+                      onChange={(e) => onItemChange(index, "quantidade", e.target.value)}
+                      className={itemErrors[`${index}.quantidade`] ? "border-destructive" : ""}
+                    />
+                    {itemErrors[`${index}.quantidade`] && (
+                      <p className="mt-1 text-xs text-destructive">
+                        {itemErrors[`${index}.quantidade`]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <Label>Endereço *</Label>
+                  <Input
+                    value={item.endereco_entrega}
+                    onChange={(e) => onItemChange(index, "endereco_entrega", e.target.value)}
+                    placeholder="Rua, número, bairro, cidade"
+                    className={itemErrors[`${index}.endereco_entrega`] ? "border-destructive" : ""}
+                    maxLength={300}
+                  />
+                  {itemErrors[`${index}.endereco_entrega`] && (
+                    <p className="mt-1 text-xs text-destructive">
+                      {itemErrors[`${index}.endereco_entrega`]}
+                    </p>
+                  )}
+                </div>
+                <div className="w-32">
+                  <Label>Peso (kg)</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={item.peso_kg}
+                    onChange={(e) => onItemChange(index, "peso_kg", e.target.value)}
+                  />
+                </div>
+              </div>
+            ))}
+            {formErrors.itens && <p className="text-xs text-destructive">{formErrors.itens}</p>}
           </div>
         </div>
         <DialogFooter>
