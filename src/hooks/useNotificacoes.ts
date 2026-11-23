@@ -133,7 +133,7 @@ export function useNotificacoes() {
 
       // Realtime para notificações
       const notifChannel = supabase
-        .channel("notificacoes_changes")
+        .channel(`notificacoes_changes-${Math.random().toString(36).slice(2)}`)
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "notificacoes" }, () =>
           fetchNotificacoes()
         )
@@ -141,7 +141,7 @@ export function useNotificacoes() {
 
       // Realtime para alertas
       const alertaChannel = supabase
-        .channel("alertas_changes")
+        .channel(`alertas_changes-${Math.random().toString(36).slice(2)}`)
         .on("postgres_changes", { event: "*", schema: "public", table: "alertas_historico" }, () =>
           fetchNotificacoes()
         )

@@ -14,11 +14,12 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("romaneios-changes")
+      .channel(`romaneios-changes-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "romaneios" }, () => {
         queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       })
@@ -29,7 +30,8 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, queryClient]);

@@ -15,11 +15,12 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("products-changes")
+      .channel(`products-changes-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "produtos" }, () => {
         queryClient.invalidateQueries({ queryKey: ["produtos"] });
       })
@@ -27,7 +28,8 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, queryClient]);

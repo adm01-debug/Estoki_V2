@@ -41,7 +41,7 @@ export const useGamificacao = () => {
 
   useEffect(() => {
     const channel = supabase
-      .channel("gamificacao-realtime")
+      .channel(`gamificacao-realtime-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "gamificacao_usuarios" },
