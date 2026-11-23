@@ -168,7 +168,7 @@ export default function RomaneiosPage() {
   if (error)
     return (
       <AppLayout showBack>
-        <ErrorState onRetry={() => refetch()} />
+        <ErrorState message="Erro ao carregar romaneios" onRetry={() => refetch()} />
       </AppLayout>
     );
 
