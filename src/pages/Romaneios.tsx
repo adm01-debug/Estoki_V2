@@ -85,8 +85,15 @@ const statusConfig: Record<
 };
 
 export default function RomaneiosPage() {
-  const { romaneios, loading, criarRomaneio, atualizarStatus, confirmarRomaneio, registrarEntrega, refetch } =
-    useRomaneios();
+  const {
+    romaneios,
+    loading,
+    criarRomaneio,
+    atualizarStatus,
+    confirmarRomaneio,
+    registrarEntrega,
+    refetch,
+  } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");

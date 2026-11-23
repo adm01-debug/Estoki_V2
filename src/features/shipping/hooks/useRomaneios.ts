@@ -65,7 +65,6 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     },
   });
 
-
   const confirmarRomaneioMutation = useMutation({
     mutationFn: async (id: string) => {
       return shippingService.confirmarRomaneio(id);
@@ -75,7 +74,7 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
       toast.success("Romaneio confirmado! Rota liberada para iniciar.");
     },
     onError: (err: Error) => {
-      toast.error(Erro ao confirmar romaneio: \);
+      toast.error(`Erro ao confirmar romaneio: ${err.message}`);
     },
   });
 
@@ -92,7 +91,12 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     confirmarRomaneio: (id: string) => confirmarRomaneioMutation.mutate(id),
     atualizarStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
-    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega, dados?: Record<string, unknown>) => {
+    registrarEntrega: async (
+      romaneioId: string,
+      itemId: string,
+      status: StatusEntrega,
+      dados?: Record<string, unknown>
+    ) => {
       try {
         await shippingService.registrarEntrega(romaneioId, itemId, status, dados);
         queryClient.invalidateQueries({ queryKey: ["romaneios"] });

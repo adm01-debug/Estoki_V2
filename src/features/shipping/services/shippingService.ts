@@ -76,9 +76,11 @@ export const shippingService = {
     return data as any;
   },
 
-
   async confirmarRomaneio(id: string): Promise<void> {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
     if (userError || !user) throw new Error("Nao autenticado");
 
     const { error } = await supabase
