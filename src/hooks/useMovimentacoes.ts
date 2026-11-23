@@ -106,7 +106,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const registrarEntrada = async (
     produtoId: string,
     quantidade: number,
-    localizacao: string,
+    toPosicaoId?: string,
     loteId?: string,
     descricao?: string
   ): Promise<boolean> => {
@@ -115,7 +115,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
       produto_id: produtoId,
       lote_id: loteId,
       quantidade,
-      localizacao,
+      to_posicao_id: toPosicaoId,
       descricao: descricao || "Entrada de material",
     });
   };
