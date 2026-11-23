@@ -50,8 +50,9 @@ export default function AdminSettingsPage() {
           .select("value")
           .eq("key", "wms_config")
           .maybeSingle();
-        if (!error && data?.value) {
-          setSettings({ ...DEFAULTS, ...(data.value as Partial<SystemSettings>) });
+        const row = data as any;
+        if (!error && row?.value) {
+          setSettings({ ...DEFAULTS, ...(row.value as Partial<SystemSettings>) });
         }
       } catch {
         // Tabela ainda nao existe — usa defaults silenciosamente
