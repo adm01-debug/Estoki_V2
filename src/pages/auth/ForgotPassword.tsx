@@ -7,6 +7,7 @@ import { toast } from "@/hooks/use-toast";
 import { Box, Mail, ArrowLeft, Loader2 } from "lucide-react";
 import { BrandingContent } from "@/components/auth/BrandingContent";
 import { supabase } from "@/integrations/supabase/client";
+import { ROUTES } from "@/constants/routes";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +21,7 @@ const ForgotPasswordPage = () => {
     }
     setIsSubmitting(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      redirectTo: `${window.location.origin}${ROUTES.RESET_PASSWORD}`,
     });
     if (error) {
       toast({
