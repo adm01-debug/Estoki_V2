@@ -60,12 +60,18 @@ export function useTriagemFotos(options: UseTriagemFotosOptions = {}) {
 
         if (error) throw error;
 
-        // Get public URL
-        const { data: urlData } = supabase.storage.from("triagem-fotos").getPublicUrl(data.path);
+        // Bucket é privado: gera URL assinada em vez de pública (F035)
+        const { data: urlData, error: signedError } = await supabase.storage
+          .from("triagem-fotos")
+          .createSignedUrl(data.path, 60 * 60 * 24 * 7, { download: false });
+
+        if (signedError || !urlData?.signedUrl) {
+          throw signedError || new Error("Falha ao gerar URL assinada");
+        }
 
         const foto: FotoTriagem = {
           id: data.path,
-          url: urlData.publicUrl,
+          url: urlData.signedUrl,
           tipo,
           timestamp: new Date(),
           uploading: false,
