@@ -76,6 +76,25 @@ export const shippingService = {
     return data as any;
   },
 
+  async confirmarRomaneio(id: string): Promise<void> {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+    if (userError || !user) throw new Error("Nao autenticado");
+
+    const { error } = await supabase
+      .from("romaneios")
+      .update({ status: "confirmado", responsavel_id: user.id })
+      .eq("id", id)
+      .eq("status", "rascunho");
+
+    if (error) {
+      logger.error("Erro ao confirmar romaneio", error, { id });
+      throw error;
+    }
+  },
+
   async atualizarStatus(id: string, status: StatusRomaneio): Promise<void> {
     const updates: TablesUpdate<"romaneios"> = { status };
     if (status === "em_transito") {
