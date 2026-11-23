@@ -65,6 +65,9 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       toast.success("Status atualizado!");
     },
+    onError: (err: Error) => {
+      toast.error(`Erro ao atualizar status: ${err.message}`);
+    },
   });
 
   const confirmarRomaneioMutation = useMutation({

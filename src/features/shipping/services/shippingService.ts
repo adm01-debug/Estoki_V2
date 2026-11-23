@@ -103,11 +103,19 @@ export const shippingService = {
       updates.data_retorno = new Date().toISOString();
     }
 
-    const { error } = await supabase.from("romaneios").update(updates).eq("id", id);
+    const { data, error } = await supabase
+      .from("romaneios")
+      .update(updates)
+      .eq("id", id)
+      .select("id")
+      .single();
 
     if (error) {
       logger.error("Erro ao atualizar status do romaneio", error, { id, status });
       throw error;
+    }
+    if (!data) {
+      throw new Error("Romaneio não encontrado ou sem permissão para atualizar o status");
     }
   },
 
