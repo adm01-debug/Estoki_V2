@@ -43,11 +43,12 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("movements-changes")
+      .channel(`movements-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rastreamento_historico" },
@@ -59,7 +60,8 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, fetchMovimentacoes]);

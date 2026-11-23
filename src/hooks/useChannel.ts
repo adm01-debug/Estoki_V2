@@ -10,7 +10,10 @@ export function useChannel<T = unknown>(channelName: string) {
       .on("broadcast", { event: "*" }, ({ payload }) => setMessages((m) => [...m, payload]))
       .subscribe();
     return () => {
-      channelRef.current?.unsubscribe();
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, [channelName]);
   const send = useCallback(

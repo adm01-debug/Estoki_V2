@@ -69,7 +69,7 @@ export function PresenceAvatars() {
       });
 
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(channel);
     };
   }, [channelName, user, profile, location.pathname]);
 

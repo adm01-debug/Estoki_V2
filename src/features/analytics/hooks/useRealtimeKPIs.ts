@@ -64,7 +64,7 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
 
   useEffect(() => {
     const channel = supabase
-      .channel("kpi-realtime-updates")
+      .channel(`kpi-realtime-updates-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "metricas_operacionais" },
