@@ -119,6 +119,46 @@ export const shippingService = {
     }
   },
 
+  async cancelarRomaneio(id: string, motivo?: string): Promise<void> {
+    const { data: atual, error: fetchError } = await supabase
+      .from("romaneios")
+      .select("status")
+      .eq("id", id)
+      .single();
+
+    if (fetchError) {
+      logger.error("Erro ao buscar romaneio para cancelar", fetchError, { id });
+      throw fetchError;
+    }
+    if (!atual) {
+      throw new Error("Romaneio não encontrado");
+    }
+    if (atual.status === "entregue" || atual.status === "cancelado") {
+      throw new Error("Este romaneio não pode ser cancelado");
+    }
+
+    const updates: TablesUpdate<"romaneios"> = { status: "cancelado" };
+    if (motivo) {
+      updates.observacoes = motivo;
+    }
+
+    const { data, error } = await supabase
+      .from("romaneios")
+      .update(updates)
+      .eq("id", id)
+      .eq("status", atual.status)
+      .select("id")
+      .single();
+
+    if (error) {
+      logger.error("Erro ao cancelar romaneio", error, { id });
+      throw error;
+    }
+    if (!data) {
+      throw new Error("Romaneio já foi alterado por outro usuário; tente novamente");
+    }
+  },
+
   async registrarEntrega(
     romaneioId: string,
     itemId: string,

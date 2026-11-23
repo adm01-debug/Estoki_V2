@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRomaneios } from "@/features/shipping/hooks/useRomaneios";
 import type {
   Romaneio,
@@ -91,6 +92,7 @@ export default function RomaneiosPage() {
     criarRomaneio,
     atualizarStatus,
     confirmarRomaneio,
+    cancelarRomaneio,
     registrarEntrega,
     error,
     refetch,
@@ -103,6 +105,8 @@ export default function RomaneiosPage() {
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [romaneioCancelar, setRomaneioCancelar] = useState<Romaneio | null>(null);
+  const [motivoCancelamento, setMotivoCancelamento] = useState("");
   const [novoRomaneio, setNovoRomaneio] = useState({
     motorista: "",
     placa_veiculo: "",
@@ -129,6 +133,13 @@ export default function RomaneiosPage() {
       (acc, r) => acc + ((r.total_entregas || 0) - (r.entregas_realizadas || 0)),
       0
     ),
+  };
+
+  const handleCancelarRomaneio = async () => {
+    if (!romaneioCancelar) return;
+    await cancelarRomaneio(romaneioCancelar.id, motivoCancelamento.trim() || undefined);
+    setRomaneioCancelar(null);
+    setMotivoCancelamento("");
   };
 
   const handleCriarRomaneio = async () => {
@@ -450,7 +461,13 @@ export default function RomaneiosPage() {
                                   <Share2 className="mr-2 h-4 w-4" /> Compartilhar Rastreio
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => {
+                                    setRomaneioCancelar(romaneio);
+                                    setMotivoCancelamento("");
+                                  }}
+                                >
                                   <XCircle className="mr-2 h-4 w-4" /> Cancelar Rota
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -534,6 +551,17 @@ export default function RomaneiosPage() {
           onFieldChange={handleFieldChange}
           onSubmit={handleCriarRomaneio}
           isSubmitting={criandoRomaneio}
+        />
+        <ConfirmDialog
+          open={!!romaneioCancelar}
+          onOpenChange={(open) => {
+            if (!open) setRomaneioCancelar(null);
+          }}
+          onConfirm={handleCancelarRomaneio}
+          title="Cancelar romaneio"
+          description="Esta ação cancela a rota do romaneio e não pode ser desfeita. Deseja continuar?"
+          confirmLabel="Cancelar romaneio"
+          variant="destructive"
         />
         <RomaneioDetalhesDialog
           romaneio={romaneioSelecionado}
