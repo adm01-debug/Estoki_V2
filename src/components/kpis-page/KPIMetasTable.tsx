@@ -1,4 +1,15 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -20,6 +31,8 @@ interface KPIMetasTableProps {
 }
 
 export function KPIMetasTable({ metas, onEdit, onDelete, onNew }: KPIMetasTableProps) {
+  const [metaParaExcluir, setMetaParaExcluir] = useState<MetaKPI | null>(null);
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
@@ -55,14 +68,20 @@ export function KPIMetasTable({ metas, onEdit, onDelete, onNew }: KPIMetasTableP
                   <TableCell>{meta.unidade || "-"}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => onEdit(meta)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`Editar meta ${meta.nome}`}
+                        onClick={() => onEdit(meta)}
+                      >
                         <Settings className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="text-red-500"
-                        onClick={() => onDelete(meta.id)}
+                        aria-label={`Excluir meta ${meta.nome}`}
+                        onClick={() => setMetaParaExcluir(meta)}
                       >
                         <XCircle className="h-4 w-4" />
                       </Button>
@@ -74,6 +93,32 @@ export function KPIMetasTable({ metas, onEdit, onDelete, onNew }: KPIMetasTableP
           </Table>
         </CardContent>
       </Card>
+
+      <AlertDialog
+        open={metaParaExcluir !== null}
+        onOpenChange={(open) => !open && setMetaParaExcluir(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir meta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              A meta {metaParaExcluir?.nome} será removida do acompanhamento de KPIs. Esta ação não
+              pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (metaParaExcluir) onDelete(metaParaExcluir.id);
+                setMetaParaExcluir(null);
+              }}
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
