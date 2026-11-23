@@ -3,7 +3,7 @@ import { pickingService } from "./pickingService";
 import { supabase } from "@/integrations/supabase/client";
 
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: vi.fn() },
+  supabase: { from: vi.fn(), rpc: vi.fn() },
 }));
 
 function chain(overrides: Record<string, any> = {}) {
@@ -46,14 +46,32 @@ describe("pickingService", () => {
     await expect(pickingService.getTasks()).rejects.toThrow("boom");
   });
 
-  it("updateTaskStatus injeta operador ao iniciar", async () => {
-    const mock = chain({
-      eq: vi.fn().mockResolvedValue({ data: null, error: null }),
-    });
-    (supabase.from as any).mockReturnValue(mock);
+  it("updateTaskStatus usa RPC iniciar_tarefa_picking ao iniciar", async () => {
+    (supabase.rpc as any).mockResolvedValue({ error: null });
     await pickingService.updateTaskStatus("t1", "em_andamento", "user-1");
-    expect(mock.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: "em_andamento", operador_id: "user-1" })
+    expect(supabase.rpc).toHaveBeenCalledWith("iniciar_tarefa_picking", { p_tarefa_id: "t1" });
+  });
+
+  it("updateTaskStatus usa RPC concluir_tarefa_picking ao concluir", async () => {
+    (supabase.rpc as any).mockResolvedValue({ error: null });
+    await pickingService.updateTaskStatus("t1", "concluida", "user-1", 5);
+    expect(supabase.rpc).toHaveBeenCalledWith("concluir_tarefa_picking", {
+      p_tarefa_id: "t1",
+      p_quantidade: 5,
+      p_codigo_lido: null,
+    });
+  });
+
+  it("updateTaskStatus exige quantidade ao concluir", async () => {
+    await expect(pickingService.updateTaskStatus("t1", "concluida", "user-1")).rejects.toThrow(
+      "Quantidade é obrigatória"
+    );
+  });
+
+  it("updateTaskStatus propaga erro do RPC ao iniciar", async () => {
+    (supabase.rpc as any).mockResolvedValue({ error: new Error("rpc-fail") });
+    await expect(pickingService.updateTaskStatus("t1", "em_andamento", "user-1")).rejects.toThrow(
+      "rpc-fail"
     );
   });
 });

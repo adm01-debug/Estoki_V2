@@ -57,9 +57,13 @@ export default function PickingPage() {
         t.produto_id?.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleStartTask = (task: PickingTask) => {
-    startTask(task.id);
-    setActiveTask(task);
+  const handleStartTask = async (task: PickingTask) => {
+    try {
+      await startTask(task.id);
+      setActiveTask(task);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao iniciar tarefa");
+    }
   };
 
   const isScannedCodeFromTask = useMemo(() => {
@@ -76,7 +80,7 @@ export default function PickingPage() {
     return candidates.includes(code);
   }, [activeTask, scannedCode]);
 
-  const handleConfirm = useCallback(() => {
+  const handleConfirm = useCallback(async () => {
     if (!activeTask) return;
 
     const qty = Number(confirmQty);
@@ -90,10 +94,15 @@ export default function PickingPage() {
       return;
     }
 
-    finishTask(activeTask.id, qty);
-    setActiveTask(null);
-    setScannedCode("");
-    setConfirmQty("");
+    try {
+      await finishTask(activeTask.id, qty);
+      toast.success("Picking concluído com sucesso!");
+      setActiveTask(null);
+      setScannedCode("");
+      setConfirmQty("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao concluir picking");
+    }
   }, [activeTask, confirmQty, finishTask, isScannedCodeFromTask]);
 
   if (activeTask) {
