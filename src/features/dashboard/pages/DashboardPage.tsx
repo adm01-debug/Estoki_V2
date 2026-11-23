@@ -60,9 +60,8 @@ export default function Dashboard() {
     const div = recebimentosList.filter((r) => r.status === "divergencia").length;
     const triagem = stats?.triagensPendentes || 0;
     const itens = estatisticas.posicoesOcupadas;
-    const pp = Math.round(estatisticas.taxaOcupacao);
-    // Simulação de ocupação de boxes com base na taxa global para maior precisão visual
-    const boxes = estatisticas.taxaOcupacao > 0 ? Math.round(estatisticas.taxaOcupacao * 0.82) : 0;
+    const pp = Math.round(estatisticas.taxaOcupacaoPortaPalete);
+    const boxes = Math.round(estatisticas.taxaOcupacaoBox);
     return {
       aguardandoRecebimento: aguardando,
       divergencias: div,
@@ -91,7 +90,6 @@ export default function Dashboard() {
       sublabel: "Recebimento",
       variant: "warning" as const,
       path: "/recebimento",
-      trend: { value: 12, isUp: true, label: "vs ontem" },
       excellence: true,
     },
     {
@@ -101,7 +99,6 @@ export default function Dashboard() {
       sublabel: "Pendente",
       variant: "default" as const,
       path: "/triagem",
-      trend: { value: 5, isUp: false, label: "vs ontem" },
       excellence: true,
     },
     {
@@ -111,7 +108,6 @@ export default function Dashboard() {
       sublabel: "Ocupadas",
       variant: "success" as const,
       path: "/estoque",
-      trend: { value: 2, isUp: true, label: "vs ontem" },
       excellence: true,
     },
     {
@@ -121,7 +117,6 @@ export default function Dashboard() {
       sublabel: "Pendentes",
       variant: "danger" as const,
       path: "/divergencias",
-      trend: { value: 0, isUp: true, label: "vs ontem" },
       excellence: true,
     },
   ];

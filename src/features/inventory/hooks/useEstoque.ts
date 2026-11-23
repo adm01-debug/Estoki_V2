@@ -121,6 +121,15 @@ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: bool
     const bloqueados = lista.filter((p: PosicaoEstoque) => p.status === "bloqueado").length;
     const reservados = lista.filter((p: PosicaoEstoque) => p.status === "reservado").length;
     const taxaOcupacao = total > 0 ? (ocupados / total) * 100 : 0;
+    // Ocupacao real por tipo de posicao (E-153): o painel inferia "boxes" como 82% da taxa global
+    const taxaPorTipo = (tipo: PosicaoEstoque["tipo"]) => {
+      const grupo = lista.filter((p: PosicaoEstoque) => p.tipo === tipo);
+      if (grupo.length === 0) return 0;
+      const ocupadosGrupo = grupo.filter((p: PosicaoEstoque) => p.status === "ocupado").length;
+      return (ocupadosGrupo / grupo.length) * 100;
+    };
+    const taxaOcupacaoPortaPalete = taxaPorTipo("porta_palete");
+    const taxaOcupacaoBox = taxaPorTipo("box");
 
     return {
       total,
@@ -129,6 +138,8 @@ export const useEstoque = (options?: { enableRealtime?: boolean; prefetch?: bool
       bloqueados,
       reservados,
       taxaOcupacao,
+      taxaOcupacaoPortaPalete,
+      taxaOcupacaoBox,
       totalPosicoes: total,
       posicoesOcupadas: ocupados,
       posicoesLivres: livres,

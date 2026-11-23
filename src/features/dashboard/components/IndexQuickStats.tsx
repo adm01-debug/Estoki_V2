@@ -2,17 +2,7 @@ import { memo } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Zap,
-  CheckCircle2,
-  Target,
-  XCircle,
-  LucideIcon,
-  Sparkles,
-  TrendingUp,
-  TrendingDown,
-  Info,
-} from "lucide-react";
+import { Zap, CheckCircle2, Target, XCircle, LucideIcon, Sparkles, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
@@ -46,7 +36,6 @@ export const IndexQuickStats = memo(function IndexQuickStats({
       bgClass: "bg-success/10",
       textClass: "text-success",
       borderClass: "border-success/20",
-      trend: { value: 12, isUp: true },
     },
     {
       icon: Target,
@@ -55,7 +44,6 @@ export const IndexQuickStats = memo(function IndexQuickStats({
       bgClass: "bg-primary/10",
       textClass: "text-primary",
       borderClass: "border-primary/20",
-      trend: { value: 5, isUp: true },
     },
     {
       icon: XCircle,
@@ -64,7 +52,6 @@ export const IndexQuickStats = memo(function IndexQuickStats({
       bgClass: "bg-destructive/10",
       textClass: "text-destructive",
       borderClass: "border-destructive/20",
-      trend: { value: 0, isUp: false },
     },
   ];
 
@@ -140,30 +127,9 @@ export const IndexQuickStats = memo(function IndexQuickStats({
                         <Icon className={cn("h-5 w-5", stat.textClass)} />
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
-                          <p
-                            className={cn("text-2xl font-extrabold tracking-tight", stat.textClass)}
-                          >
-                            {stat.value}
-                          </p>
-                          {stat.trend && (
-                            <div
-                              className={cn(
-                                "flex items-center rounded-md px-1 text-[10px] font-bold",
-                                stat.trend.isUp
-                                  ? "bg-success/10 text-success"
-                                  : "bg-destructive/10 text-destructive"
-                              )}
-                            >
-                              {stat.trend.isUp ? (
-                                <TrendingUp className="mr-0.5 h-2.5 w-2.5" />
-                              ) : (
-                                <TrendingDown className="mr-0.5 h-2.5 w-2.5" />
-                              )}
-                              {stat.trend.value}%
-                            </div>
-                          )}
-                        </div>
+                        <p className={cn("text-2xl font-extrabold tracking-tight", stat.textClass)}>
+                          {stat.value}
+                        </p>
                         <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                           {stat.label}
                         </p>
