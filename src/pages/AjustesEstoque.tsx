@@ -24,6 +24,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAdjustments, Adjustment } from "@/hooks/useAdjustments";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Plus,
   Search,
@@ -54,6 +56,18 @@ export default function AjustesEstoquePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const { data: produtos = [] } = useQuery({
+    queryKey: ["produtos-select"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("produtos")
+        .select("id, nome, sku")
+        .order("nome");
+      if (error) throw error;
+      return data as { id: string; nome: string; sku: string }[];
+    },
+  });
+
   // New Adjustment Form State
   const [newAdj, setNewAdj] = useState({
     produto_id: "",
@@ -66,8 +80,12 @@ export default function AjustesEstoquePage() {
   });
 
   const handleCreate = async () => {
+    if (!newAdj.produto_id) {
+      return;
+    }
     await createAdjustment.mutateAsync(newAdj as any);
     setIsDialogOpen(false);
+    setNewAdj({ produto_id: "", lote_id: "", posicao_id: "", quantidade_anterior: 0, quantidade_nova: 0, motivo: "correcao", observacoes: "" });
   };
 
   const getStatusBadge = (status: string) => {
@@ -137,12 +155,22 @@ export default function AjustesEstoquePage() {
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label>Produto (ID)</Label>
-                      <Input
+                      <Label>Produto *</Label>
+                      <Select
                         value={newAdj.produto_id}
-                        onChange={(e) => setNewAdj({ ...newAdj, produto_id: e.target.value })}
-                        placeholder="ID do produto..."
-                      />
+                        onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o produto..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {produtos.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.nome} <span className="text-muted-foreground">({p.sku})</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
@@ -196,7 +224,7 @@ export default function AjustesEstoquePage() {
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancelar
                     </Button>
-                    <Button onClick={handleCreate} disabled={createAdjustment.isPending}>
+                    <Button onClick={handleCreate} disabled={createAdjustment.isPending || !newAdj.produto_id}>
                       Enviar para Aprovação
                     </Button>
                   </DialogFooter>
