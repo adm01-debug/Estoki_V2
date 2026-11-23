@@ -65,6 +65,20 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     },
   });
 
+
+  const confirmarRomaneioMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return shippingService.confirmarRomaneio(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      toast.success("Romaneio confirmado! Rota liberada para iniciar.");
+    },
+    onError: (err: Error) => {
+      toast.error(Erro ao confirmar romaneio: \);
+    },
+  });
+
   return {
     romaneios,
     isLoading,
@@ -75,11 +89,18 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     criarRomaneio: createRomaneioMutation.mutate,
     updateStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
+    confirmarRomaneio: (id: string) => confirmarRomaneioMutation.mutate(id),
     atualizarStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
-    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
-      // Implementación real o placeholder
-      toast.info("Registro de entrega en desarrollo");
+    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega, dados?: Record<string, unknown>) => {
+      try {
+        await shippingService.registrarEntrega(romaneioId, itemId, status, dados);
+        queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+        toast.success("Entrega registrada com sucesso!");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Erro ao registrar entrega";
+        toast.error(message);
+      }
     },
   };
 }

@@ -85,7 +85,7 @@ const statusConfig: Record<
 };
 
 export default function RomaneiosPage() {
-  const { romaneios, loading, criarRomaneio, atualizarStatus, registrarEntrega, refetch } =
+  const { romaneios, loading, criarRomaneio, atualizarStatus, confirmarRomaneio, registrarEntrega, refetch } =
     useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
@@ -394,6 +394,14 @@ export default function RomaneiosPage() {
                           </div>
 
                           <div className="flex gap-2 border-t bg-muted/30 p-3">
+                            {romaneio.status === "rascunho" && (
+                              <Button
+                                className="h-9 flex-1 bg-green-600 hover:bg-green-700"
+                                onClick={() => confirmarRomaneio(romaneio.id)}
+                              >
+                                <CheckCircle2 className="mr-2 h-3 w-3" /> Confirmar
+                              </Button>
+                            )}
                             {romaneio.status === "confirmado" && (
                               <Button
                                 className="h-9 flex-1 bg-primary"
