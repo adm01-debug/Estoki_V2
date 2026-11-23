@@ -108,29 +108,26 @@ export default function UsersPage() {
     if (!roleUser) return;
     setSavingRole(true);
     try {
-      const { data: existing, error: existingError } = await supabase
+      // F001: "Alterar Cargo" deve SUBSTITUIR, nao acumular.
+      // Apaga todos os papeis atuais do usuario neste tenant e insere o novo escolhido.
+      const { error: deleteError } = await supabase
         .from("user_roles")
-        .select("id, role")
-        .eq("user_id", roleUser.id)
-        .eq("role", selectedRole);
+        .delete()
+        .eq("user_id", roleUser.id);
 
-      if (existingError) throw existingError;
+      if (deleteError) throw deleteError;
 
-      if (existing && existing.length > 0) {
-        toast({ title: "Cargo já atribuído", description: "Este usuário já possui este cargo." });
-      } else {
-        const { error: insertError } = await supabase.from("user_roles").insert({
-          user_id: roleUser.id,
-          role: selectedRole,
-        });
-        if (insertError) throw insertError;
-        toast({ title: "Cargo atribuído", description: "Cargo atribuído com sucesso." });
-      }
+      const { error: insertError } = await supabase.from("user_roles").insert({
+        user_id: roleUser.id,
+        role: selectedRole,
+      });
+      if (insertError) throw insertError;
 
+      toast({ title: "Cargo alterado", description: Papel atualizado para . });
       await queryClient.invalidateQueries({ queryKey: ["users-list"] });
       setRoleUser(null);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Erro ao atribuir cargo.";
+      const message = err instanceof Error ? err.message : "Erro ao alterar cargo.";
       toast({ title: "Erro", description: message, variant: "destructive" });
     } finally {
       setSavingRole(false);
