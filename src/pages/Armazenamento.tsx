@@ -369,7 +369,7 @@ const ArmazenamentoPage = () => {
               <Button
                 size="lg"
                 className="bg-orange-600 text-white shadow-md hover:bg-orange-700"
-                onClick={() => navigate(`/shipping/orders/${crossDockingOrder.orders?.id}`)}
+                onClick={() => navigate(`/pedidos/${crossDockingOrder.orders?.id}`)}
               >
                 ATENDER AGORA
               </Button>
