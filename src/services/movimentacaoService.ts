@@ -57,10 +57,6 @@ export const movimentacaoService = {
       if (pos) toPosicaoId = pos.id;
     }
 
-    if (!input.from_posicao_id && !toPosicaoId) {
-      throw new Error("Informe posição de origem ou destino");
-    }
-
     if (input.lote_id) {
       // Full move_stock RPC path
       const { error: rpcError } = await supabase.rpc("move_stock", {
