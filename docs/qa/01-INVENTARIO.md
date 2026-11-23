@@ -625,7 +625,7 @@ Itens inventariados:
 - scripts/supabase_snapshot/ - snapshot.py (107KB) usado por contexto.yml com o secret SUPABASE_DB_URL; impoe SET default_transaction_read_only = on (snapshot.py:900).
 - scripts/regras_negocio/ - generate.py, indice.py e test_generate.py usados por contexto.yml; publish.sh declaradamente nao usado neste repo (README.md:21) mas registrado como comando manual.
 - scripts/automation.mjs + automation.config.json + maintenance/ + ai-context/ + lib/ - tooling de automacao local; automation-local.yml roda apenas doctor --static e test.
-- 19 arquivos de teste (_.unit.mjs, *.test.mjs, test_*.py) dentro de scripts/, executados por contexto.yml, automation-local.yml e os alvos test:_ do package.json.
+- 19 arquivos de teste (_.unit.mjs, \*.test.mjs, test_*.py) dentro de scripts/, executados por contexto.yml, automation-local.yml e os alvos test:_ do package.json.
 
 ### Camada: modulos-nao-cobertos (src/plugins, src/m
 
@@ -743,7 +743,7 @@ Itens inventariados:
 
 ### Camada: docs-vs-realidade
 
-**Cobertura declarada:** Lidos integralmente AGENTS.md (153 linhas), CLAUDE.md, README.md, README_PT.md, ESTADO_ATUAL.md (331 linhas) e os 6 arquivos de docs/agentes/ (646 linhas); lidos parcialmente docs/pendencias/_ordem.md, docs/pendencias/_linha-de-base.md, docs/ROADMAP.md, docs/qa/01-INVENTARIO.md e CONTRIBUTING.md. Cada afirmacao numerica ou de caminho foi confrontada com o artefato real: supabase/config.toml, package.json, vite.config.ts, vitest.config.ts, vercel.json, os 10 arquivos de .github/workflows/, supabase/functions/ (249 diretorios), supabase/migrations/ (178 .sql), scripts/ (12 .mjs + 8 subpastas), src/routes/, src/pages/, .i18n-hardcoded-baseline.json e public/openapi.json. Executei `npm run build` (falha por env) e `npx vite build` com envs dummy (exit 0, 45s) para testar as afirmacoes de build dos READMEs. NAO auditei docs/ARCHITECTURE.md, docs/OBSERVABILIDADE.md/OBSERVABILITY.md, docs/PLANO__.md, docs/SECURITY.md, docs/SOC2_GAP_ANALYSIS.md, docs/PLUGIN_SDK.md, docs/adr/, docs/history/, docs/estado/ nem os demais docs/pendencias/_ individualmente — ficaram fora do escopo de tokens. Os enums de regras-dominio.md nao foram conferidos contra o banco (MCP com token invalido), apenas os caminhos de codigo que ele cita.
+**Cobertura declarada:** Lidos integralmente AGENTS.md (153 linhas), CLAUDE.md, README.md, README_PT.md, ESTADO_ATUAL.md (331 linhas) e os 6 arquivos de docs/agentes/ (646 linhas); lidos parcialmente docs/pendencias/_ordem.md, docs/pendencias/*linha-de-base.md, docs/ROADMAP.md, docs/qa/01-INVENTARIO.md e CONTRIBUTING.md. Cada afirmacao numerica ou de caminho foi confrontada com o artefato real: supabase/config.toml, package.json, vite.config.ts, vitest.config.ts, vercel.json, os 10 arquivos de .github/workflows/, supabase/functions/ (249 diretorios), supabase/migrations/ (178 .sql), scripts/ (12 .mjs + 8 subpastas), src/routes/, src/pages/, .i18n-hardcoded-baseline.json e public/openapi.json. Executei `npm run build` (falha por env) e `npx vite build` com envs dummy (exit 0, 45s) para testar as afirmacoes de build dos READMEs. NAO auditei docs/ARCHITECTURE.md, docs/OBSERVABILIDADE.md/OBSERVABILITY.md, docs/PLANO*_.md, docs/SECURITY.md, docs/SOC2_GAP_ANALYSIS.md, docs/PLUGIN_SDK.md, docs/adr/, docs/history/, docs/estado/ nem os demais docs/pendencias/_ individualmente — ficaram fora do escopo de tokens. Os enums de regras-dominio.md nao foram conferidos contra o banco (MCP com token invalido), apenas os caminhos de codigo que ele cita.
 
 Itens inventariados:
 
