@@ -47,6 +47,7 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
   });
 
   const createRomaneioMutation = useMutation({
+    retry: 0,
     mutationFn: shippingService.criarRomaneio,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
