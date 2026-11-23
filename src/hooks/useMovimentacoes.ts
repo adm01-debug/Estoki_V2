@@ -5,7 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { movimentacaoService } from "@/services/movimentacaoService";
 import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from "@/types/movimentacao";
 
-export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
+export function useMovimentacoes(options?: {
+  enableRealtime?: boolean;
+  pageSize?: number;
+  dataInicio?: Date;
+  dataFim?: Date;
+}) {
+  const { pageSize: pageSizeConfig, dataInicio, dataFim } = options ?? {};
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,26 +20,29 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const subscriptionRef = useRef<any>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchMovimentacoes = useCallback(async (page = 1, pageSize = 50) => {
-    try {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+  const fetchMovimentacoes = useCallback(
+    async (page = 1, pageSize = pageSizeConfig ?? 50) => {
+      try {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+
+        setLoading(true);
+        setError(null);
+
+        const result = await movimentacaoService.getAll({ page, pageSize, dataInicio, dataFim });
+        setMovimentacoes(result.data);
+      } catch (err) {
+        if ((err as any).name === "AbortError") return;
+        const message = err instanceof Error ? err.message : "Erro ao buscar movimentações";
+        setError(message);
+      } finally {
+        setLoading(false);
       }
-      abortControllerRef.current = new AbortController();
-
-      setLoading(true);
-      setError(null);
-
-      const result = await movimentacaoService.getAll({ page, pageSize });
-      setMovimentacoes(result.data);
-    } catch (err) {
-      if ((err as any).name === "AbortError") return;
-      const message = err instanceof Error ? err.message : "Erro ao buscar movimentações";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [pageSizeConfig, dataInicio, dataFim]
+  );
 
   useEffect(() => {
     fetchMovimentacoes();

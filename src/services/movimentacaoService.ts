@@ -3,22 +3,30 @@ import { logger } from "@/utils/logger";
 import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from "@/types/movimentacao";
 
 export const movimentacaoService = {
-  async getAll(options?: { page?: number; pageSize?: number }) {
-    const { page = 1, pageSize = 50 } = options || {};
+  async getAll(options?: {
+    page?: number;
+    pageSize?: number;
+    dataInicio?: Date | string;
+    dataFim?: Date | string;
+  }) {
+    const { page = 1, pageSize = 50, dataInicio, dataFim } = options || {};
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const { data, error, count } = await supabase
-      .from("rastreamento_historico")
-      .select(
-        `
+    let query = supabase.from("rastreamento_historico").select(
+      `
         *,
         produtos (nome),
         lotes (numero_lote),
         profiles:operador_id (nome)
       `,
-        { count: "exact" }
-      )
+      { count: "exact" }
+    );
+
+    if (dataInicio) query = query.gte("created_at", new Date(dataInicio).toISOString());
+    if (dataFim) query = query.lte("created_at", new Date(dataFim).toISOString());
+
+    const { data, error, count } = await query
       .order("created_at", { ascending: false })
       .range(from, to);
 

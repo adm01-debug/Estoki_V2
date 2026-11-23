@@ -73,7 +73,6 @@ const CHART_COLORS: Record<string, string> = {
 };
 
 export default function RelatoriosPage() {
-  const { movimentacoes, loading } = useMovimentacoes();
   const { log } = useAuditLog();
   const [operadorFiltro, setOperadorFiltro] = useState<string>("todos");
   const [metaDiaria, setMetaDiaria] = useState<number>(100);
@@ -81,6 +80,9 @@ export default function RelatoriosPage() {
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
   const [dataInicio, setDataInicio] = useState<Date>(subDays(new Date(), 30));
   const [dataFim, setDataFim] = useState<Date>(new Date());
+  // O periodo selecionado precisa ir para a consulta: sem isso os KPIs de 30 dias
+  // eram calculados sobre as 50 movimentacoes mais recentes (E-155)
+  const { movimentacoes, loading } = useMovimentacoes({ pageSize: 500, dataInicio, dataFim });
   const [exportando, setExportando] = useState(false);
   const [comparar, setComparar] = useState(false);
   const [reportTab, setReportTab] = useState("movimentacoes");
