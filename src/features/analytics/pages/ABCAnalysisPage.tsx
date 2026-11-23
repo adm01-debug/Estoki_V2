@@ -5,6 +5,7 @@ import { PageTransition } from "@/components/layout/PageTransition";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCurvaABC } from "../hooks/useCurvaABC";
+import { toast } from "sonner";
 import { RefreshCw, Loader2 } from "lucide-react";
 import { ABCStatsCards } from "@/components/analytics/abc/ABCStatsCards";
 import { ABCCharts } from "@/components/analytics/abc/ABCCharts";
@@ -20,8 +21,13 @@ export default function CurvaABCPage() {
 
   const handleRecalcular = async () => {
     setRecalculando(true);
-    await recalcular();
-    setRecalculando(false);
+    try {
+      await recalcular();
+    } catch {
+      toast.error("Não foi possível atualizar a curva ABC");
+    } finally {
+      setRecalculando(false);
+    }
   };
 
   return (
@@ -38,7 +44,8 @@ export default function CurvaABCPage() {
               <div>
                 <h2 className="text-lg font-semibold">Análise Curva ABC</h2>
                 <p className="text-sm text-muted-foreground">
-                  Classificação de produtos por valor e giro
+                  Classificação recalculada no navegador por giro de saída e peso unitário (proxy de
+                  valor) — não é gravada em produtos
                 </p>
               </div>
               <Button onClick={handleRecalcular} disabled={recalculando} className="gap-2">
@@ -47,7 +54,7 @@ export default function CurvaABCPage() {
                 ) : (
                   <RefreshCw className="h-4 w-4" />
                 )}
-                Recalcular
+                Atualizar
               </Button>
             </div>
 

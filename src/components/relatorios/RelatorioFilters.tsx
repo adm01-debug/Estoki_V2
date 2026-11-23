@@ -27,6 +27,11 @@ interface RelatorioFiltersProps {
   setDataInicio: (d: Date) => void;
   dataFim: Date;
   setDataFim: (d: Date) => void;
+  operadorFiltro: string;
+  setOperadorFiltro: (v: string) => void;
+  operadores: { id: string; nome: string }[];
+  metaDiaria: number;
+  setMetaDiaria: (v: number) => void;
 }
 
 export function RelatorioFilters({
@@ -38,6 +43,11 @@ export function RelatorioFilters({
   setDataInicio,
   dataFim,
   setDataFim,
+  operadorFiltro,
+  setOperadorFiltro,
+  operadores,
+  metaDiaria,
+  setMetaDiaria,
 }: RelatorioFiltersProps) {
   return (
     <Card>
@@ -48,7 +58,7 @@ export function RelatorioFilters({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
           <div className="space-y-1.5">
             <Label className="text-xs">Buscar</Label>
             <div className="relative">
@@ -76,6 +86,31 @@ export function RelatorioFilters({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Operador</Label>
+            <Select value={operadorFiltro} onValueChange={setOperadorFiltro}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos</SelectItem>
+                {operadores.map((operador) => (
+                  <SelectItem key={operador.id} value={operador.id}>
+                    {operador.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Meta diária (un.)</Label>
+            <Input
+              type="number"
+              min={0}
+              value={metaDiaria}
+              onChange={(e) => setMetaDiaria(Number(e.target.value) || 0)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Data Início</Label>

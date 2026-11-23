@@ -82,10 +82,11 @@ export default function PrevisaoDemandaIA() {
 
   const calcularPrevisao = async (produto: Produto): Promise<Previsao> => {
     // Buscar estoque atual
-    const { data: estoque } = await supabase
+    const { data: estoque, error: estoqueError } = await supabase
       .from("estoque_posicao")
       .select("quantidade")
       .eq("produto_id", produto.id);
+    if (estoqueError) throw estoqueError;
     const estoqueAtual = (estoque || []).reduce((s, e) => s + e.quantidade, 0);
 
     // Usar giro mensal como base
@@ -152,10 +153,16 @@ export default function PrevisaoDemandaIA() {
       return;
     }
     setLoading(true);
-    const produto = produtos.find((p) => p.id === selectedProduto)!;
-    const prev = await calcularPrevisao(produto);
-    setPrevisao(prev);
-    setLoading(false);
+    try {
+      const produto = produtos.find((p) => p.id === selectedProduto);
+      if (!produto) throw new Error("Produto não encontrado na lista carregada");
+      const prev = await calcularPrevisao(produto);
+      setPrevisao(prev);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao calcular a estimativa");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePreverTodos = async () => {
@@ -174,7 +181,9 @@ export default function PrevisaoDemandaIA() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">📊 Previsão de Demanda IA</h1>
-          <p className="text-sm text-muted-foreground">Análise preditiva avançada com Lovable AI</p>
+          <p className="text-sm text-muted-foreground">
+            Recomendações por IA (Lovable) e estimativa heurística local de giro e sazonalidade
+          </p>
         </div>
         <Button onClick={handlePreverTodos} disabled={loadingIA} variant="outline">
           <Brain className={`mr-2 h-4 w-4 ${loadingIA ? "animate-pulse" : ""}`} />
@@ -203,6 +212,11 @@ export default function PrevisaoDemandaIA() {
               {loading ? "Calculando..." : "Prever"}
             </Button>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            A estimativa do botão Prever é heurística: giro mensal do cadastro (padrão 30 un/mês
+            quando ausente) x fator sazonal médio do mês. Para previsão com IA use o botão Análise
+            Global IA.
+          </p>
         </CardContent>
       </Card>
 
