@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +43,11 @@ const statusEntregaConfig: Record<
 interface RomaneioDetalhesDialogProps {
   romaneio: Romaneio | null;
   onClose: () => void;
-  onFinalizarEntrega: (romaneioId: string, itemId: string, status: StatusEntrega) => void;
+  onFinalizarEntrega: (
+    romaneioId: string,
+    itemId: string,
+    status: StatusEntrega
+  ) => Promise<void> | void;
 }
 
 export function RomaneioDetalhesDialog({
@@ -50,9 +55,20 @@ export function RomaneioDetalhesDialog({
   onClose,
   onFinalizarEntrega,
 }: RomaneioDetalhesDialogProps) {
+  const [entregandoItemId, setEntregandoItemId] = useState<string | null>(null);
+
   if (!romaneio) return null;
 
   const config = statusConfig[romaneio.status as StatusRomaneio];
+
+  const finalizarEntrega = async (itemId: string, status: StatusEntrega) => {
+    setEntregandoItemId(itemId);
+    try {
+      await onFinalizarEntrega(romaneio.id, itemId, status);
+    } finally {
+      setEntregandoItemId(null);
+    }
+  };
 
   return (
     <Dialog open={!!romaneio} onOpenChange={() => onClose()}>
@@ -119,14 +135,16 @@ export function RomaneioDetalhesDialog({
                               <Button
                                 size="sm"
                                 variant="default"
-                                onClick={() => onFinalizarEntrega(romaneio.id, item.id, "entregue")}
+                                disabled={entregandoItemId === item.id}
+                                onClick={() => finalizarEntrega(item.id, "entregue")}
                               >
                                 Entregue
                               </Button>
                               <Button
                                 size="sm"
                                 variant="destructive"
-                                onClick={() => onFinalizarEntrega(romaneio.id, item.id, "recusado")}
+                                disabled={entregandoItemId === item.id}
+                                onClick={() => finalizarEntrega(item.id, "recusado")}
                               >
                                 Recusado
                               </Button>

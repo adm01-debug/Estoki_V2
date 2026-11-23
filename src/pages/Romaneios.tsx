@@ -101,7 +101,8 @@ export default function RomaneiosPage() {
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [romaneioSelecionado, setRomaneioSelecionado] = useState<Romaneio | null>(null);
+  const [romaneioSelecionadoId, setRomaneioSelecionadoId] = useState<string | null>(null);
+  const romaneioSelecionado = romaneios.find((r) => r.id === romaneioSelecionadoId) ?? null;
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -440,7 +441,7 @@ export default function RomaneiosPage() {
                             <Button
                               variant="outline"
                               className="h-9 flex-1 border shadow-sm"
-                              onClick={() => setRomaneioSelecionado(romaneio)}
+                              onClick={() => setRomaneioSelecionadoId(romaneio.id)}
                             >
                               Detalhes
                             </Button>
@@ -529,7 +530,7 @@ export default function RomaneiosPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setRomaneioSelecionado(romaneio)}
+                            onClick={() => setRomaneioSelecionadoId(romaneio.id)}
                           >
                             Gerenciar
                           </Button>
@@ -565,7 +566,7 @@ export default function RomaneiosPage() {
         />
         <RomaneioDetalhesDialog
           romaneio={romaneioSelecionado}
-          onClose={() => setRomaneioSelecionado(null)}
+          onClose={() => setRomaneioSelecionadoId(null)}
           onFinalizarEntrega={(rid, iid, status) => registrarEntrega(rid, iid, status)}
         />
       </div>
