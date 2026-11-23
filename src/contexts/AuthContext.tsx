@@ -13,7 +13,7 @@ interface AuthContextType {
   roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, nome: string) => Promise<{ error: Error | null }>;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<{ error: Error | null }>;
   updateProfile: (
     updates: Partial<Pick<Profile, "nome" | "avatar_url" | "departamento">>
   ) => Promise<{ error: Error | null }>;
@@ -115,11 +115,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const res = await supabase.auth.signOut();
+    const { error } = (res ?? { error: null }) as { error: Error | null };
+    if (error) {
+      // Rede caida ou revoke global falhou: encerra ao menos a sessao local.
+      const localRes = await supabase.auth.signOut({ scope: "local" });
+      const local = (localRes ?? { error: null }) as { error: Error | null };
+      if (local.error) {
+        return { error: local.error as Error };
+      }
+    }
     setUser(null);
     setSession(null);
     setProfile(null);
     setRole(null);
+    return { error: null };
   };
 
   const refreshProfile = useCallback(async () => {

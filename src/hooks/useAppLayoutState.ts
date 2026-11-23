@@ -42,8 +42,10 @@ export function useAppLayoutState() {
   }, [navigate, location.pathname]);
 
   const handleLogout = useCallback(async () => {
-    await signOut();
-    navigate("/auth");
+    const { error } = await signOut();
+    if (!error) {
+      navigate("/auth");
+    }
   }, [signOut, navigate]);
 
   const handleNavigate = useCallback(
