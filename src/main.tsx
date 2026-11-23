@@ -11,10 +11,9 @@ import { initSentry } from "./lib/sentry";
 setupGlobalErrorHandler();
 initSentry();
 
-// Suppress noisy errors
+// Report unhandled promise rejections (não silencia: deixa o console do navegador imprimir)
 window.addEventListener("unhandledrejection", (event) => {
   console.error("[Unhandled Promise]", event.reason);
-  event.preventDefault();
 });
 
 window.addEventListener("error", (event) => {
