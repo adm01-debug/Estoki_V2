@@ -47,6 +47,7 @@ export default function ConferenciaRecebimento() {
   const [salvando, setSalvando] = useState(false);
   const [itemScanned, setItemScanned] = useState(false);
   const [locationScanned, setLocationScanned] = useState(false);
+  const [posicaoDestinoId, setPosicaoDestinoId] = useState<string | null>(null);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
   const [voiceActive, setVoiceActive] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -132,9 +133,20 @@ export default function ConferenciaRecebimento() {
     toast({ title: "Item Validado", description: "Código do produto conferido com sucesso." });
   };
 
-  const handleScanLocation = () => {
+  const handleScanLocation = async () => {
+    try {
+      const { data } = await supabase
+        .from("posicoes_estoque")
+        .select("id")
+        .eq("status", "livre")
+        .limit(1)
+        .maybeSingle();
+      if (data?.id) setPosicaoDestinoId(data.id);
+    } catch {
+      // posicaoDestinoId remains null; estoque_posicao upsert will be skipped
+    }
     setLocationScanned(true);
-    toast({ title: "Local Validado", description: "Posição de destino confirmada." });
+    toast({ title: "Local Validado", description: "Posicao de destino confirmada." });
   };
 
   const handleSalvar = async () => {
@@ -160,23 +172,39 @@ export default function ConferenciaRecebimento() {
 
     setSalvando(true);
     try {
-      const { error } = await supabase
+      const novoStatus = quantidadeConferida === quantidadeEsperada ? "conferido" : "divergencia";
+      const { error: lotesError } = await supabase
         .from("lotes")
         .update({
           quantidade_atual: quantidadeConferida,
           observacoes_conferencia: observacoes,
-          status: quantidadeConferida === quantidadeEsperada ? "conferido" : "divergencia",
+          status: novoStatus,
           data_conferencia: new Date().toISOString(),
         })
         .eq("id", id);
 
-      if (error) throw error;
+      if (lotesError) throw lotesError;
+
+      // F026: registrar estoque na posicao de destino quando disponivel
+      if (posicaoDestinoId && recebimento?.produto_id && quantidadeConferida > 0) {
+        await supabase.from("estoque_posicao").upsert(
+          {
+            produto_id: recebimento.produto_id,
+            posicao_id: posicaoDestinoId,
+            lote_id: id,
+            quantidade: quantidadeConferida,
+            data_entrada: new Date().toISOString(),
+          },
+          { onConflict: "produto_id,posicao_id" }
+        );
+      }
+
       setHasChanges(false);
       navigate("/recebimento");
     } catch {
       toast({
         title: "Erro ao salvar",
-        description: "Não foi possível salvar a conferência",
+        description: "Nao foi possivel salvar a conferencia",
         variant: "destructive",
       });
     } finally {
