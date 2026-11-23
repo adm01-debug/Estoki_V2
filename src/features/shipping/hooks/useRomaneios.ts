@@ -3,7 +3,13 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { shippingService } from "../services/shippingService";
-import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
+import type {
+  Romaneio,
+  RomaneioInput,
+  RomaneioItemInput,
+  StatusRomaneio,
+  StatusEntrega,
+} from "../types";
 export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega };
 
 export function useRomaneios(options?: { enableRealtime?: boolean }) {
@@ -48,7 +54,8 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
 
   const createRomaneioMutation = useMutation({
     retry: 0,
-    mutationFn: shippingService.criarRomaneio,
+    mutationFn: ({ input, itens }: { input: RomaneioInput; itens?: RomaneioItemInput[] }) =>
+      shippingService.criarRomaneio(input, itens),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       toast.success("Romaneio criado com sucesso!");
@@ -103,8 +110,10 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     loading: isLoading,
     error,
     refetch,
-    createRomaneio: createRomaneioMutation.mutate,
-    criarRomaneio: createRomaneioMutation.mutate,
+    createRomaneio: (input: RomaneioInput, itens?: RomaneioItemInput[]) =>
+      createRomaneioMutation.mutateAsync({ input, itens }),
+    criarRomaneio: (input: RomaneioInput, itens?: RomaneioItemInput[]) =>
+      createRomaneioMutation.mutateAsync({ input, itens }),
     criandoRomaneio: createRomaneioMutation.isPending,
     updateStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),

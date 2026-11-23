@@ -1,7 +1,7 @@
 import { RomaneiosCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
-import { romaneioSchema, validateForm } from "@/lib/validations";
+import { romaneioItemSchema, romaneioSchema, validateForm } from "@/lib/validations";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageLoader, ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent } from "@/components/ui/card";
@@ -48,7 +48,10 @@ import {
   RefreshCw,
   Package,
 } from "lucide-react";
-import { NovoRomaneioDialog } from "@/components/romaneios/NovoRomaneioDialog";
+import {
+  NovoRomaneioDialog,
+  type RomaneioItemDraft,
+} from "@/components/romaneios/NovoRomaneioDialog";
 import { RomaneioDetalhesDialog } from "@/components/romaneios/RomaneioDetalhesDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -85,6 +88,13 @@ const statusConfig: Record<
   cancelado: { label: "Cancelado", color: "bg-red-500", icon: <XCircle className="h-4 w-4" /> },
 };
 
+const itemVazio: RomaneioItemDraft = {
+  cliente: "",
+  endereco_entrega: "",
+  quantidade: "1",
+  peso_kg: "",
+};
+
 export default function RomaneiosPage() {
   const {
     romaneios,
@@ -115,6 +125,8 @@ export default function RomaneiosPage() {
     data_prevista_entrega: "",
     rota: "",
   });
+  const [itensRomaneio, setItensRomaneio] = useState<RomaneioItemDraft[]>([]);
+  const [itemErrors, setItemErrors] = useState<Record<string, string>>({});
 
   const romaneiosFiltrados = romaneios.filter((r) => {
     const matchStatus = filtroStatus === "todos" || r.status === filtroStatus;
@@ -149,9 +161,39 @@ export default function RomaneiosPage() {
       setFormErrors(validation.errors);
       return;
     }
+
+    if (itensRomaneio.length === 0) {
+      setFormErrors({ itens: "Adicione ao menos um item ao romaneio" });
+      return;
+    }
+
+    const errosItens: Record<string, string> = {};
+    itensRomaneio.forEach((item, index) => {
+      const itemValidation = validateForm(romaneioItemSchema, item);
+      if (!itemValidation.success) {
+        Object.entries(itemValidation.errors).forEach(([field, message]) => {
+          errosItens[`${index}.${field}`] = message;
+        });
+      }
+    });
+    if (Object.keys(errosItens).length > 0) {
+      setItemErrors(errosItens);
+      setFormErrors({ itens: "Corrija os itens destacados" });
+      return;
+    }
+
     setFormErrors({});
+    setItemErrors({});
     try {
-      await criarRomaneio(novoRomaneio);
+      await criarRomaneio(
+        novoRomaneio,
+        itensRomaneio.map((item) => ({
+          cliente: item.cliente,
+          endereco_entrega: item.endereco_entrega,
+          quantidade: Number(item.quantidade),
+          peso_kg: item.peso_kg === "" ? undefined : Number(item.peso_kg),
+        }))
+      );
       setNovoRomaneioOpen(false);
       setNovoRomaneio({
         motorista: "",
@@ -160,6 +202,7 @@ export default function RomaneiosPage() {
         data_prevista_entrega: "",
         rota: "",
       });
+      setItensRomaneio([]);
     } catch {
       // Submission error handled by toast notifications
     }
@@ -168,6 +211,23 @@ export default function RomaneiosPage() {
   const handleFieldChange = (field: string, value: string) => {
     setNovoRomaneio((prev) => ({ ...prev, [field]: value }));
     setFormErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleAddItem = () => {
+    setItensRomaneio((prev) => [...prev, { ...itemVazio }]);
+    setFormErrors((prev) => ({ ...prev, itens: "" }));
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setItensRomaneio((prev) => prev.filter((_, i) => i !== index));
+    setItemErrors({});
+  };
+
+  const handleItemChange = (index: number, field: keyof RomaneioItemDraft, value: string) => {
+    setItensRomaneio((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+    setItemErrors((prev) => ({ ...prev, [`${index}.${field}`]: "" }));
   };
 
   if (loading)
@@ -550,6 +610,11 @@ export default function RomaneiosPage() {
           novoRomaneio={novoRomaneio}
           formErrors={formErrors}
           onFieldChange={handleFieldChange}
+          itens={itensRomaneio}
+          itemErrors={itemErrors}
+          onItemChange={handleItemChange}
+          onAddItem={handleAddItem}
+          onRemoveItem={handleRemoveItem}
           onSubmit={handleCriarRomaneio}
           isSubmitting={criandoRomaneio}
         />

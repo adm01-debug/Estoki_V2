@@ -66,6 +66,16 @@ export const romaneioSchema = z.object({
 
 export type RomaneioFormData = z.infer<typeof romaneioSchema>;
 
+// ── Item de Romaneio ──
+export const romaneioItemSchema = z.object({
+  cliente: z.string().trim().min(2, msg.min(2)).max(200, msg.max(200)),
+  endereco_entrega: z.string().trim().min(5, msg.min(5)).max(300, msg.max(300)),
+  quantidade: z.coerce.number().int().min(1, msg.positive),
+  peso_kg: z.coerce.number().min(0, msg.nonNegative).optional(),
+});
+
+export type RomaneioItemFormData = z.infer<typeof romaneioItemSchema>;
+
 // ── Helper: extract field errors from ZodError ──
 export function extractZodErrors(err: z.ZodError): Record<string, string> {
   const errors: Record<string, string> = {};
