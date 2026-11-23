@@ -97,8 +97,10 @@ function loadEnvConfig(): EnvironmentConfig {
 export const envConfig = loadEnvConfig();
 
 // Helpers
-export const isProduction = () => envConfig.name === "production";
-export const isDevelopment = () => envConfig.name === "development";
+// `import.meta.env.PROD` é o modo do Vite: true quando o build roda em modo produção,
+// mesmo que VITE_APP_ENV não esteja definido (é o que derrubava o reporte de erro em prod).
+export const isProduction = () => envConfig.name === "production" || import.meta.env.PROD;
+export const isDevelopment = () => envConfig.name === "development" || import.meta.env.DEV;
 export const isStaging = () => envConfig.name === "staging";
 
 // Validar configuração obrigatória

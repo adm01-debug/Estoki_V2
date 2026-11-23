@@ -6,6 +6,7 @@
 import { envConfig, isProduction } from "./environment";
 
 import { logger } from "../utils/logger";
+import { captureException } from "../lib/sentry";
 
 // Tipos de erro
 export enum ErrorCode {
@@ -140,18 +141,18 @@ export function isAppError(error: unknown): error is AppError {
 
 // Log de erro (dev: console, prod: serviço externo)
 export async function logError(error: AppError): Promise<void> {
-  // Sempre logar no console em dev
-  if (!isProduction()) {
+  // Sempre reportar o erro ao serviço externo em produção.
+  captureException(error, error.context);
+
+  // Em dev também imprime no console com o contexto completo.
+  if (import.meta.env.DEV) {
     console.error("[ERROR]", {
       code: error.code,
       message: error instanceof Error ? error.message : String(error),
       context: error.context,
       stack: error.stack,
     });
-    return;
   }
-
-  logger.error(`[${error.code}] ${error.message}`, error, error.context as Record<string, unknown>);
 }
 
 // Handler global para erros não capturados
