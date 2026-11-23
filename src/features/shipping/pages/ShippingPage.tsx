@@ -34,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,8 +45,9 @@ import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
 import { VolumeChecklist } from "../components/VolumeChecklist";
 
 export default function ShippingPage() {
-  const { romaneios, loading, error, refetch, atualizarStatus } = useRomaneios();
+  const { romaneios, loading, error, refetch, atualizarStatus, cancelarRomaneio } = useRomaneios();
   const [searchTerm, setSearchTerm] = useState("");
+  const [romaneioCancelar, setRomaneioCancelar] = useState<any | null>(null);
 
   const getStatusBadge = (status: StatusRomaneio) => {
     switch (status) {
@@ -76,6 +78,12 @@ export default function ShippingPage() {
       r.motorista?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       r.placa_veiculo?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleCancelarRomaneio = async () => {
+    if (!romaneioCancelar) return;
+    await cancelarRomaneio(romaneioCancelar.id);
+    setRomaneioCancelar(null);
+  };
 
   const stats = {
     total: romaneios.length,
@@ -254,7 +262,10 @@ export default function ShippingPage() {
                               <DropdownMenuItem>
                                 <QrCode className="mr-2 h-4 w-4" /> Gerar QR Codes
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => setRomaneioCancelar(r)}
+                              >
                                 <AlertCircle className="mr-2 h-4 w-4" /> Cancelar
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -347,6 +358,17 @@ export default function ShippingPage() {
           </Tabs>
         </div>
       </PageTransition>
+      <ConfirmDialog
+        open={!!romaneioCancelar}
+        onOpenChange={(open) => {
+          if (!open) setRomaneioCancelar(null);
+        }}
+        onConfirm={handleCancelarRomaneio}
+        title="Cancelar romaneio"
+        description="Esta ação cancela a rota do romaneio e não pode ser desfeita. Deseja continuar?"
+        confirmLabel="Cancelar romaneio"
+        variant="destructive"
+      />
     </AppLayout>
   );
 }

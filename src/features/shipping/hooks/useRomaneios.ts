@@ -71,6 +71,19 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     },
   });
 
+  const cancelarRomaneioMutation = useMutation({
+    mutationFn: async ({ id, motivo }: { id: string; motivo?: string }) => {
+      return shippingService.cancelarRomaneio(id, motivo);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      toast.success("Romaneio cancelado!");
+    },
+    onError: (err: Error) => {
+      toast.error(`Erro ao cancelar romaneio: ${err.message}`);
+    },
+  });
+
   const confirmarRomaneioMutation = useMutation({
     mutationFn: async (id: string) => {
       return shippingService.confirmarRomaneio(id);
@@ -96,6 +109,8 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     updateStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
     confirmarRomaneio: (id: string) => confirmarRomaneioMutation.mutate(id),
+    cancelarRomaneio: (id: string, motivo?: string) =>
+      cancelarRomaneioMutation.mutate({ id, motivo }),
     atualizarStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
     registrarEntrega: async (
