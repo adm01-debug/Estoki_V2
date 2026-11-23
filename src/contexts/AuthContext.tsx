@@ -10,6 +10,7 @@ interface AuthContextType {
   profile: Profile | null;
   role: AppRole | null;
   loading: boolean;
+  roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, nome: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -29,8 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
   const [loading, setLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(false);
 
   const fetchUserData = useCallback(async (userId: string) => {
+    setRoleLoading(true);
     try {
       const { profile: userProfile, role: userRole } = await authService.getUserData(userId);
       if (userProfile) setProfile(userProfile);
@@ -39,6 +42,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       logger.error("Erro ao sincronizar dados do usuário:", error);
       return { profile: null, role: null };
+    } finally {
+      setRoleLoading(false);
     }
   }, []);
 
@@ -58,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (currentSession?.user) {
         // Defer Supabase calls to avoid the known deadlock when invoked
         // synchronously inside the auth state change callback.
+        setRoleLoading(true);
         setTimeout(() => {
           if (mounted) {
             void fetchUserData(currentSession.user.id);
@@ -66,6 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(null);
         setRole(null);
+        setRoleLoading(false);
       }
 
       // Any auth event (including INITIAL_SESSION) means hydration is done.
@@ -154,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         profile,
         role,
         loading,
+        roleLoading,
         signIn,
         signUp,
         signOut,
