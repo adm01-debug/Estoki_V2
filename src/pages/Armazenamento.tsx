@@ -254,7 +254,7 @@ const ArmazenamentoPage = () => {
       const success = await registrarEntrada(
         item.produtoId,
         item.quantidade,
-        posicaoSelecionada.codigo,
+        posicaoSelecionada.id,
         item.loteId,
         `Armazenamento inteligente - SKU: ${item.sku}`
       );
