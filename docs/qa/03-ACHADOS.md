@@ -21,11 +21,9 @@
 > arquivo. Os achados marcados abaixo com `✔ 2ª leitura` passaram por esse crivo; os demais têm só a
 > evidência do primeiro auditor.
 
-
 ---
 
 # 🔴 Crítica — 74 achados
-
 
 ## F001 — Rebaixar papel é impossível: a tela só faz INSERT, nunca remove o papel antigo
 
@@ -48,7 +46,7 @@
 ## F003 — O último GRANT em migration tira EXECUTE de log_audit_event do papel authenticated, mas o front chama a RPC direto do navegador
 
 - **Camada:** Administracao · **Severidade:** Critica · **Confiança:** hipotese · **Verificação:** RASTREADO
-- **Evidência:** supabase/migrations/20260712232041_*.sql:8 `REVOKE EXECUTE ON FUNCTION public.log_audit_event(...) FROM PUBLIC, anon, authenticated;` e :16 GRANT só para service_role. É a última migration que toca a função (nenhum arquivo posterior a 20260712232041 a menciona). A função é SECURITY INVOKER (supabase/migrations/20260619152232_*.sql:33-80). Chamadas do browser: src/services/auditService.ts:83, src/hooks/useTelemetry.ts:32, src/lib/monitoring.ts:22.
+- **Evidência:** supabase/migrations/20260712232041__.sql:8 `REVOKE EXECUTE ON FUNCTION public.log_audit_event(...) FROM PUBLIC, anon, authenticated;` e :16 GRANT só para service_role. É a última migration que toca a função (nenhum arquivo posterior a 20260712232041 a menciona). A função é SECURITY INVOKER (supabase/migrations/20260619152232__.sql:33-80). Chamadas do browser: src/services/auditService.ts:83, src/hooks/useTelemetry.ts:32, src/lib/monitoring.ts:22.
 - **Locais (4):** `supabase/migrations/20260712232041_ca8dfdf7-578a-43e8-a1fa-80fe5aa0bb16.sql:8`, `src/services/auditService.ts:82-97`, `src/lib/monitoring.ts:22-29`, `src/hooks/useTelemetry.ts:30-39`
 - **Causa raiz:** Endurecimento de SECURITY DEFINER aplicado em lote sobre uma função que, apesar do nome na lista, é SECURITY INVOKER e é chamada pelo cliente autenticado.
 - **Impacto no negócio:** Se a migration estiver aplicada em produção, toda escrita de auditoria feita pelo navegador falha com 42501 — a trilha de auditoria fica vazia para ações de produto, estoque e relatórios, e o painel /admin/auditoria mostra uma operação que parece não ter acontecido. Em monitoring.ts o erro é só logado; em useTelemetry.ts é engolido em silêncio.
@@ -102,7 +100,7 @@
 ## F009 — RLS de romaneios exige responsavel_id, que o código nunca grava: operador vê lista vazia e supervisor/admin não têm bloqueio nenhum
 
 - **Camada:** Expedicao · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** A policy de SELECT é 'Staff or assigned driver can view romaneios' USING (has_role admin OR has_role supervisor OR responsavel_id = auth.uid()) (supabase/migrations/20260713105350_*.sql:4-11), e a antiga policy aberta foi derrubada (supabase/migrations/20260713124545_*.sql:1). O INSERT de criarRomaneio não envia responsavel_id (src/features/shipping/services/shippingService.ts:57-70) e grep -rn 'responsavel_id' em src não acha nenhuma escrita em romaneios (só inventario_ciclos). Nenhuma migration tem trigger que preencha a coluna.
+- **Evidência:** A policy de SELECT é 'Staff or assigned driver can view romaneios' USING (has_role admin OR has_role supervisor OR responsavel_id = auth.uid()) (supabase/migrations/20260713105350__.sql:4-11), e a antiga policy aberta foi derrubada (supabase/migrations/20260713124545__.sql:1). O INSERT de criarRomaneio não envia responsavel_id (src/features/shipping/services/shippingService.ts:57-70) e grep -rn 'responsavel_id' em src não acha nenhuma escrita em romaneios (só inventario_ciclos). Nenhuma migration tem trigger que preencha a coluna.
 - **Locais (3):** `/home/user/Estoki_V2/supabase/migrations/20260713105350_d9d31578-c39f-4e12-94dc-dfd638e13e55.sql:4-11`, `/home/user/Estoki_V2/src/features/shipping/services/shippingService.ts:57-70`, `/home/user/Estoki_V2/supabase/migrations/20260317222315_eba763e3-4ed6-47d3-a81e-978955f1bbee.sql:252-256`
 - **Causa raiz:** A RLS foi desenhada em torno de responsavel_id (FK para profiles) mas o formulário só captura 'motorista' como texto livre (src/components/romaneios/NovoRomaneioDialog.tsx:50-57). Motorista e responsável nunca se cruzam.
 - **Impacto no negócio:** Operador abre /romaneios e vê 'Nenhum romaneio atende aos filtros' mesmo com romaneios na base — vai concluir que o sistema perdeu as cargas. E o caminho 'motorista vê a própria rota', que justifica a policy, está morto: nenhum motorista enxerga ou registra nada.
@@ -228,7 +226,7 @@
 ## F023 — Única entrada de saldo viva sempre falha: registrarEntrada nunca envia posição de destino
 
 - **Camada:** Produtos e estoque · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** src/pages/Armazenamento.tsx:251-256 chama registrarEntrada(produtoId, quantidade, posicaoSelecionada.codigo, loteId). src/hooks/useMovimentacoes.ts:105-120 monta {tipo:'recebimento_nf', produto_id, lote_id, quantidade, localizacao, descricao} — sem from_posicao_id nem to_posicao_id. src/services/movimentacaoService.ts:53-61 repassa à RPC apenas p_from_posicao_id/p_to_posicao_id (ambos null) e descarta produto_id e localizacao. move_stock aborta: supabase/migrations/20260619152035_0550e51e-8155-46a7-a362-b07422016f27.sql:142-144 'Informe posição de origem ou destino'. Confirmado em teste existente que o cliente envia recebimento_nf sem posição: src/services/__tests__/movimentacaoService.test.ts:104-115 (EXECUTADO: 13 testes passam, mas a RPC está mockada, então o guard do servidor não é exercido).
+- **Evidência:** src/pages/Armazenamento.tsx:251-256 chama registrarEntrada(produtoId, quantidade, posicaoSelecionada.codigo, loteId). src/hooks/useMovimentacoes.ts:105-120 monta {tipo:'recebimento_nf', produto_id, lote_id, quantidade, localizacao, descricao} — sem from_posicao_id nem to_posicao_id. src/services/movimentacaoService.ts:53-61 repassa à RPC apenas p_from_posicao_id/p_to_posicao_id (ambos null) e descarta produto_id e localizacao. move_stock aborta: supabase/migrations/20260619152035_0550e51e-8155-46a7-a362-b07422016f27.sql:142-144 'Informe posição de origem ou destino'. Confirmado em teste existente que o cliente envia recebimento_nf sem posição: src/services/**tests**/movimentacaoService.test.ts:104-115 (EXECUTADO: 13 testes passam, mas a RPC está mockada, então o guard do servidor não é exercido).
 - **Locais (4):** `/home/user/Estoki_V2/src/pages/Armazenamento.tsx:251`, `/home/user/Estoki_V2/src/hooks/useMovimentacoes.ts:105`, `/home/user/Estoki_V2/src/services/movimentacaoService.ts:53`, `/home/user/Estoki_V2/supabase/migrations/20260619152035_0550e51e-8155-46a7-a362-b07422016f27.sql:142`
 - **Causa raiz:** O contrato de MovimentacaoInput tem dois vocabulários conviventes: 'produto_id + localizacao (código textual)' usado pelo hook de entrada, e 'lote_id + from/to_posicao_id (uuid)' exigido pela RPC. O service só conhece o segundo e joga o primeiro no lixo, sem erro de tipo (campos opcionais).
 - **Impacto no negócio:** Não existe nenhum caminho funcional na UI para dar entrada de saldo em uma posição. O produto é cadastrado e fica sem estoque para sempre; o operador vê 'Armazenamento concluído em Xs. Acuracidade garantida' ou um erro cru, dependendo de o lote existir. O WMS não controla estoque.
@@ -475,11 +473,25 @@
 
 - **Camada:** edge-robustez · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** EXECUTADO · **2 auditores relataram**
 - **Evidência:** supabase/functions/reserve-stock/index.ts:13-25 — cria o client e nunca o usa, depois ecoa a entrada:
+
 ```ts
-const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-return new Response(JSON.stringify({ success: true, function: "reserve-stock", timestamp: new Date().toISOString(), ...v.data }), { headers });
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL")!,
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+);
+return new Response(
+  JSON.stringify({
+    success: true,
+    function: "reserve-stock",
+    timestamp: new Date().toISOString(),
+    ...v.data,
+  }),
+  { headers }
+);
 ```
+
 Contagem: `for f in */index.ts; do grep -q 'function: "' && grep -qE '\.\.\.(body|v\.data|__v\.data)' && ! grep -q '\.from(' ; done` -> 100/247. Probe OPTIONS nas 247 (projeto ookjbflsnoefnsixrspc): 94 respondem 200, 153 respondem 404; o cruzamento das duas listas dá 18 stubs deployados.
+
 - **Locais (25):** `supabase/functions/export-products/index.ts:5-27`, `supabase/functions/dashboard-stats/index.ts`, `supabase/functions/abc-analysis/index.ts`, `supabase/functions/import-csv/index.ts`, `supabase/functions/cycle-count/index.ts`, `supabase/functions/reserve-stock/index.ts:17-25`, `supabase/functions/release-stock/index.ts:17-25`, `supabase/functions/receive-purchase-order/index.ts:17-25`, `supabase/functions/stripe-webhook/index.ts:17-25`, `supabase/functions/send-whatsapp/index.ts:17-25`, `supabase/functions/packing-confirm/index.ts:17-25`, `supabase/functions/batch-processor/index.ts:5-10` …
 - **Causa raiz:** As funções foram geradas em massa a partir de um molde (CORS + validateInput + createClient + resposta) e o corpo de negócio nunca foi escrito. O molde já devolve `success: true`, então a função "passa" em qualquer teste de fumaça que só olhe o status HTTP. Nada no CI distingue um stub de uma implementação: `eslint.config.js:17` ignora `supabase/functions/**` e nenhum tsconfig inclui o diretório.
 - **Impacto no negócio:** Dezoito endpoints em produção respondem "deu certo" sem fazer nada. `auth-session-revoke` confirma que revogou a sessão de um usuário sem revogar — quem for desligado continua logado. `expiration-check` é chamada pelo cron diário e reporta sucesso sem checar validade nenhuma. Se alguém ligar `reserve-stock`/`release-stock` na tela de pedidos, o sistema confirmará reservas de estoque que não existem e o saldo físico divergirá do sistema sem nenhum erro no log.
@@ -490,6 +502,7 @@ Contagem: `for f in */index.ts; do grep -q 'function: "' && grep -qE '\.\.\.(bod
 
 - **Camada:** edge-robustez · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** supabase/functions/cron-daily/index.ts:15-20 (o padrão se repete nas 4 tarefas):
+
 ```ts
 try {
   await supabase.from("sessions").delete().lt("expires_at", new Date().toISOString());
@@ -498,11 +511,13 @@ try {
   tasks.failed.push("cleanup_sessions");
 }
 ```
+
 Contrato verificado no pacote instalado, não de memória:
+
 - `node_modules/@supabase/postgrest-js/src/PostgrestBuilder.ts:25` -> `protected shouldThrowOnError = false`; linha 78 -> `this.shouldThrowOnError = builder.shouldThrowOnError ?? false`; os `throw new PostgrestError` nas linhas 408/438/472 estão todos dentro de `if (this.shouldThrowOnError)`.
 - `node_modules/@supabase/functions-js/dist/main/FunctionsClient.js:302-310` -> o `catch` interno devolve `{ data: null, error, response }`; `invoke` nunca rejeita.
 - `grep -rn "throwOnError" supabase/functions/` -> 0 ocorrências.
-Versões: postgrest-js 2.119.2 / functions-js 2.119.2.
+  Versões: postgrest-js 2.119.2 / functions-js 2.119.2.
 - **Locais (8):** `supabase/functions/cron-daily/index.ts:15-20`, `supabase/functions/cron-daily/index.ts:23-28`, `supabase/functions/cron-daily/index.ts:31-36`, `supabase/functions/cron-daily/index.ts:39-44`, `supabase/functions/cron-daily/index.ts:47-53`, `supabase/functions/cron-weekly/index.ts:39-41`, `supabase/functions/cron-weekly/index.ts:43-49`, `supabase/functions/cron-weekly/index.ts:51-57`
 - **Causa raiz:** O código assume que supabase-js lança exceção em erro, como um ORM. Ele não lança: devolve `{ data, error }` e só lança se `.throwOnError()` for chamado explicitamente — o que nenhuma das 247 funções faz. Como nada lança, o `catch` nunca roda, `tasks.failed` nunca recebe item e `tasks.completed` lista todas as tarefas sempre. O mesmo vale para `supabase.functions.invoke`, que engole inclusive erro de rede e HTTP 500.
 - **Impacto no negócio:** O cron diário e o semanal sempre reportam sucesso total, mesmo que todas as tarefas falhem. Se a limpeza de sessões parar, o alerta de estoque parar e a fila de jobs parar, `cron_logs` registra `tasks_failed: 0` e a resposta é `success: true`. O dono não tem como descobrir que a rotina noturna morreu — exatamente o cenário para o qual o log existe. Agrava o achado dos stubs: cron-daily chama `expiration-check`, que é um stub, e registra "expiration_check completed".
@@ -513,6 +528,7 @@ Versões: postgrest-js 2.119.2 / functions-js 2.119.2.
 
 - **Camada:** edge-robustez · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** supabase/functions/reorder-check/index.ts:53-62 — função pública (verify_jwt=false) que grava e nunca checa:
+
 ```ts
 if (suggestions.length > 0) {
   await supabase.from("reorder_suggestions").upsert(
@@ -522,7 +538,9 @@ if (suggestions.length > 0) {
 }
 return new Response(JSON.stringify({ success: true, suggestions }), {...});
 ```
+
 O `upsert` não é desestruturado, então o `{ error }` é jogado fora e a função responde `success: true` com as sugestões que não foram salvas. Varredura (script em /tmp/.../unchecked.mjs: linhas `await supabase` sem `= await`, seguidas de `.insert|.update|.upsert|.delete` em até 12 linhas): 75 ocorrências.
+
 - **Locais (26):** `supabase/functions/reorder-check/index.ts:54`, `supabase/functions/cron-daily/index.ts:16`, `supabase/functions/cron-daily/index.ts:47`, `supabase/functions/cron-weekly/index.ts:51`, `supabase/functions/cancel-order/index.ts:35`, `supabase/functions/cancel-order/index.ts:40`, `supabase/functions/queue-process/index.ts:40`, `supabase/functions/queue-process/index.ts:63`, `supabase/functions/queue-process/index.ts:75`, `supabase/functions/receiving-confirm/index.ts:87`, `supabase/functions/receiving-confirm/index.ts:97`, `supabase/functions/agv-dispatch/index.ts:124` …
 - **Causa raiz:** Mesma raiz do achado anterior — supabase-js devolve o erro em vez de lançar — mas aqui o erro nem é capturado numa variável. É a diferença entre `const { error } = await supabase...; if (error) throw error;` (padrão usado corretamente em `adjust-inventory/index.ts:39,63,80`) e `await supabase...` solto. Como nada no CI analisa esses arquivos, as duas formas convivem.
 - **Impacto no negócio:** Em 75 pontos o sistema diz que gravou e não gravou. `cancel-order:35` libera a reserva de estoque de cada item sem checar: se o update falhar, o pedido é marcado como cancelado (linha 40, também sem checar) e o estoque fica reservado para sempre — estoque fantasma que ninguém consegue vender. `reorder-check` devolve sugestões de compra que não estão na tabela, então a tela de reposição aparece vazia enquanto a API jurou que salvou.
@@ -576,8 +594,8 @@ O `upsert` não é desestruturado, então o `{ error }` é jogado fora e a funç
   bindings registrados: 1 (dois consumidores pediram)
   callback que sobrou e o do 1o consumidor? true
   LOG da lib: ['error: duplicate `postgres_changes` binding for realtime:products-changes ignored']
-Causa na lib (@supabase/supabase-js 2.87.3 / realtime-js 2.119.2): node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js:338-350 — `channel(topic)` devolve a instância JÁ existente para o mesmo tópico; RealtimeChannel.js:691-697 — binding `postgres_changes` duplicado é ignorado em silêncio. Agravante: RealtimeChannel.js `subscribe()` só entra no bloco de join `if (this.channelAdapter.isClosed())`, então re-assinar o mesmo tópico enquanto o canal anterior ainda está saindo é no-op silencioso.
-Código do repo, ex.: src/hooks/useProdutos.ts:21-26 `supabase.channel("products-changes")` e src/hooks/useProdutos.ts:18,31 `subscriptionRef.current.unsubscribe()` (sem `removeChannel`, logo sem `teardown()`: RealtimeClient.js:257-262).
+  Causa na lib (@supabase/supabase-js 2.87.3 / realtime-js 2.119.2): node_modules/@supabase/realtime-js/dist/main/RealtimeClient.js:338-350 — `channel(topic)` devolve a instância JÁ existente para o mesmo tópico; RealtimeChannel.js:691-697 — binding `postgres_changes` duplicado é ignorado em silêncio. Agravante: RealtimeChannel.js `subscribe()` só entra no bloco de join `if (this.channelAdapter.isClosed())`, então re-assinar o mesmo tópico enquanto o canal anterior ainda está saindo é no-op silencioso.
+  Código do repo, ex.: src/hooks/useProdutos.ts:21-26 `supabase.channel("products-changes")` e src/hooks/useProdutos.ts:18,31 `subscriptionRef.current.unsubscribe()` (sem `removeChannel`, logo sem `teardown()`: RealtimeClient.js:257-262).
 - **Locais (25):** `src/hooks/useProdutos.ts:22`, `src/hooks/useProdutos.ts:18`, `src/hooks/useProdutos.ts:31`, `src/hooks/useMovimentacoes.ts:50`, `src/hooks/useMovimentacoes.ts:46`, `src/hooks/useMovimentacoes.ts:62`, `src/features/quality/hooks/useTriagens.ts:23`, `src/features/quality/hooks/useTriagens.ts:19`, `src/features/quality/hooks/useTriagens.ts:31`, `src/features/picking/hooks/usePicking.ts:23`, `src/features/picking/hooks/usePicking.ts:19`, `src/features/picking/hooks/usePicking.ts:35` …
 - **Causa raiz:** Dois defeitos na mesma linha de código, com uma única correção: (1) o nome do canal é uma constante, então duas telas/componentes que montam o mesmo hook recebem o MESMO objeto de canal — o handler do segundo é jogado fora e, quando o primeiro desmonta, o cleanup derruba o canal do que continua na tela; (2) o cleanup usa `channel.unsubscribe()` em vez de `supabase.removeChannel(channel)`, então `teardown()` nunca roda e o canal fica com bindings e timer de rejoin pendurados, e um novo `subscribe()` no mesmo tópico cai no no-op silencioso.
 - **Impacto no negócio:** Quando duas telas do mesmo módulo ficam abertas (ex.: lista de recebimentos no dashboard + página de recebimento, ou lista de triagens + formulário de triagem), a atualização automática para de funcionar para uma delas sem nenhum aviso. O operador olha para uma tela parada acreditando que está vendo o estoque/tarefa de agora.
@@ -745,11 +763,11 @@ Código do repo, ex.: src/hooks/useProdutos.ts:21-26 `supabase.channel("products
 
 - **Camada:** services-contratos · **Severidade:** Critica · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** src/features/shipping/hooks/useRomaneios.ts:80-83:
-    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
-      // Implementación real o placeholder
-      toast.info("Registro de entrega en desarrollo");
-    },
-O service real existe e está completo (src/features/shipping/services/shippingService.ts:95-117, insere em comprovantes_entrega) mas nunca é chamado. `npx eslint src/features/shipping/hooks/useRomaneios.ts` confirma: 80:30 'romaneioId' is defined but never used / 80:50 'itemId' / 80:66 'status' — os três argumentos são descartados. grep em src: o único consumidor é src/pages/Romaneios.tsx:516 `onFinalizarEntrega={(rid, iid, status) => registrarEntrega(rid, iid, status)}`, que cai no stub.
+  registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
+  // Implementación real o placeholder
+  toast.info("Registro de entrega en desarrollo");
+  },
+  O service real existe e está completo (src/features/shipping/services/shippingService.ts:95-117, insere em comprovantes_entrega) mas nunca é chamado. `npx eslint src/features/shipping/hooks/useRomaneios.ts` confirma: 80:30 'romaneioId' is defined but never used / 80:50 'itemId' / 80:66 'status' — os três argumentos são descartados. grep em src: o único consumidor é src/pages/Romaneios.tsx:516 `onFinalizarEntrega={(rid, iid, status) => registrarEntrega(rid, iid, status)}`, que cai no stub.
 - **Locais (3):** `src/features/shipping/hooks/useRomaneios.ts:80`, `src/features/shipping/services/shippingService.ts:95`, `src/pages/Romaneios.tsx:516`
 - **Causa raiz:** O hook foi escrito antes do service e o placeholder nunca foi substituído. Como a assinatura do stub bate com a do service, nada quebra em build/typecheck e o eslint só emite warning (regra no-unused-vars está em warn e `npm run lint` roda `eslint .` sem --max-warnings 0).
 - **Impacto no negócio:** O motorista/conferente clica em "finalizar entrega", vê uma mensagem de sucesso em espanhol e nada é gravado: nenhum comprovante, nenhuma assinatura, nenhuma foto, o item do romaneio continua pendente e o contador de entregas realizadas nunca sobe. A operação de expedição não tem prova de entrega.
@@ -769,7 +787,6 @@ O service real existe e está completo (src/features/shipping/services/shippingS
 ---
 
 # 🟠 Alta — 187 achados
-
 
 ## F075 — Nenhuma proteção contra remover/rebaixar o último admin, nem contra o admin mexer no próprio papel
 
@@ -909,7 +926,7 @@ O service real existe e está completo (src/features/shipping/services/shippingS
 ## F090 — Cron e fire-and-forget: function fora do ar nao gera nenhum sinal
 
 - **Camada:** Alertas e reposicao · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** supabase/migrations/20261121120000_*.sql:13-16 e 20261121110000_*.sql:13-16 chamam `net.http_post(...)` e descartam o `request_id`; nenhuma migration le `net._http_response`; grep `CREATE TRIGGER` nas 163 migrations nao encontra nenhum gatilho em `estoque_posicao` que gere alerta — a unica fonte e o cron diario.
+- **Evidência:** supabase/migrations/20261121120000__.sql:13-16 e 20261121110000__.sql:13-16 chamam `net.http_post(...)` e descartam o `request_id`; nenhuma migration le `net._http_response`; grep `CREATE TRIGGER` nas 163 migrations nao encontra nenhum gatilho em `estoque_posicao` que gere alerta — a unica fonte e o cron diario.
 - **Locais (2):** `supabase/migrations/20261121120000_EST01_stock-alert-cron.sql:13-16`, `supabase/migrations/20261121110000_EST01_reorder-check-cron.sql:13-16`
 - **Causa raiz:** Agendamento HTTP assincrono sem verificacao de resposta, sem retry e sem alerta de falha do proprio agendador.
 - **Impacto no negócio:** Deploy quebrado, timeout ou 500 na function produz 24h (ou meses) sem nenhum alerta de estoque, e a tela nao diferencia isso de 'sem problemas'. Alem disso, a latencia minima e de um dia: ruptura das 09h so avisa na madrugada seguinte.
@@ -976,7 +993,7 @@ O service real existe e está completo (src/features/shipping/services/shippingS
 - **Locais (5):** `src/services/authService.ts:45-62`, `src/utils/role.ts:13-21`, `supabase/migrations/20261122141000_WMS9_fase3_rbac_por_tenant.sql:49-62`, `supabase/migrations/20261122150000_WMS9_fase3b_isola_user_roles.sql:24-37`, `src/components/auth/ProtectedRoute.tsx:28`
 - **Causa raiz:** A Fase 3 deu tenant ao RBAC no banco mantendo a assinatura de has_role(), mas o frontend continuou lendo user_roles sem filtro de tenant e reduzindo tudo ao maior papel.
 - **Impacto no negócio:** Usuario que e admin no tenant B e operador no tenant A navega o tenant A como admin: menus e telas administrativas abrem, mas toda escrita e barrada pelo RLS. Resultado pratico: telas vazias, erros de permissao e a impressao de sistema quebrado - alem de exposicao de estrutura administrativa a quem nao deveria ver.
-- **Correção sugerida:** Em src/services/authService.ts:45-62, selecionar role e tenant_id e filtrar pelo tenant efetivo (ler via RPC effective_tenant_id() ou pelo claim do JWT), passando a highestRole apenas as linhas do tenant atual mais as globais (tenant_id IS NULL). Alterar src/utils/role.ts para receber { role, tenant_id } e ja existe teste em src/utils/__tests__/role.test.ts para estender.
+- **Correção sugerida:** Em src/services/authService.ts:45-62, selecionar role e tenant_id e filtrar pelo tenant efetivo (ler via RPC effective_tenant_id() ou pelo claim do JWT), passando a highestRole apenas as linhas do tenant atual mais as globais (tenant_id IS NULL). Alterar src/utils/role.ts para receber { role, tenant_id } e ja existe teste em src/utils/**tests**/role.test.ts para estender.
 
 ## F098 — Reset de senha aprovado pelo admin manda o usuario para uma rota que nao existe
 
@@ -1152,7 +1169,7 @@ O service real existe e está completo (src/features/shipping/services/shippingS
 ## F117 — Jornada inteira sem teste automatizado
 
 - **Camada:** Inventario e ajustes · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** find em src por arquivos de __tests__ combinado com grep por ajustes_estoque, inventario_ciclos, inventario_contagens, useAdjustments e useInventarioCiclico: nenhum arquivo. A cobertura mede apenas services/features/lib (vitest.config.ts:20), fora de pages, hooks e components. npx eslint nos arquivos da jornada: 0 erros, 10 warnings (inclui o `any` de utils.ts:4,26 e o `as any` de AjustesEstoque.tsx:69).
+- **Evidência:** find em src por arquivos de **tests** combinado com grep por ajustes_estoque, inventario_ciclos, inventario_contagens, useAdjustments e useInventarioCiclico: nenhum arquivo. A cobertura mede apenas services/features/lib (vitest.config.ts:20), fora de pages, hooks e components. npx eslint nos arquivos da jornada: 0 erros, 10 warnings (inclui o `any` de utils.ts:4,26 e o `as any` de AjustesEstoque.tsx:69).
 - **Locais (4):** `src/hooks/useInventarioCiclico/`, `src/hooks/useAdjustments.ts`, `src/pages/AjustesEstoque.tsx`, `src/pages/InventarioCiclico.tsx`
 - **Causa raiz:** Modulo escrito sem teste e fora do escopo de cobertura configurado.
 - **Impacto no negócio:** Nenhum dos defeitos acima (uuid vazio, sobrescrita de saldo, acuracidade errada) seria pego pelo CI: os gates ficam verdes com a jornada quebrada.
@@ -1477,6 +1494,7 @@ O service real existe e está completo (src/features/shipping/services/shippingS
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Script /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/labels.mjs (parser JSX com balanceamento): '321 campos de formulario analisados; sem label associado / aria-label: 143 em 81 arquivos' — contando só os que não têm NEM htmlFor correspondente, NEM id, NEM aria-label, NEM aria-labelledby, NEM title, NEM placeholder. Exemplo lido na íntegra, src/components/configuracoes/EstoqueConfigCard.tsx:33-40:
+
 ```
 <Label className="text-sm">Nível Mínimo Geral</Label>
 <Input
@@ -1486,7 +1504,9 @@ O service real existe e está completo (src/features/shipping/services/shippingS
   min={0}
 />
 ```
+
 O <Label> renderiza <label> sem `for`, e o <Input> não tem `id` — não existe vínculo programático. Top arquivos: AlertasConfigCard.tsx (6), EstoqueConfigCard.tsx (5), InventarioConfigTab.tsx (5), admin/SettingsPage.tsx (5), PreferenciasCard.tsx (4), Etiquetas.tsx (4). Confirmei que são telas VIVAS: `grep -rln EstoqueConfigCard` → src/pages/Configuracoes.tsx; InventarioConfigTab → src/pages/InventarioCiclico.tsx.
+
 - **Locais (29):** `src/components/configuracoes/EstoqueConfigCard.tsx:34`, `src/components/configuracoes/EstoqueConfigCard.tsx:43`, `src/components/configuracoes/EstoqueConfigCard.tsx:53`, `src/components/configuracoes/EstoqueConfigCard.tsx:65`, `src/components/configuracoes/EstoqueConfigCard.tsx:75`, `src/components/configuracoes/AlertasConfigCard.tsx:39`, `src/components/configuracoes/AlertasConfigCard.tsx:53`, `src/components/configuracoes/AlertasConfigCard.tsx:65`, `src/components/configuracoes/AlertasConfigCard.tsx:83`, `src/components/configuracoes/AlertasConfigCard.tsx:93`, `src/components/configuracoes/AlertasConfigCard.tsx:103`, `src/components/configuracoes/PreferenciasCard.tsx:61` …
 - **Causa raiz:** O repo usa o <Label> do shadcn como se fosse um <span> de título: ninguém passa `htmlFor`, e os <Input> não recebem `id`. Só 55 `htmlFor=` existem em todo o src/ para 197 `<Input>` + 154 `<Label>`. Não há lint rule que force a associação (o eslint do projeto sai com 990 warnings, nenhum de jsx-a11y para label — `eslint-plugin-jsx-a11y` não está no pipeline), e o único gate de a11y (axe no E2E) só visita 2 rotas públicas, nenhuma com formulário autenticado.
 - **Impacto no negócio:** Operador que usa leitor de tela não consegue preencher Configurações, Ajustes de Estoque, Etiquetas, Inventário Cíclico nem Metas de KPI: o campo é anunciado como 'edição, vazio' sem dizer o que é. Clicar no texto do rótulo também não foca o campo — perda de produtividade para todos, inclusive quem não usa leitor de tela, em telas táteis de coletor onde o alvo do input é pequeno.
@@ -1496,6 +1516,7 @@ O <Label> renderiza <label> sem `for`, e o <Input> não tem `id` — não existe
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Script /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/a11y.mjs: '### iconNoLabel: 101'. O script lê a tag aberta completa (`<Button ... size="icon" ...>`, mesmo em 8 linhas) e só acusa quando não há `aria-label`, `aria-labelledby` nem `title=` na tag E não há `sr-only` nem texto nos 400 caracteres de filhos. Base: `grep -rn 'size="icon"' --include=*.tsx src/ | wc -l` = 133, dos quais 132 sem aria-label na mesma linha. Exemplo lido, src/pages/customers/CustomersPage.tsx:229-237 — editar e excluir cliente, ambos sem rótulo:
+
 ```
 <Button size="icon" variant="ghost" onClick={() => openEdit(c)}>
   <Pencil className="h-4 w-4" />
@@ -1504,7 +1525,9 @@ O <Label> renderiza <label> sem `for`, e o <Input> não tem `id` — não existe
   <Trash2 className="h-4 w-4 text-destructive" />
 </Button>
 ```
+
 Contraste com o padrão correto que já existe no repo: src/components/organisms/layout/Header.tsx:63 (`aria-label="Abrir menu"`), src/components/ui/sidebar.tsx:270 (`<span className="sr-only">Toggle Sidebar</span>`), src/components/ui/dialog.tsx:47 (`<span className="sr-only">Close</span>`). Distribuição por área: components/forms 21, components/data 14, pages/inventory 5, features/quality 5, components/layout 5, features/inventory 4, components/security 4.
+
 - **Locais (37):** `src/pages/customers/CustomersPage.tsx:229`, `src/pages/customers/CustomersPage.tsx:232`, `src/pages/categories/CategoriesPage.tsx:186`, `src/pages/categories/CategoriesPage.tsx:189`, `src/pages/warehouses/WarehousesPage.tsx (2)`, `src/pages/admin/UsersPage.tsx:248`, `src/pages/admin/AuditLogPage.tsx:173`, `src/pages/Romaneios.tsx:180`, `src/pages/Romaneios.tsx:287`, `src/pages/Romaneios.tsx:295`, `src/pages/Romaneios.tsx:414`, `src/pages/AjustesEstoque.tsx:263` …
 - **Causa raiz:** A convenção do repo exige `aria-label` (`.claude/skills/estoki-v2/SKILL.md`, seção Código: 'A11y: aria-label, foco visível, alvo de toque ≥ 48px'), mas nada verifica. `eslint-plugin-jsx-a11y` não está no pipeline de lint, e os ícones lucide não carregam texto algum, então o botão fica com nome acessível vazio. O padrão correto existe nas primitivas copiadas do shadcn (que trazem `sr-only` de fábrica) e foi perdido em todo código escrito à mão depois.
 - **Impacto no negócio:** Leitor de tela anuncia 'botão' sem dizer qual — ao lado de 'botão' para excluir. Em CustomersPage e CategoriesPage os dois botões adjacentes são Editar e Excluir, sem nada que os distinga: risco real de apagar cadastro de cliente por engano. Também derruba teste E2E por acessibilidade e qualquer auditoria de contrato/licitação que peça WCAG 2.1 AA.
@@ -1514,22 +1537,26 @@ Contraste com o padrão correto que já existe no repo: src/components/organisms
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Script /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/contrast.mjs, cálculo WCAG 2.1 sobre os tokens HSL reais de src/index.css:
+
 ```
 DARK  muted-foreground / card          #737b8c on #0f131a = 4.38:1  FALHA AA texto normal
 DARK  muted-foreground / muted         #737b8c on #171c26 = 4.02:1  FALHA AA texto normal
 DARK  muted-foreground / background    #737b8c on #0a0c10 = 4.60:1  OK(AA)
 LIGHT muted-foreground / card          #6a7181 on #ffffff = 4.89:1  OK(AA)
 ```
+
 Tokens de origem, src/index.css:98 (`.dark { --muted-foreground: 220 10% 50%; }`), :85 (`--card: 220 25% 8%`), :97 (`--muted: 220 25% 12%`). Volume: `grep -rno 'text-muted-foreground' --include=*.tsx src/ | wc -l` = 1422 ocorrências; destas, 561 estão na mesma className que `text-xs` ou `text-[10px]/[11px]` (texto pequeno, onde AA exige 4.5:1 e não os 3:1 de texto grande). O próprio repo já sabia do problema: tests/e2e/a11y-smoke.spec.ts:8-12 documenta a exclusão de /auth/login e /auth/forgot-password por 'violações reais de color-contrast herdadas da main (text-muted-foreground ... = 3.01 < 4.5:1)' — os valores do comentário não batem mais com o CSS atual (hoje é 4.38, não 3.01), mas a falha persiste. src/index.css:186 agrava: `.caption { @apply text-xs text-muted-foreground; }`. O tema escuro não é exceção: src/contexts/ThemeContext.tsx:14 usa default `'system'`, logo todo usuário com SO em modo escuro cai no `.dark`.
+
 - **Locais (8):** `src/index.css:98 (dark --muted-foreground: 220 10% 50%)`, `src/index.css:85 (dark --card: 220 25% 8%)`, `src/index.css:97 (dark --muted: 220 25% 12%)`, `src/index.css:186 (.caption = text-xs text-muted-foreground)`, `src/index.css:191 (.overline = text-[10px] text-muted-foreground)`, `src/contexts/ThemeContext.tsx:14 (default 'system')`, `tests/e2e/a11y-smoke.spec.ts:8-12 (falha já documentada e excluída do gate)`, `561 ocorrências de text-xs/text-[10px] + text-muted-foreground em src/**/*.tsx (reproduzível por grep)`
 - **Causa raiz:** O token `--muted-foreground` do tema escuro foi escolhido contra `--background` (o fundo mais escuro, onde passa com 4.60:1), mas na prática quase todo texto secundário vive dentro de `<Card>` ou de um bloco `bg-muted`, que são mais claros — e aí a razão cai para 4.38 e 4.02. É um erro de um único token, não de 561 componentes.
 - **Impacto no negócio:** Toda legenda, subtítulo, metadado e texto de ajuda do sistema fica abaixo do mínimo legível em modo escuro — que é o default para quem tem o SO em dark. No galpão, em tela de coletor com brilho baixo e reflexo, é justamente a informação pequena (número de lote, NF, quantidade) que fica ilegível. Bloqueia certificação WCAG 2.1 AA.
 - **Correção sugerida:** Mudar um valor: em src/index.css, no bloco `.dark`, levar `--muted-foreground` de `220 10% 50%` para cerca de `220 10% 58%` — contra `--card` (8%) isso dá ~5.8:1 e contra `--muted` (12%) ~5.3:1, folga suficiente para texto pequeno. Rodar o script de contraste de novo para confirmar antes de abrir a PR, e então reinserir `/auth/login` e `/auth/forgot-password` em PUBLIC_ROUTES de tests/e2e/a11y-smoke.spec.ts:19, que foram removidas exatamente por causa disso.
 
-## F156 — 1555 cores hardcoded em 217 arquivos, com 16 pares text-white sobre bg-*-500 (1.92:1 a 3.76:1) e 29 badges bg-*-100/text-*-800 que não trocam no dark
+## F156 — 1555 cores hardcoded em 217 arquivos, com 16 pares text-white sobre bg-_-500 (1.92:1 a 3.76:1) e 29 badges bg-_-100/text-*-800 que não trocam no dark
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `grep -rEoh '\b(bg|text|border|ring|from|to|via|fill|stroke|...)-(white|black|slate|gray|...|rose)(-[0-9]{2,3})?\b' --include=*.tsx --include=*.ts src/ | wc -l` = 1555 ocorrências, em 217 arquivos. Mais frequentes: bg-green-500 (61), text-white (58), bg-red-500 (55), bg-blue-500 (55), text-green-500 (54), text-yellow-500 (42), bg-amber-500 (39), bg-white (23), bg-black (21). Isso viola diretamente `.claude/skills/estoki-v2/SKILL.md`: 'Só token semântico do tema (bg-background, text-foreground...). Cor fixa (bg-blue-500, text-white, bg-[#1a1a1a]) é proibida — quebra o dark mode.' Dois subconjuntos são falha de contraste medida, não só de estilo. (a) /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/contrast.mjs sobre a paleta Tailwind v3:
+
 ```
 text-white / bg-yellow-500   = 1.92:1 FALHA
 text-white / bg-amber-500    = 2.15:1 FALHA
@@ -1538,7 +1565,9 @@ text-white / bg-orange-500   = 2.80:1 FALHA
 text-white / bg-blue-500     = 3.68:1 FALHA
 text-white / bg-red-500      = 3.76:1 FALHA
 ```
+
 16 ocorrências desse par no código, ex. src/components/wms/QualityStatus.tsx:17: `pending: { label: "Pendente", icon: Clock, color: "bg-yellow-500 text-white" }` (1.92:1 — quatro vezes abaixo do mínimo). (b) 29 pares `bg-X-100 text-X-800` sem variante `dark:`: em todo o src/ há apenas 92 ocorrências de `dark:` para 1555 cores fixas, então esses badges permanecem claros sobre fundo escuro. Ex. src/components/wms/ProductCard.tsx:40-42, src/components/wms/BatchInfo.tsx:21-23, src/components/ui/status-badge.tsx:28,50. Arquivos mais afetados: ui/stats-card.tsx (29 cores), features/quality/pages/DashboardTriador.tsx (23), pages/Romaneios.tsx (18), features/shipping/pages/ShippingPage.tsx (18), pages/Armazenamento.tsx (17).
+
 - **Locais (16):** `src/components/wms/QualityStatus.tsx:17 (bg-yellow-500 text-white = 1.92:1)`, `src/features/quality/pages/DashboardTriador.tsx:553 (bg-yellow-500 text-white)`, `src/features/quality/pages/FormularioTriagem.tsx:606 (bg-yellow-500 p-2 text-white)`, `src/components/wms/ProductCard.tsx:40-42 (bg-green-100/red-100/gray-100 + text-*-800, sem dark:)`, `src/components/wms/BatchInfo.tsx:21-23 (idem)`, `src/components/ui/status-badge.tsx:28 e :50 (bg-gray-100 text-gray-800, sem dark:)`, `src/components/feedback/Message.tsx:9-12 (4 pares bg-*-100/text-*-700)`, `src/components/ui/stats-card.tsx (29 cores fixas)`, `src/features/quality/pages/DashboardTriador.tsx (23)`, `src/pages/Romaneios.tsx (18)`, `src/features/shipping/pages/ShippingPage.tsx (18)`, `src/pages/Armazenamento.tsx (17)` …
 - **Causa raiz:** Não existe guarda contra cor fixa. O repo tem gate para i18n hardcoded (`scripts/i18n-hardcoded-check.mjs` com baseline congelado de 1316/1316 ocorrências), para RLS e para dependências, mas nenhum para token semântico, embora a skill trate cor fixa como proibição. Semântica de status (sucesso/alerta/erro) foi codificada em cor Tailwind crua em cada componente em vez de em tokens (`--success`, `--warning`, `--destructive`) — e o repo já tem tokens desses: src/pages/Posicoes.tsx:359 usa `bg-success`, provando que a alternativa existe e é ignorada.
 - **Impacto no negócio:** Dois efeitos somados: (1) badge de status de qualidade/lote ilegível — 'Pendente' em branco sobre amarelo a 1.92:1 é praticamente invisível, e status de triagem errado lido no galpão gera decisão errada de aceite/recusa de mercadoria; (2) o modo escuro, que é o default para quem tem SO em dark, exibe badges claros em telas escuras, com aparência de bug. Cada arquivo novo repete o padrão porque nada barra.
@@ -1548,6 +1577,7 @@ text-white / bg-red-500      = 3.76:1 FALHA
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Script /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/a11y.mjs: '### divClick: 36' — contando apenas tags `div/span/li/td/tr/p/section/article` com `onClick=` e SEM `role=`, `tabIndex`, `onKeyDown`, `onKeyPress` ou `onKeyUp` na mesma tag. Para comparação, `grep -rn 'role="button"' --include=*.tsx src/ | wc -l` = 3 e `grep -rno tabIndex` = 2 em todo o src/: o padrão acessível praticamente não é usado. Dois casos passam de problema de a11y a bug funcional. src/pages/Posicoes.tsx:342-354, lido:
+
 ```
 <div className="mr-2 flex items-center gap-2"
   onClick={(e) => { e.stopPropagation(); toggleSelection(pos.id); }}>
@@ -1556,7 +1586,9 @@ text-white / bg-red-500      = 3.76:1 FALHA
     className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
 </div>
 ```
+
 O checkbox é focável, mas `onChange={() => {}}` não faz nada: Espaço/Enter no checkbox não seleciona. A seleção depende exclusivamente do `onClick` do <div> pai, que não é focável. src/pages/InventarioCiclico.tsx:172-187 repete com `readOnly` no lugar do onChange no-op — e o <div> pai ainda tem `opacity-0 transition-opacity group-hover:opacity-100`, ou seja o checkbox é invisível até passar o mouse. Casos de clique em container sem papel semântico também em src/pages/Scanner.tsx:373 (item do histórico de scans que navega), src/pages/Etiquetas.tsx:351 e :376 (seleção de lote/entrega para etiqueta), src/pages/Posicoes.tsx:332 (<Card onClick>).
+
 - **Locais (36):** `src/pages/Posicoes.tsx:342 (checkbox onChange no-op — seleção impossível por teclado)`, `src/pages/InventarioCiclico.tsx:172 (checkbox readOnly + visível só no hover)`, `src/pages/Posicoes.tsx:332 (Card clicável sem papel)`, `src/pages/Scanner.tsx:370`, `src/pages/Etiquetas.tsx:351`, `src/pages/Etiquetas.tsx:376`, `src/features/quality/components/triagem-page/TriagemListItem.tsx:45`, `src/features/quality/components/formulario/VisualDefectTagging.tsx:66`, `src/features/receiving/components/ImportarNFDialog.tsx:182`, `src/features/dashboard/components/IndexHero.tsx:114`, `src/components/armazenamento/SugestaoCard.tsx:45`, `src/components/armazenamento/SugestaoCard.tsx:89` …
 - **Causa raiz:** Padrão de 'card inteiro clicável' implementado como <div onClick>, com o controle real (checkbox) neutralizado para não disparar duas vezes — resolveram o conflito de propagação desligando o `onChange` em vez de usar `stopPropagation` no próprio controle. O jeito certo já existe no mesmo repo: src/pages/Etiquetas.tsx:356-360 usa `<Checkbox onCheckedChange={...} onClick={(e) => e.stopPropagation()}>`, que mantém o teclado funcionando.
 - **Impacto no negócio:** Seleção em massa de posições de armazenagem e de ciclos de inventário só funciona com mouse. Operador em coletor com teclado físico, ou usuário que navega por Tab, não consegue selecionar nada nessas duas telas — então não consegue executar ação em lote (liberar posições, iniciar ciclos). Em InventarioCiclico o checkbox ainda está invisível até o hover, o que em tela de toque significa que não existe. Isso não é só a11y: é funcionalidade indisponível para parte dos operadores.
@@ -1566,6 +1598,7 @@ O checkbox é focável, mas `onChange={() => {}}` não faz nada: Espaço/Enter n
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `grep -rn 'group-hover:opacity-100' --include=*.tsx src/ | wc -l` = 22; nenhuma usa `focus-within:opacity-100` ou `focus:opacity-100` (a única exceção é src/components/ui/toast.tsx:77, que tem `focus:opacity-100` e por isso está correta). Pior caso lido, src/features/quality/components/FotosLoteObrigatorias.tsx:209-214:
+
 ```
 <button
   onClick={() => onRemoveFoto(foto.id)}
@@ -1574,7 +1607,9 @@ O checkbox é focável, mas `onChange={() => {}}` não faz nada: Espaço/Enter n
   <X className="h-4 w-4" />
 </button>
 ```
+
 É a única forma de remover uma foto errada do lote na triagem, tem 24×24px, não tem aria-label e é invisível até o hover. Igual em src/components/kanban/KanbanCard.tsx:45-55 (menu do card, `h-6 w-6 opacity-0 group-hover:opacity-100`), src/components/notifications/NotificationCenter.tsx:78 (excluir notificação), src/features/shipping/components/ExpedicaoTimeline.tsx:131, src/pages/InventarioCiclico.tsx:172 (checkbox de seleção em massa).
+
 - **Locais (16):** `src/features/quality/components/FotosLoteObrigatorias.tsx:211 (remover foto obrigatória da triagem)`, `src/components/kanban/KanbanCard.tsx:48 (menu do card)`, `src/components/kanban/KanbanCard.tsx:39 (alça de arrastar)`, `src/components/kanban/LoteCard.tsx:42`, `src/components/notifications/NotificationCenter.tsx:78 (excluir notificação)`, `src/features/shipping/components/ExpedicaoTimeline.tsx:131`, `src/pages/InventarioCiclico.tsx:172 (checkbox de seleção em massa)`, `src/components/common/GlobalSearchDialog.tsx:198`, `src/components/produtos/ProductCardAvancado.tsx:69`, `src/components/dashboard/DashboardKPIs.tsx:164`, `src/components/dashboard/DashboardActivityFeed.tsx:89`, `src/features/quality/components/TriagemCard.tsx:27` …
 - **Causa raiz:** `opacity-0 group-hover:opacity-100` foi adotado como padrão de 'ação secundária discreta', copiado de UI desktop. Hover não existe em touch (o WMS roda em coletor e celular — o repo tem `src/components/mobile/`, Capacitor e projetos 'Mobile Chrome'/'Mobile Safari' no playwright.config.ts, logo mobile é caso de uso declarado), e `:hover` não é disparado por foco de teclado. Faltou o par `focus-within:opacity-100`, que o próprio ui/toast.tsx já usa.
 - **Impacto no negócio:** Em celular/coletor, o operador de triagem não tem como apagar uma foto obrigatória enviada por engano — a foto errada vai pro registro do lote e o laudo de qualidade fica com evidência incorreta, que é dado de auditoria. Quem usa teclado não alcança menu de card kanban nem exclusão de notificação. A ação existe no código e é inacessível na operação real.
@@ -1798,6 +1833,7 @@ O checkbox é focável, mas `onChange={() => {}}` não faz nada: Espaço/Enter n
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** supabase/functions/_shared/schemas.ts:733-737 — o schema não descreve campo nenhum:
+
 ```ts
 export const GenericPayloadSchema = z
   .record(z.unknown())
@@ -1805,7 +1841,9 @@ export const GenericPayloadSchema = z
     message: "Payload too large (max 100KB)",
   });
 ```
+
 Medição (script /tmp/.../matrix.mjs, 247 arquivos): chamada de validação presente em 210/247, das quais 120 com schema específico e **90 com GenericPayloadSchema**. Exemplo de uso em função que grava: `supabase/functions/queue-process/index.ts:19-21`, que ainda desestrutura de `__raw` e não de `__v.data`.
+
 - **Locais (20):** `supabase/functions/_shared/schemas.ts:733-737`, `supabase/functions/queue-process/index.ts:19-21`, `supabase/functions/external-db-bridge/index.ts:142-145`, `supabase/functions/release-stock/index.ts:11`, `supabase/functions/reserve-stock/index.ts:11`, `supabase/functions/receive-purchase-order/index.ts:11`, `supabase/functions/picking-assign/index.ts`, `supabase/functions/picking-cancel/index.ts`, `supabase/functions/picking-batch/index.ts`, `supabase/functions/packing-start/index.ts`, `supabase/functions/receiving-cancel/index.ts`, `supabase/functions/receiving-inspect/index.ts` …
 - **Causa raiz:** Quando a regra "sempre Zod" foi aplicada em massa, as funções que não tinham schema próprio receberam um schema coringa para satisfazer a regra. `z.record(z.unknown())` só afirma "é um objeto"; a única checagem real é o tamanho de 100KB. O resultado passa o grep de conformidade (`validateInput(` presente) sem validar nada. Em 16 dessas funções o código ainda lê `__raw` em vez de `__v.data`, o que torna explícito que o retorno da validação não é usado.
 - **Impacto no negócio:** Em 90 endpoints, a barreira de entrada é decorativa: `quantidade: "abc"`, `produto_id: null` ou um campo extra qualquer passam para dentro e chegam ao Postgres. O erro aparece como falha de constraint do banco, devolvida como HTTP 400 com a mensagem crua do Postgres (ver achados de status e de vazamento), em vez de uma mensagem de campo inválido. Para quem usa a API, um dado errado e um bug do servidor são indistinguíveis.
@@ -1816,13 +1854,16 @@ Medição (script /tmp/.../matrix.mjs, 247 arquivos): chamada de validação pre
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `grep -lE '(^|[^.a-zA-Z])fetch\(' */index.ts` -> 16 funções, 37 call sites; `grep -lE 'AbortController|AbortSignal|signal:'` nessas 16 -> **0**. Exemplo em função deployada, `supabase/functions/ai-completion/index.ts:16-28`:
+
 ```ts
 const response = await fetch("https://api.openai.com/v1/chat/completions", {
   method: "POST", headers: {...}, body: JSON.stringify({...}),
 });
 const data = await response.json();
 ```
+
 A solução já existe no repo e é boa — `supabase/functions/_shared/erp.ts:63-96` tem timeout por AbortController (15s), retry exponencial com jitter em 408/429/5xx e circuit breaker por host. `grep -l '_shared/erp.ts' */index.ts` -> apenas `integration-sap` e `integration-totvs`. `_shared/correios.ts` faz fetch em 3 pontos (linhas 45, 74, 81) e também não tem timeout.
+
 - **Locais (20):** `supabase/functions/ai-completion/index.ts:16`, `supabase/functions/ai-assistant/index.ts:44`, `supabase/functions/ai-classify/index.ts`, `supabase/functions/ai-embedding/index.ts`, `supabase/functions/ai-summarize/index.ts`, `supabase/functions/ai-translate/index.ts`, `supabase/functions/scanner-ocr/index.ts:31`, `supabase/functions/integration-correios/index.ts:26`, `supabase/functions/integration-amazon/index.ts`, `supabase/functions/integration-ifood/index.ts`, `supabase/functions/integration-mercado-livre/index.ts:44`, `supabase/functions/integration-mercado-livre/index.ts:49` …
 - **Causa raiz:** `erpFetch` foi escrito para as duas integrações de ERP e nunca generalizado. As outras 14 funções chamam `fetch` direto, herdando o comportamento padrão: sem timeout, a requisição fica pendurada até o limite de parede da própria Edge Function. Como as funções com fetch externo e as com `erpFetch` foram escritas em momentos diferentes e nada no CI compara, a duplicação passou.
 - **Impacto no negócio:** Qualquer lentidão de OpenAI, Mercado Livre, ViaCEP ou do gateway de IA pendura a Edge Function até ela ser morta pela plataforma. O usuário vê a tela girando e depois um erro genérico, sem saber que o problema é de terceiro. `scanner-ocr`, que é chamada pelo app, é a mais exposta: o operador fotografa a etiqueta e espera indefinidamente. Sem timeout também não há retry útil: não dá para desistir rápido e tentar de novo.
@@ -1833,7 +1874,8 @@ A solução já existe no repo e é boa — `supabase/functions/_shared/erp.ts:6
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Contagem de `\.ok\b|\.status\s*[!=]==?\s*[0-9]` por função com fetch -> zero em 8 arquivos: ai-classify, ai-completion, ai-embedding, ai-summarize, ai-translate, batch-import, integration-amazon, integration-correios.
-`supabase/functions/ai-completion/index.ts:27-32` — vai direto do fetch para o .json() e para a resposta:
+  `supabase/functions/ai-completion/index.ts:27-32` — vai direto do fetch para o .json() e para a resposta:
+
 ```ts
 const data = await response.json();
 return new Response(
@@ -1841,7 +1883,9 @@ return new Response(
   { headers: {...} }   // sem status -> 200
 );
 ```
+
 Com HTTP 401/429/500 da OpenAI, `data.choices` é undefined, o optional chaining devolve `undefined` e a função responde **200** com `{"response": null}`. Contraste no mesmo repo: `supabase/functions/send-email-alert/index.ts:53-57` checa `!response.ok`, loga e devolve 502.
+
 - **Locais (9):** `supabase/functions/ai-completion/index.ts:27-32`, `supabase/functions/ai-classify/index.ts`, `supabase/functions/ai-embedding/index.ts`, `supabase/functions/ai-summarize/index.ts`, `supabase/functions/ai-translate/index.ts`, `supabase/functions/integration-amazon/index.ts`, `supabase/functions/integration-correios/index.ts:26-28`, `supabase/functions/batch-import/index.ts`, `supabase/functions/integration-mercado-livre/index.ts:44-59`
 - **Causa raiz:** O código trata `fetch` como se rejeitasse em status de erro. `fetch` só rejeita em falha de rede; um 500 é uma resposta bem-sucedida do ponto de vista da promise. Sem o teste de `response.ok`, o corpo de erro é parseado como se fosse o corpo de sucesso, e o optional chaining (`data.choices?.[0]`) converte a ausência do campo em `null` silencioso em vez de erro.
 - **Impacto no negócio:** Falha de API paga vira resultado vazio com status 200. Em `integration-mercado-livre` (deployada), um token expirado faz `list_orders` devolver o JSON de erro do ML como se fosse a lista de pedidos — a sincronização "funciona" e não traz pedido nenhum. Em `integration-correios`, erro do ViaCEP vira endereço vazio aceito no cadastro. Ninguém é avisado: não há log de erro nem status diferente de 200.
@@ -1852,7 +1896,8 @@ Com HTTP 401/429/500 da OpenAI, `data.choices` é undefined, o optional chaining
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Varredura do status no catch final das 247 funções (script /tmp/.../s2.mjs): **400 em 168**, 500 em 69, condicional 503/400 em 2 (integration-sap, integration-totvs), sem catch em 2, indeterminado em 2.
-`supabase/functions/queue-process/index.ts:98-102` — o catch cobre `fetchError` do banco e erro de parse do corpo com o mesmo 400:
+  `supabase/functions/queue-process/index.ts:98-102` — o catch cobre `fetchError` do banco e erro de parse do corpo com o mesmo 400:
+
 ```ts
 } catch (error) {
   return new Response(JSON.stringify({ error: error.message }), {
@@ -1860,7 +1905,9 @@ Com HTTP 401/429/500 da OpenAI, `data.choices` é undefined, o optional chaining
   });
 }
 ```
+
 O mesmo em `payment-create/index.ts:80-85`, onde a falha do `insert` em `payments` (linha 57, `if (error) throw error`) sai como 400. O wrapper compartilhado repete o padrão: `_shared/bulk.ts:66-71` devolve 400 para toda exceção, atingindo as 5 funções bulk-*/batch-processor de uma vez.
+
 - **Locais (10):** `supabase/functions/_shared/bulk.ts:66-71`, `supabase/functions/queue-process/index.ts:98-102`, `supabase/functions/payment-create/index.ts:80-85`, `supabase/functions/reorder-check/index.ts:63-67`, `supabase/functions/stock-alert/index.ts:107-112`, `supabase/functions/cancel-order/index.ts:52-56`, `supabase/functions/create-purchase-order/index.ts:40-44`, `supabase/functions/ai-completion/index.ts:33-37`, `supabase/functions/integration-mercado-livre/index.ts`, `supabase/functions/adjust-inventory/index.ts:90-94`
 - **Causa raiz:** O molde de geração usou 400 como status de erro único, sem separar "o cliente mandou algo errado" de "eu falhei". Como o `catch` é no topo do handler, ele captura indiscriminadamente erro de validação, erro do Postgres relançado por `if (error) throw error` e exceção de runtime — e aplica o mesmo 400. As 69 que usam 500 e as 2 com 503 condicional mostram que não houve convenção.
 - **Impacto no negócio:** Toda a cadeia de retry e de alerta fica cega. 4xx significa "não tente de novo, o pedido está errado"; 5xx significa "foi falha minha, tente de novo". Com banco fora do ar, essas 168 funções respondem 400 e qualquer cliente, fila ou monitor bem-comportado desiste em vez de reprocessar — perdendo a operação em silêncio. No painel, uma indisponibilidade do Postgres aparece como pico de erro do usuário, levando a investigação para o lado errado.
@@ -1871,13 +1918,16 @@ O mesmo em `payment-create/index.ts:80-85`, onde a falha do `insert` em `payment
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `grep -rniE 'idempot|Idempotency-Key' supabase/functions/` -> **0 ocorrências** em todo o diretório.
-`supabase/functions/create-purchase-order/index.ts:21-36` (deployada):
+  `supabase/functions/create-purchase-order/index.ts:21-36` (deployada):
+
 ```ts
 const orderNumber = `PO-${Date.now()}`;
 const { data: order, error } = await supabase.from("purchase_orders").insert({ order_number: orderNumber, supplier_id: supplierId, items, total, ... }).select().single();
 if (error) throw error;
 ```
+
 A coluna tem unicidade no banco: `supabase/migrations/20260522135907_d6535911-4dd9-4eed-9112-efc0ed8e5940.sql:31` -> `order_number TEXT UNIQUE NOT NULL`. Mesmo padrão em 12 arquivos: `grep -rlE '\$\{Date\.now\(\)\}'` -> 12, entre eles `create-sales-order:21` (`SO-`), `invoice-generate:39` (`INV-`), `receiving-create:53` (`REC-`), `packing-start:34` (`PCK-`), `wave-planning:79,89` (`WAVE-`).
+
 - **Locais (8):** `supabase/functions/create-purchase-order/index.ts:21`, `supabase/functions/create-sales-order/index.ts:21`, `supabase/functions/invoice-generate/index.ts:39`, `supabase/functions/receiving-create/index.ts:53`, `supabase/functions/packing-start/index.ts:34`, `supabase/functions/wave-planning/index.ts:79`, `supabase/functions/wave-planning/index.ts:89`, `supabase/functions/payment-create/index.ts:34-55`
 - **Causa raiz:** Nenhuma das funções que criam registro aceita chave de idempotência, e o identificador do documento é derivado do relógio em vez de do conteúdo da requisição. Duas consequências independentes: (a) duas requisições no mesmo milissegundo produzem o mesmo `order_number` e uma estoura unique violation; (b) duas requisições em milissegundos diferentes com o mesmo payload produzem dois documentos distintos, e nada no código percebe que é a mesma intenção repetida.
 - **Impacto no negócio:** O caso (b) é o que dói: timeout de rede, duplo clique ou retry automático cria uma segunda ordem de compra, um segundo pedido de venda ou uma segunda cobrança. `payment-create` gera um `paymentId` novo a cada chamada (linha 34) e insere outra linha em `payments` — o cliente pode ser cobrado duas vezes pela mesma compra. O caso (a) é mais raro mas pior de diagnosticar: a violação de unique sai como HTTP 400 com a mensagem do Postgres, que parece erro de preenchimento, e nenhum cliente com retry vai repetir um 400.
@@ -1888,7 +1938,8 @@ A coluna tem unicidade no banco: `supabase/migrations/20260522135907_d6535911-4d
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Funções cujo corpo de erro interpola a mensagem da exceção: 215/247. Funções que devolvem mensagem genérica (`Internal server error`): **6**.
-`supabase/functions/adjust-inventory/index.ts:90-94` — a exceção vem de `if (fetchError) throw fetchError` / `if (upsertError) throw upsertError` (linhas 39, 63, 80), ou seja, é um PostgrestError:
+  `supabase/functions/adjust-inventory/index.ts:90-94` — a exceção vem de `if (fetchError) throw fetchError` / `if (upsertError) throw upsertError` (linhas 39, 63, 80), ou seja, é um PostgrestError:
+
 ```ts
 } catch (error) {
   return new Response(
@@ -1897,7 +1948,9 @@ A coluna tem unicidade no banco: `supabase/migrations/20260522135907_d6535911-4d
   );
 }
 ```
+
 O repo tem o módulo de redação pronto e não usado nesse caminho: `_shared/logger.ts:11` define `SENSITIVE_KEY = /(pass(word)?|token|secret|apikey|api_key|authorization|cookie|cpf|cnpj)/i` e `redact()` nas linhas 14-20, mas só 2 funções importam o logger.
+
 - **Locais (10):** `supabase/functions/adjust-inventory/index.ts:92`, `supabase/functions/_shared/bulk.ts:67`, `supabase/functions/queue-process/index.ts:99`, `supabase/functions/payment-create/index.ts:81`, `supabase/functions/create-purchase-order/index.ts:41`, `supabase/functions/reorder-check/index.ts:64`, `supabase/functions/receiving-confirm/index.ts:110`, `supabase/functions/cancel-order/index.ts:53`, `supabase/functions/external-db-bridge/index.ts:209`, `supabase/functions/integration-mercado-livre/index.ts`
 - **Causa raiz:** O molde devolve a mensagem da exceção para facilitar depuração, e as funções relançam o erro do Postgres com `if (error) throw error`. O `message` de um PostgrestError carrega texto do servidor: nome de tabela, de coluna e de constraint (ex. 'duplicate key value violates unique constraint "purchase_orders_order_number_key"', 'column "quantidade_nova" violates not-null constraint'). O caminho correto já existe no repo e é usado por 6 funções: logar o detalhe no servidor e devolver mensagem genérica ao cliente.
 - **Impacto no negócio:** Qualquer requisição mal formada devolve um mapa parcial do banco — nomes de tabelas, colunas e constraints — a quem chamou. É reconhecimento gratuito para quem quiser sondar a API, e o alcance é amplo porque 201 das 248 funções operam com `service_role`. Também polui a experiência: o usuário final vê texto de erro de Postgres em português-inglês misturado, em vez de uma mensagem de negócio.
@@ -1908,13 +1961,18 @@ O repo tem o módulo de redação pronto e não usado nesse caminho: `_shared/lo
 
 - **Camada:** edge-robustez · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Ambas respondem sem autenticação (OPTIONS 200 no projeto oficial; são as duas únicas com `verify_jwt=false` em `supabase/config.toml`, enquanto `health`, `health-check` e `backend-health` devolvem 401 `UNAUTHORIZED_NO_AUTH_HEADER`).
-`supabase/functions/stock-alert/index.ts:16-18` — select sem `.limit()`, com join aninhado:
+  `supabase/functions/stock-alert/index.ts:16-18` — select sem `.limit()`, com join aninhado:
+
 ```ts
 const { data: produtos, error } = await supabase
   .from("produtos")
-  .select("id, sku, nome, estoque_minimo, estoque_maximo, ponto_pedido, estoque:estoque_posicao(quantidade)");
+  .select(
+    "id, sku, nome, estoque_minimo, estoque_maximo, ponto_pedido, estoque:estoque_posicao(quantidade)"
+  );
 ```
+
 Segue para outro select sem limite (linhas 32-37, `alertas_historico`) e para um insert em lote (linhas 92-95). `reorder-check/index.ts:24-26` é pior: `.from("products").select("*")`, tabela inteira e todas as colunas, mais `suppliers` sem limite (16-18) e um `upsert` (54-58). Nenhuma das duas importa `_shared/rate-limit.ts` — `grep -l 'rate-limit.ts' */index.ts` devolve 11 funções, todas de auth/pagamento, nenhuma delas.
+
 - **Locais (7):** `supabase/functions/stock-alert/index.ts:16-18`, `supabase/functions/stock-alert/index.ts:32-37`, `supabase/functions/stock-alert/index.ts:92-95`, `supabase/functions/reorder-check/index.ts:16-18`, `supabase/functions/reorder-check/index.ts:24-26`, `supabase/functions/reorder-check/index.ts:54-58`, `supabase/functions/_shared/rate-limit.ts:96-105`
 - **Causa raiz:** As duas funções foram pensadas como tarefas de cron (chamadas por `cron-daily:24`), onde custo por execução não importa e não há autenticação de usuário a verificar. Ao receberem `verify_jwt = false` para o agendador alcançá-las, passaram a ser endpoints abertos — mas mantiveram o perfil de cron: varredura completa, escrita em lote e nenhum limite de taxa. A regra do repo de `.limit(500)` não é verificada em lugar nenhum, porque o CI não analisa estes arquivos.
 - **Impacto no negócio:** São os dois únicos pontos da API que respondem a qualquer um na internet, e cada chamada custa uma varredura completa de `produtos` (com join de posições) ou de `products` mais uma escrita. Um laço simples de requisições derruba o desempenho do banco de produção e enche `alertas_historico`/`reorder_suggestions` de linhas — sem credencial, sem rate limit e sem rastro de quem chamou. Para o dono: o painel de alertas fica inutilizável e o Postgres sofre, sem ninguém poder identificar a origem.
@@ -1960,7 +2018,7 @@ Segue para outro select sem limite (linhas 32-37, `alertas_historico`) e para um
 ## F192 — 'Valor parado' é exibido em R$ mas calculado com o peso em kg do produto
 
 - **Camada:** features-secundarias · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** `src/features/dashboard/hooks/useDashboard.ts:221`: `valor: (item.quantidade || 0) * ((prod?.peso_unitario as number) || 0)` — `peso_unitario` é a única coluna numérica do produto lida na consulta (`:123`), e a tabela `produtos` não tem coluna de preço (conferido em `src/integrations/supabase/types.ts`, bloco `produtos`: existem `curva_abc`, `giro_mensal`, `peso_unitario`, nenhum `preco_*`). O resultado é somado em `valorParado` (`:236`) e apresentado como moeda em dois lugares: `src/components/dashboard/DashboardKPIs.tsx:74` `` subValue={`R$ ${safeKpis.valorParado.toLocaleString()}`} `` e `src/utils/dashboardExport.ts:103` `` `Valor Total de Itens Parados: R$ ...` ``. O mesmo atalho reaparece, aí sim com comentário honesto, em `src/features/analytics/hooks/useCurvaABC.ts:89-90`: `// Sem coluna de valor no schema: usa peso_unitario como proxy de valor unitário`.
+- **Evidência:** `src/features/dashboard/hooks/useDashboard.ts:221`: `valor: (item.quantidade || 0) * ((prod?.peso_unitario as number) || 0)` — `peso_unitario` é a única coluna numérica do produto lida na consulta (`:123`), e a tabela `produtos` não tem coluna de preço (conferido em `src/integrations/supabase/types.ts`, bloco `produtos`: existem `curva_abc`, `giro_mensal`, `peso_unitario`, nenhum `preco_*`). O resultado é somado em `valorParado` (`:236`) e apresentado como moeda em dois lugares: `src/components/dashboard/DashboardKPIs.tsx:74` ``subValue={`R$ ${safeKpis.valorParado.toLocaleString()}`}`` e `src/utils/dashboardExport.ts:103` `` `Valor Total de Itens Parados: R$ ...` ``. O mesmo atalho reaparece, aí sim com comentário honesto, em `src/features/analytics/hooks/useCurvaABC.ts:89-90`: `// Sem coluna de valor no schema: usa peso_unitario como proxy de valor unitário`.
 - **Locais (5):** `src/features/dashboard/hooks/useDashboard.ts:221`, `src/features/dashboard/hooks/useDashboard.ts:236`, `src/components/dashboard/DashboardKPIs.tsx:74`, `src/utils/dashboardExport.ts:103`, `src/features/analytics/hooks/useCurvaABC.ts:89-91`
 - **Causa raiz:** O schema de `produtos` não tem custo/preço e, em vez de a feature parar ou pedir o dado, o código elegeu `peso_unitario` como 'proxy de valor' — e a camada de apresentação formatou o resultado como reais.
 - **Impacto no negócio:** O dono lê 'Valor Total de Itens Parados: R$ 1.234' em um relatório exportado quando o número é 1.234 kg. Capital imobilizado é justamente o indicador usado para decidir liquidação/expedição de estoque morto; o número está em outra unidade e pode errar por ordens de magnitude.
@@ -1996,7 +2054,7 @@ Segue para outro select sem limite (linhas 32-37, `alertas_historico`) e para um
 ## F196 — Curva ABC: duas implementações divergentes, nenhuma segue a regra documentada, função de banco é stub e o resultado nunca é gravado
 
 - **Camada:** features-secundarias · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** A regra do projeto é 'A = alto giro, 80% do movimento · B = 15% · C = 5%' (`docs/agentes/regras-dominio.md:47-48`, que também aponta a função `abc-analysis` e a página `ABCAnalysisPage`). O que a página faz (`src/features/analytics/pages/ABCAnalysisPage.tsx:15` → `src/features/analytics/hooks/useCurvaABC.ts`): classifica por **valor acumulado** usando peso como proxy de valor (`:89-91`), em 80/95/resto (`:130-136`), e cruza com faixas absolutas de giro inventadas (`>100` = A, `>30` = B, `:138-144`), fechando com um OU (`:146-152`) — qualquer produto classe A em *um* dos dois critérios vira A, o que estoura a repartição 80/15/5. As três consultas do cálculo não têm `.limit()` (`:49-56`, `:59`, `:63-66`), então ficam no teto padrão do PostgREST e truncam silenciosamente acima de 1000 linhas (a convenção do projeto é `.limit(500)` explícito, `.claude/skills/estoki-v2/SKILL.md`). A função de banco citada na doc é um stub: `supabase/functions/abc-analysis/index.ts` abre cliente `service_role`, não consulta nada e devolve `{ success: true, function: "abc-analysis", timestamp, ...v.data }`. Existe ainda uma segunda implementação paralela, `src/hooks/useABCAnalysis.ts` (80/95 sobre `produtos.preco_venda`, linhas 34 e 59-61), com **zero consumidores** (`grep -rn useABCAnalysis src/` só acha a definição) e que lê uma coluna inexistente — `produtos` não tem `preco_venda` (bloco `produtos` em `src/integrations/supabase/types.ts` tem só `curva_abc`, `giro_mensal`, `peso_unitario`). Por fim, a classificação calculada nunca é persistida: `useCurvaABC` apenas **lê** `curva_abc` (`:53`, `:99`) e nenhum arquivo do repo escreve essa coluna (`grep -rn curva_abc` + filtro de insert/update/upsert em `src/`, `supabase/functions/` e `supabase/migrations/` = 0 escritas), embora 10+ telas decidam com ela, incluindo o endereçamento automático (`src/pages/Endereçamento Automatico.tsx:98,128-133,159`) e os cards/filtros de produto (`src/hooks/useProdutos.ts:108-110`, `src/components/produtos/ProductCardAvancado.tsx:59-66`). O botão 'Recalcular' da página só invalida o cache do React Query (`useCurvaABC.ts:191-195`).
+- **Evidência:** A regra do projeto é 'A = alto giro, 80% do movimento · B = 15% · C = 5%' (`docs/agentes/regras-dominio.md:47-48`, que também aponta a função `abc-analysis` e a página `ABCAnalysisPage`). O que a página faz (`src/features/analytics/pages/ABCAnalysisPage.tsx:15` → `src/features/analytics/hooks/useCurvaABC.ts`): classifica por **valor acumulado** usando peso como proxy de valor (`:89-91`), em 80/95/resto (`:130-136`), e cruza com faixas absolutas de giro inventadas (`>100` = A, `>30` = B, `:138-144`), fechando com um OU (`:146-152`) — qualquer produto classe A em _um_ dos dois critérios vira A, o que estoura a repartição 80/15/5. As três consultas do cálculo não têm `.limit()` (`:49-56`, `:59`, `:63-66`), então ficam no teto padrão do PostgREST e truncam silenciosamente acima de 1000 linhas (a convenção do projeto é `.limit(500)` explícito, `.claude/skills/estoki-v2/SKILL.md`). A função de banco citada na doc é um stub: `supabase/functions/abc-analysis/index.ts` abre cliente `service_role`, não consulta nada e devolve `{ success: true, function: "abc-analysis", timestamp, ...v.data }`. Existe ainda uma segunda implementação paralela, `src/hooks/useABCAnalysis.ts` (80/95 sobre `produtos.preco_venda`, linhas 34 e 59-61), com **zero consumidores** (`grep -rn useABCAnalysis src/` só acha a definição) e que lê uma coluna inexistente — `produtos` não tem `preco_venda` (bloco `produtos` em `src/integrations/supabase/types.ts` tem só `curva_abc`, `giro_mensal`, `peso_unitario`). Por fim, a classificação calculada nunca é persistida: `useCurvaABC` apenas **lê** `curva_abc` (`:53`, `:99`) e nenhum arquivo do repo escreve essa coluna (`grep -rn curva_abc` + filtro de insert/update/upsert em `src/`, `supabase/functions/` e `supabase/migrations/` = 0 escritas), embora 10+ telas decidam com ela, incluindo o endereçamento automático (`src/pages/Endereçamento Automatico.tsx:98,128-133,159`) e os cards/filtros de produto (`src/hooks/useProdutos.ts:108-110`, `src/components/produtos/ProductCardAvancado.tsx:59-66`). O botão 'Recalcular' da página só invalida o cache do React Query (`useCurvaABC.ts:191-195`).
 - **Locais (9):** `src/features/analytics/hooks/useCurvaABC.ts:89-91`, `src/features/analytics/hooks/useCurvaABC.ts:130-152`, `src/features/analytics/hooks/useCurvaABC.ts:49-66`, `src/features/analytics/hooks/useCurvaABC.ts:191-195`, `src/hooks/useABCAnalysis.ts:14-22`, `src/hooks/useABCAnalysis.ts:34`, `supabase/functions/abc-analysis/index.ts:16-26`, `src/pages/Endereçamento Automatico.tsx:98`, `docs/agentes/regras-dominio.md:47-48`
 - **Causa raiz:** A feature foi implementada três vezes (hook novo, hook antigo, edge function) sem nunca fechar o ciclo: falta a coluna de valor no schema, falta persistir a classificação e falta escolher uma fonte única. A documentação descreve a versão que menos existe (a edge function).
 - **Impacto no negócio:** A classificação ABC que o sistema usa para decidir onde endereçar produto e o que priorizar vem de `produtos.curva_abc`, que ninguém atualiza — é dado de cadastro/seed envelhecendo. A tela de Curva ABC mostra uma terceira classificação, calculada sobre peso e com regra que não é a do negócio, que desaparece ao sair da página. Decisão de layout de armazém e de reposição em cima de dado errado.
@@ -2165,9 +2223,9 @@ Segue para outro select sem limite (linhas 32-37, `alertas_historico`) e para um
 - **Camada:** hooks-estado · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** grep de chamadas que passam a flag (excluindo a declaração do próprio hook):
   $ grep -rn "enableRealtime" src | grep -v "options?.enableRealtime\|enableRealtime?: boolean"
-  src/features/inventory/pages/EstoquePage.tsx:59:    enableRealtime: true,
-Hooks que expõem a opção: src/hooks/useMovimentacoes.ts, src/hooks/useProdutos.ts, src/features/quality/hooks/useTriagens.ts, src/features/picking/hooks/usePicking.ts, src/features/receiving/hooks/useRecebimentos.ts, src/features/shipping/hooks/useRomaneios.ts, src/features/inventory/hooks/useEstoque.ts.
-Consumidores reais, todos sem a flag: src/features/picking/pages/PickingPage.tsx:31 `usePicking()`, src/features/quality/pages/TriagemPage.tsx:64 `useTriagens()`, src/features/receiving/pages/RecebimentoPage.tsx:72 `useRecebimentos()`, src/features/shipping/pages/ShippingPage.tsx:46 `useRomaneios()`, src/pages/Produtos.tsx:28 `useProdutos()`, src/pages/inventory/StockMovementsPage.tsx:31 `useMovimentacoes()`.
+  src/features/inventory/pages/EstoquePage.tsx:59: enableRealtime: true,
+  Hooks que expõem a opção: src/hooks/useMovimentacoes.ts, src/hooks/useProdutos.ts, src/features/quality/hooks/useTriagens.ts, src/features/picking/hooks/usePicking.ts, src/features/receiving/hooks/useRecebimentos.ts, src/features/shipping/hooks/useRomaneios.ts, src/features/inventory/hooks/useEstoque.ts.
+  Consumidores reais, todos sem a flag: src/features/picking/pages/PickingPage.tsx:31 `usePicking()`, src/features/quality/pages/TriagemPage.tsx:64 `useTriagens()`, src/features/receiving/pages/RecebimentoPage.tsx:72 `useRecebimentos()`, src/features/shipping/pages/ShippingPage.tsx:46 `useRomaneios()`, src/pages/Produtos.tsx:28 `useProdutos()`, src/pages/inventory/StockMovementsPage.tsx:31 `useMovimentacoes()`.
 - **Locais (11):** `src/features/picking/pages/PickingPage.tsx:31`, `src/features/quality/pages/TriagemPage.tsx:64`, `src/features/quality/pages/FormularioTriagem.tsx:44`, `src/features/receiving/pages/RecebimentoPage.tsx:72`, `src/features/receiving/pages/ConferenciaRecebimento.tsx:39`, `src/features/shipping/pages/ShippingPage.tsx:46`, `src/pages/Romaneios.tsx:89`, `src/pages/Produtos.tsx:28`, `src/pages/inventory/StockMovementsPage.tsx:31`, `src/pages/Rastreabilidade.tsx:38`, `src/pages/Relatorios.tsx:76`
 - **Causa raiz:** A assinatura realtime foi escrita atrás de um flag opcional (`options?.enableRealtime`) que ninguém liga. Só a EstoquePage passa `enableRealtime: true`. O código de assinatura nos outros 6 hooks nunca executa.
 - **Impacto no negócio:** Picking, triagem, recebimento, expedição, produtos e movimentações não atualizam sozinhos: quem está na tela só vê o que foi carregado na abertura. Dois operadores no mesmo pedido podem trabalhar sobre informação diferente, e o supervisor vê uma fila que já não existe.
@@ -2178,9 +2236,9 @@ Consumidores reais, todos sem a flag: src/features/picking/pages/PickingPage.tsx
 
 - **Camada:** hooks-estado · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Comparação executada entre as chaves invalidadas em src/features/analytics/hooks/useRealtimeKPIs.ts e as `queryKey` realmente usadas no repo:
-  metricas_operacionais -> exato:0  | dashboard -> exato:0 | posicoes_estoque -> exato:0 | posicoes_estoque_count -> exato:0 | ocupacao_por_porta_palete -> exato:0 | estoque_posicao -> exato:0 | triagem_por_produto -> exato:0 | eventos_triagem -> exato:0 | eventos_picking -> exato:0 | ondas_separacao -> exato:0 | lotes -> exato:0 | alertas -> exato:0 | atividades_recentes -> exato:0
+  metricas_operacionais -> exato:0 | dashboard -> exato:0 | posicoes_estoque -> exato:0 | posicoes_estoque_count -> exato:0 | ocupacao_por_porta_palete -> exato:0 | estoque_posicao -> exato:0 | triagem_por_produto -> exato:0 | eventos_triagem -> exato:0 | eventos_picking -> exato:0 | ondas_separacao -> exato:0 | lotes -> exato:0 | alertas -> exato:0 | atividades_recentes -> exato:0
   tarefas -> exato:3 | recebimentos -> exato:3 | alertas_historico -> exato:1 | rastreamento_historico -> exato:1
-As chaves reais usam hífen e outro nome: src/features/dashboard/hooks/useDashboard.ts:76 `queryKey: ["dashboard-stats"]`, src/features/analytics/hooks/useKPIsOperacionais/index.ts:24 `queryKey: ["metricas-operacionais", periodo]`, src/features/inventory/hooks/useEstoque.ts:54 `queryKey: ["estoque-posicoes"]`, src/features/analytics/hooks/useOperationalLive.ts:47 `queryKey: ["operational-live", today()]`.
+  As chaves reais usam hífen e outro nome: src/features/dashboard/hooks/useDashboard.ts:76 `queryKey: ["dashboard-stats"]`, src/features/analytics/hooks/useKPIsOperacionais/index.ts:24 `queryKey: ["metricas-operacionais", periodo]`, src/features/inventory/hooks/useEstoque.ts:54 `queryKey: ["estoque-posicoes"]`, src/features/analytics/hooks/useOperationalLive.ts:47 `queryKey: ["operational-live", today()]`.
 - **Locais (9):** `src/features/analytics/hooks/useRealtimeKPIs.ts:72`, `src/features/analytics/hooks/useRealtimeKPIs.ts:80`, `src/features/analytics/hooks/useRealtimeKPIs.ts:89`, `src/features/analytics/hooks/useRealtimeKPIs.ts:96`, `src/features/analytics/hooks/useRealtimeKPIs.ts:104`, `src/features/analytics/hooks/useRealtimeKPIs.ts:108`, `src/features/analytics/hooks/useRealtimeKPIs.ts:112`, `src/features/analytics/hooks/useRealtimeKPIs.ts:119`, `src/features/analytics/hooks/useRealtimeKPIs.ts:125`
 - **Causa raiz:** As chaves de invalidação foram escritas com o nome da TABELA do banco (snake_case: `posicoes_estoque`, `metricas_operacionais`), mas as queries do app usam nomes de domínio com hífen (`estoque-posicoes`, `metricas-operacionais`, `dashboard-stats`). `invalidateQueries` casa por prefixo de array elemento a elemento, então `["dashboard"]` não casa `["dashboard-stats"]`. 13 das 17 chaves não tocam nada.
 - **Impacto no negócio:** O painel vendido como "tempo real" (indicador 'conectado' na tela) recebe o evento do banco e não atualiza quase nada: ocupação, KPIs, curva de triagem e picking continuam com o número antigo. O dashboard só muda quando o poll de 30s roda ou quando o usuário recarrega — o indicador de conexão verde dá uma confiança que o dado não tem.
@@ -2191,10 +2249,10 @@ As chaves reais usam hífen e outro nome: src/features/dashboard/hooks/useDashbo
 
 - **Camada:** hooks-estado · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Varredura executada em src/hooks, src/features e src/contexts procurando `.from("x").select(...)` sem `.limit(`, `.range(`, `.single()`, `.maybeSingle()` ou `.eq(`: 32 ocorrências. Exemplos lidos e confirmados:
-src/features/analytics/hooks/useCurvaABC.ts:49 `supabase.from("produtos").select(...)` sem limite; :59 `supabase.from("lotes").select("produto_id, quantidade_atual")`; :64 `.from("rastreamento_historico").select(...).gte("created_at", trintaDiasAtras)` — sem limite.
-src/hooks/useFornecedores.ts:55-60 `.from("lotes").select("id, fornecedor, quantidade_inicial, ...")` e :65 `.from("eventos_triagem").select("id, resultado, lote_id")` — sem limite.
-src/hooks/useTrocasDevolucoes.ts:71-74 `.from("trocas_devolucoes").select("*").order(...)` — sem limite.
-supabase/config.toml tem 7 linhas e não declara `[api] max_rows`, ou seja vale o teto padrão do Supabase Cloud (1000 linhas por resposta).
+  src/features/analytics/hooks/useCurvaABC.ts:49 `supabase.from("produtos").select(...)` sem limite; :59 `supabase.from("lotes").select("produto_id, quantidade_atual")`; :64 `.from("rastreamento_historico").select(...).gte("created_at", trintaDiasAtras)` — sem limite.
+  src/hooks/useFornecedores.ts:55-60 `.from("lotes").select("id, fornecedor, quantidade_inicial, ...")` e :65 `.from("eventos_triagem").select("id, resultado, lote_id")` — sem limite.
+  src/hooks/useTrocasDevolucoes.ts:71-74 `.from("trocas_devolucoes").select("*").order(...)` — sem limite.
+  supabase/config.toml tem 7 linhas e não declara `[api] max_rows`, ou seja vale o teto padrão do Supabase Cloud (1000 linhas por resposta).
 - **Locais (26):** `src/features/analytics/hooks/useCurvaABC.ts:49`, `src/features/analytics/hooks/useCurvaABC.ts:59`, `src/features/analytics/hooks/useCurvaABC.ts:64`, `src/hooks/useFornecedores.ts:56`, `src/hooks/useFornecedores.ts:65`, `src/hooks/useTrocasDevolucoes.ts:72`, `src/hooks/useTarefas.ts:18`, `src/hooks/useRanking.ts:29`, `src/hooks/useRanking.ts:52`, `src/hooks/useABCAnalysis.ts:15`, `src/hooks/useFEFO.ts:13`, `src/hooks/useLIFO.ts:13` …
 - **Causa raiz:** As consultas trazem a tabela inteira e o cálculo é feito no navegador. Quando a tabela passa de 1000 linhas o PostgREST devolve só as primeiras 1000, sem erro e sem aviso, e o reduce/filter do hook calcula sobre um pedaço dos dados.
 - **Impacto no negócio:** Classificação de Curva ABC, giro mensal, score de fornecedor, ranking e produtividade passam a sair silenciosamente errados quando o histórico cresce — e a tela não dá nenhum sinal de que faltou dado. Decisão de compra e avaliação de fornecedor em cima de número incompleto.
@@ -2206,9 +2264,9 @@ supabase/config.toml tem 7 linhas e não declara `[api] max_rows`, ou seja vale 
 - **Camada:** hooks-estado · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/contexts/NotificationContext.tsx:134-140:
   const markAsRead = useCallback(async (id) => { await dbMarkAsRead(id); setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n))); }, [dbMarkAsRead]);
-O `dbMarkAsRead` nunca sinaliza falha — src/hooks/useNotificationOperations.ts:113-116: `} catch (err) { if (import.meta.env.DEV) console.error("Erro ao marcar como lida:", err); }` (em produção, silêncio total), e :155-161 faz o mesmo em `markAllAsRead`.
-src/hooks/useNotificacoes.ts:263-271: `limparTodas` apenas faz `setNotificacoes([])` e `return true` — não escreve nada no banco; e src/hooks/useNotificacoes.ts:132 recarrega tudo a cada 60s, então a lista volta.
-src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `tipo === "alerta"`; para os demais faz apenas `setNotificacoes(prev => prev.filter(...))` (comentário na linha 252 admite isso).
+  O `dbMarkAsRead` nunca sinaliza falha — src/hooks/useNotificationOperations.ts:113-116: `} catch (err) { if (import.meta.env.DEV) console.error("Erro ao marcar como lida:", err); }` (em produção, silêncio total), e :155-161 faz o mesmo em `markAllAsRead`.
+  src/hooks/useNotificacoes.ts:263-271: `limparTodas` apenas faz `setNotificacoes([])` e `return true` — não escreve nada no banco; e src/hooks/useNotificacoes.ts:132 recarrega tudo a cada 60s, então a lista volta.
+  src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `tipo === "alerta"`; para os demais faz apenas `setNotificacoes(prev => prev.filter(...))` (comentário na linha 252 admite isso).
 - **Locais (7):** `src/contexts/NotificationContext.tsx:134`, `src/contexts/NotificationContext.tsx:142`, `src/hooks/useNotificationOperations.ts:103`, `src/hooks/useNotificationOperations.ts:113`, `src/hooks/useNotificationOperations.ts:155`, `src/hooks/useNotificacoes.ts:236`, `src/hooks/useNotificacoes.ts:263`
 - **Causa raiz:** Atualização otimista sem rollback: o estado local é marcado como lido/limpo independentemente do resultado da escrita, e o catch do service engole o erro (só loga em DEV). Em `limparTodas` não existe nem a escrita.
 - **Impacto no negócio:** O operador "limpa" as notificações, elas desaparecem e voltam no próximo refresh de 60s ou na próxima sessão. Pior: um alerta crítico pode ser marcado como lido na tela sem ter sido reconhecido no banco — ninguém fica responsável pelo alerta e o histórico de reconhecimento fica furado.
@@ -2473,7 +2531,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F243 — Service worker pré-cacheia o app inteiro (5.25 MB) na primeira visita e anula todo o code-splitting
 
 - **Camada:** performance-front · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** Saída do build: `PWA v0.19.8 / mode generateSW / precache 240 entries (5376.14 KiB)`. Confirmado no artefato: `grep -oE '"[^"]*assets/(exceljs|jspdf|vendor-recharts|useScanner|html2canvas|index\.es)[^"]*"' dist/sw.js` retorna assets/vendor-recharts-*.js, assets/useScanner-*.js, assets/jspdf.plugin.autotable-*.js, assets/jspdf.es.min-*.js, assets/index.es-*.js, assets/html2canvas.esm-*.js, assets/exceljs.min-*.js. Somados em gzip só esses: exceljs 256.33 + jspdf 123.98 + recharts 156.56 + useScanner 101.00 + html2canvas 45.63 + index.es 51.37 = 734.87 KB gzip baixados sem o usuário abrir nenhum relatório, export ou scanner.
+- **Evidência:** Saída do build: `PWA v0.19.8 / mode generateSW / precache 240 entries (5376.14 KiB)`. Confirmado no artefato: `grep -oE '"[^"]*assets/(exceljs|jspdf|vendor-recharts|useScanner|html2canvas|index\.es)[^"]*"' dist/sw.js` retorna assets/vendor-recharts-_.js, assets/useScanner-_.js, assets/jspdf.plugin.autotable-_.js, assets/jspdf.es.min-_.js, assets/index.es-_.js, assets/html2canvas.esm-_.js, assets/exceljs.min-*.js. Somados em gzip só esses: exceljs 256.33 + jspdf 123.98 + recharts 156.56 + useScanner 101.00 + html2canvas 45.63 + index.es 51.37 = 734.87 KB gzip baixados sem o usuário abrir nenhum relatório, export ou scanner.
 - **Locais (3):** `/home/user/Estoki_V2/vite.config.ts:114-121`, `/home/user/Estoki_V2/vite.config.ts:116`, `/home/user/Estoki_V2/dist/sw.js`
 - **Causa raiz:** `workbox.globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"]` (vite.config.ts:116) casa com os 224 chunks de dist/assets, incluindo todos os chunks assíncronos. O precache do workbox é eager: o SW baixa a lista inteira na instalação. Os `import()` dinâmicos de exceljs/jspdf/papaparse continuam corretos no código, mas o SW já trouxe tudo antes.
 - **Impacto no negócio:** Primeira visita (e cada atualização de versão, porque `registerType: "autoUpdate"` revalida o manifest) consome 5.25 MB de dados por dispositivo. Em frota de coletores com plano móvel isso é custo direto e lentidão na instalação do PWA, sem nenhum ganho para o operador que só usa recebimento e picking.
@@ -2553,7 +2611,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F251 — 23 scripts seed/probe escrevem com service_role em qualquer projeto que o .env apontar, sem pino de projeto nem guarda de ambiente, e 13 comecam apagando tabelas
 
 - **Camada:** scripts-operacao · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** Todos os 17 seed-*.cjs e 6 probe-*.cjs fazem createClient(process.env.VITE_SUPABASE_URL, process.env.SERVICE_ROLE_KEY) - zero verificacao de qual projeto respondeu e zero check de NODE_ENV. Treze deles abrem apagando em massa: seed-aprovacoes.cjs:15 e seed-inventario-geral.cjs:8 usam .delete().gte('created_at','1900-01-01') (ou seja, a tabela inteira: aprovacoes_movimentacao e inventario_contagens), seed-kpis.cjs:15 faz o mesmo em metricas_operacionais, seed-qualidade.cjs:15 em inspecoes_qualidade, seed-putaway.cjs:16-19 apaga tarefas tipo=armazenagem e posicoes_estoque com codigo PW%, e seed-conferencia.cjs:15, seed-expedicao.cjs:15, seed-trocas.cjs:15 apagam lotes/romaneios/trocas por prefixo. O repo ja tem o padrao correto em outro lugar: scripts/inventario/gerar-banco.mjs:33,244-246 fixa PROJETO_OFICIAL=ookjbflsnoefnsixrspc e recusa outro ref, e scripts/db-audit/database-identity.mjs valida o endpoint por fingerprint SHA-256 antes de qualquer query.
+- **Evidência:** Todos os 17 seed-_.cjs e 6 probe-_.cjs fazem createClient(process.env.VITE_SUPABASE_URL, process.env.SERVICE_ROLE_KEY) - zero verificacao de qual projeto respondeu e zero check de NODE_ENV. Treze deles abrem apagando em massa: seed-aprovacoes.cjs:15 e seed-inventario-geral.cjs:8 usam .delete().gte('created_at','1900-01-01') (ou seja, a tabela inteira: aprovacoes_movimentacao e inventario_contagens), seed-kpis.cjs:15 faz o mesmo em metricas_operacionais, seed-qualidade.cjs:15 em inspecoes_qualidade, seed-putaway.cjs:16-19 apaga tarefas tipo=armazenagem e posicoes_estoque com codigo PW%, e seed-conferencia.cjs:15, seed-expedicao.cjs:15, seed-trocas.cjs:15 apagam lotes/romaneios/trocas por prefixo. O repo ja tem o padrao correto em outro lugar: scripts/inventario/gerar-banco.mjs:33,244-246 fixa PROJETO_OFICIAL=ookjbflsnoefnsixrspc e recusa outro ref, e scripts/db-audit/database-identity.mjs valida o endpoint por fingerprint SHA-256 antes de qualquer query.
 - **Locais (10):** `/home/user/Estoki_V2/scripts/seed-aprovacoes.cjs:3-15`, `/home/user/Estoki_V2/scripts/seed-inventario-geral.cjs:3-8`, `/home/user/Estoki_V2/scripts/seed-kpis.cjs:15-19`, `/home/user/Estoki_V2/scripts/seed-qualidade.cjs:15`, `/home/user/Estoki_V2/scripts/seed-putaway.cjs:16-19`, `/home/user/Estoki_V2/scripts/seed-conferencia.cjs:15`, `/home/user/Estoki_V2/scripts/seed-expedicao.cjs:15`, `/home/user/Estoki_V2/scripts/seed-trocas.cjs:15`, `/home/user/Estoki_V2/scripts/seed-app-tables.cjs:4-12`, `/home/user/Estoki_V2/scripts/inventario/gerar-banco.mjs:244-246`
 - **Causa raiz:** Scripts de popular ambiente de demo escritos apontando para o mesmo .env da aplicacao, sem o pino de projeto que o resto do tooling do repo adotou depois.
 - **Impacto no negócio:** Existem dois Supabase vivos (ookjbflsnoefnsixrspc do repo/Vercel e mtnsslmweggrmmdcklya do estoki.lovable.app). Um .env com a URL do projeto errado faz o script apagar tabelas operacionais do banco errado - contagens de inventario, aprovacoes de movimentacao e metricas nao tem backup logico nem trilha de quem apagou, porque service_role ignora RLS e nao gera registro de usuario.
@@ -2604,8 +2662,10 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 
 - **Camada:** services-contratos · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** 1) analytics_events — colunas reais (src/integrations/supabase/types.ts:515-524 e supabase/migrations/20260521103249_ac506458-f9b6-4a80-b501-91b5d21a6c4c.sql:15-23): id, user_id, session_id, event NOT NULL, properties, user_agent, timestamp. src/services/analyticsService.ts:7-11 insere `{ action, metadata, entity_type }` — as três não existem e `event` (NOT NULL) não é preenchida; linhas 20-24 filtram `.eq("event_name", type)` e `.gte("created_at", ...)`, também inexistentes.
-2) stock_movements — colunas reais (types.ts:3758-3768): created_at, from_location, id, product_id, quantity, to_location, type, user_id. src/services/stockService.ts:60-62 insere `previous_qty` e `new_qty`; a interface StockMovement (linhas 5-17) ainda declara location_id, reference e reason.
-3) locations — colunas reais (types.ts:1848-1860): aisle, bin, created_at, id, level, rack, status, updated_at, warehouse_id, zone. A interface Location em src/services/locationService.ts:2-15 declara `code`, `position`, `type`, `max_capacity`, `current_occupancy` — nenhuma existe — e `create()` (linha 41) insere o objeto inteiro.
+
+2. stock_movements — colunas reais (types.ts:3758-3768): created_at, from_location, id, product_id, quantity, to_location, type, user_id. src/services/stockService.ts:60-62 insere `previous_qty` e `new_qty`; a interface StockMovement (linhas 5-17) ainda declara location_id, reference e reason.
+3. locations — colunas reais (types.ts:1848-1860): aisle, bin, created_at, id, level, rack, status, updated_at, warehouse_id, zone. A interface Location em src/services/locationService.ts:2-15 declara `code`, `position`, `type`, `max_capacity`, `current_occupancy` — nenhuma existe — e `create()` (linha 41) insere o objeto inteiro.
+
 - **Locais (6):** `src/services/analyticsService.ts:7`, `src/services/analyticsService.ts:20`, `src/services/stockService.ts:60`, `src/services/stockService.ts:5`, `src/services/locationService.ts:2`, `src/services/locationService.ts:41`
 - **Causa raiz:** Mesma origem do achado anterior (scaffold em inglês), mas aqui a tabela existe e só as colunas divergem — por isso o erro que chega é PGRST204/42703 ("column not found") ou violação de NOT NULL, não 404. Os casts `as any` em analyticsService.ts:11,20 e o helper tipado em stockService.ts:3-4 escondem o problema do typecheck.
 - **Impacto no negócio:** Telemetria de uso do sistema (analytics) seria 100% perdida em silêncio — analyticsService.ts:13-15 só loga o erro e segue. Movimentação de estoque e cadastro de endereços falhariam na gravação. Hoje nenhum dos três tem consumidor, então o prejuízo é latente.
@@ -2645,7 +2705,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F260 — Foto de triagem e assinatura de conferência são salvas com URL pública num bucket privado
 
 - **Camada:** storage · **Severidade:** Alta · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** supabase/migrations/20251220143942_*.sql:2-3 cria o bucket triagem-fotos com public=true; supabase/migrations/20260404160737_*.sql:2 faz UPDATE storage.buckets SET public=false. O frontend continua usando getPublicUrl() (src/hooks/useTriagemFotos.ts:64 e src/components/conferencia/AssinaturaConferenciaDialog.tsx:56). EXECUTADO: GET /storage/v1/object/public/triagem-fotos/<qualquer> devolve HTTP 400.
+- **Evidência:** supabase/migrations/20251220143942__.sql:2-3 cria o bucket triagem-fotos com public=true; supabase/migrations/20260404160737__.sql:2 faz UPDATE storage.buckets SET public=false. O frontend continua usando getPublicUrl() (src/hooks/useTriagemFotos.ts:64 e src/components/conferencia/AssinaturaConferenciaDialog.tsx:56). EXECUTADO: GET /storage/v1/object/public/triagem-fotos/<qualquer> devolve HTTP 400.
 - **Locais (3):** `src/hooks/useTriagemFotos.ts:64`, `src/components/conferencia/AssinaturaConferenciaDialog.tsx:56`, `supabase/migrations/20260404160737_41a9f3c2-438f-453d-8a57-1a9bc2e0f9b4.sql:2`
 - **Causa raiz:** O bucket foi fechado por segurança e o frontend não acompanhou a troca de getPublicUrl para URL assinada.
 - **Impacto no negócio:** A evidência fotográfica da triagem e a assinatura da conferência são gravadas e depois não abrem — a prova do processo se perde.
@@ -2665,7 +2725,6 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ---
 
 # 🟡 Média — 145 achados
-
 
 ## F262 — Cinco rotas de admin não têm nenhum link na interface
 
@@ -2715,7 +2774,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F267 — Operador le todos os alertas (inclusive de infraestrutura) e nao consegue tratar nenhum, com falha silenciosa
 
 - **Camada:** Alertas e reposicao · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** Leitura estatica das policies: SELECT `TO authenticated USING (true)` (supabase/migrations/20260315152726_*.sql:22-24, recriada condicionalmente em 20260519161332_*.sql:9-18) contra UPDATE/INSERT restritos a admin/supervisor (20260317222353_*.sql:6-9, 20260317222825_*.sql:18-20, 20260531125120_*.sql:6-11); src/hooks/useNotificacoes.ts:214-217 engole o erro com console so em DEV; a rota /alertas exclui operador (src/routes/analyticsRoutes.tsx:61).
+- **Evidência:** Leitura estatica das policies: SELECT `TO authenticated USING (true)` (supabase/migrations/20260315152726__.sql:22-24, recriada condicionalmente em 20260519161332__.sql:9-18) contra UPDATE/INSERT restritos a admin/supervisor (20260317222353__.sql:6-9, 20260317222825__.sql:18-20, 20260531125120_*.sql:6-11); src/hooks/useNotificacoes.ts:214-217 engole o erro com console so em DEV; a rota /alertas exclui operador (src/routes/analyticsRoutes.tsx:61).
 - **Locais (4):** `supabase/migrations/20260315152726_5575178e-04b4-45fe-a25c-7f5b3ca49077.sql:22-24`, `supabase/migrations/20260531125120_59015d9b-23c6-463b-a314-f807c5b7602c.sql:6-11`, `src/hooks/useNotificacoes.ts:160-186,214-217`, `src/routes/analyticsRoutes.tsx:61`
 - **Causa raiz:** Leitura liberada para qualquer autenticado enquanto a escrita e restrita, sem a UI refletir essa assimetria (botao aparece, acao falha calada).
 - **Impacto no negócio:** O operador — quem de fato repoe — ve o alerta no sino, clica, nada acontece e nao ha explicacao; e ve tambem alertas de banco (WAL, deadlock) que nao lhe dizem respeito.
@@ -2724,7 +2783,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F268 — reorder-check sobrescreve a sugestao anterior e nao tem historico; unicidade e global, nao por tenant
 
 - **Camada:** Alertas e reposicao · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** supabase/functions/reorder-check/index.ts:52-57 (`upsert` com `onConflict: "product_id"` reescrevendo `status:'pending'` e `created_at`); supabase/migrations/20261121090000_*.sql:42 (`CONSTRAINT uq_reorder_product UNIQUE (product_id)`), sem tenant_id na chave mesmo depois de 20261122134000_*.sql:54 adicionar a coluna.
+- **Evidência:** supabase/functions/reorder-check/index.ts:52-57 (`upsert` com `onConflict: "product_id"` reescrevendo `status:'pending'` e `created_at`); supabase/migrations/20261121090000__.sql:42 (`CONSTRAINT uq_reorder_product UNIQUE (product_id)`), sem tenant_id na chave mesmo depois de 20261122134000__.sql:54 adicionar a coluna.
 - **Locais (2):** `supabase/functions/reorder-check/index.ts:52-57`, `supabase/migrations/20261121090000_EST01_stock-alert-backbone.sql:29-43`
 - **Causa raiz:** Tabela modelada como estado atual (1 linha por produto) e nao como fila de sugestoes, com chave unica anterior a introducao de tenant.
 - **Impacto no negócio:** Qualquer tratamento de uma sugestao e perdido na rodada seguinte, nao existe historico do que foi sugerido e, em multi-tenant, duas filiais disputam a mesma linha do mesmo produto.
@@ -2769,7 +2828,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F273 — E-mail de login e enviado sem trim, embora o Zod ja produza a versao limpa
 
 - **Camada:** Autenticacao e sessao · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** Teste executado (npx vitest run, arquivo temporario removido): loginSchema.safeParse({email:"  USER@x.com  "}) retorna success=true com data.email === "USER@x.com" (trim aplicado na saida). Mas src/pages/Auth.tsx:35-45 descarta `result.data` e chama signIn(loginEmail, loginPassword) com o state cru; idem src/pages/auth/Login.tsx:28-38. Schema em src/components/auth/authSchema.ts:4.
+- **Evidência:** Teste executado (npx vitest run, arquivo temporario removido): loginSchema.safeParse({email:" USER@x.com "}) retorna success=true com data.email === "USER@x.com" (trim aplicado na saida). Mas src/pages/Auth.tsx:35-45 descarta `result.data` e chama signIn(loginEmail, loginPassword) com o state cru; idem src/pages/auth/Login.tsx:28-38. Schema em src/components/auth/authSchema.ts:4.
 - **Locais (3):** `src/components/auth/authSchema.ts:3-6`, `src/pages/Auth.tsx:35-45`, `src/pages/auth/Login.tsx:28-38`
 - **Causa raiz:** O resultado da validacao e usado so como booleano; o payload normalizado pelo .trim() do Zod e ignorado.
 - **Impacto no negócio:** Colador de e-mail (leitor de codigo, copiar/colar do WhatsApp) traz espaco e recebe "Email ou senha incorretos" com a senha certa. Chamado de suporte recorrente e, com lockout ligado no futuro, bloqueio indevido.
@@ -2881,7 +2940,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 - **Locais (4):** `/home/user/Estoki_V2/src/hooks/useProdutos.ts:79`, `/home/user/Estoki_V2/src/components/produtos/ProdutoFormDialog.tsx:81`, `/home/user/Estoki_V2/supabase/migrations/20260619151639_16c56f29-0f9d-46ca-8897-dbbb2a087fc2.sql:5`, `/home/user/Estoki_V2/src/services/productService.ts:71`
 - **Causa raiz:** Hook e dialog foram preparados para CRUD completo e a página só ligou o 'create'. No banco, o endurecimento de RLS removeu o FOR ALL e repôs apenas INSERT/UPDATE, deixando DELETE sem policy.
 - **Impacto no negócio:** Produto cadastrado errado (SKU torto, nome truncado por CSV) não pode ser corrigido nem removido pela tela — só por SQL. E se a exclusão fosse religada como está, o delete passaria 0 linhas e o toast diria 'Produto removido!' (useProdutos.ts:83) com o produto ainda lá; se a policy existisse, o FK ON DELETE CASCADE de estoque_posicao (20251216155903:99) apagaria o saldo junto, sem aviso.
-- **Correção sugerida:** Ligar edição (passar initialData e chamar updateProduto) antes de pensar em exclusão. Para delete, usar o helper já existente src/lib/exigirLinhaAfetada (tem teste em src/lib/__tests__/exigirLinhaAfetada.test.ts) para não anunciar sucesso sem linha afetada, e decidir com o dono entre bloquear exclusão com saldo ou aceitar o cascade.
+- **Correção sugerida:** Ligar edição (passar initialData e chamar updateProduto) antes de pensar em exclusão. Para delete, usar o helper já existente src/lib/exigirLinhaAfetada (tem teste em src/lib/**tests**/exigirLinhaAfetada.test.ts) para não anunciar sucesso sem linha afetada, e decidir com o dono entre bloquear exclusão com saldo ou aceitar o cascade.
 
 ## F286 — Código de barras é UNIQUE no banco e não existe em nenhum formulário de cadastro
 
@@ -2922,7 +2981,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 ## F290 — Zod aceita decimal e min>max contra colunas INTEGER, derrubando o cadastro com erro cru
 
 - **Camada:** Produtos e estoque · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** Executado com o zod do repo sobre produtoSchema (src/components/produtos/produtoSchema.ts:3-13): estoque_minimo 2.5 => ACEITO; 1e21 => ACEITO; {estoque_minimo: 999, estoque_maximo: 1} => ACEITO; sku '   ' (só espaços) => ACEITO; sku com zero-width + emoji => ACEITO. Rejeitados corretamente: NaN (input '-') e -1. As colunas no banco são INTEGER: supabase/migrations/20251216155903_52c599ec-7e02-4b42-9164-1542337d24f0.sql:67-69 (estoque_minimo/estoque_maximo/ponto_pedido). O input usa step livre e +e.target.value (src/components/produtos/ProdutoFormDialog.tsx:166-172).
+- **Evidência:** Executado com o zod do repo sobre produtoSchema (src/components/produtos/produtoSchema.ts:3-13): estoque_minimo 2.5 => ACEITO; 1e21 => ACEITO; {estoque_minimo: 999, estoque_maximo: 1} => ACEITO; sku ' ' (só espaços) => ACEITO; sku com zero-width + emoji => ACEITO. Rejeitados corretamente: NaN (input '-') e -1. As colunas no banco são INTEGER: supabase/migrations/20251216155903_52c599ec-7e02-4b42-9164-1542337d24f0.sql:67-69 (estoque_minimo/estoque_maximo/ponto_pedido). O input usa step livre e +e.target.value (src/components/produtos/ProdutoFormDialog.tsx:166-172).
 - **Locais (3):** `/home/user/Estoki_V2/src/components/produtos/produtoSchema.ts:8`, `/home/user/Estoki_V2/src/components/produtos/ProdutoFormDialog.tsx:166`, `/home/user/Estoki_V2/supabase/migrations/20251216155903_52c599ec-7e02-4b42-9164-1542337d24f0.sql:67`
 - **Causa raiz:** O schema usa z.number().min(0) sem .int() e sem refine cruzado; o tipo da coluna é integer. Nenhuma regra proíbe mínimo acima do máximo nem SKU em branco.
 - **Impacto no negócio:** Digitar 2,5 em 'Est. Mínimo' devolve erro de sintaxe do Postgres em vez de mensagem de campo. Pior: mínimo 999 com máximo 1 é aceito e grava, e é exatamente o que alimenta ponto de pedido e alerta de ruptura — o produto passa a disparar reposição infinita. SKU só com espaços cria um produto invisível na busca.
@@ -3077,6 +3136,7 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 
 - **Camada:** acessibilidade-mobile · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Diferença entre as duas execuções de /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/labels.mjs: 265 campos sem label associado nem aria-label contra 143 quando o placeholder é aceito como nome — logo 122 campos têm placeholder e nada mais. Exemplo lido na íntegra, src/pages/customers/CustomersPage.tsx:148-190 — o formulário de cadastro/edição de cliente, 8 campos, nenhum <Label>:
+
 ```
 <Input placeholder="Nome" value={form.nome} onChange={...} required />
 <Input placeholder="CPF/CNPJ" value={form.cpf_cnpj} onChange={...} />
@@ -3087,7 +3147,9 @@ src/hooks/useNotificacoes.ts:236-261: `removerNotificacao` só persiste quando `
 <Input placeholder="Estado" maxLength={2} ... />
 <Input placeholder="CEP" ... />
 ```
+
 Top arquivos (de 125 no total da primeira varredura): trocas-page/NovoRegistroDialog.tsx (9), customers/CustomersPage.tsx (9), warehouses/WarehousesPage.tsx (8), governanca/OcorrenciasTab.tsx (6), kpis-page/KPIMetaDialog.tsx (6), AjustesEstoque.tsx (6).
+
 - **Locais (11):** `src/pages/customers/CustomersPage.tsx:148-190 (8 campos) e :205`, `src/components/trocas-page/NovoRegistroDialog.tsx (9 campos)`, `src/pages/warehouses/WarehousesPage.tsx (8 campos)`, `src/components/governanca/OcorrenciasTab.tsx (6)`, `src/components/kpis-page/KPIMetaDialog.tsx (6)`, `src/pages/AjustesEstoque.tsx (6)`, `src/components/governanca/CustodiaTab.tsx (5)`, `src/components/ondas/NovoOndaDialog.tsx (5)`, `src/components/SearchInput.tsx:62`, `src/components/common/SearchInput.tsx:20`, `mais ~115 arquivos — reproduzível com `node /tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/labels.mjs` (versão sem a exclusão de placeholder)`
 - **Causa raiz:** Formulários montados em grid compacto onde o <Label> foi suprimido para economizar altura, usando placeholder no lugar. O placeholder é dica, não rótulo: sai da tela ao digitar, não é vinculado pelo atributo `for` e, em muitos leitores de tela, não é reanunciado na revisão do formulário.
 - **Impacto no negócio:** Em formulário de 8 campos em grid de 2 colunas (CustomersPage), depois de preencher metade o operador não sabe mais qual coluna é Cidade e qual é Estado — e 'Estado' tem maxLength 2, então o erro só aparece no save. Preenchimento de cadastro de cliente e de registro de troca fica propenso a campo trocado, o que suja dado mestre.
@@ -3337,7 +3399,7 @@ Top arquivos (de 125 no total da primeira varredura): trocas-page/NovoRegistroDi
 ## F333 — stockService reimplementa stock-movement no cliente sobre o schema EN, sem nenhum consumidor, e tem teste unitário verde
 
 - **Camada:** edge-orfas · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** src/services/stockService.ts:34-63 lê `products.stock_quantity`, recalcula o saldo em JS e grava `products` + `stock_movements`. Os únicos lugares que o importam são o barrel (src/services/index.ts:22, `export * from "./stockService"`) e o próprio teste (src/services/__tests__/stockService.test.ts:2,50,74); `grep -rn 'from "@/services"' src/` retorna zero, então ninguém consome o barrel. Em paralelo, supabase/functions/stock-movement/index.ts existe, está 404, e seu único chamador (batch-import/index.ts:369) também está 404.
+- **Evidência:** src/services/stockService.ts:34-63 lê `products.stock_quantity`, recalcula o saldo em JS e grava `products` + `stock_movements`. Os únicos lugares que o importam são o barrel (src/services/index.ts:22, `export * from "./stockService"`) e o próprio teste (src/services/**tests**/stockService.test.ts:2,50,74); `grep -rn 'from "@/services"' src/` retorna zero, então ninguém consome o barrel. Em paralelo, supabase/functions/stock-movement/index.ts existe, está 404, e seu único chamador (batch-import/index.ts:369) também está 404.
 - **Locais (5):** `src/services/stockService.ts:34`, `src/services/stockService.ts:59`, `src/services/index.ts:22`, `src/services/__tests__/stockService.test.ts:50`, `supabase/functions/stock-movement/index.ts:1`
 - **Causa raiz:** Mesma regra de movimentação escrita em três lugares (service do cliente, edge function, e as telas que usam `lotes` direto). Como a cobertura do Vitest mede src/services/** (vitest.config.ts:20), o caminho morto tem teste e parece saudável.
 - **Impacto no negócio:** O teste unitário de movimentação de estoque passa sem que exista movimentação de estoque por esse caminho. Métrica de qualidade apontando para código que nenhum usuário executa.
@@ -3358,7 +3420,8 @@ Top arquivos (de 125 no total da primeira varredura): trocas-page/NovoRegistroDi
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `for f in $(grep -l validateInput */index.ts); do [ $(grep -cE 'validateInput\(' $f) -eq 0 ] && echo $f; done` -> 6 arquivos.
-`supabase/functions/payment-create/index.ts:5` importa e as linhas 27-31 validam à mão:
+  `supabase/functions/payment-create/index.ts:5` importa e as linhas 27-31 validam à mão:
+
 ```ts
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 ...
@@ -3367,7 +3430,9 @@ if (!payment.amount || !payment.method || !payment.customer) {
   throw new Error("amount, method e customer são obrigatórios");
 }
 ```
+
 Não há checagem de tipo: `amount: "abc"` e `amount: -500` passam (truthy), e o insert em `payments` (linhas 39-55) recebe o valor como veio. Mesmo quadro em `receiving-confirm/index.ts:5` + `:35-40`. Relacionado: 115 funções importam `handleCors` sem nunca chamar, preferindo o `if (req.method === "OPTIONS")` inline.
+
 - **Locais (8):** `supabase/functions/payment-create/index.ts:5`, `supabase/functions/payment-create/index.ts:27-31`, `supabase/functions/receiving-confirm/index.ts:5`, `supabase/functions/receiving-confirm/index.ts:35-40`, `supabase/functions/receiving-create/index.ts`, `supabase/functions/receiving-putaway/index.ts`, `supabase/functions/invoice-generate/index.ts`, `supabase/functions/edi-process/index.ts`
 - **Causa raiz:** A passagem que adicionou `validateInput` inseriu o import nesses 6 arquivos sem substituir o `if` manual pré-existente. O import ficou órfão. Nada acusa: `noUnusedLocals: false` em `tsconfig.app.json:19`, e de todo modo `eslint.config.js:17` ignora `supabase/functions/**`, então nem import não usado nem variável morta aparecem.
 - **Impacto no negócio:** Nessas 6 o `if` manual só testa presença, não tipo nem faixa. `payment-create` aceita `amount` negativo ou string e grava em `payments` — cobrança com valor inválido, que só vai aparecer na conciliação financeira. Ler o arquivo também engana: quem vê o import de `validateInput` no topo conclui que a função valida, e não valida.
@@ -3378,6 +3443,7 @@ Não há checagem de tipo: `amount: "abc"` e `amount: -500` passam (truthy), e o
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** supabase/functions/receiving-confirm/index.ts:57-75 — N updates independentes com `Promise.all`, cada um filtrando só por `item.item_id`:
+
 ```ts
 const updatePromises = items.map(async (item) => {
   const { error } = await supabase
@@ -3389,7 +3455,9 @@ const updatePromises = items.map(async (item) => {
 });
 await Promise.all(updatePromises);
 ```
+
 Não há `.eq("receiving_id", receiving_id)`, embora a função tenha validado a existência do recebimento nas linhas 43-54. Em seguida, os updates de `receivings` (87-94) e o insert em `audit_log` (97-103) ignoram o `{ error }`. `received_quantity` chega sem validação de tipo (o import de `validateInput` está morto, linha 5).
+
 - **Locais (3):** `supabase/functions/receiving-confirm/index.ts:57-75`, `supabase/functions/receiving-confirm/index.ts:87-94`, `supabase/functions/receiving-confirm/index.ts:97-103`
 - **Causa raiz:** `Promise.all` sobre updates individuais, sem transação, dá atomicidade zero: quando um item falha, os já aplicados permanecem e a exceção sobe para o catch, que devolve erro (status 500, linha 112). O chamador recebe falha e o banco fica num estado intermediário. Além disso, o `receiving_id` é usado para autorizar (a função confirma que o recebimento existe) mas não para filtrar a escrita, então o vínculo validado não é aplicado no `WHERE`.
 - **Impacto no negócio:** Confirmação parcial de recebimento: parte dos itens entra como recebida, o recebimento não é fechado, e o operador vê erro na tela. Ao tentar de novo, os itens já gravados são sobrescritos com novo `received_at` — e não há idempotência para impedir. Pior, como o update não amarra o item ao recebimento, um `item_id` de outro recebimento qualquer é aceito e marcado como recebido, misturando a conferência de duas cargas sem nenhum erro.
@@ -3400,19 +3468,24 @@ Não há `.eq("receiving_id", receiving_id)`, embora a função tenha validado a
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** supabase/functions/queue-process/index.ts:38-43 — lê pendentes e marca `processing` sem condicionar ao estado anterior:
+
 ```ts
 for (const job of jobs || []) {
   await supabase.from("job_queue")
     .update({ status: "processing", started_at: new Date().toISOString(), worker_id })
     .eq("id", job.id);
 ```
+
 Falta `.eq("status", "pending")`, então dois workers que fizeram o select (linhas 24-32) no mesmo intervalo pegam o mesmo job e ambos seguem. Os handlers não executam nada (linhas 48-60):
+
 ```ts
 case "send_email":   result = { sent: true, to: job.payload?.to }; break;
 case "sync_inventory": result = { synced_items: Math.floor(Math.random() * 100) }; break;
 default:             result = { processed: true };
 ```
+
 E o job é marcado `completed` (63-70). O `catch (jobError)` das linhas 73-85 é inalcançável: nada no bloco lança — os cases são atribuições puras e o update de `job_queue` devolve `{ error }` em vez de lançar (postgrest-js, `shouldThrowOnError = false`).
+
 - **Locais (4):** `supabase/functions/queue-process/index.ts:38-43`, `supabase/functions/queue-process/index.ts:45-60`, `supabase/functions/queue-process/index.ts:63-70`, `supabase/functions/queue-process/index.ts:73-85`
 - **Causa raiz:** Dois problemas no mesmo arquivo. O claim do job é um read-then-write sem guarda de estado, que em concorrência não garante exclusividade. E o executor nunca foi implementado: os `case` devolvem literais (incluindo `Math.random()`), de modo que todo job é marcado concluído sem trabalho feito, e o caminho de falha — que existe e incrementa `attempts` — nunca é exercitado.
 - **Impacto no negócio:** A fila é um sorvedouro: todo job entra, é marcado `completed` e nada acontece. Como `queue-retry` só reprocessa o que está marcado como falha (e ele sim tem backoff exponencial correto, `queue-retry/index.ts:39-41`), nada é reprocessado — não há falha registrada. E-mails de `send_email` nunca saem, `sync_inventory` grava um número aleatório como se fosse a contagem sincronizada. Com dois workers, o mesmo job é "processado" duas vezes, o que duplicaria o efeito assim que handlers reais existirem.
@@ -3423,17 +3496,20 @@ E o job é marcado `completed` (63-70). O `catch (jobError)` das linhas 73-85 é
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** supabase/functions/_shared/erp.ts:75-96 — no caminho de retry o `continue` pula `recordFailure(host)`:
+
 ```ts
 const res = await fetch(url, { ...init, signal: ctrl.signal });
 clearTimeout(timer);
 if (retryOn.includes(res.status) && attempt < retries) {
   await sleep(backoff(attempt));
-  continue;              // <- não chama recordFailure(host)
+  continue; // <- não chama recordFailure(host)
 }
 if (res.ok) recordSuccess(host);
 else recordFailure(host);
 ```
+
 Com `retries = 3`, `retryOn = [408,429,500,502,503,504]` (linhas 66-67) e `BREAKER_THRESHOLD = 5` (linha 29): um host que devolve 503 sempre gasta as tentativas 0,1,2 no `continue` sem registrar nada e só registra 1 falha na tentativa 3. São 5 chamadas de `erpFetch` para abrir o circuito, ou seja 20 requisições ao host caído, e cada chamada dorme `backoff(0)+backoff(1)+backoff(2)` = 2s+4s+8s ≈ 14s (linhas 98-101).
+
 - **Locais (4):** `supabase/functions/_shared/erp.ts:75-96`, `supabase/functions/_shared/erp.ts:29-30`, `supabase/functions/integration-sap/index.ts:136-141`, `supabase/functions/integration-totvs/index.ts:152-157`
 - **Causa raiz:** O breaker conta falha em dois lugares — exceção de rede/abort (linha 91) e resposta não-ok não retryável (linha 86) — mas não no ramo de retry, que é justamente o caminho de 429/5xx, o modo de falha mais comum de um ERP sobrecarregado. O `continue` sai do bloco antes de qualquer contabilização.
 - **Impacto no negócio:** O circuit breaker existe para não martelar o ERP em queda e para falhar rápido, e no cenário mais comum ele faz o oposto: cada chamada à integração SAP ou TOTVS fica ~14 segundos pendurada tentando, e são necessárias 5 chamadas (20 requisições) antes de o circuito abrir. Enquanto isso o usuário espera, e o ERP já em dificuldade recebe 4x mais requisições do que o limiar sugere. Ganha relevância porque este é o módulo que deveria ser adotado pelas outras 14 funções com fetch externo.
@@ -3444,6 +3520,7 @@ Com `retries = 3`, `retryOn = [408,429,500,502,503,504]` (linhas 66-67) e `BREAK
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** supabase/functions/_shared/logger.ts:87-94 — o wrapper loga e relança:
+
 ```ts
 } catch (err) {
   const durationMs = Math.round(performance.now() - started);
@@ -3451,7 +3528,9 @@ Com `retries = 3`, `retryOn = [408,429,500,502,503,504]` (linhas 66-67) e `BREAK
   throw err;
 }
 ```
+
 As duas únicas funções sem `try {` em todo o diretório são `db-alert-monitor/index.ts` e `health/index.ts` (as 5 bulk-*/batch-processor são cobertas pelo try/catch de `_shared/bulk.ts:55-71`). `db-alert-monitor/index.ts:94` -> `Deno.serve(withLogging("db-alert-monitor", handler))`, sem try/catch no handler; a função está deployada (OPTIONS 200). Adoção do wrapper: `grep -l withLogging */index.ts` -> **2 de 247** (`db-alert-monitor`, `metrics`), e `metrics` responde 404 em produção.
+
 - **Locais (4):** `supabase/functions/_shared/logger.ts:87-94`, `supabase/functions/db-alert-monitor/index.ts:94`, `supabase/functions/health/index.ts:5-21`, `supabase/functions/metrics/index.ts:209`
 - **Causa raiz:** `withLogging` é observabilidade, não tratamento de erro: ele relança para não engolir a exceção, o que é a decisão certa para um wrapper de log — mas pressupõe um try/catch no handler, que nessas duas funções não existe. Quando a exceção escapa, o runtime do Deno devolve 500 com corpo próprio, sem os headers de CORS que `getCorsHeaders` adicionaria, e o navegador relata falha de CORS em vez do erro real.
 - **Impacto no negócio:** Em `db-alert-monitor` — justamente o monitor de saúde do Postgres — uma exceção inesperada aparece no browser como erro de CORS, mandando a investigação para o lado errado enquanto o banco é o que está mal. O alcance é limitado porque a função é bem construída no resto (auth com comparação em tempo constante nas linhas 31-36, Zod com `safeParse` na 63, status 401/400/500 corretos) e pouco lança. O número que importa é o outro: a regra do repo pede `withLogging()` sempre e a adoção é 2/247, com 0 funções deployadas tendo as quatro guardas.
@@ -3462,11 +3541,14 @@ As duas únicas funções sem `try {` em todo o diretório são `db-alert-monito
 
 - **Camada:** edge-robustez · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** `eslint.config.js:9-18` ignora o diretório explicitamente:
+
 ```js
 ignores: ["node_modules/**", "dist/**", "build/**", "coverage/**", "**/*.min.js", "public/**", ".vercel/**", "supabase/functions/**"],
 ```
+
 Confirmado na prática: `npx eslint supabase/functions/payment-create/index.ts` -> `0:0 warning File ignored because of a matching ignore pattern`, 0 errors.
 O typecheck também não alcança: `package.json` -> `"typecheck": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json"`; `tsconfig.app.json:30` -> `"include": ["src"]`; `tsconfig.node.json` -> `"include": ["vite.config.ts", "src/config/supabaseEnvAlias.ts"]`. E `grep -rniE 'deno|supabase/functions' .github/workflows/` -> **0 linhas**, então nenhum workflow roda `deno check`. `deno` não está instalado no ambiente (`which deno` -> ausente), logo nem localmente há como verificar.
+
 - **Locais (4):** `eslint.config.js:17`, `tsconfig.app.json:30`, `tsconfig.node.json:11`, `package.json`
 - **Causa raiz:** O diretório foi excluído do ESLint porque usa imports de URL e globais do Deno, que o setup de TypeScript do front (moduleResolution bundler, lib DOM) não entende. A exclusão resolveu o ruído e deixou o código sem nenhuma análise: nem tipos, nem import morto, nem variável não usada. É a raiz comum de boa parte deste relatório — os 100 stubs, os 6 imports de validação mortos, os 115 `handleCors` importados sem uso e os 123 `catch (error)` que acessam `error.message` sem narrowing existem porque nada os aponta.
 - **Impacto no negócio:** Metade do backend — 247 funções, 201 delas operando com `service_role` — entra em produção sem uma única verificação automática. As 6 guardas que barram a PR (`lint`, `typecheck`, testes, `build`, `rls-audit`, `dep-audit`) passam verdes com qualquer erro nessas funções. Todo defeito aqui só aparece em produção, e o deploy é manual, então nem o momento da quebra fica registrado.
@@ -3584,8 +3666,8 @@ O typecheck também não alcança: `package.json` -> `"typecheck": "tsc --noEmit
 
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Sistema A, global: src/components/common/AppProviders.tsx:53 `<NotificationProvider>` → src/contexts/NotificationContext.tsx:96-102 `const interval = setInterval(loadNotifications, 60000)` + src/hooks/useNotificationRealtime.ts:13,21 canais `realtime_notificacoes` e `realtime_alertas`; a carga são 3 consultas (src/hooks/useNotificationOperations.ts:11-29: `notificacoes`, `alertas_historico`, `tarefas`).
-Sistema B, por página: src/pages/notifications/NotificationsPage.tsx:94 `useNotificacoes()` → src/hooks/useNotificacoes.ts:132 `setInterval(fetchNotificacoes, 60000)` + :136,:143 canais `notificacoes_changes` e `alertas_changes`; a carga são 2 consultas nas mesmas tabelas (:58-74).
-A rota existe: src/routes/featureRoutes.tsx:25,173 (`NotificationsPage`). Logo, com a página aberta os dois rodam juntos.
+  Sistema B, por página: src/pages/notifications/NotificationsPage.tsx:94 `useNotificacoes()` → src/hooks/useNotificacoes.ts:132 `setInterval(fetchNotificacoes, 60000)` + :136,:143 canais `notificacoes_changes` e `alertas_changes`; a carga são 2 consultas nas mesmas tabelas (:58-74).
+  A rota existe: src/routes/featureRoutes.tsx:25,173 (`NotificationsPage`). Logo, com a página aberta os dois rodam juntos.
 - **Locais (6):** `src/components/common/AppProviders.tsx:53`, `src/contexts/NotificationContext.tsx:96`, `src/hooks/useNotificationRealtime.ts:9`, `src/pages/notifications/NotificationsPage.tsx:94`, `src/hooks/useNotificacoes.ts:128`, `src/components/notifications/NotificacoesGlobais.tsx:15`
 - **Causa raiz:** A camada de notificação foi reescrita (NotificationContext + useNotificationOperations + useNotificationRealtime) mas o hook antigo (useNotificacoes) continuou vivo e é usado pela página de notificações, com polling e canais próprios sobre as mesmas tabelas.
 - **Impacto no negócio:** Com a tela de notificações aberta, o app faz o dobro de consultas ao banco (5 requisições a cada 60s em vez de 3) e mantém 4 assinaturas realtime para 2 tabelas — custo de Supabase e bateria do coletor em dobro, e os dois sistemas podem mostrar contagens diferentes de não lidas na mesma hora.
@@ -3596,8 +3678,8 @@ A rota existe: src/routes/featureRoutes.tsx:25,173 (`NotificationsPage`). Logo, 
 
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/hooks/useNotificationRealtime.ts:34 — deps do efeito: `}, [user, onNewNotification, onAlertChange]);`
-src/contexts/NotificationContext.tsx:91 — `handleNewNotification` é recriado quando muda som/permissão: `[soundEnabled, pushPermission]`; e :31-34/:42-44 ligam `soundEnabled` a um `useState`+localStorage alterável pela UI (`setSoundEnabled` exposto na linha 171).
-Consequência na lib: o cleanup chama `supabase.removeChannel(notifChannel)` (useNotificationRealtime.ts:31) que é assíncrono (RealtimeClient.js:257-262 faz `await channel.unsubscribe()` antes de `teardown()`), enquanto o corpo do novo efeito roda em seguida de forma síncrona e chama `supabase.channel("realtime_notificacoes")` — que, por RealtimeClient.js:338-350, devolve a MESMA instância ainda em saída; o `.on()` cai no descarte de binding duplicado (RealtimeChannel.js:691-697) e o `.subscribe()` é no-op porque o bloco de join só executa `if (this.channelAdapter.isClosed())`.
+  src/contexts/NotificationContext.tsx:91 — `handleNewNotification` é recriado quando muda som/permissão: `[soundEnabled, pushPermission]`; e :31-34/:42-44 ligam `soundEnabled` a um `useState`+localStorage alterável pela UI (`setSoundEnabled` exposto na linha 171).
+  Consequência na lib: o cleanup chama `supabase.removeChannel(notifChannel)` (useNotificationRealtime.ts:31) que é assíncrono (RealtimeClient.js:257-262 faz `await channel.unsubscribe()` antes de `teardown()`), enquanto o corpo do novo efeito roda em seguida de forma síncrona e chama `supabase.channel("realtime_notificacoes")` — que, por RealtimeClient.js:338-350, devolve a MESMA instância ainda em saída; o `.on()` cai no descarte de binding duplicado (RealtimeChannel.js:691-697) e o `.subscribe()` é no-op porque o bloco de join só executa `if (this.channelAdapter.isClosed())`.
 - **Locais (4):** `src/hooks/useNotificationRealtime.ts:34`, `src/contexts/NotificationContext.tsx:52`, `src/contexts/NotificationContext.tsx:91`, `src/contexts/NotificationContext.tsx:171`
 - **Causa raiz:** O callback entra no array de dependências do efeito que cria as assinaturas. Como o callback muda com o toggle de som, o efeito derruba e recria os canais — e a recriação com tópico fixo, em cima de um canal ainda em processo de saída, não assina de novo.
 - **Impacto no negócio:** Depois que o operador mexe no botão de som (ou o navegador concede a permissão de notificação), as notificações em tempo real podem parar de chegar e só o poll de 60s continua funcionando. Alerta crítico de divergência chega com até 1 minuto de atraso, sem nenhum sinal na tela.
@@ -3609,11 +3691,11 @@ Consequência na lib: o cleanup chama `supabase.removeChannel(notifChannel)` (us
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** hipotese · **Verificação:** RASTREADO
 - **Evidência:** src/contexts/NotificationContext.tsx:83-89:
   if (pushPermission === "granted" && "Notification" in window) {
-    new window.Notification(notification.title, { body: ..., icon: "/favicon.ico", tag: notification.id });
+  new window.Notification(notification.title, { body: ..., icon: "/favicon.ico", tag: notification.id });
   }
-Mesmo trecho repetido em :124-129. O arquivo já importa `usePushNotifications` (:11) e usa só `permission`/`requestPermission` (:28-29), ignorando o `showNotification` do hook, que faz exatamente isso DENTRO de try/catch — src/hooks/usePushNotifications.ts:69-93.
-O repo tem alvo mobile (capacitor.config.ts na raiz) e existe src/hooks/usePushSubscription.ts (caminho de service worker) sem nenhum consumidor.
-O que faltou para confirmar: executar em um Android real/emulado. Em navegador Android o construtor `Notification` lança TypeError ("Illegal constructor"), e aí a exceção estoura dentro de `handleNewNotification`, que é o callback da assinatura realtime.
+  Mesmo trecho repetido em :124-129. O arquivo já importa `usePushNotifications` (:11) e usa só `permission`/`requestPermission` (:28-29), ignorando o `showNotification` do hook, que faz exatamente isso DENTRO de try/catch — src/hooks/usePushNotifications.ts:69-93.
+  O repo tem alvo mobile (capacitor.config.ts na raiz) e existe src/hooks/usePushSubscription.ts (caminho de service worker) sem nenhum consumidor.
+  O que faltou para confirmar: executar em um Android real/emulado. Em navegador Android o construtor `Notification` lança TypeError ("Illegal constructor"), e aí a exceção estoura dentro de `handleNewNotification`, que é o callback da assinatura realtime.
 - **Locais (2):** `src/contexts/NotificationContext.tsx:83`, `src/contexts/NotificationContext.tsx:124`
 - **Causa raiz:** O contexto reimplementou a exibição de notificação do sistema com o construtor cru, em vez de chamar o `showNotification` do hook que já importa, e sem try/catch — em um callback de realtime, qualquer exceção interrompe o resto do processamento daquele evento (som, toast, estado).
 - **Impacto no negócio:** No coletor/celular (uso principal do WMS no armazém), a notificação pode derrubar o processamento do evento: o operador não recebe o toast nem o item entra na lista. Em desktop funciona, então o problema aparece só em campo.
@@ -3624,9 +3706,9 @@ O que faltou para confirmar: executar em um Android real/emulado. Em navegador A
 
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** Montagem global: src/App.tsx:27 `<Route path="/" element={<AppLayout />}>` → src/components/layout/AppLayout.tsx:183 `<ShortcutsHUD />` → src/components/common/ShortcutsHUD.tsx:10 `const { shortcuts } = useKeyboardShortcuts();`
-src/hooks/useKeyboardShortcuts.ts:121 `event.preventDefault();` antes de `shortcut.action()` (:123), para qualquer atalho que casar.
-Atalhos registrados (:17-98): Ctrl+H (navega "/"), Ctrl+D ("/dashboard"), Ctrl+R ("/recebimento"), Ctrl+T ("/triagem"), Ctrl+E ("/estoque"), Ctrl+L ("/admin/auditoria"), Ctrl+Shift+S ("/scanner"), Ctrl+F (evento "open-global-search"), "?" (toast de ajuda).
-Bug extra no mesmo bloco — :113 `const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;` e o atalho `{ key: "?" }` (:94) não declara `shift: true`; como "?" exige Shift no teclado ABNT2/US, `shiftMatch` é sempre false e o atalho de ajuda nunca casa.
+  src/hooks/useKeyboardShortcuts.ts:121 `event.preventDefault();` antes de `shortcut.action()` (:123), para qualquer atalho que casar.
+  Atalhos registrados (:17-98): Ctrl+H (navega "/"), Ctrl+D ("/dashboard"), Ctrl+R ("/recebimento"), Ctrl+T ("/triagem"), Ctrl+E ("/estoque"), Ctrl+L ("/admin/auditoria"), Ctrl+Shift+S ("/scanner"), Ctrl+F (evento "open-global-search"), "?" (toast de ajuda).
+  Bug extra no mesmo bloco — :113 `const shiftMatch = shortcut.shift ? event.shiftKey : !event.shiftKey;` e o atalho `{ key: "?" }` (:94) não declara `shift: true`; como "?" exige Shift no teclado ABNT2/US, `shiftMatch` é sempre false e o atalho de ajuda nunca casa.
 - **Locais (8):** `src/components/layout/AppLayout.tsx:183`, `src/components/common/ShortcutsHUD.tsx:10`, `src/hooks/useKeyboardShortcuts.ts:38`, `src/hooks/useKeyboardShortcuts.ts:29`, `src/hooks/useKeyboardShortcuts.ts:86`, `src/hooks/useKeyboardShortcuts.ts:94`, `src/hooks/useKeyboardShortcuts.ts:113`, `src/hooks/useKeyboardShortcuts.ts:121`
 - **Causa raiz:** O mapa de atalhos usa combinações reservadas do navegador e aplica `preventDefault()` em todas; o hook está montado no layout, logo vale em toda a aplicação. A regra de Shift do matcher exige ausência de Shift quando o atalho não declara `shift`, o que invalida teclas que só existem com Shift.
 - **Impacto no negócio:** Ctrl+R deixa de recarregar a página e passa a navegar para Recebimento; Ctrl+F deixa de abrir a busca do navegador; Ctrl+D não salva favorito. O operador acha que o sistema travou/mudou de tela sozinho, e a tecla de ajuda ("?") anunciada no próprio toast não funciona.
@@ -3641,8 +3723,8 @@ Bug extra no mesmo bloco — :113 `const shiftMatch = shortcut.shift ? event.shi
   abortControllerRef.current = new AbortController();
   ...
   const result = await movimentacaoService.getAll({ page, pageSize });
-O `signal` nunca é passado — src/services/movimentacaoService.ts:6 `async getAll(options?: { page?: number; pageSize?: number })` não aceita signal e a chamada ao supabase (:11-23) não usa `AbortSignal`. Logo o `abort()` não cancela nada e o guard `if ((err as any).name === "AbortError") return;` (useMovimentacoes.ts:30) é código morto.
-O gatilho de concorrência existe: :54-56 chama `fetchMovimentacoes()` a cada evento realtime, sem debounce.
+  O `signal` nunca é passado — src/services/movimentacaoService.ts:6 `async getAll(options?: { page?: number; pageSize?: number })` não aceita signal e a chamada ao supabase (:11-23) não usa `AbortSignal`. Logo o `abort()` não cancela nada e o guard `if ((err as any).name === "AbortError") return;` (useMovimentacoes.ts:30) é código morto.
+  O gatilho de concorrência existe: :54-56 chama `fetchMovimentacoes()` a cada evento realtime, sem debounce.
 - **Locais (3):** `src/hooks/useMovimentacoes.ts:19`, `src/hooks/useMovimentacoes.ts:30`, `src/services/movimentacaoService.ts:6`
 - **Causa raiz:** O padrão de cancelamento foi escrito pela metade: cria-se o AbortController, mas o `signal` não desce até a consulta. Sem cancelamento e sem guarda de ordem de chegada, a última resposta a chegar vence — que pode ser a mais antiga.
 - **Impacto no negócio:** Numa rajada de movimentações (recebimento grande, inventário), a tela de rastreabilidade/movimentações pode acabar exibindo uma página anterior do histórico, além de piscar o loading a cada evento. Quem audita movimentação olha para um dado que não é o último.
@@ -3653,8 +3735,8 @@ O gatilho de concorrência existe: :54-56 chama `fetchMovimentacoes()` a cada ev
 
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/features/analytics/hooks/useOperationalLive.ts:46-47 `queryKey: ["operational-live", today()]` e :166 `refetchInterval: 30000`.
-As 8 consultas do `queryFn` (:60-91) incluem três sem nenhum filtro nem limite: :72 `supabase.from("lotes").select("id, status")`, :74 `.from("tarefas").select("id, status")`, :76 `.from("posicoes_estoque").select("id, status")`.
-E o realtime que o próprio hook liga (:44 `useRealtimeKPIs`) nunca invalida `["operational-live", ...]` — a lista de chaves invalidadas está em src/features/analytics/hooks/useRealtimeKPIs.ts:72-126 e não contém essa chave.
+  As 8 consultas do `queryFn` (:60-91) incluem três sem nenhum filtro nem limite: :72 `supabase.from("lotes").select("id, status")`, :74 `.from("tarefas").select("id, status")`, :76 `.from("posicoes_estoque").select("id, status")`.
+  E o realtime que o próprio hook liga (:44 `useRealtimeKPIs`) nunca invalida `["operational-live", ...]` — a lista de chaves invalidadas está em src/features/analytics/hooks/useRealtimeKPIs.ts:72-126 e não contém essa chave.
 - **Locais (5):** `src/features/analytics/hooks/useOperationalLive.ts:72`, `src/features/analytics/hooks/useOperationalLive.ts:74`, `src/features/analytics/hooks/useOperationalLive.ts:76`, `src/features/analytics/hooks/useOperationalLive.ts:166`, `src/features/analytics/hooks/useOperationalLive.ts:44`
 - **Causa raiz:** Os contadores (ocupadas/livres, tarefas por status, lotes por status) são calculados no navegador a partir da tabela completa, e a atualização depende só do `refetchInterval`, porque a chave da query não está na lista de invalidação do hook de realtime.
 - **Impacto no negócio:** O monitor operacional faz 8 round-trips a cada 30 segundos por usuário com a tela aberta, baixando a tabela de posições inteira só para contar quantas estão ocupadas — custo de banco e de dados móveis. E, acima de 1000 posições/tarefas/lotes, os contadores ficam errados pelo teto de linhas (achado 4).
@@ -3666,7 +3748,7 @@ E o realtime que o próprio hook liga (:44 `useRealtimeKPIs`) nunca invalida `["
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/components/common/AppProviders.tsx:28-37:
   queries: { staleTime: 5 * 60 * 1000, gcTime: 10 * 60 * 1000, retry: 1, refetchOnWindowFocus: false, refetchOnReconnect: "always", networkMode: "offlineFirst" }
-Combinado com o achado 2 (realtime ligado só em EstoquePage.tsx:59), sobra apenas `refetchOnReconnect` — que só dispara quando a conexão cai e volta. Hooks como src/features/picking/hooks/usePicking.ts:45-48 e src/features/shipping/hooks/useRomaneios.ts:42-45 não definem `refetchInterval` nem `staleTime` próprio, logo herdam os 5 minutos.
+  Combinado com o achado 2 (realtime ligado só em EstoquePage.tsx:59), sobra apenas `refetchOnReconnect` — que só dispara quando a conexão cai e volta. Hooks como src/features/picking/hooks/usePicking.ts:45-48 e src/features/shipping/hooks/useRomaneios.ts:42-45 não definem `refetchInterval` nem `staleTime` próprio, logo herdam os 5 minutos.
 - **Locais (5):** `src/components/common/AppProviders.tsx:31`, `src/components/common/AppProviders.tsx:34`, `src/features/picking/hooks/usePicking.ts:45`, `src/features/shipping/hooks/useRomaneios.ts:42`, `src/hooks/useProdutos.ts:40`
 - **Causa raiz:** A configuração global foi ajustada para economizar requisições (sem refetch ao focar a janela, 5 minutos de dado "fresco") assumindo que o realtime cobriria a atualização. Como o realtime não está ligado, não existe nenhum gatilho de atualização entre a montagem da tela e uma mutação feita pelo próprio usuário.
 - **Impacto no negócio:** O operador que volta para a aba do WMS depois de 10 minutos vê a fila de picking, os romaneios e a lista de produtos exatamente como estavam, sem nenhum indício de que o dado é velho. Duas pessoas podem pegar a mesma tarefa.
@@ -3677,9 +3759,9 @@ Combinado com o achado 2 (realtime ligado só em EstoquePage.tsx:59), sobra apen
 
 - **Camada:** hooks-estado · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** Script executado sobre src (contando referências a cada hook fora de src/hooks): "hooks nao referenciados fora de src/hooks: 205 de 284".
-Confirmação pontual por grep: `useSubscription`, `useChannel`, `usePresence`, `useRefreshToken`, `useIndexedDB`, `useSWR`, `useRealtime`, `useRealtimeToast` → 0 referências fora de src/hooks.
-Colisão de nomes: src/hooks/useQuery.ts:8 `export function useQuery<T>(queryKey: string, queryFn, options)` e src/hooks/useMutation.ts:11 `export function useMutation<T, V>(mutationFn, options)` — implementações caseiras com o mesmo nome dos hooks do @tanstack/react-query usados em 41 arquivos.
-Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consumidores; `src/contexts/ToastContext.tsx` tem 0 referências e exporta um `useToast` que colide com o de src/hooks/use-toast.ts; `src/contexts/index.ts` e `src/hooks/index.ts` (barrels) têm 0 importadores (`from "@/contexts"` → 0, `from "@/hooks"` → 0); `AppContext` é montado em AppProviders.tsx:52 mas `useApp()` nunca é chamado.
+  Confirmação pontual por grep: `useSubscription`, `useChannel`, `usePresence`, `useRefreshToken`, `useIndexedDB`, `useSWR`, `useRealtime`, `useRealtimeToast` → 0 referências fora de src/hooks.
+  Colisão de nomes: src/hooks/useQuery.ts:8 `export function useQuery<T>(queryKey: string, queryFn, options)` e src/hooks/useMutation.ts:11 `export function useMutation<T, V>(mutationFn, options)` — implementações caseiras com o mesmo nome dos hooks do @tanstack/react-query usados em 41 arquivos.
+  Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consumidores; `src/contexts/ToastContext.tsx` tem 0 referências e exporta um `useToast` que colide com o de src/hooks/use-toast.ts; `src/contexts/index.ts` e `src/hooks/index.ts` (barrels) têm 0 importadores (`from "@/contexts"` → 0, `from "@/hooks"` → 0); `AppContext` é montado em AppProviders.tsx:52 mas `useApp()` nunca é chamado.
 - **Locais (8):** `src/hooks/useQuery.ts:8`, `src/hooks/useMutation.ts:11`, `src/stores/index.ts:25`, `src/contexts/ToastContext.tsx:17`, `src/contexts/index.ts:3`, `src/hooks/index.ts:1`, `src/contexts/AppContext.tsx:24`, `src/components/common/AppProviders.tsx:52`
 - **Causa raiz:** A pasta de hooks foi povoada com uma biblioteca genérica de utilitários que nunca foi integrada. Três dos hooks mortos reimplementam cache/estado em paralelo ao TanStack Query, e dois com nomes idênticos aos dele.
 - **Impacto no negócio:** Qualquer agente ou pessoa que mexer nesse código perde tempo e tokens lendo 205 arquivos que não rodam, e corre o risco real de importar o `useQuery`/`useToast` errado (o caseiro não tem cache compartilhado, nem retry, nem invalidação) e de "corrigir bugs" em código morto.
@@ -3704,7 +3786,7 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 - **Causa raiz:** Duas geracoes de configuracao coexistem sem que uma tenha substituido a outra, e o .env.example foi atualizado por uniao (somando os nomes das duas) em vez de por consolidacao. Nada no CI compara os nomes do .env.example com os `import.meta.env.*` lidos no codigo.
 - **Impacto no negócio:** Configurar o ambiente e tentativa e erro. O dono (ou o agente) preenche uma variavel do .env.example e a funcionalidade continua desligada, sem mensagem nenhuma — foi exatamente assim que analytics (achado 4) e a integracao Bitrix24 ficaram inertes. E `validateConfig()` nao avisa: ele so checa SUPABASE_URL e ANON_KEY, e a cobranca do Sentry DSN esta dentro de `if (isProduction())`, que e sempre falso.
 - **Correção sugerida:** Apagar src/lib/env.ts (morto) e deixar src/config/environment.ts como fonte unica, com a leitura de ambiente corrigida conforme o achado 3. Unificar o nome do GA em VITE_GA_ID (um unico nome nos dois lados), corrigir `VITE_BITRIX` -> `VITE_BITRIX24_WEBHOOK_URL` em .env.example:30 e remover do .env.example as variaveis que nenhum codigo le. Expandir `validateConfig()` para avisar fora da guarda de producao, para que o aviso realmente apareca.
-- **Armadilha:** src/config/supabaseEnvAlias.ts resolve esse mesmo tipo de problema para o Supabase (aliasa NEXT_PUBLIC_*/SUPABASE_* para VITE_*) e tem teste — e um bom padrao ja existente no repo. Se for criar um alias para GA ou Bitrix, siga aquele arquivo em vez de inventar outro mecanismo.
+- **Armadilha:** src/config/supabaseEnvAlias.ts resolve esse mesmo tipo de problema para o Supabase (aliasa NEXT_PUBLIC__/SUPABASE__ para VITE_*) e tem teste — e um bom padrao ja existente no repo. Se for criar um alias para GA ou Bitrix, siga aquele arquivo em vez de inventar outro mecanismo.
 
 ## F362 — src/lib/sanitize.ts (DOMPurify, 9 exports) esta morto e cada ponto de HTML dinamico reimplementa a propria sanitizacao
 
@@ -3729,12 +3811,12 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 ## F364 — src/plugins/ e um esqueleto: SDK e registry completos, com teste, e nenhuma integracao com o host
 
 - **Camada:** modulos-nao-cobertos · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** src/plugins/sdk.ts define EstokiEvent (4 eventos de dominio: lote.recebido, picking.confirmado, estoque.ajustado, xp.ganho), PluginNavItem, PluginRoute, PluginContext e HOST_VERSION; src/plugins/registry.ts (linha 82) exporta `pluginRegistry` com register/activate/deactivate/dispatch e validacao de versao minima e permissoes. O host nunca aparece: `grep -rn 'plugins/registry|plugins/sdk|plugins/example|pluginRegistry|registerPlugin' src tests` retorna APENAS linhas de src/plugins/__tests__/registry.test.ts e a propria definicao na linha 82. Ninguem chama `setContextFactory` (sem ela, `activate` nem executa o `onActivate` do plugin — registry.ts:40-42), ninguem le `nav`/`routes`/`widgets` para montar menu ou rota, e nenhum ponto do dominio chama `dispatch` quando um lote e recebido ou um picking e confirmado. src/plugins/example-plugin.ts tem ZERO importadores. O proprio comentario no topo de registry.ts admite o estado: 'Persistência da lista de plugins habilitados fica a cargo do host (localStorage no MVP; tabela `plugins_instalados` em rodada futura)' — tabela que nao existe.
+- **Evidência:** src/plugins/sdk.ts define EstokiEvent (4 eventos de dominio: lote.recebido, picking.confirmado, estoque.ajustado, xp.ganho), PluginNavItem, PluginRoute, PluginContext e HOST_VERSION; src/plugins/registry.ts (linha 82) exporta `pluginRegistry` com register/activate/deactivate/dispatch e validacao de versao minima e permissoes. O host nunca aparece: `grep -rn 'plugins/registry|plugins/sdk|plugins/example|pluginRegistry|registerPlugin' src tests` retorna APENAS linhas de src/plugins/**tests**/registry.test.ts e a propria definicao na linha 82. Ninguem chama `setContextFactory` (sem ela, `activate` nem executa o `onActivate` do plugin — registry.ts:40-42), ninguem le `nav`/`routes`/`widgets` para montar menu ou rota, e nenhum ponto do dominio chama `dispatch` quando um lote e recebido ou um picking e confirmado. src/plugins/example-plugin.ts tem ZERO importadores. O proprio comentario no topo de registry.ts admite o estado: 'Persistência da lista de plugins habilitados fica a cargo do host (localStorage no MVP; tabela `plugins_instalados` em rodada futura)' — tabela que nao existe.
 - **Locais (5):** `src/plugins/sdk.ts`, `src/plugins/registry.ts:40-42`, `src/plugins/registry.ts:82`, `src/plugins/example-plugin.ts`, `src/plugins/__tests__/registry.test.ts`
 - **Causa raiz:** Fase 1 de uma arquitetura de plugins (contrato + registry + teste) entregue sem a fase 2 (o host que registra, persiste e despacha). O teste verde da a impressao de recurso funcionando: ele exercita o registry em memoria, que e exatamente a parte que existe.
 - **Impacto no negócio:** Nao e possivel instalar nenhum plugin — o recurso nao existe para o usuario. O custo real e de leitura: o diretorio, o SDK documentado e o teste passando sugerem que a extensibilidade esta disponivel, e uma decisao de produto pode ser tomada com base nisso. O contrato tambem envelhece de graca: `PluginNavItem.requiresRole` ja usa 'admin'|'supervisor'|'operador' (correto, bate com o enum do banco), mas ninguem valida isso contra nada.
 - **Correção sugerida:** Decidir com o dono se plugins sao roadmap ou nao. Se nao: apagar src/plugins/ inteiro (4 arquivos) — e exclusao limpa, o teste vai junto. Se sim, o caminho minimo ponta a ponta e: chamar `setContextFactory` no shell autenticado (passando supabase escopado e o usuario), montar `nav`/`routes` dos plugins ativos em src/routes/, chamar `dispatch` nos 4 pontos de dominio que os eventos declaram, e criar a tabela `plugins_instalados` com RLS por auth.uid() — ou seja, trabalho novo com DDL em producao, que precisa aprovacao sua antes de comecar. Nao deixe no meio como esta.
-- **Armadilha:** O arquivo tem teste proprio e passa (src/plugins/__tests__/registry.test.ts esta entre os 21 arquivos verdes). Teste verde aqui nao significa recurso integrado — ele testa o registry isolado, nunca o host.
+- **Armadilha:** O arquivo tem teste proprio e passa (src/plugins/**tests**/registry.test.ts esta entre os 21 arquivos verdes). Teste verde aqui nao significa recurso integrado — ele testa o registry isolado, nunca o host.
 
 ## F365 — O laco da Fase 2 ignora em silencio 5 tabelas da propria lista, e a migration e append-only
 
@@ -3826,7 +3908,7 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 ## F374 — Nenhuma das 72 páginas usa i18n: todo texto está fixo em português no código
 
 - **Camada:** paginas-ui · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** `grep -rl "useTranslation" src/pages --include="*.tsx"` (excluindo __tests__) não retorna nenhum arquivo, contra `find src/pages -name "*.tsx" -not -path "*__tests__*" | wc -l` = 72. O projeto declara i18next com pt-BR/en/es e o guia do repositório exige texto em `t()`.
+- **Evidência:** `grep -rl "useTranslation" src/pages --include="*.tsx"` (excluindo **tests**) não retorna nenhum arquivo, contra `find src/pages -name "*.tsx" -not -path "*__tests__*" | wc -l` = 72. O projeto declara i18next com pt-BR/en/es e o guia do repositório exige texto em `t()`.
 - **Locais (6):** `src/pages/Produtos.tsx:169`, `src/pages/AjustesEstoque.tsx:121`, `src/pages/Movimentacao.tsx:135`, `src/pages/quality/QualityPage.tsx:67`, `src/pages/Romaneios.tsx:176`, `src/pages/inventory/StockMovementsPage.tsx:60`
 - **Causa raiz:** A camada de páginas foi escrita antes/à margem da adoção do i18next e nenhuma guarda bloqueia regressão: o `i18n:hardcoded` roda contra um baseline congelado de ocorrências e não barra a PR.
 - **Impacto no negócio:** Vender ou operar em outro idioma exige reescrever as 72 telas, não traduzir arquivos de idioma. O investimento já feito em i18next (3 idiomas configurados) não entrega nada hoje.
@@ -3996,7 +4078,7 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 ## F391 — O smoke de rotas cobre 29 das 86 rotas e nao testa guard nenhum; nao ha teste unitario do ProtectedRoute
 
 - **Camada:** rotas-guards · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** tests/e2e/routes-smoke.spec.ts:12-46 lista 29 caminhos (publicas, raiz, analytics e admin) — ficam de fora as 26 rotas de wmsRoutes e quase todas as de featureRoutes, inclusive /ajustes, /import-export, /clientes e /pedidos. A unica assercao de conteudo e a ausencia de error boundary: tests/e2e/routes-smoke.spec.ts:98-102 `const errorBoundary = page.locator("text=/Algo deu errado|Something went wrong|Erro inesperado/i"); await expect(errorBoundary).toHaveCount(0);` — uma tela de "Acesso Negado" passa no teste. E o teste injeta sessao falsa sem papel (tests/e2e/routes-smoke.spec.ts:56-69) e trata o bloqueio de RLS como ruido esperado (:78-81). Busca por teste de rota/guard em src e tests: so src/services/__tests__/authService.test.ts e src/pages/auth/__tests__/Auth.test.tsx; nada cobre ProtectedRoute nem canAccess. `npx vitest run src/utils/__tests__/role.test.ts src/services/__tests__/authService.test.ts` -> 2 arquivos, 7 testes, todos passando.
+- **Evidência:** tests/e2e/routes-smoke.spec.ts:12-46 lista 29 caminhos (publicas, raiz, analytics e admin) — ficam de fora as 26 rotas de wmsRoutes e quase todas as de featureRoutes, inclusive /ajustes, /import-export, /clientes e /pedidos. A unica assercao de conteudo e a ausencia de error boundary: tests/e2e/routes-smoke.spec.ts:98-102 `const errorBoundary = page.locator("text=/Algo deu errado|Something went wrong|Erro inesperado/i"); await expect(errorBoundary).toHaveCount(0);` — uma tela de "Acesso Negado" passa no teste. E o teste injeta sessao falsa sem papel (tests/e2e/routes-smoke.spec.ts:56-69) e trata o bloqueio de RLS como ruido esperado (:78-81). Busca por teste de rota/guard em src e tests: so src/services/**tests**/authService.test.ts e src/pages/auth/**tests**/Auth.test.tsx; nada cobre ProtectedRoute nem canAccess. `npx vitest run src/utils/__tests__/role.test.ts src/services/__tests__/authService.test.ts` -> 2 arquivos, 7 testes, todos passando.
 - **Locais (4):** `tests/e2e/routes-smoke.spec.ts:12`, `tests/e2e/routes-smoke.spec.ts:56`, `tests/e2e/routes-smoke.spec.ts:98`, `src/components/auth/ProtectedRoute.tsx:13`
 - **Causa raiz:** A lista de rotas do smoke e mantida a mao ("Lista derivada de src/routes/*.tsx", comentario da linha 11) e nao acompanhou o crescimento do roteador; e a cobertura unitaria do projeto mede so services/features/lib (vitest.config.ts:20), que nao inclui components/ — entao o guard nunca entra na conta.
 - **Impacto no negócio:** Qualquer regressao de permissao passa pela CI sem alarme: trocar o allowedRoles de /admin/usuarios para supervisor, ou remover o ProtectedRoute de uma tela administrativa, nao quebra nenhum teste. A rede de protecao da autorizacao e inteiramente humana.
@@ -4036,7 +4118,7 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 ## F395 — 26 scripts de banco sao codigo morto sem nenhum chamador, catalogados pela automacao como execucao manual aceitavel
 
 - **Camada:** scripts-operacao · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** Cruzei tres fontes. 1) grep -o 'scripts/[...]' em package.json: os 17 alvos citados sao ai-context, audit-zod, automation, dep-audit, i18n-check, i18n-hardcoded-check, inventario/*, maintenance/*, qa-report, regras_negocio/generate.py, rls-audit, supabase_snapshot/snapshot.py - nenhum seed/probe. 2) grep em .github/workflows/: os 42 caminhos citados sao ai-context, ci/*, db-audit/*, inventario/*, lib/*, regras_negocio/*, supabase_snapshot/* e as guardas de qa.yml - nenhum seed/probe. 3) scripts/automation.config.json tem 80 registros, dos quais 26 sao kind=legacy, triggers=[manual], com a justificativa 'Legado sem chamador literal no inventario; execucao manual controlada apos revisar parametros e ambiente': os 17 seed-*.cjs, 6 probe-*.cjs, check-eventos-triagem.cjs, apply_rls_helper.cjs e test-db-connection.ts. docs/AUTOMACAO_LOCAL.md:107 repete a formula para publish.sh.
+- **Evidência:** Cruzei tres fontes. 1) grep -o 'scripts/[...]' em package.json: os 17 alvos citados sao ai-context, audit-zod, automation, dep-audit, i18n-check, i18n-hardcoded-check, inventario/_, maintenance/_, qa-report, regras_negocio/generate.py, rls-audit, supabase_snapshot/snapshot.py - nenhum seed/probe. 2) grep em .github/workflows/: os 42 caminhos citados sao ai-context, ci/_, db-audit/_, inventario/_, lib/_, regras_negocio/_, supabase_snapshot/_ e as guardas de qa.yml - nenhum seed/probe. 3) scripts/automation.config.json tem 80 registros, dos quais 26 sao kind=legacy, triggers=[manual], com a justificativa 'Legado sem chamador literal no inventario; execucao manual controlada apos revisar parametros e ambiente': os 17 seed-_.cjs, 6 probe-_.cjs, check-eventos-triagem.cjs, apply_rls_helper.cjs e test-db-connection.ts. docs/AUTOMACAO_LOCAL.md:107 repete a formula para publish.sh.
 - **Locais (5):** `/home/user/Estoki_V2/scripts/automation.config.json (26 registros legacy-*)`, `/home/user/Estoki_V2/package.json:6-70`, `/home/user/Estoki_V2/docs/AUTOMACAO_LOCAL.md:107`, `/home/user/Estoki_V2/scripts/check-eventos-triagem.cjs:1-16`, `/home/user/Estoki_V2/scripts/test-db-connection.ts:1-34`
 - **Causa raiz:** Scripts de exploracao e carga da fase de bring-up nunca foram apagados, e o inventario da automacao optou por catalogar o que nao tem chamador como legado manual em vez de sinalizar para remocao.
 - **Impacto no negócio:** A pasta scripts/ apresenta 26 ferramentas que escrevem em producao como opcoes legitimas e revisadas. Um agente que leia o registro ('execucao manual controlada') tem incentivo textual para rodar exatamente o que apaga tabela de inventario. O custo de remover e zero: nada no CI, no build ou no deploy depende deles.
@@ -4077,13 +4159,13 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 
 - **Camada:** services-contratos · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** Colunas reais de xp_historico (src/integrations/supabase/types.ts:4203-4221, bloco Insert): created_at?, descricao (obrigatória), id?, quantidade, referencia_id?, tipo, user_id. src/services/gamificacaoService.ts:37-42:
-      await (supabase.from("xp_historico") as any).insert({
-        user_id: userId,
-        quantidade: amount,
-        motivo: reason,
-        tipo: "xp",
-      });
-`motivo` não existe na tabela e `descricao` (NOT NULL) não é preenchida — o INSERT falha duas vezes. O resultado não é desestruturado, então o erro é descartado e addXP devolve `true` na linha 44 mesmo assim. O cast `as any` é o que faz isso passar no typecheck (`npx eslint` marca o mesmo ponto: gamificacaoService.ts 37:47 no-explicit-any).
+  await (supabase.from("xp_historico") as any).insert({
+  user_id: userId,
+  quantidade: amount,
+  motivo: reason,
+  tipo: "xp",
+  });
+  `motivo` não existe na tabela e `descricao` (NOT NULL) não é preenchida — o INSERT falha duas vezes. O resultado não é desestruturado, então o erro é descartado e addXP devolve `true` na linha 44 mesmo assim. O cast `as any` é o que faz isso passar no typecheck (`npx eslint` marca o mesmo ponto: gamificacaoService.ts 37:47 no-explicit-any).
 - **Locais (2):** `src/services/gamificacaoService.ts:37`, `src/services/gamificacaoService.ts:44`
 - **Causa raiz:** Campo renomeado no banco (motivo → descricao) sem acompanhar o service, e o cast `as any` nessa única chamada — as outras do mesmo arquivo são tipadas — desligou a verificação justamente onde ela pegaria.
 - **Impacto no negócio:** O XP total do usuário sobe (o upsert da linha 22 é tipado e funciona) mas nenhuma linha de histórico é gravada, então não há como auditar de onde veio o ponto nem reverter uma pontuação indevida. E o service reporta sucesso, então o problema é invisível.
@@ -4113,7 +4195,7 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 ## F402 — Os testes de service mockam supabase.from e congelam colunas inexistentes como se fossem corretas
 
 - **Camada:** services-contratos · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** `npx vitest run src/services/__tests__ src/features/picking/services src/features/shipping/services` → 7 arquivos, 26 testes, todos verdes em 1,60s. Mas src/services/__tests__/stockService.test.ts:5-7 substitui o cliente inteiro (`vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: vi.fn() } }))`) e o único assert sobre o payload, nas linhas 81-83, é `expect(insertMock.insert).toHaveBeenCalledWith(expect.objectContaining({ previous_qty: 5, new_qty: 8 }))` — duas colunas que não existem em stock_movements (types.ts:3758-3768). `grep` no arquivo não encontra nenhum assert sobre o nome da tabela passada a `from`, então nem "location_stock" nem "products" são verificados.
+- **Evidência:** `npx vitest run src/services/__tests__ src/features/picking/services src/features/shipping/services` → 7 arquivos, 26 testes, todos verdes em 1,60s. Mas src/services/**tests**/stockService.test.ts:5-7 substitui o cliente inteiro (`vi.mock("@/integrations/supabase/client", () => ({ supabase: { from: vi.fn() } }))`) e o único assert sobre o payload, nas linhas 81-83, é `expect(insertMock.insert).toHaveBeenCalledWith(expect.objectContaining({ previous_qty: 5, new_qty: 8 }))` — duas colunas que não existem em stock_movements (types.ts:3758-3768). `grep` no arquivo não encontra nenhum assert sobre o nome da tabela passada a `from`, então nem "location_stock" nem "products" são verificados.
 - **Locais (5):** `src/services/__tests__/stockService.test.ts:5`, `src/services/__tests__/stockService.test.ts:81`, `src/services/__tests__/movimentacaoService.test.ts`, `src/services/__tests__/qualityService.test.ts`, `src/services/__tests__/receivingService.test.ts`
 - **Causa raiz:** Mock total do cliente: o teste exercita a aritmética do service (que está certa) e nada do contrato com o banco, que é onde estão todos os defeitos deste relatório. Como a cobertura só mede src/services, src/features/**/services e src/lib (vitest.config.ts:20), esses arquivos puxam o número de cobertura para cima sem cobrir risco real.
 - **Impacto no negócio:** A suíte verde dá confiança falsa: todos os achados de tabela e coluna deste relatório convivem com 26 testes passando. Quem for mexer nesses services vai confiar nos testes e enviar código que quebra em produção.
@@ -4134,11 +4216,11 @@ Estado morto adjacente: `src/stores/index.ts` (appStore/createStore) tem 0 consu
 
 - **Camada:** services-contratos · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/services/inventoryService.ts:122-130:
-    if (operadorId) {
-      const logs = ids.map((posId) => ({ posicao_id: posId, status_novo: status, operador_id: operadorId, motivo: motivo || "Alteração manual via painel" }));
-      await supabase.from("posicao_status_log").insert(logs);
-    }
-O resultado não é desestruturado, então um erro do insert é descartado em silêncio — ao contrário de todas as outras operações do mesmo arquivo, que checam e logam (linhas 30-33, 57-60, 117-120). O payload também omite `status_anterior`, coluna que existe na tabela (src/integrations/supabase/types.ts:2729). E o log só é gravado quando `operadorId` é informado, apesar de o UPDATE em posicoes_estoque (linha 115) acontecer sempre. Caminho vivo: src/features/inventory/hooks/useEstoque.ts:89.
+  if (operadorId) {
+  const logs = ids.map((posId) => ({ posicao_id: posId, status_novo: status, operador_id: operadorId, motivo: motivo || "Alteração manual via painel" }));
+  await supabase.from("posicao_status_log").insert(logs);
+  }
+  O resultado não é desestruturado, então um erro do insert é descartado em silêncio — ao contrário de todas as outras operações do mesmo arquivo, que checam e logam (linhas 30-33, 57-60, 117-120). O payload também omite `status_anterior`, coluna que existe na tabela (src/integrations/supabase/types.ts:2729). E o log só é gravado quando `operadorId` é informado, apesar de o UPDATE em posicoes_estoque (linha 115) acontecer sempre. Caminho vivo: src/features/inventory/hooks/useEstoque.ts:89.
 - **Locais (3):** `src/services/inventoryService.ts:122`, `src/services/inventoryService.ts:129`, `src/features/inventory/hooks/useEstoque.ts:89`
 - **Causa raiz:** O log foi tratado como efeito colateral opcional e não como parte da operação; por não ser transacional com o UPDATE, ele pode falhar sozinho sem ninguém saber.
 - **Impacto no negócio:** Bloquear ou reservar uma posição de estoque pode acontecer sem deixar rastro: se o log falhar (ou se a chamada vier sem operador), não há como saber depois quem bloqueou a posição nem por quê. E como o status anterior nunca é gravado, nem o log que funciona permite reconstruir a mudança.
@@ -4158,7 +4240,7 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 ## F406 — 44 arquivos de teste das edge functions nunca são executados
 
 - **Camada:** testes · **Severidade:** Media · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** 12 arquivos *_test.ts e 32 *.test.ts em supabase/functions; vitest.config.ts:15 exclui supabase/** de propósito; nenhum workflow menciona deno (grep em .github/workflows: 0).
+- **Evidência:** 12 arquivos _\_test.ts e 32 *.test.ts em supabase/functions; vitest.config.ts:15 exclui supabase/*_ de propósito; nenhum workflow menciona deno (grep em .github/workflows: 0).
 - **Locais (3):** `supabase/functions/_shared/`, `vitest.config.ts:15`, `.github/workflows/`
 - **Causa raiz:** Os testes foram escritos para o runner do Deno, que nunca foi adicionado ao CI.
 - **Impacto no negócio:** O backend tem 44 arquivos de teste escritos que não protegem nada.
@@ -4168,7 +4250,6 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 ---
 
 # ⚪ Baixa — 25 achados
-
 
 ## F407 — Codigo morto na jornada de autenticacao mantido ao lado do caminho vivo
 
@@ -4191,7 +4272,7 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 ## F409 — Query de romaneios sem .limit(): a tela carrega a tabela inteira com os itens aninhados
 
 - **Camada:** Expedicao · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** RASTREADO
-- **Evidência:** src/features/shipping/services/shippingService.ts:8-16 faz select('*, romaneio_itens (*)').order('created_at') sem limite. A convenção do repo é .limit(500) (.claude/skills/estoki-v2/SKILL.md, citada em AGENTS.md); as queries vizinhas respeitam (src/components/kanban/useKanbanData.ts:24 e src/pages/Etiquetas.tsx:76).
+- **Evidência:** src/features/shipping/services/shippingService.ts:8-16 faz select('_, romaneio_itens (_)').order('created_at') sem limite. A convenção do repo é .limit(500) (.claude/skills/estoki-v2/SKILL.md, citada em AGENTS.md); as queries vizinhas respeitam (src/components/kanban/useKanbanData.ts:24 e src/pages/Etiquetas.tsx:76).
 - **Locais (1):** `/home/user/Estoki_V2/src/features/shipping/services/shippingService.ts:7-16`
 - **Causa raiz:** Query escrita sem paginação; o PostgREST corta no max-rows do projeto, de forma silenciosa.
 - **Impacto no negócio:** Com o histórico crescendo, a tela de Romaneios fica lenta e passa a mostrar um recorte arbitrário do passado em vez dos romaneios atuais, sem avisar que truncou.
@@ -4209,7 +4290,7 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 ## F411 — Debounce da busca é decorativo: o filtro usa o termo imediato
 
 - **Camada:** Produtos e estoque · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** src/pages/Produtos.tsx:30 cria debouncedSearch e os efeitos 36-43 o usam só para ligar/desligar o skeleton; o filtro em 61-70 depende de `search` (imediato), não de debouncedSearch. O teste existente só verifica que o skeleton aparece e desaparece (src/pages/__tests__/ProdutosPage.test.tsx:76-89) — EXECUTADO: passa, e passaria igual sem o debounce.
+- **Evidência:** src/pages/Produtos.tsx:30 cria debouncedSearch e os efeitos 36-43 o usam só para ligar/desligar o skeleton; o filtro em 61-70 depende de `search` (imediato), não de debouncedSearch. O teste existente só verifica que o skeleton aparece e desaparece (src/pages/**tests**/ProdutosPage.test.tsx:76-89) — EXECUTADO: passa, e passaria igual sem o debounce.
 - **Locais (3):** `/home/user/Estoki_V2/src/pages/Produtos.tsx:30`, `/home/user/Estoki_V2/src/pages/Produtos.tsx:61`, `/home/user/Estoki_V2/src/pages/__tests__/ProdutosPage.test.tsx:76`
 - **Causa raiz:** O debounce foi introduzido junto com o skeleton de busca, mas o cálculo de resultados nunca foi migrado para o valor debounced (e, como o filtro é local, não havia request a economizar).
 - **Impacto no negócio:** Pequeno: a lista filtra na hora enquanto um skeleton pisca por 200 ms em cima do resultado já correto — parece lentidão onde não há. Vira problema de verdade se a busca for movida para o servidor sem corrigir isto, porque disparará um request por tecla.
@@ -4256,7 +4337,7 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 ## F416 — A camada inteira tem 3 arquivos de teste e nenhum teste de página
 
 - **Camada:** features-ui · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** `npx vitest run src/features` → "Test Files 3 passed (3) / Tests 7 passed (7)". Os três arquivos são src/features/dashboard/hooks/__tests__/useDashboard.test.tsx, src/features/picking/services/pickingService.test.ts e src/features/shipping/services/shippingService.test.ts — 7 testes para 107 arquivos, nenhuma das 15 páginas de feature coberta. Isso casa com o que o AGENTS.md já avisa sobre o gate de cobertura: vitest.config.ts:20 mede só src/services/**, src/features/**/services/** e src/lib/**, deixando components/, pages/ e hooks/ de fora — ou seja, as 15 páginas e os 13 hooks desta camada não entram nem na conta. `npx tsc --noEmit` sai 0 e `npx eslint src/features` não acusa nenhum erro (180 avisos, 0 erros), então nenhum dos achados críticos acima seria barrado pelo CI.
+- **Evidência:** `npx vitest run src/features` → "Test Files 3 passed (3) / Tests 7 passed (7)". Os três arquivos são src/features/dashboard/hooks/**tests**/useDashboard.test.tsx, src/features/picking/services/pickingService.test.ts e src/features/shipping/services/shippingService.test.ts — 7 testes para 107 arquivos, nenhuma das 15 páginas de feature coberta. Isso casa com o que o AGENTS.md já avisa sobre o gate de cobertura: vitest.config.ts:20 mede só src/services/**, src/features/**/services/** e src/lib/**, deixando components/, pages/ e hooks/ de fora — ou seja, as 15 páginas e os 13 hooks desta camada não entram nem na conta. `npx tsc --noEmit` sai 0 e `npx eslint src/features` não acusa nenhum erro (180 avisos, 0 erros), então nenhum dos achados críticos acima seria barrado pelo CI.
 - **Locais (4):** `src/features/dashboard/hooks/__tests__/useDashboard.test.tsx`, `src/features/picking/services/pickingService.test.ts`, `src/features/shipping/services/shippingService.test.ts`, `vitest.config.ts:20`
 - **Causa raiz:** Só o que o gate de cobertura mede ganhou teste (os dois services de feature). Páginas, hooks e componentes ficaram fora do escopo medido e, por consequência, fora do escopo testado.
 - **Impacto no negócio:** Nenhum dos problemas graves encontrados nesta auditoria — rota de detalhe inexistente, botão de entrega que não grava, seleção em massa inalcançável, erro de consulta mostrado como lista vazia — seria pego pelo CI: lint, typecheck e build passam verdes com todos eles presentes. O dono recebe "CI verde" como se fosse garantia, e não é.
@@ -4269,8 +4350,8 @@ O resultado não é desestruturado, então um erro do insert é descartado em si
 - **Evidência:** src/components/common/AppProviders.tsx:55-56 monta os dois:
   <Sonner />
   <Toaster />
-Contagem por grep: 90 arquivos em src importam `from "sonner"`, 39 importam `use-toast`. Mistura dentro do mesmo fluxo: src/hooks/useProdutos.ts:4 usa sonner enquanto src/hooks/useMovimentacoes.ts:3 usa `useToast`; src/features/quality/hooks/useTriagens.ts:4 usa `useToast` e src/features/picking/hooks/usePicking.ts:5 usa sonner.
-src/hooks/use-toast.ts:5-6 `const TOAST_LIMIT = 1; const TOAST_REMOVE_DELAY = 1000000;` — o sistema shadcn mostra no máximo 1 toast por vez e mantém o toast fechado em memória por ~16 minutos.
+  Contagem por grep: 90 arquivos em src importam `from "sonner"`, 39 importam `use-toast`. Mistura dentro do mesmo fluxo: src/hooks/useProdutos.ts:4 usa sonner enquanto src/hooks/useMovimentacoes.ts:3 usa `useToast`; src/features/quality/hooks/useTriagens.ts:4 usa `useToast` e src/features/picking/hooks/usePicking.ts:5 usa sonner.
+  src/hooks/use-toast.ts:5-6 `const TOAST_LIMIT = 1; const TOAST_REMOVE_DELAY = 1000000;` — o sistema shadcn mostra no máximo 1 toast por vez e mantém o toast fechado em memória por ~16 minutos.
 - **Locais (7):** `src/components/common/AppProviders.tsx:55`, `src/components/common/AppProviders.tsx:56`, `src/hooks/use-toast.ts:5`, `src/hooks/useProdutos.ts:4`, `src/hooks/useMovimentacoes.ts:3`, `src/features/quality/hooks/useTriagens.ts:4`, `src/features/picking/hooks/usePicking.ts:5`
 - **Causa raiz:** O projeto nasceu com o toast do shadcn (`use-toast` + `<Toaster />`) e depois adotou sonner, sem migrar nem remover o primeiro. Os dois renderizadores ficaram montados e os hooks escolhem um ou outro sem critério.
 - **Impacto no negócio:** A mesma ação pode avisar o operador em dois cantos diferentes da tela com estilos diferentes, e o aviso do sistema antigo pode ser suprimido (limite de 1 por vez) quando duas operações terminam juntas — por exemplo, erro de gravação de triagem engolido pelo toast de sucesso anterior.
@@ -4282,12 +4363,12 @@ src/hooks/use-toast.ts:5-6 `const TOAST_LIMIT = 1; const TOAST_REMOVE_DELAY = 10
 - **Camada:** hooks-estado · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** EXECUTADO
 - **Evidência:** src/hooks/useIndexedDB.ts:4-13:
   useEffect(() => {
-    const request = indexedDB.open(dbName, 1);
-    ...
-    request.onsuccess = () => setDb(request.result);
-    return () => { db?.close(); };
+  const request = indexedDB.open(dbName, 1);
+  ...
+  request.onsuccess = () => setDb(request.result);
+  return () => { db?.close(); };
   }, [dbName, storeName]);
-O `db` do cleanup é o do render em que o efeito rodou — null, porque `setDb` só acontece no `onsuccess` posterior e o efeito não re-roda (deps só `[dbName, storeName]`). Confirmado pelo eslint do repo: `npx eslint src/hooks` → "src/hooks/useIndexedDB.ts:13: React Hook useEffect has a missing dependency: 'db'".
+  O `db` do cleanup é o do render em que o efeito rodou — null, porque `setDb` só acontece no `onsuccess` posterior e o efeito não re-roda (deps só `[dbName, storeName]`). Confirmado pelo eslint do repo: `npx eslint src/hooks` → "src/hooks/useIndexedDB.ts:13: React Hook useEffect has a missing dependency: 'db'".
 - **Locais (2):** `src/hooks/useIndexedDB.ts:11`, `src/hooks/useIndexedDB.ts:13`
 - **Causa raiz:** Closure obsoleta no cleanup combinada com array de dependências incompleto: a conexão que precisa ser fechada só existe depois do efeito, e o cleanup captura o valor anterior.
 - **Impacto no negócio:** Baixo hoje, porque o hook não é usado por nenhuma tela (0 referências fora de src/hooks). Se alguém o adotar para cache offline do coletor, a conexão IndexedDB fica aberta a cada troca de banco/store e o navegador passa a bloquear upgrades de versão.
@@ -4299,8 +4380,8 @@ O `db` do cleanup é o do render em que o efeito rodou — null, porque `setDb` 
 - **Camada:** hooks-estado · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** RASTREADO
 - **Evidência:** src/hooks/useTriagemTimer.ts:79-94:
   intervalRef.current = setInterval(() => { setElapsedSeconds((prev) => prev + 1); }, 1000);
-O hook já guarda a hora de início e não a usa para o cálculo — :25 `const [startTime, setStartTime] = useState<Date | null>(null);` e :47 `setStartTime(new Date())`.
-Consumidor: src/features/quality/pages/FormularioTriagem.tsx:46-52 (`formattedTime`), exibido em :254 e nos toasts :172 e :179. O valor não é gravado no banco.
+  O hook já guarda a hora de início e não a usa para o cálculo — :25 `const [startTime, setStartTime] = useState<Date | null>(null);` e :47 `setStartTime(new Date())`.
+  Consumidor: src/features/quality/pages/FormularioTriagem.tsx:46-52 (`formattedTime`), exibido em :254 e nos toasts :172 e :179. O valor não é gravado no banco.
 - **Locais (3):** `src/hooks/useTriagemTimer.ts:81`, `src/hooks/useTriagemTimer.ts:98`, `src/features/quality/pages/FormularioTriagem.tsx:172`
 - **Causa raiz:** O tempo é acumulado somando 1 a cada disparo do `setInterval`, e o navegador reduz a frequência de timers em abas em segundo plano (chega a 1 disparo por minuto). O `startTime`, que daria o tempo real, fica sem uso.
 - **Impacto no negócio:** O tempo de triagem mostrado ao operador fica menor que o real se ele trocar de aba ou bloquear a tela durante a conferência. Como o número não vai para o banco, afeta só a informação na tela e o texto do toast de XP — não contamina métrica de produtividade.
@@ -4360,7 +4441,7 @@ Consumidor: src/features/quality/pages/FormularioTriagem.tsx:46-52 (`formattedTi
 ## F425 — jspdf arrasta canvg + core-js (331 KB raw) para um chunk de export de PDF
 
 - **Camada:** performance-front · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** O chunk dist/assets/index.es-*.js (156.86 kB raw / 51.37 kB gzip) é, pelo visualizer: nm:core-js 165.7 KB, nm:canvg 165.3 KB, nm:svg-pathdata 18.6 KB, nm:stackblur-canvas 12.2 KB, nm:rgbcolor 9.8 KB, nm:raf 2.2 KB, nm:performance-now 1.4 KB, @babel/runtime 1.2 KB (raw) — nenhum byte de código do projeto. Vem do caminho opcional de SVG/HTML do jspdf 4.2.1 (chunk jspdf.es.min-*.js, 386.19 kB / 123.98 kB gzip) somado ao html2canvas (199.44 kB / 45.63 kB gzip).
+- **Evidência:** O chunk dist/assets/index.es-_.js (156.86 kB raw / 51.37 kB gzip) é, pelo visualizer: nm:core-js 165.7 KB, nm:canvg 165.3 KB, nm:svg-pathdata 18.6 KB, nm:stackblur-canvas 12.2 KB, nm:rgbcolor 9.8 KB, nm:raf 2.2 KB, nm:performance-now 1.4 KB, @babel/runtime 1.2 KB (raw) — nenhum byte de código do projeto. Vem do caminho opcional de SVG/HTML do jspdf 4.2.1 (chunk jspdf.es.min-_.js, 386.19 kB / 123.98 kB gzip) somado ao html2canvas (199.44 kB / 45.63 kB gzip).
 - **Locais (3):** `/home/user/Estoki_V2/dist/assets/index.es-BM9hQ2cz.js`, `/home/user/Estoki_V2/package.json — "jspdf": "4.2.1"`, `/home/user/Estoki_V2/.size-limit.json:22-32`
 - **Causa raiz:** O jspdf importa canvg (que traz polyfills core-js) para renderizar SVG; mesmo quem só gera tabelas via jspdf-autotable paga o chunk, porque o import é resolvido no grafo do pacote, não por feature.
 - **Impacto no negócio:** Baixo no dia a dia — os três chunks são assíncronos e só o usuário que exporta PDF deveria pagar. Vira relevante hoje apenas por causa do achado 2 (o service worker baixa os 3 na primeira visita: 221 KB gzip).
@@ -4410,7 +4491,7 @@ Consumidor: src/features/quality/pages/FormularioTriagem.tsx:46-52 (`formattedTi
 ## F430 — Os 26 scripts .cjs dependem de dotenv, que nao esta declarado em dependencies nem devDependencies
 
 - **Camada:** scripts-operacao · **Severidade:** Baixa · **Confiança:** confirmado · **Verificação:** EXECUTADO
-- **Evidência:** Todos os seed-*.cjs, probe-*.cjs, check-eventos-triagem.cjs e apply_rls_helper.cjs comecam com require('dotenv').config({path:'.env'}). Consultei o package.json: dotenv nao aparece em dependencies nem em devDependencies. Executei require.resolve('dotenv'): resolve para /home/user/Estoki_V2/node_modules/dotenv/lib/main.js, versao 17.4.2. No package-lock.json a unica entrada e node_modules/dotenv com dev: true - ou seja, esta na arvore apenas como dependencia transitiva de desenvolvimento de outro pacote.
+- **Evidência:** Todos os seed-_.cjs, probe-_.cjs, check-eventos-triagem.cjs e apply_rls_helper.cjs comecam com require('dotenv').config({path:'.env'}). Consultei o package.json: dotenv nao aparece em dependencies nem em devDependencies. Executei require.resolve('dotenv'): resolve para /home/user/Estoki_V2/node_modules/dotenv/lib/main.js, versao 17.4.2. No package-lock.json a unica entrada e node_modules/dotenv com dev: true - ou seja, esta na arvore apenas como dependencia transitiva de desenvolvimento de outro pacote.
 - **Locais (4):** `/home/user/Estoki_V2/package.json (dependencies e devDependencies)`, `/home/user/Estoki_V2/package-lock.json (node_modules/dotenv, dev: true)`, `/home/user/Estoki_V2/scripts/seed-db.cjs:6`, `/home/user/Estoki_V2/scripts/apply_rls_helper.cjs:1`
 - **Causa raiz:** Os scripts foram escritos quando dotenv estava por acaso instalado na arvore e a dependencia nunca foi formalizada.
 - **Impacto no negócio:** Baixo enquanto esses scripts sao codigo morto, e o problema desaparece se eles forem apagados. Se forem mantidos, qualquer bump que remova o pacote que arrasta o dotenv quebra os 26 de uma vez, com erro de modulo nao encontrado que nao aponta para a causa.

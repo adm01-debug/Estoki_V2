@@ -14,27 +14,27 @@
 
 ## 1. Stack e pontos de entrada
 
-| Item | Valor | Evidência | Verificação |
-| --- | --- | --- | --- |
-| Build/dev | Vite 5 | `vite.config.ts`, `package.json:8` | EXECUTADO (`npm run build` disponível) |
-| Framework | React 18 + TypeScript strict | `tsconfig.app.json`, `package.json` | RASTREADO |
-| UI | Tailwind + shadcn/ui (82 componentes em `src/components/ui`) | `tailwind.config.ts`, `components.json` | EXECUTADO (contagem) |
-| Dados/estado | TanStack Query + Context API; `src/stores/` só tem um `createStore` genérico, sem nenhuma store criada | `src/stores/index.ts:1-25` | EXECUTADO (`ls src/stores/`) |
-| Validação | Zod (+ `@hookform/resolvers`) | `package.json` | RASTREADO |
-| i18n | i18next, 4 arquivos de locale (`pt-BR`, `en`, `en-US`, `es`) — `en.json` e `en-US.json` coexistem | `src/i18n/locales/` | EXECUTADO (`find`) |
-| Backend | Supabase (Postgres + Edge Functions Deno) | `supabase/config.toml:1` | EXECUTADO |
-| Mobile | Capacitor (PoC) | `capacitor.config.ts` | RASTREADO |
-| Ponto de entrada web | `index.html` → `src/main.tsx` → `src/App.tsx` | `src/App.tsx:20-60` | RASTREADO |
-| Porta de dev | **8080** (não 5173) | `vite.config.ts:40` | RASTREADO |
-| Node | 22 no CI (`cd.yml`), 20+ exigido no `AGENTS.md`; container desta auditoria: v22.23.5 | `.github/workflows/cd.yml:36` | EXECUTADO (`node -v`) |
+| Item                 | Valor                                                                                                  | Evidência                               | Verificação                            |
+| -------------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------- | -------------------------------------- |
+| Build/dev            | Vite 5                                                                                                 | `vite.config.ts`, `package.json:8`      | EXECUTADO (`npm run build` disponível) |
+| Framework            | React 18 + TypeScript strict                                                                           | `tsconfig.app.json`, `package.json`     | RASTREADO                              |
+| UI                   | Tailwind + shadcn/ui (82 componentes em `src/components/ui`)                                           | `tailwind.config.ts`, `components.json` | EXECUTADO (contagem)                   |
+| Dados/estado         | TanStack Query + Context API; `src/stores/` só tem um `createStore` genérico, sem nenhuma store criada | `src/stores/index.ts:1-25`              | EXECUTADO (`ls src/stores/`)           |
+| Validação            | Zod (+ `@hookform/resolvers`)                                                                          | `package.json`                          | RASTREADO                              |
+| i18n                 | i18next, 4 arquivos de locale (`pt-BR`, `en`, `en-US`, `es`) — `en.json` e `en-US.json` coexistem      | `src/i18n/locales/`                     | EXECUTADO (`find`)                     |
+| Backend              | Supabase (Postgres + Edge Functions Deno)                                                              | `supabase/config.toml:1`                | EXECUTADO                              |
+| Mobile               | Capacitor (PoC)                                                                                        | `capacitor.config.ts`                   | RASTREADO                              |
+| Ponto de entrada web | `index.html` → `src/main.tsx` → `src/App.tsx`                                                          | `src/App.tsx:20-60`                     | RASTREADO                              |
+| Porta de dev         | **8080** (não 5173)                                                                                    | `vite.config.ts:40`                     | RASTREADO                              |
+| Node                 | 22 no CI (`cd.yml`), 20+ exigido no `AGENTS.md`; container desta auditoria: v22.23.5                   | `.github/workflows/cd.yml:36`           | EXECUTADO (`node -v`)                  |
 
 ### Instalação de dependências (estado real medido)
 
-| Comando | Resultado medido | Verificação |
-| --- | --- | --- |
-| `npm install --no-audit --no-fund` | **FALHA** — exit 1 no postinstall do `cypress@16.3.0` (`npm error path .../node_modules/cypress`, `command sh -c node dist/index.js --exec install`) | EXECUTADO |
-| `CYPRESS_INSTALL_BINARY=0 npm install` | **SUCESSO** — "added 1365 packages in 13s", exit 0 | EXECUTADO |
-| `npm ci --dry-run` | **SUCESSO** — exit 0, "added 77 packages in 1s" | EXECUTADO |
+| Comando                                | Resultado medido                                                                                                                                     | Verificação |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `npm install --no-audit --no-fund`     | **FALHA** — exit 1 no postinstall do `cypress@16.3.0` (`npm error path .../node_modules/cypress`, `command sh -c node dist/index.js --exec install`) | EXECUTADO   |
+| `CYPRESS_INSTALL_BINARY=0 npm install` | **SUCESSO** — "added 1365 packages in 13s", exit 0                                                                                                   | EXECUTADO   |
+| `npm ci --dry-run`                     | **SUCESSO** — exit 0, "added 77 packages in 1s"                                                                                                      | EXECUTADO   |
 
 > Isso **contradiz** `AGENTS.md § Qualidade e guardas`, que afirma que `npm ci --dry-run` "aborta
 > localmente em `#loadPeerSet` (peer do `vitest@5.0.3`)". O bloqueio real é o download do binário do
@@ -44,35 +44,35 @@
 
 ## 2. Ambientes e deploys (medido por HTTP)
 
-| Alvo | HTTP | Projeto Supabase que o bundle usa | Evidência | Verificação |
-| --- | --- | --- | --- | --- |
-| `https://estoki.lovable.app` | 200 | **`mtnsslmweggrmmdcklya`** (chave `anon` legada, JWT `role=anon`) | bundle `/assets/index-U-NBmTWY.js` | EXECUTADO |
-| `https://estoki-v2.vercel.app` | 200 | **`ookjbflsnoefnsixrspc`** (chave `sb_publishable_…`) | bundle `/assets/index-BhAhgqRb.js` | EXECUTADO |
-| `https://estoki-main.vercel.app` | 200 | **`ookjbflsnoefnsixrspc`** — mesmo bundle (`index-BhAhgqRb.js`), é um **segundo projeto Vercel** do mesmo repositório | bot da Vercel na PR #190: projetos `estoki-v2` e `estoki-main`, time `juca1`, ambos disparados pelo mesmo push | EXECUTADO |
-| Repositório / migrations / crons | — | `ookjbflsnoefnsixrspc` | `supabase/config.toml:1` | EXECUTADO |
+| Alvo                             | HTTP | Projeto Supabase que o bundle usa                                                                                     | Evidência                                                                                                      | Verificação |
+| -------------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------- |
+| `https://estoki.lovable.app`     | 200  | **`mtnsslmweggrmmdcklya`** (chave `anon` legada, JWT `role=anon`)                                                     | bundle `/assets/index-U-NBmTWY.js`                                                                             | EXECUTADO   |
+| `https://estoki-v2.vercel.app`   | 200  | **`ookjbflsnoefnsixrspc`** (chave `sb_publishable_…`)                                                                 | bundle `/assets/index-BhAhgqRb.js`                                                                             | EXECUTADO   |
+| `https://estoki-main.vercel.app` | 200  | **`ookjbflsnoefnsixrspc`** — mesmo bundle (`index-BhAhgqRb.js`), é um **segundo projeto Vercel** do mesmo repositório | bot da Vercel na PR #190: projetos `estoki-v2` e `estoki-main`, time `juca1`, ambos disparados pelo mesmo push | EXECUTADO   |
+| Repositório / migrations / crons | —    | `ookjbflsnoefnsixrspc`                                                                                                | `supabase/config.toml:1`                                                                                       | EXECUTADO   |
 
 **Três endereços de produção no ar.** Dois (Vercel) servem o mesmo build contra o banco oficial — e constroem
 em duplicidade a cada push; o terceiro (Lovable) fala com um banco que não tem o sistema. É o achado
 estrutural nº 1.
 
-| Ambiente declarado | Onde | Verificação |
-| --- | --- | --- |
-| `staging` (Vercel preview) | `.github/workflows/cd.yml:50-57` | RASTREADO |
-| `production` | `cd.yml` (`workflow_dispatch`) | RASTREADO |
+| Ambiente declarado                    | Onde                                                    | Verificação  |
+| ------------------------------------- | ------------------------------------------------------- | ------------ |
+| `staging` (Vercel preview)            | `.github/workflows/cd.yml:50-57`                        | RASTREADO    |
+| `production`                          | `cd.yml` (`workflow_dispatch`)                          | RASTREADO    |
 | 4 environments no GitHub, sem revisor | `AGENTS.md § Fluxo Git` (não reconfirmado nesta sessão) | NÃO REVISADO |
 
 ---
 
 ## 3. Rotas (82 declaradas) — cobertura
 
-| Arquivo | Rotas (`path="…"`) | Ocorrências de `ProtectedRoute` | Status |
-| --- | --- | --- | --- |
-| `src/routes/publicRoutes.tsx` | 7 | 0 (correto: são públicas) | revisado |
-| `src/routes/wmsRoutes.tsx` | 26 | 9 | revisado |
-| `src/routes/featureRoutes.tsx` | 27 | 11 | revisado |
-| `src/routes/adminRoutes.tsx` | 13 | 27 | revisado |
-| `src/routes/analyticsRoutes.tsx` | 9 | 19 | revisado |
-| `src/App.tsx` (index, `dashboard`, `monitor`) | 3 | 0 | revisado |
+| Arquivo                                       | Rotas (`path="…"`) | Ocorrências de `ProtectedRoute` | Status   |
+| --------------------------------------------- | ------------------ | ------------------------------- | -------- |
+| `src/routes/publicRoutes.tsx`                 | 7                  | 0 (correto: são públicas)       | revisado |
+| `src/routes/wmsRoutes.tsx`                    | 26                 | 9                               | revisado |
+| `src/routes/featureRoutes.tsx`                | 27                 | 11                              | revisado |
+| `src/routes/adminRoutes.tsx`                  | 13                 | 27                              | revisado |
+| `src/routes/analyticsRoutes.tsx`              | 9                  | 19                              | revisado |
+| `src/App.tsx` (index, `dashboard`, `monitor`) | 3                  | 0                               | revisado |
 
 Autenticação: o grupo `<Route path="/" element={<AppLayout />}>` (`src/App.tsx:27`) é a porta —
 `AppLayout` redireciona para `/auth` quando não há usuário (`src/components/layout/AppLayout.tsx:53-54`).
@@ -87,30 +87,30 @@ Papéis reais do sistema: **3** — `operador | supervisor | admin`
 
 ## 4. Frontend — inventário quantitativo
 
-| Item | Quantidade | Comando | Status |
-| --- | --- | --- | --- |
-| Páginas em `src/pages` | 76 `.tsx` | `find src/pages -name '*.tsx'` | revisado por amostragem dirigida (fluxos principais) |
-| Módulos em `src/features` | 8 (`analytics, dashboard, inventory, multiWarehouse, picking, quality, receiving, shipping`), 107 arquivos | `ls src/features` | revisado |
-| Componentes | 478 `.tsx` em `src/components` (ui 82, forms 46, common 30, layout 28, charts 22, data 19, wms 18, …) | `find` | revisado por amostragem |
-| Arquivos de hook (`use*`) | 303 | `find src -name 'use*.ts*'` | revisado por amostragem dirigida |
-| Services | 25 em `src/services` + services por feature | `ls src/services` | revisado |
-| Contexts | 5 (`App, Auth, Notification, Theme, Toast, Transition`) | `ls src/contexts` | revisado |
-| Stores | 0 (só o helper `createStore`) | `ls src/stores` | revisado |
+| Item                      | Quantidade                                                                                                 | Comando                        | Status                                               |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------- |
+| Páginas em `src/pages`    | 76 `.tsx`                                                                                                  | `find src/pages -name '*.tsx'` | revisado por amostragem dirigida (fluxos principais) |
+| Módulos em `src/features` | 8 (`analytics, dashboard, inventory, multiWarehouse, picking, quality, receiving, shipping`), 107 arquivos | `ls src/features`              | revisado                                             |
+| Componentes               | 478 `.tsx` em `src/components` (ui 82, forms 46, common 30, layout 28, charts 22, data 19, wms 18, …)      | `find`                         | revisado por amostragem                              |
+| Arquivos de hook (`use*`) | 303                                                                                                        | `find src -name 'use*.ts*'`    | revisado por amostragem dirigida                     |
+| Services                  | 25 em `src/services` + services por feature                                                                | `ls src/services`              | revisado                                             |
+| Contexts                  | 5 (`App, Auth, Notification, Theme, Toast, Transition`)                                                    | `ls src/contexts`              | revisado                                             |
+| Stores                    | 0 (só o helper `createStore`)                                                                              | `ls src/stores`                | revisado                                             |
 
 ---
 
 ## 5. Backend — Edge Functions
 
-| Medida | Valor | Verificação |
-| --- | --- | --- |
-| Funções em `supabase/functions` (cada uma com `index.ts`, fora `_shared` e `tests`) | **247** | EXECUTADO |
-| **Deployadas em produção** (responderam ≠404 em `OPTIONS /functions/v1/<nome>`) | **94** | EXECUTADO (probe em todas) |
-| **Não deployadas** (404) | **153** | EXECUTADO |
-| Declaram `verify_jwt = false` | 2 — `reorder-check`, `stock-alert` | EXECUTADO (`supabase/config.toml:3-7`) |
-| Usam `SUPABASE_SERVICE_ROLE_KEY` | **203** ocorrências | EXECUTADO (grep) |
-| Leem `SUPABASE_ANON_KEY` | 24 | EXECUTADO |
-| `functions.invoke("<literal>")` no frontend | 7 nomes distintos (`gerar-desafios-diarios`, `scanner-ocr`, `send-email-alert`, `webauthn-*`) + 3 chamadas com nome dinâmico (`src/lib/ai-invoke.ts:31`, `src/pages/admin/IntegrationsPage.tsx:116`, `src/hooks/useDivergencias.ts:173`) | EXECUTADO | 
-| Função `metrics` (usada pelo painel de saúde) | **404 — não deployada** | EXECUTADO |
+| Medida                                                                              | Valor                                                                                                                                                                                                                                    | Verificação                            |
+| ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Funções em `supabase/functions` (cada uma com `index.ts`, fora `_shared` e `tests`) | **247**                                                                                                                                                                                                                                  | EXECUTADO                              |
+| **Deployadas em produção** (responderam ≠404 em `OPTIONS /functions/v1/<nome>`)     | **94**                                                                                                                                                                                                                                   | EXECUTADO (probe em todas)             |
+| **Não deployadas** (404)                                                            | **153**                                                                                                                                                                                                                                  | EXECUTADO                              |
+| Declaram `verify_jwt = false`                                                       | 2 — `reorder-check`, `stock-alert`                                                                                                                                                                                                       | EXECUTADO (`supabase/config.toml:3-7`) |
+| Usam `SUPABASE_SERVICE_ROLE_KEY`                                                    | **203** ocorrências                                                                                                                                                                                                                      | EXECUTADO (grep)                       |
+| Leem `SUPABASE_ANON_KEY`                                                            | 24                                                                                                                                                                                                                                       | EXECUTADO                              |
+| `functions.invoke("<literal>")` no frontend                                         | 7 nomes distintos (`gerar-desafios-diarios`, `scanner-ocr`, `send-email-alert`, `webauthn-*`) + 3 chamadas com nome dinâmico (`src/lib/ai-invoke.ts:31`, `src/pages/admin/IntegrationsPage.tsx:116`, `src/hooks/useDivergencias.ts:173`) | EXECUTADO                              |
+| Função `metrics` (usada pelo painel de saúde)                                       | **404 — não deployada**                                                                                                                                                                                                                  | EXECUTADO                              |
 
 Segredos lidos pelas functions (nomes, nunca valores): `SUPABASE_URL` (222), `SUPABASE_SERVICE_ROLE_KEY`
 (203), `SUPABASE_ANON_KEY` (24), `OPENAI_API_KEY` (5), `SUPABASE_PUBLISHABLE_KEY` (4),
@@ -121,20 +121,20 @@ Segredos lidos pelas functions (nomes, nunca valores): `SUPABASE_URL` (222), `SU
 
 ### Medições adicionais sobre as Edge Functions (todas EXECUTADO)
 
-| Medida | Valor |
-| --- | --- |
-| Funções que são **stub** (criam client, validam com Zod e devolvem `{success:true, function:"<nome>"}` sem nenhum `.from`/`.rpc`/`.storage`) | **107 de 247** |
-| Dessas, **deployadas em produção** | **26** (`abc-analysis`, `alert-monitor`, `alert-productivity`, `alert-quality`, `alert-sla-breach`, `auth-session-list`, `auth-session-revoke`, `auth-social-login`, `batch-processor`, `cache-invalidate`, `carrier-book`, `carrier-cancel`, `carrier-rates-cache`, `carrier-webhooks`, `cte-import`, `cycle-count`, `dashboard-stats`, `data-migration`, `download-file`, `expiration-check`, `export-pdf`, `export-products`, `generate-barcode`, `generate-sku`, `import-csv`, `safety-stock`) |
-| Funções deployadas que usam `service_role` | 59 de 94 |
-| Dessas, que **nunca validam o chamador** (sem `auth.getUser`) | **55** |
-| Funções deployadas que validam o usuário | 14 de 94 |
-| Funções com chamador real no app | **16 de 247 (6,5%)** |
-| Conformidade com a regra do próprio repo (`AGENTS.md`: "Sempre CORS + Zod (400) + try/catch + `withLogging()`") | CORS 242/247 · Zod 210/247 · try/catch 240/247 · **`withLogging()` 2/247** |
+| Medida                                                                                                                                       | Valor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Funções que são **stub** (criam client, validam com Zod e devolvem `{success:true, function:"<nome>"}` sem nenhum `.from`/`.rpc`/`.storage`) | **107 de 247**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Dessas, **deployadas em produção**                                                                                                           | **26** (`abc-analysis`, `alert-monitor`, `alert-productivity`, `alert-quality`, `alert-sla-breach`, `auth-session-list`, `auth-session-revoke`, `auth-social-login`, `batch-processor`, `cache-invalidate`, `carrier-book`, `carrier-cancel`, `carrier-rates-cache`, `carrier-webhooks`, `cte-import`, `cycle-count`, `dashboard-stats`, `data-migration`, `download-file`, `expiration-check`, `export-pdf`, `export-products`, `generate-barcode`, `generate-sku`, `import-csv`, `safety-stock`) |
+| Funções deployadas que usam `service_role`                                                                                                   | 59 de 94                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Dessas, que **nunca validam o chamador** (sem `auth.getUser`)                                                                                | **55**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Funções deployadas que validam o usuário                                                                                                     | 14 de 94                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Funções com chamador real no app                                                                                                             | **16 de 247 (6,5%)**                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Conformidade com a regra do próprio repo (`AGENTS.md`: "Sempre CORS + Zod (400) + try/catch + `withLogging()`")                              | CORS 242/247 · Zod 210/247 · try/catch 240/247 · **`withLogging()` 2/247**                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 **Como o portão de autenticação do Supabase realmente se comporta aqui (EXECUTADO):**
 `POST /functions/v1/health-check` sem cabeçalho → **401**; o mesmo POST com
 `Authorization: Bearer <chave publicável do bundle>` → **200 com o corpo completo**. Ou seja,
-`verify_jwt = true` só exige *um* JWT do projeto, e a chave publicável (pública por design, está no
+`verify_jwt = true` só exige _um_ JWT do projeto, e a chave publicável (pública por design, está no
 JavaScript do site) satisfaz essa exigência. Sem checagem de papel dentro da função, as 55 acima ficam
 abertas a qualquer pessoa.
 
@@ -149,36 +149,36 @@ registradas em `conferencia` e `formulario-triagem`, **sem o segmento `:id`** qu
 
 ### Storage (EXECUTADO)
 
-| Bucket | Estado | Evidência |
-| --- | --- | --- |
-| `triagem-fotos` | criado `public = true` e depois alterado para `public = false`; o front continua usando `getPublicUrl()` | `supabase/migrations/20251220143942_*.sql:2-3`, `supabase/migrations/20260404160737_*.sql:2`, `src/hooks/useTriagemFotos.ts:64`; `GET /storage/v1/object/public/triagem-fotos/...` → **400** |
-| `backups`, `images`, `files` | referenciados em código, **sem** migration de criação encontrada | grep em `supabase/migrations/` |
+| Bucket                       | Estado                                                                                                   | Evidência                                                                                                                                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `triagem-fotos`              | criado `public = true` e depois alterado para `public = false`; o front continua usando `getPublicUrl()` | `supabase/migrations/20251220143942_*.sql:2-3`, `supabase/migrations/20260404160737_*.sql:2`, `src/hooks/useTriagemFotos.ts:64`; `GET /storage/v1/object/public/triagem-fotos/...` → **400** |
+| `backups`, `images`, `files` | referenciados em código, **sem** migration de criação encontrada                                         | grep em `supabase/migrations/`                                                                                                                                                               |
 
 ### Objetos de banco verificados por chamada real (EXECUTADO)
 
-| Objeto | Resultado |
-| --- | --- |
-| `get_reorder_point`, `get_min_stock_threshold` | existem **e são executáveis pela chave publicável** (retornaram `10` e `5`) |
-| `get_backend_health`, `check_db_alert_thresholds` | existem e a guarda funciona (`P0001 Acesso restrito a administradores`) |
-| `decrease_location_stock`, `get_inventory_summary`, `recalculate_weekly_stats` | chamadas por Edge Functions e **criadas em 0 das 178 migrations** |
-| Projeto do deploy Lovable (`mtnsslmweggrmmdcklya`) | das 86 tabelas do sistema só existem **`profiles` e `user_roles`**; as outras 83 dão `PGRST205` |
+| Objeto                                                                         | Resultado                                                                                       |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `get_reorder_point`, `get_min_stock_threshold`                                 | existem **e são executáveis pela chave publicável** (retornaram `10` e `5`)                     |
+| `get_backend_health`, `check_db_alert_thresholds`                              | existem e a guarda funciona (`P0001 Acesso restrito a administradores`)                         |
+| `decrease_location_stock`, `get_inventory_summary`, `recalculate_weekly_stats` | chamadas por Edge Functions e **criadas em 0 das 178 migrations**                               |
+| Projeto do deploy Lovable (`mtnsslmweggrmmdcklya`)                             | das 86 tabelas do sistema só existem **`profiles` e `user_roles`**; as outras 83 dão `PGRST205` |
 
 ---
 
 ## 6. Banco de dados
 
-| Medida | Valor | Verificação |
-| --- | --- | --- |
-| Migrations versionadas | **178** arquivos em `supabase/migrations/` | EXECUTADO |
-| Tabelas nos tipos gerados | **86** | EXECUTADO (parse de `src/integrations/supabase/types.ts`) |
-| Views nos tipos gerados | 3 | EXECUTADO |
-| Funções (RPC) nos tipos | 22 | EXECUTADO |
-| Enums | 11 (`app_role`, `order_status`, `status_recebimento`, `status_tarefa`, `status_onda`, `status_romaneio`, `status_entrega`, `status_posicao`, `status_contagem`, `status_ciclo_inventario`, `status_registro_td`, `motivo_td`, `prioridade_tarefa`, `severidade_alerta`, `status_alerta`, `tipo_alerta`) | EXECUTADO |
-| `CREATE TRIGGER` distintos nas migrations | 67 | EXECUTADO |
-| Migrations com `cron.schedule` | 4 arquivos (EST01 reorder-check, EST01 stock-alert, AUTO01 alert-expiration, + 1) | EXECUTADO |
-| Migrations usando `pg_net`/`net.http_post` | 4 | EXECUTADO |
-| **Exposição anônima de dados** | **0 de 86 tabelas + 3 views retornaram linha** para a chave publicável sem login (todas `200 []`) | EXECUTADO (probe REST nas 89) |
-| Buckets de storage referenciados no código | 4 — `triagem-fotos`, `backups`, `images`, `files` | EXECUTADO (grep) |
+| Medida                                     | Valor                                                                                                                                                                                                                                                                                                   | Verificação                                               |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Migrations versionadas                     | **178** arquivos em `supabase/migrations/`                                                                                                                                                                                                                                                              | EXECUTADO                                                 |
+| Tabelas nos tipos gerados                  | **86**                                                                                                                                                                                                                                                                                                  | EXECUTADO (parse de `src/integrations/supabase/types.ts`) |
+| Views nos tipos gerados                    | 3                                                                                                                                                                                                                                                                                                       | EXECUTADO                                                 |
+| Funções (RPC) nos tipos                    | 22                                                                                                                                                                                                                                                                                                      | EXECUTADO                                                 |
+| Enums                                      | 11 (`app_role`, `order_status`, `status_recebimento`, `status_tarefa`, `status_onda`, `status_romaneio`, `status_entrega`, `status_posicao`, `status_contagem`, `status_ciclo_inventario`, `status_registro_td`, `motivo_td`, `prioridade_tarefa`, `severidade_alerta`, `status_alerta`, `tipo_alerta`) | EXECUTADO                                                 |
+| `CREATE TRIGGER` distintos nas migrations  | 67                                                                                                                                                                                                                                                                                                      | EXECUTADO                                                 |
+| Migrations com `cron.schedule`             | 4 arquivos (EST01 reorder-check, EST01 stock-alert, AUTO01 alert-expiration, + 1)                                                                                                                                                                                                                       | EXECUTADO                                                 |
+| Migrations usando `pg_net`/`net.http_post` | 4                                                                                                                                                                                                                                                                                                       | EXECUTADO                                                 |
+| **Exposição anônima de dados**             | **0 de 86 tabelas + 3 views retornaram linha** para a chave publicável sem login (todas `200 []`)                                                                                                                                                                                                       | EXECUTADO (probe REST nas 89)                             |
+| Buckets de storage referenciados no código | 4 — `triagem-fotos`, `backups`, `images`, `files`                                                                                                                                                                                                                                                       | EXECUTADO (grep)                                          |
 
 ### Camada NÃO COBERTA — internals do Postgres
 
@@ -200,18 +200,18 @@ coberta — ver "O que não foi coberto" em `00-RESUMO.md`.
 
 ## 7. Integrações externas e segredos
 
-| Integração | Onde | Status |
-| --- | --- | --- |
-| Correios (cotação/rastreio) | functions + `VITE_CORREIOS_API_KEY` | revisado |
-| Mercado Livre | `supabase/functions/integration-mercado-livre/` | revisado |
-| NF-e | `VITE_NFE_CERTIFICATE_PATH`, functions de recebimento | revisado |
-| Resend (e-mail) | `RESEND_API_KEY` em function | revisado |
-| Stripe | `STRIPE_SECRET_KEY` em 3 functions | revisado |
-| OpenAI / Lovable AI | `OPENAI_API_KEY` (5), `LOVABLE_API_KEY` (3) | revisado |
-| Bitrix | `VITE_BITRIX` | revisado |
-| ERPs SAP/TOTVS | `ERP_SIMULATION`, docs de pendência | revisado (simulação) |
-| Sentry | `src/lib/sentry.ts` + `VITE_SENTRY_DSN` | revisado |
-| Google Analytics | `VITE_GA_ID`, `VITE_GA_TRACKING_ID` (duas variáveis para a mesma coisa) | revisado |
+| Integração                  | Onde                                                                    | Status               |
+| --------------------------- | ----------------------------------------------------------------------- | -------------------- |
+| Correios (cotação/rastreio) | functions + `VITE_CORREIOS_API_KEY`                                     | revisado             |
+| Mercado Livre               | `supabase/functions/integration-mercado-livre/`                         | revisado             |
+| NF-e                        | `VITE_NFE_CERTIFICATE_PATH`, functions de recebimento                   | revisado             |
+| Resend (e-mail)             | `RESEND_API_KEY` em function                                            | revisado             |
+| Stripe                      | `STRIPE_SECRET_KEY` em 3 functions                                      | revisado             |
+| OpenAI / Lovable AI         | `OPENAI_API_KEY` (5), `LOVABLE_API_KEY` (3)                             | revisado             |
+| Bitrix                      | `VITE_BITRIX`                                                           | revisado             |
+| ERPs SAP/TOTVS              | `ERP_SIMULATION`, docs de pendência                                     | revisado (simulação) |
+| Sentry                      | `src/lib/sentry.ts` + `VITE_SENTRY_DSN`                                 | revisado             |
+| Google Analytics            | `VITE_GA_ID`, `VITE_GA_TRACKING_ID` (duas variáveis para a mesma coisa) | revisado             |
 
 **Segredo em repositório (local e tipo, sem valor):** senha do banco de produção embutida em
 `scripts/apply_rls_helper.cjs:18` (string de conexão `postgresql://postgres:…@…supabase.co:5432/postgres`).
@@ -222,18 +222,18 @@ valor não transcrito).
 
 ## 8. CI/CD e qualidade (medido)
 
-| Workflow | Papel | Status |
-| --- | --- | --- |
-| `qa.yml` | quality gate de PR — 9 verificações obrigatórias (`qa.yml:177-190`): integridade do AGENTS, lint, typecheck, testes, build, rls-audit, i18n hardcoded, dep-audit, **e2e smoke** | revisado |
-| `ci.yml` | pipeline de push | revisado |
-| `cd.yml` | deploy Vercel (staging/production) | revisado |
-| `dependency-review.yml`, `db-manifesto.yml`, `branch-hygiene-audit.yml`, `contexto.yml`, `inventario-estado.yml`, `automation-local.yml`, `notifica-falha-main.yml` | auxiliares | revisado |
+| Workflow                                                                                                                                                            | Papel                                                                                                                                                                           | Status   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `qa.yml`                                                                                                                                                            | quality gate de PR — 9 verificações obrigatórias (`qa.yml:177-190`): integridade do AGENTS, lint, typecheck, testes, build, rls-audit, i18n hardcoded, dep-audit, **e2e smoke** | revisado |
+| `ci.yml`                                                                                                                                                            | pipeline de push                                                                                                                                                                | revisado |
+| `cd.yml`                                                                                                                                                            | deploy Vercel (staging/production)                                                                                                                                              | revisado |
+| `dependency-review.yml`, `db-manifesto.yml`, `branch-hygiene-audit.yml`, `contexto.yml`, `inventario-estado.yml`, `automation-local.yml`, `notifica-falha-main.yml` | auxiliares                                                                                                                                                                      | revisado |
 
-| Comando rodado nesta sessão | Resultado | Verificação |
-| --- | --- | --- |
-| `npm run typecheck` | **exit 0**, nenhum erro | EXECUTADO |
-| `npx eslint .` | **exit 0** — 990 problemas, **0 erros, 990 warnings** | EXECUTADO |
-| distribuição dos warnings | 539 `@typescript-eslint/no-unused-vars`, 380 `@typescript-eslint/no-explicit-any`, 42 `react-refresh/only-export-components`, **29 `react-hooks/exhaustive-deps`** | EXECUTADO |
+| Comando rodado nesta sessão | Resultado                                                                                                                                                          | Verificação |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
+| `npm run typecheck`         | **exit 0**, nenhum erro                                                                                                                                            | EXECUTADO   |
+| `npx eslint .`              | **exit 0** — 990 problemas, **0 erros, 990 warnings**                                                                                                              | EXECUTADO   |
+| distribuição dos warnings   | 539 `@typescript-eslint/no-unused-vars`, 380 `@typescript-eslint/no-explicit-any`, 42 `react-refresh/only-export-components`, **29 `react-hooks/exhaustive-deps`** | EXECUTADO   |
 
 > `AGENTS.md` diz que os gates da `main` são 6 (ou 7). O arquivo atual exige **9**. Divergência
 > registrada como achado de documentação.
@@ -263,21 +263,21 @@ A matriz de cenários por jornada (ator × estado do dado × entrada × condiç�
 
 ## 10. Registro de cobertura — o que ficou de fora
 
-| Camada | Cobertura | Motivo |
-| --- | --- | --- |
-| Rotas e guards | **revisado** | leitura integral dos 5 arquivos de rota |
-| Páginas e componentes | **revisado por amostragem dirigida** | 76 páginas + 478 componentes; foco nos 9 fluxos acima |
-| Hooks e estado | **revisado por amostragem dirigida** | 303 arquivos; varredura por padrão de defeito (deps, cleanup, invalidate) |
-| Services e contratos | **revisado** | 25 + services de feature |
-| Edge Functions | **revisado** | inventário integral + leitura dirigida; probe de deploy nos 248 |
-| Migrations / RLS estático | **revisado** | 178 arquivos |
-| **Banco em produção (policies, índices, órfãos, planos)** | **NÃO COBERTO** | MCP do banco retorna `401 Invalid access token`; sem outra credencial permitida |
-| Exposição anônima de dados | **revisado (EXECUTADO)** | probe REST em 89 objetos |
-| Integrações externas | **revisado estaticamente** | nenhuma chamada real a terceiro foi disparada (regra de somente leitura) |
-| CI/CD e infra | **revisado** | 10 workflows + Dockerfile + vercel.json + scripts de gate |
-| Testes | **revisado** | ver `03-ACHADOS.md`, camada de testes |
-| **Acessibilidade e responsividade reais em navegador** | **NÃO COBERTO** | nenhuma sessão de navegador autenticada foi aberta (exigiria credencial de usuário) |
-| **Fluxos autenticados end-to-end em produção** | **NÃO COBERTO** | exigiria login real; cenários marcados RASTREADO |
+| Camada                                                    | Cobertura                            | Motivo                                                                              |
+| --------------------------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| Rotas e guards                                            | **revisado**                         | leitura integral dos 5 arquivos de rota                                             |
+| Páginas e componentes                                     | **revisado por amostragem dirigida** | 76 páginas + 478 componentes; foco nos 9 fluxos acima                               |
+| Hooks e estado                                            | **revisado por amostragem dirigida** | 303 arquivos; varredura por padrão de defeito (deps, cleanup, invalidate)           |
+| Services e contratos                                      | **revisado**                         | 25 + services de feature                                                            |
+| Edge Functions                                            | **revisado**                         | inventário integral + leitura dirigida; probe de deploy nos 248                     |
+| Migrations / RLS estático                                 | **revisado**                         | 178 arquivos                                                                        |
+| **Banco em produção (policies, índices, órfãos, planos)** | **NÃO COBERTO**                      | MCP do banco retorna `401 Invalid access token`; sem outra credencial permitida     |
+| Exposição anônima de dados                                | **revisado (EXECUTADO)**             | probe REST em 89 objetos                                                            |
+| Integrações externas                                      | **revisado estaticamente**           | nenhuma chamada real a terceiro foi disparada (regra de somente leitura)            |
+| CI/CD e infra                                             | **revisado**                         | 10 workflows + Dockerfile + vercel.json + scripts de gate                           |
+| Testes                                                    | **revisado**                         | ver `03-ACHADOS.md`, camada de testes                                               |
+| **Acessibilidade e responsividade reais em navegador**    | **NÃO COBERTO**                      | nenhuma sessão de navegador autenticada foi aberta (exigiria credencial de usuário) |
+| **Fluxos autenticados end-to-end em produção**            | **NÃO COBERTO**                      | exigiria login real; cenários marcados RASTREADO                                    |
 
 ---
 
@@ -286,11 +286,9 @@ A matriz de cenários por jornada (ator × estado do dado × entrada × condiç�
 > Cada auditor de camada devolveu o que inspecionou e o que deixou de fora. Reproduzido aqui sem edição,
 > porque é o que sustenta a afirmação de exaustividade — e o que mostra onde ela não vale.
 
-
 ### Camada: paginas-ui
 
-**Cobertura declarada:** Auditoria somente-leitura das 72 páginas de src/pages (76 arquivos contando os 4 de __tests__). Li integralmente as 10 páginas dos fluxos principais (produtos, ajustes de estoque, movimentação, inventário cíclico, armazenamento/putaway, qualidade, pedidos, kanban) e os trechos decisivos de outras 12; nas 30 restantes apliquei varredura dirigida. Segui o caminho ponta a ponta: página → hook/service → migration (tipo de coluna) → rota de destino. Verificações executadas: `npx eslint src/pages` (171 avisos, 0 erros: 129 no-unused-vars, 34 no-explicit-any, 8 exhaustive-deps), `npx tsc --noEmit` (sai 0, sem erros), `npx vitest run src/pages` (4 arquivos, 7 testes, todos passam — só 4 páginas das 72 têm teste), inventário completo das rotas declaradas em src/App.tsx + src/routes/*.tsx confrontado com cada `navigate()` das páginas, varredura programática de todas as tags <Button> descartando os casos envoltos por Dialog/Dropdown/Popover Trigger, e contagem de adoção de i18n e de paginação. FORA DO ESCOPO: as telas de recebimento, triagem, picking, expedição e estoque, que o enunciado pede priorizar, NÃO ficam em src/pages — estão em src/features/{receiving,quality,picking,shipping,inventory}/pages e pertencem a outra camada desta auditoria; aqui elas só aparecem como destino de navegação (ex.: EstoquePage ignorando o parâmetro ?posicao do scanner). Também não inspecionei componentes de src/components nem hooks além do necessário para provar cada achado, e não abri ESTADO_ATUAL.md para não herdar conclusão de terceiros. Nenhum arquivo foi editado e nenhuma escrita em banco, storage ou serviço externo foi feita; a senha de produção em scripts/apply_rls_helper.cjs:18 não foi lida nem executada.
-
+**Cobertura declarada:** Auditoria somente-leitura das 72 páginas de src/pages (76 arquivos contando os 4 de **tests**). Li integralmente as 10 páginas dos fluxos principais (produtos, ajustes de estoque, movimentação, inventário cíclico, armazenamento/putaway, qualidade, pedidos, kanban) e os trechos decisivos de outras 12; nas 30 restantes apliquei varredura dirigida. Segui o caminho ponta a ponta: página → hook/service → migration (tipo de coluna) → rota de destino. Verificações executadas: `npx eslint src/pages` (171 avisos, 0 erros: 129 no-unused-vars, 34 no-explicit-any, 8 exhaustive-deps), `npx tsc --noEmit` (sai 0, sem erros), `npx vitest run src/pages` (4 arquivos, 7 testes, todos passam — só 4 páginas das 72 têm teste), inventário completo das rotas declaradas em src/App.tsx + src/routes/*.tsx confrontado com cada `navigate()` das páginas, varredura programática de todas as tags <Button> descartando os casos envoltos por Dialog/Dropdown/Popover Trigger, e contagem de adoção de i18n e de paginação. FORA DO ESCOPO: as telas de recebimento, triagem, picking, expedição e estoque, que o enunciado pede priorizar, NÃO ficam em src/pages — estão em src/features/{receiving,quality,picking,shipping,inventory}/pages e pertencem a outra camada desta auditoria; aqui elas só aparecem como destino de navegação (ex.: EstoquePage ignorando o parâmetro ?posicao do scanner). Também não inspecionei componentes de src/components nem hooks além do necessário para provar cada achado, e não abri ESTADO_ATUAL.md para não herdar conclusão de terceiros. Nenhum arquivo foi editado e nenhuma escrita em banco, storage ou serviço externo foi feita; a senha de produção em scripts/apply_rls_helper.cjs:18 não foi lida nem executada.
 
 Itens inventariados:
 
@@ -306,7 +304,6 @@ Itens inventariados:
 ### Camada: rotas-guards
 
 **Cobertura declarada:** Inspecionei toda a camada de roteamento e protecao: src/App.tsx, os 5 arquivos de src/routes/, src/guards/ (3 guards + index), src/hoc/withAuth.tsx, src/middleware/index.ts, src/components/auth/ProtectedRoute.tsx, src/components/layout/AppLayout.tsx, src/contexts/AuthContext.tsx, src/services/authService.ts, src/utils/role.ts, as duas fontes de navegacao (src/components/layout/sidebar/sidebarNavData.ts e src/config/menu.ts), src/constants/routes.ts, src/lib/prefetch.ts e tests/e2e/routes-smoke.spec.ts. Mapeei rota a rota (86 declaracoes: 7 publicas, 78 autenticadas, 1 catch-all), cruzei por script cada caminho com o guard aplicado, cada destino de menu com as rotas existentes e cada import() lazy com o arquivo em disco, e confirmei os papeis reais no enum app_role e nas policies de user_roles. Rodei typecheck (limpo) e os testes de role/authService (7 passando). Ficaram de fora: o interior das 85 paginas, as policies das tabelas por tras de cada rota sem papel (so li user_roles, profiles, audit_log e ajustes_estoque) e qualquer verificacao com usuario autenticado real no banco — o MCP do Supabase responde 401 nesta sessao, por isso o achado mais grave esta marcado como hipotese com o comando exato de confirmacao.
-
 
 Itens inventariados:
 
@@ -337,7 +334,7 @@ Itens inventariados:
 - Rotas duplicadas — VERIFICADO E NEGATIVO: nenhum path declarado duas vezes (86 declaracoes, todas com contagem 1)
 - Links de menu para rota inexistente — VERIFICADO E NEGATIVO: os 72 destinos da sidebar e os 16 de menu.ts batem com rotas declaradas
 - npx tsc --noEmit -p tsconfig.app.json — EXECUTADO: saida vazia, codigo 0
-- npx vitest run src/utils/__tests__/role.test.ts src/services/__tests__/authService.test.ts — EXECUTADO: 2 arquivos, 7 testes, todos passando
+- npx vitest run src/utils/**tests**/role.test.ts src/services/**tests**/authService.test.ts — EXECUTADO: 2 arquivos, 7 testes, todos passando
 - NAO REVISADO: o interior das 85 paginas (so AjustesEstoque, Configuracoes, ImportExport, TwoFactorAuth, Auth e Login foram abertos) — fora do escopo desta camada
 - NAO REVISADO: as policies das tabelas por tras das 47 rotas sem papel, uma a uma — so user_roles, profiles, audit_log e ajustes_estoque foram lidas; confirmar o resto exige consulta a pg_policies, e o MCP do banco responde 401 nesta sessao
 - NAO REVISADO: comportamento real do RLS para usuario autenticado (nenhum JWT de usuario disponivel), por isso o achado sobre o REVOKE de has_role fica como hipotese
@@ -347,12 +344,11 @@ Itens inventariados:
 
 **Cobertura declarada:** Auditoria somente-leitura de src/features/ (107 arquivos, 8 módulos) confrontada com src/pages/ (76 páginas), a tabela de rotas (src/App.tsx + src/routes/*.tsx) e o menu real (src/components/layout/sidebar/sidebarNavData.ts). Inspecionei de ponta a ponta as 15 páginas de feature, os 13 hooks, os 3 services da camada e os componentes ligados a elas, lendo os arquivos (não só grep) e seguindo cada caminho rota → página → hook → service → tabela. Verificações executadas: `npx tsc --noEmit` (sai 0), `npx eslint src/features` (180 avisos, 0 erros), `npx vitest run src/features` (3 arquivos / 7 testes, todos passando), varredura de referências arquivo a arquivo para achar órfãos, contagem de `.select(` sem `.limit(` e contagem de classes de cor fora do token semântico. Ficou de fora: comportamento em navegador (nada foi aberto de verdade — os achados de roteamento são rastreados no código, não testados em runtime), a lógica interna dos componentes de amostragem AQL da qualidade e do ImportarNFDialog (merecem auditoria de regra de negócio própria), e qualquer afirmação sobre RLS das tabelas consumidas, porque o MCP do banco responde 401 nesta sessão. Dos quatro padrões pedidos: não há feature com página não roteada (as 15 estão registradas) — o problema é o inverso, páginas roteadas e inalcançáveis; há duplicação viva de tela entre pages/ e features/ (romaneios/expedição e os dois dashboards); há service e hook duplicados (ABC em 4 versões, `performanceService` em 2); e há 2 componentes com zero referências provadas por varredura.
 
-
 Itens inventariados:
 
 - src/features/analytics (16 arquivos) — REVISADO: ABCAnalysisPage, DemandForecastPage, KPIsPage, OperationalMonitorPage, RealtimeDashboardPage, useCurvaABC, useDemandForecast, useKPIsOperacionais(.ts shim + pasta), useKPIAlerts, useOperationalLive, useRealtimeKPIs, performanceService, PerformanceMonitor
-- src/features/dashboard (11 arquivos) — REVISADO: DashboardPage, IndexHero, IndexKPIs, IndexOcupacaoCard, IndexQuickStats, IndexOperations, IndexAtividade, SystemHealthMonitor, useDashboard, useAtividadeRecente, __tests__/useDashboard.test.tsx
-- src/features/inventory (30 arquivos) — REVISADO: EstoquePage (lido linha a linha), useEstoque, usePosicaoDetalhes, EstoqueToolbar (órfão), EstoqueStatsCards, EstoqueFilterSheet, EstoqueMapaTab, estoque-page/EstoqueVirtualList, NovaPosicaoDialog, PosicaoDetalhesDialog + posicao-detalhes/*, cyclic/* (3), inventory-page/* (3), index.ts; NÃO REVISADOS em profundidade: AlertaPerdaLogistica, MapaCalorOcupacao, WarehouseMap, PosicaoCard, PosicaoGrid, BoxForm, PortaPaleteForm — apenas checados quanto a referências, `.limit()` e cores (motivo: orçamento de leitura concentrado nas páginas e nos fluxos quebrados)
+- src/features/dashboard (11 arquivos) — REVISADO: DashboardPage, IndexHero, IndexKPIs, IndexOcupacaoCard, IndexQuickStats, IndexOperations, IndexAtividade, SystemHealthMonitor, useDashboard, useAtividadeRecente, **tests**/useDashboard.test.tsx
+- src/features/inventory (30 arquivos) — REVISADO: EstoquePage (lido linha a linha), useEstoque, usePosicaoDetalhes, EstoqueToolbar (órfão), EstoqueStatsCards, EstoqueFilterSheet, EstoqueMapaTab, estoque-page/EstoqueVirtualList, NovaPosicaoDialog, PosicaoDetalhesDialog + posicao-detalhes/_, cyclic/_ (3), inventory-page/* (3), index.ts; NÃO REVISADOS em profundidade: AlertaPerdaLogistica, MapaCalorOcupacao, WarehouseMap, PosicaoCard, PosicaoGrid, BoxForm, PortaPaleteForm — apenas checados quanto a referências, `.limit()` e cores (motivo: orçamento de leitura concentrado nas páginas e nos fluxos quebrados)
 - src/features/multiWarehouse (2 arquivos) — REVISADO superficialmente: MultiWarehouseDashboardPage (rota /dashboard-gerencial confirmada, trata erro) e useMultiWarehouseDashboard; sem achado próprio
 - src/features/picking (5 arquivos) — REVISADO: PickingPage, usePicking, pickingService, pickingService.test, types; nota não elevada a achado por ser da camada de banco: `pickingService.updateTaskStatus` conclui a tarefa e grava `eventos_picking` sem baixar saldo de posição, e não há trigger de estoque em `tarefas` (só update_tarefas_updated_at, trigger_xp_on_tarefa_complete e trg_tarefas_version nas migrations) — confirmar com a camada de banco
 - src/features/quality (25 arquivos) — REVISADO: TriagemPage, FormularioTriagem, DashboardTriador, useTriagens, TriagemTimer (órfão), triagem-page/* (2), formulario/* (8), components/index.ts; NÃO REVISADOS em profundidade: AmostragemAutomatica, AmostragemProgresso, AmostragemSelecao, amostragemUtils, DefeitoHistorico, FotosLoteObrigatorias, VolumeContagem, TriagemCard — só checados quanto a referências, tamanho e cores (motivo: a lógica de amostragem AQL merece auditoria própria de regra de negócio, fora do escopo desta camada)
@@ -364,7 +360,6 @@ Itens inventariados:
 ### Camada: hooks-estado
 
 **Cobertura declarada:** Inspecionei integralmente os 6 contextos (src/contexts/) e src/stores/, e em src/hooks/ (284 arquivos) + src/features/**/hooks/ (19) usei três varreduras executadas para priorizar: (a) quais hooks têm consumidor real — 79 usados, 205 mortos; (b) todos os 16 arquivos que criam canal realtime/subscription; (c) todos os 13 setInterval e 15 setTimeout, os 13 warnings de react-hooks/exhaustive-deps (`npx eslint`, 222 warnings/0 errors), os catches silenciosos (script), as mutações sem invalidateQueries (0 encontradas) e as 32 consultas sem limite. Os arquivos que importam, li por completo: AuthContext, NotificationContext, AppContext, ThemeContext, TransitionContext, ToastContext, stores/index.ts, useMovimentacoes, useProdutos, useNotificacoes, useNotificationOperations, useNotificationRealtime, useRealtimeToast, useRealtime, useSubscription, useChannel, usePresence, useGamificacao, useTriagens, usePicking, useRecebimentos, useRomaneios, useEstoque, useRealtimeKPIs, useOperationalLive, useKeyboardShortcuts, useTriagemTimer, use-toast, useLocalStorage, useOnlineStatus, usePushNotifications, useIndexedDB, useSWR, useRefreshToken, useQuery/useMutation caseiros. Para provar o comportamento de canal da biblioteca li o código de @supabase/realtime-js 2.119.2 em node_modules e executei um script Node contra ele. `npx tsc --noEmit` passa (exit 0). Ficou de fora: os 205 hooks sem consumidor (amostrados, não auditados um a um — impacto zero hoje), os hooks de governança/MFA/permissões que dependem de policies do banco (o MCP do Supabase responde 401, então não há como provar nada ali), e hooks que moram em src/components/, fora desta camada. Nada foi editado e nenhuma escrita foi feita em banco, storage ou serviço externo.
-
 
 Itens inventariados:
 
@@ -389,7 +384,6 @@ Itens inventariados:
 ### Camada: services-contratos
 
 **Cobertura declarada:** Inspecionei integralmente os 24 arquivos de src/services/ (+ o barrel index.ts) e os 3 services em src/features/**/services/ (picking, shipping, analytics/performance), lendo cada arquivo na íntegra — não só grep. Para cada tabela e RPC referenciado, confrontei nome e colunas contra src/integrations/supabase/types.ts (86 tabelas, 3 views, 22 functions) e, onde os tipos se mostraram desatualizados, contra as 178 migrations em supabase/migrations/. Segui ponta a ponta os caminhos vivos: mapeei os consumidores de cada service com grep em todo o src (resultado: 9 dos 27 services têm consumidor real; 15 só aparecem no barrel, que por sua vez não é importado em lugar nenhum) e, nos caminhos vivos, li o hook e a página até o call site — foi assim que apareceram os dois achados críticos (stub de entrega em useRomaneios e armazenamento sem posição em Armazenamento.tsx). Li também o corpo SQL de public.move_stock para validar o contrato do único RPC de escrita usado pela camada. Comandos executados: npx tsc --noEmit (limpo), npx eslint sobre services e hooks de shipping (82 warnings, 0 erros — todos no-explicit-any e no-unused-vars), npx vitest run dos 7 arquivos de teste da camada (26 testes verdes) e leitura do eslint.config.js + package.json para explicar por que o gate não pega nada disso. FORA DA COBERTURA, e por quê: o estado real do banco (pg_policies, pg_catalog, contagem de linhas) — o MCP responde 401, conforme já estabelecido, então todo achado de schema é RASTREADO sobre tipos+migrations, nunca consultado no banco; nenhuma requisição foi feita a endpoint de produção; nenhum arquivo foi editado; scripts/apply_rls_helper.cjs não foi aberto. Hooks, componentes, edge functions e migrations como camada própria ficaram de fora do escopo — só entraram como evidência de caminho vivo.
-
 
 Itens inventariados:
 
@@ -424,7 +418,7 @@ Itens inventariados:
 - Tabelas/RPC referenciados que NÃO estão nos tipos gerados: warehouses, lots, categorys, customers, location_stock (não existem em lugar nenhum — nem nos tipos nem nas 178 migrations); suppliers (existe em migration 20261121090000, ausente dos tipos). Todos os outros nomes usados pelos services — produtos, lotes, posicoes_estoque, estoque_posicao, rastreamento_historico, posicao_status_log, notificacoes, audit_log, analytics_events, orders, order_items, products, locations, stock_movements, tarefas, eventos_picking, eventos_triagem, romaneios, romaneio_itens, comprovantes_entrega, profiles, user_roles, gamificacao_usuarios, conquistas_definicoes, conquistas_usuarios, desafios_diarios, desafios_usuarios, xp_historico — estão nos tipos. RPCs usados (log_audit_event, move_stock) existem e as assinaturas conferem.
 - NÃO REVISADO: estado real do banco (pg_policies, pg_catalog, contagem de linhas) — o MCP supabase-estoki responde "Management API 401: Invalid access token", conforme o contexto da auditoria. Tudo sobre schema foi derivado de src/integrations/supabase/types.ts + supabase/migrations/, e os tipos estão provadamente desatualizados em 3 migrations.
 - NÃO REVISADO: hooks e componentes que consomem os services, salvo os pontos citados como evidência de caminho vivo (useRomaneios, useMovimentacoes, useEstoque, useAuditLog, useProdutos, useTriagens, useRecebimentos, OrdersPage, Armazenamento, Romaneios) — fora da camada atribuída.
-- NÃO REVISADO: as 249 edge functions em supabase/functions/ e os 23 scripts/seed-*.cjs / probe-*.cjs — outra camada; os scripts, além disso, apontam para produção com service_role.
+- NÃO REVISADO: as 249 edge functions em supabase/functions/ e os 23 scripts/seed-_.cjs / probe-_.cjs — outra camada; os scripts, além disso, apontam para produção com service_role.
 
 ### Camada: edge-auth
 
@@ -433,7 +427,6 @@ Itens inventariados:
 AVISO IMPORTANTE, preciso ser transparente: ao sondar produção com GET sem autenticação, reorder-check respondeu HTTP 200 e, por desenho (reorder-check/index.ts:54-57), executou um upsert em reorder_suggestions. Foi uma escrita em produção não intencional, violando a regra de somente-leitura desta auditoria. É um upsert idempotente com onConflict em product_id, com os mesmos valores que o cron já grava, então o dano prático é nulo — mas aconteceu e o dono deve saber. Em seguida interrompi toda a sondagem de endpoints de produção. NÃO sondei cleanup-old-data nem external-db-bridge, cujos caminhos de DELETE eu havia acabado de ler; esses achados são 100% estáticos.
 
 Ficou de fora: a definição real das funções SQL chamadas por rpc() e as policies de pg_policies (o MCP do banco responde 401 na Management API nesta sessão) — é o que mantém o achado de inventory-transfer como hipótese; o estado real dos secrets das edges (WEBHOOK_SECRET, METRICS_TOKEN, SUPABASE_AUTH_JWT_SECRET), que afeta a severidade final de webhook-handler e webauthn-auth-verify; o estado de deploy de ~173 funções não sondadas; e a leitura integral das 42 funções escritoras não deployadas. Nada nos achados depende de informação que eu não tenha citado com arquivo:linha ou saída de comando.
-
 
 Itens inventariados:
 
@@ -457,7 +450,6 @@ Itens inventariados:
 
 **Cobertura declarada:** Percorri ponta a ponta os 8 domínios pedidos (recebimento, triagem/qualidade, armazenagem/putaway, picking, expedição, inventário cíclico, trocas/devoluções, alertas), lendo os arquivos de verdade e confrontando as três camadas: tipos/hooks/páginas do front (src/), edge functions (supabase/functions/) e DDL (supabase/migrations/ + o enum/esquema real exposto em src/integrations/supabase/types.ts, que é gerado do banco oficial). Para cada regra segui o caminho do clique até o INSERT/UPDATE. Executei: contagem de stubs nas 247 edge functions, contagem das functions realmente invocadas pelo front, `npx tsc --noEmit` (sai 0, o que prova que as divergências de enum não são pegas em compilação) e um node para provar a aritmética NaN do reorder-check. Tratei docs/agentes/regras-dominio.md e docs/pendencias/_regras-de-negocio.md como hipótese: vários pontos deles não se sustentam (ver achados 2, 3 e 11). FICOU DE FORA: (a) consulta a pg_policies/pg_catalog — o MCP do banco responde 401, então "a tabela existe no banco" foi inferido do types.ts gerado, não de pg_catalog; (b) execução de e2e/Playwright contra produção, então nenhum achado é "testado em runtime de produção" — os marcados EXECUTADO são comandos locais; (c) scripts/apply_rls_helper.cjs (só citado, nunca lido/executado); (d) gamificação, RBAC, multi-tenant e os 23 scripts seed-*, fora do escopo desta camada; (e) os ~130 componentes de UI puramente visuais dos módulos (cards, charts), lidos só quando consumiam uma regra.
 
-
 Itens inventariados:
 
 - REVISADO — Recebimento: src/features/receiving/{types,hooks/useRecebimentos,pages/RecebimentoPage,pages/ConferenciaRecebimento,utils/receivingUtils}, src/services/receivingService.ts, src/types/recebimento.ts, enum status_recebimento (migrations 20251216* + 20260513191848)
@@ -474,14 +466,13 @@ Itens inventariados:
 - REVISADO — Painel de auditoria interno src/components/admin/AuditoriaEnterpriseViewer.tsx (conferência dos 8 caminhos citados como 'Implementado') e sua rota em src/pages/admin/AuditLogPage.tsx:120 / src/routes/adminRoutes.tsx:113
 - NAO REVISADO — pg_policies / pg_catalog / dados de produção: o MCP do banco responde 'Management API 401'; existência de tabela e valor de enum foram inferidos do types.ts gerado, não consultados no banco
 - NAO REVISADO — comportamento em runtime de produção (nenhum fluxo foi exercitado por E2E ou request autenticado); todos os achados de fluxo são RASTREADO por leitura de código, e os EXECUTADO se referem a comandos locais (contagens, npx tsc, node)
-- NAO REVISADO — scripts/apply_rls_helper.cjs e os 23 scripts seed-*/probe-*.cjs: apontam para produção com service_role, não executados nem lidos (apenas citados)
+- NAO REVISADO — scripts/apply_rls_helper.cjs e os 23 scripts seed-_/probe-_.cjs: apontam para produção com service_role, não executados nem lidos (apenas citados)
 - NAO REVISADO — gamificação (XP/streaks/desafios), RBAC/has_role, multi-tenant fase 2 e multi-filial WMS38: fora desta camada
 - NAO REVISADO — ~130 componentes de UI dos módulos revisados (cards, charts, dialogs puramente visuais), lidos só quando consumiam uma regra de negócio; e os módulos de Produtos/Categorias/Fornecedores/Pedidos/Clientes, que não estão na lista desta camada
 
 ### Camada: edge-robustez
 
 **Cobertura declarada:** Auditei robustez das Edge Functions em três passadas: (1) leitura integral dos 7 módulos de `_shared/` que definem as guardas, (2) leitura integral de 21 `index.ts` e parcial de 8, escolhidos por estarem deployados, por serem chamados pelo front ou por mexerem em saldo/dinheiro, (3) varredura programática das 247 funções para quantificar cada guarda. Verifiquei em produção, via 247 preflights OPTIONS somente-leitura no projeto oficial ookjbflsnoefnsixrspc, quais funções existem de fato: 94 respondem 200 e 153 respondem 404 — isso separa achado vivo de achado latente e está marcado em cada item. Confirmei o contrato de erro do supabase-js lendo o pacote instalado (postgrest-js 2.119.2, `shouldThrowOnError = false`; functions-js 2.119.2, `invoke` nunca rejeita), que é a causa raiz de três achados, em vez de afirmar de memória. Números da camada, sobre 247 funções com `index.ts`: CORS 247, try/catch 245, chamada de validação 210 (mas só 120 com schema específico — 90 usam `GenericPayloadSchema`, que é `z.record(z.unknown())`), `withLogging` 2. Funções com as quatro guardas da regra do repo: 1, e ela não está deployada; deployadas com as quatro: zero. Também: 0 dos 37 fetch externos com timeout, 8 das 16 funções com fetch sem checar `response.ok`, 75 pontos de escrita que descartam o `{ error }`, 168 que devolvem 400 para erro de servidor, 215 que vazam `error.message` ao cliente, 44 com `select()` sem `limit`, 0 ocorrências de idempotência no diretório inteiro, e 100 funções que são stubs devolvendo `success: true` sem executar nada (18 em produção). Duas hipóteses foram medidas e descartadas, e por isso não viraram achado: o custo do base64 em `scanner-ocr` é linear (~90ms/MB), não quadrático; e as 10 funções que eu havia contado como "devolvem 200 em erro" usam `jsonResponse(body, 500, req)` com status posicional, estando corretas. Ficou fora: leitura individual de ~218 `index.ts` (cobertos só por varredura — os agregados são sólidos, mas achado novo neles exigiria leitura), os módulos de domínio de `_shared/` (agv, tsp, forecast, prometheus, telemetry), e qualquer verificação em runtime das escritas, porque exigiria POST que grava em produção, vedado pelas regras desta auditoria; esses achados estão marcados RASTREADO. RLS real em `pg_policies` não foi consultável nesta sessão (MCP do banco com token inválido). `scripts/apply_rls_helper.cjs:18` não foi lido por determinação.
-
 
 Itens inventariados:
 
@@ -511,7 +502,6 @@ Itens inventariados:
 
 **Cobertura declarada:** Inspecionei o acoplamento das 247 edge functions reais (249 pastas em supabase/functions menos _shared e tests, que não têm index.ts — conferido com loop `[ -f index.ts ]`). Mapeei chamadores por 4 vias: (1) `supabase.functions.invoke` em src/ (12 sites, todos lidos, inclusive os 3 dinâmicos: src/lib/ai-invoke.ts, src/pages/admin/IntegrationsPage.tsx, src/pages/admin/SimulationPage.tsx); (2) fetch cru para /functions/v1/ em src/ (1 site); (3) pg_cron/pg_net em supabase/migrations (3 arquivos); (4) chamada função→função em supabase/functions (cron-daily, batch-import, simulation-test). Medi o deploy real do projeto oficial ookjbflsnoefnsixrspc com requisição OPTIONS (preflight, não executa handler) nas 247 funções — calibrei o método antes com um nome inexistente (404) e dois conhecidos (200), e reconfirmei 10 dos 404 numa segunda rodada. Testei alcance anônimo com POST apenas nas 26 funções deployadas que são stub puro (zero `.from/.rpc/.insert/.update/.delete/storage`, verificado por grep arquivo a arquivo) e em alert-expiration com payload inválido (Zod barra antes de qualquer query) — nenhuma escrita. FICOU DE FORA: não consegui enumerar a lista de funções deployadas pela Management API (token 401), então o inverso "deployada em produção mas ausente do repo" só foi testado nominalmente para migrate-helper (a única pasta de função apagada no histórico git); verify_jwt real das outras 67 deployadas não-stub não foi medido porque qualquer POST nelas executaria código com service_role. Também não li as 247 funções integralmente — leitura completa só nas 31 com chamador, nos stubs e nas pares duplicadas.
 
-
 Itens inventariados:
 
 - TOTAL: 247 edge functions reais (249 pastas em supabase/functions, menos _shared e tests, que não têm index.ts) — REVISADO por contagem e por probe individual
@@ -520,7 +510,7 @@ Itens inventariados:
 - CHAMADORES FORA DO FRONT: 3 por pg_cron (stock-alert, reorder-check, alert-expiration) + 3 função→função (expiration-check, queue-process via cron-daily; stock-movement via batch-import) — REVISADO
 - COM CHAMADOR (31): abc-analysis, ai-assistant, alert-expiration, alerta-divergencia-fornecedor, backend-health, calculate-kpis, carrier-track, check-reorder, dashboard-stats, expiration-check, export-data, gerar-desafios-diarios, health-check, integration-amazon, integration-ifood, integration-mercado-livre, integration-rappi, integration-sap, integration-totvs, nfe-import, previsao-demanda, queue-process, reorder-check, scanner-ocr, send-email-alert, stock-alert, stock-movement, webauthn-auth-options, webauthn-auth-verify, webauthn-register-options, webauthn-register-verify — REVISADO (index.ts lido em todas)
 - DEPLOYADAS SEM CHAMADOR (65): alert-monitor, alert-productivity, alert-quality, alert-sla-breach, analytics, audit-log, auth-2fa-setup, auth-2fa-verify, auth-change-password, auth-login, auth-logout, auth-refresh-token, auth-register, auth-reset-password, auth-session-list, auth-session-revoke, auth-social-login, auth-verify-email, batch-processor, broadcast-event, bulk-delete, bulk-insert, bulk-update, bulk-upsert, cache, cache-invalidate, calculate-shipping, carrier-book, carrier-cancel, carrier-quote, carrier-quote-correios, carrier-quote-jadlog, carrier-rates-cache, carrier-webhooks, check-permission, cleanup-old-data, complete-job, create-customer, create-payment-intent, create-purchase-order, create-subscription, cte-import, cycle-count, danfe-generate, data-migration, db-alert-monitor, delete-file, download-file, export-pdf, export-products, external-db-bridge, generate-barcode, generate-csv, generate-excel, generate-putaway-list, generate-report, generate-sku, get-permissions, health, import-csv, integration-accounting, integration-ecommerce, integration-erp, integration-marketplace, safety-stock — REVISADO por nome e deploy; corpo lido só nas que são stub (26) e em auth-login e carrier-webhooks
-- NÃO DEPLOYADAS E SEM CHAMADOR (151): grupos picking- 7, receiving- 6, packing- 5, wave- 6, inventory- 9, shipping- 6, report- 14, nfe- 6, ai- 7, scheduler- 4, notification- 4, send- 4, queue- 3, webhook 2, mais avulsas (metrics, simulation-test, cron-daily, cron-weekly, batch-import, stripe-webhook, upload-*, parse-*, print-label, scan-barcode, search-*, validate-*, warehouse-metrics, etc.) — NÃO REVISADO individualmente: corpo lido só em picking-optimize e stock-movement; as demais foram inventariadas por nome, deploy e ausência de chamador, que já bastam para a decisão de apagar ou publicar
+- NÃO DEPLOYADAS E SEM CHAMADOR (151): grupos picking- 7, receiving- 6, packing- 5, wave- 6, inventory- 9, shipping- 6, report- 14, nfe- 6, ai- 7, scheduler- 4, notification- 4, send- 4, queue- 3, webhook 2, mais avulsas (metrics, simulation-test, cron-daily, cron-weekly, batch-import, stripe-webhook, upload-_, parse-_, print-label, scan-barcode, search-_, validate-_, warehouse-metrics, etc.) — NÃO REVISADO individualmente: corpo lido só em picking-optimize e stock-movement; as demais foram inventariadas por nome, deploy e ausência de chamador, que já bastam para a decisão de apagar ou publicar
 - CHAMADA PARA FUNCTION INEXISTENTE NO REPO: 0 casos — REVISADO (os 25 nomes conferidos contra `ls supabase/functions`)
 - CHAMADA PARA FUNCTION QUE EXISTE MAS NÃO ESTÁ DEPLOYADA: 2 casos (queue-process, stock-movement), ambos com chamador também não deployado — REVISADO
 - STUBS DE ECO (`function: "<nome>"` sem acesso a dados): 107 de 247 no repo; 26 das 94 deployadas; 3 das 31 com chamador (abc-analysis, dashboard-stats, expiration-check) — REVISADO (grep por arquivo + leitura dos 26 deployados)
@@ -537,7 +527,6 @@ Método: (1) varredura própria em Python que isolou as 210 cadeias `.from(...).
 Métricas medidas nesta sessão: 98 `select("*")`; 23 `count: "exact"`; 36 `postgres_changes` (3 filtrados); 24 `setInterval` + 10 `refetchInterval`; apenas 6 ocorrências de `.limit(500)`, que é a regra do repo (`.claude/skills/estoki-v2/SKILL.md:29`).
 
 Limite declarado: o MCP do banco está com token inválido, então `pg_indexes`, `pg_stat_statements`, `EXPLAIN` e o tamanho das tabelas não foram consultados. Toda afirmação sobre índice vem de `supabase/migrations/` (fonte de DDL segundo o AGENTS.md) e por isso o achado de índices está marcado como hipótese: produção pode ter índices criados fora de migration, e índice só importa a partir de certo volume, que não foi medido. Os 12 achados estão ordenados por impacto; o multiplicador que transforma os outros em incidente é o achado 8 (realtime sem filtro).
-
 
 Itens inventariados:
 
@@ -581,7 +570,6 @@ Itens inventariados:
 
 **Cobertura declarada:** Build de produção executado com sucesso (exit 0, 45.78s, 4893 módulos, 224 chunks JS, dist 26 MB) após injetar VITE_SUPABASE_URL/VITE_SUPABASE_ANON_KEY inline — sem `.env` no repo o `npm run build` aborta no guard de vite.config.ts:46-54. `npx size-limit` executado (7 budgets, todos passam, nenhum com folga no entry). Build adicional com ANALYZE=true para extrair o mapa módulo→chunk do rollup-plugin-visualizer (dist/stats.html, 2 MB) e atribuir cada KB a um pacote. Experimento controlado em cópia do repo no scratchpad (/tmp/.../scratchpad/exp, node_modules por symlink, nada escrito em /home/user/Estoki_V2): removidas as duas entradas de `manualChunks` e medido o primeiro load resultante. Lidos na íntegra: vite.config.ts, .size-limit.json, App.tsx, AppProviders.tsx, AppLayout.tsx, chart.tsx, data-table-advanced.tsx, os 4 arquivos do Kanban, EstoquePage.tsx, EstoqueMapaTab.tsx, inventoryService.ts, useEstoque.ts, useDashboard.ts. Verificado dist/index.html (modulepreload), dist/sw.js (manifest de precache) e os imports estáticos no topo do chunk de entrada. Fora do escopo: nada de banco, nada de deploy, nenhuma escrita no repo (git status só mostra arquivos mexidos por outras camadas da auditoria). O impacto de rede em dispositivo real (LCP/TTI medidos no navegador) é NÃO VERIFICADO — todas as medidas são de bundle/build, não de runtime no browser.
 
-
 Itens inventariados:
 
 - vite.config.ts — build.rollupOptions.output.manualChunks (linhas 207-221), terser, PWA/workbox, modulePreload.polyfill=false, chunkSizeWarningLimit=600
@@ -598,7 +586,6 @@ Itens inventariados:
 ### Camada: acessibilidade-mobile
 
 **Cobertura declarada:** Varri as 650 `.tsx` de `src/` (76 páginas, 478 componentes, 70 em features) com dois scanners JSX próprios que parseiam tags abertas com balanceamento de chaves/strings (não só grep de linha única, que erra em JSX multilinha), mais um script de cálculo de contraste WCAG sobre os tokens HSL reais de `src/index.css`. Scripts em `/tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/a11y.mjs`, `/tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/labels.mjs` e `/tmp/claude-0/-home-user-Estoki-V2/dcb40ce0-aa19-5d25-b60c-17289e1e8ddf/scratchpad/contrast.mjs`. Li de verdade (não só grep) 22 arquivos: primitivas `ui/button.tsx`, `ui/dialog.tsx`, `ui/table.tsx`, `ui/modal.tsx`, `ui/sidebar.tsx`, `ui/command.tsx`; layout vivo (`layout/AppLayout.tsx`, `organisms/layout/Header.tsx`, `organisms/layout/MobileNavigation.tsx`); páginas roteadas (`Posicoes.tsx`, `Etiquetas.tsx`, `Scanner.tsx`, `InventarioCiclico.tsx`, `customers/CustomersPage.tsx`, `Romaneios.tsx`); componentes de domínio (`FotosLoteObrigatorias.tsx`, `KanbanCard.tsx`, `EstoqueConfigCard.tsx`, `GlobalSearchDialog.tsx`, `MFASettings.tsx`); `src/components/a11y/*`; `tests/e2e/a11y-smoke.spec.ts`; `src/index.css`; `index.html`. Verifiquei para cada achado se o arquivo está VIVO (importado a partir de `AppLayout`/rotas) ou morto, porque `src/components/layout/` e `src/components/organisms/layout/` convivem e o layout real usa o segundo. NÃO EXECUTADO: render em navegador (sem axe-core rodado, sem Playwright — browsers não instalados e a auditoria é somente leitura), portanto estouro de texto em 360px e sobreposição da bottom nav ficam como RASTREADO. Checagens que deram negativo e não geraram achado: `tabIndex` positivo (0 ocorrências), `<table>` sem scroll horizontal (a primitiva `ui/table.tsx:7` já envolve em `overflow-auto`), `<img>` sem alt (1 só, em código morto), `focus-visible` na primitiva Button (presente, `button.tsx:9`), `AlertDialogContent` sem título (0), `lang` e `viewport` no `index.html` (corretos).
-
 
 Itens inventariados:
 
@@ -625,12 +612,11 @@ Itens inventariados:
 
 ### Camada: scripts-operacao
 
-**Cobertura declarada:** Li os 104 arquivos de scripts/ (85 executaveis: 48 .mjs, 26 .cjs, 5 .py, 3 .sh, 1 .ts, 8 .sql) e os 10 workflows de .github/workflows/, cruzando cada script com package.json, scripts/automation.config.json (80 registros) e os workflows. Nada foi executado contra banco, storage ou servico externo: nenhum seed-*.cjs, probe-*.cjs, apply_rls_helper.cjs, npm run db:* ou psql foi rodado. Executei apenas leitura, grep, node scripts/dep-audit.mjs e um POST somente-leitura ao endpoint publico de advisories do npm para validar o resultado do dep-audit. A senha de producao em scripts/apply_rls_helper.cjs:18 foi localizada e NAO esta transcrita em nenhum campo desta resposta. Auditoria de banco e estatica: o MCP supabase-estoki esta com token invalido, entao nao foi possivel confirmar quais SQL de scripts/ ja foram aplicados em producao.
-
+**Cobertura declarada:** Li os 104 arquivos de scripts/ (85 executaveis: 48 .mjs, 26 .cjs, 5 .py, 3 .sh, 1 .ts, 8 .sql) e os 10 workflows de .github/workflows/, cruzando cada script com package.json, scripts/automation.config.json (80 registros) e os workflows. Nada foi executado contra banco, storage ou servico externo: nenhum seed-_.cjs, probe-_.cjs, apply_rls_helper.cjs, npm run db:* ou psql foi rodado. Executei apenas leitura, grep, node scripts/dep-audit.mjs e um POST somente-leitura ao endpoint publico de advisories do npm para validar o resultado do dep-audit. A senha de producao em scripts/apply_rls_helper.cjs:18 foi localizada e NAO esta transcrita em nenhum campo desta resposta. Auditoria de banco e estatica: o MCP supabase-estoki esta com token invalido, entao nao foi possivel confirmar quais SQL de scripts/ ja foram aplicados em producao.
 
 Itens inventariados:
 
-- scripts/ (raiz) - 26 scripts legados .cjs/.ts de banco: 17 seed-*.cjs, 6 probe-*.cjs, check-eventos-triagem.cjs, apply_rls_helper.cjs, test-db-connection.ts. Nenhum chamado por workflow ou package.json; todos registrados como kind=legacy/trigger=manual em scripts/automation.config.json.
+- scripts/ (raiz) - 26 scripts legados .cjs/.ts de banco: 17 seed-_.cjs, 6 probe-_.cjs, check-eventos-triagem.cjs, apply_rls_helper.cjs, test-db-connection.ts. Nenhum chamado por workflow ou package.json; todos registrados como kind=legacy/trigger=manual em scripts/automation.config.json.
 - scripts/ (raiz) - 4 .sql avulsos fora de supabase/migrations: create_cadastros_tables.sql, create_cadastros_rls.sql (duplicam a migration 20260520120000), rls-fix-users.sql e rls-fix-profile-update.sql (sem migration equivalente).
 - scripts/ (raiz) - guardas usadas pelo CI (qa.yml): rls-audit.mjs, audit-zod.mjs, i18n-check.mjs, i18n-hardcoded-check.mjs, migrations-todo-check.mjs, dep-audit.mjs, qa-report.mjs, check-agents-integrity.mjs. Todas somente-leitura sobre o repo.
 - scripts/ci/ - 6 arquivos usados por branch-hygiene-audit.yml (actions-kpi, branch-podaveis, bump-toolchain, sla-code-scanning, install-postgresql-client.sh, workflow-test-support). Nao deletam branch: branch-podaveis.mjs:116 apenas imprime os comandos numa issue.
@@ -639,12 +625,11 @@ Itens inventariados:
 - scripts/supabase_snapshot/ - snapshot.py (107KB) usado por contexto.yml com o secret SUPABASE_DB_URL; impoe SET default_transaction_read_only = on (snapshot.py:900).
 - scripts/regras_negocio/ - generate.py, indice.py e test_generate.py usados por contexto.yml; publish.sh declaradamente nao usado neste repo (README.md:21) mas registrado como comando manual.
 - scripts/automation.mjs + automation.config.json + maintenance/ + ai-context/ + lib/ - tooling de automacao local; automation-local.yml roda apenas doctor --static e test.
-- 19 arquivos de teste (*.unit.mjs, *.test.mjs, test_*.py) dentro de scripts/, executados por contexto.yml, automation-local.yml e os alvos test:* do package.json.
+- 19 arquivos de teste (_.unit.mjs, *.test.mjs, test_*.py) dentro de scripts/, executados por contexto.yml, automation-local.yml e os alvos test:_ do package.json.
 
 ### Camada: modulos-nao-cobertos (src/plugins, src/m
 
 **Cobertura declarada:** Li os 10 diretorios da camada arquivo por arquivo (nao so grep): 4 arquivos em src/plugins, 1 em src/middleware, 4 em src/guards, 5 em src/hoc, 10 em src/config, 5 em src/constants, 17 em src/utils, ~100 em src/lib (incluindo schemas/, crud/, transitions/, validations/), 1 em src/docs, 1 em src/test. Para cada um verifiquei consumidores por caminho de import exato (nao por nome de simbolo, que da falso positivo em palavras comuns como env/validate/trackEvent) e, nos casos decisivos, rodei `npm run build` com envs placeholder e inspecionei o bundle minificado em dist/assets/ para ver o que sobra em producao. Achados criticos foram confirmados no bundle (EXECUTADO), nao inferidos. Resultado principal: a camada de observabilidade (logger + handler global de erro + analytics + web vitals) compila para no-op em producao, e 68 dos arquivos da camada (~3.246 linhas) nao tem nenhum consumidor — incluindo tres diretorios 100% mortos. Nao consegui verificar as variaveis de ambiente definidas no painel da Vercel nem o estado real do Sentry em producao: isso fica marcado como hipotese onde depende disso.
-
 
 Itens inventariados:
 
@@ -652,7 +637,7 @@ Itens inventariados:
 - src/lib/logger.ts (186 linhas) — segundo logger, bem melhor (mascara PII, JSON estruturado, correlation id, child loggers, createLogger). ZERO importadores; `createLogger` nao aparece em nenhum arquivo fora dele.
 - src/config/environment.ts (127 linhas) — envConfig a partir de VITE_APP_ENV. Importado por 6 arquivos (analytics, bitrix24-client, feature-flags, error-handler, api-client, utils/logger). VITE_APP_ENV nunca definido fora de .env.example (achado 3).
 - src/lib/env.ts (24 linhas) — configuracao de ambiente concorrente (isDev/isProd/mode + VITE_GA_ID). ZERO importadores; divergente de config/environment.ts (achado 9).
-- src/config/supabaseEnvAlias.ts (22 linhas) — alias NEXT_PUBLIC_*/SUPABASE_* -> VITE_*. Usado por vite.config.ts; tem teste proprio. INTEGRADO e correto.
+- src/config/supabaseEnvAlias.ts (22 linhas) — alias NEXT_PUBLIC__/SUPABASE__ -> VITE_*. Usado por vite.config.ts; tem teste proprio. INTEGRADO e correto.
 - src/config/error-handler.ts (202 linhas) — setupGlobalErrorHandler chamado em src/main.tsx:11. INTEGRADO, mas logError vira funcao vazia no bundle (achado 2).
 - src/config/analytics.ts (243 linhas) — trackEvent usado por src/hooks/use-export.ts. INTEGRADO na chamada, sem nenhum destino real (achado 4).
 - src/config/index.ts (91 linhas) — barrel do config + initializeApp. Unico importador e src/lib/init.ts, que por sua vez tem ZERO importadores: barrel morto por transitividade.
@@ -663,7 +648,7 @@ Itens inventariados:
 - src/guards/ (AuthGuard, RoleGuard+AdminGuard/SupervisorGuard/OperatorGuard, PermissionGuard+usePermission, index) — DIRETORIO 100% MORTO: nenhum dos nomes aparece fora de src/guards/. A protecao de rota real e src/components/auth/ProtectedRoute.tsx (src/routes/adminRoutes.tsx:4).
 - src/hoc/ (withAuth, withLoading+withSkeleton, withErrorHandler, withAnalytics, index) — DIRETORIO 100% MORTO: nenhum nome aparece fora de src/hoc/.
 - src/middleware/index.ts (23 linhas) — authMiddleware/adminMiddleware consultando user_roles. DIRETORIO 100% MORTO: nenhum chamador. Logica correta (usa user_roles, nao profiles) e desperdicada.
-- src/plugins/ (sdk.ts, registry.ts, example-plugin.ts, __tests__/registry.test.ts) — ESQUELETO: SDK e registry completos, consumidor zero fora do teste (achado 13).
+- src/plugins/ (sdk.ts, registry.ts, example-plugin.ts, **tests**/registry.test.ts) — ESQUELETO: SDK e registry completos, consumidor zero fora do teste (achado 13).
 - src/constants/index.ts (75 linhas) — POSICAO_STATUS, TRIAGEM_STATUS, STATUS_COLORS, PAGINATION, TIMING. ZERO importadores do barrel (`from "@/constants"` nao existe no repo).
 - src/constants/app.ts (122 linhas) — USER_ROLES, GAMIFICATION, BRAZILIAN_STATES, PAGINATION. ZERO importadores; roles divergem do banco (achado 12).
 - src/constants/status.ts (133 linhas) — STATUS_CONFIG. Usado por src/components/ui/status-badge.tsx. INTEGRADO.
@@ -687,7 +672,6 @@ Itens inventariados:
 
 **Cobertura declarada:** Li de ponta a ponta as 3 features: gamificação (página `src/pages/Gamificacao.tsx`, 11 componentes em `src/components/gamificacao/`, hooks `useGamificacao`/`useConquistas`/`useDesafiosDiarios`/`useStreaks`/`useRanking`, função `gerar-desafios-diarios`, RPCs `adicionar_xp`/`descontar_pontos`/`collect_challenge_reward`/`registrar_checkin_diario` nas migrations), dashboards (`src/features/dashboard/` completo + `src/pages/Dashboard.tsx` + `src/components/dashboard/`, `src/features/analytics/` com 5 páginas e 8 hooks, RPCs `get_dashboard_metrics`/`refresh_dashboard_materialized_views`/`incrementar_metrica_dashboard`) e multi-filial (`src/features/multiWarehouse/` + migration `20261122100000_WMS38`). Rotas conferidas em `src/routes/*.tsx` e `src/App.tsx`; entradas de menu em `src/components/layout/sidebar/sidebarNavData.ts`. Auditoria de banco é ESTÁTICA (migrations), porque o MCP `supabase-estoki` está com token inválido — nenhuma policy/grant foi conferida em produção, e isso está dito em cada achado que depende disso. Executei: `npx eslint src/features/dashboard/hooks/useDashboard.ts` (3 warnings, inclusive `hoje` não usado) e `npx vitest run src/features/dashboard/hooks/__tests__/useDashboard.test.tsx` (1 teste, passa, sem assert de valor). Veredito: multi-filial é a única integrada com qualidade no lado de leitura (rota, menu, loading/erro/vazio, i18n) mas sem lado de escrita; gamificação está pela metade e com furo de saldo; dashboards estão integrados mas com números fixos e cálculos que não batem com o rótulo.
 
-
 Itens inventariados:
 
 - src/pages/Gamificacao.tsx (rota /gamificacao, featureRoutes.tsx:179)
@@ -703,7 +687,7 @@ Itens inventariados:
 - supabase/migrations/20260317223746 (registrar_checkin_diario, collect_challenge_reward)
 - supabase/migrations/{20260512175225,20260519174137,20260619145956,20260713105700} (ciclo de GRANT/REVOKE de descontar_pontos e adicionar_xp)
 - src/features/dashboard/pages/DashboardPage.tsx (rota /, App.tsx:17)
-- src/features/dashboard/hooks/{useDashboard,useAtividadeRecente}.ts + __tests__/useDashboard.test.tsx
+- src/features/dashboard/hooks/{useDashboard,useAtividadeRecente}.ts + **tests**/useDashboard.test.tsx
 - src/features/dashboard/components/{IndexKPIs,IndexQuickStats,IndexOcupacaoCard,IndexHero,IndexOperations,IndexAtividade,SystemHealthMonitor}.tsx
 - src/pages/Dashboard.tsx (rota /dashboard, App.tsx:39)
 - src/components/dashboard/{DashboardKPIs,DynamicAIInsights}.tsx
@@ -720,7 +704,6 @@ Itens inventariados:
 ### Camada: multi-tenant
 
 **Cobertura declarada:** Auditoria estatica (MCP do banco com token invalido: nao houve consulta a pg_policies/pg_indexes). Li integralmente as 6 migrations de tenancy (Fase 1 `20260723151620`, revokes `20260726161907`, `20261122132000` trigger, `20261122134000` Fase 2, `20261122141000` Fase 3, `20261122150000` Fase 3b, `20261122220000` handle_new_user) e a de multi-filial (`20261122100000` WMS-38), mais as policies de `user_roles`, `products`, `armazens` e as RPCs `move_stock`/`transferir_estoque`/`get_multi_warehouse_dashboard`. No frontend li `useCurrentTenant.ts`, `middleware/index.ts`, `utils/role.ts`, `locationService.ts`, `useTarefas.ts`, `useMultiWarehouseDashboard.ts`, `featureRoutes.tsx` e o `types.ts` gerado. Cruzei por script as 99 tabelas com `ENABLE ROW LEVEL SECURITY` contra a lista de 72 tabelas da Fase 2 e a lista de 18 exclusoes declaradas. PRIMEIRA CORRECAO AO BRIEFING: `docs/agentes/regras-dominio.md:66-67` esta desatualizado — a Fase 2 NAO esta pendente, ela foi mergeada (#173), com Fase 3 (#174) e Fase 3b (#175) em cima. O problema hoje nao e ausencia de isolamento, e isolamento com quatro furos estruturais (NULL permissivo, service_role, SECURITY DEFINER, role global) que o tornam ineficaz em producao. Multi-filial continua sem nenhum isolamento, nem no banco nem no frontend. 12 achados.
-
 
 Itens inventariados:
 
@@ -760,8 +743,7 @@ Itens inventariados:
 
 ### Camada: docs-vs-realidade
 
-**Cobertura declarada:** Lidos integralmente AGENTS.md (153 linhas), CLAUDE.md, README.md, README_PT.md, ESTADO_ATUAL.md (331 linhas) e os 6 arquivos de docs/agentes/ (646 linhas); lidos parcialmente docs/pendencias/_ordem.md, docs/pendencias/_linha-de-base.md, docs/ROADMAP.md, docs/qa/01-INVENTARIO.md e CONTRIBUTING.md. Cada afirmacao numerica ou de caminho foi confrontada com o artefato real: supabase/config.toml, package.json, vite.config.ts, vitest.config.ts, vercel.json, os 10 arquivos de .github/workflows/, supabase/functions/ (249 diretorios), supabase/migrations/ (178 .sql), scripts/ (12 .mjs + 8 subpastas), src/routes/, src/pages/, .i18n-hardcoded-baseline.json e public/openapi.json. Executei `npm run build` (falha por env) e `npx vite build` com envs dummy (exit 0, 45s) para testar as afirmacoes de build dos READMEs. NAO auditei docs/ARCHITECTURE.md, docs/OBSERVABILIDADE.md/OBSERVABILITY.md, docs/PLANO_*.md, docs/SECURITY.md, docs/SOC2_GAP_ANALYSIS.md, docs/PLUGIN_SDK.md, docs/adr/, docs/history/, docs/estado/ nem os demais docs/pendencias/* individualmente — ficaram fora do escopo de tokens. Os enums de regras-dominio.md nao foram conferidos contra o banco (MCP com token invalido), apenas os caminhos de codigo que ele cita.
-
+**Cobertura declarada:** Lidos integralmente AGENTS.md (153 linhas), CLAUDE.md, README.md, README_PT.md, ESTADO_ATUAL.md (331 linhas) e os 6 arquivos de docs/agentes/ (646 linhas); lidos parcialmente docs/pendencias/_ordem.md, docs/pendencias/_linha-de-base.md, docs/ROADMAP.md, docs/qa/01-INVENTARIO.md e CONTRIBUTING.md. Cada afirmacao numerica ou de caminho foi confrontada com o artefato real: supabase/config.toml, package.json, vite.config.ts, vitest.config.ts, vercel.json, os 10 arquivos de .github/workflows/, supabase/functions/ (249 diretorios), supabase/migrations/ (178 .sql), scripts/ (12 .mjs + 8 subpastas), src/routes/, src/pages/, .i18n-hardcoded-baseline.json e public/openapi.json. Executei `npm run build` (falha por env) e `npx vite build` com envs dummy (exit 0, 45s) para testar as afirmacoes de build dos READMEs. NAO auditei docs/ARCHITECTURE.md, docs/OBSERVABILIDADE.md/OBSERVABILITY.md, docs/PLANO__.md, docs/SECURITY.md, docs/SOC2_GAP_ANALYSIS.md, docs/PLUGIN_SDK.md, docs/adr/, docs/history/, docs/estado/ nem os demais docs/pendencias/_ individualmente — ficaram fora do escopo de tokens. Os enums de regras-dominio.md nao foram conferidos contra o banco (MCP com token invalido), apenas os caminhos de codigo que ele cita.
 
 Itens inventariados:
 
@@ -791,8 +773,8 @@ Itens inventariados:
 - /home/user/Estoki_V2/scripts/check-agents-integrity.mjs — cabecalho e constantes (:3-39) lidos; conjunto vigiado confere com AGENTS.md:150-153
 - /home/user/Estoki_V2/scripts/apply_rls_helper.cjs — NAO lido por conter senha de producao (AGENTS.md:26-27); leitura bloqueada pelo classificador e nao contornada. Apenas confirmada a existencia (813 B)
 - /home/user/Estoki_V2/.i18n-hardcoded-baseline.json, /home/user/Estoki_V2/.env.example, /home/user/Estoki_V2/.mcp.json, /home/user/Estoki_V2/.claude/settings.json, /home/user/Estoki_V2/postcss.config.js, /home/user/Estoki_V2/Dockerfile — lidos ou conferidos por grep
-- contagens EXECUTADAS: supabase/functions 249 dirs / 247 index.ts; supabase/migrations 178 .sql; src/pages 76 .tsx (42 raiz, 14 subpastas); src/components 520; src/hooks 288; src/services 24 *Service.ts; src/routes 82 path= (+4 em App.tsx); scripts 12 .mjs na raiz + 8 subpastas (61 arquivos); 17 seed-*.cjs + 6 probe-*.cjs; 21 arquivos de teste em src; public/openapi.json 248 paths (OpenAPI 3.1.0)
-- comandos EXECUTADOS: `npm run build` -> exit 1 (guard de env do Supabase); `VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... npx vite build` -> exit 0, 45.12s. Nenhuma escrita em banco, storage ou servico externo; nenhum arquivo do repo alterado; nenhum script seed-*/probe-*/db:* executado
+- contagens EXECUTADAS: supabase/functions 249 dirs / 247 index.ts; supabase/migrations 178 .sql; src/pages 76 .tsx (42 raiz, 14 subpastas); src/components 520; src/hooks 288; src/services 24 _Service.ts; src/routes 82 path= (+4 em App.tsx); scripts 12 .mjs na raiz + 8 subpastas (61 arquivos); 17 seed-_.cjs + 6 probe-*.cjs; 21 arquivos de teste em src; public/openapi.json 248 paths (OpenAPI 3.1.0)
+- comandos EXECUTADOS: `npm run build` -> exit 1 (guard de env do Supabase); `VITE_SUPABASE_URL=... VITE_SUPABASE_ANON_KEY=... npx vite build` -> exit 0, 45.12s. Nenhuma escrita em banco, storage ou servico externo; nenhum arquivo do repo alterado; nenhum script seed-_/probe-_/db:* executado
 
 ### Lacunas da jornada: Recebimento e conferencia
 
