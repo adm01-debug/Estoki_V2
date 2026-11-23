@@ -48,9 +48,12 @@
 | --- | --- | --- | --- | --- |
 | `https://estoki.lovable.app` | 200 | **`mtnsslmweggrmmdcklya`** (chave `anon` legada, JWT `role=anon`) | bundle `/assets/index-U-NBmTWY.js` | EXECUTADO |
 | `https://estoki-v2.vercel.app` | 200 | **`ookjbflsnoefnsixrspc`** (chave `sb_publishable_…`) | bundle `/assets/index-BhAhgqRb.js` | EXECUTADO |
+| `https://estoki-main.vercel.app` | 200 | **`ookjbflsnoefnsixrspc`** — mesmo bundle (`index-BhAhgqRb.js`), é um **segundo projeto Vercel** do mesmo repositório | bot da Vercel na PR #190: projetos `estoki-v2` e `estoki-main`, time `juca1`, ambos disparados pelo mesmo push | EXECUTADO |
 | Repositório / migrations / crons | — | `ookjbflsnoefnsixrspc` | `supabase/config.toml:1` | EXECUTADO |
 
-**Dois endereços de produção no ar apontando para dois bancos diferentes.** É o achado estrutural nº 1.
+**Três endereços de produção no ar.** Dois (Vercel) servem o mesmo build contra o banco oficial — e constroem
+em duplicidade a cada push; o terceiro (Lovable) fala com um banco que não tem o sistema. É o achado
+estrutural nº 1.
 
 | Ambiente declarado | Onde | Verificação |
 | --- | --- | --- |
