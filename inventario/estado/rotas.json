@@ -2,10 +2,10 @@
   "format_version": 1,
   "fonte": "scripts/inventario/gerar-rotas.mjs (le src/App.tsx, src/routes/*.tsx, src/config/menu.ts e os imports de cada pagina)",
   "resumo": {
-    "urls": 85,
-    "telas": 84,
+    "urls": 89,
+    "telas": 88,
     "itens_de_menu": 16,
-    "hooks_distintos": 68,
+    "hooks_distintos": 70,
     "problemas": 0
   },
   "urls": [
@@ -320,16 +320,6 @@
       "redireciona": null
     },
     {
-      "caminho": "/conferencia",
-      "componente": "ConferenciaRecebimento",
-      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
-      "declarada_em": "src/routes/wmsRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "redireciona": null
-    },
-    {
       "caminho": "/configuracoes",
       "componente": "Configuracoes",
       "arquivo": "src/pages/Configuracoes.tsx",
@@ -354,6 +344,16 @@
       "componente": "Dashboard",
       "arquivo": "src/pages/Dashboard.tsx",
       "declarada_em": "src/App.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
+      "caminho": "/dashboard-gerencial",
+      "componente": "MultiWarehouseDashboardPage",
+      "arquivo": "src/features/multiWarehouse/pages/MultiWarehouseDashboardPage.tsx",
+      "declarada_em": "src/routes/featureRoutes.tsx",
       "protegida": false,
       "papeis": [],
       "permissao": null,
@@ -493,6 +493,16 @@
       "caminho": "/inventario",
       "componente": "InventarioCiclico",
       "arquivo": "src/pages/InventarioCiclico.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
+      "caminho": "/inventario/:id",
+      "componente": "InventarioCicloDetalhe",
+      "arquivo": "src/pages/InventarioCicloDetalhe.tsx",
       "declarada_em": "src/routes/wmsRoutes.tsx",
       "protegida": true,
       "papeis": [],
@@ -730,6 +740,26 @@
       "redireciona": null
     },
     {
+      "caminho": "/recebimento/:id",
+      "componente": "ConferenciaRecebimento",
+      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
+      "caminho": "/recebimento/conferencia/:id",
+      "componente": "ConferenciaRecebimento",
+      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
       "caminho": "/relatorios",
       "componente": "Relatorios",
       "arquivo": "src/pages/Relatorios.tsx",
@@ -823,6 +853,16 @@
       "caminho": "/triagem",
       "componente": "Triagem",
       "arquivo": "src/features/quality/pages/TriagemPage.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
+      "caminho": "/triagem/:id",
+      "componente": "FormularioTriagem",
+      "arquivo": "src/features/quality/pages/FormularioTriagem.tsx",
       "declarada_em": "src/routes/wmsRoutes.tsx",
       "protegida": false,
       "papeis": [],
@@ -930,7 +970,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 128,
+      "arquivos_lidos": 132,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -955,6 +995,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1027,6 +1071,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -1056,12 +1104,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1076,6 +1127,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -1091,7 +1143,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1116,6 +1168,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1190,6 +1246,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -1213,6 +1273,8 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
@@ -1220,6 +1282,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1235,6 +1298,7 @@
         "produtos",
         "profiles",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "stock_movements",
         "tarefas",
@@ -1270,7 +1334,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1295,6 +1359,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1369,6 +1437,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -1392,12 +1464,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1412,7 +1487,9 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
+        "system_settings",
         "tarefas"
       ],
       "imports_quebrados": []
@@ -1427,7 +1504,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -1445,7 +1522,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1470,6 +1547,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1498,6 +1579,10 @@
         {
           "nome": "usePerformance",
           "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePermissions",
+          "arquivo": "src/hooks/usePermissions.ts"
         },
         {
           "nome": "usePicking",
@@ -1542,6 +1627,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -1567,12 +1656,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1583,12 +1675,16 @@
         "nfe_documents",
         "nfe_items",
         "notificacoes",
+        "permissions",
         "posicao_status_log",
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "role_permissions",
+        "romaneio_itens",
         "romaneios",
-        "tarefas"
+        "tarefas",
+        "user_roles"
       ],
       "imports_quebrados": []
     },
@@ -1602,7 +1698,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1627,6 +1723,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1699,6 +1799,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -1726,12 +1830,15 @@
         "backend-health"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1746,6 +1853,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -1761,7 +1869,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1786,6 +1894,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -1860,6 +1972,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -1883,12 +1999,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -1903,6 +2022,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -1918,7 +2038,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 6,
+      "arquivos_lidos": 8,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -1938,7 +2058,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -1963,6 +2083,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -2037,6 +2161,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -2060,12 +2188,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -2081,6 +2212,7 @@
         "produtos",
         "profiles",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas",
         "user_roles"
@@ -2097,7 +2229,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 121,
+      "arquivos_lidos": 125,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -2122,6 +2254,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -2196,6 +2332,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -2219,12 +2359,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -2239,6 +2382,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -2254,7 +2398,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 164,
+      "arquivos_lidos": 169,
       "hooks": [
         {
           "nome": "useAdjustments",
@@ -2289,6 +2433,10 @@
           "arquivo": "src/hooks/useDebounce.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -2377,6 +2525,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -2406,6 +2558,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -2414,6 +2568,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -2428,6 +2583,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -2443,7 +2599,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 175,
+      "arquivos_lidos": 180,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -2474,6 +2630,10 @@
           "arquivo": "src/hooks/useDebounce.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -2562,6 +2722,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -2591,6 +2755,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -2599,6 +2765,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -2613,6 +2780,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -2628,7 +2796,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [
         {
           "nome": "useAuth",
@@ -2653,7 +2821,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 166,
+      "arquivos_lidos": 172,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -2682,6 +2850,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -2772,6 +2944,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -2801,6 +2977,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -2808,6 +2986,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -2823,6 +3002,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -2838,13 +3018,16 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 3,
       "hooks": [],
       "buckets": [],
       "edges": [],
       "rpcs": [],
       "tabelas": [
-        "armazens"
+        "armazens",
+        "orders",
+        "posicoes_estoque",
+        "tarefas"
       ],
       "imports_quebrados": []
     },
@@ -2858,12 +3041,18 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
       "rpcs": [],
-      "tabelas": [],
+      "tabelas": [
+        "armazens",
+        "lotes",
+        "orders",
+        "posicoes_estoque",
+        "tarefas"
+      ],
       "imports_quebrados": []
     },
     {
@@ -3031,7 +3220,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 3,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -3051,7 +3240,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 3,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -3071,176 +3260,14 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
       "rpcs": [],
-      "tabelas": [],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/conferencia",
-      "url": "/conferencia",
-      "componente": "ConferenciaRecebimento",
-      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
-      "declarada_em": "src/routes/wmsRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "menu": null,
-      "arquivos_lidos": 130,
-      "hooks": [
-        {
-          "nome": "useAppLayoutState",
-          "arquivo": "src/hooks/useAppLayoutState.ts"
-        },
-        {
-          "nome": "useAtividadeRecente",
-          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
-        },
-        {
-          "nome": "useAuditLog",
-          "arquivo": "src/hooks/useAuditLog.ts"
-        },
-        {
-          "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
-        },
-        {
-          "nome": "useBalanca",
-          "arquivo": "src/hooks/useBalanca.ts"
-        },
-        {
-          "nome": "useCurvaABC",
-          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
-        },
-        {
-          "nome": "useDashboard",
-          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
-        },
-        {
-          "nome": "useEstoque",
-          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
-        },
-        {
-          "nome": "useKeyboardShortcuts",
-          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
-        },
-        {
-          "nome": "useKPIAlerts",
-          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
-        },
-        {
-          "nome": "useKPIsOperacionais",
-          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
-        },
-        {
-          "nome": "useLocalStorage",
-          "arquivo": "src/hooks/useLocalStorage.ts"
-        },
-        {
-          "nome": "usePageTransition",
-          "arquivo": "src/hooks/usePageTransition.ts"
-        },
-        {
-          "nome": "usePerformance",
-          "arquivo": "src/utils/performance.ts"
-        },
-        {
-          "nome": "usePicking",
-          "arquivo": "src/features/picking/hooks/usePicking.ts"
-        },
-        {
-          "nome": "usePosicaoDetalhes",
-          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
-        },
-        {
-          "nome": "usePullToRefresh",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "usePushNotifications",
-          "arquivo": "src/hooks/usePushNotifications.ts"
-        },
-        {
-          "nome": "useRealtimeKPIs",
-          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
-        },
-        {
-          "nome": "useRecebimentos",
-          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
-        },
-        {
-          "nome": "useReducedMotion",
-          "arquivo": "src/hooks/useReducedMotion.ts"
-        },
-        {
-          "nome": "useRomaneios",
-          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
-        },
-        {
-          "nome": "useRoutePreload",
-          "arquivo": "src/hooks/useRoutePreload.ts"
-        },
-        {
-          "nome": "useScanner",
-          "arquivo": "src/hooks/useScanner.ts"
-        },
-        {
-          "nome": "useSidebarFavorites",
-          "arquivo": "src/hooks/useSidebarFavorites.ts"
-        },
-        {
-          "nome": "useSwipeBack",
-          "arquivo": "src/hooks/useSwipeBack.ts"
-        },
-        {
-          "nome": "useSwipeGesture",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
-        },
-        {
-          "nome": "useTransitionContext",
-          "arquivo": "src/contexts/TransitionContext.tsx"
-        },
-        {
-          "nome": "useTriagens",
-          "arquivo": "src/features/quality/hooks/useTriagens.ts"
-        },
-        {
-          "nome": "useUnsavedChanges",
-          "arquivo": "src/hooks/useUnsavedChanges.ts"
-        }
-      ],
-      "buckets": [],
-      "edges": [],
-      "rpcs": [
-        "log_audit_event"
-      ],
       "tabelas": [
-        "alertas_historico",
-        "audit_log",
-        "comprovantes_entrega",
-        "estoque_posicao",
-        "eventos_picking",
-        "eventos_triagem",
-        "lotes",
-        "metas_kpi",
-        "metricas_dashboard",
-        "metricas_operacionais",
-        "nfe_documents",
-        "nfe_items",
-        "notificacoes",
-        "posicao_status_log",
-        "posicoes_estoque",
-        "produtos",
-        "rastreamento_historico",
-        "romaneios",
-        "tarefas"
+        "clientes",
+        "orders"
       ],
       "imports_quebrados": []
     },
@@ -3257,7 +3284,7 @@
         "rotulo": "Configurações",
         "icone": "Settings"
       },
-      "arquivos_lidos": 168,
+      "arquivos_lidos": 173,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -3286,6 +3313,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -3374,6 +3405,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -3413,6 +3448,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -3420,6 +3457,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -3434,6 +3472,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -3449,7 +3488,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 120,
+      "arquivos_lidos": 124,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -3474,6 +3513,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -3548,6 +3591,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -3571,12 +3618,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -3591,6 +3641,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -3609,7 +3660,7 @@
         "rotulo": "Dashboard",
         "icone": "LayoutDashboard"
       },
-      "arquivos_lidos": 164,
+      "arquivos_lidos": 169,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -3638,6 +3689,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -3728,6 +3783,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -3757,6 +3816,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -3764,6 +3825,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -3778,9 +3840,35 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/dashboard-gerencial",
+      "url": "/dashboard-gerencial",
+      "componente": "MultiWarehouseDashboardPage",
+      "arquivo": "src/features/multiWarehouse/pages/MultiWarehouseDashboardPage.tsx",
+      "declarada_em": "src/routes/featureRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 3,
+      "hooks": [
+        {
+          "nome": "useMultiWarehouseDashboard",
+          "arquivo": "src/features/multiWarehouse/hooks/useMultiWarehouseDashboard.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "get_multi_warehouse_dashboard"
+      ],
+      "tabelas": [],
       "imports_quebrados": []
     },
     {
@@ -3793,7 +3881,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -3821,7 +3909,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 169,
+      "arquivos_lidos": 174,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -3856,6 +3944,10 @@
           "arquivo": "src/hooks/useDivergencias.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -3942,6 +4034,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -3974,6 +4070,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -3981,6 +4079,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -3995,6 +4094,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -4010,7 +4110,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -4035,7 +4135,7 @@
         "rotulo": "Estoque",
         "icone": "Package"
       },
-      "arquivos_lidos": 134,
+      "arquivos_lidos": 138,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4060,6 +4160,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -4134,6 +4238,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -4157,12 +4265,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -4177,6 +4288,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -4192,7 +4304,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 167,
+      "arquivos_lidos": 172,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4221,6 +4333,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -4311,6 +4427,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -4340,6 +4460,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -4347,6 +4469,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -4377,7 +4500,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 120,
+      "arquivos_lidos": 124,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4402,6 +4525,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -4474,6 +4601,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -4499,12 +4630,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -4519,6 +4653,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -4534,7 +4669,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 133,
+      "arquivos_lidos": 137,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4559,6 +4694,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -4631,6 +4770,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -4670,12 +4813,15 @@
       ],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -4690,6 +4836,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -4705,7 +4852,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 169,
+      "arquivos_lidos": 176,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4734,6 +4881,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -4828,6 +4979,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -4857,6 +5012,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -4864,9 +5021,11 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
+        "fornecedor_scores",
         "lotes",
         "metas_kpi",
         "metricas_dashboard",
@@ -4878,6 +5037,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -4893,12 +5053,13 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 4,
       "hooks": [],
       "buckets": [],
       "edges": [],
       "rpcs": [],
       "tabelas": [
+        "eventos_triagem",
         "fornecedor_scores",
         "lotes"
       ],
@@ -4917,7 +5078,7 @@
         "rotulo": "Gamificação",
         "icone": "Trophy"
       },
-      "arquivos_lidos": 186,
+      "arquivos_lidos": 191,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4954,6 +5115,10 @@
         {
           "nome": "useDesafiosDiarios",
           "arquivo": "src/hooks/useDesafiosDiarios.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -5052,6 +5217,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useStreaks",
           "arquivo": "src/hooks/useStreaks.ts"
         },
@@ -5087,6 +5256,8 @@
       ],
       "rpcs": [
         "collect_challenge_reward",
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock",
         "registrar_checkin_diario"
@@ -5097,6 +5268,7 @@
         "comprovantes_entrega",
         "conquistas_definicoes",
         "conquistas_usuarios",
+        "db_health_snapshots",
         "desafios_diarios",
         "desafios_usuarios",
         "estoque_posicao",
@@ -5117,6 +5289,7 @@
         "produtos",
         "profiles",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "streaks_historico",
         "streaks_usuarios",
@@ -5176,7 +5349,7 @@
         "rotulo": "Hub Central",
         "icone": "RefreshCw"
       },
-      "arquivos_lidos": 164,
+      "arquivos_lidos": 169,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5205,6 +5378,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -5295,6 +5472,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -5324,6 +5505,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -5331,6 +5514,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -5345,6 +5529,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -5380,7 +5565,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 174,
+      "arquivos_lidos": 179,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5409,6 +5594,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -5503,6 +5692,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -5532,6 +5725,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -5539,6 +5734,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -5555,22 +5751,23 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
       "imports_quebrados": []
     },
     {
-      "id": "/inventory",
-      "url": "/inventory",
-      "componente": "InventoryPage",
-      "arquivo": "src/pages/inventory/InventoryPage.tsx",
+      "id": "/inventario/:id",
+      "url": "/inventario/:id",
+      "componente": "InventarioCicloDetalhe",
+      "arquivo": "src/pages/InventarioCicloDetalhe.tsx",
       "declarada_em": "src/routes/wmsRoutes.tsx",
-      "protegida": false,
+      "protegida": true,
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 125,
+      "arquivos_lidos": 172,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5595,6 +5792,212 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDebounce",
+          "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useGestaoTarefasPage",
+          "arquivo": "src/hooks/useGestaoTarefasPage.ts"
+        },
+        {
+          "nome": "useInventarioCiclico",
+          "arquivo": "src/hooks/useInventarioCiclico.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "useMovimentacoes",
+          "arquivo": "src/hooks/useMovimentacoes.ts"
+        },
+        {
+          "nome": "useOperationalLive",
+          "arquivo": "src/features/analytics/hooks/useOperationalLive.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "useProdutos",
+          "arquivo": "src/hooks/useProdutos.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useTarefas",
+          "arquivo": "src/hooks/useTarefas.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [
+        "scanner-ocr"
+      ],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event",
+        "move_stock"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "inventario_ciclos",
+        "inventario_contagens",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/inventory",
+      "url": "/inventory",
+      "componente": "InventoryPage",
+      "arquivo": "src/pages/inventory/InventoryPage.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 129,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -5673,6 +6076,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -5696,12 +6103,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -5717,6 +6127,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -5732,7 +6143,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 123,
+      "arquivos_lidos": 127,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5757,6 +6168,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -5835,6 +6250,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -5858,6 +6277,8 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -5865,6 +6286,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -5879,6 +6301,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -5896,10 +6319,6 @@
       "menu": null,
       "arquivos_lidos": 9,
       "hooks": [
-        {
-          "nome": "useHead",
-          "arquivo": "src/hooks/useHead.ts"
-        },
         {
           "nome": "useKanbanData",
           "arquivo": "src/components/kanban/useKanbanData.ts"
@@ -5926,7 +6345,7 @@
         "rotulo": "KPIs",
         "icone": "BarChart3"
       },
-      "arquivos_lidos": 120,
+      "arquivos_lidos": 124,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5951,6 +6370,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -6025,6 +6448,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -6048,12 +6475,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -6068,6 +6498,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -6086,7 +6517,7 @@
         "rotulo": "Lotes",
         "icone": "ClipboardList"
       },
-      "arquivos_lidos": 171,
+      "arquivos_lidos": 176,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -6115,6 +6546,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -6205,6 +6640,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -6234,6 +6673,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -6241,6 +6682,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -6255,6 +6697,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -6270,7 +6713,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 164,
+      "arquivos_lidos": 169,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -6299,6 +6742,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -6393,6 +6840,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -6422,6 +6873,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -6429,6 +6882,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -6443,6 +6897,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -6458,7 +6913,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 7,
+      "arquivos_lidos": 8,
       "hooks": [
         {
           "nome": "useOperationalLive",
@@ -6495,7 +6950,7 @@
         "rotulo": "Movimentação",
         "icone": "ArrowLeftRight"
       },
-      "arquivos_lidos": 163,
+      "arquivos_lidos": 168,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -6524,6 +6979,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -6614,6 +7073,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -6643,6 +7106,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -6650,6 +7115,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -6664,6 +7130,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -6679,7 +7146,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 122,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -6704,6 +7171,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -6782,6 +7253,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -6805,12 +7280,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -6825,6 +7303,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -6840,193 +7319,6 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 168,
-      "hooks": [
-        {
-          "nome": "useAppLayoutState",
-          "arquivo": "src/hooks/useAppLayoutState.ts"
-        },
-        {
-          "nome": "useAtividadeRecente",
-          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
-        },
-        {
-          "nome": "useAuditLog",
-          "arquivo": "src/hooks/useAuditLog.ts"
-        },
-        {
-          "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
-        },
-        {
-          "nome": "useCurvaABC",
-          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
-        },
-        {
-          "nome": "useDashboard",
-          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
-        },
-        {
-          "nome": "useDebounce",
-          "arquivo": "src/hooks/useDebounce.ts"
-        },
-        {
-          "nome": "useEstoque",
-          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
-        },
-        {
-          "nome": "useGestaoTarefasPage",
-          "arquivo": "src/hooks/useGestaoTarefasPage.ts"
-        },
-        {
-          "nome": "useKeyboardShortcuts",
-          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
-        },
-        {
-          "nome": "useKPIAlerts",
-          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
-        },
-        {
-          "nome": "useKPIsOperacionais",
-          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
-        },
-        {
-          "nome": "useLocalStorage",
-          "arquivo": "src/hooks/useLocalStorage.ts"
-        },
-        {
-          "nome": "useMovimentacoes",
-          "arquivo": "src/hooks/useMovimentacoes.ts"
-        },
-        {
-          "nome": "useOperationalLive",
-          "arquivo": "src/features/analytics/hooks/useOperationalLive.ts"
-        },
-        {
-          "nome": "usePageTransition",
-          "arquivo": "src/hooks/usePageTransition.ts"
-        },
-        {
-          "nome": "usePerformance",
-          "arquivo": "src/utils/performance.ts"
-        },
-        {
-          "nome": "usePicking",
-          "arquivo": "src/features/picking/hooks/usePicking.ts"
-        },
-        {
-          "nome": "usePosicaoDetalhes",
-          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
-        },
-        {
-          "nome": "useProdutos",
-          "arquivo": "src/hooks/useProdutos.ts"
-        },
-        {
-          "nome": "usePullToRefresh",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "usePushNotifications",
-          "arquivo": "src/hooks/usePushNotifications.ts"
-        },
-        {
-          "nome": "useRealtimeKPIs",
-          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
-        },
-        {
-          "nome": "useRecebimentos",
-          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
-        },
-        {
-          "nome": "useReducedMotion",
-          "arquivo": "src/hooks/useReducedMotion.ts"
-        },
-        {
-          "nome": "useRomaneios",
-          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
-        },
-        {
-          "nome": "useRoutePreload",
-          "arquivo": "src/hooks/useRoutePreload.ts"
-        },
-        {
-          "nome": "useScanner",
-          "arquivo": "src/hooks/useScanner.ts"
-        },
-        {
-          "nome": "useSidebarFavorites",
-          "arquivo": "src/hooks/useSidebarFavorites.ts"
-        },
-        {
-          "nome": "useSwipeBack",
-          "arquivo": "src/hooks/useSwipeBack.ts"
-        },
-        {
-          "nome": "useSwipeGesture",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "useTarefas",
-          "arquivo": "src/hooks/useTarefas.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
-        },
-        {
-          "nome": "useTransitionContext",
-          "arquivo": "src/contexts/TransitionContext.tsx"
-        },
-        {
-          "nome": "useTriagens",
-          "arquivo": "src/features/quality/hooks/useTriagens.ts"
-        }
-      ],
-      "buckets": [],
-      "edges": [
-        "scanner-ocr"
-      ],
-      "rpcs": [
-        "log_audit_event",
-        "move_stock"
-      ],
-      "tabelas": [
-        "alertas_historico",
-        "audit_log",
-        "comprovantes_entrega",
-        "estoque_posicao",
-        "eventos_picking",
-        "eventos_triagem",
-        "lotes",
-        "metas_kpi",
-        "metricas_dashboard",
-        "metricas_operacionais",
-        "nfe_documents",
-        "nfe_items",
-        "notificacoes",
-        "posicao_status_log",
-        "posicoes_estoque",
-        "produtos",
-        "rastreamento_historico",
-        "romaneios",
-        "tarefas"
-      ],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/ondas",
-      "url": "/ondas",
-      "componente": "Ondas",
-      "arquivo": "src/pages/Ondas.tsx",
-      "declarada_em": "src/routes/wmsRoutes.tsx",
-      "protegida": true,
-      "papeis": [],
-      "permissao": null,
-      "menu": {
-        "rotulo": "Ondas",
-        "icone": "Waves"
-      },
       "arquivos_lidos": 173,
       "hooks": [
         {
@@ -7058,6 +7350,10 @@
           "arquivo": "src/hooks/useDebounce.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -7146,6 +7442,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -7175,6 +7475,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -7182,341 +7484,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
-        "estoque_posicao",
-        "eventos_picking",
-        "eventos_triagem",
-        "lotes",
-        "metas_kpi",
-        "metricas_dashboard",
-        "metricas_operacionais",
-        "nfe_documents",
-        "nfe_items",
-        "notificacoes",
-        "ondas_separacao",
-        "posicao_status_log",
-        "posicoes_estoque",
-        "produtos",
-        "rastreamento_historico",
-        "romaneios",
-        "tarefas"
-      ],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/pedidos",
-      "url": "/pedidos",
-      "componente": "OrdersPage",
-      "arquivo": "src/pages/orders/OrdersPage.tsx",
-      "declarada_em": "src/routes/featureRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "menu": null,
-      "arquivos_lidos": 122,
-      "hooks": [
-        {
-          "nome": "useAppLayoutState",
-          "arquivo": "src/hooks/useAppLayoutState.ts"
-        },
-        {
-          "nome": "useAtividadeRecente",
-          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
-        },
-        {
-          "nome": "useAuditLog",
-          "arquivo": "src/hooks/useAuditLog.ts"
-        },
-        {
-          "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
-        },
-        {
-          "nome": "useCurvaABC",
-          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
-        },
-        {
-          "nome": "useDashboard",
-          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
-        },
-        {
-          "nome": "useEstoque",
-          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
-        },
-        {
-          "nome": "useKeyboardShortcuts",
-          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
-        },
-        {
-          "nome": "useKPIAlerts",
-          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
-        },
-        {
-          "nome": "useKPIsOperacionais",
-          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
-        },
-        {
-          "nome": "useLocalStorage",
-          "arquivo": "src/hooks/useLocalStorage.ts"
-        },
-        {
-          "nome": "usePageTransition",
-          "arquivo": "src/hooks/usePageTransition.ts"
-        },
-        {
-          "nome": "usePerformance",
-          "arquivo": "src/utils/performance.ts"
-        },
-        {
-          "nome": "usePicking",
-          "arquivo": "src/features/picking/hooks/usePicking.ts"
-        },
-        {
-          "nome": "usePosicaoDetalhes",
-          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
-        },
-        {
-          "nome": "usePullToRefresh",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "usePushNotifications",
-          "arquivo": "src/hooks/usePushNotifications.ts"
-        },
-        {
-          "nome": "useRealtimeKPIs",
-          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
-        },
-        {
-          "nome": "useRecebimentos",
-          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
-        },
-        {
-          "nome": "useReducedMotion",
-          "arquivo": "src/hooks/useReducedMotion.ts"
-        },
-        {
-          "nome": "useRomaneios",
-          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
-        },
-        {
-          "nome": "useRoutePreload",
-          "arquivo": "src/hooks/useRoutePreload.ts"
-        },
-        {
-          "nome": "useScanner",
-          "arquivo": "src/hooks/useScanner.ts"
-        },
-        {
-          "nome": "useSidebarFavorites",
-          "arquivo": "src/hooks/useSidebarFavorites.ts"
-        },
-        {
-          "nome": "useSwipeBack",
-          "arquivo": "src/hooks/useSwipeBack.ts"
-        },
-        {
-          "nome": "useSwipeGesture",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
-        },
-        {
-          "nome": "useTransitionContext",
-          "arquivo": "src/contexts/TransitionContext.tsx"
-        },
-        {
-          "nome": "useTriagens",
-          "arquivo": "src/features/quality/hooks/useTriagens.ts"
-        }
-      ],
-      "buckets": [],
-      "edges": [],
-      "rpcs": [
-        "log_audit_event"
-      ],
-      "tabelas": [
-        "alertas_historico",
-        "audit_log",
-        "comprovantes_entrega",
-        "estoque_posicao",
-        "eventos_picking",
-        "eventos_triagem",
-        "lotes",
-        "metas_kpi",
-        "metricas_dashboard",
-        "metricas_operacionais",
-        "nfe_documents",
-        "nfe_items",
-        "notificacoes",
-        "order_items",
-        "orders",
-        "posicao_status_log",
-        "posicoes_estoque",
-        "produtos",
-        "rastreamento_historico",
-        "romaneios",
-        "tarefas"
-      ],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/pedidos/:id",
-      "url": "/pedidos/:id",
-      "componente": "OrderDetailPage",
-      "arquivo": "src/pages/orders/OrderDetailPage.tsx",
-      "declarada_em": "src/routes/featureRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "menu": null,
-      "arquivos_lidos": 1,
-      "hooks": [],
-      "buckets": [],
-      "edges": [],
-      "rpcs": [],
-      "tabelas": [],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/perfil",
-      "url": "/perfil",
-      "componente": "ProfilePage",
-      "arquivo": "src/pages/profile/ProfilePage.tsx",
-      "declarada_em": "src/routes/featureRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "menu": null,
-      "arquivos_lidos": 121,
-      "hooks": [
-        {
-          "nome": "useAppLayoutState",
-          "arquivo": "src/hooks/useAppLayoutState.ts"
-        },
-        {
-          "nome": "useAtividadeRecente",
-          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
-        },
-        {
-          "nome": "useAuditLog",
-          "arquivo": "src/hooks/useAuditLog.ts"
-        },
-        {
-          "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
-        },
-        {
-          "nome": "useCurvaABC",
-          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
-        },
-        {
-          "nome": "useDashboard",
-          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
-        },
-        {
-          "nome": "useEstoque",
-          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
-        },
-        {
-          "nome": "useKeyboardShortcuts",
-          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
-        },
-        {
-          "nome": "useKPIAlerts",
-          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
-        },
-        {
-          "nome": "useKPIsOperacionais",
-          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
-        },
-        {
-          "nome": "useLocalStorage",
-          "arquivo": "src/hooks/useLocalStorage.ts"
-        },
-        {
-          "nome": "usePageTransition",
-          "arquivo": "src/hooks/usePageTransition.ts"
-        },
-        {
-          "nome": "usePerformance",
-          "arquivo": "src/utils/performance.ts"
-        },
-        {
-          "nome": "usePicking",
-          "arquivo": "src/features/picking/hooks/usePicking.ts"
-        },
-        {
-          "nome": "usePosicaoDetalhes",
-          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
-        },
-        {
-          "nome": "usePullToRefresh",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "usePushNotifications",
-          "arquivo": "src/hooks/usePushNotifications.ts"
-        },
-        {
-          "nome": "useRealtimeKPIs",
-          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
-        },
-        {
-          "nome": "useRecebimentos",
-          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
-        },
-        {
-          "nome": "useReducedMotion",
-          "arquivo": "src/hooks/useReducedMotion.ts"
-        },
-        {
-          "nome": "useRomaneios",
-          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
-        },
-        {
-          "nome": "useRoutePreload",
-          "arquivo": "src/hooks/useRoutePreload.ts"
-        },
-        {
-          "nome": "useScanner",
-          "arquivo": "src/hooks/useScanner.ts"
-        },
-        {
-          "nome": "useSidebarFavorites",
-          "arquivo": "src/hooks/useSidebarFavorites.ts"
-        },
-        {
-          "nome": "useSwipeBack",
-          "arquivo": "src/hooks/useSwipeBack.ts"
-        },
-        {
-          "nome": "useSwipeGesture",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
-        },
-        {
-          "nome": "useTransitionContext",
-          "arquivo": "src/contexts/TransitionContext.tsx"
-        },
-        {
-          "nome": "useTriagens",
-          "arquivo": "src/features/quality/hooks/useTriagens.ts"
-        }
-      ],
-      "buckets": [],
-      "edges": [],
-      "rpcs": [
-        "log_audit_event"
-      ],
-      "tabelas": [
-        "alertas_historico",
-        "audit_log",
-        "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -7531,182 +7499,26 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
       "imports_quebrados": []
     },
     {
-      "id": "/picking",
-      "url": "/picking",
-      "componente": "PickingPage",
-      "arquivo": "src/features/picking/pages/PickingPage.tsx",
-      "declarada_em": "src/routes/wmsRoutes.tsx",
-      "protegida": false,
-      "papeis": [],
-      "permissao": null,
-      "menu": null,
-      "arquivos_lidos": 120,
-      "hooks": [
-        {
-          "nome": "useAppLayoutState",
-          "arquivo": "src/hooks/useAppLayoutState.ts"
-        },
-        {
-          "nome": "useAtividadeRecente",
-          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
-        },
-        {
-          "nome": "useAuditLog",
-          "arquivo": "src/hooks/useAuditLog.ts"
-        },
-        {
-          "nome": "useAuth",
-          "arquivo": "src/contexts/AuthContext.tsx"
-        },
-        {
-          "nome": "useCurvaABC",
-          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
-        },
-        {
-          "nome": "useDashboard",
-          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
-        },
-        {
-          "nome": "useEstoque",
-          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
-        },
-        {
-          "nome": "useKeyboardShortcuts",
-          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
-        },
-        {
-          "nome": "useKPIAlerts",
-          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
-        },
-        {
-          "nome": "useKPIsOperacionais",
-          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
-        },
-        {
-          "nome": "useLocalStorage",
-          "arquivo": "src/hooks/useLocalStorage.ts"
-        },
-        {
-          "nome": "usePageTransition",
-          "arquivo": "src/hooks/usePageTransition.ts"
-        },
-        {
-          "nome": "usePerformance",
-          "arquivo": "src/utils/performance.ts"
-        },
-        {
-          "nome": "usePicking",
-          "arquivo": "src/features/picking/hooks/usePicking.ts"
-        },
-        {
-          "nome": "usePosicaoDetalhes",
-          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
-        },
-        {
-          "nome": "usePullToRefresh",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "usePushNotifications",
-          "arquivo": "src/hooks/usePushNotifications.ts"
-        },
-        {
-          "nome": "useRealtimeKPIs",
-          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
-        },
-        {
-          "nome": "useRecebimentos",
-          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
-        },
-        {
-          "nome": "useReducedMotion",
-          "arquivo": "src/hooks/useReducedMotion.ts"
-        },
-        {
-          "nome": "useRomaneios",
-          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
-        },
-        {
-          "nome": "useRoutePreload",
-          "arquivo": "src/hooks/useRoutePreload.ts"
-        },
-        {
-          "nome": "useScanner",
-          "arquivo": "src/hooks/useScanner.ts"
-        },
-        {
-          "nome": "useSidebarFavorites",
-          "arquivo": "src/hooks/useSidebarFavorites.ts"
-        },
-        {
-          "nome": "useSwipeBack",
-          "arquivo": "src/hooks/useSwipeBack.ts"
-        },
-        {
-          "nome": "useSwipeGesture",
-          "arquivo": "src/hooks/useTouchGestures.ts"
-        },
-        {
-          "nome": "useToast",
-          "arquivo": "src/hooks/use-toast.ts"
-        },
-        {
-          "nome": "useTransitionContext",
-          "arquivo": "src/contexts/TransitionContext.tsx"
-        },
-        {
-          "nome": "useTriagens",
-          "arquivo": "src/features/quality/hooks/useTriagens.ts"
-        }
-      ],
-      "buckets": [],
-      "edges": [],
-      "rpcs": [
-        "log_audit_event"
-      ],
-      "tabelas": [
-        "alertas_historico",
-        "audit_log",
-        "comprovantes_entrega",
-        "estoque_posicao",
-        "eventos_picking",
-        "eventos_triagem",
-        "lotes",
-        "metas_kpi",
-        "metricas_dashboard",
-        "metricas_operacionais",
-        "nfe_documents",
-        "nfe_items",
-        "notificacoes",
-        "posicao_status_log",
-        "posicoes_estoque",
-        "produtos",
-        "rastreamento_historico",
-        "romaneios",
-        "tarefas"
-      ],
-      "imports_quebrados": []
-    },
-    {
-      "id": "/posicoes",
-      "url": "/posicoes",
-      "componente": "Posicoes",
-      "arquivo": "src/pages/Posicoes.tsx",
+      "id": "/ondas",
+      "url": "/ondas",
+      "componente": "Ondas",
+      "arquivo": "src/pages/Ondas.tsx",
       "declarada_em": "src/routes/wmsRoutes.tsx",
       "protegida": true,
       "papeis": [],
       "permissao": null,
       "menu": {
-        "rotulo": "Posições",
-        "icone": "MapPin"
+        "rotulo": "Ondas",
+        "icone": "Waves"
       },
-      "arquivos_lidos": 162,
+      "arquivos_lidos": 179,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -7737,6 +7549,10 @@
           "arquivo": "src/hooks/useDebounce.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -7825,6 +7641,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -7854,6 +7674,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -7861,6 +7683,371 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "ondas_separacao",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/pedidos",
+      "url": "/pedidos",
+      "componente": "OrdersPage",
+      "arquivo": "src/pages/orders/OrdersPage.tsx",
+      "declarada_em": "src/routes/featureRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 128,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "armazens",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "order_items",
+        "orders",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/pedidos/:id",
+      "url": "/pedidos/:id",
+      "componente": "OrderDetailPage",
+      "arquivo": "src/pages/orders/OrderDetailPage.tsx",
+      "declarada_em": "src/routes/featureRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 4,
+      "hooks": [],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [],
+      "tabelas": [
+        "armazens",
+        "order_items",
+        "orders"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/perfil",
+      "url": "/perfil",
+      "componente": "ProfilePage",
+      "arquivo": "src/pages/profile/ProfilePage.tsx",
+      "declarada_em": "src/routes/featureRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 125,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -7875,6 +8062,375 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/picking",
+      "url": "/picking",
+      "componente": "PickingPage",
+      "arquivo": "src/features/picking/pages/PickingPage.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 124,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/posicoes",
+      "url": "/posicoes",
+      "componente": "Posicoes",
+      "arquivo": "src/pages/Posicoes.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "menu": {
+        "rotulo": "Posições",
+        "icone": "MapPin"
+      },
+      "arquivos_lidos": 167,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDebounce",
+          "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useGestaoTarefasPage",
+          "arquivo": "src/hooks/useGestaoTarefasPage.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "useMovimentacoes",
+          "arquivo": "src/hooks/useMovimentacoes.ts"
+        },
+        {
+          "nome": "useOperationalLive",
+          "arquivo": "src/features/analytics/hooks/useOperationalLive.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "useProdutos",
+          "arquivo": "src/hooks/useProdutos.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useTarefas",
+          "arquivo": "src/hooks/useTarefas.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [
+        "scanner-ocr"
+      ],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event",
+        "move_stock"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -7890,7 +8446,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 122,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -7921,6 +8477,10 @@
           "arquivo": "src/features/analytics/hooks/useDemandForecast.ts"
         },
         {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
           "nome": "useEstoque",
           "arquivo": "src/features/inventory/hooks/useEstoque.ts"
         },
@@ -7993,6 +8553,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8016,12 +8580,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8036,6 +8603,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -8051,7 +8619,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 169,
+      "arquivos_lidos": 174,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8080,6 +8648,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -8174,6 +8746,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8203,6 +8779,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -8210,6 +8788,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8226,6 +8805,7 @@
         "produtos",
         "profiles",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas",
         "user_roles"
@@ -8245,7 +8825,7 @@
         "rotulo": "Produtos",
         "icone": "Layers"
       },
-      "arquivos_lidos": 163,
+      "arquivos_lidos": 168,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8274,6 +8854,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -8364,6 +8948,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8393,6 +8981,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -8400,6 +8990,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8414,6 +9005,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -8429,7 +9021,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 122,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8454,6 +9046,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -8532,6 +9128,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8555,12 +9155,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8575,6 +9178,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -8590,7 +9194,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 122,
+      "arquivos_lidos": 126,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8615,6 +9219,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -8693,6 +9301,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8716,12 +9328,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8737,6 +9352,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -8752,7 +9368,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 166,
+      "arquivos_lidos": 171,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8781,6 +9397,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -8871,6 +9491,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -8900,6 +9524,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -8907,6 +9533,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -8921,6 +9548,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -8939,7 +9567,7 @@
         "rotulo": "Recebimento",
         "icone": "Truck"
       },
-      "arquivos_lidos": 129,
+      "arquivos_lidos": 133,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -8964,6 +9592,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -9038,6 +9670,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -9061,12 +9697,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -9081,6 +9720,361 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/recebimento/:id",
+      "url": "/recebimento/:id",
+      "componente": "ConferenciaRecebimento",
+      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 134,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useBalanca",
+          "arquivo": "src/hooks/useBalanca.ts"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        },
+        {
+          "nome": "useUnsavedChanges",
+          "arquivo": "src/hooks/useUnsavedChanges.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/recebimento/conferencia/:id",
+      "url": "/recebimento/conferencia/:id",
+      "componente": "ConferenciaRecebimento",
+      "arquivo": "src/features/receiving/pages/ConferenciaRecebimento.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 134,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useBalanca",
+          "arquivo": "src/hooks/useBalanca.ts"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        },
+        {
+          "nome": "useUnsavedChanges",
+          "arquivo": "src/hooks/useUnsavedChanges.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -9099,7 +10093,7 @@
         "rotulo": "Relatórios",
         "icone": "FileText"
       },
-      "arquivos_lidos": 163,
+      "arquivos_lidos": 168,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -9128,6 +10122,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -9218,6 +10216,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -9247,6 +10249,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -9254,6 +10258,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -9268,6 +10273,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -9308,7 +10314,7 @@
         "rotulo": "Romaneios",
         "icone": "TrendingUp"
       },
-      "arquivos_lidos": 171,
+      "arquivos_lidos": 176,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -9337,6 +10343,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -9427,6 +10437,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -9456,6 +10470,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -9463,6 +10479,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -9477,6 +10494,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -9492,7 +10510,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 162,
+      "arquivos_lidos": 167,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -9521,6 +10539,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -9611,6 +10633,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -9640,6 +10666,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -9647,6 +10675,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -9661,6 +10690,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -9676,7 +10706,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 19,
+      "arquivos_lidos": 20,
       "hooks": [
         {
           "nome": "useAuth",
@@ -9737,7 +10767,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
@@ -9760,7 +10790,7 @@
         "rotulo": "Tarefas",
         "icone": "ListChecks"
       },
-      "arquivos_lidos": 162,
+      "arquivos_lidos": 167,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -9789,6 +10819,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -9879,6 +10913,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -9908,6 +10946,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -9915,6 +10955,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -9929,6 +10970,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -9944,10 +10986,12 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 1,
+      "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
-      "edges": [],
+      "edges": [
+        "carrier-track"
+      ],
       "rpcs": [],
       "tabelas": [
         "romaneios"
@@ -9964,7 +11008,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 127,
+      "arquivos_lidos": 131,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -9997,6 +11041,10 @@
         {
           "nome": "useDesafiosDiarios",
           "arquivo": "src/hooks/useDesafiosDiarios.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -10083,6 +11131,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useStreaks",
           "arquivo": "src/hooks/useStreaks.ts"
         },
@@ -10113,6 +11165,8 @@
       ],
       "rpcs": [
         "collect_challenge_reward",
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "registrar_checkin_diario"
       ],
@@ -10122,6 +11176,7 @@
         "comprovantes_entrega",
         "conquistas_definicoes",
         "conquistas_usuarios",
+        "db_health_snapshots",
         "desafios_diarios",
         "desafios_usuarios",
         "estoque_posicao",
@@ -10140,6 +11195,7 @@
         "produtos",
         "profiles",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "streaks_historico",
         "streaks_usuarios",
@@ -10161,7 +11217,7 @@
         "rotulo": "Triagem",
         "icone": "FileSearch"
       },
-      "arquivos_lidos": 131,
+      "arquivos_lidos": 135,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -10186,6 +11242,10 @@
         {
           "nome": "useDashboard",
           "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -10258,6 +11318,10 @@
         {
           "nome": "useSidebarFavorites",
           "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
         },
         {
           "nome": "useSwipeBack",
@@ -10283,12 +11347,15 @@
       "buckets": [],
       "edges": [],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event"
       ],
       "tabelas": [
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -10303,6 +11370,190 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
+        "romaneios",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/triagem/:id",
+      "url": "/triagem/:id",
+      "componente": "FormularioTriagem",
+      "arquivo": "src/features/quality/pages/FormularioTriagem.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 137,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagemFotos",
+          "arquivo": "src/hooks/useTriagemFotos.ts"
+        },
+        {
+          "nome": "useTriagemTimer",
+          "arquivo": "src/hooks/useTriagemTimer.ts"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        },
+        {
+          "nome": "useUnsavedChanges",
+          "arquivo": "src/hooks/useUnsavedChanges.ts"
+        }
+      ],
+      "buckets": [
+        "triagem-fotos"
+      ],
+      "edges": [],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas"
       ],
@@ -10318,7 +11569,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 171,
+      "arquivos_lidos": 176,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -10347,6 +11598,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -10437,6 +11692,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -10470,6 +11729,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -10477,6 +11738,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -10491,6 +11753,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas",
         "trocas_devolucoes"
@@ -10507,7 +11770,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 167,
+      "arquivos_lidos": 172,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -10536,6 +11799,10 @@
         {
           "nome": "useDebounce",
           "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
         },
         {
           "nome": "useEstoque",
@@ -10626,6 +11893,10 @@
           "arquivo": "src/hooks/useSidebarFavorites.ts"
         },
         {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
           "nome": "useSwipeBack",
           "arquivo": "src/hooks/useSwipeBack.ts"
         },
@@ -10659,6 +11930,8 @@
         "scanner-ocr"
       ],
       "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
         "log_audit_event",
         "move_stock"
       ],
@@ -10666,6 +11939,7 @@
         "alertas_historico",
         "audit_log",
         "comprovantes_entrega",
+        "db_health_snapshots",
         "estoque_posicao",
         "eventos_picking",
         "eventos_triagem",
@@ -10680,6 +11954,7 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "romaneio_itens",
         "romaneios",
         "tarefas",
         "trocas_devolucoes"
@@ -10726,7 +12001,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -10739,6 +12013,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -10759,12 +12034,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -10783,7 +12061,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -10796,6 +12073,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -10816,12 +12094,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -10840,7 +12121,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -10853,6 +12133,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -10873,12 +12154,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -10902,7 +12186,6 @@
         "/auth",
         "/auth/login",
         "/automacoes",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -10916,6 +12199,7 @@
         "/governanca",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -10936,6 +12220,8 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
@@ -10943,6 +12229,7 @@
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -10950,7 +12237,8 @@
     "useBalanca": {
       "arquivo": "src/hooks/useBalanca.ts",
       "telas": [
-        "/conferencia"
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id"
       ]
     },
     "useCheckpointsZona": {
@@ -10980,7 +12268,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -10993,6 +12280,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11013,12 +12301,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11043,7 +12334,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11056,6 +12346,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11076,12 +12367,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11100,6 +12394,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/lotes",
         "/modo-offline",
         "/movimentacao",
@@ -11136,8 +12431,8 @@
         "/divergencias"
       ]
     },
-    "useEstoque": {
-      "arquivo": "src/features/inventory/hooks/useEstoque.ts",
+    "useDocumentTitle": {
+      "arquivo": "src/hooks/useDocumentTitle.ts",
       "telas": [
         "/admin/auditoria",
         "/admin/auditoria-critica",
@@ -11150,7 +12445,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11163,6 +12457,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11183,12 +12478,75 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
+        "/trocas",
+        "/trocas-dashboard"
+      ]
+    },
+    "useEstoque": {
+      "arquivo": "src/features/inventory/hooks/useEstoque.ts",
+      "telas": [
+        "/admin/auditoria",
+        "/admin/auditoria-critica",
+        "/admin/configuracoes",
+        "/admin/roles",
+        "/admin/saude-backend",
+        "/admin/simulacao",
+        "/admin/usuarios",
+        "/ajuda",
+        "/ajustes",
+        "/alertas",
+        "/armazenamento",
+        "/configuracoes",
+        "/curva-abc",
+        "/dashboard",
+        "/divergencias",
+        "/estoque",
+        "/etiquetas",
+        "/expedicao",
+        "/formulario-triagem",
+        "/fornecedores",
+        "/gamificacao",
+        "/hub",
+        "/inventario",
+        "/inventario/:id",
+        "/inventory",
+        "/inventory/movements",
+        "/kpis-operacionais",
+        "/lotes",
+        "/modo-offline",
+        "/movimentacao",
+        "/notificacoes",
+        "/ocupacao",
+        "/ondas",
+        "/pedidos",
+        "/perfil",
+        "/picking",
+        "/posicoes",
+        "/previsao-demanda",
+        "/produtividade",
+        "/produtos",
+        "/putaway",
+        "/qualidade",
+        "/rastreabilidade",
+        "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
+        "/relatorios",
+        "/romaneios",
+        "/scanner",
+        "/tarefas",
+        "/triador",
+        "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11226,6 +12584,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/lotes",
         "/modo-offline",
         "/movimentacao",
@@ -11243,16 +12602,11 @@
         "/trocas-dashboard"
       ]
     },
-    "useHead": {
-      "arquivo": "src/hooks/useHead.ts",
-      "telas": [
-        "/kanban"
-      ]
-    },
     "useInventarioCiclico": {
       "arquivo": "src/hooks/useInventarioCiclico.ts",
       "telas": [
-        "/inventario"
+        "/inventario",
+        "/inventario/:id"
       ]
     },
     "useInventoryCount": {
@@ -11275,7 +12629,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11288,6 +12641,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11308,12 +12662,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11332,7 +12689,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11345,6 +12701,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11365,12 +12722,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11395,7 +12755,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11408,6 +12767,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11428,12 +12788,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11452,7 +12815,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11465,6 +12827,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11485,12 +12848,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11516,6 +12882,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory/movements",
         "/lotes",
         "/modo-offline",
@@ -11532,6 +12899,12 @@
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
+      ]
+    },
+    "useMultiWarehouseDashboard": {
+      "arquivo": "src/features/multiWarehouse/hooks/useMultiWarehouseDashboard.ts",
+      "telas": [
+        "/dashboard-gerencial"
       ]
     },
     "useNotificacoes": {
@@ -11566,6 +12939,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/lotes",
         "/modo-offline",
         "/monitor",
@@ -11598,7 +12972,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11611,6 +12984,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11631,12 +13005,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11661,7 +13038,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11674,6 +13050,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11694,12 +13071,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11707,6 +13087,7 @@
     "usePermissions": {
       "arquivo": "src/hooks/usePermissions.ts",
       "telas": [
+        "/admin/roles",
         "/seguranca"
       ]
     },
@@ -11724,7 +13105,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11737,6 +13117,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11757,12 +13138,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11781,7 +13165,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11794,6 +13177,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11814,12 +13198,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11845,6 +13232,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/lotes",
         "/modo-offline",
         "/movimentacao",
@@ -11876,7 +13264,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11889,6 +13276,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11909,12 +13297,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -11933,7 +13324,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -11946,6 +13336,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -11966,6 +13357,8 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
@@ -11973,6 +13366,7 @@
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12010,7 +13404,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12023,6 +13416,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12044,12 +13438,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12068,7 +13465,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12081,6 +13477,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12101,12 +13498,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12125,7 +13525,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12138,6 +13537,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12158,12 +13558,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12182,7 +13585,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12195,6 +13597,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12215,12 +13618,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12239,7 +13645,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12252,6 +13657,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12272,12 +13678,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12296,7 +13705,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12309,6 +13717,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12329,12 +13738,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12353,7 +13765,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12366,6 +13777,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12386,12 +13798,75 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
+        "/trocas",
+        "/trocas-dashboard"
+      ]
+    },
+    "useSpeechRecognition": {
+      "arquivo": "src/hooks/useSpeechRecognition.ts",
+      "telas": [
+        "/admin/auditoria",
+        "/admin/auditoria-critica",
+        "/admin/configuracoes",
+        "/admin/roles",
+        "/admin/saude-backend",
+        "/admin/simulacao",
+        "/admin/usuarios",
+        "/ajuda",
+        "/ajustes",
+        "/alertas",
+        "/armazenamento",
+        "/configuracoes",
+        "/curva-abc",
+        "/dashboard",
+        "/divergencias",
+        "/estoque",
+        "/etiquetas",
+        "/expedicao",
+        "/formulario-triagem",
+        "/fornecedores",
+        "/gamificacao",
+        "/hub",
+        "/inventario",
+        "/inventario/:id",
+        "/inventory",
+        "/inventory/movements",
+        "/kpis-operacionais",
+        "/lotes",
+        "/modo-offline",
+        "/movimentacao",
+        "/notificacoes",
+        "/ocupacao",
+        "/ondas",
+        "/pedidos",
+        "/perfil",
+        "/picking",
+        "/posicoes",
+        "/previsao-demanda",
+        "/produtividade",
+        "/produtos",
+        "/putaway",
+        "/qualidade",
+        "/rastreabilidade",
+        "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
+        "/relatorios",
+        "/romaneios",
+        "/scanner",
+        "/tarefas",
+        "/triador",
+        "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12417,7 +13892,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12430,6 +13904,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12450,12 +13925,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12474,7 +13952,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12487,6 +13964,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12507,12 +13985,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12537,6 +14018,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/lotes",
         "/modo-offline",
         "/movimentacao",
@@ -12574,7 +14056,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12587,6 +14068,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12607,12 +14089,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12631,7 +14116,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12644,6 +14128,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12664,12 +14149,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12677,13 +14165,15 @@
     "useTriagemFotos": {
       "arquivo": "src/hooks/useTriagemFotos.ts",
       "telas": [
-        "/formulario-triagem"
+        "/formulario-triagem",
+        "/triagem/:id"
       ]
     },
     "useTriagemTimer": {
       "arquivo": "src/hooks/useTriagemTimer.ts",
       "telas": [
-        "/formulario-triagem"
+        "/formulario-triagem",
+        "/triagem/:id"
       ]
     },
     "useTriagens": {
@@ -12700,7 +14190,6 @@
         "/ajustes",
         "/alertas",
         "/armazenamento",
-        "/conferencia",
         "/configuracoes",
         "/curva-abc",
         "/dashboard",
@@ -12713,6 +14202,7 @@
         "/gamificacao",
         "/hub",
         "/inventario",
+        "/inventario/:id",
         "/inventory",
         "/inventory/movements",
         "/kpis-operacionais",
@@ -12733,12 +14223,15 @@
         "/qualidade",
         "/rastreabilidade",
         "/recebimento",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
         "/relatorios",
         "/romaneios",
         "/scanner",
         "/tarefas",
         "/triador",
         "/triagem",
+        "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
       ]
@@ -12753,9 +14246,11 @@
     "useUnsavedChanges": {
       "arquivo": "src/hooks/useUnsavedChanges.ts",
       "telas": [
-        "/conferencia",
         "/configuracoes",
-        "/formulario-triagem"
+        "/formulario-triagem",
+        "/recebimento/:id",
+        "/recebimento/conferencia/:id",
+        "/triagem/:id"
       ]
     },
     "useWebAuthn": {
