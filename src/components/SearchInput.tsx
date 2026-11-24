@@ -71,7 +71,12 @@ export function SearchInput({
       <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
         {showClear && internalValue && !isLoading && (
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClear}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="relative h-6 w-6 after:absolute after:-inset-2.5 after:content-['']"
+            onClick={handleClear}
+          >
             <X className="h-4 w-4" />
             <span className="sr-only">Limpar busca</span>
           </Button>

@@ -3,7 +3,7 @@ import { Box } from "lucide-react";
 
 export function AuthLoading() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background">
       <motion.div
         className="flex flex-col items-center gap-4"
         initial={{ opacity: 0, scale: 0.9 }}

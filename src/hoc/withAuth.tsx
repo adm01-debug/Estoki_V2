@@ -23,7 +23,7 @@ export function withAuth<P extends object>(
         return <LoadingComponent />;
       }
       return (
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex min-h-dvh items-center justify-center">
           <LoadingSpinner size="lg" />
         </div>
       );

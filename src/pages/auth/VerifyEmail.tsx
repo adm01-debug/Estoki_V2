@@ -4,7 +4,7 @@ import { BrandingContent } from "@/components/auth/BrandingContent";
 
 const VerifyEmailPage = () => {
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
+    <div className="relative flex min-h-dvh overflow-hidden">
       <div className="absolute inset-0 bg-sidebar" />
       <BrandingContent />
       <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">

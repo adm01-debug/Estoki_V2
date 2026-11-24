@@ -65,7 +65,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     <AppLayoutContext.Provider value={true}>
       <TooltipProvider>
         <div
-          className="flex min-h-screen flex-col bg-background"
+          className="flex min-h-dvh flex-col bg-background"
           role="application"
           aria-label="Promo Brindes Intel WMS"
         >
