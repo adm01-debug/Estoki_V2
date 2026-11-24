@@ -281,7 +281,12 @@ async function main(argv) {
   if (!publicadasApi && token) publicadasApi = await chamarApi('/functions');
 
   const dado = extrairInventario(bruto);
-  conferirOrigem(dado, tabelasDoManifesto(RAIZ), versoesDoRepo(RAIZ));
+  // A Management API monta a URL em chamarApi() com o ref conferido em projeto(): a origem ja esta
+  // provada, e a conferencia por ledger so tem valor no caminho --entrada/MCP, onde o texto pode vir
+  // de outro banco. Ela nao serve aqui: o ledger do projeto oficial carimba segundos diferentes do
+  // nome do arquivo (ex.: ledger 20260512154025 x arquivo 20260512154028), entao versao por versao
+  // acusa 88 de 96 versoes como desconhecidas mesmo com a resposta correta.
+  if (iEntrada !== -1) conferirOrigem(dado, tabelasDoManifesto(RAIZ), versoesDoRepo(RAIZ));
   const uso = contarUsoNoCodigo(RAIZ, dado.tabelas.map((t) => t.nome));
   const inventario = montarInventario(dado, uso, compararEdges(publicadasApi, edgesNoRepo(RAIZ)));
   const texto = JSON.stringify(inventario, null, 2) + '\n';

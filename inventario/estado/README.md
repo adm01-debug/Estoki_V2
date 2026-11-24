@@ -18,6 +18,9 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão.
   `cron_sem_execucao` (job ativo que roda todo dia sem nenhuma execução em 24 h — cron 100 % parado
   não grava falha, então só aparece aqui), `historico_cron_sem_limpeza` (> 50 mil linhas com mais de
   7 dias), `edge_sem_deploy` e `edge_publicada_sem_codigo`. Limiares em `LIMIARES` no script.
+- **`funcoes`**: nomes das funções/RPCs do schema `public`, em ordem. Use para provar que uma RPC
+  existe no banco real (a contagem `resumo.funcoes_public` não diz qual), comparando com as
+  `supabase/migrations/*.sql`.
 - **`tabelas_orfas`**: 0 linhas + não citada em função/view do banco + nenhum `.from()` nem
   `/rest/v1/` no código (`.from(variavel)` não é resolvido). Candidata a limpeza, não prova de que
   pode apagar (pode ser usada por RPC com outro nome ou por sistema externo).
@@ -28,6 +31,10 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão.
 - A resposta só é gravada se o ledger bater com `supabase/migrations/` (maior versão aplicada entre as
   20 migrations mais recentes do repo e quantidade de registros a até 10 % da de arquivos) e, quando
   `supabase/schema-manifest.json` existir, se as tabelas baterem com ele (≥ 90 %, nos dois sentidos).
+  Essa conferência roda **só** no caminho `--entrada` (resposta colada do MCP): quando a leitura vem da
+  Management API do projeto oficial, a origem já está provada pela URL e o ledger não é comparado —
+  no banco oficial o `version` do ledger tem segundos diferentes do nome do arquivo (`20260512154025` no
+  ledger × `20260512154028` no repo), e comparar versão por versão acusa quase tudo como desconhecido.
   Isso barra resposta colada de outro banco. Sem o manifesto o script avisa em `stderr` e segue só com
   o ledger.
 - Nada de dado de usuário sai daqui: o SQL lê catálogo e contagens; de `cron.job` sai só o nome das
