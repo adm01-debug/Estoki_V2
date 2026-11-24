@@ -95,12 +95,15 @@ SELECT jsonb_build_object(
 
   -- Funcoes que a chave publica (`anon`) executa. O Postgres concede EXECUTE a PUBLIC por padrao e
   -- `anon` herda: `REVOKE ... FROM PUBLIC` sozinho NAO bloqueia (furo corrigido em
-  -- 20261124120000_SEC_revoke_anon_execute.sql). So o fluxo pre-login pode aparecer aqui; qualquer
-  -- outro nome vira alerta `funcao_anon_executavel` em gerar-banco.mjs.
+  -- 20261124120000_SEC_revoke_anon_execute.sql). Mesmo recorte da migration: fora extensao
+  -- (pg_trgm/unaccent nao sao API do produto) e fora funcao de trigger (o disparo nao checa
+  -- EXECUTE), para o alerta nao virar ruido permanente. Qualquer outro nome aqui e API exposta.
   'funcoes_executaveis_anon', (
     SELECT coalesce(jsonb_agg(p.proname ORDER BY p.proname), '[]'::jsonb)
       FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
      WHERE n.nspname = 'public' AND p.prokind = 'f'
+       AND p.prorettype <> 'pg_catalog.trigger'::regtype
+       AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
        AND has_function_privilege('anon', p.oid, 'EXECUTE')
   ),
 
