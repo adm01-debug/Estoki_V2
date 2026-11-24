@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Activity, Database, AlertCircle, RefreshCw, Zap, Server, Clock } from "lucide-react";
+import { Activity, Database, RefreshCw, Zap, Server, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -199,12 +200,10 @@ export default function BackendHealthPage() {
         }
       >
         {error && (
-          <Card className="border-destructive/40 bg-destructive/10">
-            <CardContent className="flex items-center gap-2 p-4 text-destructive">
-              <AlertCircle className="h-5 w-5" />
-              Erro ao carregar métricas: {(error as Error).message}
-            </CardContent>
-          </Card>
+          <ErrorState
+            message={`Erro ao carregar métricas: ${(error as Error).message}`}
+            onRetry={() => void refetch()}
+          />
         )}
 
         {isLoading && !data && (
