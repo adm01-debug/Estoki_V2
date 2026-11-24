@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface CurrencyInputProps {
@@ -29,10 +29,17 @@ export function CurrencyInput({
     setDisplayValue(formatCurrency(clamped));
     onChange?.(clamped);
   };
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
-      <Input value={displayValue} onChange={handleChange} className="text-right font-mono" />
+      {label && <Label htmlFor={uid}>{label}</Label>}
+      <Input
+        id={uid}
+        value={displayValue}
+        onChange={handleChange}
+        className="text-right font-mono"
+      />
     </div>
   );
 }

@@ -268,7 +268,11 @@ export default function Automacoes() {
                         )}
                         Executar
                       </Button>
-                      <Switch checked={wf.ativo} onCheckedChange={() => toggleWorkflow(wf.id)} />
+                      <Switch
+                        aria-label={wf.nome}
+                        checked={wf.ativo}
+                        onCheckedChange={() => toggleWorkflow(wf.id)}
+                      />
                     </div>
                   </div>
                 </CardContent>

@@ -159,6 +159,7 @@ export const DeviceManagement: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">Confiável</span>
                       <Switch
+                        aria-label="Marcar dispositivo como confiável"
                         checked={device.is_trusted || false}
                         onCheckedChange={(checked) =>
                           toggleTrustMutation.mutate({ deviceId: device.id, isTrusted: checked })

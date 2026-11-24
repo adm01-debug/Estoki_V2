@@ -401,6 +401,7 @@ export default function ModoOffline() {
                       </p>
                     </div>
                     <Switch
+                      aria-label="Sincronização automática"
                       checked={autoSync}
                       onCheckedChange={(v) => {
                         haptics.light();

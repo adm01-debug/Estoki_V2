@@ -41,6 +41,7 @@ export function TagInput({
         </Badge>
       ))}
       <Input
+        aria-label={placeholder || "Adicionar item"}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}

@@ -198,6 +198,7 @@ export default function IntegracaoTransportadoras() {
             <CardContent className="p-4">
               <div className="flex gap-3">
                 <Input
+                  aria-label="Digite o código de rastreio (ex: BR123456789BR)"
                   placeholder="Digite o código de rastreio (ex: BR123456789BR)"
                   value={codigoRastreio}
                   onChange={(e) => setCodigoRastreio(e.target.value.toUpperCase())}

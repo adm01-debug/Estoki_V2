@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -25,12 +25,15 @@ export function ColorInput({
   const rgbToHex = (r: number, g: number, b: number) =>
     "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("");
   const rgb = hexToRgb(value);
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <div className="flex gap-2">
         <div className="h-10 w-10 rounded border" style={{ backgroundColor: value }} />
         <Input
+          id={uid}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           className="flex-1 font-mono"
@@ -43,7 +46,12 @@ export function ColorInput({
           <TabsTrigger value="rgb">RGB</TabsTrigger>
         </TabsList>
         <TabsContent value="hex">
-          <Input value={value} onChange={(e) => onChange?.(e.target.value)} placeholder="#000000" />
+          <Input
+            aria-label="Cor"
+            value={value}
+            onChange={(e) => onChange?.(e.target.value)}
+            placeholder="#000000"
+          />
         </TabsContent>
         <TabsContent value="rgb" className="space-y-2">
           <div className="flex items-center gap-2">

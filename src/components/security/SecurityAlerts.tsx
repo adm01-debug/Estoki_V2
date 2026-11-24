@@ -120,7 +120,7 @@ export const SecurityAlerts: React.FC = () => {
                   <Label className="text-base">{setting.title}</Label>
                   <p className="text-sm text-muted-foreground">{setting.description}</p>
                 </div>
-                <Switch checked={setting.enabled} />
+                <Switch aria-label={setting.title} checked={setting.enabled} />
               </div>
             ))}
           </div>
@@ -134,7 +134,7 @@ export const SecurityAlerts: React.FC = () => {
                   <p className="font-medium">Email</p>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
-                <Switch checked={true} className="ml-auto" />
+                <Switch aria-label="Alertas por email" checked={true} className="ml-auto" />
               </div>
               <div
                 className={`flex items-center gap-3 rounded-lg border p-3 ${pushEnabled ? "border-primary/30 bg-primary/5" : ""}`}
@@ -160,6 +160,7 @@ export const SecurityAlerts: React.FC = () => {
                   </p>
                 </div>
                 <Switch
+                  aria-label="Notificações push"
                   checked={pushEnabled}
                   onCheckedChange={handleTogglePush}
                   disabled={!isSupported || permission === "denied"}

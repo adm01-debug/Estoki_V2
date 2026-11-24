@@ -389,7 +389,7 @@ export default function AdminTelemetriaPage() {
           value={severityFilter}
           onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}
         >
-          <SelectTrigger className="w-44">
+          <SelectTrigger aria-label="Severidade" className="w-44">
             <SelectValue placeholder="Severidade" />
           </SelectTrigger>
           <SelectContent>
@@ -400,7 +400,7 @@ export default function AdminTelemetriaPage() {
           </SelectContent>
         </Select>
         <Select value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger aria-label="Período" className="w-44">
             <SelectValue placeholder="Período" />
           </SelectTrigger>
           <SelectContent>

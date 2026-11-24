@@ -160,6 +160,7 @@ export default function AjustesEstoquePage() {
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar por produto ou motivo"
                   placeholder="Buscar por produto ou motivo..."
                   className="pl-9"
                   value={searchTerm}
@@ -179,12 +180,12 @@ export default function AjustesEstoquePage() {
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label>Produto *</Label>
+                      <Label htmlFor="produto">Produto *</Label>
                       <Select
                         value={newAdj.produto_id}
                         onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="produto">
                           <SelectValue placeholder="Selecione o produto..." />
                         </SelectTrigger>
                         <SelectContent>
@@ -198,8 +199,9 @@ export default function AjustesEstoquePage() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Qtd. Atual</Label>
+                        <Label htmlFor="qtd-atual">Qtd. Atual</Label>
                         <Input
+                          id="qtd-atual"
                           type="number"
                           value={newAdj.quantidade_anterior}
                           onChange={(e) =>
@@ -208,8 +210,9 @@ export default function AjustesEstoquePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Nova Qtd.</Label>
+                        <Label htmlFor="nova-qtd">Nova Qtd.</Label>
                         <Input
+                          id="nova-qtd"
                           type="number"
                           value={newAdj.quantidade_nova}
                           onChange={(e) =>
@@ -219,12 +222,12 @@ export default function AjustesEstoquePage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Motivo</Label>
+                      <Label htmlFor="motivo">Motivo</Label>
                       <Select
                         value={newAdj.motivo}
                         onValueChange={(v) => setNewAdj({ ...newAdj, motivo: v })}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="motivo">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -236,8 +239,9 @@ export default function AjustesEstoquePage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Observações</Label>
+                      <Label htmlFor="observacoes">Observações</Label>
                       <Textarea
+                        id="observacoes"
                         value={newAdj.observacoes}
                         onChange={(e) => setNewAdj({ ...newAdj, observacoes: e.target.value })}
                         placeholder="Explique o motivo do ajuste..."

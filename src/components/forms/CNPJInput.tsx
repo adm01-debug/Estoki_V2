@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface CNPJInputProps {
@@ -34,10 +34,13 @@ export function CNPJInput({ value = "", onChange, label, showValidation = true }
     return calc(12) === parseInt(digits[12]) && calc(13) === parseInt(digits[13]);
   };
   const isValid = value.replace(/\D/g, "").length === 14 ? validateCNPJ(value) : null;
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <Input
+        id={uid}
         value={value}
         onChange={(e) => onChange?.(formatCNPJ(e.target.value))}
         placeholder="00.000.000/0000-00"

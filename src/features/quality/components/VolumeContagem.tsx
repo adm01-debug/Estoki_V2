@@ -291,10 +291,14 @@ export function VolumeContagem({
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="block text-[10px] font-black uppercase text-muted-foreground">
+                        <label
+                          htmlFor={`quantidade-contada-${volume.id}`}
+                          className="block text-[10px] font-black uppercase text-muted-foreground"
+                        >
                           Quantidade Contada
                         </label>
                         <Input
+                          id={`quantidade-contada-${volume.id}`}
                           type="number"
                           min={0}
                           value={volume.qtdContada ?? ""}

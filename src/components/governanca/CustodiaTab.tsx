@@ -76,6 +76,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
             </DialogHeader>
             <div className="space-y-3">
               <Input
+                aria-label="ID do operador destino"
                 placeholder="ID do operador destino"
                 value={form.operador_destino_id}
                 onChange={(e) => setForm((f) => ({ ...f, operador_destino_id: e.target.value }))}
@@ -85,7 +86,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
                   value={form.zona_origem}
                   onValueChange={(v) => setForm((f) => ({ ...f, zona_origem: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger aria-label="Zona origem">
                     <SelectValue placeholder="Zona origem" />
                   </SelectTrigger>
                   <SelectContent>
@@ -102,7 +103,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
                   value={form.zona_destino}
                   onValueChange={(v) => setForm((f) => ({ ...f, zona_destino: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger aria-label="Zona destino">
                     <SelectValue placeholder="Zona destino" />
                   </SelectTrigger>
                   <SelectContent>
@@ -117,6 +118,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
                 </Select>
               </div>
               <Input
+                aria-label="Quantidade"
                 type="number"
                 min={1}
                 placeholder="Quantidade"
@@ -124,6 +126,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
                 onChange={(e) => setForm((f) => ({ ...f, quantidade: Number(e.target.value) }))}
               />
               <Textarea
+                aria-label="Motivo (opcional)"
                 placeholder="Motivo (opcional)"
                 value={form.motivo}
                 onChange={(e) => setForm((f) => ({ ...f, motivo: e.target.value }))}

@@ -122,6 +122,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <div className="relative mb-2">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
+            aria-label="Buscar"
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

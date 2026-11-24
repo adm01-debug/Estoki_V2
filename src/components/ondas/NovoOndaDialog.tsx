@@ -104,19 +104,20 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Código</Label>
+              <Label htmlFor="codigo">Código</Label>
               <Input
+                id="codigo"
                 value={formData.codigo}
                 onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label>Prioridade</Label>
+              <Label htmlFor="prioridade">Prioridade</Label>
               <Select
                 value={formData.prioridade}
                 onValueChange={(v) => setFormData({ ...formData, prioridade: v as any })}
               >
-                <SelectTrigger>
+                <SelectTrigger id="prioridade">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,8 +130,9 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Descrição</Label>
+            <Label htmlFor="descricao">Descrição</Label>
             <Input
+              id="descricao"
               value={formData.descricao}
               onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
               placeholder="Ex: Pedidos E-commerce Manhã"
@@ -138,16 +140,18 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Zona Alvo</Label>
+              <Label htmlFor="zona-alvo">Zona Alvo</Label>
               <Input
+                id="zona-alvo"
                 value={formData.zona_alvo}
                 onChange={(e) => setFormData({ ...formData, zona_alvo: e.target.value })}
                 placeholder="Ex: A, B, C"
               />
             </div>
             <div className="space-y-2">
-              <Label>Rota</Label>
+              <Label htmlFor="rota">Rota</Label>
               <Input
+                id="rota"
                 value={formData.rota}
                 onChange={(e) => setFormData({ ...formData, rota: e.target.value })}
                 placeholder="Ex: Norte"

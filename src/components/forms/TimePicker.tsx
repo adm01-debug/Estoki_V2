@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -13,11 +13,18 @@ export function TimePicker({ value = "12:00", onChange, label }: TimePickerProps
   const updateTime = (h: string, m: string) => {
     onChange?.(`${h.padStart(2, "0")}:${m.padStart(2, "0")}`);
   };
+  const uid = useId();
+
   return (
     <div>
-      {label && <Label className="mb-1">{label}</Label>}
+      {label && (
+        <Label htmlFor={uid} className="mb-1">
+          {label}
+        </Label>
+      )}
       <div className="flex items-center gap-1">
         <Input
+          id={uid}
           type="number"
           min={0}
           max={23}
@@ -30,6 +37,7 @@ export function TimePicker({ value = "12:00", onChange, label }: TimePickerProps
         />
         <span>:</span>
         <Input
+          aria-label="Minutos"
           type="number"
           min={0}
           max={59}

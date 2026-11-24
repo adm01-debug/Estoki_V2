@@ -382,6 +382,7 @@ export default function EstoquePage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Buscar posição, SKU, Rua"
                 type="text"
                 placeholder="Buscar posição, SKU, Rua..."
                 className="h-11 rounded-xl border-border/20 bg-card/50 pl-10 shadow-sm transition-all focus:bg-card focus:ring-2 focus:ring-primary/20"

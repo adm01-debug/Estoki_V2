@@ -54,6 +54,7 @@ export function DataGrid<T extends { id: string | number }>({
         <div className="flex items-center gap-2">
           <Search className="h-4 w-4" />
           <Input
+            aria-label="Buscar"
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

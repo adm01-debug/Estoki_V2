@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 interface TextareaCounterProps {
@@ -22,10 +22,13 @@ export function TextareaCounter({
   const remaining = maxLength - value.length;
   const isOverLimit = remaining < 0;
   const isUnderLimit = value.length < minLength;
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <Textarea
+        id={uid}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
         rows={rows}

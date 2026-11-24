@@ -153,6 +153,7 @@ export function SavedFiltersManager({
             <DialogTitle>Salvar Filtro</DialogTitle>
           </DialogHeader>
           <Input
+            aria-label="Nome do filtro"
             placeholder="Nome do filtro..."
             value={filterName}
             onChange={(e) => setFilterName(e.target.value)}

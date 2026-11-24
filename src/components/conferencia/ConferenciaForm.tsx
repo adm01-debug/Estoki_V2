@@ -94,9 +94,9 @@ export function ConferenciaForm({
       </div>
 
       <div>
-        <Label htmlFor="embalagem">Tipo de Embalagem</Label>
+        <Label htmlFor="tipo-de-embalagem">Tipo de Embalagem</Label>
         <Select value={tipoEmbalagem} onValueChange={(v) => setTipoEmbalagem(v as TipoEmbalagem)}>
-          <SelectTrigger className="mt-1">
+          <SelectTrigger id="tipo-de-embalagem" className="mt-1">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

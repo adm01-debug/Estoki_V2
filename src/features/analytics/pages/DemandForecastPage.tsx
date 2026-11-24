@@ -196,7 +196,7 @@ export default function PrevisaoDemandaIA() {
         <CardContent className="p-4">
           <div className="flex gap-3">
             <Select value={selectedProduto} onValueChange={setSelectedProduto}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger aria-label="Selecione um produto" className="flex-1">
                 <SelectValue placeholder="Selecione um produto" />
               </SelectTrigger>
               <SelectContent>

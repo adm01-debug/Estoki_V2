@@ -135,9 +135,12 @@ export default function PickingPage() {
 
                 <div className="space-y-4 border-t pt-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Validar Produto (Scan)</label>
+                    <label htmlFor="validar-produto-scan" className="text-sm font-medium">
+                      Validar Produto (Scan)
+                    </label>
                     <div className="flex gap-2">
                       <Input
+                        id="validar-produto-scan"
                         placeholder="Escaneie o código do produto"
                         value={scannedCode}
                         onChange={(e) => setScannedCode(e.target.value)}
@@ -198,8 +201,11 @@ export default function PickingPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Quantidade Coletada</label>
+                    <label htmlFor="quantidade-coletada" className="text-sm font-medium">
+                      Quantidade Coletada
+                    </label>
                     <Input
+                      id="quantidade-coletada"
                       type="number"
                       placeholder="Informe a quantidade"
                       value={confirmQty}
@@ -235,6 +241,7 @@ export default function PickingPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por produto ou posição"
                 placeholder="Buscar por produto ou posição..."
                 className="pl-9"
                 value={searchTerm}

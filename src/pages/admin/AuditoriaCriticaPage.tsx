@@ -465,6 +465,7 @@ export default function AuditoriaCriticaPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar por usuário, ação, motivo, tipo"
                     placeholder="Buscar por usuário, ação, motivo, tipo..."
                     className="pl-9"
                     value={search}

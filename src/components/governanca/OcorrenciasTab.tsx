@@ -103,7 +103,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
             </DialogHeader>
             <div className="space-y-3">
               <Select value={form.tipo} onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}>
-                <SelectTrigger>
+                <SelectTrigger aria-label="Tipo de ocorrência">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -117,7 +117,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                 value={form.zona_detectada}
                 onValueChange={(v) => setForm((f) => ({ ...f, zona_detectada: v }))}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Zona onde detectou">
                   <SelectValue placeholder="Zona onde detectou" />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,6 +129,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                 </SelectContent>
               </Select>
               <Input
+                aria-label="Quantidade"
                 type="number"
                 min={1}
                 placeholder="Quantidade"
@@ -136,6 +137,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                 onChange={(e) => setForm((f) => ({ ...f, quantidade: Number(e.target.value) }))}
               />
               <Input
+                aria-label="Valor do prejuízo (R$)"
                 type="number"
                 min={0}
                 step="0.01"
@@ -212,11 +214,13 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                         </DialogHeader>
                         <div className="space-y-3">
                           <Textarea
+                            aria-label="Parecer da investigação"
                             placeholder="Parecer da investigação..."
                             value={parecer}
                             onChange={(e) => setParecer(e.target.value)}
                           />
                           <Textarea
+                            aria-label="Ação corretiva recomendada"
                             placeholder="Ação corretiva recomendada..."
                             value={acao}
                             onChange={(e) => setAcao(e.target.value)}

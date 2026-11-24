@@ -573,6 +573,7 @@ export default function TriagemPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
               <Input
+                aria-label="Buscar por ID ou Lote"
                 placeholder="Buscar por ID ou Lote..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -588,7 +589,10 @@ export default function TriagemPage() {
                   setStatusFilter(v);
                 }}
               >
-                <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/20 bg-background font-medium">
+                <SelectTrigger
+                  aria-label="Status"
+                  className="h-11 w-[160px] rounded-xl border-border/20 bg-background font-medium"
+                >
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">

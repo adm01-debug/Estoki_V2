@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -27,9 +27,11 @@ export function NumberInput({
     const num = parseFloat(e.target.value) || 0;
     onChange?.(Math.max(min, Math.min(max, num)));
   };
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <div className="flex">
         {showControls && (
           <Button
@@ -45,6 +47,7 @@ export function NumberInput({
           </Button>
         )}
         <Input
+          id={uid}
           type="number"
           value={value}
           onChange={handleChange}

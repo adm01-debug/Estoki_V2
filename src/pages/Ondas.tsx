@@ -257,6 +257,7 @@ export default function OndasPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar onda"
                   placeholder="Buscar onda..."
                   className="pl-10"
                   value={search}
@@ -272,7 +273,7 @@ export default function OndasPage() {
                 )}
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger aria-label="Filtrar por status" className="w-[150px]">
                   <Filter className="mr-2 h-4 w-4" />
                   <SelectValue />
                 </SelectTrigger>

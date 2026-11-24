@@ -310,6 +310,11 @@ export default function Etiquetas() {
                 <div className="relative min-w-[200px] flex-1">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
+                    aria-label={
+                      fonte === "lotes"
+                        ? "Buscar lote, produto, SKU ou NF"
+                        : "Buscar cliente, pedido, NF ou romaneio"
+                    }
                     placeholder={
                       fonte === "lotes"
                         ? "Buscar lote, produto, SKU, NF..."
@@ -354,6 +359,7 @@ export default function Etiquetas() {
                         onClick={() => setPreviewId(lote.id)}
                       >
                         <Checkbox
+                          aria-label={lote.produto_nome ?? "Lote"}
                           checked={selectedIds.has(lote.id)}
                           onCheckedChange={() => toggleSelect(lote.id)}
                           onClick={(e) => e.stopPropagation()}
@@ -379,6 +385,7 @@ export default function Etiquetas() {
                         onClick={() => setPreviewId(ent.id)}
                       >
                         <Checkbox
+                          aria-label={ent.cliente ?? "Entrega"}
                           checked={selectedIds.has(ent.id)}
                           onCheckedChange={() => toggleSelect(ent.id)}
                           onClick={(e) => e.stopPropagation()}
@@ -409,9 +416,11 @@ export default function Etiquetas() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="text-xs">Tamanho da etiqueta</Label>
+                    <Label htmlFor="tamanho-da-etiqueta" className="text-xs">
+                      Tamanho da etiqueta
+                    </Label>
                     <Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}>
-                      <SelectTrigger>
+                      <SelectTrigger id="tamanho-da-etiqueta">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -425,8 +434,11 @@ export default function Etiquetas() {
                   </div>
                   {fonte === "lotes" && (
                     <div>
-                      <Label className="text-xs">Volumes por lote</Label>
+                      <Label htmlFor="volumes-por-lote" className="text-xs">
+                        Volumes por lote
+                      </Label>
                       <Input
+                        id="volumes-por-lote"
                         type="number"
                         min={1}
                         max={50}

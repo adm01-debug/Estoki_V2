@@ -188,6 +188,7 @@ export default function AprovacaoMovimentacoes() {
                           {aprov.status === "pendente" && isApprover && (
                             <div className="flex min-w-[200px] flex-col gap-2">
                               <Textarea
+                                aria-label="Observação (opcional)"
                                 placeholder="Observação (opcional)"
                                 className="h-16 text-xs"
                                 value={observacao[aprov.id] || ""}

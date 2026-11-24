@@ -76,6 +76,7 @@ export function PickList({
                   )}
                 >
                   <Checkbox
+                    aria-label={item.productName}
                     checked={isPicked}
                     onCheckedChange={(checked) => onItemPicked?.(item.id, !!checked)}
                   />

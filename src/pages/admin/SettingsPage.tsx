@@ -51,12 +51,12 @@ export default function AdminSettingsPage() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label>Nome da Unidade</Label>
-                      <Input defaultValue="ESTOKI - CD Central" />
+                      <Label htmlFor="nome-da-unidade">Nome da Unidade</Label>
+                      <Input id="nome-da-unidade" defaultValue="ESTOKI - CD Central" />
                     </div>
                     <div className="space-y-2">
-                      <Label>Código Identificador</Label>
-                      <Input defaultValue="CDC-01" />
+                      <Label htmlFor="codigo-identificador">Código Identificador</Label>
+                      <Input id="codigo-identificador" defaultValue="CDC-01" />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -81,30 +81,32 @@ export default function AdminSettingsPage() {
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Exigir Scan de QR Code</Label>
+                      <Label htmlFor="exigir-scan-de-qr-code">Exigir Scan de QR Code</Label>
                       <p className="text-xs text-muted-foreground">
                         Obrigatório escanear item e local em todas as movimentações.
                       </p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch id="exigir-scan-de-qr-code" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Validação de Validade (FEFO)</Label>
+                      <Label htmlFor="validacao-de-validade-fefo">
+                        Validação de Validade (FEFO)
+                      </Label>
                       <p className="text-xs text-muted-foreground">
                         Priorizar saída de itens com vencimento mais próximo.
                       </p>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch id="validacao-de-validade-fefo" defaultChecked />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Picking Multi-Ondas</Label>
+                      <Label htmlFor="picking-multi-ondas">Picking Multi-Ondas</Label>
                       <p className="text-xs text-muted-foreground">
                         Permitir agrupamento de vários pedidos em uma única rota.
                       </p>
                     </div>
-                    <Switch />
+                    <Switch id="picking-multi-ondas" />
                   </div>
                 </CardContent>
               </Card>

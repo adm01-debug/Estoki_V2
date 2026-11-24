@@ -39,6 +39,7 @@ export function BuscaProdutoTab({ onSearch }: BuscaProdutoTabProps) {
         <CardContent>
           <div className="flex gap-3">
             <Input
+              aria-label="Digite o ID do produto"
               placeholder="Digite o ID do produto..."
               value={produtoBusca}
               onChange={(e) => setProdutoBusca(e.target.value)}

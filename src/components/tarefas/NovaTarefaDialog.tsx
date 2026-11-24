@@ -49,12 +49,12 @@ export function NovaTarefaDialog({
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Tipo</Label>
+            <Label htmlFor="tipo">Tipo</Label>
             <Select
               value={novaTarefa.tipo}
               onValueChange={(v) => setNovaTarefa({ ...novaTarefa, tipo: v as TipoTarefa })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="tipo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -67,8 +67,9 @@ export function NovaTarefaDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Descrição *</Label>
+            <Label htmlFor="descricao">Descrição *</Label>
             <Textarea
+              id="descricao"
               placeholder="Descreva a tarefa..."
               value={novaTarefa.descricao}
               onChange={(e) => setNovaTarefa({ ...novaTarefa, descricao: e.target.value })}
@@ -76,14 +77,14 @@ export function NovaTarefaDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Prioridade</Label>
+              <Label htmlFor="prioridade">Prioridade</Label>
               <Select
                 value={novaTarefa.prioridade}
                 onValueChange={(v) =>
                   setNovaTarefa({ ...novaTarefa, prioridade: v as PrioridadeTarefa })
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger id="prioridade">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -96,8 +97,9 @@ export function NovaTarefaDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quantidade</Label>
+              <Label htmlFor="quantidade">Quantidade</Label>
               <Input
+                id="quantidade"
                 type="number"
                 value={novaTarefa.quantidade}
                 onChange={(e) =>

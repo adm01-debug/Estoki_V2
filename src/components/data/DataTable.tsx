@@ -67,6 +67,7 @@ export function DataTable<T extends Record<string, any>>({
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            aria-label="Buscar"
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}

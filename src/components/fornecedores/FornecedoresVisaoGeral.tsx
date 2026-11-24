@@ -148,6 +148,7 @@ export function FornecedoresVisaoGeral({
         <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            aria-label="Buscar fornecedor"
             placeholder="Buscar fornecedor..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -155,7 +156,7 @@ export function FornecedoresVisaoGeral({
           />
         </div>
         <Select value={classificacaoFilter} onValueChange={onClassificacaoChange}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger aria-label="Filtrar por classificação" className="w-[150px]">
             <Star className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>

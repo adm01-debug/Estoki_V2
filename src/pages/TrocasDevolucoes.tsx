@@ -220,6 +220,7 @@ export default function TrocasDevolucoes() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar"
                     placeholder="Buscar..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -230,7 +231,7 @@ export default function TrocasDevolucoes() {
                   value={filtroTipo}
                   onValueChange={(v) => setFiltroTipo(v as "troca" | "devolucao" | "todos")}
                 >
-                  <SelectTrigger className="w-[130px]">
+                  <SelectTrigger aria-label="Tipo" className="w-[130px]">
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue placeholder="Tipo" />
                   </SelectTrigger>

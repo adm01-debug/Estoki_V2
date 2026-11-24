@@ -51,6 +51,7 @@ export function ColorPicker({
             ))}
           </div>
           <Input
+            aria-label="Cor personalizada"
             type="color"
             value={value}
             onChange={(e) => onChange?.(e.target.value)}

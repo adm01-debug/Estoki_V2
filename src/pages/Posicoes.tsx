@@ -269,6 +269,7 @@ export default function PosicoesPage() {
               <div className="relative min-w-[200px] flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar posição"
                   placeholder="Buscar posição..."
                   className="pl-10"
                   value={search}
@@ -284,7 +285,7 @@ export default function PosicoesPage() {
                 )}
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[130px]">
+                <SelectTrigger aria-label="Status" className="w-[130px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -297,7 +298,7 @@ export default function PosicoesPage() {
                 </SelectContent>
               </Select>
               <Select value={tipoFilter} onValueChange={setTipoFilter}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger aria-label="Tipo" className="w-[140px]">
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent>

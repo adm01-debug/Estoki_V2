@@ -65,6 +65,7 @@ export default function StockMovementsPage() {
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
                 <Input
+                  aria-label="SKU, Lote ou Descrição"
                   placeholder="SKU, Lote ou Descrição..."
                   className="h-10 rounded-xl border-border/40 bg-muted/30 pl-10 transition-all focus:bg-background"
                   value={searchTerm}
