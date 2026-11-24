@@ -75,9 +75,11 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     isLoading,
     error,
     refetch,
-    startTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "em_andamento" }),
-    finishTask: (taskId: string, qty: number) =>
-      updateTaskStatus.mutate({ taskId, status: "concluida", qty }),
-    cancelTask: (taskId: string) => updateTaskStatus.mutate({ taskId, status: "cancelada" }),
+    startTask: async (taskId: string) =>
+      updateTaskStatus.mutateAsync({ taskId, status: "em_andamento" }),
+    finishTask: async (taskId: string, qty: number) =>
+      updateTaskStatus.mutateAsync({ taskId, status: "concluida", qty }),
+    cancelTask: async (taskId: string) =>
+      updateTaskStatus.mutateAsync({ taskId, status: "cancelada" }),
   };
 }
