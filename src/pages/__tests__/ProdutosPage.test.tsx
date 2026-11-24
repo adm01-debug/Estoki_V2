@@ -33,59 +33,131 @@ const queryClient = new QueryClient({
   },
 });
 
-describe("ProdutosPage Search Interaction", () => {
+const produtoMock = {
+  id: "1",
+  nome: "Produto Real",
+  sku: "REAL1",
+  unidade: "UN",
+  curva_abc: "A",
+  estoque_minimo: 0,
+  estoque_maximo: null,
+  fornecedor_principal: null,
+  created_at: new Date().toISOString(),
+};
+
+const montarHook = (overrides: Record<string, unknown> = {}) => {
+  (useProdutosHook.useProdutos as any).mockReturnValue({
+    produtos: [produtoMock],
+    total: 1,
+    page: 1,
+    pageCount: 1,
+    loading: false,
+    isFetching: false,
+    error: null,
+    refetch: vi.fn(),
+    stats: { total: 1, curvaA: 1, curvaB: 0, curvaC: 0 },
+    createProduto: { isPending: false, mutateAsync: vi.fn() },
+    updateProduto: { isPending: false, mutateAsync: vi.fn() },
+    ...overrides,
+  });
+};
+
+const renderizar = () =>
+  render(
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <BrowserRouter>
+          <Produtos />
+        </BrowserRouter>
+      </HelmetProvider>
+    </QueryClientProvider>
+  );
+
+const ultimaChamada = () => {
+  // BulkImportDialog tambem chama useProdutos() sem opcoes; aqui interessa a pagina.
+  const chamadas = ((useProdutosHook.useProdutos as any).mock.calls as any[][]).filter(
+    (chamada) => chamada[0]
+  );
+  return chamadas[chamadas.length - 1][0];
+};
+
+describe("ProdutosPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it("should display skeletons during search transition", async () => {
-    const mockProducts = [
-      {
-        id: "1",
-        nome: "Produto Real",
-        sku: "REAL1",
-        curva_abc: "A",
-        created_at: new Date().toISOString(),
-      },
-    ];
-
-    (useProdutosHook.useProdutos as any).mockReturnValue({
-      produtos: mockProducts,
-      loading: false,
-      stats: { total: 1, curvaA: 1, curvaB: 0, curvaC: 0 },
-      createProduto: { isPending: false },
-    });
-
-    render(
-      <QueryClientProvider client={queryClient}>
-        <HelmetProvider>
-          <BrowserRouter>
-            <Produtos />
-          </BrowserRouter>
-        </HelmetProvider>
-      </QueryClientProvider>
-    );
+    montarHook();
+    renderizar();
 
     const searchInput = screen.getByPlaceholderText(/Buscar por nome ou SKU/i);
 
-    // Initial state: results are visible
     expect(screen.getByTestId("product-grid-results")).toBeInTheDocument();
     expect(screen.getByText("Produto Real")).toBeInTheDocument();
 
-    // Trigger search
     fireEvent.change(searchInput, { target: { value: "novo termo" } });
 
-    // Skeletons should appear due to search !== debouncedSearch
     await waitFor(() => {
       expect(screen.getByTestId("product-grid-loading")).toBeInTheDocument();
     });
 
-    // After debounce and effect finishing, results should return (or empty state if not found)
     await waitFor(
       () => {
         expect(screen.queryByTestId("product-grid-loading")).not.toBeInTheDocument();
       },
       { timeout: 1500 }
     );
+  });
+
+  it("envia a busca para o servidor usando o valor com debounce", async () => {
+    montarHook();
+    renderizar();
+
+    const searchInput = screen.getByPlaceholderText(/Buscar por nome ou SKU/i);
+    fireEvent.change(searchInput, { target: { value: "m" } });
+    fireEvent.change(searchInput, { target: { value: "mochila" } });
+
+    await waitFor(
+      () => {
+        expect(ultimaChamada()).toMatchObject({ search: "mochila", page: 1 });
+      },
+      { timeout: 1500 }
+    );
+
+    const buscas = ((useProdutosHook.useProdutos as any).mock.calls as any[][])
+      .filter((chamada) => chamada[0])
+      .map((chamada) => chamada[0].search);
+    expect(buscas).not.toContain("m");
+  });
+
+  it("mostra o recorte da pagina e avanca para a proxima pagina", () => {
+    montarHook({ total: 120 });
+    renderizar();
+
+    expect(screen.getByTestId("produtos-contagem")).toHaveTextContent("Mostrando 1–50 de 120");
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima" }));
+
+    expect(ultimaChamada()).toMatchObject({ page: 2, pageSize: 50 });
+    expect(screen.getByTestId("produtos-contagem")).toHaveTextContent("Mostrando 51–100 de 120");
+  });
+
+  it("mantem o botao de proxima desabilitado na ultima pagina", () => {
+    montarHook({ total: 10 });
+    renderizar();
+
+    expect(screen.getByRole("button", { name: "Próxima" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Anterior" })).toBeDisabled();
+    expect(screen.getByTestId("produtos-contagem")).toHaveTextContent("Mostrando 1–10 de 10");
+  });
+
+  it("oferece nova tentativa quando a listagem falha", () => {
+    const refetch = vi.fn();
+    montarHook({ error: new Error("boom"), produtos: [], total: 0, refetch });
+    renderizar();
+
+    expect(screen.getByText(/Não foi possível carregar os produtos/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Tentar novamente" }));
+    expect(refetch).toHaveBeenCalled();
   });
 });

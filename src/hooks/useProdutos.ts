@@ -4,9 +4,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuditLog } from "./useAuditLog";
 import { productService } from "@/services/productService";
-import type { Produto, ProdutoInsert, ProdutoUpdate } from "@/types/product";
+import type { ProdutoUpdate } from "@/types/product";
 
-export const useProdutos = (options?: { enableRealtime?: boolean }) => {
+export interface UseProdutosOptions {
+  enableRealtime?: boolean;
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  curva?: string;
+}
+
+export const useProdutos = (options?: UseProdutosOptions) => {
+  const page = options?.page ?? 1;
+  const pageSize = options?.pageSize ?? 100;
+  const search = options?.search ?? "";
+  const curva = options?.curva ?? "todos";
   const queryClient = useQueryClient();
   const { log } = useAuditLog();
   const subscriptionRef = useRef<any>(null);
@@ -37,14 +49,22 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
   const {
     data: result,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useQuery({
-    queryKey: ["produtos", { page: 1, pageSize: 100 }],
-    queryFn: () => productService.getAll({ page: 1, pageSize: 100 }),
+    queryKey: ["produtos", "lista", { page, pageSize, search, curva }],
+    queryFn: () => productService.getAll({ page, pageSize, search, curva }),
+  });
+
+  const { data: contagem } = useQuery({
+    queryKey: ["produtos", "stats"],
+    queryFn: () => productService.contarPorCurva(),
   });
 
   const produtos = useMemo(() => result?.data || [], [result?.data]);
+  const total = result?.total || 0;
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
 
   const createProduto = useMutation({
     mutationFn: productService.create,
@@ -78,18 +98,6 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
     },
   });
 
-  const deleteProduto = useMutation({
-    mutationFn: productService.delete,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: ["produtos"] });
-      toast.success("Produto removido!");
-      log.custom("delete", "produtos", { id });
-    },
-    onError: (err: Error) => {
-      toast.error(err.message || "Erro ao remover produto");
-    },
-  });
-
   const bulkCreateProdutos = useMutation({
     mutationFn: productService.bulkCreate,
     onSuccess: (data) => {
@@ -106,22 +114,25 @@ export const useProdutos = (options?: { enableRealtime?: boolean }) => {
 
   const stats = useMemo(
     () => ({
-      total: result?.total || 0,
-      curvaA: produtos.filter((p) => p.curva_abc === "A").length,
-      curvaB: produtos.filter((p) => p.curva_abc === "B").length,
-      curvaC: produtos.filter((p) => p.curva_abc === "C").length,
+      total: contagem?.total ?? 0,
+      curvaA: contagem?.A ?? 0,
+      curvaB: contagem?.B ?? 0,
+      curvaC: contagem?.C ?? 0,
     }),
-    [produtos, result?.total]
+    [contagem]
   );
 
   return {
     produtos,
+    total,
+    page,
+    pageCount,
     loading: isLoading,
+    isFetching,
     error,
     refetch,
     createProduto,
     updateProduto,
-    deleteProduto,
     bulkCreateProdutos,
     stats,
   };
