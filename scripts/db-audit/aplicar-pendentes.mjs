@@ -42,6 +42,30 @@ const EXISTE_HAS_ROLE =
   "exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
   "where n.nspname = 'public' and p.proname = 'has_role')";
 
+// Mesma regra da migration 20261124120000_SEC_revoke_anon_execute.sql. Essa migration nao cria
+// objeto nenhum: ela revoga EXECUTE, entao a prova de aplicacao e negativa -- nenhuma funcao de
+// `public` fora do fluxo publico pre-login (e fora de extensao/trigger) pode continuar executavel
+// por `anon`, que herda EXECUTE de PUBLIC.
+const ANON_PUBLICO = [
+  "has_role",
+  "is_tenant_admin",
+  "is_tenant_member",
+  "effective_tenant_id",
+  "default_tenant_id",
+  "current_tenant_id",
+  "check_login_lockout",
+  "record_failed_login",
+  "reset_login_attempts",
+  "get_backend_health",
+];
+
+const ANON_SEM_EXECUTE =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' and p.prorettype <> 'pg_catalog.trigger'::regtype " +
+  "and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e') " +
+  "and has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  `and p.proname <> all (array[${ANON_PUBLICO.map((nome) => `'${nome}'`).join(",")}]))`;
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -61,6 +85,12 @@ const PENDENCIAS = [
       "to_regprocedure('public.iniciar_tarefa_picking(uuid)') is not null and " +
       "to_regprocedure('public.concluir_tarefa_picking(uuid,numeric,text)') is not null",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261124120000_SEC_revoke_anon_execute.sql",
+    nome: "revoke_anon_execute",
+    aplicado: ANON_SEM_EXECUTE,
+    dependencias: [],
   },
 ];
 

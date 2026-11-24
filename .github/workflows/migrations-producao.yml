@@ -1,6 +1,6 @@
 # docs:
 #   gatilho: workflow_dispatch apenas (modo `ler` por padrao; `aplicar` exige confirmacao explicita).
-#   prova: system_settings e as RPC iniciar/concluir_tarefa_picking existem no banco oficial, com as policies e grants do repo.
+#   prova: system_settings e as RPC iniciar/concluir_tarefa_picking existem no banco oficial, com as policies e grants do repo, e `anon` nao executa as funcoes revogadas em 20261124120000.
 #   falha: sem token, dependencia ausente, SQL que nao roda ou objeto continuando ausente depois de aplicar.
 #   avisa: notifica-falha-main.yml nao cobre dispatch manual; a falha aparece no run e no log do job.
 # nao-e-bug:
