@@ -266,6 +266,7 @@ export default function RomaneiosPage() {
           </div>
           <div className="flex gap-2">
             <Button
+              aria-label="Atualizar"
               variant="outline"
               size="icon"
               onClick={() => {
@@ -373,6 +374,7 @@ export default function RomaneiosPage() {
           </div>
           <div className="flex items-center gap-1 rounded-lg bg-muted/50 p-1">
             <Button
+              aria-label="Ver em grade"
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="icon"
               className="h-8 w-8 shadow-sm"
@@ -381,6 +383,7 @@ export default function RomaneiosPage() {
               <LayoutGrid className="h-4 w-4" />
             </Button>
             <Button
+              aria-label="Ver em lista"
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="icon"
               className="h-8 w-8"
@@ -507,7 +510,12 @@ export default function RomaneiosPage() {
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-9 w-9">
+                                <Button
+                                  aria-label="Mais ações"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9"
+                                >
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>

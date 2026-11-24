@@ -70,7 +70,13 @@ export function FileDropzone({
               <File className="h-4 w-4" />
               <span className="flex-1 truncate text-sm">{f.name}</span>
               <span className="text-xs text-muted-foreground">{(f.size / 1024).toFixed(1)}KB</span>
-              <Button type="button" variant="ghost" size="icon" onClick={() => removeFile(i)}>
+              <Button
+                aria-label="Remover arquivo"
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeFile(i)}
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>

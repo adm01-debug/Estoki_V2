@@ -43,6 +43,7 @@ export function KanbanCard({
           <div className="flex items-start justify-between">
             <h4 className="truncate text-sm font-medium">{title}</h4>
             <Button
+              aria-label="Mais ações do lote"
               variant="ghost"
               size="icon"
               className="h-6 w-6 opacity-0 group-hover:opacity-100"

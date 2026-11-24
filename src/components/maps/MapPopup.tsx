@@ -16,6 +16,7 @@ export function MapPopup({ children, position, onClose, className }: MapPopupPro
     >
       {onClose && (
         <Button
+          aria-label="Fechar"
           variant="ghost"
           size="icon"
           className="absolute right-1 top-1 h-6 w-6"

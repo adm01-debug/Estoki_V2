@@ -75,6 +75,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
       <Button
         variant="ghost"
         size="icon"
+        aria-label="Dispensar notificação"
         className="h-6 w-6 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
         onClick={(e) => {
           e.stopPropagation();
@@ -102,7 +103,12 @@ export function NotificationCenter() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="touch-friendly relative">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Notificações"
+          className="touch-friendly relative"
+        >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge

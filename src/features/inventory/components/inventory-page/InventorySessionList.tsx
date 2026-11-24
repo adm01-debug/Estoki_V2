@@ -105,6 +105,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
                     {item.variance === 0 ? "Acurado" : `Divergência: ${item.variance}`}
                   </Badge>
                   <Button
+                    aria-label="Ver detalhes da sessão"
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 opacity-0 transition-opacity group-hover/item:opacity-100"

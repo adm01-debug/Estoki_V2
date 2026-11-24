@@ -75,7 +75,13 @@ export function BulkActionsBar({
         <Badge variant="secondary" className="text-sm">
           {selectedCount} selecionado{selectedCount > 1 ? "s" : ""}
         </Badge>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClear}>
+        <Button
+          aria-label="Limpar seleção"
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={onClear}
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>

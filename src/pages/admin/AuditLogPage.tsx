@@ -170,7 +170,7 @@ export default function AuditLogPage() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" size="icon">
+                <Button aria-label="Atualizar" variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
                 <ExportButton onExport={(format) => exportData(format)} isExporting={isExporting} />
@@ -244,7 +244,7 @@ export default function AuditLogPage() {
                       cell: (log: AuditLogEntry) => (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button aria-label="Ver detalhes" variant="ghost" size="icon">
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>

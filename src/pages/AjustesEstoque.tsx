@@ -316,6 +316,7 @@ export default function AjustesEstoquePage() {
                             {adj.status === "pendente" && isAdmin ? (
                               <div className="flex justify-end gap-1">
                                 <Button
+                                  aria-label="Aprovar ajuste"
                                   variant="ghost"
                                   size="icon"
                                   className="text-success hover:bg-success/10 hover:text-success"
@@ -326,6 +327,7 @@ export default function AjustesEstoquePage() {
                                   <CheckCircle2 className="h-4 w-4" />
                                 </Button>
                                 <Button
+                                  aria-label="Rejeitar ajuste"
                                   variant="ghost"
                                   size="icon"
                                   className="text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -337,7 +339,7 @@ export default function AjustesEstoquePage() {
                                 </Button>
                               </div>
                             ) : (
-                              <Button variant="ghost" size="icon">
+                              <Button aria-label="Ver detalhes" variant="ghost" size="icon">
                                 <Eye className="h-4 w-4" />
                               </Button>
                             )}

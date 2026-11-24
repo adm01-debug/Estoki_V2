@@ -120,7 +120,12 @@ export default function InventarioCicloDetalhe() {
     <AppLayout>
       <div className="container mx-auto max-w-3xl space-y-4 p-4">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/inventario")}>
+          <Button
+            aria-label="Voltar"
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/inventario")}
+          >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>

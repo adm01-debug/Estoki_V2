@@ -131,6 +131,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <div className="grid max-h-48 grid-cols-8 gap-1 overflow-auto">
           {filteredIcons.map(([name, Icon]) => (
             <Button
+              aria-label={`Selecionar ícone ${name}`}
               key={name}
               variant={value === name ? "secondary" : "ghost"}
               size="icon"

@@ -35,7 +35,7 @@ export function Modal({ open, onClose, title, children, size = "md" }: ModalProp
         {title && (
           <div className="flex items-center justify-between border-b p-4">
             <h2 className="font-semibold">{title}</h2>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button aria-label="Fechar" variant="ghost" size="icon" onClick={onClose}>
               <X className="h-4 w-4" />
             </Button>
           </div>

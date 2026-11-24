@@ -176,6 +176,7 @@ export function PasswordInput({
           placeholder={placeholder}
         />
         <Button
+          aria-label={show ? "Ocultar senha" : "Mostrar senha"}
           type="button"
           variant="ghost"
           size="icon"

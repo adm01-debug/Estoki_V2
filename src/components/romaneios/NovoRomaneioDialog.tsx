@@ -151,6 +151,7 @@ export function NovoRomaneioDialog({
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold">Item {index + 1}</span>
                   <Button
+                    aria-label="Remover item"
                     type="button"
                     variant="ghost"
                     size="icon"

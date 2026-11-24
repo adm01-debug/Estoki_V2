@@ -100,7 +100,7 @@ export function EmojiPicker({ onSelect }: EmojiPickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button aria-label="Escolher emoji" variant="outline" size="icon">
           <Smile className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
