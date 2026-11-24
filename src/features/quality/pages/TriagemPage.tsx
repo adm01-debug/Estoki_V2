@@ -1,5 +1,6 @@
 import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
@@ -130,16 +131,7 @@ export default function TriagemPage() {
       t.data_fim || "",
       t.operador_id || "",
     ]);
-    const csvContent = [headers, ...rows]
-      .map((e) => e.map((val) => `"${val}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `triagem_promo_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `triagem_promo_${new Date().toISOString().split("T")[0]}`);
   }, [filteredAndSortedItems]);
 
   const totalPages = Math.ceil(filteredAndSortedItems.length / ITEMS_PER_PAGE);
