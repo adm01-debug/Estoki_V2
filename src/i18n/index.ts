@@ -22,6 +22,8 @@ i18n
       es: { translation: es },
     },
     fallbackLng: "pt-BR",
+    supportedLngs: supportedLanguages.map((l) => l.code),
+    load: "currentOnly",
     interpolation: { escapeValue: false },
     detection: {
       order: ["localStorage", "navigator"],

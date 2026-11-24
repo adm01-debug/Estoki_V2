@@ -64,7 +64,7 @@ for (const file of walk(ROOT)) {
 if (UPDATE) {
   writeFileSync(
     BASELINE,
-    JSON.stringify({ total, generatedAt: new Date().toISOString() }, null, 2) + "\n"
+    JSON.stringify({ total, generatedAt: new Date().toISOString(), perFile }, null, 2) + "\n"
   );
   console.log(
     `[i18n-hardcoded] baseline atualizado: ${total} ocorrências em ${Object.keys(perFile).length} arquivos.`
@@ -72,20 +72,30 @@ if (UPDATE) {
   process.exit(0);
 }
 
-let baseline = { total: Infinity };
+let baseline = { total: Infinity, perFile: {} };
 if (existsSync(BASELINE)) baseline = JSON.parse(readFileSync(BASELINE, "utf8"));
 else console.warn(`[i18n-hardcoded] sem baseline — criando um agora (${total}).`);
 
+const baselinePerFile = baseline.perFile ?? {};
+const novos = [];
+const pioraram = [];
+for (const [file, count] of Object.entries(perFile)) {
+  const before = baselinePerFile[file] ?? 0;
+  if (count > before) {
+    (before === 0 ? novos : pioraram).push([file, count, before]);
+  }
+}
+
 console.log(`[i18n-hardcoded] atual=${total} baseline=${baseline.total}`);
-if (total > baseline.total) {
-  console.error(`❌ Regressão: +${total - baseline.total} strings hard-coded.`);
-  const top = Object.entries(perFile)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 15);
-  for (const [f, c] of top) console.error(`  ${c}\t${f}`);
+if (novos.length || pioraram.length) {
+  console.error(
+    `❌ Regressão por arquivo: ${pioraram.length} arquivo(s) com mais strings e ${novos.length} arquivo(s) novo(s) com string PT.`
+  );
+  for (const [f, c, b] of pioraram) console.error(`  ${b} → ${c}\t${f}`);
+  for (const [f, c] of novos) console.error(`  0 → ${c}\t${f}`);
   console.error(
     `Migre para t('...') ou atualize baseline: node scripts/i18n-hardcoded-check.mjs --update`
   );
   process.exit(1);
 }
-console.log(`✅ Sem regressão de i18n hard-coded.`);
+console.log(`✅ Sem regressão de i18n hard-coded (por arquivo).`);
