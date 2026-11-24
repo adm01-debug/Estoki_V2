@@ -26,7 +26,6 @@ import { BasePageTemplate } from "@/components/templates/BasePageTemplate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRecebimentos } from "../hooks/useRecebimentos";
 import { NovoRecebimentoDialog } from "../components/NovoRecebimentoDialog";
 import { ImportarNFDialog } from "../components/ImportarNFDialog";
@@ -65,6 +64,13 @@ const statusConfig: Record<
   },
   cancelado: { label: "Cancelado", variant: "destructive", icon: <XCircle className="h-3 w-3" /> },
 };
+
+// Filtro de status é segmented control: `role="group"` + `aria-pressed` por
+// botão. As classes replicam o `TabsTrigger` que existia aqui (mesmo visual),
+// mas sem o `aria-controls` órfão que o Radix Tabs gerava sem `TabsContent`.
+const FILTRO_ITEM_CLASS =
+  "inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground ring-offset-background transition-all hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+const FILTRO_ITEM_ATIVO_CLASS = "bg-background text-foreground shadow-sm";
 
 export default function RecebimentoPage() {
   const navigate = useNavigate();
@@ -194,46 +200,93 @@ export default function RecebimentoPage() {
             </motion.div>
           )}
 
-          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full">
-            <TabsList className="scrollbar-hide w-full flex-nowrap justify-start overflow-x-auto rounded-xl bg-muted/30 p-1">
-              <TabsTrigger value="todos" className="gap-1 rounded-lg">
-                Todos{" "}
-                <Badge variant="secondary" className="ml-1 text-[10px]">
-                  {contagens.todos}
-                </Badge>
-              </TabsTrigger>
-              <TabsTrigger value="aguardando" className="gap-1 rounded-lg">
-                <Clock className="mr-1 h-3 w-3" /> Aguardando{" "}
-                <Badge variant="secondary" className="ml-1 text-[10px]">
-                  {contagens.aguardando}
-                </Badge>
-              </TabsTrigger>
-              <TabsTrigger value="em_transito" className="gap-1 rounded-lg">
-                <Truck className="mr-1 h-3 w-3" /> Trânsito{" "}
-                <Badge variant="secondary" className="ml-1 text-[10px]">
-                  {contagens.em_transito}
-                </Badge>
-              </TabsTrigger>
-              <TabsTrigger value="recebido" className="gap-1 rounded-lg">
-                <Package className="mr-1 h-3 w-3" /> Recebido{" "}
-                <Badge variant="secondary" className="ml-1 text-[10px]">
-                  {contagens.recebido}
-                </Badge>
-              </TabsTrigger>
-              <TabsTrigger value="em_conferencia" className="gap-1 rounded-lg">
-                <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Em Conferência{" "}
-                <Badge variant="secondary" className="ml-1 text-[10px]">
-                  {contagens.em_conferencia}
-                </Badge>
-              </TabsTrigger>
-              <TabsTrigger value="divergencia" className="gap-1 rounded-lg">
-                <AlertTriangle className="mr-1 h-3 w-3" /> Divergência{" "}
-                <Badge variant="destructive" className="ml-1 text-[10px]">
-                  {contagens.divergencia}
-                </Badge>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div
+            role="group"
+            aria-label="Filtrar recebimentos por status"
+            className="scrollbar-hide flex h-10 w-full flex-nowrap items-center justify-start gap-1 overflow-x-auto rounded-xl bg-muted/30 p-1"
+          >
+            <button
+              type="button"
+              aria-pressed={statusFilter === "todos"}
+              onClick={() => setStatusFilter("todos")}
+              className={cn(FILTRO_ITEM_CLASS, statusFilter === "todos" && FILTRO_ITEM_ATIVO_CLASS)}
+            >
+              Todos{" "}
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {contagens.todos}
+              </Badge>
+            </button>
+            <button
+              type="button"
+              aria-pressed={statusFilter === "aguardando"}
+              onClick={() => setStatusFilter("aguardando")}
+              className={cn(
+                FILTRO_ITEM_CLASS,
+                statusFilter === "aguardando" && FILTRO_ITEM_ATIVO_CLASS
+              )}
+            >
+              <Clock className="mr-1 h-3 w-3" /> Aguardando{" "}
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {contagens.aguardando}
+              </Badge>
+            </button>
+            <button
+              type="button"
+              aria-pressed={statusFilter === "em_transito"}
+              onClick={() => setStatusFilter("em_transito")}
+              className={cn(
+                FILTRO_ITEM_CLASS,
+                statusFilter === "em_transito" && FILTRO_ITEM_ATIVO_CLASS
+              )}
+            >
+              <Truck className="mr-1 h-3 w-3" /> Trânsito{" "}
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {contagens.em_transito}
+              </Badge>
+            </button>
+            <button
+              type="button"
+              aria-pressed={statusFilter === "recebido"}
+              onClick={() => setStatusFilter("recebido")}
+              className={cn(
+                FILTRO_ITEM_CLASS,
+                statusFilter === "recebido" && FILTRO_ITEM_ATIVO_CLASS
+              )}
+            >
+              <Package className="mr-1 h-3 w-3" /> Recebido{" "}
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {contagens.recebido}
+              </Badge>
+            </button>
+            <button
+              type="button"
+              aria-pressed={statusFilter === "em_conferencia"}
+              onClick={() => setStatusFilter("em_conferencia")}
+              className={cn(
+                FILTRO_ITEM_CLASS,
+                statusFilter === "em_conferencia" && FILTRO_ITEM_ATIVO_CLASS
+              )}
+            >
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" /> Em Conferência{" "}
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {contagens.em_conferencia}
+              </Badge>
+            </button>
+            <button
+              type="button"
+              aria-pressed={statusFilter === "divergencia"}
+              onClick={() => setStatusFilter("divergencia")}
+              className={cn(
+                FILTRO_ITEM_CLASS,
+                statusFilter === "divergencia" && FILTRO_ITEM_ATIVO_CLASS
+              )}
+            >
+              <AlertTriangle className="mr-1 h-3 w-3" /> Divergência{" "}
+              <Badge variant="destructive" className="ml-1 text-[10px]">
+                {contagens.divergencia}
+              </Badge>
+            </button>
+          </div>
 
           <div className="grid gap-3">
             {filteredItems.length === 0 ? (

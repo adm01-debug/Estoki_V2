@@ -73,10 +73,9 @@ const PRIVATE_ROUTES = [
  * com ícone).
  *
  * O que sobrou é dívida real e mensurável:
- * - `aria-valid-attr-value` em `/recebimento`: os 6 filtros usam `TabsTrigger`
- *   sem nenhum `TabsContent`, então o `aria-controls` que o Radix gera aponta
- *   para um id inexistente. Ou viram segmented control (`aria-pressed`), ou
- *   ganham os tabpanels.
+ * - `aria-valid-attr-value`: zero dívida. Os 6 filtros de `/recebimento`
+ *   deixaram de ser `TabsTrigger` sem `TabsContent` e viraram segmented control
+ *   (`role="group"` + `aria-pressed` por botão), sem `aria-controls` órfão.
  *
  * `color-contrast` foi zerado em 2026-11-24: os tokens ganharam par claro/escuro
  * com AA real (`--muted-foreground`, `--success`, `--warning`), o chrome escuro
@@ -85,10 +84,7 @@ const PRIVATE_ROUTES = [
  *
  * Ao corrigir, **baixe o número aqui** — este mapa é o burndown.
  */
-const KNOWN_DEBT_MARCACAO: Record<string, Record<string, number>> = {
-  // 6 `TabsTrigger` de filtro sem `TabsContent` → `aria-controls` órfão.
-  "/recebimento": { "aria-valid-attr-value": 1 },
-};
+const KNOWN_DEBT_MARCACAO: Record<string, Record<string, number>> = {};
 
 // Zerado: contraste agora é gate duro (qualquer nó novo falha o teste).
 const KNOWN_DEBT: Record<string, number> = {};
