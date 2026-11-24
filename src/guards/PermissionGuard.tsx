@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 type Permission =
   | "products.read"
@@ -69,9 +70,12 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
   fallback,
 }) => {
   const { user, loading } = useAuth();
-  const { data: userPermissions = [], isLoading: permissionsLoading } = useUserPermissions(
-    user?.id
-  );
+  const {
+    data: userPermissions = [],
+    isLoading: permissionsLoading,
+    isError: permissionsError,
+    refetch: refetchPermissions,
+  } = useUserPermissions(user?.id);
 
   if (loading || permissionsLoading) {
     return (
@@ -83,6 +87,16 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // Falha ao ler permissões não libera acesso, mas também não pode virar "sem permissão".
+  if (permissionsError) {
+    return (
+      <ErrorState
+        message="Não foi possível verificar suas permissões."
+        onRetry={() => refetchPermissions()}
+      />
+    );
   }
 
   const requiredPermissions = Array.isArray(permissions) ? permissions : [permissions];
