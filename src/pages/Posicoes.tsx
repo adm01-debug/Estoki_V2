@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -84,14 +85,7 @@ export default function PosicoesPage() {
       p.secao || "",
       p.nivel || "",
     ]);
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `posicoes_estoki_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `posicoes_estoki_${new Date().toISOString().split("T")[0]}`);
   };
 
   const posicoes = rawPosicoes || [];

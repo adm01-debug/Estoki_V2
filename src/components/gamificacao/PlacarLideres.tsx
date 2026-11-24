@@ -6,6 +6,7 @@ import { Trophy, Star, Target, Download, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useRanking, PeriodoRanking } from "@/hooks/useRanking";
+import { exportRowsToCSV } from "@/lib/export";
 import { Podium } from "./placar/Podium";
 import { RankingItem } from "./placar/RankingItem";
 import { getPosicaoIcon, getPodiumColor, getInitials } from "./placar/placarHelpers";
@@ -17,17 +18,11 @@ export const PlacarLideres: React.FC = () => {
   const handleExport = () => {
     const headers = ["Posição", "Nome", "XP Total", "Nível", "Conquistas"];
     const rows = ranking.map((r) => [r.posicao, r.nome, r.xp_total, r.nivel, r.conquistas]);
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute(
-      "download",
-      `ranking_estoki_${periodo}_${new Date().toISOString().split("T")[0]}.csv`
+    exportRowsToCSV(
+      headers,
+      rows,
+      `ranking_estoki_${periodo}_${new Date().toISOString().split("T")[0]}`
     );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const userNaFrente = minhaposicao ? ranking[ranking.indexOf(minhaposicao) - 1] : null;
