@@ -25,6 +25,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { citadosSemBanco, migrationsOrfas } from './coerencia.mjs';
+
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const SQL_PATH = path.join(RAIZ, 'scripts/inventario/banco.sql');
 const SAIDA = path.join(RAIZ, 'inventario/estado/banco.json');
@@ -212,7 +214,7 @@ export function rodaTodoDia(agenda) {
 }
 
 /** Junta banco + codigo + edges e calcula orfas e alertas. Funcao pura (testada em scripts/ci/). */
-export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
+export function montarInventario(dado, uso, edges = compararEdges(null, []), coerencia = { migrations: [], codigo: [] }) {
   const tabelas = dado.tabelas.map((t) => ({ ...t, uso_no_codigo: uso[t.nome] ?? { src: 0, edges: 0 } }));
   const orfas = tabelas
     .filter((t) => t.linhas === 0 && !t.citada_no_banco && t.uso_no_codigo.src + t.uso_no_codigo.edges === 0)
@@ -259,6 +261,17 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (dado.cron.historico.mais_de_7_dias > LIMIARES.historicoCronMaisDe7Dias) {
     alertas.push({ tipo: 'historico_cron_sem_limpeza', detalhe: [`${dado.cron.historico.mais_de_7_dias} linhas com mais de 7 dias`] });
   }
+  // Migration que existe no repo e nunca foi aplicada, e codigo vivo chamando tabela/RPC que o
+  // banco nao tem: as duas falham sem erro de CI (ver scripts/inventario/coerencia.mjs). O que ja e
+  // codigo morto conhecido vem com motivo e nao entra no alerta.
+  const migrationsSemMotivo = (coerencia.migrations ?? []).filter((m) => !m.motivo);
+  if (migrationsSemMotivo.length) {
+    alertas.push({ tipo: 'migration_orfa', detalhe: migrationsSemMotivo.map((m) => m.arquivo) });
+  }
+  const citadosSemMotivo = (coerencia.codigo ?? []).filter((c) => !c.motivo);
+  if (citadosSemMotivo.length) {
+    alertas.push({ tipo: 'objeto_citado_sem_banco', detalhe: citadosSemMotivo.map((c) => `${c.tipo}:${c.nome}`) });
+  }
   if (edges.no_repo_sem_deploy?.length) alertas.push({ tipo: 'edge_sem_deploy', detalhe: edges.no_repo_sem_deploy });
   if (edges.publicadas_sem_codigo_no_repo?.length) {
     alertas.push({ tipo: 'edge_publicada_sem_codigo', detalhe: edges.publicadas_sem_codigo_no_repo });
@@ -271,6 +284,14 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
     tabelas_orfas: {
       criterio: '0 linhas + nao citada em funcao/view do banco + nenhum .from() em src/ ou supabase/functions/',
       lista: orfas,
+    },
+    migrations_orfas: {
+      criterio: 'migration de supabase/migrations/ cuja tabela/funcao nao existe no banco (view fica de fora: o inventario nao guarda nome de view)',
+      lista: coerencia.migrations ?? [],
+    },
+    objetos_citados_sem_banco: {
+      criterio: 'tabela/RPC citada em src/ ou em edge publicada que o banco nao tem; motivo preenchido = codigo morto conhecido',
+      lista: coerencia.codigo ?? [],
     },
     edge_functions: edges,
     alertas,
@@ -325,7 +346,12 @@ async function main(argv) {
   // acusa 88 de 96 versoes como desconhecidas mesmo com a resposta correta.
   if (iEntrada !== -1) conferirOrigem(dado, tabelasDoManifesto(RAIZ), versoesDoRepo(RAIZ));
   const uso = contarUsoNoCodigo(RAIZ, dado.tabelas.map((t) => t.nome));
-  const inventario = montarInventario(dado, uso, compararEdges(publicadasApi, edgesNoRepo(RAIZ)));
+  const edges = compararEdges(publicadasApi, edgesNoRepo(RAIZ));
+  const coerencia = {
+    migrations: migrationsOrfas(RAIZ, dado),
+    codigo: citadosSemBanco(RAIZ, { ...dado, edge_functions: edges }),
+  };
+  const inventario = montarInventario(dado, uso, edges, coerencia);
   const texto = JSON.stringify(inventario, null, 2) + '\n';
   if (PARECE_CREDENCIAL.test(texto)) {
     throw new Error('a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql.');
@@ -334,7 +360,8 @@ async function main(argv) {
   fs.writeFileSync(SAIDA, texto);
   const ed = inventario.edge_functions;
   console.log(`banco.json: ${inventario.tabelas.length} tabelas, ${inventario.cron.jobs.length} cron jobs, `
-    + `${inventario.tabelas_orfas.lista.length} orfas, ${inventario.alertas.length} alertas, `
+    + `${inventario.tabelas_orfas.lista.length} orfas, ${inventario.migrations_orfas.lista.length} migrations orfas, `
+    + `${inventario.objetos_citados_sem_banco.lista.length} objetos sem banco, ${inventario.alertas.length} alertas, `
     + `edges ${ed.publicadas ? `${ed.publicadas.length} publicadas/${ed.no_repo} no repo` : `${ed.no_repo} no repo (publicadas nao consultadas)`} `
     + `(medido_em ${inventario.medido_em}).`);
 }
