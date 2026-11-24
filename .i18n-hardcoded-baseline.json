@@ -1,6 +1,6 @@
 {
-  "total": 1516,
-  "generatedAt": "2026-11-24T16:13:39.175Z",
+  "total": 1517,
+  "generatedAt": "2026-11-24T16:49:20.337Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -242,7 +242,7 @@
     "src/features/receiving/components/NovoRecebimentoDialog.tsx": 1,
     "src/features/receiving/components/novo-recebimento/FormFields.tsx": 16,
     "src/features/receiving/pages/ConferenciaRecebimento.tsx": 10,
-    "src/features/receiving/pages/RecebimentoPage.tsx": 11,
+    "src/features/receiving/pages/RecebimentoPage.tsx": 12,
     "src/features/shipping/components/ExpedicaoTimeline.tsx": 2,
     "src/features/shipping/components/VolumeChecklist.tsx": 3,
     "src/features/shipping/pages/ShippingPage.tsx": 17,
