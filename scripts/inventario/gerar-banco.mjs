@@ -239,6 +239,12 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (secDefinerFrouxo.length) {
     alertas.push({ tipo: 'funcao_security_definer_sem_search_path', detalhe: secDefinerFrouxo });
   }
+  // View sem `security_invoker` roda com os privilegios do dono: o RLS das tabelas de base nao vale e
+  // a leitura cruza tenants. Qualquer nome aqui e leitura de dado alheio, nao divida herdada.
+  const viewsFrouxas = dado.views_sem_security_invoker ?? [];
+  if (viewsFrouxas.length) {
+    alertas.push({ tipo: 'view_sem_security_invoker', detalhe: viewsFrouxas });
+  }
   const cronRuim = dado.cron.jobs
     .filter((j) => j.ativo && j.taxa_falha_7d_pct >= LIMIARES.taxaFalhaCronPct)
     .map((j) => `${j.nome} (${j.taxa_falha_7d_pct}% em 7d)`);

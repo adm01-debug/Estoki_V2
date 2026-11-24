@@ -55,3 +55,17 @@ test("nenhum security definer frouxo (ou chave ausente) nao gera alerta", () => 
     []
   );
 });
+
+test("view legivel por anon sem security_invoker vira alerta nomeado", () => {
+  const dado = { ...base([]), views_sem_security_invoker: ["vw_produtos (v)"] };
+  assert.deepEqual(montarInventario(dado, {}).alertas, [
+    { tipo: "view_sem_security_invoker", detalhe: ["vw_produtos (v)"] },
+  ]);
+});
+
+test("nenhuma view sem security_invoker nao gera alerta", () => {
+  assert.deepEqual(
+    montarInventario({ ...base([]), views_sem_security_invoker: [] }, {}).alertas,
+    []
+  );
+});
