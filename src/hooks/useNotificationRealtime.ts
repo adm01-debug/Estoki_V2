@@ -10,7 +10,7 @@ export function useNotificationRealtime(
     if (!user) return;
 
     const notifChannel = supabase
-      .channel("realtime_notificacoes")
+      .channel(`realtime_notificacoes-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "notificacoes" },
@@ -19,7 +19,7 @@ export function useNotificationRealtime(
       .subscribe();
 
     const alertChannel = supabase
-      .channel("realtime_alertas")
+      .channel(`realtime_alertas-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "alertas_historico" },

@@ -72,12 +72,14 @@ export function AmostragemSelecao({
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium">Método de Amostragem</label>
+          <label htmlFor="metodo-de-amostragem" className="text-sm font-medium">
+            Método de Amostragem
+          </label>
           <Select
             value={metodoSelecionado}
             onValueChange={(v) => setMetodoSelecionado(v as MetodoAmostragem)}
           >
-            <SelectTrigger>
+            <SelectTrigger id="metodo-de-amostragem">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface CPFInputProps {
@@ -31,10 +31,13 @@ export function CPFInput({ value = "", onChange, label, showValidation = true }:
     return check === parseInt(digits[10]);
   };
   const isValid = value.replace(/\D/g, "").length === 11 ? validateCPF(value) : null;
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <Input
+        id={uid}
         value={value}
         onChange={(e) => onChange?.(formatCPF(e.target.value))}
         placeholder="000.000.000-00"

@@ -330,6 +330,7 @@ export default function AssistenteIA() {
                   disabled={loading}
                 />
                 <Button
+                  aria-label="Enviar mensagem"
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || loading}
                   size="icon"

@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { ErrorState } from "@/components/common/AsyncStates";
 import {
   Search,
   UserPlus,
@@ -90,7 +91,9 @@ export default function UsersPage() {
   const {
     data: users = [],
     isLoading: loading,
+    isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["users-list"],
     queryFn: fetchUsers,
@@ -147,19 +150,15 @@ export default function UsersPage() {
     }
   };
 
-  if (error) {
+  if (isError) {
     return (
       <AppLayout title="Gerenciamento de Usuários" showBack>
         <PageTransition>
           <div className="p-6">
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-sm font-bold text-destructive">Erro ao carregar usuários</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {String((error as Error)?.message ?? error)}
-                </p>
-              </CardContent>
-            </Card>
+            <ErrorState
+              message={`Erro ao carregar usuários: ${String((error as Error)?.message ?? error)}`}
+              onRetry={() => void refetch()}
+            />
           </div>
         </PageTransition>
       </AppLayout>
@@ -195,6 +194,7 @@ export default function UsersPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por nome ou email"
                 placeholder="Buscar por nome ou email..."
                 className="pl-9"
                 value={searchTerm}
@@ -255,7 +255,7 @@ export default function UsersPage() {
                         <TableCell className="text-right">
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
+                              <Button aria-label="Mais ações" variant="ghost" size="icon">
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -305,7 +305,7 @@ export default function UsersPage() {
                 value={selectedRole}
                 onValueChange={(value) => setSelectedRole(value as AppRoleValue)}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger aria-label="Selecione o cargo" className="w-full">
                   <SelectValue placeholder="Selecione o cargo" />
                 </SelectTrigger>
                 <SelectContent>

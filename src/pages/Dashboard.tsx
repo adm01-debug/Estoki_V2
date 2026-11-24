@@ -1,10 +1,11 @@
 import { SEO } from "@/components/common/SEO";
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useDashboard } from "@/features/dashboard/hooks/useDashboard";
 import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "@/hooks/use-toast";
 import { Download, RefreshCw, Sparkles, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { History, Zap, ShieldCheck, Search as SearchIcon } from "lucide-react";
 
 const DashboardPage = () => {
+  const navigate = useNavigate();
+  const { canAccess } = useAuth();
   const [exportando, setExportando] = useState(false);
   const {
     kpis,
@@ -35,7 +38,6 @@ const DashboardPage = () => {
     error,
     refetch,
   } = useDashboard();
-  useKeyboardShortcuts();
   const realtimeStatus = useRealtimeKPIs({ showToasts: true });
 
   const handleExportPDF = useCallback(async () => {
@@ -204,13 +206,18 @@ const DashboardPage = () => {
                   </CardHeader>
                   <CardContent className="px-3 pt-4">
                     <DashboardActivityFeed />
-                    <Button
-                      variant="ghost"
-                      className="mt-2 h-8 w-full rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/5"
-                      onClick={() => haptics.light()}
-                    >
-                      Ver Log Completo
-                    </Button>
+                    {canAccess(["admin"]) && (
+                      <Button
+                        variant="ghost"
+                        className="mt-2 h-8 w-full rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/5"
+                        onClick={() => {
+                          haptics.light();
+                          navigate("/admin/auditoria");
+                        }}
+                      >
+                        Ver Log Completo
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </ModuleErrorBoundary>

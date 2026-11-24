@@ -92,80 +92,91 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
           <DialogTitle>Novo Ciclo de Inventário</DialogTitle>
           <DialogDescription>Crie um novo ciclo de contagem</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>Nome do Ciclo *</Label>
-            <Input
-              placeholder="Ex: Inventário Zona A - Semana 51"
-              value={newCiclo.nome}
-              onChange={(e) => setNewCiclo({ ...newCiclo, nome: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Descrição</Label>
-            <Textarea
-              placeholder="Descrição opcional"
-              value={newCiclo.descricao}
-              onChange={(e) => setNewCiclo({ ...newCiclo, descricao: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (submitting) return;
+            handleCriarCiclo();
+          }}
+        >
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select
-                value={newCiclo.tipo}
-                onValueChange={(v) => setNewCiclo({ ...newCiclo, tipo: v as TipoCiclo })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(tipoLabels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Zona Alvo</Label>
+              <Label htmlFor="nome-do-ciclo">Nome do Ciclo *</Label>
               <Input
-                placeholder="Ex: A, B, C"
-                value={newCiclo.zona_alvo}
-                onChange={(e) => setNewCiclo({ ...newCiclo, zona_alvo: e.target.value })}
+                id="nome-do-ciclo"
+                placeholder="Ex: Inventário Zona A - Semana 51"
+                value={newCiclo.nome}
+                onChange={(e) => setNewCiclo({ ...newCiclo, nome: e.target.value })}
               />
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label>Data Agendada</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full justify-start">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(newCiclo.data_agendada, "dd/MM/yyyy", { locale: ptBR })}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={newCiclo.data_agendada}
-                  onSelect={(date) => date && setNewCiclo({ ...newCiclo, data_agendada: date })}
-                  locale={ptBR}
+            <div className="space-y-2">
+              <Label htmlFor="descricao">Descrição</Label>
+              <Textarea
+                id="descricao"
+                placeholder="Descrição opcional"
+                value={newCiclo.descricao}
+                onChange={(e) => setNewCiclo({ ...newCiclo, descricao: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tipo">Tipo</Label>
+                <Select
+                  value={newCiclo.tipo}
+                  onValueChange={(v) => setNewCiclo({ ...newCiclo, tipo: v as TipoCiclo })}
+                >
+                  <SelectTrigger id="tipo">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(tipoLabels).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="zona-alvo">Zona Alvo</Label>
+                <Input
+                  id="zona-alvo"
+                  placeholder="Ex: A, B, C"
+                  value={newCiclo.zona_alvo}
+                  onChange={(e) => setNewCiclo({ ...newCiclo, zona_alvo: e.target.value })}
                 />
-              </PopoverContent>
-            </Popover>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Data Agendada</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button type="button" variant="outline" className="w-full justify-start">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(newCiclo.data_agendada, "dd/MM/yyyy", { locale: ptBR })}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={newCiclo.data_agendada}
+                    onSelect={(date) => date && setNewCiclo({ ...newCiclo, data_agendada: date })}
+                    locale={ptBR}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleCriarCiclo} disabled={submitting}>
-            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Criar Ciclo
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              Criar Ciclo
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

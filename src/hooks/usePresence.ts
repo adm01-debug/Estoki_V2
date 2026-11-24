@@ -15,7 +15,7 @@ export function usePresence(channelName: string, userId: string) {
         }
       });
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(channel);
     };
   }, [channelName, userId]);
   return { onlineUsers, count: onlineUsers.length };

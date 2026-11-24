@@ -33,9 +33,10 @@ import {
 } from "lucide-react";
 import { MovimentacaoCard } from "@/components/rastreabilidade/MovimentacaoCard";
 import { BuscaProdutoTab } from "@/components/rastreabilidade/BuscaProdutoTab";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function RastreabilidadePage() {
-  const { movimentacoes, loading, getMovimentacoesPorProduto } = useMovimentacoes();
+  const { movimentacoes, loading, error, refetch, getMovimentacoesPorProduto } = useMovimentacoes();
 
   const [tab, setTab] = useState("timeline");
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,6 +68,17 @@ export default function RastreabilidadePage() {
       return matchSearch && matchTipo;
     });
   }, [movimentacoes, searchTerm, filtroTipo]);
+
+  if (error) {
+    return (
+      <AppLayout title="Rastreabilidade" showBack>
+        <ErrorState
+          message="Não foi possível carregar as movimentações."
+          onRetry={() => refetch()}
+        />
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (
@@ -200,9 +212,10 @@ export default function RastreabilidadePage() {
             <TabsContent value="timeline" className="space-y-4">
               {/* Filtros */}
               <div className="flex flex-wrap gap-3">
-                <div className="relative min-w-[200px] flex-1">
+                <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar movimentações"
                     placeholder="Buscar movimentações..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -210,7 +223,7 @@ export default function RastreabilidadePage() {
                   />
                 </div>
                 <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                  <SelectTrigger className="w-[180px]">
+                  <SelectTrigger aria-label="Filtrar por tipo" className="w-[180px]">
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue />
                   </SelectTrigger>

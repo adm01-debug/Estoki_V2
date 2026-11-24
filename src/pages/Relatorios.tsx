@@ -73,7 +73,6 @@ const CHART_COLORS: Record<string, string> = {
 };
 
 export default function RelatoriosPage() {
-  const { movimentacoes, loading } = useMovimentacoes();
   const { log } = useAuditLog();
   const [operadorFiltro, setOperadorFiltro] = useState<string>("todos");
   const [metaDiaria, setMetaDiaria] = useState<number>(100);
@@ -81,6 +80,9 @@ export default function RelatoriosPage() {
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
   const [dataInicio, setDataInicio] = useState<Date>(subDays(new Date(), 30));
   const [dataFim, setDataFim] = useState<Date>(new Date());
+  // O periodo selecionado precisa ir para a consulta: sem isso os KPIs de 30 dias
+  // eram calculados sobre as 50 movimentacoes mais recentes (E-155)
+  const { movimentacoes, loading } = useMovimentacoes({ pageSize: 500, dataInicio, dataFim });
   const [exportando, setExportando] = useState(false);
   const [comparar, setComparar] = useState(false);
   const [reportTab, setReportTab] = useState("movimentacoes");
@@ -138,6 +140,17 @@ export default function RelatoriosPage() {
     });
   }, []);
 
+  // Operadores presentes no periodo carregado: o filtro nao dispara consulta nova
+  const operadores = useMemo(() => {
+    const mapa = new Map<string, string>();
+    movimentacoes.forEach((mov) => {
+      if (mov.operador_id) mapa.set(mov.operador_id, mov.operador_nome || "Operador");
+    });
+    return Array.from(mapa, ([id, nome]) => ({ id, nome })).sort((a, b) =>
+      a.nome.localeCompare(b.nome)
+    );
+  }, [movimentacoes]);
+
   const dadosFiltrados = useMemo(
     () =>
       movimentacoes.filter((mov) => {
@@ -155,7 +168,7 @@ export default function RelatoriosPage() {
         const matchOperador = operadorFiltro === "todos" || mov.operador_id === operadorFiltro;
         return dentroDoPeriodo && matchSearch && matchTipo && matchOperador;
       }),
-    [movimentacoes, searchTerm, tipoFiltro, dataInicio, dataFim]
+    [movimentacoes, searchTerm, tipoFiltro, dataInicio, dataFim, operadorFiltro]
   );
 
   const kpis = useMemo(() => {
@@ -342,6 +355,11 @@ export default function RelatoriosPage() {
               setDataInicio={setDataInicio}
               dataFim={dataFim}
               setDataFim={setDataFim}
+              operadorFiltro={operadorFiltro}
+              setOperadorFiltro={setOperadorFiltro}
+              operadores={operadores}
+              metaDiaria={metaDiaria}
+              setMetaDiaria={setMetaDiaria}
             />
 
             <div className="flex flex-wrap items-center justify-between gap-3">

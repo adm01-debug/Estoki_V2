@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface CEPInputProps {
@@ -42,11 +42,13 @@ export function CEPInput({ value = "", onChange, onAddressFound, label }: CEPInp
       }
     }
   };
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <div className="relative">
-        <Input value={value} onChange={handleChange} placeholder="00000-000" />
+        <Input id={uid} value={value} onChange={handleChange} placeholder="00000-000" />
         {loading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />

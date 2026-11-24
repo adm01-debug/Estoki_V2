@@ -6,7 +6,7 @@
     "description": "API pública do ESTOKI WMS. Todas as chamadas passam pelas Edge Functions (`/functions/v1/*`) do Lovable Cloud com validação Zod e rate limiting.",
     "contact": {
       "name": "ESTOKI",
-      "url": "https://cart-bloom-connect.lovable.app"
+      "url": "https://estoki.app"
     },
     "license": {
       "name": "Proprietary"

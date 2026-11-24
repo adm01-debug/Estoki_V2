@@ -45,88 +45,99 @@ export function KPIMetaDialog({
 }: KPIMetaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{editingMeta ? "Editar Meta" : "Nova Meta"}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label>Nome</Label>
-            <Input
-              value={metaForm.nome}
-              onChange={(e) => onMetaFormChange({ ...metaForm, nome: e.target.value })}
-              placeholder="Ex: Meta de Triagem Diária"
-            />
-          </div>
-          <div>
-            <Label>Descrição</Label>
-            <Input
-              value={metaForm.descricao}
-              onChange={(e) => onMetaFormChange({ ...metaForm, descricao: e.target.value })}
-              placeholder="Descrição opcional"
-            />
-          </div>
-          <div>
-            <Label>Métrica</Label>
-            <Select
-              value={metaForm.metrica}
-              onValueChange={(v) => onMetaFormChange({ ...metaForm, metrica: v })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a métrica" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="itens_triados">Itens Triados</SelectItem>
-                <SelectItem value="taxa_aprovacao">Taxa de Aprovação</SelectItem>
-                <SelectItem value="tempo_medio_triagem_minutos">Tempo Médio Triagem</SelectItem>
-                <SelectItem value="pedidos_separados">Pedidos Separados</SelectItem>
-                <SelectItem value="acuracidade_picking">Acuracidade Picking</SelectItem>
-                <SelectItem value="volumes_recebidos">Volumes Recebidos</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Tipo</Label>
-            <Select
-              value={metaForm.tipo}
-              onValueChange={(v) => onMetaFormChange({ ...metaForm, tipo: v })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="maior_melhor">Maior é melhor</SelectItem>
-                <SelectItem value="menor_melhor">Menor é melhor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSave();
+          }}
+        >
+          <div className="space-y-4">
             <div>
-              <Label>Valor da Meta</Label>
+              <Label htmlFor="nome">Nome</Label>
               <Input
-                type="number"
-                value={metaForm.valor_meta}
-                onChange={(e) =>
-                  onMetaFormChange({ ...metaForm, valor_meta: Number(e.target.value) })
-                }
+                id="nome"
+                value={metaForm.nome}
+                onChange={(e) => onMetaFormChange({ ...metaForm, nome: e.target.value })}
+                placeholder="Ex: Meta de Triagem Diária"
               />
             </div>
             <div>
-              <Label>Unidade</Label>
+              <Label htmlFor="descricao">Descrição</Label>
               <Input
-                value={metaForm.unidade}
-                onChange={(e) => onMetaFormChange({ ...metaForm, unidade: e.target.value })}
-                placeholder="Ex: un, %, min"
+                id="descricao"
+                value={metaForm.descricao}
+                onChange={(e) => onMetaFormChange({ ...metaForm, descricao: e.target.value })}
+                placeholder="Descrição opcional"
               />
             </div>
+            <div>
+              <Label htmlFor="metrica">Métrica</Label>
+              <Select
+                value={metaForm.metrica}
+                onValueChange={(v) => onMetaFormChange({ ...metaForm, metrica: v })}
+              >
+                <SelectTrigger id="metrica">
+                  <SelectValue placeholder="Selecione a métrica" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="itens_triados">Itens Triados</SelectItem>
+                  <SelectItem value="taxa_aprovacao">Taxa de Aprovação</SelectItem>
+                  <SelectItem value="tempo_medio_triagem_minutos">Tempo Médio Triagem</SelectItem>
+                  <SelectItem value="pedidos_separados">Pedidos Separados</SelectItem>
+                  <SelectItem value="acuracidade_picking">Acuracidade Picking</SelectItem>
+                  <SelectItem value="volumes_recebidos">Volumes Recebidos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="tipo">Tipo</Label>
+              <Select
+                value={metaForm.tipo}
+                onValueChange={(v) => onMetaFormChange({ ...metaForm, tipo: v })}
+              >
+                <SelectTrigger id="tipo">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="maior_melhor">Maior é melhor</SelectItem>
+                  <SelectItem value="menor_melhor">Menor é melhor</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="valor-da-meta">Valor da Meta</Label>
+                <Input
+                  id="valor-da-meta"
+                  type="number"
+                  value={metaForm.valor_meta}
+                  onChange={(e) =>
+                    onMetaFormChange({ ...metaForm, valor_meta: Number(e.target.value) })
+                  }
+                />
+              </div>
+              <div>
+                <Label htmlFor="unidade">Unidade</Label>
+                <Input
+                  id="unidade"
+                  value={metaForm.unidade}
+                  onChange={(e) => onMetaFormChange({ ...metaForm, unidade: e.target.value })}
+                  placeholder="Ex: un, %, min"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={onSave}>{editingMeta ? "Atualizar" : "Criar"}</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit">{editingMeta ? "Atualizar" : "Criar"}</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

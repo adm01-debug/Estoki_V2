@@ -1,5 +1,6 @@
 import { TriagemCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 import { usePullToRefresh } from "@/hooks/useTouchGestures";
 import { PullToRefreshIndicator } from "@/components/mobile/SwipeableListItem";
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
@@ -130,16 +131,7 @@ export default function TriagemPage() {
       t.data_fim || "",
       t.operador_id || "",
     ]);
-    const csvContent = [headers, ...rows]
-      .map((e) => e.map((val) => `"${val}"`).join(","))
-      .join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `triagem_promo_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `triagem_promo_${new Date().toISOString().split("T")[0]}`);
   }, [filteredAndSortedItems]);
 
   const totalPages = Math.ceil(filteredAndSortedItems.length / ITEMS_PER_PAGE);
@@ -573,6 +565,7 @@ export default function TriagemPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
               <Input
+                aria-label="Buscar por ID ou Lote"
                 placeholder="Buscar por ID ou Lote..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -588,7 +581,10 @@ export default function TriagemPage() {
                   setStatusFilter(v);
                 }}
               >
-                <SelectTrigger className="h-11 w-[160px] rounded-xl border-border/20 bg-background font-medium">
+                <SelectTrigger
+                  aria-label="Status"
+                  className="h-11 w-[160px] rounded-xl border-border/20 bg-background font-medium"
+                >
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
@@ -600,6 +596,7 @@ export default function TriagemPage() {
                 </SelectContent>
               </Select>
               <Button
+                aria-label="Alternar ordenação"
                 variant="outline"
                 size="icon"
                 className="h-11 w-11 rounded-xl border-border/20 bg-background hover:bg-muted"
@@ -623,6 +620,7 @@ export default function TriagemPage() {
           {/* Floating Action Button for Mobile */}
           <div className="fixed bottom-6 right-6 z-50 md:hidden">
             <Button
+              aria-label="Iniciar triagem"
               size="icon"
               className="glow-button h-14 w-14 rounded-full shadow-2xl shadow-primary/40"
               onClick={() => {

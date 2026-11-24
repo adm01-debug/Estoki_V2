@@ -3,8 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ErrorState } from "@/components/common/AsyncStates";
+import {
+  fetchFornecedorScores,
+  recalcularFornecedorScores,
+} from "@/services/fornecedorScoreService";
 import {
   Building2,
   TrendingUp,
@@ -28,88 +32,46 @@ import {
 } from "recharts";
 import { Progress } from "@/components/ui/progress";
 
-interface FornecedorScore {
-  id: string;
-  fornecedor: string;
-  total_entregas: number;
-  entregas_conformes: number;
-  entregas_divergentes: number;
-  lead_time_medio_dias: number | null;
-  score: number | null;
-  ultima_entrega: string | null;
-}
-
-async function fetchScores(): Promise<FornecedorScore[]> {
-  const { data, error } = await supabase
-    .from("fornecedor_scores")
-    .select("*")
-    .order("score", { ascending: false });
-  if (error) throw error;
-  return (data as FornecedorScore[]) || [];
-}
-
 export default function FornecedoresAvancado() {
   const queryClient = useQueryClient();
-  const { data: fornecedores = [], isLoading: loading } = useQuery({
+  const [recalculando, setRecalculando] = useState(false);
+  const {
+    data: fornecedores = [],
+    isLoading: loading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["fornecedor-scores"],
-    queryFn: fetchScores,
+    queryFn: fetchFornecedorScores,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
   });
 
   const recalcularScores = async () => {
-    toast.info("Recalculando scores...");
-    const { data: lotes } = await supabase
-      .from("lotes")
-      .select("fornecedor, status, data_recebimento, previsao_chegada")
-      .not("fornecedor", "is", null);
-    if (!lotes || lotes.length === 0) {
-      toast.warning("Nenhum lote com fornecedor encontrado");
-      return;
-    }
+    setRecalculando(true);
+    try {
+      const resultado = await recalcularFornecedorScores();
 
-    const scoreMap: Record<
-      string,
-      { total: number; conformes: number; divergentes: number; leadTimes: number[] }
-    > = {};
-    lotes.forEach((l) => {
-      const f = l.fornecedor!;
-      if (!scoreMap[f]) scoreMap[f] = { total: 0, conformes: 0, divergentes: 0, leadTimes: [] };
-      scoreMap[f].total++;
-      if (l.status === "divergencia") scoreMap[f].divergentes++;
-      else scoreMap[f].conformes++;
-      if (l.previsao_chegada && l.data_recebimento) {
-        const diff =
-          (new Date(l.data_recebimento).getTime() - new Date(l.previsao_chegada).getTime()) /
-          (1000 * 60 * 60 * 24);
-        scoreMap[f].leadTimes.push(Math.abs(diff));
+      if (resultado.fornecedores === 0) {
+        toast.warning("Nenhum lote com fornecedor encontrado");
+        return;
       }
-    });
 
-    for (const [fornecedor, data] of Object.entries(scoreMap)) {
-      const conformidade = data.total > 0 ? (data.conformes / data.total) * 100 : 100;
-      const avgLead =
-        data.leadTimes.length > 0
-          ? data.leadTimes.reduce((a, b) => a + b, 0) / data.leadTimes.length
-          : 0;
-      const score = Math.max(0, Math.min(100, conformidade - avgLead * 2));
+      if (resultado.falhas.length > 0) {
+        toast.error(
+          `${resultado.atualizados} de ${resultado.fornecedores} fornecedores atualizados. Falhas: ${resultado.falhas.join(", ")}`
+        );
+      } else {
+        toast.success(`${resultado.atualizados} fornecedores recalculados`);
+      }
 
-      await supabase.from("fornecedor_scores").upsert(
-        {
-          fornecedor,
-          total_entregas: data.total,
-          entregas_conformes: data.conformes,
-          entregas_divergentes: data.divergentes,
-          lead_time_medio_dias: Math.round(avgLead * 10) / 10,
-          score: Math.round(score * 10) / 10,
-          ultima_entrega: new Date().toISOString(),
-        } as any,
-        { onConflict: "fornecedor" }
-      );
+      queryClient.invalidateQueries({ queryKey: ["fornecedor-scores"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao recalcular scores");
+    } finally {
+      setRecalculando(false);
     }
-
-    toast.success("Scores recalculados!");
-    queryClient.invalidateQueries({ queryKey: ["fornecedor-scores"] });
   };
 
   const getScoreColor = (score: number) => {
@@ -123,6 +85,9 @@ export default function FornecedoresAvancado() {
     if (score >= 70) return "hsl(var(--warning))";
     return "hsl(var(--destructive))";
   };
+
+  const corScore = (score: number | null) =>
+    score === null ? "text-muted-foreground" : getScoreColor(score);
 
   const getStars = (score: number) => {
     if (score >= 95) return 5;
@@ -140,10 +105,22 @@ export default function FornecedoresAvancado() {
 
   const totalEntregas = fornecedores.reduce((s, f) => s + f.total_entregas, 0);
   const totalDivergentes = fornecedores.reduce((s, f) => s + f.entregas_divergentes, 0);
+  const comScore = fornecedores.filter((f) => f.score !== null);
   const avgScore =
-    fornecedores.length > 0
-      ? Math.round(fornecedores.reduce((s, f) => s + (f.score ?? 0), 0) / fornecedores.length)
-      : 0;
+    comScore.length > 0
+      ? Math.round(comScore.reduce((s, f) => s + (f.score ?? 0), 0) / comScore.length)
+      : null;
+
+  if (isError) {
+    return (
+      <div className="space-y-6 p-4 md:p-6">
+        <ErrorState
+          message={`Não foi possível carregar os fornecedores: ${String((error as Error)?.message ?? error ?? "erro desconhecido")}`}
+          onRetry={() => void refetch()}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 md:p-6">
@@ -154,9 +131,9 @@ export default function FornecedoresAvancado() {
             Score, ranking e análise de confiabilidade
           </p>
         </div>
-        <Button onClick={recalcularScores} variant="outline">
-          <RefreshCw className="mr-2 h-4 w-4" />
-          Recalcular Scores
+        <Button onClick={recalcularScores} variant="outline" disabled={recalculando}>
+          <RefreshCw className={`mr-2 h-4 w-4 ${recalculando ? "animate-spin" : ""}`} />
+          {recalculando ? "Recalculando..." : "Recalcular Scores"}
         </Button>
       </div>
 
@@ -178,9 +155,9 @@ export default function FornecedoresAvancado() {
           },
           {
             label: "Score Médio",
-            value: `${avgScore}%`,
+            value: avgScore === null ? "\u2014" : `${avgScore}%`,
             icon: Star,
-            color: getScoreColor(avgScore),
+            color: corScore(avgScore),
           },
         ].map((kpi, i) => (
           <motion.div
@@ -265,15 +242,19 @@ export default function FornecedoresAvancado() {
                 <div className="flex items-center justify-between">
                   <span className="truncate text-xs font-semibold">{f.fornecedor}</span>
                   <div className="flex">
-                    {Array.from({ length: getStars(f.score ?? 0) }).map((_, s) => (
-                      <Star key={s} className="h-3 w-3 fill-warning text-warning" />
-                    ))}
+                    {Array.from({ length: f.score === null ? 0 : getStars(f.score) }).map(
+                      (_, s) => (
+                        <Star key={s} className="h-3 w-3 fill-warning text-warning" />
+                      )
+                    )}
                   </div>
                 </div>
-                <Progress value={f.score} className="h-1.5" />
+                <Progress value={f.score ?? 0} className="h-1.5" />
                 <div className="flex justify-between text-[10px] text-muted-foreground">
                   <span>{f.total_entregas} entregas</span>
-                  <span className={getScoreColor(f.score ?? 0)}>{f.score ?? 0}%</span>
+                  <span className={corScore(f.score)}>
+                    {f.score === null ? "sem entregas" : `${f.score}%`}
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -292,12 +273,24 @@ export default function FornecedoresAvancado() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="p-2 text-left font-semibold">Fornecedor</th>
-                    <th className="p-2 text-center font-semibold">Score</th>
-                    <th className="p-2 text-center font-semibold">Entregas</th>
-                    <th className="p-2 text-center font-semibold">Conformes</th>
-                    <th className="p-2 text-center font-semibold">Divergentes</th>
-                    <th className="p-2 text-center font-semibold">Lead Time (dias)</th>
+                    <th scope="col" className="p-2 text-left font-semibold">
+                      Fornecedor
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Score
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Entregas
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Conformes
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Divergentes
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Lead Time (dias)
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -305,14 +298,14 @@ export default function FornecedoresAvancado() {
                     <tr key={f.id} className="border-b border-border/30 hover:bg-muted/20">
                       <td className="p-2 font-medium">{f.fornecedor}</td>
                       <td className="p-2 text-center">
-                        <Badge className={`${getScoreColor(f.score ?? 0)} border bg-transparent`}>
-                          {f.score ?? 0}%
+                        <Badge className={`${corScore(f.score)} border bg-transparent`}>
+                          {f.score === null ? "\u2014" : `${f.score}%`}
                         </Badge>
                       </td>
                       <td className="p-2 text-center">{f.total_entregas}</td>
                       <td className="p-2 text-center text-success">{f.entregas_conformes}</td>
                       <td className="p-2 text-center text-destructive">{f.entregas_divergentes}</td>
-                      <td className="p-2 text-center">{f.lead_time_medio_dias}</td>
+                      <td className="p-2 text-center">{f.lead_time_medio_dias ?? "\u2014"}</td>
                     </tr>
                   ))}
                 </tbody>

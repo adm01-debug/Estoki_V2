@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 interface LightboxProps {
@@ -14,8 +14,13 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
   const next = () => setIndex((i) => (i + 1) % images.length);
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[95vh] max-w-[95vw] bg-black/90 p-0">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-h-[95vh] max-w-[95vw] bg-black/90 p-0"
+      >
+        <DialogTitle className="sr-only">Visualizador de imagens</DialogTitle>
         <Button
+          aria-label="Fechar visualizador"
           variant="ghost"
           size="icon"
           className="absolute right-2 top-2 text-white"
@@ -24,11 +29,18 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
           <X />
         </Button>
         <div className="flex h-full items-center justify-center">
-          <Button variant="ghost" size="icon" className="absolute left-2 text-white" onClick={prev}>
+          <Button
+            aria-label="Imagem anterior"
+            variant="ghost"
+            size="icon"
+            className="absolute left-2 text-white"
+            onClick={prev}
+          >
             <ChevronLeft />
           </Button>
           <img src={images[index]} className="max-h-[85vh] max-w-[85vw] object-contain" />
           <Button
+            aria-label="Próxima imagem"
             variant="ghost"
             size="icon"
             className="absolute right-2 text-white"

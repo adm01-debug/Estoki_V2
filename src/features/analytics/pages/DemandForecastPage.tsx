@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { useDemandForecast } from "../hooks/useDemandForecast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +75,12 @@ export default function PrevisaoDemandaIA() {
   const [previsao, setPrevisao] = useState<Previsao | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { data: produtos = [] } = useQuery({
+  const {
+    data: produtos = [],
+    isError: erroProdutos,
+    error: erroProdutosObj,
+    refetch: recarregarProdutos,
+  } = useQuery({
     queryKey: ["produtos-previsao"],
     queryFn: fetchProdutosPrevisao,
     staleTime: 1000 * 60 * 5,
@@ -82,10 +88,11 @@ export default function PrevisaoDemandaIA() {
 
   const calcularPrevisao = async (produto: Produto): Promise<Previsao> => {
     // Buscar estoque atual
-    const { data: estoque } = await supabase
+    const { data: estoque, error: estoqueError } = await supabase
       .from("estoque_posicao")
       .select("quantidade")
       .eq("produto_id", produto.id);
+    if (estoqueError) throw estoqueError;
     const estoqueAtual = (estoque || []).reduce((s, e) => s + e.quantidade, 0);
 
     // Usar giro mensal como base
@@ -152,10 +159,16 @@ export default function PrevisaoDemandaIA() {
       return;
     }
     setLoading(true);
-    const produto = produtos.find((p) => p.id === selectedProduto)!;
-    const prev = await calcularPrevisao(produto);
-    setPrevisao(prev);
-    setLoading(false);
+    try {
+      const produto = produtos.find((p) => p.id === selectedProduto);
+      if (!produto) throw new Error("Produto não encontrado na lista carregada");
+      const prev = await calcularPrevisao(produto);
+      setPrevisao(prev);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao calcular a estimativa");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePreverTodos = async () => {
@@ -174,7 +187,9 @@ export default function PrevisaoDemandaIA() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">📊 Previsão de Demanda IA</h1>
-          <p className="text-sm text-muted-foreground">Análise preditiva avançada com Lovable AI</p>
+          <p className="text-sm text-muted-foreground">
+            Recomendações por IA (Lovable) e estimativa heurística local de giro e sazonalidade
+          </p>
         </div>
         <Button onClick={handlePreverTodos} disabled={loadingIA} variant="outline">
           <Brain className={`mr-2 h-4 w-4 ${loadingIA ? "animate-pulse" : ""}`} />
@@ -183,11 +198,17 @@ export default function PrevisaoDemandaIA() {
       </div>
 
       {/* Product selector */}
+      {erroProdutos && (
+        <ErrorState
+          message={`Não foi possível carregar os produtos para previsão: ${(erroProdutosObj as Error).message}`}
+          onRetry={() => recarregarProdutos()}
+        />
+      )}
       <Card className="glass-card">
         <CardContent className="p-4">
           <div className="flex gap-3">
             <Select value={selectedProduto} onValueChange={setSelectedProduto}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger aria-label="Selecione um produto" className="flex-1">
                 <SelectValue placeholder="Selecione um produto" />
               </SelectTrigger>
               <SelectContent>
@@ -203,6 +224,11 @@ export default function PrevisaoDemandaIA() {
               {loading ? "Calculando..." : "Prever"}
             </Button>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            A estimativa do botão Prever é heurística: giro mensal do cadastro (padrão 30 un/mês
+            quando ausente) x fator sazonal médio do mês. Para previsão com IA use o botão Análise
+            Global IA.
+          </p>
         </CardContent>
       </Card>
 
@@ -342,11 +368,21 @@ export default function PrevisaoDemandaIA() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="p-2 text-left">Produto</th>
-                    <th className="p-2 text-center">Demanda Prevista</th>
-                    <th className="p-2 text-center">Tendência</th>
-                    <th className="p-2 text-center">Confiança</th>
-                    <th className="p-2 text-left">Recomendação IA</th>
+                    <th scope="col" className="p-2 text-left">
+                      Produto
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Demanda Prevista
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Tendência
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Confiança
+                    </th>
+                    <th scope="col" className="p-2 text-left">
+                      Recomendação IA
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

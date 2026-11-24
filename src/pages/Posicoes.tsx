@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -17,6 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEstoque } from "@/features/inventory/hooks/useEstoque";
+import { ErrorState } from "@/components/common/AsyncStates";
 import type { PosicaoEstoque, StatusPosicao } from "@/types/inventory";
 import { NovaPosicaoDialog } from "@/features/inventory/components/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "@/features/inventory/components/PosicaoDetalhesDialog";
@@ -52,7 +54,14 @@ const statusLabels: Record<
 };
 
 export default function PosicoesPage() {
-  const { posicoes: rawPosicoes, loading, updatePosicao, getEstatisticas, refetch } = useEstoque();
+  const {
+    posicoes: rawPosicoes,
+    loading,
+    error,
+    updatePosicao,
+    getEstatisticas,
+    refetch,
+  } = useEstoque();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const toggleSelection = (id: string) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -61,8 +70,13 @@ export default function PosicoesPage() {
   const clearSelection = () => setSelectedIds([]);
 
   const handleBulkUpdate = async (status: StatusPosicao) => {
-    await updatePosicao.mutateAsync({ ids: selectedIds, status });
-    clearSelection();
+    if (updatePosicao.isPending || selectedIds.length === 0) return;
+    try {
+      await updatePosicao.mutateAsync({ ids: selectedIds, status });
+      clearSelection();
+    } catch {
+      toast.error("Não foi possível atualizar as posições selecionadas");
+    }
   };
 
   const handleExport = () => {
@@ -76,14 +90,7 @@ export default function PosicoesPage() {
       p.secao || "",
       p.nivel || "",
     ]);
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `posicoes_estoki_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `posicoes_estoki_${new Date().toISOString().split("T")[0]}`);
   };
 
   const posicoes = rawPosicoes || [];
@@ -102,6 +109,16 @@ export default function PosicoesPage() {
   }, [posicoes, search, statusFilter, tipoFilter]);
 
   const stats = useMemo(() => getEstatisticas(), [getEstatisticas]);
+
+  if (error) {
+    return (
+      <AppLayout title="Posições de Estoque" showBack>
+        <PageTransition>
+          <ErrorState message="Não foi possível carregar as posições." onRetry={() => refetch()} />
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (
@@ -181,6 +198,7 @@ export default function PosicoesPage() {
                   size="sm"
                   variant="outline"
                   className="gap-1"
+                  disabled={updatePosicao.isPending}
                   onClick={() => handleBulkUpdate("bloqueado")}
                 >
                   <Lock className="h-3 w-3" />
@@ -190,6 +208,7 @@ export default function PosicoesPage() {
                   size="sm"
                   variant="outline"
                   className="gap-1"
+                  disabled={updatePosicao.isPending}
                   onClick={() => handleBulkUpdate("livre")}
                 >
                   <Unlock className="h-3 w-3" />
@@ -266,9 +285,10 @@ export default function PosicoesPage() {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-2">
-              <div className="relative min-w-[200px] flex-1">
+              <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar posição"
                   placeholder="Buscar posição..."
                   className="pl-10"
                   value={search}
@@ -284,7 +304,7 @@ export default function PosicoesPage() {
                 )}
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[130px]">
+                <SelectTrigger aria-label="Status" className="w-[130px]">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -297,7 +317,7 @@ export default function PosicoesPage() {
                 </SelectContent>
               </Select>
               <Select value={tipoFilter} onValueChange={setTipoFilter}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger aria-label="Tipo" className="w-[140px]">
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent>

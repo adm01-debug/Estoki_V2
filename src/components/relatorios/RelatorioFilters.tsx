@@ -27,6 +27,11 @@ interface RelatorioFiltersProps {
   setDataInicio: (d: Date) => void;
   dataFim: Date;
   setDataFim: (d: Date) => void;
+  operadorFiltro: string;
+  setOperadorFiltro: (v: string) => void;
+  operadores: { id: string; nome: string }[];
+  metaDiaria: number;
+  setMetaDiaria: (v: number) => void;
 }
 
 export function RelatorioFilters({
@@ -38,6 +43,11 @@ export function RelatorioFilters({
   setDataInicio,
   dataFim,
   setDataFim,
+  operadorFiltro,
+  setOperadorFiltro,
+  operadores,
+  metaDiaria,
+  setMetaDiaria,
 }: RelatorioFiltersProps) {
   return (
     <Card>
@@ -48,12 +58,15 @@ export function RelatorioFilters({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
           <div className="space-y-1.5">
-            <Label className="text-xs">Buscar</Label>
+            <Label htmlFor="buscar" className="text-xs">
+              Buscar
+            </Label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                id="buscar"
                 placeholder="Buscar..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -62,9 +75,11 @@ export function RelatorioFilters({
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Tipo</Label>
+            <Label htmlFor="tipo" className="text-xs">
+              Tipo
+            </Label>
             <Select value={tipoFiltro} onValueChange={setTipoFiltro}>
-              <SelectTrigger>
+              <SelectTrigger id="tipo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -76,6 +91,36 @@ export function RelatorioFilters({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="operador" className="text-xs">
+              Operador
+            </Label>
+            <Select value={operadorFiltro} onValueChange={setOperadorFiltro}>
+              <SelectTrigger id="operador">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos</SelectItem>
+                {operadores.map((operador) => (
+                  <SelectItem key={operador.id} value={operador.id}>
+                    {operador.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="meta-diaria-un" className="text-xs">
+              Meta diária (un.)
+            </Label>
+            <Input
+              id="meta-diaria-un"
+              type="number"
+              min={0}
+              value={metaDiaria}
+              onChange={(e) => setMetaDiaria(Number(e.target.value) || 0)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Data Início</Label>

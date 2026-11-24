@@ -76,7 +76,7 @@ export function ProdutoFormDialog({ open, onOpenChange, initialData, saving, onS
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent aria-describedby={undefined} className="max-w-md">
         <DialogHeader>
           <DialogTitle>{initialData?.sku ? "Editar Produto" : "Novo Produto"}</DialogTitle>
         </DialogHeader>

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SecurityScore {
@@ -31,36 +32,60 @@ interface SecurityScore {
 export const SecurityOverview: React.FC = () => {
   const { user } = useAuth();
 
-  const { data: devices } = useQuery({
+  const {
+    data: devices,
+    isError: erroDevices,
+    error: erroDevicesObj,
+    refetch: recarregarDevices,
+  } = useQuery({
     queryKey: ["user-devices", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data } = await supabase.from("user_devices").select("*").eq("user_id", user.id);
+      const { data, error } = await supabase
+        .from("user_devices")
+        .select("*")
+        .eq("user_id", user.id);
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user?.id,
   });
 
-  const { data: loginLogs } = useQuery({
+  const {
+    data: loginLogs,
+    isError: erroLoginLogs,
+    error: erroLoginLogsObj,
+    refetch: recarregarLoginLogs,
+  } = useQuery({
     queryKey: ["login-logs", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("login_logs")
         .select("*")
         .eq("user_id", user.id)
         .order("login_at", { ascending: false })
         .limit(10);
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user?.id,
   });
 
-  const { data: userRole } = useQuery({
+  const {
+    data: userRole,
+    isError: erroUserRole,
+    error: erroUserRoleObj,
+    refetch: recarregarUserRole,
+  } = useQuery({
     queryKey: ["user-role", user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id);
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id);
+      if (error) throw error;
       return highestRole((data ?? []).map((r) => r.role)) || "operador";
     },
     enabled: !!user?.id,
@@ -122,6 +147,20 @@ export const SecurityOverview: React.FC = () => {
   };
 
   const scoreBadge = getScoreBadge(scorePercentage);
+
+  if (erroDevices || erroLoginLogs || erroUserRole) {
+    const erroAtual = (erroDevicesObj ?? erroLoginLogsObj ?? erroUserRoleObj) as Error | null;
+    return (
+      <ErrorState
+        message={`Não foi possível carregar os dados de segurança: ${erroAtual?.message ?? ""}`}
+        onRetry={() => {
+          if (erroDevices) recarregarDevices();
+          if (erroLoginLogs) recarregarLoginLogs();
+          if (erroUserRole) recarregarUserRole();
+        }}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">

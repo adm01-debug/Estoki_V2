@@ -25,10 +25,11 @@ import type { PickingTask } from "../hooks/usePicking";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { toast } from "sonner";
 
 export default function PickingPage() {
-  const { tasks, isLoading, startTask, finishTask } = usePicking();
+  const { tasks, isLoading, error, refetch, startTask, finishTask } = usePicking();
   const [activeTask, setActiveTask] = useState<PickingTask | null>(null);
   const [scannedCode, setScannedCode] = useState("");
   const [confirmQty, setConfirmQty] = useState<number | "">("");
@@ -135,9 +136,12 @@ export default function PickingPage() {
 
                 <div className="space-y-4 border-t pt-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Validar Produto (Scan)</label>
+                    <label htmlFor="validar-produto-scan" className="text-sm font-medium">
+                      Validar Produto (Scan)
+                    </label>
                     <div className="flex gap-2">
                       <Input
+                        id="validar-produto-scan"
                         placeholder="Escaneie o código do produto"
                         value={scannedCode}
                         onChange={(e) => setScannedCode(e.target.value)}
@@ -145,6 +149,8 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
+                        className="h-11 w-11"
+                        aria-label="Escanear código"
                         onClick={() => {
                           if (!scannedCode.trim()) {
                             toast.error("Escaneie ou digite o código do produto");
@@ -162,6 +168,7 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
+                        className="h-11 w-11"
                         onClick={isListening ? stopVoice : startVoice}
                         disabled={!isSpeechSupported}
                         title={
@@ -197,8 +204,11 @@ export default function PickingPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Quantidade Coletada</label>
+                    <label htmlFor="quantidade-coletada" className="text-sm font-medium">
+                      Quantidade Coletada
+                    </label>
                     <Input
+                      id="quantidade-coletada"
                       type="number"
                       placeholder="Informe a quantidade"
                       value={confirmQty}
@@ -234,6 +244,7 @@ export default function PickingPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por produto ou posição"
                 placeholder="Buscar por produto ou posição..."
                 className="pl-9"
                 value={searchTerm}
@@ -247,7 +258,12 @@ export default function PickingPage() {
             </div>
           </div>
 
-          {isLoading ? (
+          {error ? (
+            <ErrorState
+              message="Não foi possível carregar as tarefas de picking."
+              onRetry={() => refetch()}
+            />
+          ) : isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <Skeleton key={i} className="h-32 w-full" />

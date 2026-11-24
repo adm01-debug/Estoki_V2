@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/common/SEO";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,6 +120,10 @@ export default function Etiquetas() {
   const lotes = lotesQuery.data ?? [];
   const entregas = entregasQuery.data ?? [];
   const loading = lotesQuery.isLoading || entregasQuery.isLoading;
+  const erroCarregamento = fonte === "lotes" ? lotesQuery.isError : entregasQuery.isError;
+  const erroAtual = (fonte === "lotes" ? lotesQuery.error : entregasQuery.error) as Error | null;
+  const recarregarAtual = () =>
+    fonte === "lotes" ? lotesQuery.refetch() : entregasQuery.refetch();
 
   useEffect(() => {
     if (lotesQuery.error) {
@@ -307,9 +312,14 @@ export default function Etiquetas() {
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="space-y-4 lg:col-span-2">
               <div className="flex flex-wrap gap-3">
-                <div className="relative min-w-[200px] flex-1">
+                <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
+                    aria-label={
+                      fonte === "lotes"
+                        ? "Buscar lote, produto, SKU ou NF"
+                        : "Buscar cliente, pedido, NF ou romaneio"
+                    }
                     placeholder={
                       fonte === "lotes"
                         ? "Buscar lote, produto, SKU, NF..."
@@ -338,7 +348,12 @@ export default function Etiquetas() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="max-h-[400px] overflow-y-auto p-0">
-                  {loading ? (
+                  {erroCarregamento ? (
+                    <ErrorState
+                      message={`Não foi possível carregar os registros: ${erroAtual?.message ?? ""}`}
+                      onRetry={recarregarAtual}
+                    />
+                  ) : loading ? (
                     <div className="flex justify-center py-12">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     </div>
@@ -354,6 +369,7 @@ export default function Etiquetas() {
                         onClick={() => setPreviewId(lote.id)}
                       >
                         <Checkbox
+                          aria-label={lote.produto_nome ?? "Lote"}
                           checked={selectedIds.has(lote.id)}
                           onCheckedChange={() => toggleSelect(lote.id)}
                           onClick={(e) => e.stopPropagation()}
@@ -379,6 +395,7 @@ export default function Etiquetas() {
                         onClick={() => setPreviewId(ent.id)}
                       >
                         <Checkbox
+                          aria-label={ent.cliente ?? "Entrega"}
                           checked={selectedIds.has(ent.id)}
                           onCheckedChange={() => toggleSelect(ent.id)}
                           onClick={(e) => e.stopPropagation()}
@@ -409,9 +426,11 @@ export default function Etiquetas() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="text-xs">Tamanho da etiqueta</Label>
+                    <Label htmlFor="tamanho-da-etiqueta" className="text-xs">
+                      Tamanho da etiqueta
+                    </Label>
                     <Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}>
-                      <SelectTrigger>
+                      <SelectTrigger id="tamanho-da-etiqueta">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -425,8 +444,11 @@ export default function Etiquetas() {
                   </div>
                   {fonte === "lotes" && (
                     <div>
-                      <Label className="text-xs">Volumes por lote</Label>
+                      <Label htmlFor="volumes-por-lote" className="text-xs">
+                        Volumes por lote
+                      </Label>
                       <Input
+                        id="volumes-por-lote"
                         type="number"
                         min={1}
                         max={50}

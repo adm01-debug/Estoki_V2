@@ -29,7 +29,9 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
 
   const showToasts = options.showToasts ?? false;
 
-  // Debounced invalidation — batches rapid updates into a single invalidation
+  // Debounced invalidation — batches rapid updates into a single invalidation.
+  // As chaves abaixo precisam ser as queryKeys reais do app (E-154):
+  // invalidar chave inexistente nao invalida nada.
   const pendingKeysRef = useRef<Set<string>>(new Set());
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
@@ -64,12 +66,12 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
 
   useEffect(() => {
     const channel = supabase
-      .channel("kpi-realtime-updates")
+      .channel(`kpi-realtime-updates-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "metricas_operacionais" },
         (payload) => {
-          invalidateQueries([["metricas_operacionais"], ["dashboard"]]);
+          invalidateQueries([["metricas-operacionais"], ["metas-kpi"]]);
           optionsRef.current.onMetricUpdate?.();
           if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
             toast.info("KPIs atualizados", { duration: 3000 });
@@ -78,22 +80,27 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
       )
       .on("postgres_changes", { event: "*", schema: "public", table: "posicoes_estoque" }, () => {
         invalidateQueries([
-          ["posicoes_estoque"],
-          ["posicoes_estoque_count"],
-          ["ocupacao_por_porta_palete"],
-          ["dashboard"],
+          ["estoque-posicoes"],
+          ["ocupacao-visual-v2"],
+          ["operational-live"],
+          ["dashboard-stats"],
         ]);
         optionsRef.current.onPositionUpdate?.();
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "estoque_posicao" }, () => {
-        invalidateQueries([["estoque_posicao"], ["posicoes_estoque"], ["dashboard"]]);
+        invalidateQueries([["estoque-posicoes"], ["posicao-detalhe"], ["dashboard-stats"]]);
         optionsRef.current.onPositionUpdate?.();
       })
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "eventos_triagem" },
         (payload) => {
-          invalidateQueries([["triagem_por_produto"], ["eventos_triagem"], ["dashboard"]]);
+          invalidateQueries([
+            ["triagens"],
+            ["fornecedor-scores"],
+            ["dashboard-stats"],
+            ["operational-live"],
+          ]);
           optionsRef.current.onTriageUpdate?.();
           if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
             toast.success("Triagem registrada", { duration: 2000 });
@@ -101,28 +108,40 @@ export function useRealtimeKPIs(options: RealtimeKPIOptions = {}) {
         }
       )
       .on("postgres_changes", { event: "*", schema: "public", table: "eventos_picking" }, () => {
-        invalidateQueries([["metricas_operacionais"], ["eventos_picking"], ["dashboard"]]);
+        invalidateQueries([["operational-live"], ["picking-tasks"]]);
         optionsRef.current.onPickingUpdate?.();
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "tarefas" }, () => {
-        invalidateQueries([["tarefas"], ["ondas_separacao"], ["dashboard"]]);
+        invalidateQueries([
+          ["tarefas"],
+          ["picking-tasks"],
+          ["putaway-tasks"],
+          ["operational-live"],
+        ]);
         optionsRef.current.onTaskUpdate?.();
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "lotes" }, (payload) => {
-        invalidateQueries([["lotes"], ["recebimentos"], ["dashboard"]]);
+        invalidateQueries([
+          ["recebimentos"],
+          ["lotes-list"],
+          ["kanban-lotes"],
+          ["curva-abc"],
+          ["dashboard-stats"],
+          ["operational-live"],
+        ]);
         optionsRef.current.onLoteUpdate?.();
         if (optionsRef.current.showToasts && payload.eventType === "INSERT") {
           toast.info("Novo lote recebido", { duration: 2000 });
         }
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "alertas_historico" }, () => {
-        invalidateQueries([["alertas"], ["alertas_historico"], ["dashboard"]]);
+        invalidateQueries([["alertas_historico"], ["operational-live"]]);
       })
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rastreamento_historico" },
         () => {
-          invalidateQueries([["rastreamento_historico"], ["atividades_recentes"], ["dashboard"]]);
+          invalidateQueries([["rastreamento_historico"], ["curva-abc"], ["dashboard-stats"]]);
         }
       )
       .subscribe((subscriptionStatus) => {

@@ -23,11 +23,21 @@ export function MonthPicker({ value, onChange }: MonthPickerProps) {
       </PopoverTrigger>
       <PopoverContent className="w-[280px]">
         <div className="mb-4 flex items-center justify-between">
-          <Button size="icon" variant="ghost" onClick={() => setYear((y) => y - 1)}>
+          <Button
+            aria-label="Ano anterior"
+            size="icon"
+            variant="ghost"
+            onClick={() => setYear((y) => y - 1)}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="font-semibold">{year}</span>
-          <Button size="icon" variant="ghost" onClick={() => setYear((y) => y + 1)}>
+          <Button
+            aria-label="Próximo ano"
+            size="icon"
+            variant="ghost"
+            onClick={() => setYear((y) => y + 1)}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

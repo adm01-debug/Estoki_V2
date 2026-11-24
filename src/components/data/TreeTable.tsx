@@ -36,7 +36,13 @@ export function TreeTable({ data, columns }: TreeTableProps) {
           className="flex items-center gap-2"
         >
           {node.children?.length ? (
-            <Button size="icon" variant="ghost" className="h-4 w-4" onClick={() => toggle(node.id)}>
+            <Button
+              aria-label={expanded.has(node.id) ? "Recolher" : "Expandir"}
+              size="icon"
+              variant="ghost"
+              className="h-4 w-4"
+              onClick={() => toggle(node.id)}
+            >
               {expanded.has(node.id) ? <ChevronDown /> : <ChevronRight />}
             </Button>
           ) : (

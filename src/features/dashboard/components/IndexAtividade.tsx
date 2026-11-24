@@ -158,13 +158,19 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
 
                         <div className="flex items-center opacity-0 transition-opacity group-hover/item:opacity-100">
                           <Button
+                            aria-label="Abrir em nova aba"
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button
+                            aria-label="Mais ações"
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                          >
                             <MoreVertical className="h-4 w-4 text-muted-foreground" />
                           </Button>
                         </div>

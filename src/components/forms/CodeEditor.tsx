@@ -31,6 +31,7 @@ export function CodeEditor({ value = "", onChange, language = "javascript" }: Co
         {language}
       </div>
       <Textarea
+        aria-label="Código"
         value={content}
         onChange={(e) => handleChange(e.target.value)}
         onKeyDown={handleKeyDown}

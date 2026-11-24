@@ -24,6 +24,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useAdjustments, Adjustment } from "@/hooks/useAdjustments";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Plus,
   Search,
@@ -47,18 +49,37 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AjustesEstoquePage() {
   const { user, role } = useAuth();
-  const { adjustments, isLoading, createAdjustment, updateStatus } = useAdjustments();
+  const { adjustments, isLoading, isError, refetch, createAdjustment, updateStatus } =
+    useAdjustments();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  const { data: produtos = [] } = useQuery({
+    queryKey: ["produtos-select"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("produtos").select("id, nome, sku").order("nome");
+      if (error) throw error;
+      return data as { id: string; nome: string; sku: string }[];
+    },
+  });
+
   // New Adjustment Form State
-  const [newAdj, setNewAdj] = useState({
+  const [newAdj, setNewAdj] = useState<{
+    produto_id: string;
+    lote_id: string | null;
+    posicao_id: string | null;
+    quantidade_anterior: number;
+    quantidade_nova: number;
+    motivo: string;
+    observacoes: string;
+  }>({
     produto_id: "",
-    lote_id: "",
-    posicao_id: "",
+    lote_id: null,
+    posicao_id: null,
     quantidade_anterior: 0,
     quantidade_nova: 0,
     motivo: "correcao",
@@ -66,8 +87,31 @@ export default function AjustesEstoquePage() {
   });
 
   const handleCreate = async () => {
-    await createAdjustment.mutateAsync(newAdj as any);
+    if (!newAdj.produto_id) {
+      return;
+    }
+    if (isNaN(newAdj.quantidade_anterior) || isNaN(newAdj.quantidade_nova)) {
+      return;
+    }
+    await createAdjustment.mutateAsync({
+      produto_id: newAdj.produto_id,
+      lote_id: newAdj.lote_id,
+      posicao_id: newAdj.posicao_id,
+      quantidade_anterior: newAdj.quantidade_anterior,
+      quantidade_nova: newAdj.quantidade_nova,
+      motivo: newAdj.motivo,
+      observacoes: newAdj.observacoes,
+    });
     setIsDialogOpen(false);
+    setNewAdj({
+      produto_id: "",
+      lote_id: null,
+      posicao_id: null,
+      quantidade_anterior: 0,
+      quantidade_nova: 0,
+      motivo: "correcao",
+      observacoes: "",
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -118,6 +162,7 @@ export default function AjustesEstoquePage() {
               <div className="relative w-full md:w-96">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar por produto ou motivo"
                   placeholder="Buscar por produto ou motivo..."
                   className="pl-9"
                   value={searchTerm}
@@ -131,23 +176,34 @@ export default function AjustesEstoquePage() {
                     <Plus className="h-4 w-4" /> Novo Ajuste
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent aria-describedby={undefined} className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Solicitar Ajuste de Quantidade</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <Label>Produto (ID)</Label>
-                      <Input
+                      <Label htmlFor="produto">Produto *</Label>
+                      <Select
                         value={newAdj.produto_id}
-                        onChange={(e) => setNewAdj({ ...newAdj, produto_id: e.target.value })}
-                        placeholder="ID do produto..."
-                      />
+                        onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
+                      >
+                        <SelectTrigger id="produto">
+                          <SelectValue placeholder="Selecione o produto..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {produtos.map((p) => (
+                            <SelectItem key={p.id} value={p.id}>
+                              {p.nome} <span className="text-muted-foreground">({p.sku})</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label>Qtd. Atual</Label>
+                        <Label htmlFor="qtd-atual">Qtd. Atual</Label>
                         <Input
+                          id="qtd-atual"
                           type="number"
                           value={newAdj.quantidade_anterior}
                           onChange={(e) =>
@@ -156,8 +212,9 @@ export default function AjustesEstoquePage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label>Nova Qtd.</Label>
+                        <Label htmlFor="nova-qtd">Nova Qtd.</Label>
                         <Input
+                          id="nova-qtd"
                           type="number"
                           value={newAdj.quantidade_nova}
                           onChange={(e) =>
@@ -167,12 +224,12 @@ export default function AjustesEstoquePage() {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label>Motivo</Label>
+                      <Label htmlFor="motivo">Motivo</Label>
                       <Select
                         value={newAdj.motivo}
                         onValueChange={(v) => setNewAdj({ ...newAdj, motivo: v })}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id="motivo">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -184,8 +241,9 @@ export default function AjustesEstoquePage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Observações</Label>
+                      <Label htmlFor="observacoes">Observações</Label>
                       <Textarea
+                        id="observacoes"
                         value={newAdj.observacoes}
                         onChange={(e) => setNewAdj({ ...newAdj, observacoes: e.target.value })}
                         placeholder="Explique o motivo do ajuste..."
@@ -196,7 +254,10 @@ export default function AjustesEstoquePage() {
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                       Cancelar
                     </Button>
-                    <Button onClick={handleCreate} disabled={createAdjustment.isPending}>
+                    <Button
+                      onClick={handleCreate}
+                      disabled={createAdjustment.isPending || !newAdj.produto_id}
+                    >
                       Enviar para Aprovação
                     </Button>
                   </DialogFooter>
@@ -212,7 +273,12 @@ export default function AjustesEstoquePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                {isLoading ? (
+                {isError ? (
+                  <ErrorState
+                    message="Não foi possível carregar os ajustes de estoque."
+                    onRetry={() => refetch()}
+                  />
+                ) : isLoading ? (
                   <div className="space-y-4 p-8">
                     {[1, 2, 3].map((i) => (
                       <Skeleton key={i} className="h-16 w-full" />
@@ -261,6 +327,7 @@ export default function AjustesEstoquePage() {
                             {adj.status === "pendente" && isAdmin ? (
                               <div className="flex justify-end gap-1">
                                 <Button
+                                  aria-label="Aprovar ajuste"
                                   variant="ghost"
                                   size="icon"
                                   className="text-success hover:bg-success/10 hover:text-success"
@@ -271,6 +338,7 @@ export default function AjustesEstoquePage() {
                                   <CheckCircle2 className="h-4 w-4" />
                                 </Button>
                                 <Button
+                                  aria-label="Rejeitar ajuste"
                                   variant="ghost"
                                   size="icon"
                                   className="text-destructive hover:bg-destructive/10 hover:text-destructive"
@@ -282,7 +350,7 @@ export default function AjustesEstoquePage() {
                                 </Button>
                               </div>
                             ) : (
-                              <Button variant="ghost" size="icon">
+                              <Button aria-label="Ver detalhes" variant="ghost" size="icon">
                                 <Eye className="h-4 w-4" />
                               </Button>
                             )}

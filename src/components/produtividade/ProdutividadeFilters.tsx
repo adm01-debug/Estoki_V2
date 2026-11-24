@@ -32,7 +32,7 @@ export function ProdutividadeFilters({
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex flex-wrap gap-3">
         <Select value={periodo} onValueChange={onPeriodoChange}>
-          <SelectTrigger className="w-[160px]">
+          <SelectTrigger aria-label="Período" className="w-[160px]">
             <Calendar className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>
@@ -46,7 +46,7 @@ export function ProdutividadeFilters({
         </Select>
 
         <Select value={operadorSelecionado} onValueChange={onOperadorChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger aria-label="Operador" className="w-[180px]">
             <Users className="mr-2 h-4 w-4" />
             <SelectValue placeholder="Operador" />
           </SelectTrigger>

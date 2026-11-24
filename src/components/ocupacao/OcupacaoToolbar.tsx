@@ -59,7 +59,7 @@ export function OcupacaoToolbar({
     <Card>
       <CardContent className="p-3">
         <div className="flex flex-col gap-3 lg:flex-row">
-          <div className="relative min-w-[200px] flex-1">
+          <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Buscar posição, porta-palete, zona..."
@@ -71,7 +71,7 @@ export function OcupacaoToolbar({
           </div>
           <div className="flex flex-wrap gap-2">
             <Select value={filtroZona} onValueChange={onFiltroZonaChange}>
-              <SelectTrigger className="h-9 w-36">
+              <SelectTrigger aria-label="Filtrar por zona" className="h-9 w-36">
                 <Filter className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
                 <SelectValue />
               </SelectTrigger>
@@ -84,7 +84,7 @@ export function OcupacaoToolbar({
               </SelectContent>
             </Select>
             <Select value={filtroStatus} onValueChange={onFiltroStatusChange}>
-              <SelectTrigger className="h-9 w-36">
+              <SelectTrigger aria-label="Filtrar por status" className="h-9 w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

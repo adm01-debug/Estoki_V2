@@ -32,6 +32,7 @@ import {
   Legend,
 } from "recharts";
 import { Fornecedor, ClassificacaoFornecedor } from "@/hooks/useFornecedores";
+import { formatarPercentual } from "@/lib/fornecedorScore";
 
 const classificacaoConfig: Record<ClassificacaoFornecedor, { label: string; color: string }> = {
   A: { label: "Excelente", color: "text-green-600" },
@@ -50,7 +51,7 @@ const COLORS = [
 interface Props {
   fornecedoresFiltrados: Fornecedor[];
   dadosClassificacao: { name: string; value: number; color: string }[];
-  dadosQualidade: { nome: string; qualidade: number; pontualidade: number }[];
+  dadosQualidade: { nome: string; qualidade: number | null; pontualidade: number | null }[];
   searchTerm: string;
   classificacaoFilter: string;
   onSearchChange: (v: string) => void;
@@ -60,6 +61,7 @@ interface Props {
 const getTendenciaIcon = (tendencia?: string) => {
   if (tendencia === "subindo") return <TrendingUp className="h-4 w-4 text-green-500" />;
   if (tendencia === "descendo") return <TrendingDown className="h-4 w-4 text-red-500" />;
+  if (tendencia === "sem_dados") return <Minus className="h-4 w-4 text-muted-foreground" />;
   return <Minus className="h-4 w-4 text-gray-400" />;
 };
 
@@ -114,7 +116,24 @@ export function FornecedoresVisaoGeral({
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis dataKey="nome" type="category" width={80} />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(
+                      _valor: number | string,
+                      nome: string,
+                      item: {
+                        payload?: { qualidade?: number | null; pontualidade?: number | null };
+                      }
+                    ) => {
+                      const bruto =
+                        nome === "Qualidade"
+                          ? item?.payload?.qualidade
+                          : item?.payload?.pontualidade;
+                      return [
+                        bruto === null || bruto === undefined ? "sem dados" : `${bruto}%`,
+                        nome,
+                      ];
+                    }}
+                  />
                   <Legend />
                   <Bar dataKey="qualidade" name="Qualidade" fill={COLORS[0]} radius={4} />
                   <Bar dataKey="pontualidade" name="Pontualidade" fill={COLORS[1]} radius={4} />
@@ -126,9 +145,10 @@ export function FornecedoresVisaoGeral({
       </div>
 
       <div className="flex flex-wrap gap-3">
-        <div className="relative min-w-[200px] flex-1">
+        <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            aria-label="Buscar fornecedor"
             placeholder="Buscar fornecedor..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
@@ -136,7 +156,7 @@ export function FornecedoresVisaoGeral({
           />
         </div>
         <Select value={classificacaoFilter} onValueChange={onClassificacaoChange}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger aria-label="Filtrar por classificação" className="w-[150px]">
             <Star className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>
@@ -171,25 +191,33 @@ export function FornecedoresVisaoGeral({
                 </TableRow>
               ) : (
                 fornecedoresFiltrados.map((f) => {
-                  const cls = classificacaoConfig[f.classificacao];
+                  const cls = f.classificacao ? classificacaoConfig[f.classificacao] : null;
                   return (
                     <TableRow key={f.id}>
                       <TableCell className="font-medium">{f.nome}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={cls.color}>
-                          {f.classificacao} - {cls.label}
-                        </Badge>
+                        {cls ? (
+                          <Badge variant="outline" className={cls.color}>
+                            {f.classificacao} - {cls.label}
+                          </Badge>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">Sem dados</span>
+                        )}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Progress value={f.percentual_qualidade} className="h-2 w-20" />
-                          <span className="text-sm">{f.percentual_qualidade.toFixed(1)}%</span>
+                          <Progress value={f.percentual_qualidade ?? 0} className="h-2 w-20" />
+                          <span className="text-sm">
+                            {formatarPercentual(f.percentual_qualidade)}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
-                          <Progress value={f.percentual_pontualidade} className="h-2 w-20" />
-                          <span className="text-sm">{f.percentual_pontualidade.toFixed(1)}%</span>
+                          <Progress value={f.percentual_pontualidade ?? 0} className="h-2 w-20" />
+                          <span className="text-sm">
+                            {formatarPercentual(f.percentual_pontualidade)}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-center">{getTendenciaIcon(f.tendencia)}</TableCell>

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { SEO } from "@/components/common/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -6,19 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Search, RefreshCw } from "lucide-react";
-import { useHead } from "@/hooks/useHead";
 import { useKanbanData } from "@/components/kanban/useKanbanData";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { KanbanColumn } from "@/components/kanban/KanbanColumn";
 import { LoteDetailDialog } from "@/components/kanban/LoteDetailDialog";
 
 export default function KanbanPipeline() {
-  const { setTitle } = useHead();
-  useEffect(() => {
-    setTitle("Kanban Pipeline | ESTOKI");
-  }, [setTitle]);
-
   const {
     isLoading,
+    isError,
     refetch,
     searchTerm,
     setSearchTerm,
@@ -48,6 +43,7 @@ export default function KanbanPipeline() {
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Buscar lote, produto, NF"
                 placeholder="Buscar lote, produto, NF..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -71,7 +67,9 @@ export default function KanbanPipeline() {
         </div>
 
         {/* Kanban Board */}
-        {isLoading ? (
+        {isError ? (
+          <ErrorState message="Não foi possível carregar o pipeline." onRetry={() => refetch()} />
+        ) : isLoading ? (
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="w-72 flex-shrink-0 space-y-3">

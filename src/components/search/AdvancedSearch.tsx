@@ -50,6 +50,7 @@ export function AdvancedSearch({
         </div>
 
         <Input
+          aria-label={placeholder || "Buscar"}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -67,7 +68,13 @@ export function AdvancedSearch({
           )}
 
           {showClearButton && (
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClear}>
+            <Button
+              aria-label="Limpar busca"
+              variant="ghost"
+              size="icon"
+              className="relative h-6 w-6 after:absolute after:-inset-2.5 after:content-['']"
+              onClick={handleClear}
+            >
               <X className="h-3 w-3" />
             </Button>
           )}

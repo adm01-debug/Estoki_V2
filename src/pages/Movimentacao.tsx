@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
@@ -59,7 +60,12 @@ export default function MovimentacaoPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
 
-  const { data: movimentacoes = [], isLoading } = useQuery({
+  const {
+    data: movimentacoes = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["rastreamento_historico"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -164,6 +170,7 @@ export default function MovimentacaoPage() {
             {/* Filters */}
             <div className="flex gap-2">
               <Input
+                aria-label="Buscar movimentação"
                 placeholder="Buscar movimentação..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -182,7 +189,12 @@ export default function MovimentacaoPage() {
             </div>
 
             {/* List */}
-            {isLoading ? (
+            {isError ? (
+              <ErrorState
+                message="Não foi possível carregar as movimentações."
+                onRetry={() => refetch()}
+              />
+            ) : isLoading ? (
               <div className="space-y-3">
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div key={i} className="animate-pulse rounded-xl border bg-card p-4">

@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Box } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { PosicaoVisual, statusConfig } from "./types";
 
@@ -15,7 +16,13 @@ interface PosicaoDetalhePanelProps {
 }
 
 export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePanelProps) {
-  const { data: estoqueData, isLoading } = useQuery({
+  const {
+    data: estoqueData,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["posicao-detalhe", posicao?.id],
     enabled: !!posicao?.id,
     queryFn: async () => {
@@ -34,7 +41,7 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent aria-describedby={undefined} className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", cfg.bgClass)}>
@@ -88,7 +95,12 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
             <h4 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
               Produtos Armazenados
             </h4>
-            {isLoading ? (
+            {isError ? (
+              <ErrorState
+                message={`Não foi possível carregar os produtos da posição: ${(error as Error).message}`}
+                onRetry={() => refetch()}
+              />
+            ) : isLoading ? (
               <div className="space-y-2">
                 <Skeleton className="h-12 w-full rounded-lg" />
                 <Skeleton className="h-12 w-full rounded-lg" />

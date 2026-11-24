@@ -62,9 +62,12 @@ export function ArmazenamentoItemCard({ item, onItemChange }: ArmazenamentoItemC
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Peso por Volume</Label>
+            <Label htmlFor="peso-por-volume" className="text-xs text-muted-foreground">
+              Peso por Volume
+            </Label>
             <div className="flex items-center gap-2">
               <Input
+                id="peso-por-volume"
                 type="number"
                 value={item.peso}
                 onChange={(e) => onItemChange({ ...item, peso: Number(e.target.value) })}
@@ -74,12 +77,14 @@ export function ArmazenamentoItemCard({ item, onItemChange }: ArmazenamentoItemC
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Rotatividade</Label>
+            <Label htmlFor="rotatividade" className="text-xs text-muted-foreground">
+              Rotatividade
+            </Label>
             <Select
               value={item.rotatividade}
               onValueChange={(v: Rotatividade) => onItemChange({ ...item, rotatividade: v })}
             >
-              <SelectTrigger className="h-9">
+              <SelectTrigger id="rotatividade" className="h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

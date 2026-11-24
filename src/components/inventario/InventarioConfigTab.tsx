@@ -17,26 +17,26 @@ export function InventarioConfigTab() {
       <CardContent className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <Label>Meta de Acuracidade (%)</Label>
-            <Input type="number" defaultValue={99} min={90} max={100} />
+            <Label htmlFor="meta-de-acuracidade">Meta de Acuracidade (%)</Label>
+            <Input id="meta-de-acuracidade" type="number" defaultValue={99} min={90} max={100} />
           </div>
           <div className="space-y-2">
-            <Label>Threshold de Divergência (%)</Label>
-            <Input type="number" defaultValue={5} min={1} max={20} />
+            <Label htmlFor="threshold-de-divergencia">Threshold de Divergência (%)</Label>
+            <Input id="threshold-de-divergencia" type="number" defaultValue={5} min={1} max={20} />
           </div>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="space-y-2">
-            <Label>Frequência Curva A (dias)</Label>
-            <Input type="number" defaultValue={7} min={1} />
+            <Label htmlFor="frequencia-curva-a-dias">Frequência Curva A (dias)</Label>
+            <Input id="frequencia-curva-a-dias" type="number" defaultValue={7} min={1} />
           </div>
           <div className="space-y-2">
-            <Label>Frequência Curva B (dias)</Label>
-            <Input type="number" defaultValue={14} min={1} />
+            <Label htmlFor="frequencia-curva-b-dias">Frequência Curva B (dias)</Label>
+            <Input id="frequencia-curva-b-dias" type="number" defaultValue={14} min={1} />
           </div>
           <div className="space-y-2">
-            <Label>Frequência Curva C (dias)</Label>
-            <Input type="number" defaultValue={30} min={1} />
+            <Label htmlFor="frequencia-curva-c-dias">Frequência Curva C (dias)</Label>
+            <Input id="frequencia-curva-c-dias" type="number" defaultValue={30} min={1} />
           </div>
         </div>
         <Button className="mt-4">Salvar Configurações</Button>

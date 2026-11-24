@@ -122,6 +122,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <div className="relative mb-2">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
+            aria-label="Buscar"
             placeholder="Buscar..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -131,6 +132,7 @@ export function IconPicker({ value, onChange }: IconPickerProps) {
         <div className="grid max-h-48 grid-cols-8 gap-1 overflow-auto">
           {filteredIcons.map(([name, Icon]) => (
             <Button
+              aria-label={`Selecionar ícone ${name}`}
               key={name}
               variant={value === name ? "secondary" : "ghost"}
               size="icon"

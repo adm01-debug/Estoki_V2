@@ -6,7 +6,7 @@ const Unauthorized = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background">
       <div className="space-y-6 p-8 text-center">
         <ShieldX className="mx-auto h-24 w-24 text-destructive" />
         <h1 className="text-4xl font-bold">Acesso Negado</h1>

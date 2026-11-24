@@ -77,40 +77,9 @@ export default defineConfig(async ({ mode, command }) => {
           devOptions: { enabled: false },
           filename: "sw.js",
           includeAssets: ["favicon.ico", "robots.txt", "offline.html"],
-          manifest: {
-            name: "WMS - Sistema de Gestão de Armazém",
-            short_name: "WMS",
-            description: "Sistema completo de gestão de armazém e logística",
-            id: "/",
-            theme_color: "#3b82f6",
-            background_color: "#0f172a",
-            display: "standalone",
-            orientation: "portrait-primary",
-            start_url: "/",
-            scope: "/",
-            lang: "pt-BR",
-            categories: ["business", "productivity", "logistics"],
-            icons: [
-              {
-                src: "/favicon.ico",
-                sizes: "64x64 32x32 24x24 16x16",
-                type: "image/x-icon",
-              },
-              {
-                src: "/icon-192.png",
-                sizes: "192x192",
-                type: "image/png",
-                purpose: "any maskable",
-              },
-              {
-                src: "/icon-512.png",
-                sizes: "512x512",
-                type: "image/png",
-                purpose: "any maskable",
-              },
-              { src: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-            ],
-          },
+          // Manifest único: public/manifest.json (index.html é o único que o referencia).
+          // Desligado aqui para não gerar /manifest.webmanifest divergente.
+          manifest: false,
           workbox: {
             maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
             globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],

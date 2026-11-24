@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -100,13 +101,23 @@ const EMPTY_KPI: RealtimeKPI = {
 
 export default function DashboardTempoReal() {
   const queryClient = useQueryClient();
-  const { data: kpis = EMPTY_KPI } = useQuery({
+  const {
+    data: kpis = EMPTY_KPI,
+    isError: erroKpis,
+    error: erroKpisObj,
+    refetch: recarregarKpis,
+  } = useQuery({
     queryKey: ["realtime-kpis"],
     queryFn: fetchRealtimeKPIs,
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
   });
-  const { data: feed = [] } = useQuery({
+  const {
+    data: feed = [],
+    isError: erroFeed,
+    error: erroFeedObj,
+    refetch: recarregarFeed,
+  } = useQuery({
     queryKey: ["realtime-feed"],
     queryFn: fetchRealtimeFeed,
     staleTime: 1000 * 30,
@@ -137,17 +148,7 @@ export default function DashboardTempoReal() {
           }))
         );
       } else {
-        const hoje = new Date();
-        const h = Array.from({ length: 8 }, (_, i) => {
-          const hora = 8 + i;
-          return {
-            hora: `${String(hora).padStart(2, "0")}:00`,
-            triagem: 0,
-            picking: 0,
-            recebimento: 0,
-          };
-        });
-        setHistorico(h);
+        setHistorico([]);
       }
     };
     fetchHistorico();
@@ -244,6 +245,17 @@ export default function DashboardTempoReal() {
       </div>
 
       {/* KPI Grid */}
+      {erroKpis || erroFeed ? (
+        <ErrorState
+          message={`Não foi possível carregar os indicadores em tempo real: ${
+            (erroKpisObj as Error | null)?.message ?? (erroFeedObj as Error | null)?.message ?? ""
+          }`}
+          onRetry={() => {
+            if (erroKpis) recarregarKpis();
+            if (erroFeed) recarregarFeed();
+          }}
+        />
+      ) : null}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {kpiCards.map((kpi, i) => (
           <motion.div
@@ -282,50 +294,58 @@ export default function DashboardTempoReal() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={historico}>
-                <defs>
-                  <linearGradient id="colorTriagem" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorPicking" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--info))" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="hsl(var(--info))" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="hora"
-                  tick={{ fontSize: 11 }}
-                  stroke="hsl(var(--muted-foreground))"
-                />
-                <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    background: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: 8,
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="triagem"
-                  stroke="hsl(var(--primary))"
-                  fill="url(#colorTriagem)"
-                  strokeWidth={2}
-                  name="Triagem"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="picking"
-                  stroke="hsl(var(--info))"
-                  fill="url(#colorPicking)"
-                  strokeWidth={2}
-                  name="Picking"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            {historico.length === 0 ? (
+              <div className="flex h-[250px] flex-col items-center justify-center gap-1 text-center text-xs text-muted-foreground">
+                <Activity className="h-5 w-5 text-primary" />
+                <span>Sem métricas operacionais registradas.</span>
+                <span>O gráfico aparece assim que houver triagem, picking ou recebimento.</span>
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={historico}>
+                  <defs>
+                    <linearGradient id="colorTriagem" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorPicking" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--info))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--info))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey="hora"
+                    tick={{ fontSize: 11 }}
+                    stroke="hsl(var(--muted-foreground))"
+                  />
+                  <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                  <Tooltip
+                    contentStyle={{
+                      background: "hsl(var(--card))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 8,
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="triagem"
+                    stroke="hsl(var(--primary))"
+                    fill="url(#colorTriagem)"
+                    strokeWidth={2}
+                    name="Triagem"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="picking"
+                    stroke="hsl(var(--info))"
+                    fill="url(#colorPicking)"
+                    strokeWidth={2}
+                    name="Picking"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </CardContent>
         </Card>
 

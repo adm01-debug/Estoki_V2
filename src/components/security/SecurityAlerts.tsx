@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -54,16 +55,22 @@ export const SecurityAlerts: React.FC = () => {
     toast.success("Notificação de teste enviada");
   };
 
-  const { data: loginLogs } = useQuery({
+  const {
+    data: loginLogs,
+    isError: erroLoginLogs,
+    error: erroLoginLogsObj,
+    refetch: recarregarLoginLogs,
+  } = useQuery({
     queryKey: ["login-logs-alerts", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("login_logs")
         .select("*")
         .eq("user_id", user.id)
         .order("login_at", { ascending: false })
         .limit(50);
+      if (error) throw error;
       return data || [];
     },
     enabled: !!user?.id,
@@ -99,6 +106,15 @@ export const SecurityAlerts: React.FC = () => {
     },
   ];
 
+  if (erroLoginLogs) {
+    return (
+      <ErrorState
+        message={`Não foi possível carregar os alertas de segurança: ${(erroLoginLogsObj as Error).message}`}
+        onRetry={() => recarregarLoginLogs()}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Alert Settings */}
@@ -120,7 +136,7 @@ export const SecurityAlerts: React.FC = () => {
                   <Label className="text-base">{setting.title}</Label>
                   <p className="text-sm text-muted-foreground">{setting.description}</p>
                 </div>
-                <Switch checked={setting.enabled} />
+                <Switch aria-label={setting.title} checked={setting.enabled} />
               </div>
             ))}
           </div>
@@ -134,7 +150,7 @@ export const SecurityAlerts: React.FC = () => {
                   <p className="font-medium">Email</p>
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
                 </div>
-                <Switch checked={true} className="ml-auto" />
+                <Switch aria-label="Alertas por email" checked={true} className="ml-auto" />
               </div>
               <div
                 className={`flex items-center gap-3 rounded-lg border p-3 ${pushEnabled ? "border-primary/30 bg-primary/5" : ""}`}
@@ -160,6 +176,7 @@ export const SecurityAlerts: React.FC = () => {
                   </p>
                 </div>
                 <Switch
+                  aria-label="Notificações push"
                   checked={pushEnabled}
                   onCheckedChange={handleTogglePush}
                   disabled={!isSupported || permission === "denied"}

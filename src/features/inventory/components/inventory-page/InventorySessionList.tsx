@@ -37,6 +37,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
             <Input
+              aria-label="Filtrar SKU"
               placeholder="Filtrar SKU..."
               className="h-9 w-48 rounded-xl bg-background/50 pl-9 text-xs"
               value={query}
@@ -105,6 +106,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
                     {item.variance === 0 ? "Acurado" : `Divergência: ${item.variance}`}
                   </Badge>
                   <Button
+                    aria-label="Ver detalhes da sessão"
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 opacity-0 transition-opacity group-hover/item:opacity-100"

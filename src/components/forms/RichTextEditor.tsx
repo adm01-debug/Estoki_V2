@@ -22,6 +22,7 @@ export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEd
     <div className="rounded-md border">
       <div className="flex gap-1 border-b p-2">
         <Button
+          aria-label="Negrito"
           size="icon"
           variant={editor.isActive("bold") ? "default" : "ghost"}
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -29,6 +30,7 @@ export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEd
           <Bold className="h-4 w-4" />
         </Button>
         <Button
+          aria-label="Itálico"
           size="icon"
           variant={editor.isActive("italic") ? "default" : "ghost"}
           onClick={() => editor.chain().focus().toggleItalic().run()}
@@ -36,6 +38,7 @@ export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEd
           <Italic className="h-4 w-4" />
         </Button>
         <Button
+          aria-label="Lista com marcadores"
           size="icon"
           variant={editor.isActive("bulletList") ? "default" : "ghost"}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -43,6 +46,7 @@ export function RichTextEditor({ value = "", onChange, placeholder }: RichTextEd
           <List className="h-4 w-4" />
         </Button>
         <Button
+          aria-label="Lista numerada"
           size="icon"
           variant={editor.isActive("orderedList") ? "default" : "ghost"}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}

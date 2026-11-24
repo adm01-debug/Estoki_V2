@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import {
   Key,
   Smartphone,
@@ -21,6 +21,7 @@ import { useMFA } from "@/hooks/useMFA";
 import { MFAEnroll } from "@/components/MFAEnroll";
 import { toast } from "sonner";
 import PasskeySettings from "./PasskeySettings";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export const MFASettings: React.FC = () => {
   const { user } = useAuth();
@@ -28,6 +29,9 @@ export const MFASettings: React.FC = () => {
   const [enrollDialogOpen, setEnrollDialogOpen] = useState(false);
   const [verifiedFactors, setVerifiedFactors] = useState<any[]>([]);
   const [isMFAEnabled, setIsMFAEnabled] = useState(false);
+  const [factorParaRemover, setFactorParaRemover] = useState<{ id: string; nome: string } | null>(
+    null
+  );
 
   useEffect(() => {
     loadMFAStatus();
@@ -47,8 +51,7 @@ export const MFASettings: React.FC = () => {
   };
 
   const handleUnenroll = async (factorId: string) => {
-    if (!confirm("Tem certeza que deseja desativar este método de autenticação?")) return;
-
+    setFactorParaRemover(null);
     const success = await unenroll(factorId);
     if (success) {
       toast.success("Método de autenticação removido");
@@ -216,7 +219,13 @@ export const MFASettings: React.FC = () => {
                           {method.enabled ? "Adicionar outro" : "Ativar"}
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="border-0 bg-transparent p-0 shadow-none sm:max-w-md">
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="border-0 bg-transparent p-0 shadow-none sm:max-w-md"
+                      >
+                        <DialogTitle className="sr-only">
+                          Configurar autenticação em dois fatores
+                        </DialogTitle>
                         <MFAEnroll
                           onSuccess={handleEnrollSuccess}
                           onCancel={() => setEnrollDialogOpen(false)}
@@ -251,10 +260,16 @@ export const MFASettings: React.FC = () => {
                           </span>
                         </div>
                         <Button
+                          aria-label="Remover autenticador"
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => handleUnenroll(factor.id)}
+                          onClick={() =>
+                            setFactorParaRemover({
+                              id: factor.id,
+                              nome: factor.friendly_name || "Autenticador",
+                            })
+                          }
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -318,6 +333,20 @@ export const MFASettings: React.FC = () => {
           </ol>
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={factorParaRemover !== null}
+        onOpenChange={(open) => {
+          if (!open) setFactorParaRemover(null);
+        }}
+        onConfirm={() => {
+          if (factorParaRemover) void handleUnenroll(factorParaRemover.id);
+        }}
+        title="Desativar este método de autenticação?"
+        description={`Remover ${factorParaRemover?.nome ?? "este autenticador"} reduz a proteção da conta. Você pode cadastrar um novo método depois.`}
+        confirmLabel="Desativar"
+        variant="destructive"
+      />
     </div>
   );
 };

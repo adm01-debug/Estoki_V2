@@ -16,6 +16,8 @@ import {
   Search,
   Box,
 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { QRScanner } from "@/components/scanner/QRScanner";
 import { usePutaway, PutawayTask } from "@/hooks/usePutaway";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,6 +29,7 @@ export default function PutawayPage() {
   const [scannedLocation, setScannedLocation] = useState("");
   const [confirmQty, setConfirmQty] = useState<number | "">("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [scanOpen, setScanOpen] = useState(false);
 
   const filteredTasks = tasks.filter(
     (t) =>
@@ -43,9 +46,10 @@ export default function PutawayPage() {
   const handleConfirm = () => {
     if (!activeTask) return;
 
-    // Simulação de validação de local
-    if (scannedLocation !== activeTask.posicao_destino_codigo && scannedLocation !== "LOC-OK") {
-      toast.warning("Local escaneado diferente do sugerido. Verifique!");
+    // Validação real do local: o destino precisa conferir com o sugerido
+    if (scannedLocation !== activeTask.posicao_destino_codigo) {
+      toast.error("Local escaneado diferente do sugerido. Verifique o destino antes de continuar.");
+      return;
     }
 
     const qty = Number(confirmQty);
@@ -108,17 +112,21 @@ export default function PutawayPage() {
 
                 <div className="space-y-4 border-t pt-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Confirmar Local (Scan)</label>
+                    <label htmlFor="confirmar-local-scan" className="text-sm font-medium">
+                      Confirmar Local (Scan)
+                    </label>
                     <div className="flex gap-2">
                       <Input
+                        id="confirmar-local-scan"
                         placeholder="Escaneie o código da posição"
                         value={scannedLocation}
                         onChange={(e) => setScannedLocation(e.target.value)}
                       />
                       <Button
+                        aria-label="Escanear código"
                         variant="outline"
                         size="icon"
-                        onClick={() => setScannedLocation("LOC-OK")}
+                        onClick={() => setScanOpen(true)}
                       >
                         <Scan className="h-4 w-4" />
                       </Button>
@@ -126,8 +134,11 @@ export default function PutawayPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Quantidade Armazenada</label>
+                    <label htmlFor="quantidade-armazenada" className="text-sm font-medium">
+                      Quantidade Armazenada
+                    </label>
                     <Input
+                      id="quantidade-armazenada"
                       type="number"
                       placeholder="Confirmar quantidade"
                       value={confirmQty}
@@ -139,6 +150,20 @@ export default function PutawayPage() {
                 </div>
               </CardContent>
             </Card>
+
+            <Dialog open={scanOpen} onOpenChange={setScanOpen}>
+              <DialogContent aria-describedby={undefined}>
+                <DialogHeader>
+                  <DialogTitle>Escanear Local de Destino</DialogTitle>
+                </DialogHeader>
+                <QRScanner
+                  onScan={(data) => {
+                    setScannedLocation(data.trim());
+                    setScanOpen(false);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
 
             <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
               <Button
@@ -162,6 +187,7 @@ export default function PutawayPage() {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
+              aria-label="Buscar por produto ou destino"
               placeholder="Buscar por produto ou destino..."
               className="pl-9"
               value={searchTerm}

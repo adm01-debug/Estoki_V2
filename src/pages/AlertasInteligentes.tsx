@@ -12,6 +12,7 @@ import { useKPIAlerts } from "@/features/analytics/hooks/useKPIAlerts";
 import { AlertasResumoCards } from "@/components/alertas/AlertasResumoCards";
 import { AlertasHistoricoTable, AlertaHistorico } from "@/components/alertas/AlertasHistoricoTable";
 import { AlertasConfigTable } from "@/components/alertas/AlertasConfigTable";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AlertasInteligentesPage() {
   const [alertsEnabled, setAlertsEnabled] = useState(true);
@@ -27,6 +28,7 @@ export default function AlertasInteligentesPage() {
   const {
     data: historico = [],
     isLoading: loadingHistorico,
+    isError: erroHistorico,
     refetch,
   } = useQuery({
     queryKey: ["alertas_historico", filtroSeveridade, filtroStatus],
@@ -148,16 +150,23 @@ export default function AlertasInteligentesPage() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="historico">
-              <AlertasHistoricoTable
-                historico={historico}
-                loading={loadingHistorico}
-                filtroSeveridade={filtroSeveridade}
-                filtroStatus={filtroStatus}
-                onChangeSeveridade={setFiltroSeveridade}
-                onChangeStatus={setFiltroStatus}
-                onReconhecer={handleReconhecer}
-                onResolver={handleResolver}
-              />
+              {erroHistorico ? (
+                <ErrorState
+                  message="Não foi possível carregar o histórico de alertas."
+                  onRetry={() => void refetch()}
+                />
+              ) : (
+                <AlertasHistoricoTable
+                  historico={historico}
+                  loading={loadingHistorico}
+                  filtroSeveridade={filtroSeveridade}
+                  filtroStatus={filtroStatus}
+                  onChangeSeveridade={setFiltroSeveridade}
+                  onChangeStatus={setFiltroStatus}
+                  onReconhecer={handleReconhecer}
+                  onResolver={handleResolver}
+                />
+              )}
             </TabsContent>
             <TabsContent value="config">
               <AlertasConfigTable configAlertas={configAlertas} />

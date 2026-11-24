@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -33,6 +34,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,8 +45,9 @@ import { ExpedicaoTimeline } from "../components/ExpedicaoTimeline";
 import { VolumeChecklist } from "../components/VolumeChecklist";
 
 export default function ShippingPage() {
-  const { romaneios, loading, atualizarStatus } = useRomaneios();
+  const { romaneios, loading, error, refetch, atualizarStatus, cancelarRomaneio } = useRomaneios();
   const [searchTerm, setSearchTerm] = useState("");
+  const [romaneioCancelar, setRomaneioCancelar] = useState<any | null>(null);
 
   const getStatusBadge = (status: StatusRomaneio) => {
     switch (status) {
@@ -76,6 +79,12 @@ export default function ShippingPage() {
       r.placa_veiculo?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleCancelarRomaneio = async () => {
+    if (!romaneioCancelar) return;
+    await cancelarRomaneio(romaneioCancelar.id);
+    setRomaneioCancelar(null);
+  };
+
   const stats = {
     total: romaneios.length,
     emTransito: (romaneios as any[]).filter((r) => r.status === "em_transito").length,
@@ -83,7 +92,12 @@ export default function ShippingPage() {
     pedentes: (romaneios as any[]).filter(
       (r) => r.status === "confirmado" || r.status === "rascunho"
     ).length,
+    divergencias: (romaneios as any[]).filter(
+      (r) => r.status === "parcial" || r.status === "cancelado"
+    ).length,
   };
+  const percentual = (valor: number) =>
+    stats.total > 0 ? Math.round((valor / stats.total) * 100) : 0;
 
   return (
     <AppLayout title="Expedição & Shipping" showBack>
@@ -129,7 +143,7 @@ export default function ShippingPage() {
               <CardContent className="flex items-center justify-between p-4">
                 <div>
                   <p className="text-xs font-medium uppercase text-muted-foreground">Alertas</p>
-                  <p className="text-2xl font-bold text-destructive">0</p>
+                  <p className="text-2xl font-bold text-destructive">{stats.divergencias}</p>
                 </div>
                 <div className="rounded-full bg-destructive/10 p-2">
                   <AlertCircle className="h-5 w-5 text-destructive" />
@@ -150,21 +164,25 @@ export default function ShippingPage() {
                 </div>
                 <div>
                   <h3 className="flex items-center gap-2 font-bold text-blue-900 dark:text-blue-100">
-                    Segurança Promo Brindes (10/10)
+                    Segurança Promo Brindes
                   </h3>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Cadeia de custódia verificada: 100% dos volumes triados e lacrados.
+                    {stats.entreguesHoje} de {stats.total} romaneios entregues.
                   </p>
                 </div>
               </div>
               <div className="flex w-full gap-3 md:w-auto">
                 <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center dark:bg-black/20 md:flex-none">
                   <p className="text-[10px] font-bold uppercase text-blue-600">Divergências</p>
-                  <p className="text-xl font-black text-blue-900 dark:text-white">0%</p>
+                  <p className="text-xl font-black text-blue-900 dark:text-white">
+                    {percentual(stats.divergencias)}%
+                  </p>
                 </div>
                 <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center dark:bg-black/20 md:flex-none">
-                  <p className="text-[10px] font-bold uppercase text-blue-600">SLA Médio</p>
-                  <p className="text-xl font-black text-blue-900 dark:text-white">99.8%</p>
+                  <p className="text-[10px] font-bold uppercase text-blue-600">Entregues</p>
+                  <p className="text-xl font-black text-blue-900 dark:text-white">
+                    {percentual(stats.entreguesHoje)}%
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -173,10 +191,10 @@ export default function ShippingPage() {
           {/* Promo Brindes Operational Views */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
-              <VolumeChecklist />
+              <VolumeChecklist romaneios={romaneios} />
             </div>
             <div className="lg:col-span-1">
-              <ExpedicaoTimeline />
+              <ExpedicaoTimeline romaneios={romaneios} />
             </div>
           </div>
 
@@ -185,6 +203,7 @@ export default function ShippingPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por código, motorista, placa"
                 placeholder="Buscar por código, motorista, placa..."
                 className="pl-9"
                 value={searchTerm}
@@ -217,6 +236,8 @@ export default function ShippingPage() {
                     <Skeleton key={i} className="h-48 w-full" />
                   ))}
                 </div>
+              ) : error ? (
+                <ErrorState onRetry={() => refetch()} />
               ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {filteredRomaneios.map((r: any) => (
@@ -237,7 +258,7 @@ export default function ShippingPage() {
                           </div>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
+                              <Button aria-label="Mais ações" variant="ghost" size="icon">
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -251,7 +272,10 @@ export default function ShippingPage() {
                               <DropdownMenuItem>
                                 <QrCode className="mr-2 h-4 w-4" /> Gerar QR Codes
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive">
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                onClick={() => setRomaneioCancelar(r)}
+                              >
                                 <AlertCircle className="mr-2 h-4 w-4" /> Cancelar
                               </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -344,6 +368,17 @@ export default function ShippingPage() {
           </Tabs>
         </div>
       </PageTransition>
+      <ConfirmDialog
+        open={!!romaneioCancelar}
+        onOpenChange={(open) => {
+          if (!open) setRomaneioCancelar(null);
+        }}
+        onConfirm={handleCancelarRomaneio}
+        title="Cancelar romaneio"
+        description="Esta ação cancela a rota do romaneio e não pode ser desfeita. Deseja continuar?"
+        confirmLabel="Cancelar romaneio"
+        variant="destructive"
+      />
     </AppLayout>
   );
 }

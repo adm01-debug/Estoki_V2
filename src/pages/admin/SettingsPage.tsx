@@ -136,15 +136,17 @@ export default function AdminSettingsPage() {
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label>Nome da Unidade</Label>
+                      <Label htmlFor="nome-da-unidade">Nome da Unidade</Label>
                       <Input
+                        id="nome-da-unidade"
                         value={settings.nome_unidade}
                         onChange={(e) => set("nome_unidade", e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Código Identificador</Label>
+                      <Label htmlFor="codigo-identificador">Código Identificador</Label>
                       <Input
+                        id="codigo-identificador"
                         value={settings.codigo_identificador}
                         onChange={(e) => set("codigo_identificador", e.target.value)}
                       />
@@ -172,36 +174,41 @@ export default function AdminSettingsPage() {
                 <CardContent className="space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Exigir Scan de QR Code</Label>
+                      <Label htmlFor="exigir-scan-de-qr-code">Exigir Scan de QR Code</Label>
                       <p className="text-xs text-muted-foreground">
                         Obrigatório escanear item e local em todas as movimentações.
                       </p>
                     </div>
                     <Switch
+                      id="exigir-scan-de-qr-code"
                       checked={settings.exigir_scan_qr}
                       onCheckedChange={(v) => set("exigir_scan_qr", v)}
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Validação de Validade (FEFO)</Label>
+                      <Label htmlFor="validacao-de-validade-fefo">
+                        Validação de Validade (FEFO)
+                      </Label>
                       <p className="text-xs text-muted-foreground">
                         Priorizar saída de itens com vencimento mais próximo.
                       </p>
                     </div>
                     <Switch
+                      id="validacao-de-validade-fefo"
                       checked={settings.validacao_fefo}
                       onCheckedChange={(v) => set("validacao_fefo", v)}
                     />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Picking Multi-Ondas</Label>
+                      <Label htmlFor="picking-multi-ondas">Picking Multi-Ondas</Label>
                       <p className="text-xs text-muted-foreground">
                         Permitir agrupamento de vários pedidos em uma única rota.
                       </p>
                     </div>
                     <Switch
+                      id="picking-multi-ondas"
                       checked={settings.picking_multi_ondas}
                       onCheckedChange={(v) => set("picking_multi_ondas", v)}
                     />

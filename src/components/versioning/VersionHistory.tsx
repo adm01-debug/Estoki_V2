@@ -93,7 +93,7 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
               <p>Nenhuma versão registrada</p>
             </div>
           ) : (
-            <ScrollArea className="mt-4 h-[calc(100vh-120px)]">
+            <ScrollArea className="mt-4 h-[calc(100dvh-120px)]">
               <div className="space-y-3">
                 {versions.map((version, index) => (
                   <div
@@ -118,7 +118,7 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7"
+                          className="relative h-7 w-7 after:absolute after:-inset-2 after:content-['']"
                           onClick={() => handlePreview(version)}
                           title="Visualizar"
                         >
@@ -128,7 +128,7 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7"
+                            className="relative h-7 w-7 after:absolute after:-inset-2 after:content-['']"
                             onClick={() => {
                               setSelectedVersion(version);
                               setShowConfirmRestore(true);
@@ -168,7 +168,10 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
       </Sheet>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[80vh] max-w-2xl overflow-auto"
+        >
           <DialogHeader>
             <DialogTitle>
               Versão {selectedVersion?.version_number} - {selectedVersion?.change_type}
@@ -181,7 +184,7 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
       </Dialog>
 
       <Dialog open={showConfirmRestore} onOpenChange={setShowConfirmRestore}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Restaurar Versão {selectedVersion?.version_number}?</DialogTitle>
           </DialogHeader>

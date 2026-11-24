@@ -197,11 +197,21 @@ export function BarcodeScanner({
           {/* Controls */}
           <div className="absolute right-2 top-2 flex gap-2">
             {hasFlash && (
-              <Button size="icon" variant={flashOn ? "default" : "secondary"} onClick={toggleFlash}>
+              <Button
+                aria-label="Lanterna"
+                size="icon"
+                variant={flashOn ? "default" : "secondary"}
+                onClick={toggleFlash}
+              >
                 <Flashlight className="h-4 w-4" />
               </Button>
             )}
-            <Button size="icon" variant="destructive" onClick={stopCamera}>
+            <Button
+              aria-label="Fechar scanner"
+              size="icon"
+              variant="destructive"
+              onClick={stopCamera}
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>

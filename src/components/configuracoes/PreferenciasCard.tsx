@@ -40,8 +40,11 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label className="text-sm">Nome do Operador</Label>
+          <Label htmlFor="nome-do-operador" className="text-sm">
+            Nome do Operador
+          </Label>
           <Input
+            id="nome-do-operador"
             value={preferencias.nome}
             onChange={(e) => onChange({ nome: e.target.value })}
             placeholder="Seu nome"
@@ -50,7 +53,7 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-sm">
+            <Label htmlFor="tema" className="flex items-center gap-2 text-sm">
               <Palette className="h-4 w-4" />
               Tema
             </Label>
@@ -58,7 +61,7 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
               value={theme || "system"}
               onValueChange={(v: "light" | "dark" | "system") => onThemeChange(v)}
             >
-              <SelectTrigger>
+              <SelectTrigger id="tema">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -69,12 +72,14 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
             </Select>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm">Formato de Data</Label>
+            <Label htmlFor="formato-de-data" className="text-sm">
+              Formato de Data
+            </Label>
             <Select
               value={preferencias.formatoData}
               onValueChange={(v) => onChange({ formatoData: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="formato-de-data">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -86,12 +91,14 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
           </div>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm">Itens por Página</Label>
+          <Label htmlFor="itens-por-pagina" className="text-sm">
+            Itens por Página
+          </Label>
           <Select
             value={preferencias.paginacaoPadrao.toString()}
             onValueChange={(v) => onChange({ paginacaoPadrao: Number(v) })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="itens-por-pagina">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -109,6 +116,7 @@ export function PreferenciasCard({ preferencias, theme, onChange, onThemeChange 
             <p className="text-xs text-muted-foreground">Mostrar valores monetários nas telas</p>
           </div>
           <Switch
+            aria-label="Exibir Valores"
             checked={preferencias.exibirValores}
             onCheckedChange={(c) => onChange({ exibirValores: c })}
           />

@@ -54,6 +54,7 @@ export function EditableTable<T extends { id: string | number }>({
               <TableCell key={String(col.key)}>
                 {editingId === row.id && col.editable !== false ? (
                   <Input
+                    aria-label={String(col.header ?? col.key)}
                     value={String(editValues[col.key] || "")}
                     onChange={(e) => setEditValues((v) => ({ ...v, [col.key]: e.target.value }))}
                   />
@@ -65,15 +66,25 @@ export function EditableTable<T extends { id: string | number }>({
             <TableCell>
               {editingId === row.id ? (
                 <div className="flex gap-1">
-                  <Button size="icon" variant="ghost" onClick={saveEdit}>
+                  <Button aria-label="Salvar edição" size="icon" variant="ghost" onClick={saveEdit}>
                     <Check className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" onClick={cancelEdit}>
+                  <Button
+                    aria-label="Cancelar edição"
+                    size="icon"
+                    variant="ghost"
+                    onClick={cancelEdit}
+                  >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
               ) : (
-                <Button size="icon" variant="ghost" onClick={() => startEdit(row)}>
+                <Button
+                  aria-label="Editar linha"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => startEdit(row)}
+                >
                   <Pencil className="h-4 w-4" />
                 </Button>
               )}

@@ -45,7 +45,7 @@ export function WarehouseMap({ positions, onPositionClick }: WarehouseMapProps) 
     <Card
       className={cn(
         "w-full overflow-hidden border-primary/10 bg-background/50 backdrop-blur-sm transition-all duration-500",
-        isMaximized ? "fixed inset-4 z-50 h-[calc(100vh-32px)]" : "relative"
+        isMaximized ? "fixed inset-4 z-50 h-[calc(100dvh-32px)]" : "relative"
       )}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 border-b border-primary/5 pb-4">

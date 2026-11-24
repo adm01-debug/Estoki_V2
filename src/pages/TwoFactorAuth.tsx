@@ -45,14 +45,14 @@ export default function TwoFactorAuth() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-muted">
+      <div className="flex min-h-dvh items-center justify-center bg-muted">
         <div className="animate-pulse text-muted-foreground">Carregando...</div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted p-4">
+    <div className="flex min-h-dvh items-center justify-center bg-muted p-4">
       <MFAVerify
         factorId={factorId || undefined}
         onSuccess={handleSuccess}

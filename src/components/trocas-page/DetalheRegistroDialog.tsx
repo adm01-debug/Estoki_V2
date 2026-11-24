@@ -37,7 +37,10 @@ export function DetalheRegistroDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <span className="font-mono text-muted-foreground">#{registro.pedido}</span>

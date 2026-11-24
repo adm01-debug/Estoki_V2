@@ -21,6 +21,7 @@ const Produtos = lazy(() => import("@/pages/Produtos"));
 const Lotes = lazy(() => import("@/pages/Lotes"));
 const Posicoes = lazy(() => import("@/pages/Posicoes"));
 const InventarioCiclico = lazy(() => import("@/pages/InventarioCiclico"));
+const InventarioCicloDetalhe = lazy(() => import("@/pages/InventarioCicloDetalhe"));
 const CurvaABC = lazy(() => import("@/features/analytics/pages/ABCAnalysisPage"));
 const OcupacaoVisual = lazy(() => import("@/pages/OcupacaoVisual"));
 
@@ -67,6 +68,16 @@ export const wmsRoutes = (
       }
     />
     <Route
+      path="triagem/:id"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="form" />}>
+            <FormularioTriagem />
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
       path="recebimento"
       element={
         <RouteErrorBoundary>
@@ -97,7 +108,17 @@ export const wmsRoutes = (
       }
     />
     <Route
-      path="conferencia"
+      path="recebimento/:id"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="form" />}>
+            <ConferenciaRecebimento />
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="recebimento/conferencia/:id"
       element={
         <RouteErrorBoundary>
           <Suspense fallback={<RouteLoadingFallback type="form" />}>
@@ -157,6 +178,18 @@ export const wmsRoutes = (
           <Suspense fallback={<RouteLoadingFallback type="table" />}>
             <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
               <InventarioCiclico />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="inventario/:id"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="form" />}>
+            <ProtectedRoute allowedRoles={["admin", "supervisor"]}>
+              <InventarioCicloDetalhe />
             </ProtectedRoute>
           </Suspense>
         </RouteErrorBoundary>

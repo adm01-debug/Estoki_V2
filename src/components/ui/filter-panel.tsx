@@ -58,7 +58,7 @@ export function FilterPanel({ filters, values, onChange, onClear, className }: F
                   value={values[filter.key] || ""}
                   onValueChange={(v) => onChange(filter.key, v)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger aria-label={filter.label}>
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -71,6 +71,7 @@ export function FilterPanel({ filters, values, onChange, onClear, className }: F
                 </Select>
               ) : (
                 <Input
+                  aria-label={filter.label}
                   type={
                     filter.type === "number" ? "number" : filter.type === "date" ? "date" : "text"
                   }

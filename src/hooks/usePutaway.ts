@@ -75,10 +75,42 @@ export function usePutaway() {
 
       // Se concluiu, atualizar estoque
       if (status === "concluida" && qty) {
-        // A lógica de movimentação real de estoque costuma ser feita via RPC ou trigger
-        // mas vamos registrar uma movimentação no log pelo menos
         const task = tasks.find((t) => t.id === taskId);
-        if (task) {
+        if (task && task.produto_id && task.posicao_destino_id) {
+          // Atualiza estoque real
+          const { error: upsertErr } = await supabase.from("estoque_posicao").upsert(
+            {
+              produto_id: task.produto_id,
+              posicao_id: task.posicao_destino_id,
+              quantidade: qty,
+              lote_id: null,
+            },
+            { onConflict: "produto_id,posicao_id" }
+          );
+          if (upsertErr) throw upsertErr;
+
+          // Remove do estoque origem, se houver
+          if (task.posicao_origem_id) {
+            const { data: estoqueOrigem } = await supabase
+              .from("estoque_posicao")
+              .select("id,quantidade")
+              .eq("produto_id", task.produto_id)
+              .eq("posicao_id", task.posicao_origem_id)
+              .maybeSingle();
+            if (estoqueOrigem) {
+              const novaQtd = estoqueOrigem.quantidade - qty;
+              if (novaQtd <= 0) {
+                await supabase.from("estoque_posicao").delete().eq("id", estoqueOrigem.id);
+              } else {
+                await supabase
+                  .from("estoque_posicao")
+                  .update({ quantidade: novaQtd })
+                  .eq("id", estoqueOrigem.id);
+              }
+            }
+          }
+
+          // Trilha de auditoria
           await supabase.from("rastreamento_historico").insert([
             {
               produto_id: task.produto_id as any,

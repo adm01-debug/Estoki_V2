@@ -5,7 +5,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { movimentacaoService } from "@/services/movimentacaoService";
 import type { Movimentacao, MovimentacaoInput, TipoMovimentacao } from "@/types/movimentacao";
 
-export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
+export function useMovimentacoes(options?: {
+  enableRealtime?: boolean;
+  pageSize?: number;
+  dataInicio?: Date;
+  dataFim?: Date;
+}) {
+  const { pageSize: pageSizeConfig, dataInicio, dataFim } = options ?? {};
   const [movimentacoes, setMovimentacoes] = useState<Movimentacao[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,26 +20,29 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const subscriptionRef = useRef<any>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchMovimentacoes = useCallback(async (page = 1, pageSize = 50) => {
-    try {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+  const fetchMovimentacoes = useCallback(
+    async (page = 1, pageSize = pageSizeConfig ?? 50) => {
+      try {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+
+        setLoading(true);
+        setError(null);
+
+        const result = await movimentacaoService.getAll({ page, pageSize, dataInicio, dataFim });
+        setMovimentacoes(result.data);
+      } catch (err) {
+        if ((err as any).name === "AbortError") return;
+        const message = err instanceof Error ? err.message : "Erro ao buscar movimentações";
+        setError(message);
+      } finally {
+        setLoading(false);
       }
-      abortControllerRef.current = new AbortController();
-
-      setLoading(true);
-      setError(null);
-
-      const result = await movimentacaoService.getAll({ page, pageSize });
-      setMovimentacoes(result.data);
-    } catch (err) {
-      if ((err as any).name === "AbortError") return;
-      const message = err instanceof Error ? err.message : "Erro ao buscar movimentações";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [pageSizeConfig, dataInicio, dataFim]
+  );
 
   useEffect(() => {
     fetchMovimentacoes();
@@ -43,11 +52,12 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("movements-changes")
+      .channel(`movements-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "rastreamento_historico" },
@@ -59,7 +69,8 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, fetchMovimentacoes]);
@@ -106,7 +117,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
   const registrarEntrada = async (
     produtoId: string,
     quantidade: number,
-    localizacao: string,
+    toPosicaoId?: string,
     loteId?: string,
     descricao?: string
   ): Promise<boolean> => {
@@ -115,7 +126,7 @@ export function useMovimentacoes(options?: { enableRealtime?: boolean }) {
       produto_id: produtoId,
       lote_id: loteId,
       quantidade,
-      localizacao,
+      to_posicao_id: toPosicaoId,
       descricao: descricao || "Entrada de material",
     });
   };

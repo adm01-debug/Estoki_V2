@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Plus, Filter, X, Download } from "lucide-react";
+import { Search, Plus, Filter, X, Download, AlertCircle } from "lucide-react";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { useProdutos } from "@/hooks/useProdutos";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
@@ -23,15 +23,36 @@ import { ProductGrid } from "@/components/produtos/ProductGrid";
 import { BulkImportDialog } from "@/components/produtos/BulkImportDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 import { type ProdutoFormData } from "@/components/produtos/produtoSchema";
+import { exportRowsToCSV } from "@/lib/export";
+
+const PAGE_SIZE = 50;
 
 export default function ProdutosPage() {
-  const { produtos, loading: productsLoading, createProduto, stats } = useProdutos();
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
   const [isSearching, setIsSearching] = useState(false);
   const [curvaFilter, setCurvaFilter] = useState<string>("todos");
+  const [page, setPage] = useState(1);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
+  const [editingProduto, setEditingProduto] = useState<Produto | null>(null);
+
+  const {
+    produtos,
+    total,
+    loading: productsLoading,
+    isFetching,
+    error,
+    refetch,
+    createProduto,
+    updateProduto,
+    stats,
+  } = useProdutos({
+    page,
+    pageSize: PAGE_SIZE,
+    search: debouncedSearch,
+    curva: curvaFilter,
+  });
 
   useEffect(() => {
     if (search !== debouncedSearch) {
@@ -42,32 +63,48 @@ export default function ProdutosPage() {
     }
   }, [search, debouncedSearch]);
 
-  const handleSave = async (data: ProdutoFormData) => {
-    await createProduto.mutateAsync(
-      {
-        ...data,
-        descricao: data.descricao || null,
-        peso_unitario: data.peso_unitario || null,
-        fornecedor_principal: data.fornecedor_principal || null,
-      },
-      {
-        onSuccess: () => {
-          setShowAddDialog(false);
-        },
-      }
-    );
-  };
+  const initialData = useMemo<Partial<ProdutoFormData> | undefined>(() => {
+    if (!editingProduto) return undefined;
+    return {
+      sku: editingProduto.sku,
+      nome: editingProduto.nome,
+      descricao: editingProduto.descricao ?? "",
+      unidade: editingProduto.unidade ?? "UN",
+      estoque_minimo: editingProduto.estoque_minimo ?? 0,
+      estoque_maximo: editingProduto.estoque_maximo ?? 0,
+      ponto_pedido: editingProduto.ponto_pedido ?? 0,
+      peso_unitario: editingProduto.peso_unitario ?? 0,
+      fornecedor_principal: editingProduto.fornecedor_principal ?? "",
+    };
+  }, [editingProduto]);
 
-  const filtered = useMemo(() => {
-    return produtos.filter((p) => {
-      const matchSearch =
-        !search ||
-        p.nome.toLowerCase().includes(search.toLowerCase()) ||
-        p.sku.toLowerCase().includes(search.toLowerCase());
-      const matchCurva = curvaFilter === "todos" || p.curva_abc === curvaFilter;
-      return matchSearch && matchCurva;
+  const handleSave = async (data: ProdutoFormData) => {
+    const payload = {
+      ...data,
+      descricao: data.descricao || null,
+      peso_unitario: data.peso_unitario || null,
+      fornecedor_principal: data.fornecedor_principal || null,
+    };
+
+    if (editingProduto) {
+      await updateProduto.mutateAsync(
+        { id: editingProduto.id, ...payload },
+        {
+          onSuccess: () => {
+            setEditingProduto(null);
+            setSelectedProduto(null);
+          },
+        }
+      );
+      return;
+    }
+
+    await createProduto.mutateAsync(payload, {
+      onSuccess: () => {
+        setShowAddDialog(false);
+      },
     });
-  }, [produtos, search, curvaFilter]);
+  };
 
   const handleExport = () => {
     const headers = [
@@ -79,7 +116,7 @@ export default function ProdutosPage() {
       "Estoque Max",
       "Fornecedor",
     ];
-    const rows = filtered.map((p) => [
+    const rows = produtos.map((p) => [
       p.sku,
       p.nome,
       p.unidade,
@@ -88,14 +125,7 @@ export default function ProdutosPage() {
       p.estoque_maximo,
       p.fornecedor_principal || "",
     ]);
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `produtos_estoki_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `produtos_estoki_${new Date().toISOString().split("T")[0]}`);
   };
 
   const getCurvaBadge = (curva?: string | null) => {
@@ -123,6 +153,9 @@ export default function ProdutosPage() {
     );
   }
 
+  const primeiro = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const ultimo = Math.min(page * PAGE_SIZE, total);
+
   return (
     <>
       <SEO
@@ -141,7 +174,8 @@ export default function ProdutosPage() {
               variant="outline"
               className="gap-2"
               onClick={handleExport}
-              title="Exportar CSV"
+              disabled={produtos.length === 0}
+              title="Exportar a página atual em CSV"
             >
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Exportar</span>
@@ -166,22 +200,35 @@ export default function ProdutosPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar por nome ou SKU"
                   placeholder="Buscar por nome ou SKU..."
                   className="pl-10"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setPage(1);
+                  }}
                 />
                 {search && (
                   <button
                     className="absolute right-3 top-1/2 -translate-y-1/2"
-                    onClick={() => setSearch("")}
+                    onClick={() => {
+                      setSearch("");
+                      setPage(1);
+                    }}
                   >
                     <X className="h-4 w-4 text-muted-foreground" />
                   </button>
                 )}
               </div>
-              <Select value={curvaFilter} onValueChange={setCurvaFilter}>
-                <SelectTrigger className="w-[130px]">
+              <Select
+                value={curvaFilter}
+                onValueChange={(valor) => {
+                  setCurvaFilter(valor);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Filtrar por curva ABC" className="w-[130px]">
                   <Filter className="mr-2 h-4 w-4" />
                   <SelectValue />
                 </SelectTrigger>
@@ -194,19 +241,63 @@ export default function ProdutosPage() {
               </Select>
             </div>
 
+            {error && (
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-destructive/40 bg-destructive/5 p-3 text-sm">
+                <span className="flex items-center gap-2 text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  Não foi possível carregar os produtos.
+                </span>
+                <Button size="sm" variant="outline" onClick={() => refetch()}>
+                  Tentar novamente
+                </Button>
+              </div>
+            )}
+
             <ProductGrid
-              produtos={filtered}
-              loading={isSearching}
+              produtos={produtos}
+              loading={isSearching || isFetching}
               onSelect={setSelectedProduto}
               getCurvaBadge={getCurvaBadge}
             />
+
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
+              <span data-testid="produtos-contagem">
+                {total === 0
+                  ? "Nenhum produto encontrado"
+                  : `Mostrando ${primeiro}–${ultimo} de ${total}`}
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={page <= 1}
+                  onClick={() => setPage((atual) => Math.max(1, atual - 1))}
+                >
+                  Anterior
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={ultimo >= total}
+                  onClick={() => setPage((atual) => atual + 1)}
+                >
+                  Próxima
+                </Button>
+              </div>
+            </div>
           </div>
         </PageTransition>
 
         <ProdutoFormDialog
-          open={showAddDialog}
-          onOpenChange={setShowAddDialog}
-          saving={createProduto.isPending}
+          open={showAddDialog || !!editingProduto}
+          onOpenChange={(aberto) => {
+            if (!aberto) {
+              setShowAddDialog(false);
+              setEditingProduto(null);
+            }
+          }}
+          initialData={initialData}
+          saving={createProduto.isPending || updateProduto.isPending}
           onSave={handleSave}
         />
 
@@ -214,6 +305,10 @@ export default function ProdutosPage() {
           produto={selectedProduto}
           onClose={() => setSelectedProduto(null)}
           getCurvaBadge={getCurvaBadge}
+          onEdit={(produto) => {
+            setEditingProduto(produto);
+            setSelectedProduto(null);
+          }}
         />
       </AppLayout>
     </>

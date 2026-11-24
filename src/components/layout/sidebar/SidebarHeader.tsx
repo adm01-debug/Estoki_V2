@@ -53,7 +53,7 @@ export const SidebarHeader = memo(function SidebarHeader({
               )}
             </div>
             {!isCollapsed && (
-              <p className="ml-0.5 mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/40">
+              <p className="ml-0.5 mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/80">
                 INTELLIGENCE WMS
               </p>
             )}
@@ -61,10 +61,11 @@ export const SidebarHeader = memo(function SidebarHeader({
         </div>
         {isMobile && (
           <Button
+            aria-label="Fechar menu lateral"
             variant="ghost"
             size="icon"
             onClick={onCloseMobile}
-            className="ml-auto text-sidebar-foreground/50 hover:text-sidebar-foreground"
+            className="ml-auto text-sidebar-foreground/70 hover:text-sidebar-foreground"
           >
             <X className="h-5 w-5" />
           </Button>

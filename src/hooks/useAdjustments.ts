@@ -26,7 +26,12 @@ export function useAdjustments() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: adjustments = [], isLoading } = useQuery({
+  const {
+    data: adjustments = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["adjustments"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -103,5 +108,5 @@ export function useAdjustments() {
     },
   });
 
-  return { adjustments, isLoading, createAdjustment, updateStatus };
+  return { adjustments, isLoading, isError, refetch, createAdjustment, updateStatus };
 }

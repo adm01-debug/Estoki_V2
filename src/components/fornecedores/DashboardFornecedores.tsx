@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useFornecedores } from "@/hooks/useFornecedores";
+import { formatarPercentual } from "@/lib/fornecedorScore";
 import {
   Building2,
   TrendingUp,
@@ -37,7 +38,7 @@ export function DashboardFornecedores() {
   const topFornecedores = useMemo(() => getTopFornecedores(5), [getTopFornecedores]);
   const fornecedoresCriticos = useMemo(() => getFornecedoresCriticos(), [getFornecedoresCriticos]);
 
-  const getClassificacaoBadge = (classificacao: string) => {
+  const getClassificacaoBadge = (classificacao: string | null) => {
     const configs: Record<
       string,
       { variant: "default" | "secondary" | "destructive" | "outline"; label: string }
@@ -47,16 +48,21 @@ export function DashboardFornecedores() {
       C: { variant: "outline", label: "C - Regular" },
       D: { variant: "destructive", label: "D - Crítico" },
     };
+    if (!classificacao) return <Badge variant="outline">Sem dados</Badge>;
     const config = configs[classificacao] || configs.C;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
   const getTrendIcon = (trend?: string) => {
     switch (trend) {
+      case "subindo":
       case "up":
         return <TrendingUp className="h-4 w-4 text-green-500" />;
+      case "descendo":
       case "down":
         return <TrendingDown className="h-4 w-4 text-red-500" />;
+      case "sem_dados":
+        return <Minus className="h-4 w-4 text-muted-foreground" />;
       default:
         return <Minus className="h-4 w-4 text-yellow-500" />;
     }
@@ -98,12 +104,12 @@ export function DashboardFornecedores() {
               <div>
                 <p className="text-sm text-muted-foreground">Pontualidade Média</p>
                 <p className="text-3xl font-bold">
-                  {estatisticas.pontualidadeMedia?.toFixed(1) || 0}%
+                  {formatarPercentual(estatisticas.pontualidadeMedia)}
                 </p>
               </div>
               <Clock className="h-8 w-8 text-blue-500" />
             </div>
-            <Progress value={estatisticas.pontualidadeMedia || 0} className="mt-2" />
+            <Progress value={estatisticas.pontualidadeMedia ?? 0} className="mt-2" />
           </CardContent>
         </Card>
 
@@ -113,12 +119,12 @@ export function DashboardFornecedores() {
               <div>
                 <p className="text-sm text-muted-foreground">Qualidade Média</p>
                 <p className="text-3xl font-bold">
-                  {estatisticas.qualidadeMedia?.toFixed(1) || 0}%
+                  {formatarPercentual(estatisticas.qualidadeMedia)}
                 </p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
-            <Progress value={estatisticas.qualidadeMedia || 0} className="mt-2" />
+            <Progress value={estatisticas.qualidadeMedia ?? 0} className="mt-2" />
           </CardContent>
         </Card>
 
@@ -161,8 +167,8 @@ export function DashboardFornecedores() {
                       <TableCell className="font-medium">{f.nome}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold">{f.pontuacao?.toFixed(0) || 0}</span>
-                          <Progress value={f.pontuacao || 0} className="h-2 w-16" />
+                          <span className="font-bold">{f.pontuacao?.toFixed(0) ?? "—"}</span>
+                          <Progress value={f.pontuacao ?? 0} className="h-2 w-16" />
                         </div>
                       </TableCell>
                       <TableCell>{getClassificacaoBadge(f.classificacao)}</TableCell>
@@ -206,13 +212,13 @@ export function DashboardFornecedores() {
                           <div>
                             <p className="text-muted-foreground">Pontualidade</p>
                             <p className="font-medium">
-                              {f.percentual_pontualidade?.toFixed(1) || 0}%
+                              {formatarPercentual(f.percentual_pontualidade)}
                             </p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">Qualidade</p>
                             <p className="font-medium">
-                              {f.percentual_qualidade?.toFixed(1) || 0}%
+                              {formatarPercentual(f.percentual_qualidade)}
                             </p>
                           </div>
                           <div>

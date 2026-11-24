@@ -169,46 +169,54 @@ export function SavedFiltersDropdown({
       </DropdownMenu>
 
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Salvar Filtro</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="filter-name">Nome do Filtro *</Label>
-              <Input
-                id="filter-name"
-                value={filterName}
-                onChange={(e) => setFilterName(e.target.value)}
-                placeholder="Ex: Produtos em estoque baixo"
-              />
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!filterName.trim() || isSaving) return;
+              handleSave();
+            }}
+          >
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="filter-name">Nome do Filtro *</Label>
+                <Input
+                  id="filter-name"
+                  value={filterName}
+                  onChange={(e) => setFilterName(e.target.value)}
+                  placeholder="Ex: Produtos em estoque baixo"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="filter-description">Descrição (opcional)</Label>
+                <Textarea
+                  id="filter-description"
+                  value={filterDescription}
+                  onChange={(e) => setFilterDescription(e.target.value)}
+                  placeholder="Descreva o que este filtro faz..."
+                  rows={2}
+                />
+              </div>
+              <div className="rounded-lg bg-muted p-3">
+                <p className="mb-2 text-sm font-medium">Filtros a serem salvos:</p>
+                <pre className="max-h-32 overflow-auto text-xs">
+                  {JSON.stringify(currentFilters, null, 2)}
+                </pre>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="filter-description">Descrição (opcional)</Label>
-              <Textarea
-                id="filter-description"
-                value={filterDescription}
-                onChange={(e) => setFilterDescription(e.target.value)}
-                placeholder="Descreva o que este filtro faz..."
-                rows={2}
-              />
-            </div>
-            <div className="rounded-lg bg-muted p-3">
-              <p className="mb-2 text-sm font-medium">Filtros a serem salvos:</p>
-              <pre className="max-h-32 overflow-auto text-xs">
-                {JSON.stringify(currentFilters, null, 2)}
-              </pre>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSave} disabled={!filterName.trim() || isSaving}>
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Salvar
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowSaveDialog(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={!filterName.trim() || isSaving}>
+                {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Salvar
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

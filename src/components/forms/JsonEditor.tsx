@@ -22,6 +22,7 @@ export function JsonEditor({ value = {}, onChange }: JsonEditorProps) {
   return (
     <div className="space-y-2">
       <Textarea
+        aria-label="Editor JSON"
         value={text}
         onChange={(e) => handleChange(e.target.value)}
         className={`min-h-[200px] font-mono text-sm ${error ? "border-red-500" : ""}`}

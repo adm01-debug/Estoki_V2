@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 
 // Ações consideradas críticas (RPCs SECURITY DEFINER e mutações sensíveis)
@@ -157,7 +158,16 @@ function CriticalActionsTab({ search }: { search: string }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {query.isLoading ? (
+        {query.isError ? (
+          <TableRow>
+            <TableCell colSpan={5} className="p-2">
+              <ErrorState
+                message="Não foi possível carregar as ações críticas."
+                onRetry={() => void query.refetch()}
+              />
+            </TableCell>
+          </TableRow>
+        ) : query.isLoading ? (
           <LoadingRows cols={5} />
         ) : filtered.length === 0 ? (
           <TableRow>
@@ -265,7 +275,16 @@ function StockChangesTab({ search }: { search: string }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {query.isLoading ? (
+            {query.isError ? (
+              <TableRow>
+                <TableCell colSpan={6} className="p-2">
+                  <ErrorState
+                    message="Não foi possível carregar as movimentações de estoque."
+                    onRetry={() => void query.refetch()}
+                  />
+                </TableCell>
+              </TableRow>
+            ) : query.isLoading ? (
               <LoadingRows cols={6} />
             ) : filteredAjustes.length === 0 ? (
               <TableRow>
@@ -444,6 +463,11 @@ function XpEventsTab({ search }: { search: string }) {
 export default function AuditoriaCriticaPage() {
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState("acoes");
+  const queryClient = useQueryClient();
+
+  const recarregar = () => {
+    void queryClient.invalidateQueries({ queryKey: ["auditoria-critica"] });
+  };
 
   return (
     <AppLayout title="Auditoria Crítica" showBack>
@@ -465,18 +489,14 @@ export default function AuditoriaCriticaPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar por usuário, ação, motivo, tipo"
                     placeholder="Buscar por usuário, ação, motivo, tipo..."
                     className="pl-9"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => window.location.reload()}
-                  aria-label="Recarregar"
-                >
+                <Button variant="outline" size="icon" onClick={recarregar} aria-label="Recarregar">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
               </div>

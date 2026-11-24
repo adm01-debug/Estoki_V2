@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +42,12 @@ export default function AprovacaoMovimentacoes() {
   const [tab, setTab] = useState("pendente");
   const queryClient = useQueryClient();
 
-  const { data: aprovacoes = [], isLoading: loading } = useQuery({
+  const {
+    data: aprovacoes = [],
+    isLoading: loading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["aprovacoes-list"],
     queryFn: fetchAprovacoes,
     staleTime: 1000 * 60 * 5,
@@ -125,7 +131,12 @@ export default function AprovacaoMovimentacoes() {
         </TabsList>
 
         <TabsContent value={tab} className="mt-4">
-          {loading ? (
+          {isError ? (
+            <ErrorState
+              message="Não foi possível carregar as aprovações."
+              onRetry={() => refetch()}
+            />
+          ) : loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <Card key={i} className="glass-card h-28 animate-pulse" />
@@ -186,8 +197,9 @@ export default function AprovacaoMovimentacoes() {
                           </div>
 
                           {aprov.status === "pendente" && isApprover && (
-                            <div className="flex min-w-[200px] flex-col gap-2">
+                            <div className="flex min-w-0 flex-col gap-2 sm:min-w-[200px]">
                               <Textarea
+                                aria-label="Observação (opcional)"
                                 placeholder="Observação (opcional)"
                                 className="h-16 text-xs"
                                 value={observacao[aprov.id] || ""}

@@ -65,6 +65,7 @@ export default function StockMovementsPage() {
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
                 <Input
+                  aria-label="SKU, Lote ou Descrição"
                   placeholder="SKU, Lote ou Descrição..."
                   className="h-10 rounded-xl border-border/40 bg-muted/30 pl-10 transition-all focus:bg-background"
                   value={searchTerm}
@@ -72,6 +73,7 @@ export default function StockMovementsPage() {
                 />
               </div>
               <Button
+                aria-label="Filtrar"
                 variant="outline"
                 size="icon"
                 className="h-10 w-10 rounded-xl border-border/40"
@@ -79,6 +81,7 @@ export default function StockMovementsPage() {
                 <Filter className="h-4 w-4" />
               </Button>
               <Button
+                aria-label="Exportar"
                 variant="outline"
                 size="icon"
                 className="h-10 w-10 rounded-xl border-border/40"
@@ -99,6 +102,7 @@ export default function StockMovementsPage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center rounded-lg border border-border/40 bg-muted/50 p-1">
                   <Button
+                    aria-label="Ver em lista"
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 rounded-md bg-background text-primary shadow-sm"
@@ -106,6 +110,7 @@ export default function StockMovementsPage() {
                     <List className="h-4 w-4" />
                   </Button>
                   <Button
+                    aria-label="Ver em grade"
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 rounded-md text-muted-foreground"
@@ -247,6 +252,7 @@ export default function StockMovementsPage() {
 
                         <div className="shrink-0 border-l border-border/20 pl-4">
                           <Button
+                            aria-label="Ver detalhes"
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 rounded-full opacity-0 transition-opacity group-hover/item:opacity-100"

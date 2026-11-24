@@ -102,6 +102,7 @@ export function TriagemHeaderCard({
                 <div className="flex gap-1">
                   {isRunning ? (
                     <Button
+                      aria-label="Pausar triagem"
                       size="icon"
                       variant="ghost"
                       className="h-8 w-8 rounded-lg text-amber-600 hover:bg-amber-100"
@@ -111,6 +112,7 @@ export function TriagemHeaderCard({
                     </Button>
                   ) : (
                     <Button
+                      aria-label="Retomar triagem"
                       size="icon"
                       variant="ghost"
                       className="h-8 w-8 rounded-lg text-primary hover:bg-primary/10"

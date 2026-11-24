@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
@@ -10,26 +9,33 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
+  // Exigir JWT — passkey é segundo fator, não substituto de sessão
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Authorization required" }), {
+      status: 401,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const jwtSecret =
-      Deno.env.get("SUPABASE_AUTH_JWT_SECRET") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const __raw = await req.json();
     const __v = validateInput(GenericPayloadSchema, __raw);
-    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     const { credential, challengeId, userId } = __raw;
 
-    if (!credential || !credential.id || !challengeId || !userId) {
+    if (!credential?.id || !challengeId || !userId) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // Get and verify the challenge
+    // Verificar e consumir o challenge
     const { data: challengeData, error: challengeError } = await supabase
       .from("webauthn_challenges")
       .select("*")
@@ -45,10 +51,8 @@ serve(async (req) => {
       });
     }
 
-    // Delete used challenge
     await supabase.from("webauthn_challenges").delete().eq("id", challengeId);
 
-    // Verify challenge expiration
     if (new Date(challengeData.expires_at) < new Date()) {
       return new Response(JSON.stringify({ error: "Challenge expired" }), {
         status: 400,
@@ -56,7 +60,7 @@ serve(async (req) => {
       });
     }
 
-    // Verify the credential exists and belongs to the user
+    // Verificar que a credencial existe e pertence ao usuário
     const { data: storedCredential, error: credError } = await supabase
       .from("passkey_credentials")
       .select("*")
@@ -71,65 +75,21 @@ serve(async (req) => {
       });
     }
 
-    // Update last used timestamp
-    await supabase
-      .from("passkey_credentials")
-      .update({
-        last_used_at: new Date().toISOString(),
-        counter: storedCredential.counter + 1,
-      })
-      .eq("id", storedCredential.id);
-
-    // Get user info
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.admin.getUserById(userId);
-
-    if (userError || !user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    // Generate a custom session/token for the user
-    // Note: In production, you would use Supabase's magic link or create a proper session
-    const now = Math.floor(Date.now() / 1000);
-    const payload = {
-      aud: "authenticated",
-      exp: now + 3600, // 1 hour
-      iat: now,
-      iss: supabaseUrl + "/auth/v1",
-      sub: userId,
-      email: user.email,
-      role: "authenticated",
-      session_id: crypto.randomUUID(),
-    };
-
-    // Create a simple JWT token (in production, use proper Supabase session management)
-    const secret = new TextEncoder().encode(jwtSecret);
-    const token = await new jose.SignJWT(payload)
-      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
-      .sign(secret);
-
-    console.log("Passkey authentication successful for user:", userId);
-
+    // VERIFICAÇÃO CRIPTOGRÁFICA — exigida pela especificação WebAuthn W3C
+    // Sem ela qualquer pessoa com credential_id+challengeId pode obter token.
+    // Implementação completa requer @simplewebauthn/server (Deno-compatible).
+    // Por ora: bloquear até a verificação estar implementada.
+    // TODO: implementar verify com @noble/curves ou importar @simplewebauthn/server
     return new Response(
       JSON.stringify({
-        success: true,
-        user: {
-          id: user.id,
-          email: user.email,
-        },
-        access_token: token,
-        token_type: "bearer",
-        expires_in: 3600,
+        error: "Passkey authentication temporarily disabled pending cryptographic verification implementation.",
       }),
-      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
+      {
+        status: 503,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      }
     );
   } catch (error: unknown) {
-    console.error("Error verifying authentication:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
       status: 500,

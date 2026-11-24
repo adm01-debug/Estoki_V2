@@ -78,8 +78,9 @@ export const SidebarContent = memo(function SidebarContent({
           {!isCollapsed && (
             <div className="sticky top-0 z-20 mb-4 bg-sidebar/95 px-3 py-2 backdrop-blur-sm">
               <div className="group relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/30 transition-colors group-focus-within:text-primary" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/70 transition-colors group-focus-within:text-primary" />
                 <Input
+                  aria-label="Buscar função"
                   placeholder="Buscar função..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -107,7 +108,7 @@ export const SidebarContent = memo(function SidebarContent({
                   />
                 ))
               ) : (
-                <p className="px-4 py-2 text-xs italic text-sidebar-foreground/40">
+                <p className="px-4 py-2 text-xs italic text-sidebar-foreground/70">
                   Nenhum resultado encontrado
                 </p>
               )}

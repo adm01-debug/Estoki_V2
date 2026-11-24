@@ -72,7 +72,11 @@ export default function HelpPage() {
                 </CardTitle>
                 <div className="relative mt-2">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input placeholder="Buscar dúvida..." className="h-10 rounded-xl pl-10" />
+                  <Input
+                    aria-label="Buscar dúvida"
+                    placeholder="Buscar dúvida..."
+                    className="h-10 rounded-xl pl-10"
+                  />
                 </div>
               </CardHeader>
               <CardContent>

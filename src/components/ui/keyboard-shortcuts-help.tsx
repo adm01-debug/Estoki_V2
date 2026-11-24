@@ -28,6 +28,7 @@ const shortcuts: ShortcutItem[] = [
   { keys: ["⌘", "⇧", "X"], description: "Ir para Expedição", category: "Navegação" },
   { keys: ["⌘", "R"], description: "Atualizar dados", category: "Ações" },
   { keys: ["?"], description: "Mostrar ajuda de atalhos", category: "Ajuda" },
+  { keys: ["Alt", "/"], description: "Painel rápido de atalhos", category: "Ajuda" },
 ];
 
 function KeyboardKey({ children }: { children: React.ReactNode }) {
@@ -41,9 +42,17 @@ function KeyboardKey({ children }: { children: React.ReactNode }) {
 export function KeyboardShortcutsHelp({
   open: controlledOpen,
   onOpenChange,
+  withTrigger = true,
 }: {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Quando `false`, nenhum botão gatilho é renderizado — o diálogo abre só
+   * programaticamente (atalho "?"). Usado pelo `KeyboardShortcuts` global: o
+   * gatilho ficava como primeiro elemento focável da página, antes dos
+   * skip-links, e invisível (atrás da sidebar).
+   */
+  withTrigger?: boolean;
 }) {
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
@@ -61,13 +70,15 @@ export function KeyboardShortcutsHelp({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2" aria-label="Atalhos de teclado">
-          <Keyboard className="h-4 w-4" aria-hidden="true" />
-          <span className="sr-only sm:not-sr-only">Atalhos</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      {withTrigger && (
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="gap-2" aria-label="Atalhos de teclado">
+            <Keyboard className="h-4 w-4" aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">Atalhos</span>
+          </Button>
+        </DialogTrigger>
+      )}
+      <DialogContent aria-describedby={undefined} className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Keyboard className="h-5 w-5" />

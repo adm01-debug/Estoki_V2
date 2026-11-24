@@ -4,11 +4,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -20,6 +23,7 @@ import {
   ArrowDownLeft,
   RefreshCcw,
   Loader2,
+  Pencil,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -29,10 +33,17 @@ interface Props {
   produto: Produto | null;
   onClose: () => void;
   getCurvaBadge: (curva?: string | null) => ReactNode;
+  onEdit?: (produto: Produto) => void;
 }
 
-export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) {
-  const { data: historico, isLoading: loadingHist } = useQuery({
+export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge, onEdit }: Props) {
+  const {
+    data: historico,
+    isLoading: loadingHist,
+    isError: erroHistorico,
+    error: erroHistoricoObj,
+    refetch: recarregarHistorico,
+  } = useQuery({
     queryKey: ["produto-historico", produto?.id],
     queryFn: async () => {
       if (!produto?.id) return [];
@@ -108,7 +119,14 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) 
 
           <TabsContent value="historico" className="py-4">
             <ScrollArea className="h-[300px] pr-4">
-              {loadingHist ? (
+              {erroHistorico ? (
+                <div className="flex h-full items-center justify-center">
+                  <ErrorState
+                    message={`Não foi possível carregar o histórico: ${(erroHistoricoObj as Error).message}`}
+                    onRetry={() => recarregarHistorico()}
+                  />
+                </div>
+              ) : loadingHist ? (
                 <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
@@ -152,6 +170,20 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge }: Props) 
             </ScrollArea>
           </TabsContent>
         </Tabs>
+
+        {produto && onEdit && (
+          <DialogFooter>
+            <Button
+              variant="outline"
+              className="gap-2"
+              onClick={() => onEdit(produto)}
+              data-testid="produto-editar"
+            >
+              <Pencil className="h-4 w-4" />
+              Editar produto
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );

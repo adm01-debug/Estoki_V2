@@ -96,7 +96,7 @@ export function GeoBlockingManager() {
           {/* Add Country */}
           <div className="flex gap-2">
             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-              <SelectTrigger className="flex-1">
+              <SelectTrigger aria-label="Selecione um país para adicionar" className="flex-1">
                 <SelectValue placeholder="Selecione um país para adicionar" />
               </SelectTrigger>
               <SelectContent>
@@ -145,6 +145,7 @@ export function GeoBlockingManager() {
                     </TableCell>
                     <TableCell>
                       <Switch
+                        aria-label="Ativar ou desativar bloqueio"
                         checked={entry.is_active}
                         onCheckedChange={() => handleToggle(entry.id, entry.is_active)}
                       />
@@ -153,6 +154,7 @@ export function GeoBlockingManager() {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
+                            aria-label="Excluir regra"
                             variant="ghost"
                             size="icon"
                             className="text-destructive hover:text-destructive"

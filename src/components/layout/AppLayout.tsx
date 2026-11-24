@@ -2,7 +2,9 @@ import { ReactNode, Suspense, createContext, lazy, useContext, useState, useEffe
 import { Outlet, Navigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/constants/app";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { SkipLinks } from "@/components/a11y/SkipLinks";
 // Tour interativo — não crítico para o primeiro render.
 const OnboardingTour = lazy(() =>
   import("@/components/common/OnboardingTour").then((m) => ({ default: m.OnboardingTour }))
@@ -12,6 +14,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
@@ -48,6 +51,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
   const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
   useSwipeBack(!isHome && location.pathname !== "/dashboard");
+  useDocumentTitle(isNested ? undefined : title ? `${title} · ${APP_NAME}` : APP_NAME);
 
   if (isNested) return <>{children}</>;
   if (loading) return <AuthLoading />;
@@ -64,17 +68,12 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
     <AppLayoutContext.Provider value={true}>
       <TooltipProvider>
         <div
-          className="flex min-h-screen flex-col bg-background"
+          className="flex min-h-dvh flex-col bg-background"
           role="application"
           aria-label="Promo Brindes Intel WMS"
         >
           <GlobalLoadingBar />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-          >
-            Pular para conteúdo principal
-          </a>
+          <SkipLinks />
 
           <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
             <div className="absolute -right-[20%] -top-[40%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
@@ -97,8 +96,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
           <main
             id="main-content"
+            tabIndex={-1}
             className={cn(
-              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out",
+              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out focus:outline-none",
               mainPadding
             )}
             aria-label="Conteúdo principal"
@@ -135,7 +135,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               aria-label={sidebarCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
-              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/50 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/70 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               {sidebarCollapsed ? (
                 <ChevronLeft className="h-3 w-3 rotate-180" />

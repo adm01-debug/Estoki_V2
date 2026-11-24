@@ -46,6 +46,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
       <div className="relative">
         <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
+          aria-label="Horário"
           type="time"
           value={time}
           onChange={(e) => handleTimeChange(e.target.value)}

@@ -68,7 +68,7 @@ const LoginPage = () => {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-sidebar">
+      <div className="flex min-h-dvh items-center justify-center bg-sidebar">
         <div className="flex flex-col items-center gap-4">
           <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
             <Box className="h-6 w-6 text-primary-foreground" />
@@ -81,10 +81,10 @@ const LoginPage = () => {
     );
 
   const inputClasses =
-    "bg-sidebar-accent/60 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/30 focus:border-primary focus:ring-primary/20 h-11 rounded-lg";
+    "bg-sidebar-accent/60 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/70 focus:border-primary focus:ring-primary/20 h-11 rounded-lg";
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
+    <div className="relative flex min-h-dvh overflow-hidden">
       <div className="absolute inset-0 bg-sidebar" />
       <BrandingContent />
       <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">
@@ -99,7 +99,7 @@ const LoginPage = () => {
             <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">
               Bem-vindo de volta
             </h2>
-            <p className="mt-1 text-sm text-sidebar-foreground/40">
+            <p className="mt-1 text-sm text-sidebar-foreground/70">
               Entre com suas credenciais para continuar
             </p>
           </div>
@@ -115,7 +115,7 @@ const LoginPage = () => {
           />
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-sidebar-border" />
-            <span className="text-xs font-medium uppercase text-sidebar-foreground/30">ou</span>
+            <span className="text-xs font-medium uppercase text-sidebar-foreground/70">ou</span>
             <div className="h-px flex-1 bg-sidebar-border" />
           </div>
           <Button
@@ -134,23 +134,23 @@ const LoginPage = () => {
           <div className="space-y-2 pt-2 text-center">
             <Link
               to="/auth/forgot-password"
-              className="block text-sm text-sidebar-foreground/50 transition-colors hover:text-primary"
+              className="block text-sm text-sidebar-foreground/70 transition-colors hover:text-primary-bright"
             >
               Esqueceu sua senha?
             </Link>
-            <p className="text-[11px] text-sidebar-foreground/30">
+            <p className="text-[11px] text-sidebar-foreground/80">
               Sistema de uso exclusivo. Para solicitar acesso, contate o administrador.
             </p>
           </div>
 
           {/* Legal Footer */}
           <div className="mt-8 border-t border-sidebar-border pt-8">
-            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/30">
+            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/80">
               Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/40">
+              <span className="font-semibold italic text-sidebar-foreground/70">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>

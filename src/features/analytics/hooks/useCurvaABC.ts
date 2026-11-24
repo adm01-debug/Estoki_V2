@@ -188,6 +188,8 @@ export function useCurvaABC() {
 
   const error = queryError ? (queryError instanceof Error ? queryError.message : "Erro") : null;
 
+  // A classificacao e calculada no navegador (produtos + lotes + movimentacoes dos ultimos 30
+  // dias): nao existe persistencia em produtos.curva_abc, por isso a acao e "atualizar dados".
   const recalcularMutation = useMutation({
     mutationFn: async () => {
       await queryClient.invalidateQueries({ queryKey: ["curva-abc"] });
@@ -254,8 +256,6 @@ export function useCurvaABC() {
     getEstatisticas,
     getProdutosPorClassificacao,
     getProdutosComAcao,
-    recalcular: () => {
-      recalcularMutation.mutate();
-    },
+    recalcular: () => recalcularMutation.mutateAsync(),
   };
 }

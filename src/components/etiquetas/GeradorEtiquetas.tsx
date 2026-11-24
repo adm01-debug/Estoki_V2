@@ -89,7 +89,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">🏷️ Gerar Etiquetas QR Code</DialogTitle>
         </DialogHeader>
@@ -118,9 +118,11 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
               />
             </div>
             <div>
-              <Label className="text-xs">Tamanho</Label>
+              <Label htmlFor="tamanho" className="text-xs">
+                Tamanho
+              </Label>
               <Select value={tamanho} onValueChange={(v) => setTamanho(v as TamanhoEtiqueta)}>
-                <SelectTrigger>
+                <SelectTrigger id="tamanho">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -138,12 +140,14 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
 
           {qtdEtiquetas > 1 && (
             <div className="flex items-center gap-2">
-              <Label className="text-xs">Visualizar volume:</Label>
+              <Label htmlFor="visualizar-volume" className="text-xs">
+                Visualizar volume:
+              </Label>
               <Select
                 value={previewVolume.toString()}
                 onValueChange={(v) => setPreviewVolume(parseInt(v))}
               >
-                <SelectTrigger className="w-24">
+                <SelectTrigger id="visualizar-volume" className="w-24">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

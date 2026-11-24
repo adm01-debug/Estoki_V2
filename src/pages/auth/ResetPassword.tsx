@@ -32,7 +32,7 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
+    <div className="relative flex min-h-dvh overflow-hidden">
       <div className="absolute inset-0 bg-sidebar" />
       <BrandingContent />
       <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">
@@ -45,7 +45,7 @@ const ResetPasswordPage = () => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">Nova senha</h2>
-            <p className="mt-1 text-sm text-sidebar-foreground/40">
+            <p className="mt-1 text-sm text-sidebar-foreground/70">
               Defina sua nova senha de acesso
             </p>
           </div>

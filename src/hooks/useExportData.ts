@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { rowsToCSV } from "@/lib/export";
 
 export type ExportFormat = "csv" | "xlsx" | "pdf";
 
@@ -33,19 +34,10 @@ export function useExportData<T extends Record<string, unknown>>(options: {
     (data: T[]) => {
       const formatted = formatData(data);
       const headers = columns.map((c) => c.header);
-      const csvContent = [
-        headers.join(","),
-        ...formatted.map((row) =>
-          headers
-            .map((h) => {
-              const v = row[h];
-              return typeof v === "string" && (v.includes(",") || v.includes('"'))
-                ? `"${v.replace(/"/g, '""')}"`
-                : (v ?? "");
-            })
-            .join(",")
-        ),
-      ].join("\n");
+      const csvContent = rowsToCSV(
+        headers,
+        formatted.map((row) => headers.map((h) => row[h]))
+      );
       const blob = new Blob(["\ufeff" + csvContent], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);

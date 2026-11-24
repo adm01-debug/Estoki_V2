@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useEstoque, PosicaoEstoque } from "@/features/inventory/hooks/useEstoque";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import {
   ArrowRight,
   AlertTriangle,
+  AlertCircle,
   MapPin,
   Loader2,
   QrCode,
@@ -23,6 +25,7 @@ import { WarehouseVisualMap } from "@/components/armazenamento/WarehouseVisualMa
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { mapearTarefasArmazenagem, TarefaArmazenagem } from "@/lib/filaArmazenagem";
 
 type Rotatividade = "alta" | "media" | "baixa";
 
@@ -133,7 +136,7 @@ const calcularSugestoes = (posicoes: PosicaoEstoque[], item: ItemArmazenar): Pos
 const ArmazenamentoPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { posicoes, loading: loadingPosicoes, refetch } = useEstoque();
+  const { posicoes, loading: loadingPosicoes, error: erroPosicoes, refetch } = useEstoque();
   const { registrarEntrada } = useMovimentacoes();
 
   const [posicaoSelecionada, setPosicaoSelecionada] = useState<PosicaoSugerida | null>(null);
@@ -142,7 +145,7 @@ const ArmazenamentoPage = () => {
   const [crossDockingOrder, setCrossDockingOrder] = useState<any>(null);
   const [blindMode, setBlindMode] = useState(false);
   const [startTime] = useState(Date.now());
-  const [queue, setQueue] = useState<ItemArmazenar[]>([]);
+  const [queue, setQueue] = useState<TarefaArmazenagem[]>([]);
 
   const [item, setItem] = useState<ItemArmazenar>({
     id: searchParams.get("itemId") || "",
@@ -156,29 +159,31 @@ const ArmazenamentoPage = () => {
     loteId: searchParams.get("loteId") || undefined,
   });
 
-  // Step 5: Multi-item Queue / Routing simulation
+  // Fila real de tarefas de armazenagem ainda nao concluidas
   useEffect(() => {
-    // Simulando itens pendentes para armazenamento (Roteirização)
-    setQueue([
-      {
-        id: "1",
-        sku: "SKU-002",
-        descricao: "Produto B",
-        peso: 10,
-        rotatividade: "alta",
-        quantidade: 50,
-        volumes: 1,
-      },
-      {
-        id: "2",
-        sku: "SKU-003",
-        descricao: "Produto C",
-        peso: 45,
-        rotatividade: "baixa",
-        quantidade: 20,
-        volumes: 2,
-      },
-    ]);
+    const carregarFila = async () => {
+      const { data, error } = await supabase
+        .from("tarefas")
+        .select(
+          "id, prioridade, quantidade, produto:produtos(sku, nome), destino:posicoes_estoque!tarefas_posicao_destino_id_fkey(codigo)"
+        )
+        .eq("tipo", "armazenagem")
+        .in("status", ["pendente", "atribuida"])
+        .order("prioridade", { ascending: false })
+        .limit(5);
+
+      if (error) {
+        toast({
+          title: "Nao foi possivel carregar a fila de armazenagem",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setQueue(mapearTarefasArmazenagem(data));
+    };
+    carregarFila();
   }, []);
 
   // Step 1: Cross-docking Engine
@@ -247,16 +252,17 @@ const ArmazenamentoPage = () => {
 
     setConfirmando(true);
     try {
-      if (item.produtoId) {
-        const success = await registrarEntrada(
-          item.produtoId,
-          item.quantidade,
-          posicaoSelecionada.codigo,
-          item.loteId,
-          `Armazenamento inteligente - SKU: ${item.sku}`
-        );
-        if (!success) throw new Error("Falha");
+      if (!item.produtoId) {
+        throw new Error("Item sem produto associado");
       }
+      const success = await registrarEntrada(
+        item.produtoId,
+        item.quantidade,
+        posicaoSelecionada.id,
+        item.loteId,
+        `Armazenamento inteligente - SKU: ${item.sku}`
+      );
+      if (!success) throw new Error("Falha");
 
       const endTime = Date.now();
       const timeInSeconds = Math.round((endTime - startTime) / 1000);
@@ -267,21 +273,23 @@ const ArmazenamentoPage = () => {
       });
 
       await refetch();
-      if (queue.length > 0) {
-        const next = queue[0];
-        setQueue((q) => q.slice(1));
-        setItem(next);
-        setPosicaoSelecionada(null);
-        setScannedPosicao(null);
-      } else {
-        navigate("/estoque");
-      }
+      navigate("/estoque");
     } catch {
       toast({ title: "Erro no registro", variant: "destructive" });
     } finally {
       setConfirmando(false);
     }
   };
+
+  if (erroPosicoes)
+    return (
+      <AppLayout title="WMS Putaway AI" showBack>
+        <ErrorState
+          message="Não foi possível carregar as posições de estoque."
+          onRetry={() => refetch()}
+        />
+      </AppLayout>
+    );
 
   if (loadingPosicoes)
     return (
@@ -294,6 +302,22 @@ const ArmazenamentoPage = () => {
         </div>
       </AppLayout>
     );
+
+  if (!item.produtoId) {
+    return (
+      <AppLayout title="Armazenamento" showBack>
+        <div className="flex h-96 flex-col items-center justify-center gap-4 p-4 text-center">
+          <AlertCircle className="h-12 w-12 text-muted-foreground" />
+          <p className="font-medium text-muted-foreground">
+            Nenhum produto selecionado para armazenar.
+          </p>
+          <Button variant="outline" onClick={() => navigate("/putaway")}>
+            Ir para o Putaway
+          </Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Inbound Putaway Excellence" showBack>
@@ -351,7 +375,7 @@ const ArmazenamentoPage = () => {
               <Button
                 size="lg"
                 className="bg-orange-600 text-white shadow-md hover:bg-orange-700"
-                onClick={() => navigate(`/shipping/orders/${crossDockingOrder.orders?.id}`)}
+                onClick={() => navigate(`/pedidos/${crossDockingOrder.orders?.id}`)}
               >
                 ATENDER AGORA
               </Button>
@@ -414,22 +438,28 @@ const ArmazenamentoPage = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    Fila de Roteirização Otimizada
+                    Fila de Armazenagem ({queue.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {queue.map((q, idx) => (
                     <div
-                      key={idx}
-                      className="flex items-center gap-3 rounded-lg bg-muted/50 p-2 text-xs opacity-60"
+                      key={q.id}
+                      className="flex items-center gap-3 rounded-lg bg-muted/50 p-2 text-xs"
                     >
                       <div className="flex h-5 w-5 items-center justify-center rounded-full bg-border font-bold">
-                        {idx + 2}
+                        {idx + 1}
                       </div>
                       <span className="font-bold">{q.sku}</span>
-                      <span className="flex-1 truncate">{q.descricao}</span>
+                      <span className="flex-1 truncate">{q.nome}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {q.destino ?? "sem posição"}
+                      </span>
                       <Badge variant="outline" className="text-[9px]">
-                        {q.rotatividade}
+                        {q.quantidade} un
+                      </Badge>
+                      <Badge variant="outline" className="text-[9px]">
+                        {q.prioridade}
                       </Badge>
                     </div>
                   ))}

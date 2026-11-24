@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import {
@@ -56,10 +57,12 @@ export default function EndereçamentoAutomatico() {
   const [quantidade, setQuantidade] = useState(1);
   const [sugestoes, setSugestoes] = useState<Sugestao[]>([]);
   const [loading, setLoading] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const [{ data: prods }, { data: poss }] = await Promise.all([
+  const carregar = useCallback(async () => {
+    setErro(null);
+    const [{ data: prods, error: erroProdutos }, { data: poss, error: erroPosicoes }] =
+      await Promise.all([
         supabase
           .from("produtos")
           .select("id, nome, sku, curva_abc, peso_unitario, volume_unitario"),
@@ -67,11 +70,17 @@ export default function EndereçamentoAutomatico() {
           .from("posicoes_estoque")
           .select("id, codigo, zona, secao, nivel, status, tipo, capacidade_kg"),
       ]);
-      setProdutos((prods as any[]) || []);
-      setPosicoes((poss as any[]) || []);
-    };
-    fetch();
+    if (erroProdutos || erroPosicoes) {
+      setErro((erroProdutos ?? erroPosicoes)?.message ?? "Falha ao carregar produtos e posições");
+      return;
+    }
+    setProdutos((prods as any[]) || []);
+    setPosicoes((poss as any[]) || []);
   }, []);
+
+  useEffect(() => {
+    void carregar();
+  }, [carregar]);
 
   const calcularSugestoes = async () => {
     if (!selectedProduto) {
@@ -199,16 +208,21 @@ export default function EndereçamentoAutomatico() {
         </p>
       </div>
 
+      {erro && <ErrorState message={erro} onRetry={() => void carregar()} />}
+
       {/* Selector */}
       <Card className="glass-card">
         <CardContent className="space-y-4 p-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1 block text-xs font-semibold text-muted-foreground">
+              <label
+                htmlFor="produto"
+                className="mb-1 block text-xs font-semibold text-muted-foreground"
+              >
                 Produto
               </label>
               <Select value={selectedProduto} onValueChange={setSelectedProduto}>
-                <SelectTrigger>
+                <SelectTrigger id="produto">
                   <SelectValue placeholder="Selecione um produto" />
                 </SelectTrigger>
                 <SelectContent>

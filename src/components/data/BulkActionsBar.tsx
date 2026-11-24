@@ -75,13 +75,19 @@ export function BulkActionsBar({
         <Badge variant="secondary" className="text-sm">
           {selectedCount} selecionado{selectedCount > 1 ? "s" : ""}
         </Badge>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onClear}>
+        <Button
+          aria-label="Limpar seleção"
+          variant="ghost"
+          size="icon"
+          className="relative h-7 w-7 after:absolute after:-inset-2 after:content-['']"
+          onClick={onClear}
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>
 
       {isProcessing ? (
-        <div className="flex min-w-[200px] items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3 sm:min-w-[200px]">
           <Loader2 className="h-4 w-4 animate-spin" />
           <Progress value={progress} className="w-32" />
           <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>

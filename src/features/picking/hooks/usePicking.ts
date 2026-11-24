@@ -16,11 +16,12 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("picking-tasks-changes")
+      .channel(`picking-tasks-changes-${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "tarefas", filter: "tipo=eq.separacao" },
@@ -32,7 +33,8 @@ export function usePicking(options?: { enableRealtime?: boolean }) {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, queryClient]);

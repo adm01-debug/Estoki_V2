@@ -49,6 +49,7 @@ export function TransferList({ sourceItems, targetItems = [], onChange }: Transf
         return (
           <div key={id} className="flex items-center gap-2 py-1">
             <Checkbox
+              aria-label={item?.label ?? id}
               checked={selected.includes(id)}
               onCheckedChange={(c) =>
                 setSelected(c ? [...selected, id] : selected.filter((s) => s !== id))
@@ -64,10 +65,16 @@ export function TransferList({ sourceItems, targetItems = [], onChange }: Transf
     <div className="flex items-center gap-4">
       <div className="flex-1">{renderList(source, selectedSource, setSelectedSource)}</div>
       <div className="flex flex-col gap-1">
-        <Button size="icon" variant="outline" onClick={moveAllToTarget}>
+        <Button
+          aria-label="Adicionar todos"
+          size="icon"
+          variant="outline"
+          onClick={moveAllToTarget}
+        >
           <ChevronsRight className="h-4 w-4" />
         </Button>
         <Button
+          aria-label="Adicionar selecionados"
           size="icon"
           variant="outline"
           onClick={moveToTarget}
@@ -76,6 +83,7 @@ export function TransferList({ sourceItems, targetItems = [], onChange }: Transf
           <ChevronRight className="h-4 w-4" />
         </Button>
         <Button
+          aria-label="Remover selecionados"
           size="icon"
           variant="outline"
           onClick={moveToSource}
@@ -83,7 +91,7 @@ export function TransferList({ sourceItems, targetItems = [], onChange }: Transf
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <Button size="icon" variant="outline" onClick={moveAllToSource}>
+        <Button aria-label="Remover todos" size="icon" variant="outline" onClick={moveAllToSource}>
           <ChevronsLeft className="h-4 w-4" />
         </Button>
       </div>

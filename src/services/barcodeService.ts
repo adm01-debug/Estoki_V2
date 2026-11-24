@@ -3,6 +3,31 @@ import { Database } from "@/integrations/supabase/types";
 import { logger } from "@/utils/logger";
 
 type Produto = Database["public"]["Tables"]["produtos"]["Row"];
+
+const TENTATIVAS_BARCODE = 5;
+
+/** Gera o codigo (EAN-13 com digito verificador ou CODE128 interno) sem tocar no banco. */
+export function gerarCodigoBarras(
+  type: "EAN13" | "CODE128",
+  random: () => number = Math.random
+): string {
+  const digitos = Math.floor(random() * 1000000000)
+    .toString()
+    .padStart(9, "0");
+
+  if (type === "EAN13") {
+    // 12 dígitos base (prefixo 789 = Brasil) + dígito verificador EAN-13
+    const base = `789${digitos}`;
+    let soma = 0;
+    for (let i = 0; i < 12; i++) {
+      soma += parseInt(base[i], 10) * (i % 2 === 0 ? 1 : 3);
+    }
+    const digitoVerificador = (10 - (soma % 10)) % 10;
+    return `${base}${digitoVerificador}`;
+  }
+
+  return `EST${digitos}`;
+}
 type ProdutoUpdate = Database["public"]["Tables"]["produtos"]["Update"];
 
 export const barcodeService = {
@@ -38,21 +63,18 @@ export const barcodeService = {
   },
 
   async generateBarcode(type: "EAN13" | "CODE128"): Promise<string> {
-    const random = Math.floor(Math.random() * 1000000000)
-      .toString()
-      .padStart(9, "0");
+    for (let tentativa = 0; tentativa < TENTATIVAS_BARCODE; tentativa++) {
+      const candidato = gerarCodigoBarras(type);
+      const { data, error } = await supabase
+        .from("produtos")
+        .select("id")
+        .eq("barcode", candidato)
+        .maybeSingle();
 
-    if (type === "EAN13") {
-      // 12 dígitos base (prefixo 789 = Brasil) + dígito verificador EAN-13
-      const base = `789${random}`;
-      let soma = 0;
-      for (let i = 0; i < 12; i++) {
-        soma += parseInt(base[i], 10) * (i % 2 === 0 ? 1 : 3);
-      }
-      const digitoVerificador = (10 - (soma % 10)) % 10;
-      return `${base}${digitoVerificador}`;
+      if (error) throw error;
+      if (!data) return candidato;
     }
 
-    return `EST${random}`;
+    throw new Error("Nao foi possivel gerar um codigo de barras unico");
   },
 };

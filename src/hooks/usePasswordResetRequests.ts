@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { ROUTES } from "@/constants/routes";
 
 export interface PasswordResetRequest {
   id: string;
@@ -128,7 +129,7 @@ export function usePasswordResetRequests() {
     if (request) {
       // Send password reset email via Supabase Auth
       await supabase.auth.resetPasswordForEmail(request.user_email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}${ROUTES.RESET_PASSWORD}`,
       });
     }
 

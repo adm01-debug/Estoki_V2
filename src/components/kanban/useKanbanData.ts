@@ -12,6 +12,7 @@ export function useKanbanData() {
     data: lotes = [],
     isLoading,
     refetch,
+    isError,
   } = useQuery({
     queryKey: ["kanban-lotes"],
     queryFn: async () => {
@@ -35,7 +36,7 @@ export function useKanbanData() {
   // Realtime subscription
   useEffect(() => {
     const channel = supabase
-      .channel("kanban-lotes-realtime")
+      .channel(`kanban-lotes-realtime-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "lotes" }, () => {
         refetch();
       })
@@ -68,6 +69,7 @@ export function useKanbanData() {
   return {
     lotes,
     isLoading,
+    isError,
     refetch,
     searchTerm,
     setSearchTerm,

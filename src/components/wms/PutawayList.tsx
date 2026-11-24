@@ -57,6 +57,7 @@ export function PutawayList({
                 )}
               >
                 <Checkbox
+                  aria-label={item.productName}
                   checked={isCompleted}
                   onCheckedChange={(checked) => onItemPutaway?.(item.id, !!checked)}
                 />

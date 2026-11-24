@@ -33,6 +33,7 @@ const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
   urgente: "critical",
 };
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
 import { TarefaStats } from "@/components/tarefas/TarefaStats";
@@ -42,6 +43,8 @@ import { NovaTarefaDialog } from "@/components/tarefas/NovaTarefaDialog";
 export default function GestaoTarefasPage() {
   const {
     isLoading,
+    isError,
+    refetch,
     searchTerm,
     setSearchTerm,
     filtroStatus,
@@ -63,6 +66,14 @@ export default function GestaoTarefasPage() {
   } = useGestaoTarefasPage();
 
   const [tab, setTab] = useState("kanban");
+
+  if (isError) {
+    return (
+      <AppLayout title="Gestão de Tarefas" showBack>
+        <ErrorState message="Não foi possível carregar as tarefas." onRetry={() => refetch()} />
+      </AppLayout>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -138,9 +149,10 @@ export default function GestaoTarefasPage() {
 
             <TabsContent value="tarefas" className="space-y-4">
               <div className="flex flex-wrap gap-3">
-                <div className="relative min-w-[200px] flex-1">
+                <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar tarefas"
                     placeholder="Buscar tarefas..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -148,7 +160,7 @@ export default function GestaoTarefasPage() {
                   />
                 </div>
                 <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger aria-label="Filtrar por status" className="w-[150px]">
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue />
                   </SelectTrigger>
@@ -162,7 +174,7 @@ export default function GestaoTarefasPage() {
                   </SelectContent>
                 </Select>
                 <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger aria-label="Filtrar por tipo" className="w-[150px]">
                     <Package className="mr-2 h-4 w-4" />
                     <SelectValue />
                   </SelectTrigger>

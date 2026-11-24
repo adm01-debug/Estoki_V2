@@ -43,9 +43,11 @@ export function DivergenciasFiltros({
       <CardContent>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Período</label>
+            <label htmlFor="periodo" className="text-xs text-muted-foreground">
+              Período
+            </label>
             <Select value={periodoFiltro} onValueChange={onPeriodoChange}>
-              <SelectTrigger>
+              <SelectTrigger id="periodo">
                 <Calendar className="mr-2 h-4 w-4" />
                 <SelectValue />
               </SelectTrigger>
@@ -59,10 +61,13 @@ export function DivergenciasFiltros({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Buscar</label>
+            <label htmlFor="buscar" className="text-xs text-muted-foreground">
+              Buscar
+            </label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                id="buscar"
                 placeholder="Lote, produto, fornecedor..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
@@ -71,9 +76,11 @@ export function DivergenciasFiltros({
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Fornecedor</label>
+            <label htmlFor="fornecedor" className="text-xs text-muted-foreground">
+              Fornecedor
+            </label>
             <Select value={fornecedorFiltro} onValueChange={onFornecedorChange}>
-              <SelectTrigger>
+              <SelectTrigger id="fornecedor">
                 <Building2 className="mr-2 h-4 w-4" />
                 <SelectValue />
               </SelectTrigger>
@@ -88,12 +95,14 @@ export function DivergenciasFiltros({
             </Select>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Tipo</label>
+            <label htmlFor="tipo" className="text-xs text-muted-foreground">
+              Tipo
+            </label>
             <Select
               value={tipoFiltro}
               onValueChange={(v) => onTipoChange(v as "todos" | "falta" | "sobra")}
             >
-              <SelectTrigger>
+              <SelectTrigger id="tipo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

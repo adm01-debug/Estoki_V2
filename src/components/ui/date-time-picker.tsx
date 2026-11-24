@@ -30,9 +30,15 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, time]);
 
+  const uid = React.useId();
+
   return (
     <div className="grid gap-2">
-      {label && <label className="text-sm font-medium">{label}</label>}
+      {label && (
+        <label htmlFor={uid} className="text-sm font-medium">
+          {label}
+        </label>
+      )}
       <div className="flex gap-2">
         <Popover>
           <PopoverTrigger asChild>
@@ -54,6 +60,7 @@ export function DateTimePicker({ date, setDate, label }: DateTimePickerProps) {
         <div className="relative w-32">
           <Clock className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            id={uid}
             type="time"
             className="pl-8"
             value={time}

@@ -218,7 +218,10 @@ export function ConquistasSystem() {
               Ver todas as conquistas →
             </button>
           </DialogTrigger>
-          <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+          <DialogContent
+            aria-describedby={undefined}
+            className="max-h-[80vh] max-w-2xl overflow-y-auto"
+          >
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-warning" />

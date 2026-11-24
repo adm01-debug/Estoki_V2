@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface RelatorioAgendado {
   id: string;
@@ -48,6 +49,7 @@ async function fetchRelatorios(): Promise<RelatorioAgendado[]> {
 export default function RelatoriosAgendados() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
+  const [relatorioParaExcluir, setRelatorioParaExcluir] = useState<RelatorioAgendado | null>(null);
   const queryClient = useQueryClient();
 
   const { data: relatorios = [], isLoading: loading } = useQuery({
@@ -99,7 +101,12 @@ export default function RelatoriosAgendados() {
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from("relatorios_agendados").delete().eq("id", id);
+    setRelatorioParaExcluir(null);
+    const { error } = await supabase.from("relatorios_agendados").delete().eq("id", id);
+    if (error) {
+      toast.error("Não foi possível remover o relatório");
+      return;
+    }
     toast.success("Relatório removido");
     reload();
   };
@@ -152,26 +159,27 @@ export default function RelatoriosAgendados() {
               Novo Agendamento
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby={undefined}>
             <DialogHeader>
               <DialogTitle>Novo Relatório Agendado</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Nome</Label>
+                <Label htmlFor="nome">Nome</Label>
                 <Input
+                  id="nome"
                   value={form.nome}
                   onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
                   placeholder="Ex: Resumo Diário de Estoque"
                 />
               </div>
               <div>
-                <Label>Tipo de Relatório</Label>
+                <Label htmlFor="tipo-de-relatorio">Tipo de Relatório</Label>
                 <Select
                   value={form.tipo}
                   onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="tipo-de-relatorio">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -184,12 +192,12 @@ export default function RelatoriosAgendados() {
                 </Select>
               </div>
               <div>
-                <Label>Frequência</Label>
+                <Label htmlFor="frequencia">Frequência</Label>
                 <Select
                   value={form.frequencia}
                   onValueChange={(v) => setForm((f) => ({ ...f, frequencia: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="frequencia">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -202,8 +210,11 @@ export default function RelatoriosAgendados() {
                 </Select>
               </div>
               <div>
-                <Label>Destinatários (emails separados por vírgula)</Label>
+                <Label htmlFor="destinatarios-emails-separados-por-virgu">
+                  Destinatários (emails separados por vírgula)
+                </Label>
                 <Input
+                  id="destinatarios-emails-separados-por-virgu"
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="email1@empresa.com, email2@empresa.com"
@@ -247,6 +258,7 @@ export default function RelatoriosAgendados() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-semibold">{rel.nome}</CardTitle>
                     <Switch
+                      aria-label={rel.nome}
                       checked={rel.ativo}
                       onCheckedChange={() => toggleAtivo(rel.id, rel.ativo)}
                     />
@@ -281,7 +293,8 @@ export default function RelatoriosAgendados() {
                       size="sm"
                       variant="ghost"
                       className="text-destructive"
-                      onClick={() => handleDelete(rel.id)}
+                      aria-label={`Excluir agendamento ${rel.nome}`}
+                      onClick={() => setRelatorioParaExcluir(rel)}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -292,6 +305,20 @@ export default function RelatoriosAgendados() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={relatorioParaExcluir !== null}
+        onOpenChange={(open) => {
+          if (!open) setRelatorioParaExcluir(null);
+        }}
+        onConfirm={() => {
+          if (relatorioParaExcluir) void handleDelete(relatorioParaExcluir.id);
+        }}
+        title="Excluir este agendamento?"
+        description={`O envio automático de "${relatorioParaExcluir?.nome ?? "relatório"}" será encerrado e não poderá ser recuperado.`}
+        confirmLabel="Excluir"
+        variant="destructive"
+      />
     </div>
   );
 }

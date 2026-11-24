@@ -3,22 +3,52 @@ import { logger } from "@/utils/logger";
 import type { Produto, ProdutoInsert, ProdutoUpdate, ProdutoComEstoque } from "@/types/product";
 
 export const productService = {
-  async getAll(options?: { page?: number; pageSize?: number }) {
-    const { page = 1, pageSize = 100 } = options || {};
+  async getAll(options?: { page?: number; pageSize?: number; search?: string; curva?: string }) {
+    const { page = 1, pageSize = 100, search, curva } = options || {};
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    const { data, error, count } = await supabase
-      .from("produtos")
-      .select("*", { count: "exact" })
-      .order("nome")
-      .range(from, to);
+    let query = supabase.from("produtos").select("*", { count: "exact" }).order("nome");
+
+    const termo = (search || "").trim();
+    if (termo) {
+      // PostgREST interpreta virgula e parenteses como sintaxe de `or`, entao o termo é limpo.
+      const limpo = termo
+        .replace(/[%,()*\\]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (limpo) {
+        query = query.or(`nome.ilike.%${limpo}%,sku.ilike.%${limpo}%`);
+      }
+    }
+    if (curva && curva !== "todos") {
+      query = query.eq("curva_abc", curva);
+    }
+
+    const { data, error, count } = await query.range(from, to);
 
     if (error) {
       logger.error("Erro ao buscar produtos", error);
       throw error;
     }
     return { data: data as Produto[], total: count || 0 };
+  },
+
+  async contarPorCurva() {
+    const curvas = ["A", "B", "C"] as const;
+    const contar = async (curva?: string) => {
+      let query = supabase.from("produtos").select("id", { count: "exact", head: true });
+      if (curva) query = query.eq("curva_abc", curva);
+      const { count, error } = await query;
+      if (error) {
+        logger.error("Erro ao contar produtos por curva", error, { curva });
+        throw error;
+      }
+      return count || 0;
+    };
+
+    const [total, a, b, c] = await Promise.all([contar(), ...curvas.map((curva) => contar(curva))]);
+    return { total, A: a, B: b, C: c };
   },
 
   async getById(id: string) {
@@ -66,15 +96,6 @@ export const productService = {
       throw error;
     }
     return data as Produto;
-  },
-
-  async delete(id: string) {
-    const { error } = await supabase.from("produtos").delete().eq("id", id);
-
-    if (error) {
-      logger.error("Erro ao deletar produto", error, { id });
-      throw error;
-    }
   },
 
   async bulkCreate(produtos: ProdutoInsert[]) {

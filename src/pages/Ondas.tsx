@@ -1,9 +1,11 @@
 import { OndasCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
 import { Download } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -104,14 +106,7 @@ export default function OndasPage() {
         `${progresso}%`,
       ];
     });
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", `ondas_estoki_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `ondas_estoki_${new Date().toISOString().split("T")[0]}`);
   };
 
   const filtered = useMemo(() => {
@@ -146,6 +141,17 @@ export default function OndasPage() {
       toast.error("Erro ao iniciar onda");
     }
   };
+
+  if (error) {
+    return (
+      <AppLayout title="Ondas de Separação" showBack>
+        <ErrorState
+          message="Não foi possível carregar as ondas de separação."
+          onRetry={() => reloadOndas()}
+        />
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (
@@ -257,6 +263,7 @@ export default function OndasPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
+                  aria-label="Buscar onda"
                   placeholder="Buscar onda..."
                   className="pl-10"
                   value={search}
@@ -272,7 +279,7 @@ export default function OndasPage() {
                 )}
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[150px]">
+                <SelectTrigger aria-label="Filtrar por status" className="w-[150px]">
                   <Filter className="mr-2 h-4 w-4" />
                   <SelectValue />
                 </SelectTrigger>

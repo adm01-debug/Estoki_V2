@@ -3,7 +3,13 @@ import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { shippingService } from "../services/shippingService";
-import type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega } from "../types";
+import type {
+  Romaneio,
+  RomaneioInput,
+  RomaneioItemInput,
+  StatusRomaneio,
+  StatusEntrega,
+} from "../types";
 export type { Romaneio, RomaneioInput, StatusRomaneio, StatusEntrega };
 
 export function useRomaneios(options?: { enableRealtime?: boolean }) {
@@ -14,11 +20,12 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     if (!options?.enableRealtime) return;
 
     if (subscriptionRef.current) {
-      subscriptionRef.current.unsubscribe();
+      supabase.removeChannel(subscriptionRef.current);
+      subscriptionRef.current = null;
     }
 
     subscriptionRef.current = supabase
-      .channel("romaneios-changes")
+      .channel(`romaneios-changes-${Math.random().toString(36).slice(2)}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "romaneios" }, () => {
         queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       })
@@ -29,7 +36,8 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
 
     return () => {
       if (subscriptionRef.current) {
-        subscriptionRef.current.unsubscribe();
+        supabase.removeChannel(subscriptionRef.current);
+        subscriptionRef.current = null;
       }
     };
   }, [options?.enableRealtime, queryClient]);
@@ -45,7 +53,9 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
   });
 
   const createRomaneioMutation = useMutation({
-    mutationFn: shippingService.criarRomaneio,
+    retry: 0,
+    mutationFn: ({ input, itens }: { input: RomaneioInput; itens?: RomaneioItemInput[] }) =>
+      shippingService.criarRomaneio(input, itens),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       toast.success("Romaneio criado com sucesso!");
@@ -63,6 +73,35 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
       queryClient.invalidateQueries({ queryKey: ["romaneios"] });
       toast.success("Status atualizado!");
     },
+    onError: (err: Error) => {
+      toast.error(`Erro ao atualizar status: ${err.message}`);
+    },
+  });
+
+  const cancelarRomaneioMutation = useMutation({
+    mutationFn: async ({ id, motivo }: { id: string; motivo?: string }) => {
+      return shippingService.cancelarRomaneio(id, motivo);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      toast.success("Romaneio cancelado!");
+    },
+    onError: (err: Error) => {
+      toast.error(`Erro ao cancelar romaneio: ${err.message}`);
+    },
+  });
+
+  const confirmarRomaneioMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return shippingService.confirmarRomaneio(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+      toast.success("Romaneio confirmado! Rota liberada para iniciar.");
+    },
+    onError: (err: Error) => {
+      toast.error(`Erro ao confirmar romaneio: ${err.message}`);
+    },
   });
 
   return {
@@ -71,15 +110,32 @@ export function useRomaneios(options?: { enableRealtime?: boolean }) {
     loading: isLoading,
     error,
     refetch,
-    createRomaneio: createRomaneioMutation.mutate,
-    criarRomaneio: createRomaneioMutation.mutate,
+    createRomaneio: (input: RomaneioInput, itens?: RomaneioItemInput[]) =>
+      createRomaneioMutation.mutateAsync({ input, itens }),
+    criarRomaneio: (input: RomaneioInput, itens?: RomaneioItemInput[]) =>
+      createRomaneioMutation.mutateAsync({ input, itens }),
+    criandoRomaneio: createRomaneioMutation.isPending,
     updateStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
+    confirmarRomaneio: (id: string) => confirmarRomaneioMutation.mutate(id),
+    cancelarRomaneio: (id: string, motivo?: string) =>
+      cancelarRomaneioMutation.mutate({ id, motivo }),
     atualizarStatus: (id: string, status: StatusRomaneio) =>
       updateStatusMutation.mutate({ id, status }),
-    registrarEntrega: async (romaneioId: string, itemId: string, status: StatusEntrega) => {
-      // Implementación real o placeholder
-      toast.info("Registro de entrega en desarrollo");
+    registrarEntrega: async (
+      romaneioId: string,
+      itemId: string,
+      status: StatusEntrega,
+      dados?: Record<string, unknown>
+    ) => {
+      try {
+        await shippingService.registrarEntrega(romaneioId, itemId, status, dados);
+        queryClient.invalidateQueries({ queryKey: ["romaneios"] });
+        toast.success("Entrega registrada com sucesso!");
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Erro ao registrar entrega";
+        toast.error(message);
+      }
     },
   };
 }

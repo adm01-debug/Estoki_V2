@@ -47,10 +47,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VirtualizedTable } from "@/components/data/VirtualizedTable";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AuditLogPage() {
   const [filters, setFilters] = useState({ page: 1, pageSize: 100 });
-  const { logs, isLoading, getStats } = useAuditLog(filters);
+  const { logs, isLoading, isError, refetch, getStats } = useAuditLog(filters);
 
   const { exportData, isExporting } = useTableExport<AuditLogEntry>({
     table: "audit_log",
@@ -164,13 +165,14 @@ export default function AuditLogPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
+                    aria-label="Buscar por usuário, entidade, ID"
                     placeholder="Buscar por usuário, entidade, ID..."
                     className="pl-9"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-                <Button variant="outline" size="icon">
+                <Button aria-label="Atualizar" variant="outline" size="icon">
                   <RefreshCw className="h-4 w-4" />
                 </Button>
                 <ExportButton onExport={(format) => exportData(format)} isExporting={isExporting} />
@@ -186,7 +188,12 @@ export default function AuditLogPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              {isLoading ? (
+              {isError ? (
+                <ErrorState
+                  message="Não foi possível carregar os logs de auditoria."
+                  onRetry={() => refetch()}
+                />
+              ) : isLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Skeleton key={i} className="h-12 w-full" />
@@ -244,11 +251,11 @@ export default function AuditLogPage() {
                       cell: (log: AuditLogEntry) => (
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button aria-label="Ver detalhes" variant="ghost" size="icon">
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
+                          <DialogContent aria-describedby={undefined} className="max-w-2xl">
                             <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
                                 <FileJson className="h-5 w-5 text-primary" />
@@ -317,7 +324,7 @@ export default function AuditLogPage() {
                   height="500px"
                 />
               )}
-              {filteredLogs.length === 0 && !isLoading && (
+              {filteredLogs.length === 0 && !isLoading && !isError && (
                 <div className="flex h-32 flex-col items-center justify-center text-muted-foreground">
                   <p>Nenhum registro encontrado com os filtros atuais.</p>
                 </div>

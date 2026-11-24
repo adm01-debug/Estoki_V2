@@ -109,7 +109,7 @@ export default function DashboardTrocasPage() {
 
         <div className="flex flex-wrap gap-3">
           <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger aria-label="Tipo" className="w-[150px]">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent>
@@ -120,7 +120,7 @@ export default function DashboardTrocasPage() {
           </Select>
 
           <Select value={filtroFornecedor} onValueChange={setFiltroFornecedor}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger aria-label="Fornecedor" className="w-[200px]">
               <Building2 className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Fornecedor" />
             </SelectTrigger>

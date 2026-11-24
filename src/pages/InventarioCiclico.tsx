@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { SEO } from "@/components/common/SEO";
+import { exportRowsToCSV } from "@/lib/export";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -43,17 +44,7 @@ export default function InventarioCiclicoPage() {
       c.divergencias_encontradas || 0,
       c.total_posicoes || 0,
     ]);
-    const csvContent = [headers, ...rows].map((e) => e.join(",")).join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute(
-      "download",
-      `inventario_estoki_${new Date().toISOString().split("T")[0]}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    exportRowsToCSV(headers, rows, `inventario_estoki_${new Date().toISOString().split("T")[0]}`);
   };
 
   const ciclosFiltrados = useMemo(

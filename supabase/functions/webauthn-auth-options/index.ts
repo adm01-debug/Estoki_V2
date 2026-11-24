@@ -4,19 +4,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 
-// Generate cryptographically secure random bytes
-function generateChallenge(): string {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return btoa(String.fromCharCode(...array))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=/g, "");
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
+  }
+
+  // Exigir JWT válido — sem sessão autenticada não há passkey para usar
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ error: "Authorization required" }), {
+      status: 401,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -26,7 +25,7 @@ serve(async (req) => {
 
     const __raw = await req.json();
     const __v = validateInput(GenericPayloadSchema, __raw);
-    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
     const { email } = __raw;
 
     if (!email) {
@@ -36,82 +35,59 @@ serve(async (req) => {
       });
     }
 
-    // Find user by email
-    const { data: users, error: userError } = await supabase.auth.admin.listUsers();
-
-    if (userError) {
-      throw userError;
-    }
-
-    const user = users.users.find((u) => u.email === email);
-
-    if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    // Get user's passkeys
-    const { data: credentials, error: credError } = await supabase
-      .from("passkey_credentials")
-      .select("credential_id, transports")
-      .eq("user_id", user.id);
-
-    if (credError) {
-      throw credError;
-    }
-
-    if (!credentials || credentials.length === 0) {
-      return new Response(JSON.stringify({ error: "No passkeys registered for this user" }), {
-        status: 404,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
-
-    // Generate challenge
-    const challenge = generateChallenge();
-
-    // Store challenge (without user_id since user is not authenticated yet)
-    const { data: challengeRow } = await supabase
-      .from("webauthn_challenges")
-      .insert({
-        user_id: user.id,
-        challenge,
-        type: "authentication",
-      })
-      .select()
+    const { data: authUser, error: authError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
       .single();
 
-    // Get RP ID from request origin
-    const origin = req.headers.get("origin") || "";
-    const rpId = new URL(origin).hostname || "localhost";
+    if (authError || !authUser) {
+      return new Response(JSON.stringify({ error: "No passkeys registered for this user" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
 
-    // Create authentication options
-    const authenticationOptions = {
-      challenge,
-      rpId,
-      timeout: 60000,
-      userVerification: "preferred",
-      allowCredentials: credentials.map((cred) => ({
-        id: cred.credential_id,
-        type: "public-key",
-        transports: cred.transports || ["internal"],
-      })),
-    };
+    const userId = authUser.id;
 
-    console.log("Generated authentication options for email:", email);
+    const { data: credentials, error: credError } = await supabase
+      .from("passkey_credentials")
+      .select("credential_id, public_key")
+      .eq("user_id", userId);
+
+    if (credError || !credentials?.length) {
+      return new Response(JSON.stringify({ error: "No passkeys registered for this user" }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    const challenge = crypto.randomUUID();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+    const { data: challengeData, error: challengeError } = await supabase
+      .from("webauthn_challenges")
+      .insert({ user_id: userId, challenge, type: "authentication", expires_at: expiresAt })
+      .select("id")
+      .single();
+
+    if (challengeError || !challengeData) {
+      return new Response(JSON.stringify({ error: "Failed to create challenge" }), {
+        status: 500,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
 
     return new Response(
       JSON.stringify({
-        options: authenticationOptions,
-        challengeId: challengeRow?.id,
-        userId: user.id,
+        challengeId: challengeData.id,
+        challenge,
+        userId,
+        allowCredentials: credentials.map((c) => ({ id: c.credential_id, type: "public-key" })),
       }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
-    console.error("Error generating authentication options:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
     return new Response(JSON.stringify({ error: message }), {
       status: 500,

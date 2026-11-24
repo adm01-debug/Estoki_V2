@@ -1,9 +1,9 @@
 import { RomaneiosCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
-import { romaneioSchema, validateForm } from "@/lib/validations";
+import { romaneioItemSchema, romaneioSchema, validateForm } from "@/lib/validations";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { PageLoader } from "@/components/common/AsyncStates";
+import { PageLoader, ErrorState } from "@/components/common/AsyncStates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useRomaneios } from "@/features/shipping/hooks/useRomaneios";
 import type {
   Romaneio,
@@ -47,7 +48,10 @@ import {
   RefreshCw,
   Package,
 } from "lucide-react";
-import { NovoRomaneioDialog } from "@/components/romaneios/NovoRomaneioDialog";
+import {
+  NovoRomaneioDialog,
+  type RomaneioItemDraft,
+} from "@/components/romaneios/NovoRomaneioDialog";
 import { RomaneioDetalhesDialog } from "@/components/romaneios/RomaneioDetalhesDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -84,16 +88,36 @@ const statusConfig: Record<
   cancelado: { label: "Cancelado", color: "bg-red-500", icon: <XCircle className="h-4 w-4" /> },
 };
 
+const itemVazio: RomaneioItemDraft = {
+  cliente: "",
+  endereco_entrega: "",
+  quantidade: "1",
+  peso_kg: "",
+};
+
 export default function RomaneiosPage() {
-  const { romaneios, loading, criarRomaneio, atualizarStatus, registrarEntrega, refetch } =
-    useRomaneios();
+  const {
+    romaneios,
+    loading,
+    criarRomaneio,
+    atualizarStatus,
+    confirmarRomaneio,
+    cancelarRomaneio,
+    registrarEntrega,
+    error,
+    refetch,
+    criandoRomaneio,
+  } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [romaneioSelecionado, setRomaneioSelecionado] = useState<Romaneio | null>(null);
+  const [romaneioSelecionadoId, setRomaneioSelecionadoId] = useState<string | null>(null);
+  const romaneioSelecionado = romaneios.find((r) => r.id === romaneioSelecionadoId) ?? null;
   const [novoRomaneioOpen, setNovoRomaneioOpen] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [romaneioCancelar, setRomaneioCancelar] = useState<Romaneio | null>(null);
+  const [motivoCancelamento, setMotivoCancelamento] = useState("");
   const [novoRomaneio, setNovoRomaneio] = useState({
     motorista: "",
     placa_veiculo: "",
@@ -101,6 +125,8 @@ export default function RomaneiosPage() {
     data_prevista_entrega: "",
     rota: "",
   });
+  const [itensRomaneio, setItensRomaneio] = useState<RomaneioItemDraft[]>([]);
+  const [itemErrors, setItemErrors] = useState<Record<string, string>>({});
 
   const romaneiosFiltrados = romaneios.filter((r) => {
     const matchStatus = filtroStatus === "todos" || r.status === filtroStatus;
@@ -122,15 +148,52 @@ export default function RomaneiosPage() {
     ),
   };
 
+  const handleCancelarRomaneio = async () => {
+    if (!romaneioCancelar) return;
+    await cancelarRomaneio(romaneioCancelar.id, motivoCancelamento.trim() || undefined);
+    setRomaneioCancelar(null);
+    setMotivoCancelamento("");
+  };
+
   const handleCriarRomaneio = async () => {
     const validation = validateForm(romaneioSchema, novoRomaneio);
     if (!validation.success) {
       setFormErrors(validation.errors);
       return;
     }
+
+    if (itensRomaneio.length === 0) {
+      setFormErrors({ itens: "Adicione ao menos um item ao romaneio" });
+      return;
+    }
+
+    const errosItens: Record<string, string> = {};
+    itensRomaneio.forEach((item, index) => {
+      const itemValidation = validateForm(romaneioItemSchema, item);
+      if (!itemValidation.success) {
+        Object.entries(itemValidation.errors).forEach(([field, message]) => {
+          errosItens[`${index}.${field}`] = message;
+        });
+      }
+    });
+    if (Object.keys(errosItens).length > 0) {
+      setItemErrors(errosItens);
+      setFormErrors({ itens: "Corrija os itens destacados" });
+      return;
+    }
+
     setFormErrors({});
+    setItemErrors({});
     try {
-      await criarRomaneio(novoRomaneio);
+      await criarRomaneio(
+        novoRomaneio,
+        itensRomaneio.map((item) => ({
+          cliente: item.cliente,
+          endereco_entrega: item.endereco_entrega,
+          quantidade: Number(item.quantidade),
+          peso_kg: item.peso_kg === "" ? undefined : Number(item.peso_kg),
+        }))
+      );
       setNovoRomaneioOpen(false);
       setNovoRomaneio({
         motorista: "",
@@ -139,6 +202,7 @@ export default function RomaneiosPage() {
         data_prevista_entrega: "",
         rota: "",
       });
+      setItensRomaneio([]);
     } catch {
       // Submission error handled by toast notifications
     }
@@ -149,10 +213,34 @@ export default function RomaneiosPage() {
     setFormErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
+  const handleAddItem = () => {
+    setItensRomaneio((prev) => [...prev, { ...itemVazio }]);
+    setFormErrors((prev) => ({ ...prev, itens: "" }));
+  };
+
+  const handleRemoveItem = (index: number) => {
+    setItensRomaneio((prev) => prev.filter((_, i) => i !== index));
+    setItemErrors({});
+  };
+
+  const handleItemChange = (index: number, field: keyof RomaneioItemDraft, value: string) => {
+    setItensRomaneio((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+    setItemErrors((prev) => ({ ...prev, [`${index}.${field}`]: "" }));
+  };
+
   if (loading)
     return (
       <AppLayout title="Romaneios" showBack>
         <PageLoader message="Carregando romaneios..." />
+      </AppLayout>
+    );
+
+  if (error)
+    return (
+      <AppLayout showBack>
+        <ErrorState message="Erro ao carregar romaneios" onRetry={() => refetch()} />
       </AppLayout>
     );
 
@@ -178,6 +266,7 @@ export default function RomaneiosPage() {
           </div>
           <div className="flex gap-2">
             <Button
+              aria-label="Atualizar"
               variant="outline"
               size="icon"
               onClick={() => {
@@ -263,6 +352,7 @@ export default function RomaneiosPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Filtrar romaneios"
                 placeholder="Filtrar romaneios..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
@@ -270,7 +360,7 @@ export default function RomaneiosPage() {
               />
             </div>
             <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-              <SelectTrigger className="w-48 border-none bg-muted/30">
+              <SelectTrigger aria-label="Status" className="w-48 border-none bg-muted/30">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -285,6 +375,7 @@ export default function RomaneiosPage() {
           </div>
           <div className="flex items-center gap-1 rounded-lg bg-muted/50 p-1">
             <Button
+              aria-label="Ver em grade"
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="icon"
               className="h-8 w-8 shadow-sm"
@@ -293,6 +384,7 @@ export default function RomaneiosPage() {
               <LayoutGrid className="h-4 w-4" />
             </Button>
             <Button
+              aria-label="Ver em lista"
               variant={viewMode === "list" ? "secondary" : "ghost"}
               size="icon"
               className="h-8 w-8"
@@ -394,6 +486,14 @@ export default function RomaneiosPage() {
                           </div>
 
                           <div className="flex gap-2 border-t bg-muted/30 p-3">
+                            {romaneio.status === "rascunho" && (
+                              <Button
+                                className="h-9 flex-1 bg-green-600 hover:bg-green-700"
+                                onClick={() => confirmarRomaneio(romaneio.id)}
+                              >
+                                <CheckCircle2 className="mr-2 h-3 w-3" /> Confirmar
+                              </Button>
+                            )}
                             {romaneio.status === "confirmado" && (
                               <Button
                                 className="h-9 flex-1 bg-primary"
@@ -405,13 +505,18 @@ export default function RomaneiosPage() {
                             <Button
                               variant="outline"
                               className="h-9 flex-1 border shadow-sm"
-                              onClick={() => setRomaneioSelecionado(romaneio)}
+                              onClick={() => setRomaneioSelecionadoId(romaneio.id)}
                             >
                               Detalhes
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-9 w-9">
+                                <Button
+                                  aria-label="Mais ações"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9"
+                                >
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -426,7 +531,13 @@ export default function RomaneiosPage() {
                                   <Share2 className="mr-2 h-4 w-4" /> Compartilhar Rastreio
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-destructive">
+                                <DropdownMenuItem
+                                  className="text-destructive"
+                                  onClick={() => {
+                                    setRomaneioCancelar(romaneio);
+                                    setMotivoCancelamento("");
+                                  }}
+                                >
                                   <XCircle className="mr-2 h-4 w-4" /> Cancelar Rota
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -488,7 +599,7 @@ export default function RomaneiosPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => setRomaneioSelecionado(romaneio)}
+                            onClick={() => setRomaneioSelecionadoId(romaneio.id)}
                           >
                             Gerenciar
                           </Button>
@@ -508,11 +619,28 @@ export default function RomaneiosPage() {
           novoRomaneio={novoRomaneio}
           formErrors={formErrors}
           onFieldChange={handleFieldChange}
+          itens={itensRomaneio}
+          itemErrors={itemErrors}
+          onItemChange={handleItemChange}
+          onAddItem={handleAddItem}
+          onRemoveItem={handleRemoveItem}
           onSubmit={handleCriarRomaneio}
+          isSubmitting={criandoRomaneio}
+        />
+        <ConfirmDialog
+          open={!!romaneioCancelar}
+          onOpenChange={(open) => {
+            if (!open) setRomaneioCancelar(null);
+          }}
+          onConfirm={handleCancelarRomaneio}
+          title="Cancelar romaneio"
+          description="Esta ação cancela a rota do romaneio e não pode ser desfeita. Deseja continuar?"
+          confirmLabel="Cancelar romaneio"
+          variant="destructive"
         />
         <RomaneioDetalhesDialog
           romaneio={romaneioSelecionado}
-          onClose={() => setRomaneioSelecionado(null)}
+          onClose={() => setRomaneioSelecionadoId(null)}
           onFinalizarEntrega={(rid, iid, status) => registrarEntrega(rid, iid, status)}
         />
       </div>

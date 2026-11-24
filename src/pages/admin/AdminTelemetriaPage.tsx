@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { format } from "date-fns";
+import { exportRowsToCSV } from "@/lib/export";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -95,6 +97,8 @@ export default function AdminTelemetriaPage() {
   const {
     data: rows = [],
     isLoading,
+    isError,
+    error,
     refetch,
     isRefetching,
   } = useQuery<TelemetryRow[]>({
@@ -169,21 +173,14 @@ export default function AdminTelemetriaPage() {
       r.query_limit ?? "-",
       r.query_offset ?? "-",
       r.count_mode ?? "-",
-      (r.error_message || "").replace(/"/g, '""'),
+      r.error_message || "",
     ]);
 
-    const csvContent = [headers, ...csvRows]
-      .map((row) => row.map((cell) => `"${cell}"`).join(","))
-      .join("\n");
-
-    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    const date = format(new Date(), "yyyy-MM-dd");
-    a.href = url;
-    a.download = `telemetria_${date}_${severityFilter}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    exportRowsToCSV(
+      headers,
+      csvRows,
+      `telemetria_${format(new Date(), "yyyy-MM-dd")}_${severityFilter}`
+    );
     toast.success(`CSV exportado com ${rows.length} registros`);
   };
 
@@ -389,7 +386,7 @@ export default function AdminTelemetriaPage() {
           value={severityFilter}
           onValueChange={(v) => setSeverityFilter(v as SeverityFilter)}
         >
-          <SelectTrigger className="w-44">
+          <SelectTrigger aria-label="Severidade" className="w-44">
             <SelectValue placeholder="Severidade" />
           </SelectTrigger>
           <SelectContent>
@@ -400,7 +397,7 @@ export default function AdminTelemetriaPage() {
           </SelectContent>
         </Select>
         <Select value={timeFilter} onValueChange={(v) => setTimeFilter(v as TimeFilter)}>
-          <SelectTrigger className="w-44">
+          <SelectTrigger aria-label="Período" className="w-44">
             <SelectValue placeholder="Período" />
           </SelectTrigger>
           <SelectContent>
@@ -469,7 +466,14 @@ export default function AdminTelemetriaPage() {
         </span>
       </div>
 
-      <TelemetryTable rows={rows} isLoading={isLoading} />
+      {isError ? (
+        <ErrorState
+          message={`Não foi possível carregar a telemetria: ${(error as Error).message}`}
+          onRetry={() => refetch()}
+        />
+      ) : (
+        <TelemetryTable rows={rows} isLoading={isLoading} />
+      )}
     </div>
   );
 }
