@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -25,6 +26,8 @@ export const ActiveSessions: React.FC = () => {
   const {
     data: loginLogs,
     isLoading,
+    isError,
+    error,
     refetch,
   } = useQuery({
     queryKey: ["login-logs-sessions", user?.id],
@@ -63,6 +66,19 @@ export const ActiveSessions: React.FC = () => {
           <div className="flex justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="py-6">
+          <ErrorState
+            message={`Não foi possível carregar as sessões ativas: ${(error as Error).message}`}
+            onRetry={() => refetch()}
+          />
         </CardContent>
       </Card>
     );

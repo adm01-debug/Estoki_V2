@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -36,7 +37,13 @@ interface Props {
 }
 
 export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge, onEdit }: Props) {
-  const { data: historico, isLoading: loadingHist } = useQuery({
+  const {
+    data: historico,
+    isLoading: loadingHist,
+    isError: erroHistorico,
+    error: erroHistoricoObj,
+    refetch: recarregarHistorico,
+  } = useQuery({
     queryKey: ["produto-historico", produto?.id],
     queryFn: async () => {
       if (!produto?.id) return [];
@@ -112,7 +119,14 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge, onEdit }:
 
           <TabsContent value="historico" className="py-4">
             <ScrollArea className="h-[300px] pr-4">
-              {loadingHist ? (
+              {erroHistorico ? (
+                <div className="flex h-full items-center justify-center">
+                  <ErrorState
+                    message={`Não foi possível carregar o histórico: ${(erroHistoricoObj as Error).message}`}
+                    onRetry={() => recarregarHistorico()}
+                  />
+                </div>
+              ) : loadingHist ? (
                 <div className="flex h-full items-center justify-center">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 </div>
