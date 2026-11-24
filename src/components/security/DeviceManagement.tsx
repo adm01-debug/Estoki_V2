@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Smartphone, Laptop, Monitor, Trash2, ShieldCheck, Clock, MapPin } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { format, formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -26,7 +27,13 @@ export const DeviceManagement: React.FC = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data: devices, isLoading } = useQuery({
+  const {
+    data: devices,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["user-devices-management", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -93,6 +100,19 @@ export const DeviceManagement: React.FC = () => {
           <div className="flex justify-center">
             <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="py-6">
+          <ErrorState
+            message={`Não foi possível carregar os dispositivos conhecidos: ${(error as Error).message}`}
+            onRetry={() => refetch()}
+          />
         </CardContent>
       </Card>
     );
