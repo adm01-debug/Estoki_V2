@@ -32,6 +32,8 @@ describe("estados de tela nas paginas operacionais (E-181)", () => {
 
     expect(source).toMatch(/from "@\/components\/common\/AsyncStates"/);
     expect(source).toMatch(/<ErrorState[\s\S]{0,200}onRetry=/);
+    // o ErrorState precisa estar atras da condicao de erro, nao em codigo morto
+    expect(source).toMatch(/(?:isError|erro[A-Za-z]*|error)[\s\S]{0,300}<ErrorState/);
     expect(source).toMatch(/isError|error/);
   });
 
