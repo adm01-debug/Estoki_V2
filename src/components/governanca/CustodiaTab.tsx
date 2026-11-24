@@ -70,7 +70,7 @@ export const CustodiaTab = memo(function CustodiaTab() {
               Nova Transferência
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby={undefined}>
             <DialogHeader>
               <DialogTitle>Registrar Transferência de Custódia</DialogTitle>
             </DialogHeader>

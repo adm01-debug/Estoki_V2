@@ -56,7 +56,7 @@ export function QuickScanner() {
           <QrCode className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="rounded-3xl p-6 sm:max-w-md">
+      <DialogContent aria-describedby={undefined} className="rounded-3xl p-6 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <QrCode className="h-5 w-5 text-primary" />

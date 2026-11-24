@@ -45,7 +45,7 @@ export function KPIMetaDialog({
 }: KPIMetaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>{editingMeta ? "Editar Meta" : "Nova Meta"}</DialogTitle>
         </DialogHeader>

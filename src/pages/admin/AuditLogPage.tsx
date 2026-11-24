@@ -248,7 +248,7 @@ export default function AuditLogPage() {
                               <Eye className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="max-w-2xl">
+                          <DialogContent aria-describedby={undefined} className="max-w-2xl">
                             <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
                                 <FileJson className="h-5 w-5 text-primary" />

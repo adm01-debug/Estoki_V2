@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import {
   Key,
   Smartphone,
@@ -216,7 +216,13 @@ export const MFASettings: React.FC = () => {
                           {method.enabled ? "Adicionar outro" : "Ativar"}
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="border-0 bg-transparent p-0 shadow-none sm:max-w-md">
+                      <DialogContent
+                        aria-describedby={undefined}
+                        className="border-0 bg-transparent p-0 shadow-none sm:max-w-md"
+                      >
+                        <DialogTitle className="sr-only">
+                          Configurar autenticação em dois fatores
+                        </DialogTitle>
                         <MFAEnroll
                           onSuccess={handleEnrollSuccess}
                           onCancel={() => setEnrollDialogOpen(false)}

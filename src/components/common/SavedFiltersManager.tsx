@@ -147,7 +147,7 @@ export function SavedFiltersManager({
       </div>
 
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Salvar Filtro</DialogTitle>
           </DialogHeader>

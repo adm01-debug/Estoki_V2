@@ -34,7 +34,7 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent aria-describedby={undefined} className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", cfg.bgClass)}>

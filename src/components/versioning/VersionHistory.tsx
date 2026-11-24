@@ -168,7 +168,10 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
       </Sheet>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[80vh] max-w-2xl overflow-auto"
+        >
           <DialogHeader>
             <DialogTitle>
               Versão {selectedVersion?.version_number} - {selectedVersion?.change_type}
@@ -181,7 +184,7 @@ export function VersionHistory({ entityType, entityId, onRestore }: VersionHisto
       </Dialog>
 
       <Dialog open={showConfirmRestore} onOpenChange={setShowConfirmRestore}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Restaurar Versão {selectedVersion?.version_number}?</DialogTitle>
           </DialogHeader>

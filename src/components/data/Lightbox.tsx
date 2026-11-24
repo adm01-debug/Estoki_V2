@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 interface LightboxProps {
@@ -14,7 +14,11 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
   const next = () => setIndex((i) => (i + 1) % images.length);
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[95vh] max-w-[95vw] bg-black/90 p-0">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-h-[95vh] max-w-[95vw] bg-black/90 p-0"
+      >
+        <DialogTitle className="sr-only">Visualizador de imagens</DialogTitle>
         <Button
           variant="ghost"
           size="icon"
