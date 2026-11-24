@@ -8,11 +8,12 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ClipboardCheck, CheckCircle2, XCircle, AlertCircle, Plus, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 export default function QualityPage() {
-  const { inspections, isLoading } = useQualityControl();
+  const { inspections, isLoading, isError, refetch } = useQualityControl();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredInspections = inspections.filter(
@@ -118,7 +119,12 @@ export default function QualityPage() {
               <CardTitle>Histórico de Inspeções</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
+              {isError ? (
+                <ErrorState
+                  message="Não foi possível carregar o histórico de inspeções."
+                  onRetry={() => refetch()}
+                />
+              ) : isLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3].map((i) => (
                     <Skeleton key={i} className="h-16 w-full" />

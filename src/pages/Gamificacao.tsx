@@ -19,9 +19,15 @@ import { PlacarLideres } from "@/components/gamificacao/PlacarLideres";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Trophy, Star, Flame, Target, Zap, Medal, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function GamificacaoPage() {
-  const { perfil, isLoading: loadingGamificacao } = useGamificacao();
+  const {
+    perfil,
+    isLoading: loadingGamificacao,
+    error: erroGamificacao,
+    refetch: refetchGamificacao,
+  } = useGamificacao();
   const { conquistas, loading: loadingConquistas, desbloqueados } = useConquistas();
   const {
     desafios,
@@ -33,6 +39,19 @@ export default function GamificacaoPage() {
   const [tab, setTab] = useState("visao-geral");
 
   const loading = loadingGamificacao || loadingConquistas || loadingDesafios || loadingStreaks;
+
+  if (erroGamificacao) {
+    return (
+      <AppLayout title="Gamificação" showBack>
+        <PageTransition>
+          <ErrorState
+            message="Não foi possível carregar sua gamificação."
+            onRetry={() => refetchGamificacao()}
+          />
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (

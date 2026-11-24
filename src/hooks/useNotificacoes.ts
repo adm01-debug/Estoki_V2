@@ -48,11 +48,13 @@ function getTipoSeveridade(tipo: string): "info" | "warning" | "critical" {
 export function useNotificacoes() {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<unknown>(null);
   const { user } = useAuth();
 
   const fetchNotificacoes = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
 
       // Buscar notificações da tabela notificacoes
       const { data: notifs, error: notifsError } = await supabase
@@ -119,6 +121,7 @@ export function useNotificacoes() {
 
       setNotificacoes(allNotifs);
     } catch (err) {
+      setError(err);
       if (import.meta.env.DEV) console.error("Erro ao buscar notificações:", err);
     } finally {
       setLoading(false);
@@ -275,6 +278,7 @@ export function useNotificacoes() {
   return {
     notificacoes,
     loading,
+    isError: !!error,
     unreadCount,
     refetch: fetchNotificacoes,
     marcarComoLida,

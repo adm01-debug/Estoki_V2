@@ -25,10 +25,11 @@ import type { PickingTask } from "../hooks/usePicking";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { toast } from "sonner";
 
 export default function PickingPage() {
-  const { tasks, isLoading, startTask, finishTask } = usePicking();
+  const { tasks, isLoading, error, refetch, startTask, finishTask } = usePicking();
   const [activeTask, setActiveTask] = useState<PickingTask | null>(null);
   const [scannedCode, setScannedCode] = useState("");
   const [confirmQty, setConfirmQty] = useState<number | "">("");
@@ -255,7 +256,12 @@ export default function PickingPage() {
             </div>
           </div>
 
-          {isLoading ? (
+          {error ? (
+            <ErrorState
+              message="Não foi possível carregar as tarefas de picking."
+              onRetry={() => refetch()}
+            />
+          ) : isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <Skeleton key={i} className="h-32 w-full" />

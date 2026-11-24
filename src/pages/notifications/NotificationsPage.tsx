@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/common/AsyncStates";
 import {
   Select,
   SelectContent,
@@ -85,6 +86,8 @@ export default function NotificationsPage() {
   const {
     notificacoes,
     loading,
+    isError,
+    refetch: recarregarNotificacoes,
     unreadCount,
     refetch,
     marcarComoLida,
@@ -283,7 +286,12 @@ export default function NotificationsPage() {
           {/* Lista */}
           <Tabs value={filtro} onValueChange={(v) => setFiltro(v as FiltroStatus)}>
             <TabsContent value={filtro} className="mt-0 space-y-2">
-              {loading && notificacoes.length === 0 ? (
+              {isError ? (
+                <ErrorState
+                  message="Não foi possível carregar as notificações."
+                  onRetry={() => recarregarNotificacoes()}
+                />
+              ) : loading && notificacoes.length === 0 ? (
                 <div className="space-y-2">
                   {[1, 2, 3, 4].map((i) => (
                     <Skeleton key={i} className="h-20 w-full" />
