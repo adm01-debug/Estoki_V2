@@ -18,6 +18,9 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão.
   `cron_sem_execucao` (job ativo que roda todo dia sem nenhuma execução em 24 h — cron 100 % parado
   não grava falha, então só aparece aqui), `historico_cron_sem_limpeza` (> 50 mil linhas com mais de
   7 dias), `edge_sem_deploy` e `edge_publicada_sem_codigo`. Limiares em `LIMIARES` no script.
+- **`funcoes`**: nomes das funções/RPCs do schema `public`, em ordem. Use para provar que uma RPC
+  existe no banco real (a contagem `resumo.funcoes_public` não diz qual), comparando com as
+  `supabase/migrations/*.sql`.
 - **`tabelas_orfas`**: 0 linhas + não citada em função/view do banco + nenhum `.from()` nem
   `/rest/v1/` no código (`.from(variavel)` não é resolvido). Candidata a limpeza, não prova de que
   pode apagar (pode ser usada por RPC com outro nome ou por sistema externo).

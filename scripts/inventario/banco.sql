@@ -86,6 +86,13 @@ SELECT jsonb_build_object(
     'tamanho_bytes', pg_database_size(current_database())
   ),
 
+  -- Nomes (nao so a contagem do resumo): e por aqui que se prova se uma RPC existe no banco real.
+  'funcoes', (
+    SELECT coalesce(jsonb_agg(p.proname ORDER BY p.proname), '[]'::jsonb)
+      FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+     WHERE n.nspname = 'public' AND p.prokind IN ('f', 'p')
+  ),
+
   'tabelas', (
     SELECT coalesce(jsonb_agg(jsonb_build_object(
              'nome', t.nome,
