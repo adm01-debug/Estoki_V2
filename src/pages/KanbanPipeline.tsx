@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { SEO } from "@/components/common/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -6,18 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Search, RefreshCw } from "lucide-react";
-import { useHead } from "@/hooks/useHead";
 import { useKanbanData } from "@/components/kanban/useKanbanData";
 import { ErrorState } from "@/components/common/AsyncStates";
 import { KanbanColumn } from "@/components/kanban/KanbanColumn";
 import { LoteDetailDialog } from "@/components/kanban/LoteDetailDialog";
 
 export default function KanbanPipeline() {
-  const { setTitle } = useHead();
-  useEffect(() => {
-    setTitle("Kanban Pipeline | ESTOKI");
-  }, [setTitle]);
-
   const {
     isLoading,
     isError,
