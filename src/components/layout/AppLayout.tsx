@@ -2,6 +2,7 @@ import { ReactNode, Suspense, createContext, lazy, useContext, useState, useEffe
 import { Outlet, Navigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { APP_NAME } from "@/constants/app";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
 import { SkipLinks } from "@/components/a11y/SkipLinks";
 // Tour interativo — não crítico para o primeiro render.
@@ -13,6 +14,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSwipeBack } from "@/hooks/useSwipeBack";
 import { useAppLayoutState } from "@/hooks/useAppLayoutState";
+import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { AuthLoading } from "./AuthLoading";
 import { Header } from "@/components/organisms/layout/Header";
 import { Sidebar } from "@/components/organisms/layout/Sidebar";
@@ -49,6 +51,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
   const shouldShowBack = showBack || (!isHome && location.pathname !== "/dashboard");
   useSwipeBack(!isHome && location.pathname !== "/dashboard");
+  useDocumentTitle(isNested ? undefined : title ? `${title} · ${APP_NAME}` : APP_NAME);
 
   if (isNested) return <>{children}</>;
   if (loading) return <AuthLoading />;
