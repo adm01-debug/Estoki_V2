@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
+import { exigirLinhaAfetada } from "@/lib/exigirLinhaAfetada";
 import { Database } from "@/integrations/supabase/types";
 
 type Order = Database["public"]["Tables"]["orders"]["Row"];
@@ -23,7 +24,8 @@ export const orderService = {
             *,
             produto:produtos(nome, sku)
           )
-        `
+        `,
+          { count: "exact" }
         )
         .order("created_at", { ascending: false });
 
@@ -71,15 +73,38 @@ export const orderService = {
     }
   },
 
-  async create(order: OrderInsert, items: Omit<OrderItemInsert, "order_id">[]) {
+  /** A coluna `warehouse_id` existe no banco, mas não nos tipos gerados. */
+  /** UPDATE barrado pela RLS afeta 0 linhas "com sucesso": exigirLinhaAfetada evita sucesso falso. */
+  async updateStatus(id: string, status: NonNullable<Order["status"]>) {
     try {
+      const resultado = await supabase.from("orders").update({ status }).eq("id", id).select("id");
+      exigirLinhaAfetada(resultado, "alterar o status do pedido");
+      return resultado.data?.[0] ?? null;
+    } catch (error) {
+      logger.error("Erro ao alterar status do pedido", error, { id, status });
+      throw error;
+    }
+  },
+
+  /** A coluna `warehouse_id` existe no banco, mas não nos tipos gerados. */
+  async create(
+    order: OrderInsert & { warehouse_id?: string | null },
+    items: Omit<OrderItemInsert, "order_id">[]
+  ) {
+    try {
+      // `warehouse_id` existe no banco mas não nos tipos gerados; o insert o aceita.
       const { data: newOrder, error: orderError } = await supabase
         .from("orders")
-        .insert(order)
+        .insert(order as OrderInsert)
         .select()
         .single();
 
       if (orderError) throw orderError;
+
+      if (items.length === 0) {
+        logger.info("Pedido criado sem itens", { orderId: newOrder.id });
+        return newOrder;
+      }
 
       const itemsToInsert: OrderItemInsert[] = items.map((item) => ({
         ...item,
@@ -88,7 +113,16 @@ export const orderService = {
 
       const { error: itemsError } = await supabase.from("order_items").insert(itemsToInsert);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        // Sem desfazer, o pedido ficaria criado e vazio, e a tela diria que a criação falhou.
+        try {
+          await supabase.from("order_items").delete().eq("order_id", newOrder.id);
+          await supabase.from("orders").delete().eq("id", newOrder.id);
+        } catch (erroLimpeza) {
+          logger.error("Falha ao desfazer pedido sem itens", erroLimpeza, { orderId: newOrder.id });
+        }
+        throw itemsError;
+      }
 
       logger.info("Pedido criado com sucesso", { orderId: newOrder.id });
       return newOrder;
