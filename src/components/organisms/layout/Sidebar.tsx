@@ -75,7 +75,12 @@ export const Sidebar = memo(function Sidebar({
       )}
 
       <ScrollArea className="flex-1 px-3">
-        <nav className="space-y-1 py-4">
+        <nav
+          id={isMobile ? undefined : "main-nav"}
+          tabIndex={isMobile ? undefined : -1}
+          aria-label="Navegação principal"
+          className="space-y-1 py-4"
+        >
           {!isCollapsed && (
             <div className="sticky top-0 z-20 mb-4 bg-sidebar/95 px-3 py-2 backdrop-blur-sm">
               <motion.div

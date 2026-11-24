@@ -3,6 +3,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { SkipLinks } from "@/components/a11y/SkipLinks";
 // Tour interativo — não crítico para o primeiro render.
 const OnboardingTour = lazy(() =>
   import("@/components/common/OnboardingTour").then((m) => ({ default: m.OnboardingTour }))
@@ -69,12 +70,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           aria-label="Promo Brindes Intel WMS"
         >
           <GlobalLoadingBar />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
-          >
-            Pular para conteúdo principal
-          </a>
+          <SkipLinks />
 
           <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
             <div className="absolute -right-[20%] -top-[40%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
@@ -97,8 +93,9 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
           <main
             id="main-content"
+            tabIndex={-1}
             className={cn(
-              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out",
+              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out focus:outline-none",
               mainPadding
             )}
             aria-label="Conteúdo principal"
