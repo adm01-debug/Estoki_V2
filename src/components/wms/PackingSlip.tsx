@@ -83,11 +83,21 @@ export function PackingSlip({
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b">
-              <th className="py-2 text-left">SKU</th>
-              <th className="py-2 text-left">Descrição</th>
-              <th className="py-2 text-center">Qtd</th>
-              <th className="py-2 text-left">Local</th>
-              <th className="py-2 text-center">✓</th>
+              <th scope="col" className="py-2 text-left">
+                SKU
+              </th>
+              <th scope="col" className="py-2 text-left">
+                Descrição
+              </th>
+              <th scope="col" className="py-2 text-center">
+                Qtd
+              </th>
+              <th scope="col" className="py-2 text-left">
+                Local
+              </th>
+              <th scope="col" className="py-2 text-center">
+                ✓
+              </th>
             </tr>
           </thead>
           <tbody>
