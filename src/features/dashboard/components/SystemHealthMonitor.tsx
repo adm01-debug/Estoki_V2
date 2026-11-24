@@ -2,10 +2,15 @@ import { motion } from "framer-motion";
 import { Activity, ShieldCheck, Database, Wifi, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { APP_NAME } from "@/constants/app";
 import { cn } from "@/lib/utils";
 
 export function SystemHealthMonitor() {
-  const { data: snapshots, isLoading } = useQuery({
+  const {
+    data: snapshots,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["db-health-snapshots"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -27,14 +32,14 @@ export function SystemHealthMonitor() {
     integrates > 0
       ? Math.min(Math.round((integradas / Math.max(integradas + falhas, 1)) * 100), 100)
       : 0;
-  const linkOk = !isLoading && snapshots !== undefined;
+  const linkOk = !isLoading && !isError && snapshots !== undefined;
 
   const stats = [
     {
       label: "Status",
-      value: linkOk ? "Operacional" : "Verificando...",
+      value: isError ? "Indisponível" : linkOk ? "Operacional" : "Verificando...",
       icon: ShieldCheck,
-      color: "text-success",
+      color: isError ? "text-destructive" : "text-success",
     },
     {
       label: "Operações",
@@ -44,7 +49,7 @@ export function SystemHealthMonitor() {
     },
     {
       label: "Sync",
-      value: integrates ? "Ativo" : "Sem histórico",
+      value: isError ? "-" : integrates ? "Ativo" : "Sem histórico",
       icon: Wifi,
       color: "text-blue-500",
     },
@@ -59,15 +64,25 @@ export function SystemHealthMonitor() {
     >
       <div className="flex items-center gap-3">
         <div className="relative">
-          <div className="h-3 w-3 animate-pulse rounded-full bg-success" />
-          <div className="absolute inset-0 h-3 w-3 animate-ping rounded-full bg-success/50" />
+          <div
+            className={cn(
+              "h-3 w-3 rounded-full",
+              isError ? "bg-destructive" : "animate-pulse bg-success"
+            )}
+          />
+          <div
+            className={cn(
+              "absolute inset-0 h-3 w-3 rounded-full",
+              isError ? "bg-destructive/20" : "animate-ping bg-success/50"
+            )}
+          />
         </div>
         <div className="flex flex-col">
           <span className="text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground">
             Status do Sistema
           </span>
           <span className="text-sm font-black uppercase tracking-tight text-foreground">
-            Promo Brindes Intelligence <span className="text-primary">v10.1</span>
+            {APP_NAME} <span className="text-primary">WMS</span>
           </span>
         </div>
       </div>
