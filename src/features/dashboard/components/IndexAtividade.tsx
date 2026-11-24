@@ -60,7 +60,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
   return (
     <motion.section variants={itemVariants}>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/60">
+        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary">
           <span className="h-px w-4 bg-primary/30" />
           Atividade Recente
         </h2>
@@ -92,9 +92,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                   <Activity className="h-6 w-6 opacity-40" />
                 </div>
                 <p className="text-sm font-medium">Nenhuma atividade recente</p>
-                <p className="mt-1 text-xs text-muted-foreground/60">
-                  As atividades aparecerão aqui
-                </p>
+                <p className="mt-1 text-xs text-muted-foreground">As atividades aparecerão aqui</p>
               </div>
             ) : (
               <TooltipProvider>

@@ -365,7 +365,7 @@ export default function ProfilePage() {
                 </CardContent>
               </Card>
 
-              <div className="space-y-1 text-center opacity-50">
+              <div className="space-y-1 text-center">
                 <p className="text-[10px] font-bold uppercase tracking-widest">ESTOKI WMS v1.0.0</p>
                 <p className="text-[9px] font-medium tracking-tight">
                   ID do Usuário: {user?.id.slice(0, 8)}

@@ -118,7 +118,7 @@ export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
         <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 blur-sm transition duration-500 group-hover:opacity-100" />
         <div className="relative flex h-14 items-center rounded-2xl border border-border/40 bg-card/40 px-5 shadow-inner backdrop-blur-xl transition-all group-hover:border-primary/30 group-hover:bg-card/60">
           <Search className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" />
-          <span className="ml-4 text-sm font-medium text-muted-foreground/60">
+          <span className="ml-4 text-sm font-medium text-muted-foreground">
             O que você deseja buscar hoje? (produtos, lotes, posições...)
           </span>
           <div className="ml-auto flex items-center gap-2">

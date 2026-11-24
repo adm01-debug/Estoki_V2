@@ -32,7 +32,8 @@
     --secondary-foreground: 220 20% 25%;
 
     --muted: 220 14% 96%;
-    --muted-foreground: 220 10% 46%;
+    /* AA: #656c7b ≥ 4.71:1 sobre as superfícies claras do app (pior caso #ebf4f3) */
+    --muted-foreground: 220 10% 44%;
 
     --accent: 24 90% 37%;
     --accent-foreground: 0 0% 100%;
@@ -46,11 +47,13 @@
 
     --radius: 0.75rem;
 
-    /* Status Colors */
-    --success: 160 84% 39%;
+    /* Status Colors
+       AA no modo claro: #09714b = 5.40:1 sobre branco e 5.40:1 de texto branco sobre ele;
+       #9f5704 = 5.38:1 sobre branco. O modo escuro sobrescreve com os tons brilhantes. */
+    --success: 158 85% 24%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
+    --warning: 32 95% 32%;
     --warning-foreground: 0 0% 100%;
 
     --info: 217 91% 60%;
@@ -101,6 +104,10 @@
 
     --muted: 220 25% 12%;
     --muted-foreground: 220 10% 50%;
+
+    /* Status brilhantes: 7:1+ sobre superfícies escuras (#0d1016/#15171f) */
+    --success: 160 84% 39%;
+    --warning: 38 92% 50%;
 
     --accent: 24 95% 53%;
     --accent-foreground: 220 25% 5%;

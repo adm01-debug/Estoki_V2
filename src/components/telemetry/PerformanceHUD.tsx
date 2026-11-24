@@ -24,7 +24,7 @@ export const PerformanceHUD = () => {
             ? "border-red-500/30 bg-red-500/10 text-red-600"
             : isDegraded
               ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-600"
-              : "border-border/20 bg-background/50 text-muted-foreground"
+              : "bg-sidebar-background/90 border-border/20 text-sidebar-foreground"
         )}
         onClick={() => setShowDetails(!showDetails)}
       >
@@ -93,7 +93,7 @@ const MetricItem = ({
     <span
       className={cn(
         "text-[10px] font-black",
-        status === "ok" ? "text-success" : status === "warn" ? "text-yellow-600" : "text-red-600"
+        status === "ok" ? "text-success" : status === "warn" ? "text-warning" : "text-red-600"
       )}
     >
       {value}
