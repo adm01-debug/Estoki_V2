@@ -39,7 +39,7 @@
         "scripts/automation.unit.mjs",
         "scripts/maintenance/maintenance.unit.mjs",
         "scripts/graphify-local.unit.mjs",
-    "scripts/inventario/gerar-banco.unit.mjs"
+        "scripts/inventario/gerar-banco.unit.mjs"
       ],
       "manual": ["node", "scripts/automation.mjs", "test"],
       "triggers": ["manual", "precommit", "prepush", "PR", "pushmain"]
