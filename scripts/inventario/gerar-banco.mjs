@@ -100,7 +100,7 @@ export function contarUsoNoCodigo(raiz, nomes) {
  * .sql de supabase/migrations/) confere tambem o ledger: um banco irmao com quase as mesmas tabelas
  * (ex.: o antigo do Lovable) passa no criterio das tabelas, mas nao tem as migrations recentes.
  */
-export const LEDGER_TOLERANCIA = { versoesRecentes: 20, registrosPct: 10 };
+export const LEDGER_TOLERANCIA = { versoesRecentes: 20, registrosPct: 10, coberturaPct: 90 };
 export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   const resposta = new Set(dado.tabelas.map((t) => t.nome));
   const manifesto = new Set(tabelasManifesto);
@@ -114,9 +114,31 @@ export function conferirOrigem(dado, tabelasManifesto, versoesRepo = null) {
   }
   const origem = { tabelas_em_comum_com_manifesto: comuns, tabelas_no_manifesto: manifesto.size };
   if (!versoesRepo?.length) return origem;
-  const { ledger_versao_max: max, ledger_registros: registros } = dado.resumo ?? {};
+  const { ledger_versao_max: max, ledger_registros: registros, ledger_versoes: ligados } = dado.resumo ?? {};
   if (!max || !Number.isFinite(registros)) {
     throw new Error('a resposta nao traz resumo.ledger_versao_max/ledger_registros; rode o banco.sql atual.');
+  }
+  // Com a lista de versoes aplicadas, a pergunta certa e "o banco conhece as migrations deste repo?":
+  // repo A FRENTE do banco (migration ainda nao aplicada) e deriva normal e vira alerta, nao erro.
+  // Historico estranho (banco com versao que este repo nunca teve) continua barrado. A comparacao
+  // por contagem de registros nao distinguia os dois casos e derrubava o inventario semanal.
+  if (Array.isArray(ligados) && ligados.length) {
+    const aplicadas = new Set(ligados.map(String));
+    const desconhecidas = [...aplicadas].filter((v) => !new Set(versoesRepo).has(v));
+    const cobertura = 100 * (aplicadas.size - desconhecidas.length) / aplicadas.size;
+    if (cobertura < LEDGER_TOLERANCIA.coberturaPct) {
+      throw new Error(`a resposta nao parece ser do banco oficial: ${desconhecidas.length} das ${aplicadas.size} versoes `
+        + `do ledger nao existem em supabase/migrations (ex.: ${desconhecidas.slice(0, 3).join(', ')}). `
+        + 'Confira se o MCP usado aponta para o projeto ookjbflsnoefnsixrspc.');
+    }
+    const faltantes = [...new Set(versoesRepo)].filter((v) => !aplicadas.has(v)).sort();
+    return {
+      ...origem,
+      ledger_registros: registros,
+      migrations_no_repo: [...new Set(versoesRepo)].length,
+      ledger_versoes_desconhecidas: desconhecidas,
+      migrations_nao_aplicadas: faltantes,
+    };
   }
   const recentes = [...versoesRepo].sort().reverse();
   const limite = recentes[Math.min(LEDGER_TOLERANCIA.versoesRecentes, recentes.length) - 1];
@@ -281,9 +303,18 @@ async function main(argv) {
   if (!publicadasApi && token) publicadasApi = await chamarApi('/functions');
 
   const dado = extrairInventario(bruto);
-  conferirOrigem(dado, tabelasDoManifesto(RAIZ), versoesDoRepo(RAIZ));
+  const origem = conferirOrigem(dado, tabelasDoManifesto(RAIZ), versoesDoRepo(RAIZ));
   const uso = contarUsoNoCodigo(RAIZ, dado.tabelas.map((t) => t.nome));
   const inventario = montarInventario(dado, uso, compararEdges(publicadasApi, edgesNoRepo(RAIZ)));
+  if (origem.migrations_nao_aplicadas?.length) {
+    inventario.alertas.push({
+      tipo: 'migration_nao_aplicada',
+      detalhe: [
+        `${origem.migrations_nao_aplicadas.length} de ${origem.migrations_no_repo} migrations do repo sem registro no ledger do banco`,
+        ...origem.migrations_nao_aplicadas.slice(-5),
+      ],
+    });
+  }
   const texto = JSON.stringify(inventario, null, 2) + '\n';
   if (PARECE_CREDENCIAL.test(texto)) {
     throw new Error('a saida tem algo com cara de credencial; nada foi gravado. Revise banco.sql.');
