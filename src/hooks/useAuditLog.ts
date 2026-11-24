@@ -10,7 +10,7 @@ export function useAuditLog(filters: AuditFilter = { pageSize: 200 }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["audit-logs", filters],
     queryFn: () => auditService.getAll(filters),
   });
@@ -95,6 +95,8 @@ export function useAuditLog(filters: AuditFilter = { pageSize: 200 }) {
   return {
     logs,
     isLoading,
+    isError,
+    refetch,
     log,
     getStats,
     count: data?.count || 0,

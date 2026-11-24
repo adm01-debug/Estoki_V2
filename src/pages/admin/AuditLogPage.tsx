@@ -47,10 +47,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VirtualizedTable } from "@/components/data/VirtualizedTable";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AuditLogPage() {
   const [filters, setFilters] = useState({ page: 1, pageSize: 100 });
-  const { logs, isLoading, getStats } = useAuditLog(filters);
+  const { logs, isLoading, isError, refetch, getStats } = useAuditLog(filters);
 
   const { exportData, isExporting } = useTableExport<AuditLogEntry>({
     table: "audit_log",
@@ -187,7 +188,12 @@ export default function AuditLogPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-              {isLoading ? (
+              {isError ? (
+                <ErrorState
+                  message="Não foi possível carregar os logs de auditoria."
+                  onRetry={() => refetch()}
+                />
+              ) : isLoading ? (
                 <div className="space-y-4">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <Skeleton key={i} className="h-12 w-full" />
@@ -318,7 +324,7 @@ export default function AuditLogPage() {
                   height="500px"
                 />
               )}
-              {filteredLogs.length === 0 && !isLoading && (
+              {filteredLogs.length === 0 && !isLoading && !isError && (
                 <div className="flex h-32 flex-col items-center justify-center text-muted-foreground">
                   <p>Nenhum registro encontrado com os filtros atuais.</p>
                 </div>

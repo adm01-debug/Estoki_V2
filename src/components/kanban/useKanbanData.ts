@@ -12,6 +12,7 @@ export function useKanbanData() {
     data: lotes = [],
     isLoading,
     refetch,
+    isError,
   } = useQuery({
     queryKey: ["kanban-lotes"],
     queryFn: async () => {
@@ -68,6 +69,7 @@ export function useKanbanData() {
   return {
     lotes,
     isLoading,
+    isError,
     refetch,
     searchTerm,
     setSearchTerm,

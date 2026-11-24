@@ -49,10 +49,12 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AjustesEstoquePage() {
   const { user, role } = useAuth();
-  const { adjustments, isLoading, createAdjustment, updateStatus } = useAdjustments();
+  const { adjustments, isLoading, isError, refetch, createAdjustment, updateStatus } =
+    useAdjustments();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -271,7 +273,12 @@ export default function AjustesEstoquePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                {isLoading ? (
+                {isError ? (
+                  <ErrorState
+                    message="Não foi possível carregar os ajustes de estoque."
+                    onRetry={() => refetch()}
+                  />
+                ) : isLoading ? (
                   <div className="space-y-4 p-8">
                     {[1, 2, 3].map((i) => (
                       <Skeleton key={i} className="h-16 w-full" />
