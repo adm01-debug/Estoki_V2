@@ -17,11 +17,23 @@ import AxeBuilder from "@axe-core/playwright";
  * para fazer sem backend real — e já pega o que quebra de verdade: botão sem
  * nome, tab sem painel, hierarquia de heading, texto abaixo do contraste.
  *
- * Bloqueio: `critical` e `serious`, como no smoke público. Todas as rotas
- * estão em zero dessas violações, com uma exceção registrada no `KNOWN_DEBT`
- * abaixo (`color-contrast`), que funciona como **teto**, não como perdão:
- * passar do número registrado falha o teste, então nenhuma violação nova
- * entra — nem em rota nova, cujo teto é 0.
+ * Bloqueio: `critical` e `serious`, como no smoke público, em **dois níveis**:
+ *
+ * - **Marcação — gate duro, teto 0.** Nome acessível faltando/divergente,
+ *   atributo ARIA inválido ou proibido, hierarquia de heading. É determinístico
+ *   e está em zero nas 16 rotas; o que não está (1 nó em `/recebimento`) tem
+ *   diagnóstico e teto explícito em `KNOWN_DEBT_MARCACAO`. Um nó crítico novo
+ *   falha o teste, sem depender do teto de contraste.
+ * - **`color-contrast` — burndown, teto por rota.** `KNOWN_DEBT` guarda o pico
+ *   observado (+1 nó de margem) e é um **teto, não um perdão**: passar dele
+ *   falha o teste, e rota nova tem teto 0. Ao corrigir os tokens, baixe o
+ *   número — este mapa é o burndown.
+ *
+ * A medição é feita com `reducedMotion: "reduce"` e depois que o app montou
+ * (`.initial-loader` de `index.html` fora do DOM e skeletons resolvidos). Sem
+ * as duas esperas o axe mede a tela de boot (0 violações — gate passaria sem
+ * auditar nada) ou o primeiro frame da animação de entrada (contagem oscilando
+ * ±37 nós, gate flaky).
  *
  * Rota que cai no `RouteErrorBoundary` ("Ops! Algo deu errado") com dado vazio
  * não audita nada útil (o axe veria a tela de erro), então o teste é pulado
@@ -73,14 +85,19 @@ const PRIVATE_ROUTES = [
  *
  * Ao corrigir, **baixe o número aqui** — este mapa é o burndown.
  */
+const KNOWN_DEBT_MARCACAO: Record<string, Record<string, number>> = {
+  // 6 `TabsTrigger` de filtro sem `TabsContent` → `aria-controls` órfão.
+  "/recebimento": { "aria-valid-attr-value": 1 },
+};
+
 const KNOWN_DEBT: Record<string, number> = {
-  "/": 15,
-  "/dashboard": 15,
+  "/": 12,
+  "/dashboard": 18,
   "/estoque": 3,
-  "/produtos": 3,
+  "/produtos": 4,
   "/recebimento": 4,
-  "/expedicao": 6,
-  "/picking": 3,
+  "/expedicao": 7,
+  "/picking": 4,
   "/tarefas": 6,
   "/ondas": 4,
   "/pedidos": 4,
@@ -88,7 +105,7 @@ const KNOWN_DEBT: Record<string, number> = {
   "/relatorios": 4,
   "/alertas": 4,
   "/admin/configuracoes": 2,
-  "/perfil": 7,
+  "/perfil": 8,
 };
 
 test.beforeEach(({ browserName }) => {
@@ -99,10 +116,28 @@ for (const route of PRIVATE_ROUTES) {
   test(`a11y privada: ${route} sem violação critical/serious`, async ({ authenticatedPage }) => {
     const page = authenticatedPage;
 
+    // O contraste é medido em elementos que o framer-motion anima: com a
+    // animação ligada o axe pega o elemento em pleno fade e a contagem oscila
+    // ±2 nós. O app usa `<MotionConfig reducedMotion="user">`, então desligar a
+    // animação aqui torna a medição determinística.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+
     const resp = await page.goto(route, { waitUntil: "domcontentloaded" });
     if (!resp || resp.status() >= 400) test.skip(true, `rota ${route} indisponível`);
 
-    // Suspense/framer-motion + queries resolvendo no mock
+    // A rota só é auditável depois de montar: enquanto o `.initial-loader` do
+    // `index.html` está no DOM o axe mede a tela de boot e devolve 0 violações,
+    // o que passaria no gate sem auditar nada. Esperar a saída dele cobre os
+    // two estados que geravam flake (loader presente e primeiro frame da
+    // animação) e o settle das queries do mock.
+    await expect(page.locator(".initial-loader")).toHaveCount(0, { timeout: 15000 });
+    // Skeletons de carregamento usam cores "muted" que o axe reprova; esperar a
+    // saída deles evita medir um frame de loading.
+    await page
+      .locator('[class*="animate-pulse"], .skeleton')
+      .first()
+      .waitFor({ state: "detached", timeout: 8000 })
+      .catch(() => {});
     await page.waitForTimeout(800);
 
     const crashed = await page
@@ -119,6 +154,10 @@ for (const route of PRIVATE_ROUTES) {
       (v) => v.impact === "critical" || v.impact === "serious"
     );
     const nos = blocking.reduce((total, v) => total + v.nodes.length, 0);
+    const contrasteNos = blocking
+      .filter((v) => v.id === "color-contrast")
+      .reduce((total, v) => total + v.nodes.length, 0);
+    const outros = blocking.filter((v) => v.id !== "color-contrast");
 
     console.log(
       `a11y debt route=${route} nos=${nos} ids=${blocking
@@ -140,10 +179,26 @@ for (const route of PRIVATE_ROUTES) {
       );
     }
 
+    // Marcação é gate duro: nome faltando, atributo ARIA inválido e afins são
+    // determinísticos e o teto é 0, exceto o que já está registrado com
+    // diagnóstico em `KNOWN_DEBT_MARCACAO`. Deixá-los passar sob o teto de
+    // contraste esconderia uma regressão (1 nó crítico novo "cabe" no teto).
+    const marcacao = outros.map((v) => ({
+      id: v.id,
+      nos: v.nodes.length,
+      teto: KNOWN_DEBT_MARCACAO[route]?.[v.id] ?? 0,
+    }));
+    expect(
+      marcacao.filter((v) => v.nos > v.teto).map((v) => `${v.id}:${v.nos}/${v.teto}`),
+      `Violação a11y de marcação em ${route}`
+    ).toEqual([]);
+
+    // Contraste é burndown: o teto é o pico observado + 1 nó de margem para a
+    // variação de frame (não é perdão — rota nova tem teto 0).
     const teto = KNOWN_DEBT[route] ?? 0;
     expect(
-      nos,
-      `Violações a11y em ${route}: ${nos} nós (teto registrado: ${teto})`
+      contrasteNos,
+      `Contraste em ${route}: ${contrasteNos} nós (teto registrado: ${teto})`
     ).toBeLessThanOrEqual(teto);
   });
 }
