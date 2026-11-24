@@ -176,18 +176,6 @@ export function useBalanca() {
   const tara = useCallback(() => enviarComando("T"), [enviarComando]);
   const zero = useCallback(() => enviarComando("Z"), [enviarComando]);
 
-  const simularLeitura = useCallback((peso?: number) => {
-    const p = peso ?? parseFloat((Math.random() * 100).toFixed(3));
-    setLeitura({
-      peso: p,
-      unidade: "kg",
-      estavel: true,
-      timestamp: new Date(),
-      raw: `ST,GS,${p}kg`,
-    });
-    setConectada(true);
-  }, []);
-
   useEffect(() => {
     return () => {
       desconectar();
@@ -206,7 +194,6 @@ export function useBalanca() {
     capturarPeso,
     tara,
     zero,
-    simularLeitura,
     setConfig,
   };
 }
