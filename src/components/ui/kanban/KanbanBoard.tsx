@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,7 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBoardProps) {
+  const { t } = useTranslation();
   const [itemArrastado, setItemArrastado] = useState<string | null>(null);
   const [colunaAlvo, setColunaAlvo] = useState<string | null>(null);
 
@@ -47,7 +49,7 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
     <div
       className="flex min-h-[600px] gap-4 overflow-x-auto pb-4"
       role="region"
-      aria-label="Quadro de tarefas"
+      aria-label={t("common.taskBoard")}
       tabIndex={0}
     >
       {columns.map((column) => (
