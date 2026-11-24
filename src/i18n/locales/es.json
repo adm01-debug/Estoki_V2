@@ -28,7 +28,8 @@
     "error": "Error",
     "success": "Éxito",
     "warning": "Advertencia",
-    "info": "Información"
+    "info": "Información",
+    "taskBoard": "Tablero de tareas"
   },
   "nav": {
     "dashboard": "Panel",

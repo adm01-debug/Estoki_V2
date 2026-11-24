@@ -7,6 +7,7 @@ interface ProgressBarProps {
   size?: "sm" | "md" | "lg";
   color?: "default" | "success" | "warning" | "danger";
   className?: string;
+  "aria-label"?: string;
 }
 
 const sizes = { sm: "h-1", md: "h-2", lg: "h-3" };
@@ -24,6 +25,7 @@ export function ProgressBar({
   size = "md",
   color = "default",
   className,
+  "aria-label": ariaLabel,
 }: ProgressBarProps) {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
   const autoColor =
@@ -49,6 +51,7 @@ export function ProgressBar({
           className={cn("h-full transition-all duration-300", colors[finalColor])}
           style={{ width: `${percentage}%` }}
           role="progressbar"
+          aria-label={ariaLabel ?? "Progresso"}
           aria-valuenow={value}
           aria-valuemin={0}
           aria-valuemax={max}

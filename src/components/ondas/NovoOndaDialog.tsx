@@ -94,7 +94,7 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
       <DialogTrigger asChild>
         <Button size="sm" className="gap-2">
           <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Nova Onda</span>
+          <span className="sr-only sm:not-sr-only sm:inline">Nova Onda</span>
         </Button>
       </DialogTrigger>
       <DialogContent aria-describedby={undefined}>

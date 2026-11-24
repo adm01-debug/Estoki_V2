@@ -162,7 +162,7 @@ export default function OndasPage() {
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-2">
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Exportar</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Exportar</span>
             </Button>
             <NovoOndaDialog onSuccess={reloadOndas} />
           </div>

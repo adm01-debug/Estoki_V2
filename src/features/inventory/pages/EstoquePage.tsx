@@ -286,7 +286,7 @@ export default function EstoquePage() {
                 className="glow-button h-10 gap-2 rounded-xl shadow-primary/20"
               >
                 <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Nova Posição</span>
+                <span className="sr-only sm:not-sr-only sm:inline">Nova Posição</span>
               </Button>
             </NovaPosicaoDialog>
             <Button
@@ -299,7 +299,7 @@ export default function EstoquePage() {
               }}
             >
               <QrCode className="h-4 w-4" />
-              <span className="hidden sm:inline">Scan</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Scan</span>
             </Button>
           </div>
         }
@@ -416,7 +416,7 @@ export default function EstoquePage() {
               }}
             >
               <Layers className="h-4 w-4" />
-              <span className="hidden sm:inline">Filtros</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Filtros</span>
               {activeFiltersCount > 0 && (
                 <Badge
                   variant="default"

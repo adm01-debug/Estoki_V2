@@ -178,11 +178,11 @@ export default function ProdutosPage() {
               title="Exportar a página atual em CSV"
             >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Exportar</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Exportar</span>
             </Button>
             <Button size="sm" className="gap-2" onClick={() => setShowAddDialog(true)}>
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Novo Produto</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Novo Produto</span>
             </Button>
           </div>
         }

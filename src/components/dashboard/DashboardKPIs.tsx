@@ -164,7 +164,11 @@ const KPIItem = ({
     <div className="absolute right-0 top-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
       <TooltipProvider>
         <Tooltip>
-          <TooltipTrigger>
+          <TooltipTrigger
+            aria-label={
+              title ? `Mais informações sobre ${title}` : "Mais informações sobre este indicador"
+            }
+          >
             <Info className="h-3 w-3 text-muted-foreground" />
           </TooltipTrigger>
           <TooltipContent>

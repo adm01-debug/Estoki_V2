@@ -254,7 +254,8 @@ export default function TriagemPage() {
                 navigate("/scanner");
               }}
             >
-              <QrCode className="h-4 w-4" /> <span className="hidden md:inline">Scanner</span>
+              <QrCode className="h-4 w-4" />{" "}
+              <span className="sr-only md:not-sr-only md:inline">Scanner</span>
             </Button>
             <Button
               size="sm"
@@ -266,7 +267,7 @@ export default function TriagemPage() {
               }}
             >
               <Calculator className="h-4 w-4" />{" "}
-              <span className="hidden md:inline">Amostragem</span>
+              <span className="sr-only md:not-sr-only md:inline">Amostragem</span>
             </Button>
             <Button
               size="sm"
@@ -278,7 +279,9 @@ export default function TriagemPage() {
               }}
             >
               {zenMode ? <Target className="h-4 w-4" /> : <BarChart3 className="h-4 w-4" />}{" "}
-              <span className="hidden md:inline">{zenMode ? "Sair Zen" : "Modo Zen"}</span>
+              <span className="sr-only md:not-sr-only md:inline">
+                {zenMode ? "Sair Zen" : "Modo Zen"}
+              </span>
             </Button>
             <Button
               size="sm"
@@ -288,7 +291,8 @@ export default function TriagemPage() {
                 handleIniciarTriagem();
               }}
             >
-              <Play className="h-4 w-4" /> <span className="hidden md:inline">Nova Triagem</span>
+              <Play className="h-4 w-4" />{" "}
+              <span className="sr-only md:not-sr-only md:inline">Nova Triagem</span>
             </Button>
           </div>
         }

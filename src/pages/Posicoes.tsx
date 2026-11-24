@@ -160,12 +160,12 @@ export default function PosicoesPage() {
               title="Exportar CSV"
             >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Exportar</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Exportar</span>
             </Button>
             <NovaPosicaoDialog onSuccess={refetch}>
               <Button size="sm" className="gap-2">
                 <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">Nova Posição</span>
+                <span className="sr-only sm:not-sr-only sm:inline">Nova Posição</span>
               </Button>
             </NovaPosicaoDialog>
           </div>

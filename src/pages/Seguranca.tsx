@@ -35,27 +35,27 @@ const Seguranca: React.FC = () => {
           <TabsList className="grid w-full grid-cols-6 lg:inline-grid lg:w-auto">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">Visão Geral</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Visão Geral</span>
             </TabsTrigger>
             <TabsTrigger value="sessions" className="flex items-center gap-2">
               <Monitor className="h-4 w-4" />
-              <span className="hidden sm:inline">Sessões</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Sessões</span>
             </TabsTrigger>
             <TabsTrigger value="devices" className="flex items-center gap-2">
               <Lock className="h-4 w-4" />
-              <span className="hidden sm:inline">Dispositivos</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Dispositivos</span>
             </TabsTrigger>
             <TabsTrigger value="mfa" className="flex items-center gap-2">
               <Key className="h-4 w-4" />
-              <span className="hidden sm:inline">MFA</span>
+              <span className="sr-only sm:not-sr-only sm:inline">MFA</span>
             </TabsTrigger>
             <TabsTrigger value="access" className="flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
-              <span className="hidden sm:inline">Acessos</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Acessos</span>
             </TabsTrigger>
             <TabsTrigger value="alerts" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Alertas</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Alertas</span>
             </TabsTrigger>
           </TabsList>
 
