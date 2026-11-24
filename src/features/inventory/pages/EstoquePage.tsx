@@ -67,6 +67,7 @@ export default function EstoquePage() {
   const clearSelection = () => setSelectedIds([]);
 
   const handleBulkUpdate = async (status: StatusPosicao) => {
+    if (updatePosicao.isPending || selectedIds.length === 0) return;
     try {
       await updatePosicao.mutateAsync({ ids: selectedIds, status });
       log.custom("update", "estoque", {
@@ -335,6 +336,7 @@ export default function EstoquePage() {
                     size="sm"
                     variant="outline"
                     className="h-8 rounded-lg bg-background text-[10px] font-bold uppercase"
+                    disabled={updatePosicao.isPending}
                     onClick={() => {
                       haptics.medium();
                       handleBulkUpdate("bloqueado");
@@ -347,6 +349,7 @@ export default function EstoquePage() {
                     size="sm"
                     variant="outline"
                     className="h-8 rounded-lg bg-background text-[10px] font-bold uppercase"
+                    disabled={updatePosicao.isPending}
                     onClick={() => {
                       haptics.medium();
                       handleBulkUpdate("livre");
