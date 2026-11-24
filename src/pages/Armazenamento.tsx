@@ -24,6 +24,7 @@ import { WarehouseVisualMap } from "@/components/armazenamento/WarehouseVisualMa
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
+import { mapearTarefasArmazenagem, TarefaArmazenagem } from "@/lib/filaArmazenagem";
 
 type Rotatividade = "alta" | "media" | "baixa";
 
@@ -143,7 +144,7 @@ const ArmazenamentoPage = () => {
   const [crossDockingOrder, setCrossDockingOrder] = useState<any>(null);
   const [blindMode, setBlindMode] = useState(false);
   const [startTime] = useState(Date.now());
-  const [queue, setQueue] = useState<ItemArmazenar[]>([]);
+  const [queue, setQueue] = useState<TarefaArmazenagem[]>([]);
 
   const [item, setItem] = useState<ItemArmazenar>({
     id: searchParams.get("itemId") || "",
@@ -157,29 +158,31 @@ const ArmazenamentoPage = () => {
     loteId: searchParams.get("loteId") || undefined,
   });
 
-  // Step 5: Multi-item Queue / Routing simulation
+  // Fila real de tarefas de armazenagem ainda nao concluidas
   useEffect(() => {
-    // Simulando itens pendentes para armazenamento (Roteirização)
-    setQueue([
-      {
-        id: "1",
-        sku: "SKU-002",
-        descricao: "Produto B",
-        peso: 10,
-        rotatividade: "alta",
-        quantidade: 50,
-        volumes: 1,
-      },
-      {
-        id: "2",
-        sku: "SKU-003",
-        descricao: "Produto C",
-        peso: 45,
-        rotatividade: "baixa",
-        quantidade: 20,
-        volumes: 2,
-      },
-    ]);
+    const carregarFila = async () => {
+      const { data, error } = await supabase
+        .from("tarefas")
+        .select(
+          "id, prioridade, quantidade, produto:produtos(sku, nome), destino:posicoes_estoque!tarefas_posicao_destino_id_fkey(codigo)"
+        )
+        .eq("tipo", "armazenagem")
+        .in("status", ["pendente", "atribuida"])
+        .order("prioridade", { ascending: false })
+        .limit(5);
+
+      if (error) {
+        toast({
+          title: "Nao foi possivel carregar a fila de armazenagem",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setQueue(mapearTarefasArmazenagem(data));
+    };
+    carregarFila();
   }, []);
 
   // Step 1: Cross-docking Engine
@@ -269,15 +272,7 @@ const ArmazenamentoPage = () => {
       });
 
       await refetch();
-      if (queue.length > 0) {
-        const next = queue[0];
-        setQueue((q) => q.slice(1));
-        setItem(next);
-        setPosicaoSelecionada(null);
-        setScannedPosicao(null);
-      } else {
-        navigate("/estoque");
-      }
+      navigate("/estoque");
     } catch {
       toast({ title: "Erro no registro", variant: "destructive" });
     } finally {
@@ -432,22 +427,28 @@ const ArmazenamentoPage = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                    Fila de Roteirização Otimizada
+                    Fila de Armazenagem ({queue.length})
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {queue.map((q, idx) => (
                     <div
-                      key={idx}
-                      className="flex items-center gap-3 rounded-lg bg-muted/50 p-2 text-xs opacity-60"
+                      key={q.id}
+                      className="flex items-center gap-3 rounded-lg bg-muted/50 p-2 text-xs"
                     >
                       <div className="flex h-5 w-5 items-center justify-center rounded-full bg-border font-bold">
-                        {idx + 2}
+                        {idx + 1}
                       </div>
                       <span className="font-bold">{q.sku}</span>
-                      <span className="flex-1 truncate">{q.descricao}</span>
+                      <span className="flex-1 truncate">{q.nome}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {q.destino ?? "sem posição"}
+                      </span>
                       <Badge variant="outline" className="text-[9px]">
-                        {q.rotatividade}
+                        {q.quantidade} un
+                      </Badge>
+                      <Badge variant="outline" className="text-[9px]">
+                        {q.prioridade}
                       </Badge>
                     </div>
                   ))}
