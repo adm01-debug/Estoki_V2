@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import { Fornecedor } from "@/hooks/useFornecedores";
+import { formatarPercentual } from "@/lib/fornecedorScore";
 
 interface Props {
   fornecedoresCriticos: Fornecedor[];
@@ -29,13 +30,13 @@ export function FornecedoresCriticos({ fornecedoresCriticos }: Props) {
                   <h3 className="font-semibold">{f.nome}</h3>
                 </div>
                 <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                  <p>Qualidade: {f.percentual_qualidade.toFixed(1)}%</p>
-                  <p>Pontualidade: {f.percentual_pontualidade.toFixed(1)}%</p>
+                  <p>Qualidade: {formatarPercentual(f.percentual_qualidade)}</p>
+                  <p>Pontualidade: {formatarPercentual(f.percentual_pontualidade)}</p>
                   <p>Trocas/Devoluções: {f.trocas_devolucoes}</p>
                 </div>
               </div>
               <Badge variant="outline" className="border-red-500/30 bg-red-500/10 text-red-700">
-                Classe D
+                Classe {f.classificacao ?? "D"}
               </Badge>
             </div>
           </CardContent>

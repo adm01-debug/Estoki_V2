@@ -20,6 +20,7 @@ export default function RelatorioFornecedoresPage() {
   const {
     fornecedores,
     loading,
+    error,
     getEstatisticasGerais,
     getTopFornecedores,
     getFornecedoresCriticos,
@@ -42,7 +43,9 @@ export default function RelatorioFornecedoresPage() {
 
   const dadosClassificacao = useMemo(() => {
     const agrupado: Record<ClassificacaoFornecedor, number> = { A: 0, B: 0, C: 0, D: 0 };
-    fornecedores.forEach((f) => agrupado[f.classificacao]++);
+    fornecedores.forEach((f) => {
+      if (f.classificacao) agrupado[f.classificacao]++;
+    });
     return Object.entries(agrupado)
       .filter(([_, v]) => v > 0)
       .map(([cls, qtd], i) => ({ name: `Classe ${cls}`, value: qtd, color: COLORS[i] }));
@@ -73,6 +76,12 @@ export default function RelatorioFornecedoresPage() {
           <h2 className="text-lg font-semibold">Qualidade de Fornecedores</h2>
           <p className="text-sm text-muted-foreground">Análise de desempenho e qualidade</p>
         </div>
+
+        {error && (
+          <div className="rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+            Não foi possível carregar as métricas de fornecedores: {error}
+          </div>
+        )}
 
         <FornecedoresKPICards
           total={estatisticas.total}
