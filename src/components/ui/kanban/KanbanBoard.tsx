@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export interface KanbanColumn {
   id: string;
@@ -27,6 +28,21 @@ interface KanbanBoardProps {
 }
 
 export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBoardProps) {
+  const [itemArrastado, setItemArrastado] = useState<string | null>(null);
+  const [colunaAlvo, setColunaAlvo] = useState<string | null>(null);
+
+  const limparArrasto = () => {
+    setItemArrastado(null);
+    setColunaAlvo(null);
+  };
+
+  const mover = (itemId: string, colunaId: string) => {
+    const item = items.find((i) => i.id === itemId);
+    limparArrasto();
+    if (!item || item.columnId === colunaId) return;
+    onMoveItem?.(itemId, colunaId);
+  };
+
   return (
     <div className="flex min-h-[600px] gap-4 overflow-x-auto pb-4">
       {columns.map((column) => (
@@ -41,7 +57,24 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
             </div>
           </div>
 
-          <div className="min-h-[500px] flex-1 space-y-3 rounded-xl bg-muted/30 p-2">
+          <div
+            data-testid={`kanban-coluna-${column.id}`}
+            className={cn(
+              "min-h-[500px] flex-1 space-y-3 rounded-xl bg-muted/30 p-2 transition-shadow",
+              colunaAlvo === column.id && "ring-2 ring-primary/60"
+            )}
+            onDragOver={(evento) => {
+              if (!onMoveItem) return;
+              evento.preventDefault();
+              if (colunaAlvo !== column.id) setColunaAlvo(column.id);
+            }}
+            onDrop={(evento) => {
+              if (!onMoveItem) return;
+              evento.preventDefault();
+              const itemId = evento.dataTransfer.getData("text/plain") || itemArrastado;
+              if (itemId) mover(itemId, column.id);
+            }}
+          >
             <AnimatePresence mode="popLayout">
               {items
                 .filter((item) => item.columnId === column.id)
@@ -53,42 +86,57 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                   >
-                    {renderItem ? (
-                      renderItem(item)
-                    ) : (
-                      <Card className="shadow-sm transition-colors hover:border-primary/50">
-                        <CardContent className="space-y-2 p-3">
-                          <div className="flex items-start justify-between">
-                            <p className="line-clamp-2 text-sm font-medium">{item.title}</p>
-                            {item.priority && (
-                              <div
-                                className={`h-1.5 w-1.5 rounded-full ${
-                                  item.priority === "critical"
-                                    ? "bg-destructive"
-                                    : item.priority === "high"
-                                      ? "bg-orange-500"
-                                      : item.priority === "medium"
-                                        ? "bg-primary"
-                                        : "bg-success"
-                                }`}
-                              />
+                    <div
+                      data-testid={`kanban-item-${item.id}`}
+                      draggable={Boolean(onMoveItem)}
+                      onDragStart={(evento) => {
+                        if (!onMoveItem) return;
+                        setItemArrastado(item.id);
+                        evento.dataTransfer.setData("text/plain", item.id);
+                      }}
+                      onDragEnd={limparArrasto}
+                      className={cn(
+                        onMoveItem && "cursor-grab active:cursor-grabbing",
+                        itemArrastado === item.id && "opacity-40"
+                      )}
+                    >
+                      {renderItem ? (
+                        renderItem(item)
+                      ) : (
+                        <Card className="shadow-sm transition-colors hover:border-primary/50">
+                          <CardContent className="space-y-2 p-3">
+                            <div className="flex items-start justify-between">
+                              <p className="line-clamp-2 text-sm font-medium">{item.title}</p>
+                              {item.priority && (
+                                <div
+                                  className={`h-1.5 w-1.5 rounded-full ${
+                                    item.priority === "critical"
+                                      ? "bg-destructive"
+                                      : item.priority === "high"
+                                        ? "bg-orange-500"
+                                        : item.priority === "medium"
+                                          ? "bg-primary"
+                                          : "bg-success"
+                                  }`}
+                                />
+                              )}
+                            </div>
+                            {item.description && (
+                              <p className="line-clamp-2 text-xs text-muted-foreground">
+                                {item.description}
+                              </p>
                             )}
-                          </div>
-                          {item.description && (
-                            <p className="line-clamp-2 text-xs text-muted-foreground">
-                              {item.description}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap gap-1">
-                            {item.tags?.map((tag) => (
-                              <Badge key={tag} variant="outline" className="px-1 py-0 text-[9px]">
-                                {tag}
-                              </Badge>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
+                            <div className="flex flex-wrap gap-1">
+                              {item.tags?.map((tag) => (
+                                <Badge key={tag} variant="outline" className="px-1 py-0 text-[9px]">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+                    </div>
                   </motion.div>
                 ))}
             </AnimatePresence>
