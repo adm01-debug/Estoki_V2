@@ -136,47 +136,55 @@ export default function PasskeySettings() {
                   Configure autenticação biométrica neste dispositivo
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="deviceName">Nome do Dispositivo</Label>
-                  <Input
-                    id="deviceName"
-                    placeholder="Ex: Meu Notebook, iPhone, etc"
-                    value={deviceName}
-                    onChange={(e) => setDeviceName(e.target.value)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Escolha um nome para identificar este dispositivo
-                  </p>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (loading) return;
+                  handleRegister();
+                }}
+              >
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="deviceName">Nome do Dispositivo</Label>
+                    <Input
+                      id="deviceName"
+                      placeholder="Ex: Meu Notebook, iPhone, etc"
+                      value={deviceName}
+                      onChange={(e) => setDeviceName(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Escolha um nome para identificar este dispositivo
+                    </p>
+                  </div>
+                  <div className="space-y-2 rounded-lg bg-muted/50 p-4">
+                    <p className="text-sm font-medium">Como funciona:</p>
+                    <ul className="space-y-1 text-sm text-muted-foreground">
+                      <li>• Clique em "Registrar" abaixo</li>
+                      <li>• Seu navegador solicitará autenticação biométrica</li>
+                      <li>• Use sua impressão digital ou Face ID</li>
+                      <li>• Pronto! Você poderá fazer login sem senha</li>
+                    </ul>
+                  </div>
                 </div>
-                <div className="space-y-2 rounded-lg bg-muted/50 p-4">
-                  <p className="text-sm font-medium">Como funciona:</p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>• Clique em "Registrar" abaixo</li>
-                    <li>• Seu navegador solicitará autenticação biométrica</li>
-                    <li>• Use sua impressão digital ou Face ID</li>
-                    <li>• Pronto! Você poderá fazer login sem senha</li>
-                  </ul>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleRegister} disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Registrando...
-                    </>
-                  ) : (
-                    <>
-                      <Fingerprint className="mr-2 h-4 w-4" />
-                      Registrar Passkey
-                    </>
-                  )}
-                </Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Registrando...
+                      </>
+                    ) : (
+                      <>
+                        <Fingerprint className="mr-2 h-4 w-4" />
+                        Registrar Passkey
+                      </>
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </div>

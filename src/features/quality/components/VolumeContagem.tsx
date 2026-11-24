@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   ArrowRightCircle,
   UserCheck,
-  History,
   Search,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -55,6 +54,7 @@ export function VolumeContagem({
   );
 
   const volumesConferidos = volumes.filter((v) => v.conferido).length;
+  const handoffsConfirmados = volumes.filter((v) => v.handoffConfirmado).length;
   const totalContado = volumes.reduce((acc, v) => acc + (v.qtdContada || 0), 0);
   const totalDiferenca = totalContado - totalEsperado;
   const todosConferidos = volumesConferidos === volumes.length;
@@ -115,34 +115,21 @@ export function VolumeContagem({
       </div>
 
       {/* Promo Brindes Specific: Handoff Chain of Custody */}
-      <div className="mb-6 flex items-center justify-between rounded-2xl border border-primary/10 bg-primary/5 p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
-            <UserCheck className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
-              Cadeia de Custódia Digital
-            </p>
-            <p className="text-xs font-bold">
-              Handoff Logística → Qualidade:{" "}
-              <span className="cursor-pointer text-primary underline transition-colors hover:text-primary/80">
-                Auditado por Blockchain ID
-              </span>
-            </p>
-            <div className="mt-1 flex w-fit items-center gap-1 rounded-full bg-background/50 px-2 py-0.5 text-[9px] font-medium text-muted-foreground">
-              <ShieldCheck className="h-2.5 w-2.5 text-primary" />
-              ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}
-            </div>
-          </div>
+      <div className="mb-6 flex items-center gap-3 rounded-2xl border border-primary/10 bg-primary/5 p-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-primary/20 bg-primary/10">
+          <UserCheck className="h-5 w-5 text-primary" />
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 gap-1.5 text-[10px] font-black uppercase text-primary/70"
-        >
-          <History className="h-3 w-3" /> Log
-        </Button>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
+            Cadeia de Custódia Digital
+          </p>
+          <p className="text-xs font-bold">
+            Handoff Logística → Qualidade:{" "}
+            <span className="text-primary">
+              {handoffsConfirmados}/{volumes.length} liberados para triagem
+            </span>
+          </p>
+        </div>
       </div>
 
       <div className="mb-6 grid grid-cols-5 gap-2 sm:grid-cols-10">

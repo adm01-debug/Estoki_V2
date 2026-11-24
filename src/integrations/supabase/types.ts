@@ -4306,6 +4306,14 @@ export type Database = {
         Args: { p_desafio_id: string };
         Returns: Json;
       };
+      concluir_tarefa_picking: {
+        Args: {
+          p_codigo_lido?: string;
+          p_quantidade: number;
+          p_tarefa_id: string;
+        };
+        Returns: string;
+      };
       current_tenant_id: { Args: never; Returns: string };
       descontar_pontos: {
         Args: { p_user_id: string; p_valor: number };
@@ -4340,6 +4348,10 @@ export type Database = {
       incrementar_metrica_dashboard: {
         Args: { p_tipo: string; p_valor?: number };
         Returns: undefined;
+      };
+      iniciar_tarefa_picking: {
+        Args: { p_tarefa_id: string };
+        Returns: string;
       };
       is_tenant_admin: {
         Args: { _tenant_id: string; _user_id: string };

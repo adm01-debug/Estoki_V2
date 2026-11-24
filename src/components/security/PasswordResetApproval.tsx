@@ -302,7 +302,14 @@ export function PasswordResetApproval() {
                 : "Informe o motivo da rejeição."}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
+          <form
+            className="space-y-4 py-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (submitting) return;
+              handleAction();
+            }}
+          >
             <div className="space-y-2">
               <Label htmlFor="passwordresetapproval">
                 {actionDialog?.type === "approve"
@@ -318,20 +325,20 @@ export function PasswordResetApproval() {
                 onChange={(e) => setObservacao(e.target.value)}
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setActionDialog(null)}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleAction}
-              disabled={submitting || (actionDialog?.type === "reject" && !observacao.trim())}
-              variant={actionDialog?.type === "approve" ? "default" : "destructive"}
-            >
-              {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {actionDialog?.type === "approve" ? "Aprovar" : "Rejeitar"}
-            </Button>
-          </DialogFooter>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setActionDialog(null)}>
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={submitting || (actionDialog?.type === "reject" && !observacao.trim())}
+                variant={actionDialog?.type === "approve" ? "default" : "destructive"}
+              >
+                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {actionDialog?.type === "approve" ? "Aprovar" : "Rejeitar"}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

@@ -320,155 +320,162 @@ export default function OrdersPage() {
                 O pedido entra como Pendente e segue o fluxo do kanban.
               </DialogDescription>
             </DialogHeader>
-
-            <div className="space-y-3">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-codigo">Código</Label>
-                  <Input
-                    id="pedido-codigo"
-                    value={form.codigo}
-                    onChange={(e) => setForm({ ...form, codigo: e.target.value })}
-                    placeholder="PED-20261201-001"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-cliente">Cliente</Label>
-                  <Input
-                    id="pedido-cliente"
-                    value={form.cliente_nome}
-                    onChange={(e) => setForm({ ...form, cliente_nome: e.target.value })}
-                    placeholder="Nome do cliente"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-prioridade">Prioridade</Label>
-                  <Select
-                    value={String(form.prioridade)}
-                    onValueChange={(valor) => setForm({ ...form, prioridade: Number(valor) })}
-                  >
-                    <SelectTrigger id="pedido-prioridade">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Normal</SelectItem>
-                      <SelectItem value="2">Alta</SelectItem>
-                      <SelectItem value="3">Urgente</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-data">Data prometida</Label>
-                  <Input
-                    id="pedido-data"
-                    type="date"
-                    value={form.data_prometida}
-                    onChange={(e) => setForm({ ...form, data_prometida: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-filial">Filial</Label>
-                  <Select
-                    value={form.warehouse_id || "sem-filial"}
-                    onValueChange={(valor) =>
-                      setForm({ ...form, warehouse_id: valor === "sem-filial" ? "" : valor })
-                    }
-                  >
-                    <SelectTrigger id="pedido-filial">
-                      <SelectValue placeholder="Sem filial" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sem-filial">Sem filial</SelectItem>
-                      {(armazensQuery.data ?? []).map((armazem) => (
-                        <SelectItem key={armazem.id} value={armazem.id}>
-                          {armazem.codigo} · {armazem.nome}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label htmlFor="pedido-observacoes">Observações</Label>
-                  <Input
-                    id="pedido-observacoes"
-                    value={form.observacoes}
-                    onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Itens</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="gap-1"
-                    onClick={() => setItens([...itens, { ...ITEM_VAZIO }])}
-                  >
-                    <Plus className="h-3 w-3" /> Item
-                  </Button>
-                </div>
-
-                {itens.map((item, indice) => (
-                  <div key={indice} className="flex items-center gap-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (criar.isPending) return;
+                criar.mutate();
+              }}
+            >
+              <div className="space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-codigo">Código</Label>
+                    <Input
+                      id="pedido-codigo"
+                      value={form.codigo}
+                      onChange={(e) => setForm({ ...form, codigo: e.target.value })}
+                      placeholder="PED-20261201-001"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-cliente">Cliente</Label>
+                    <Input
+                      id="pedido-cliente"
+                      value={form.cliente_nome}
+                      onChange={(e) => setForm({ ...form, cliente_nome: e.target.value })}
+                      placeholder="Nome do cliente"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-prioridade">Prioridade</Label>
                     <Select
-                      value={item.produto_id || "sem-produto"}
-                      onValueChange={(valor) =>
-                        atualizarItem(indice, {
-                          produto_id: valor === "sem-produto" ? "" : valor,
-                        })
-                      }
+                      value={String(form.prioridade)}
+                      onValueChange={(valor) => setForm({ ...form, prioridade: Number(valor) })}
                     >
-                      <SelectTrigger
-                        aria-label={`Produto do item ${indice + 1}`}
-                        className="flex-1"
-                      >
-                        <SelectValue placeholder="Produto" />
+                      <SelectTrigger id="pedido-prioridade">
+                        <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="sem-produto">Selecione o produto</SelectItem>
-                        {(produtosQuery.data ?? []).map((produto) => (
-                          <SelectItem key={produto.id} value={produto.id}>
-                            {produto.sku ? `${produto.sku} · ${produto.nome}` : produto.nome}
+                        <SelectItem value="1">Normal</SelectItem>
+                        <SelectItem value="2">Alta</SelectItem>
+                        <SelectItem value="3">Urgente</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-data">Data prometida</Label>
+                    <Input
+                      id="pedido-data"
+                      type="date"
+                      value={form.data_prometida}
+                      onChange={(e) => setForm({ ...form, data_prometida: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-filial">Filial</Label>
+                    <Select
+                      value={form.warehouse_id || "sem-filial"}
+                      onValueChange={(valor) =>
+                        setForm({ ...form, warehouse_id: valor === "sem-filial" ? "" : valor })
+                      }
+                    >
+                      <SelectTrigger id="pedido-filial">
+                        <SelectValue placeholder="Sem filial" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sem-filial">Sem filial</SelectItem>
+                        {(armazensQuery.data ?? []).map((armazem) => (
+                          <SelectItem key={armazem.id} value={armazem.id}>
+                            {armazem.codigo} · {armazem.nome}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="pedido-observacoes">Observações</Label>
                     <Input
-                      aria-label={`Quantidade do item ${indice + 1}`}
-                      type="number"
-                      min={1}
-                      className="w-24"
-                      value={item.quantidade}
-                      onChange={(e) =>
-                        atualizarItem(indice, { quantidade: Number(e.target.value) })
-                      }
+                      id="pedido-observacoes"
+                      value={form.observacoes}
+                      onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
                     />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Itens</Label>
                     <Button
                       type="button"
-                      variant="ghost"
-                      size="icon"
-                      aria-label={`Remover item ${indice + 1}`}
-                      disabled={itens.length === 1}
-                      onClick={() => setItens(itens.filter((_, i) => i !== indice))}
+                      variant="outline"
+                      size="sm"
+                      className="gap-1"
+                      onClick={() => setItens([...itens, { ...ITEM_VAZIO }])}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Plus className="h-3 w-3" /> Item
                     </Button>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogAberto(false)}>
-                Cancelar
-              </Button>
-              <Button onClick={() => criar.mutate()} disabled={criar.isPending}>
-                Criar pedido
-              </Button>
-            </DialogFooter>
+                  {itens.map((item, indice) => (
+                    <div key={indice} className="flex items-center gap-2">
+                      <Select
+                        value={item.produto_id || "sem-produto"}
+                        onValueChange={(valor) =>
+                          atualizarItem(indice, {
+                            produto_id: valor === "sem-produto" ? "" : valor,
+                          })
+                        }
+                      >
+                        <SelectTrigger
+                          aria-label={`Produto do item ${indice + 1}`}
+                          className="flex-1"
+                        >
+                          <SelectValue placeholder="Produto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="sem-produto">Selecione o produto</SelectItem>
+                          {(produtosQuery.data ?? []).map((produto) => (
+                            <SelectItem key={produto.id} value={produto.id}>
+                              {produto.sku ? `${produto.sku} · ${produto.nome}` : produto.nome}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        aria-label={`Quantidade do item ${indice + 1}`}
+                        type="number"
+                        min={1}
+                        className="w-24"
+                        value={item.quantidade}
+                        onChange={(e) =>
+                          atualizarItem(indice, { quantidade: Number(e.target.value) })
+                        }
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label={`Remover item ${indice + 1}`}
+                        disabled={itens.length === 1}
+                        onClick={() => setItens(itens.filter((_, i) => i !== indice))}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setDialogAberto(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={criar.isPending}>
+                  Criar pedido
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </PageTransition>

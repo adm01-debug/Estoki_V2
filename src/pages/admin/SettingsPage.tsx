@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -6,16 +7,100 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings, Warehouse, Bell, ShieldCheck, Database, Cpu, Save, Globe } from "lucide-react";
+import {
+  Settings,
+  Warehouse,
+  Bell,
+  ShieldCheck,
+  Database,
+  Cpu,
+  Save,
+  Globe,
+  Loader2,
+} from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+interface SystemSettings {
+  nome_unidade: string;
+  codigo_identificador: string;
+  exigir_scan_qr: boolean;
+  validacao_fefo: boolean;
+  picking_multi_ondas: boolean;
+}
+
+const DEFAULTS: SystemSettings = {
+  nome_unidade: "ESTOKI - CD Central",
+  codigo_identificador: "CDC-01",
+  exigir_scan_qr: true,
+  validacao_fefo: true,
+  picking_multi_ondas: false,
+};
 
 export default function AdminSettingsPage() {
-  const handleSave = () => {
-    toast({
-      title: "Configurações salvas",
-      description: "As alterações foram aplicadas com sucesso.",
-    });
+  const [settings, setSettings] = useState<SystemSettings>(DEFAULTS);
+  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("system_settings" as any)
+          .select("value")
+          .eq("key", "wms_config")
+          .maybeSingle();
+        const row = data as any;
+        if (!error && row?.value) {
+          setSettings({ ...DEFAULTS, ...(row.value as Partial<SystemSettings>) });
+        }
+      } catch {
+        // Tabela ainda nao existe — usa defaults silenciosamente
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("system_settings" as any)
+        .upsert({ key: "wms_config", value: settings as any }, { onConflict: "tenant_id,key" });
+
+      if (error) throw error;
+      toast({ title: "Configurações salvas", description: "As alterações foram aplicadas." });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao salvar";
+      // Se a tabela nao existe ainda, avisa de forma amigavel
+      if (msg.includes("does not exist") || msg.includes("42P01")) {
+        toast({
+          title: "Configuração não persistida",
+          description: "A gravação no banco depende da migração pendente.",
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: "Erro ao salvar", description: msg, variant: "destructive" });
+      }
+    } finally {
+      setSaving(false);
+    }
   };
+
+  const set = (key: keyof SystemSettings, value: SystemSettings[typeof key]) =>
+    setSettings((s) => ({ ...s, [key]: value }));
+
+  if (loading) {
+    return (
+      <AppLayout title="Configurações do Sistema" showBack>
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout title="Configurações do Sistema" showBack>
@@ -52,11 +137,19 @@ export default function AdminSettingsPage() {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="nome-da-unidade">Nome da Unidade</Label>
-                      <Input id="nome-da-unidade" defaultValue="ESTOKI - CD Central" />
+                      <Input
+                        id="nome-da-unidade"
+                        value={settings.nome_unidade}
+                        onChange={(e) => set("nome_unidade", e.target.value)}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="codigo-identificador">Código Identificador</Label>
-                      <Input id="codigo-identificador" defaultValue="CDC-01" />
+                      <Input
+                        id="codigo-identificador"
+                        value={settings.codigo_identificador}
+                        onChange={(e) => set("codigo_identificador", e.target.value)}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -86,7 +179,11 @@ export default function AdminSettingsPage() {
                         Obrigatório escanear item e local em todas as movimentações.
                       </p>
                     </div>
-                    <Switch id="exigir-scan-de-qr-code" defaultChecked />
+                    <Switch
+                      id="exigir-scan-de-qr-code"
+                      checked={settings.exigir_scan_qr}
+                      onCheckedChange={(v) => set("exigir_scan_qr", v)}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
@@ -97,7 +194,11 @@ export default function AdminSettingsPage() {
                         Priorizar saída de itens com vencimento mais próximo.
                       </p>
                     </div>
-                    <Switch id="validacao-de-validade-fefo" defaultChecked />
+                    <Switch
+                      id="validacao-de-validade-fefo"
+                      checked={settings.validacao_fefo}
+                      onCheckedChange={(v) => set("validacao_fefo", v)}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
@@ -106,8 +207,40 @@ export default function AdminSettingsPage() {
                         Permitir agrupamento de vários pedidos em uma única rota.
                       </p>
                     </div>
-                    <Switch id="picking-multi-ondas" />
+                    <Switch
+                      id="picking-multi-ondas"
+                      checked={settings.picking_multi_ondas}
+                      onCheckedChange={(v) => set("picking_multi_ondas", v)}
+                    />
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="notificacoes">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Avisos e Notificações</CardTitle>
+                  <CardDescription>Configuração de alertas e avisos do sistema.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Configurações de notificação disponíveis em breve.
+                  </p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="seguranca">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Segurança</CardTitle>
+                  <CardDescription>Configurações de acesso e autenticação.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Configurações de segurança disponíveis em breve.
+                  </p>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -126,20 +259,24 @@ export default function AdminSettingsPage() {
                       <Database className="h-4 w-4" /> Zona de Perigo
                     </h4>
                     <p className="text-xs text-muted-foreground">
-                      Estas ações são irreversíveis e afetam todo o sistema.
+                      Estas ações são irreversíveis. Requerem confirmação adicional.
                     </p>
                     <div className="flex gap-2">
-                      <Button variant="destructive" size="sm">
+                      <Button variant="destructive" size="sm" disabled>
                         Limpar Cache Global
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         className="border-red-500/20 text-red-500"
+                        disabled
                       >
-                        Resetar Operações
+                        Resetar Operacoes
                       </Button>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      Ações críticas disponíveis após confirmação dupla (em desenvolvimento).
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -147,9 +284,12 @@ export default function AdminSettingsPage() {
           </Tabs>
 
           <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline">Cancelar</Button>
-            <Button onClick={handleSave} className="gap-2">
-              <Save className="h-4 w-4" /> Salvar Alterações
+            <Button variant="outline" onClick={() => setSettings(DEFAULTS)}>
+              Restaurar Padrao
+            </Button>
+            <Button onClick={handleSave} className="gap-2" disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Salvando..." : "Salvar Alteracoes"}
             </Button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 {
-  "total": 1514,
-  "generatedAt": "2026-11-24T08:19:26.716Z",
+  "total": 1516,
+  "generatedAt": "2026-11-24T10:08:34.342Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -297,7 +297,7 @@
     "src/pages/admin/CircuitBreakersPage.tsx": 2,
     "src/pages/admin/IntegrationsPage.tsx": 2,
     "src/pages/admin/RolesPage.tsx": 3,
-    "src/pages/admin/SettingsPage.tsx": 10,
+    "src/pages/admin/SettingsPage.tsx": 14,
     "src/pages/admin/SimulationPage.tsx": 8,
     "src/pages/admin/UsersPage.tsx": 18,
     "src/pages/auth/ForgotPassword.tsx": 1,
@@ -312,7 +312,7 @@
     "src/pages/orders/OrderDetailPage.tsx": 4,
     "src/pages/orders/OrdersPage.tsx": 15,
     "src/pages/profile/ProfilePage.tsx": 1,
-    "src/pages/putaway/PutawayPage.tsx": 12,
+    "src/pages/putaway/PutawayPage.tsx": 10,
     "src/pages/quality/QualityPage.tsx": 10,
     "src/pages/serials/SerialsPage.tsx": 4,
     "src/pages/warehouses/WarehouseDetailPage.tsx": 10,

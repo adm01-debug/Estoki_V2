@@ -60,7 +60,14 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
             <DialogHeader>
               <DialogTitle>Registrar Checkpoint de Zona</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
+            <form
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (registrarCheckpoint.isPending) return;
+                handleSubmit();
+              }}
+            >
               <Select value={form.zona} onValueChange={(v) => setForm((f) => ({ ...f, zona: v }))}>
                 <SelectTrigger aria-label="Zona">
                   <SelectValue placeholder="Zona" />
@@ -99,14 +106,10 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
                 value={form.observacoes}
                 onChange={(e) => setForm((f) => ({ ...f, observacoes: e.target.value }))}
               />
-              <Button
-                className="w-full"
-                onClick={handleSubmit}
-                disabled={registrarCheckpoint.isPending}
-              >
+              <Button type="submit" className="w-full" disabled={registrarCheckpoint.isPending}>
                 Registrar Checkpoint
               </Button>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

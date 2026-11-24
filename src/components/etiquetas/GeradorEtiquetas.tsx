@@ -94,7 +94,14 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
           <DialogTitle className="flex items-center gap-2">🏷️ Gerar Etiquetas QR Code</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (isGenerating || qrCodeUrls.length === 0) return;
+            handlePrint();
+          }}
+        >
           <div className="rounded-lg bg-muted/50 p-3 text-sm">
             <div className="font-medium">Pedido: #{data.pedido}</div>
             <div className="truncate text-muted-foreground">{data.produto}</div>
@@ -175,6 +182,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
 
           <div className="flex gap-2">
             <Button
+              type="button"
               variant="outline"
               className="flex-1 gap-2"
               onClick={handleGeneratePDF}
@@ -188,8 +196,8 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
               Baixar PDF
             </Button>
             <Button
+              type="submit"
               className="flex-1 gap-2"
-              onClick={handlePrint}
               disabled={isGenerating || qrCodeUrls.length === 0}
             >
               {isGenerating ? (
@@ -200,7 +208,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
               Imprimir
             </Button>
           </div>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );
