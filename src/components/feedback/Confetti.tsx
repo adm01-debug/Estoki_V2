@@ -10,6 +10,8 @@ export function Confetti({ active, duration = 3000, particleCount = 100 }: Confe
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Respeita "reduzir movimento" do sistema: nenhuma particula animada.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!active || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");

@@ -30,4 +30,13 @@ i18n
     },
   });
 
+function syncDocumentLanguage(language: string) {
+  if (typeof document !== "undefined") {
+    document.documentElement.lang = language;
+  }
+}
+
+i18n.on("languageChanged", syncDocumentLanguage);
+syncDocumentLanguage(i18n.language);
+
 export default i18n;

@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MotionConfig } from "framer-motion";
 import { Suspense, lazy } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { ThemeProvider } from "@/contexts/ThemeContext";
@@ -46,25 +47,27 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <HelmetProvider>
       <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <AuthProvider>
-              <AppProvider>
-                <NotificationProvider>
-                  <KeyboardShortcuts />
-                  <Sonner />
-                  <Toaster />
-                  <Suspense fallback={null}>
-                    <InstallPrompt />
-                    <UpdatePrompt />
-                    <PerformanceMonitor />
-                  </Suspense>
-                  <TransitionProvider>{children}</TransitionProvider>
-                </NotificationProvider>
-              </AppProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
+        <MotionConfig reducedMotion="user">
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider>
+              <AuthProvider>
+                <AppProvider>
+                  <NotificationProvider>
+                    <KeyboardShortcuts />
+                    <Sonner />
+                    <Toaster />
+                    <Suspense fallback={null}>
+                      <InstallPrompt />
+                      <UpdatePrompt />
+                      <PerformanceMonitor />
+                    </Suspense>
+                    <TransitionProvider>{children}</TransitionProvider>
+                  </NotificationProvider>
+                </AppProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </QueryClientProvider>
+        </MotionConfig>
       </ErrorBoundary>
     </HelmetProvider>
   );

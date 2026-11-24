@@ -9,6 +9,8 @@ export function Fireworks({ active, duration = 4000 }: FireworksProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    // Respeita "reduzir movimento" do sistema: nenhuma particula animada.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!active || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
