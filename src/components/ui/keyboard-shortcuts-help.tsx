@@ -28,6 +28,7 @@ const shortcuts: ShortcutItem[] = [
   { keys: ["⌘", "⇧", "X"], description: "Ir para Expedição", category: "Navegação" },
   { keys: ["⌘", "R"], description: "Atualizar dados", category: "Ações" },
   { keys: ["?"], description: "Mostrar ajuda de atalhos", category: "Ajuda" },
+  { keys: ["Alt", "/"], description: "Painel rápido de atalhos", category: "Ajuda" },
 ];
 
 function KeyboardKey({ children }: { children: React.ReactNode }) {

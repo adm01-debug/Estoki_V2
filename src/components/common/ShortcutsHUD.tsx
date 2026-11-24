@@ -11,11 +11,13 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Toggle with Alt + / or just listen for the '?' key if not in an input
+      // O "?" e do painel global (KeyboardShortcutsHelp); aqui o gatilho e Alt+/
       if (
-        e.key === "?" &&
+        e.altKey &&
+        e.key === "/" &&
         !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
       ) {
+        e.preventDefault();
         setIsOpen((prev) => !prev);
       }
       if (e.key === "Escape") {
@@ -39,6 +41,8 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
             onClick={() => setIsOpen(false)}
           />
           <motion.div
+            role="dialog"
+            aria-label="Atalhos de teclado"
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}

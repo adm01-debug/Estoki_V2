@@ -90,18 +90,19 @@ export function useKeyboardShortcuts() {
       },
       description: "Busca Rápida",
     },
-    {
-      key: "?",
-      action: () => toast.info("Atalhos: Ctrl+[H, D, R, T, E, L, F, S]"),
-      description: "Ajuda",
-    },
   ];
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      // Ignore if typing in input/textarea
+      // Atalho de letra unica nao pode roubar a digitacao em campos de formulario
       const target = event.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) {
+      const isTyping =
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.tagName === "SELECT" ||
+        target.isContentEditable ||
+        Boolean(target.closest('[role="textbox"], [role="combobox"], [contenteditable="true"]'));
+      if (isTyping) {
         return;
       }
 
