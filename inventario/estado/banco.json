@@ -2,6 +2,29 @@
   "alertas": [
     {
       "detalhe": [
+        "adicionar_xp",
+        "check_db_alert_thresholds",
+        "collect_challenge_reward",
+        "concluir_tarefa_picking",
+        "descontar_pontos",
+        "get_current_user_permissions",
+        "get_dashboard_metrics",
+        "get_min_stock_threshold",
+        "get_reorder_point",
+        "get_user_role",
+        "has_role_v2",
+        "incrementar_metrica_dashboard",
+        "iniciar_tarefa_picking",
+        "log_audit_event",
+        "move_stock",
+        "refresh_dashboard_materialized_views",
+        "registrar_checkin_diario",
+        "transferir_estoque"
+      ],
+      "tipo": "funcao_anon_executavel"
+    },
+    {
+      "detalhe": [
         "adjust-inventory",
         "agv-dispatch",
         "ai-classification",
@@ -167,7 +190,7 @@
     },
     "historico": {
       "bytes": 90112,
-      "linhas": 121,
+      "linhas": 127,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -197,7 +220,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 92,
+        "execucoes_7d": 98,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
@@ -1141,7 +1164,37 @@
     "word_similarity_dist_op",
     "word_similarity_op"
   ],
-  "medido_em": "2026-11-24T16:59:33Z",
+  "funcoes_executaveis_anon": [
+    "adicionar_xp",
+    "check_db_alert_thresholds",
+    "check_login_lockout",
+    "collect_challenge_reward",
+    "concluir_tarefa_picking",
+    "current_tenant_id",
+    "default_tenant_id",
+    "descontar_pontos",
+    "effective_tenant_id",
+    "get_backend_health",
+    "get_current_user_permissions",
+    "get_dashboard_metrics",
+    "get_min_stock_threshold",
+    "get_reorder_point",
+    "get_user_role",
+    "has_role",
+    "has_role_v2",
+    "incrementar_metrica_dashboard",
+    "iniciar_tarefa_picking",
+    "is_tenant_admin",
+    "is_tenant_member",
+    "log_audit_event",
+    "move_stock",
+    "record_failed_login",
+    "refresh_dashboard_materialized_views",
+    "registrar_checkin_diario",
+    "reset_login_attempts",
+    "transferir_estoque"
+  ],
+  "medido_em": "2026-11-24T22:19:37Z",
   "resumo": {
     "cron_ativos": 4,
     "cron_jobs": 4,
@@ -1153,7 +1206,7 @@
     "postgres": "17.11",
     "tabelas_public": 92,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 24426163,
+    "tamanho_bytes": 24573619,
     "triggers_public": 58,
     "views_public": 3
   },
@@ -1399,9 +1452,9 @@
       }
     },
     {
-      "bytes": 40960,
+      "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 96,
+      "linhas": 102,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
