@@ -70,7 +70,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       </div>
       <EditorContent
         editor={editor}
-        className="prose prose-sm dark:prose-invert min-h-[150px] max-w-none p-3 focus:outline-none"
+        className="prose prose-sm dark:prose-invert min-h-[150px] max-w-none rounded-md p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       />
     </div>
   );

@@ -6,7 +6,6 @@ import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { useDashboard } from "@/features/dashboard/hooks/useDashboard";
 import { useRealtimeKPIs } from "@/features/analytics/hooks/useRealtimeKPIs";
-import { useKeyboardShortcuts } from "@/hooks/useKeyboardShortcuts";
 import { toast } from "@/hooks/use-toast";
 import { Download, RefreshCw, Sparkles, Clock, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -39,7 +38,6 @@ const DashboardPage = () => {
     error,
     refetch,
   } = useDashboard();
-  useKeyboardShortcuts();
   const realtimeStatus = useRealtimeKPIs({ showToasts: true });
 
   const handleExportPDF = useCallback(async () => {
