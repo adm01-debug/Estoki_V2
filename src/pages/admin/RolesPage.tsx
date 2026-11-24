@@ -22,6 +22,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { usePermissions } from "@/hooks/usePermissions";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Shield,
@@ -75,6 +76,8 @@ export default function RolesPage() {
   const {
     data: userCounts = {},
     isLoading: countsLoading,
+    isError: erroContagens,
+    error: erroContagensObj,
     refetch: refetchCounts,
   } = useQuery({
     queryKey: ["role-user-counts"],
@@ -134,6 +137,17 @@ export default function RolesPage() {
               Atualizar
             </Button>
           </div>
+
+          {erroContagens && (
+            <ErrorState
+              message={
+                erroContagensObj instanceof Error
+                  ? erroContagensObj.message
+                  : "Não foi possível carregar a contagem de usuários por cargo."
+              }
+              onRetry={() => void refetchCounts()}
+            />
+          )}
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {Object.entries(ROLE_INFO).map(([roleId, info]) => (
