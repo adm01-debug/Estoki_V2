@@ -9,7 +9,6 @@ import { NotificationProvider } from "@/contexts/NotificationContext";
 import { TransitionProvider } from "@/contexts/TransitionContext";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
 import { KeyboardShortcuts } from "./KeyboardShortcuts";
 
 // Widgets não críticos para o primeiro paint — carregados sob demanda para
@@ -55,7 +54,6 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
                   <NotificationProvider>
                     <KeyboardShortcuts />
                     <Sonner />
-                    <Toaster />
                     <Suspense fallback={null}>
                       <InstallPrompt />
                       <UpdatePrompt />
