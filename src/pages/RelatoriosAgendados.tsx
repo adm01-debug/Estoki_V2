@@ -61,35 +61,43 @@ export default function RelatoriosAgendados() {
 
   const reload = () => queryClient.invalidateQueries({ queryKey: ["relatorios-agendados"] });
 
+  const [salvando, setSalvando] = useState(false);
+
   const handleCreate = async () => {
+    if (salvando) return;
     if (!form.nome || !form.email) {
       toast.error("Preencha nome e email");
       return;
     }
-    const emails = form.email
-      .split(",")
-      .map((e) => e.trim())
-      .filter(Boolean);
-    const proximo = new Date();
-    if (form.frequencia === "diario") proximo.setDate(proximo.getDate() + 1);
-    else if (form.frequencia === "semanal") proximo.setDate(proximo.getDate() + 7);
-    else proximo.setMonth(proximo.getMonth() + 1);
+    setSalvando(true);
+    try {
+      const emails = form.email
+        .split(",")
+        .map((e) => e.trim())
+        .filter(Boolean);
+      const proximo = new Date();
+      if (form.frequencia === "diario") proximo.setDate(proximo.getDate() + 1);
+      else if (form.frequencia === "semanal") proximo.setDate(proximo.getDate() + 7);
+      else proximo.setMonth(proximo.getMonth() + 1);
 
-    const { error } = await supabase.from("relatorios_agendados").insert({
-      nome: form.nome,
-      tipo: form.tipo,
-      frequencia: form.frequencia,
-      destinatarios: emails,
-      proximo_envio: proximo.toISOString(),
-    } as any);
-    if (error) {
-      toast.error("Erro ao criar relatório");
-      return;
+      const { error } = await supabase.from("relatorios_agendados").insert({
+        nome: form.nome,
+        tipo: form.tipo,
+        frequencia: form.frequencia,
+        destinatarios: emails,
+        proximo_envio: proximo.toISOString(),
+      } as any);
+      if (error) {
+        toast.error("Erro ao criar relatório");
+        return;
+      }
+      toast.success("Relatório agendado criado!");
+      setDialogOpen(false);
+      setForm({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
+      reload();
+    } finally {
+      setSalvando(false);
     }
-    toast.success("Relatório agendado criado!");
-    setDialogOpen(false);
-    setForm({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
-    reload();
   };
 
   const toggleAtivo = async (id: string, ativo: boolean) => {
@@ -163,7 +171,13 @@ export default function RelatoriosAgendados() {
             <DialogHeader>
               <DialogTitle>Novo Relatório Agendado</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4">
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleCreate();
+              }}
+            >
               <div>
                 <Label htmlFor="nome">Nome</Label>
                 <Input
@@ -220,10 +234,10 @@ export default function RelatoriosAgendados() {
                   placeholder="email1@empresa.com, email2@empresa.com"
                 />
               </div>
-              <Button onClick={handleCreate} className="w-full">
+              <Button type="submit" disabled={salvando} className="w-full">
                 Criar Agendamento
               </Button>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

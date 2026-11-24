@@ -74,7 +74,14 @@ export const CustodiaTab = memo(function CustodiaTab() {
             <DialogHeader>
               <DialogTitle>Registrar Transferência de Custódia</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
+            <form
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (criarTransferencia.isPending) return;
+                handleSubmit();
+              }}
+            >
               <Input
                 aria-label="ID do operador destino"
                 placeholder="ID do operador destino"
@@ -131,14 +138,10 @@ export const CustodiaTab = memo(function CustodiaTab() {
                 value={form.motivo}
                 onChange={(e) => setForm((f) => ({ ...f, motivo: e.target.value }))}
               />
-              <Button
-                className="w-full"
-                onClick={handleSubmit}
-                disabled={criarTransferencia.isPending}
-              >
+              <Button type="submit" className="w-full" disabled={criarTransferencia.isPending}>
                 Registrar com Assinatura Digital
               </Button>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>

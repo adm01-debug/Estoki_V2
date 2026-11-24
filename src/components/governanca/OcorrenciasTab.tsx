@@ -101,7 +101,14 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
             <DialogHeader>
               <DialogTitle>Nova Ocorrência de Perda</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3">
+            <form
+              className="space-y-3"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (criarOcorrencia.isPending) return;
+                handleSubmit();
+              }}
+            >
               <Select value={form.tipo} onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}>
                 <SelectTrigger aria-label="Tipo de ocorrência">
                   <SelectValue />
@@ -146,14 +153,14 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                 onChange={(e) => setForm((f) => ({ ...f, valor_prejuizo: Number(e.target.value) }))}
               />
               <Button
+                type="submit"
                 className="w-full"
                 variant="destructive"
-                onClick={handleSubmit}
                 disabled={criarOcorrencia.isPending}
               >
                 Registrar Ocorrência
               </Button>
-            </div>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
@@ -212,7 +219,21 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                         <DialogHeader>
                           <DialogTitle>Emitir Parecer — {oc.codigo}</DialogTitle>
                         </DialogHeader>
-                        <div className="space-y-3">
+                        <form
+                          className="space-y-3"
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            if (atualizarOcorrencia.isPending) return;
+                            atualizarOcorrencia.mutate({
+                              id: oc.id,
+                              status: "encerrado",
+                              parecer,
+                              acao_corretiva: acao,
+                            });
+                            setParecer("");
+                            setAcao("");
+                          }}
+                        >
                           <Textarea
                             aria-label="Parecer da investigação"
                             placeholder="Parecer da investigação..."
@@ -226,21 +247,13 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                             onChange={(e) => setAcao(e.target.value)}
                           />
                           <Button
+                            type="submit"
                             className="w-full"
-                            onClick={() => {
-                              atualizarOcorrencia.mutate({
-                                id: oc.id,
-                                status: "encerrado",
-                                parecer,
-                                acao_corretiva: acao,
-                              });
-                              setParecer("");
-                              setAcao("");
-                            }}
+                            disabled={atualizarOcorrencia.isPending}
                           >
                             Encerrar com Parecer
                           </Button>
-                        </div>
+                        </form>
                       </DialogContent>
                     </Dialog>
                   )}
