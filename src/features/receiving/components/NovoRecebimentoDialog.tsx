@@ -141,7 +141,7 @@ export function NovoRecebimentoDialog({ trigger, onSuccess }: NovoRecebimentoDia
         {trigger || (
           <Button size="sm" className="gap-2">
             <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Novo</span>
+            <span className="sr-only sm:not-sr-only sm:inline">Novo</span>
           </Button>
         )}
       </DialogTrigger>

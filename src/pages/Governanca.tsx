@@ -29,17 +29,17 @@ export default function Governanca() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="custodia" className="gap-2">
               <Link2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Cadeia de Custódia</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Cadeia de Custódia</span>
               <span className="sm:hidden">Custódia</span>
             </TabsTrigger>
             <TabsTrigger value="checkpoints" className="gap-2">
               <MapPin className="h-4 w-4" />
-              <span className="hidden sm:inline">Checkpoints Zona</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Checkpoints Zona</span>
               <span className="sm:hidden">Checkpoints</span>
             </TabsTrigger>
             <TabsTrigger value="ocorrencias" className="gap-2">
               <AlertTriangle className="h-4 w-4" />
-              <span className="hidden sm:inline">Ocorrências</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Ocorrências</span>
               <span className="sm:hidden">Ocorrências</span>
             </TabsTrigger>
           </TabsList>

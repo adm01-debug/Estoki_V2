@@ -57,7 +57,7 @@ export function ExportDropdown({
           ) : (
             <Download className="h-4 w-4" />
           )}
-          <span className="hidden sm:inline">Exportar</span>
+          <span className="sr-only sm:not-sr-only sm:inline">Exportar</span>
           {itemCount !== undefined && itemCount > 0 && (
             <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs">{itemCount}</span>
           )}

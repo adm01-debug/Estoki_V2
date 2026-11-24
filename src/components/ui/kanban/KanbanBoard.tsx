@@ -44,7 +44,12 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
   };
 
   return (
-    <div className="flex min-h-[600px] gap-4 overflow-x-auto pb-4">
+    <div
+      className="flex min-h-[600px] gap-4 overflow-x-auto pb-4"
+      role="region"
+      aria-label="Quadro de tarefas"
+      tabIndex={0}
+    >
       {columns.map((column) => (
         <div key={column.id} className="flex w-80 flex-shrink-0 flex-col gap-3">
           <div className="flex items-center justify-between px-2">

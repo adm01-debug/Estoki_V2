@@ -119,7 +119,7 @@ const DashboardPage = () => {
               onClick={handleRefresh}
             >
               <RefreshCw className="h-4 w-4" />
-              <span className="hidden sm:inline">Atualizar</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Atualizar</span>
             </Button>
             <Button
               size="sm"

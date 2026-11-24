@@ -70,7 +70,7 @@ export function EstoqueFilterSheet({
       <SheetTrigger asChild>
         <Button variant="outline" className="relative gap-2">
           <Filter className="h-4 w-4" />
-          <span className="hidden sm:inline">Filtros</span>
+          <span className="sr-only sm:not-sr-only sm:inline">Filtros</span>
           {activeFiltersCount > 0 && (
             <Badge className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center p-0 text-xs">
               {activeFiltersCount}

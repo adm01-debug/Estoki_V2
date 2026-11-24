@@ -110,7 +110,7 @@ export default function InventarioCiclicoPage() {
               <div className="flex gap-2">
                 <Button variant="outline" size="sm" onClick={handleExportCSV} className="gap-2">
                   <Download className="h-4 w-4" />
-                  <span className="hidden sm:inline">Exportar</span>
+                  <span className="sr-only sm:not-sr-only sm:inline">Exportar</span>
                 </Button>
                 <Button onClick={() => setShowNewCicloDialog(true)} className="gap-2" size="sm">
                   <Plus className="h-4 w-4" /> Novo Ciclo

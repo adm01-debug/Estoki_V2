@@ -108,8 +108,17 @@ const KNOWN_DEBT: Record<string, number> = {
   "/perfil": 8,
 };
 
-test.beforeEach(({ browserName }) => {
-  test.skip(browserName !== "chromium", "sweep de rotas privadas roda só no chromium");
+// Projetos auditados: desktop chromium (baseline do burndown) e "Mobile
+// Chrome" (onde o layout esconde rótulo de botão e só o ícone fica). Os demais
+// projetos não rodam este sweep: `Mobile Safari` duplica o markup do Mobile
+// Chrome, e firefox/webkit já têm o smoke público.
+const PROJETOS_GATE = ["chromium", "Mobile Chrome"];
+
+test.beforeEach((_fixtures, testInfo) => {
+  test.skip(
+    !PROJETOS_GATE.includes(testInfo.project.name),
+    `sweep de rotas privadas roda em ${PROJETOS_GATE.join(", ")}`
+  );
 });
 
 for (const route of PRIVATE_ROUTES) {
@@ -194,11 +203,15 @@ for (const route of PRIVATE_ROUTES) {
     ).toEqual([]);
 
     // Contraste é burndown: o teto é o pico observado + 1 nó de margem para a
-    // variação de frame (não é perdão — rota nova tem teto 0).
-    const teto = KNOWN_DEBT[route] ?? 0;
-    expect(
-      contrasteNos,
-      `Contraste em ${route}: ${contrasteNos} nós (teto registrado: ${teto})`
-    ).toBeLessThanOrEqual(teto);
+    // variação de frame (não é perdão — rota nova tem teto 0). Só vale para o
+    // desktop: no mobile o contraste muda com o layout (KPIs empilhados,
+    // sidebar em sheet), então o teto não é transferível.
+    if (test.info().project.name === "chromium") {
+      const teto = KNOWN_DEBT[route] ?? 0;
+      expect(
+        contrasteNos,
+        `Contraste em ${route}: ${contrasteNos} nós (teto registrado: ${teto})`
+      ).toBeLessThanOrEqual(teto);
+    }
   });
 }

@@ -67,7 +67,7 @@ export function SavedFiltersDropdown({
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className="gap-2">
             <Filter className="h-4 w-4" />
-            <span className="hidden sm:inline">Filtros Salvos</span>
+            <span className="sr-only sm:not-sr-only sm:inline">Filtros Salvos</span>
             {filters.length > 0 && (
               <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs">
                 {filters.length}

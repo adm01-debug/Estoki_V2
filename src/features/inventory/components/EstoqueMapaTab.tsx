@@ -100,7 +100,7 @@ export const EstoqueMapaTab = memo(
               onClick={() => setHeatmapEnabled(!heatmapEnabled)}
             >
               <Flame className={cn("h-4 w-4", heatmapEnabled && "animate-pulse")} />
-              <span className="hidden sm:inline">Heatmap</span>
+              <span className="sr-only sm:not-sr-only sm:inline">Heatmap</span>
             </Button>
           </div>
           <Badge variant="outline" className="text-xs">
