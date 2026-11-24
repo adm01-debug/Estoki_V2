@@ -120,16 +120,26 @@ SELECT jsonb_build_object(
            )
   ),
 
-  -- View/materialized view em public legivel por `anon` ou `authenticated` SEM `security_invoker`:
-  -- sem essa opcao a view roda com os privilegios do DONO, entao o RLS das tabelas de base e ignorado
-  -- e a leitura cruza tenants. `security_invoker=true` faz a view rodar como o chamador (RLS volta a
-  -- valer). Materialized view nao suporta a opcao: se estiver legivel por anon, e vazamento puro.
+  -- View/materialized view em public SEM `security_invoker`: sem essa opcao a view roda com os
+  -- privilegios do DONO, entao o RLS das tabelas de base e ignorado e a leitura cruza tenants.
+  -- `security_invoker=true` faz a view rodar como o chamador (RLS volta a valer). Materialized view
+  -- nao suporta a opcao. O nome sai com `:anon`/`:authenticated` quando esse papel tem SELECT.
   'views_sem_security_invoker', (
-    SELECT coalesce(jsonb_agg(c.relname || ' (' || c.relkind || ')' ORDER BY c.relname), '[]'::jsonb)
-      FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-     WHERE n.nspname = 'public' AND c.relkind IN ('v', 'm')
-       AND (has_table_privilege('anon', c.oid, 'SELECT') OR has_table_privilege('authenticated', c.oid, 'SELECT'))
-       AND NOT coalesce(array_to_string(c.reloptions, ',') LIKE '%security_invoker=%true%', false)
+    SELECT coalesce(jsonb_agg(v.nome || ':' || v.papeis ORDER BY v.nome), '[]'::jsonb)
+      FROM (
+        SELECT c.relname AS nome,
+               concat_ws(',',
+                 CASE WHEN has_table_privilege('anon', c.oid, 'SELECT') THEN 'anon' END,
+                 CASE WHEN has_table_privilege('authenticated', c.oid, 'SELECT') THEN 'authenticated' END
+               ) AS papeis
+          FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+         WHERE n.nspname = 'public' AND c.relkind IN ('v', 'm')
+           AND NOT EXISTS (
+                 SELECT 1 FROM unnest(coalesce(c.reloptions, '{}'::text[])) o
+                  WHERE o LIKE 'security_invoker=%'
+               )
+      ) v
+     WHERE v.papeis <> ''
   ),
 
   'tabelas', (
