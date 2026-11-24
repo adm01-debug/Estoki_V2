@@ -8,9 +8,12 @@ interface SEOProps {
 }
 
 const SITE_NAME = "ESTOKI WMS";
-const BASE_URL = "https://cart-bloom-connect.lovable.app";
+const FALLBACK_BASE_URL = "https://estoki.app";
+const BASE_URL = (
+  (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined) || FALLBACK_BASE_URL
+).replace(/\/+$/, "");
 
-export function SEO({ title, description, path = "/", noIndex = false }: SEOProps) {
+export function SEO({ title, description, path = "/", noIndex = true }: SEOProps) {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const url = `${BASE_URL}${path}`;
   const desc =
@@ -31,8 +34,7 @@ export function SEO({ title, description, path = "/", noIndex = false }: SEOProp
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={desc} />
-      <meta name="theme-color" content="#3b82f6" media="(prefers-color-scheme: light)" />
-      <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+      <meta name="theme-color" content="#0f172a" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     </Helmet>
