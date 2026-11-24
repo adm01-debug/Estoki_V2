@@ -107,6 +107,19 @@ SELECT jsonb_build_object(
        AND has_function_privilege('anon', p.oid, 'EXECUTE')
   ),
 
+  -- Funcoes SECURITY DEFINER sem `search_path` fixado no proprio corpo: executam com o search_path
+  -- de quem chamou, entao um schema criado antes de `public` na sessao do chamador pode sequestrar
+  -- a tabela/funcao referenciada dentro do corpo (que roda com o dono da funcao). Fixar no corpo
+  -- (SET search_path = ...) ou qualificar tudo resolve. Nomes com a assinatura identificadora.
+  'funcoes_security_definer_sem_search_path', (
+    SELECT coalesce(jsonb_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname), '[]'::jsonb)
+      FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+     WHERE n.nspname = 'public' AND p.prokind IN ('f', 'p') AND p.prosecdef
+       AND NOT EXISTS (
+             SELECT 1 FROM unnest(coalesce(p.proconfig, '{}'::text[])) c WHERE c LIKE 'search_path=%'
+           )
+  ),
+
   'tabelas', (
     SELECT coalesce(jsonb_agg(jsonb_build_object(
              'nome', t.nome,
