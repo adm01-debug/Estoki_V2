@@ -68,17 +68,17 @@ export default function AdminSettingsPage() {
     try {
       const { error } = await supabase
         .from("system_settings" as any)
-        .upsert({ key: "wms_config", value: settings as any }, { onConflict: "key" });
+        .upsert({ key: "wms_config", value: settings as any }, { onConflict: "tenant_id,key" });
 
       if (error) throw error;
-      toast({ title: "Configuracoes salvas", description: "As alteracoes foram aplicadas." });
+      toast({ title: "Configurações salvas", description: "As alterações foram aplicadas." });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Erro ao salvar";
       // Se a tabela nao existe ainda, avisa de forma amigavel
       if (msg.includes("does not exist") || msg.includes("42P01")) {
         toast({
-          title: "Configuracoes salvas localmente",
-          description: "Migracao pendente para persistencia permanente.",
+          title: "Configuração não persistida",
+          description: "A gravação no banco depende da migração pendente.",
           variant: "destructive",
         });
       } else {
@@ -94,7 +94,7 @@ export default function AdminSettingsPage() {
 
   if (loading) {
     return (
-      <AppLayout title="Configuracoes do Sistema" showBack>
+      <AppLayout title="Configurações do Sistema" showBack>
         <div className="flex h-64 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
@@ -103,7 +103,7 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <AppLayout title="Configuracoes do Sistema" showBack>
+    <AppLayout title="Configurações do Sistema" showBack>
       <PageTransition>
         <div className="space-y-6 p-4">
           <Tabs defaultValue="geral" className="w-full">
@@ -118,19 +118,19 @@ export default function AdminSettingsPage() {
                 <Bell className="h-4 w-4" /> Avisos
               </TabsTrigger>
               <TabsTrigger value="seguranca" className="gap-2">
-                <ShieldCheck className="h-4 w-4" /> Seguranca
+                <ShieldCheck className="h-4 w-4" /> Segurança
               </TabsTrigger>
               <TabsTrigger value="avancado" className="gap-2">
-                <Cpu className="h-4 w-4" /> Avancado
+                <Cpu className="h-4 w-4" /> Avançado
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="geral" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Identidade do Armazem</CardTitle>
+                  <CardTitle>Identidade do Armazém</CardTitle>
                   <CardDescription>
-                    Configure as informacoes basicas da sua operacao.
+                    Configure as informações básicas da sua operação.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -143,7 +143,7 @@ export default function AdminSettingsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Codigo Identificador</Label>
+                      <Label>Código Identificador</Label>
                       <Input
                         value={settings.codigo_identificador}
                         onChange={(e) => set("codigo_identificador", e.target.value)}
@@ -151,7 +151,7 @@ export default function AdminSettingsPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Fuso Horario</Label>
+                    <Label>Fuso Horário</Label>
                     <div className="flex items-center gap-2">
                       <Globe className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">America/Sao_Paulo (UTC-03:00)</span>
@@ -164,7 +164,7 @@ export default function AdminSettingsPage() {
             <TabsContent value="wms" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Regras de Operacao</CardTitle>
+                  <CardTitle>Regras de Operação</CardTitle>
                   <CardDescription>
                     Defina como o fluxo de mercadorias deve se comportar.
                   </CardDescription>
@@ -174,7 +174,7 @@ export default function AdminSettingsPage() {
                     <div className="space-y-0.5">
                       <Label>Exigir Scan de QR Code</Label>
                       <p className="text-xs text-muted-foreground">
-                        Obrigatorio escanear item e local em todas as movimentacoes.
+                        Obrigatório escanear item e local em todas as movimentações.
                       </p>
                     </div>
                     <Switch
@@ -184,9 +184,9 @@ export default function AdminSettingsPage() {
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <Label>Validacao de Validade (FEFO)</Label>
+                      <Label>Validação de Validade (FEFO)</Label>
                       <p className="text-xs text-muted-foreground">
-                        Priorizar saida de itens com vencimento mais proximo.
+                        Priorizar saída de itens com vencimento mais próximo.
                       </p>
                     </div>
                     <Switch
@@ -198,7 +198,7 @@ export default function AdminSettingsPage() {
                     <div className="space-y-0.5">
                       <Label>Picking Multi-Ondas</Label>
                       <p className="text-xs text-muted-foreground">
-                        Permitir agrupamento de varios pedidos em uma unica rota.
+                        Permitir agrupamento de vários pedidos em uma única rota.
                       </p>
                     </div>
                     <Switch
@@ -213,12 +213,12 @@ export default function AdminSettingsPage() {
             <TabsContent value="notificacoes">
               <Card>
                 <CardHeader>
-                  <CardTitle>Avisos e Notificacoes</CardTitle>
-                  <CardDescription>Configuracao de alertas e avisos do sistema.</CardDescription>
+                  <CardTitle>Avisos e Notificações</CardTitle>
+                  <CardDescription>Configuração de alertas e avisos do sistema.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Configuracoes de notificacao disponiveis em breve.
+                    Configurações de notificação disponíveis em breve.
                   </p>
                 </CardContent>
               </Card>
@@ -227,12 +227,12 @@ export default function AdminSettingsPage() {
             <TabsContent value="seguranca">
               <Card>
                 <CardHeader>
-                  <CardTitle>Seguranca</CardTitle>
-                  <CardDescription>Configuracoes de acesso e autenticacao.</CardDescription>
+                  <CardTitle>Segurança</CardTitle>
+                  <CardDescription>Configurações de acesso e autenticação.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground">
-                    Configuracoes de seguranca disponiveis em breve.
+                    Configurações de segurança disponíveis em breve.
                   </p>
                 </CardContent>
               </Card>
@@ -241,9 +241,9 @@ export default function AdminSettingsPage() {
             <TabsContent value="avancado">
               <Card>
                 <CardHeader>
-                  <CardTitle>Manutencao de Dados</CardTitle>
+                  <CardTitle>Manutenção de Dados</CardTitle>
                   <CardDescription>
-                    Ferramentas criticas para administracao do banco.
+                    Ferramentas críticas para administração do banco.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -252,7 +252,7 @@ export default function AdminSettingsPage() {
                       <Database className="h-4 w-4" /> Zona de Perigo
                     </h4>
                     <p className="text-xs text-muted-foreground">
-                      Estas acoes sao irreversiveis. Requerem confirmacao adicional.
+                      Estas ações são irreversíveis. Requerem confirmação adicional.
                     </p>
                     <div className="flex gap-2">
                       <Button variant="destructive" size="sm" disabled>
@@ -268,7 +268,7 @@ export default function AdminSettingsPage() {
                       </Button>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Acoes criticas disponiveis apos confirmacao dupla (em desenvolvimento).
+                      Ações críticas disponíveis após confirmação dupla (em desenvolvimento).
                     </p>
                   </div>
                 </CardContent>

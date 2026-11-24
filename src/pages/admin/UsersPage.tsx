@@ -109,19 +109,32 @@ export default function UsersPage() {
     setSavingRole(true);
     try {
       // F001: "Alterar Cargo" deve SUBSTITUIR, nao acumular.
-      // Apaga todos os papeis atuais do usuario neste tenant e insere o novo escolhido.
+      // Ordem segura: garante o novo papel ANTES de remover os antigos. Sem
+      // transacao no client, remover primeiro deixaria o usuario sem papel algum
+      // caso o insert falhasse.
+      const { data: papeisAtuais, error: papeisError } = await supabase
+        .from("user_roles")
+        .select("id, role")
+        .eq("user_id", roleUser.id);
+
+      if (papeisError) throw papeisError;
+
+      const jaTemPapel = (papeisAtuais ?? []).some((r) => r.role === selectedRole);
+      if (!jaTemPapel) {
+        const { error: insertError } = await supabase.from("user_roles").insert({
+          user_id: roleUser.id,
+          role: selectedRole,
+        });
+        if (insertError) throw insertError;
+      }
+
       const { error: deleteError } = await supabase
         .from("user_roles")
         .delete()
-        .eq("user_id", roleUser.id);
+        .eq("user_id", roleUser.id)
+        .neq("role", selectedRole);
 
       if (deleteError) throw deleteError;
-
-      const { error: insertError } = await supabase.from("user_roles").insert({
-        user_id: roleUser.id,
-        role: selectedRole,
-      });
-      if (insertError) throw insertError;
 
       toast({ title: "Cargo alterado", description: `Papel atualizado para ${selectedRole}.` });
       await queryClient.invalidateQueries({ queryKey: ["users-list"] });
