@@ -50,7 +50,6 @@ export function GlobalSearch() {
         onMouseEnter={prefetch}
         onFocus={prefetch}
         title="Buscar (Ctrl+K)"
-        aria-label="Abrir busca global"
       >
         <Search className="h-4 w-4 shrink-0" />
         <span className="ml-2 hidden flex-1 text-xs font-medium text-muted-foreground transition-colors group-hover/search:text-foreground lg:inline-flex">
