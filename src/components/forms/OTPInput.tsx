@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface OTPInputProps {
@@ -36,12 +36,15 @@ export function OTPInput({
     onChange?.(newOtp.join(""));
     inputRefs.current[Math.min(paste.length, length - 1)]?.focus();
   };
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <div className="flex gap-2">
         {Array.from({ length }, (_, i) => (
           <Input
+            id={uid}
             key={i}
             ref={(el) => (inputRefs.current[i] = el)}
             type="text"

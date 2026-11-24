@@ -86,9 +86,9 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Tipo</Label>
+            <Label htmlFor="tipo">Tipo</Label>
             <Select value={tipo} onValueChange={(v) => setTipo(v as "troca" | "devolucao")}>
-              <SelectTrigger>
+              <SelectTrigger id="tipo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -109,16 +109,18 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Pedido *</Label>
+              <Label htmlFor="pedido">Pedido *</Label>
               <Input
+                id="pedido"
                 placeholder="Número do pedido"
                 value={pedido}
                 onChange={(e) => setPedido(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label>Cliente *</Label>
+              <Label htmlFor="cliente">Cliente *</Label>
               <Input
+                id="cliente"
                 placeholder="Nome do cliente"
                 value={cliente}
                 onChange={(e) => setCliente(e.target.value)}
@@ -127,22 +129,29 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Produto *</Label>
+              <Label htmlFor="produto">Produto *</Label>
               <Input
+                id="produto"
                 placeholder="Nome do produto"
                 value={produto}
                 onChange={(e) => setProduto(e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label>SKU</Label>
-              <Input placeholder="SKU-001" value={sku} onChange={(e) => setSku(e.target.value)} />
+              <Label htmlFor="sku">SKU</Label>
+              <Input
+                id="sku"
+                placeholder="SKU-001"
+                value={sku}
+                onChange={(e) => setSku(e.target.value)}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Quantidade *</Label>
+              <Label htmlFor="quantidade">Quantidade *</Label>
               <Input
+                id="quantidade"
                 type="number"
                 placeholder="0"
                 value={quantidade}
@@ -150,8 +159,9 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
               />
             </div>
             <div className="space-y-2">
-              <Label>Fornecedor</Label>
+              <Label htmlFor="fornecedor">Fornecedor</Label>
               <Input
+                id="fornecedor"
                 placeholder="Nome do fornecedor"
                 value={fornecedor}
                 onChange={(e) => setFornecedor(e.target.value)}
@@ -159,9 +169,9 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Motivo *</Label>
+            <Label htmlFor="motivo">Motivo *</Label>
             <Select value={motivo} onValueChange={(v) => setMotivo(v as MotivoTD)}>
-              <SelectTrigger>
+              <SelectTrigger id="motivo">
                 <SelectValue placeholder="Selecione o motivo" />
               </SelectTrigger>
               <SelectContent>
@@ -174,8 +184,9 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Descrição do Problema</Label>
+            <Label htmlFor="descricao-do-problema">Descrição do Problema</Label>
             <Textarea
+              id="descricao-do-problema"
               placeholder="Descreva o problema em detalhes..."
               value={descricaoProblema}
               onChange={(e) => setDescricaoProblema(e.target.value)}

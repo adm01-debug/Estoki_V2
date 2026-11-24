@@ -203,6 +203,7 @@ export default function ShippingPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por código, motorista, placa"
                 placeholder="Buscar por código, motorista, placa..."
                 className="pl-9"
                 value={searchTerm}

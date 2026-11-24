@@ -57,6 +57,7 @@ export function VolumeChecklist({ romaneios = [] }: { romaneios?: RomaneioLike[]
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
           <Input
+            aria-label="Filtrar romaneios"
             placeholder="Filtrar romaneios..."
             className="h-8 border-none bg-muted/30 pl-8 text-xs focus-visible:ring-1 focus-visible:ring-primary/20"
             value={filter}

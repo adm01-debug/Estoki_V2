@@ -71,7 +71,7 @@ export function OcupacaoToolbar({
           </div>
           <div className="flex flex-wrap gap-2">
             <Select value={filtroZona} onValueChange={onFiltroZonaChange}>
-              <SelectTrigger className="h-9 w-36">
+              <SelectTrigger aria-label="Filtrar por zona" className="h-9 w-36">
                 <Filter className="mr-1.5 h-3.5 w-3.5 text-muted-foreground" />
                 <SelectValue />
               </SelectTrigger>
@@ -84,7 +84,7 @@ export function OcupacaoToolbar({
               </SelectContent>
             </Select>
             <Select value={filtroStatus} onValueChange={onFiltroStatusChange}>
-              <SelectTrigger className="h-9 w-36">
+              <SelectTrigger aria-label="Filtrar por status" className="h-9 w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

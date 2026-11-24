@@ -94,16 +94,18 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>Nome do Ciclo *</Label>
+            <Label htmlFor="nome-do-ciclo">Nome do Ciclo *</Label>
             <Input
+              id="nome-do-ciclo"
               placeholder="Ex: Inventário Zona A - Semana 51"
               value={newCiclo.nome}
               onChange={(e) => setNewCiclo({ ...newCiclo, nome: e.target.value })}
             />
           </div>
           <div className="space-y-2">
-            <Label>Descrição</Label>
+            <Label htmlFor="descricao">Descrição</Label>
             <Textarea
+              id="descricao"
               placeholder="Descrição opcional"
               value={newCiclo.descricao}
               onChange={(e) => setNewCiclo({ ...newCiclo, descricao: e.target.value })}
@@ -111,12 +113,12 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Tipo</Label>
+              <Label htmlFor="tipo">Tipo</Label>
               <Select
                 value={newCiclo.tipo}
                 onValueChange={(v) => setNewCiclo({ ...newCiclo, tipo: v as TipoCiclo })}
               >
-                <SelectTrigger>
+                <SelectTrigger id="tipo">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -129,8 +131,9 @@ export function NovoCicloDialog({ open, onOpenChange, criarCiclo }: NovoCicloDia
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Zona Alvo</Label>
+              <Label htmlFor="zona-alvo">Zona Alvo</Label>
               <Input
+                id="zona-alvo"
                 placeholder="Ex: A, B, C"
                 value={newCiclo.zona_alvo}
                 onChange={(e) => setNewCiclo({ ...newCiclo, zona_alvo: e.target.value })}

@@ -49,6 +49,7 @@ export function TransferList({ sourceItems, targetItems = [], onChange }: Transf
         return (
           <div key={id} className="flex items-center gap-2 py-1">
             <Checkbox
+              aria-label={item?.label ?? id}
               checked={selected.includes(id)}
               onCheckedChange={(c) =>
                 setSelected(c ? [...selected, id] : selected.filter((s) => s !== id))

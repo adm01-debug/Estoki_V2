@@ -164,6 +164,7 @@ export default function MovimentacaoPage() {
             {/* Filters */}
             <div className="flex gap-2">
               <Input
+                aria-label="Buscar movimentação"
                 placeholder="Buscar movimentação..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

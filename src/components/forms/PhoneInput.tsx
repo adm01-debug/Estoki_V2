@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 interface PhoneInputProps {
@@ -27,10 +27,13 @@ export function PhoneInput({ value = "", onChange, label, country = "BR" }: Phon
     const formatted = formatPhone(e.target.value);
     onChange?.(formatted);
   };
+  const uid = useId();
+
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={uid}>{label}</Label>}
       <Input
+        id={uid}
         value={value}
         onChange={handleChange}
         placeholder={masks[country].placeholder}

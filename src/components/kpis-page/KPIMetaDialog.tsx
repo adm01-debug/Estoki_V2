@@ -51,28 +51,30 @@ export function KPIMetaDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Nome</Label>
+            <Label htmlFor="nome">Nome</Label>
             <Input
+              id="nome"
               value={metaForm.nome}
               onChange={(e) => onMetaFormChange({ ...metaForm, nome: e.target.value })}
               placeholder="Ex: Meta de Triagem Diária"
             />
           </div>
           <div>
-            <Label>Descrição</Label>
+            <Label htmlFor="descricao">Descrição</Label>
             <Input
+              id="descricao"
               value={metaForm.descricao}
               onChange={(e) => onMetaFormChange({ ...metaForm, descricao: e.target.value })}
               placeholder="Descrição opcional"
             />
           </div>
           <div>
-            <Label>Métrica</Label>
+            <Label htmlFor="metrica">Métrica</Label>
             <Select
               value={metaForm.metrica}
               onValueChange={(v) => onMetaFormChange({ ...metaForm, metrica: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="metrica">
                 <SelectValue placeholder="Selecione a métrica" />
               </SelectTrigger>
               <SelectContent>
@@ -86,12 +88,12 @@ export function KPIMetaDialog({
             </Select>
           </div>
           <div>
-            <Label>Tipo</Label>
+            <Label htmlFor="tipo">Tipo</Label>
             <Select
               value={metaForm.tipo}
               onValueChange={(v) => onMetaFormChange({ ...metaForm, tipo: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger id="tipo">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -102,8 +104,9 @@ export function KPIMetaDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Valor da Meta</Label>
+              <Label htmlFor="valor-da-meta">Valor da Meta</Label>
               <Input
+                id="valor-da-meta"
                 type="number"
                 value={metaForm.valor_meta}
                 onChange={(e) =>
@@ -112,8 +115,9 @@ export function KPIMetaDialog({
               />
             </div>
             <div>
-              <Label>Unidade</Label>
+              <Label htmlFor="unidade">Unidade</Label>
               <Input
+                id="unidade"
                 value={metaForm.unidade}
                 onChange={(e) => onMetaFormChange({ ...metaForm, unidade: e.target.value })}
                 placeholder="Ex: un, %, min"

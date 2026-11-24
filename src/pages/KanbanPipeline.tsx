@@ -48,6 +48,7 @@ export default function KanbanPipeline() {
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Buscar lote, produto, NF"
                 placeholder="Buscar lote, produto, NF..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

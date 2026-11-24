@@ -50,6 +50,7 @@ export function AdvancedSearch({
         </div>
 
         <Input
+          aria-label={placeholder || "Buscar"}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}

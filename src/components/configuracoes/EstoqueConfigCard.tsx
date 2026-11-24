@@ -30,8 +30,11 @@ export function EstoqueConfigCard({ estoque, onChange }: Props) {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm">Nível Mínimo Geral</Label>
+            <Label htmlFor="nivel-minimo-geral" className="text-sm">
+              Nível Mínimo Geral
+            </Label>
             <Input
+              id="nivel-minimo-geral"
               type="number"
               value={estoque.nivelMinimoGeral}
               onChange={(e) => onChange({ nivelMinimoGeral: Number(e.target.value) })}
@@ -39,8 +42,11 @@ export function EstoqueConfigCard({ estoque, onChange }: Props) {
             />
           </div>
           <div className="space-y-2">
-            <Label className="text-sm">Nível Crítico Geral</Label>
+            <Label htmlFor="nivel-critico-geral" className="text-sm">
+              Nível Crítico Geral
+            </Label>
             <Input
+              id="nivel-critico-geral"
               type="number"
               value={estoque.nivelCriticoGeral}
               onChange={(e) => onChange({ nivelCriticoGeral: Number(e.target.value) })}
@@ -49,8 +55,11 @@ export function EstoqueConfigCard({ estoque, onChange }: Props) {
           </div>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm">Dias de Giro Ideal</Label>
+          <Label htmlFor="dias-de-giro-ideal" className="text-sm">
+            Dias de Giro Ideal
+          </Label>
           <Input
+            id="dias-de-giro-ideal"
             type="number"
             value={estoque.diasGiroIdeal}
             onChange={(e) => onChange({ diasGiroIdeal: Number(e.target.value) })}
@@ -61,8 +70,11 @@ export function EstoqueConfigCard({ estoque, onChange }: Props) {
         <Separator />
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="text-sm">Capacidade Porta-Palete</Label>
+            <Label htmlFor="capacidade-porta-palete" className="text-sm">
+              Capacidade Porta-Palete
+            </Label>
             <Input
+              id="capacidade-porta-palete"
               type="number"
               value={estoque.capacidadeMaxPP}
               onChange={(e) => onChange({ capacidadeMaxPP: Number(e.target.value) })}
@@ -71,8 +83,11 @@ export function EstoqueConfigCard({ estoque, onChange }: Props) {
             <p className="text-xs text-muted-foreground">Posições por PP</p>
           </div>
           <div className="space-y-2">
-            <Label className="text-sm">Capacidade Box</Label>
+            <Label htmlFor="capacidade-box" className="text-sm">
+              Capacidade Box
+            </Label>
             <Input
+              id="capacidade-box"
               type="number"
               value={estoque.capacidadeMaxBox}
               onChange={(e) => onChange({ capacidadeMaxBox: Number(e.target.value) })}

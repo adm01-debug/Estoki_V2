@@ -219,6 +219,7 @@ export default function LotesPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Buscar lote, produto, fornecedor"
                 placeholder="Buscar lote, produto, fornecedor..."
                 className="pl-10"
                 value={search}
@@ -234,7 +235,7 @@ export default function LotesPage() {
               )}
             </div>
             <Select value={sortBy} onValueChange={(v: any) => setSortBy(v)}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger aria-label="Ordenar por" className="w-[140px]">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
               <SelectContent>
@@ -244,7 +245,7 @@ export default function LotesPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger aria-label="Filtrar por status" className="w-[150px]">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue />
               </SelectTrigger>

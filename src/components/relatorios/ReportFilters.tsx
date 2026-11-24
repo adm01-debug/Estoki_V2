@@ -93,7 +93,7 @@ export function ReportFilters({
             onTipoChange?.(v);
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger aria-label="Tipo" className="w-[180px]">
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>

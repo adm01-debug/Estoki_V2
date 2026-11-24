@@ -62,7 +62,7 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
             </DialogHeader>
             <div className="space-y-3">
               <Select value={form.zona} onValueChange={(v) => setForm((f) => ({ ...f, zona: v }))}>
-                <SelectTrigger>
+                <SelectTrigger aria-label="Zona">
                   <SelectValue placeholder="Zona" />
                 </SelectTrigger>
                 <SelectContent>
@@ -77,7 +77,7 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
                 value={form.tipo}
                 onValueChange={(v) => setForm((f) => ({ ...f, tipo: v as "entrada" | "saida" }))}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Tipo de checkpoint">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -86,6 +86,7 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
                 </SelectContent>
               </Select>
               <Input
+                aria-label="Quantidade"
                 type="number"
                 min={1}
                 placeholder="Quantidade"
@@ -93,6 +94,7 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
                 onChange={(e) => setForm((f) => ({ ...f, quantidade: Number(e.target.value) }))}
               />
               <Textarea
+                aria-label="Observações (opcional)"
                 placeholder="Observações (opcional)"
                 value={form.observacoes}
                 onChange={(e) => setForm((f) => ({ ...f, observacoes: e.target.value }))}

@@ -141,6 +141,7 @@ export function DataTableAdvanced<T extends Record<string, any>>({
               {selectable && (
                 <TableHead className="w-12">
                   <Checkbox
+                    aria-label="Selecionar todas as linhas"
                     checked={selectedRows.size === paginatedData.length && paginatedData.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
@@ -197,6 +198,7 @@ export function DataTableAdvanced<T extends Record<string, any>>({
                   {selectable && (
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
+                        aria-label="Selecionar linha"
                         checked={selectedRows.has(String(row[keyField]))}
                         onCheckedChange={() => handleSelectRow(row)}
                       />

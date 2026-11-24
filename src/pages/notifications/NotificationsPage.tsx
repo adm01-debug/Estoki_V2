@@ -265,7 +265,7 @@ export default function NotificationsPage() {
               </Tabs>
 
               <Select value={tipoFiltro} onValueChange={setTipoFiltro}>
-                <SelectTrigger className="md:w-[220px]">
+                <SelectTrigger aria-label="Tipo" className="md:w-[220px]">
                   <SelectValue placeholder="Tipo" />
                 </SelectTrigger>
                 <SelectContent>

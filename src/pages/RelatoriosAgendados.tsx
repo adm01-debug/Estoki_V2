@@ -158,20 +158,21 @@ export default function RelatoriosAgendados() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label>Nome</Label>
+                <Label htmlFor="nome">Nome</Label>
                 <Input
+                  id="nome"
                   value={form.nome}
                   onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
                   placeholder="Ex: Resumo Diário de Estoque"
                 />
               </div>
               <div>
-                <Label>Tipo de Relatório</Label>
+                <Label htmlFor="tipo-de-relatorio">Tipo de Relatório</Label>
                 <Select
                   value={form.tipo}
                   onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="tipo-de-relatorio">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -184,12 +185,12 @@ export default function RelatoriosAgendados() {
                 </Select>
               </div>
               <div>
-                <Label>Frequência</Label>
+                <Label htmlFor="frequencia">Frequência</Label>
                 <Select
                   value={form.frequencia}
                   onValueChange={(v) => setForm((f) => ({ ...f, frequencia: v }))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="frequencia">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -202,8 +203,11 @@ export default function RelatoriosAgendados() {
                 </Select>
               </div>
               <div>
-                <Label>Destinatários (emails separados por vírgula)</Label>
+                <Label htmlFor="destinatarios-emails-separados-por-virgu">
+                  Destinatários (emails separados por vírgula)
+                </Label>
                 <Input
+                  id="destinatarios-emails-separados-por-virgu"
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="email1@empresa.com, email2@empresa.com"
@@ -247,6 +251,7 @@ export default function RelatoriosAgendados() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-sm font-semibold">{rel.nome}</CardTitle>
                     <Switch
+                      aria-label={rel.nome}
                       checked={rel.ativo}
                       onCheckedChange={() => toggleAtivo(rel.id, rel.ativo)}
                     />

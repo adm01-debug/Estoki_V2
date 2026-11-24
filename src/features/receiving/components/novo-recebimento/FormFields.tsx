@@ -50,7 +50,7 @@ export function FormFields({
             </div>
           ) : (
             <Select value={formData.produto_id} onValueChange={handleProdutoChange}>
-              <SelectTrigger className={errors.produto_id ? "border-destructive" : ""}>
+              <SelectTrigger id="produto" className={errors.produto_id ? "border-destructive" : ""}>
                 <SelectValue placeholder="Selecione um produto" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
@@ -205,12 +205,12 @@ export function FormFields({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="status">Status Inicial</Label>
+          <Label htmlFor="status-inicial">Status Inicial</Label>
           <Select
             value={formData.status}
             onValueChange={(value) => setFormData({ ...formData, status: value as any })}
           >
-            <SelectTrigger>
+            <SelectTrigger id="status-inicial">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

@@ -69,8 +69,9 @@ export function NovoRomaneioDialog({
         </DialogHeader>
         <div className="space-y-4">
           <div>
-            <Label>Motorista *</Label>
+            <Label htmlFor="motorista">Motorista *</Label>
             <Input
+              id="motorista"
               value={novoRomaneio.motorista}
               onChange={(e) => onFieldChange("motorista", e.target.value)}
               placeholder="Nome do motorista"
@@ -83,8 +84,9 @@ export function NovoRomaneioDialog({
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Placa do Veículo *</Label>
+              <Label htmlFor="placa-do-veiculo">Placa do Veículo *</Label>
               <Input
+                id="placa-do-veiculo"
                 value={novoRomaneio.placa_veiculo}
                 onChange={(e) => onFieldChange("placa_veiculo", e.target.value.toUpperCase())}
                 placeholder="ABC-1234"
@@ -96,12 +98,12 @@ export function NovoRomaneioDialog({
               )}
             </div>
             <div>
-              <Label>Tipo de Veículo</Label>
+              <Label htmlFor="tipo-de-veiculo">Tipo de Veículo</Label>
               <Select
                 value={novoRomaneio.tipo_veiculo}
                 onValueChange={(v) => onFieldChange("tipo_veiculo", v)}
               >
-                <SelectTrigger>
+                <SelectTrigger id="tipo-de-veiculo">
                   <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
@@ -114,8 +116,9 @@ export function NovoRomaneioDialog({
             </div>
           </div>
           <div>
-            <Label>Data Prevista *</Label>
+            <Label htmlFor="data-prevista">Data Prevista *</Label>
             <Input
+              id="data-prevista"
               type="date"
               value={novoRomaneio.data_prevista_entrega}
               onChange={(e) => onFieldChange("data_prevista_entrega", e.target.value)}
@@ -126,8 +129,9 @@ export function NovoRomaneioDialog({
             )}
           </div>
           <div>
-            <Label>Rota</Label>
+            <Label htmlFor="rota">Rota</Label>
             <Input
+              id="rota"
               value={novoRomaneio.rota}
               onChange={(e) => onFieldChange("rota", e.target.value)}
               placeholder="Descrição da rota"
@@ -163,8 +167,9 @@ export function NovoRomaneioDialog({
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="col-span-2">
-                    <Label>Destinatário *</Label>
+                    <Label htmlFor={`destinatario-${index}`}>Destinatário *</Label>
                     <Input
+                      id={`destinatario-${index}`}
                       value={item.cliente}
                       onChange={(e) => onItemChange(index, "cliente", e.target.value)}
                       placeholder="Nome do cliente"
@@ -178,8 +183,9 @@ export function NovoRomaneioDialog({
                     )}
                   </div>
                   <div>
-                    <Label>Volumes *</Label>
+                    <Label htmlFor={`volumes-${index}`}>Volumes *</Label>
                     <Input
+                      id={`volumes-${index}`}
                       type="number"
                       min={1}
                       value={item.quantidade}
@@ -194,8 +200,9 @@ export function NovoRomaneioDialog({
                   </div>
                 </div>
                 <div>
-                  <Label>Endereço *</Label>
+                  <Label htmlFor={`endereco-${index}`}>Endereço *</Label>
                   <Input
+                    id={`endereco-${index}`}
                     value={item.endereco_entrega}
                     onChange={(e) => onItemChange(index, "endereco_entrega", e.target.value)}
                     placeholder="Rua, número, bairro, cidade"
@@ -209,8 +216,9 @@ export function NovoRomaneioDialog({
                   )}
                 </div>
                 <div className="w-32">
-                  <Label>Peso (kg)</Label>
+                  <Label htmlFor={`peso-kg-${index}`}>Peso (kg)</Label>
                   <Input
+                    id={`peso-kg-${index}`}
                     type="number"
                     min={0}
                     step="0.01"

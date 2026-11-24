@@ -56,6 +56,7 @@ export function ABCProductList({ produtos }: ABCProductListProps) {
         <div className="relative min-w-[200px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
+            aria-label="Buscar produto ou SKU"
             placeholder="Buscar produto ou SKU..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -63,7 +64,7 @@ export function ABCProductList({ produtos }: ABCProductListProps) {
           />
         </div>
         <Select value={curvaFilter} onValueChange={setCurvaFilter}>
-          <SelectTrigger className="w-[130px]">
+          <SelectTrigger aria-label="Filtrar por curva ABC" className="w-[130px]">
             <Filter className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>
@@ -75,7 +76,7 @@ export function ABCProductList({ produtos }: ABCProductListProps) {
           </SelectContent>
         </Select>
         <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
-          <SelectTrigger className="w-[140px]">
+          <SelectTrigger aria-label="Ordenar produtos" className="w-[140px]">
             <ArrowUpDown className="mr-2 h-4 w-4" />
             <SelectValue />
           </SelectTrigger>

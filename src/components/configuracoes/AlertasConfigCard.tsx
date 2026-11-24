@@ -32,11 +32,12 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-sm">
+            <Label htmlFor="dias-para-alerta" className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-warning" />
               Dias para Alerta
             </Label>
             <Input
+              id="dias-para-alerta"
               type="number"
               value={alertas.diasParadoAlerta}
               onChange={(e) => onChange({ diasParadoAlerta: Number(e.target.value) })}
@@ -46,11 +47,12 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
             <p className="text-xs text-muted-foreground">Item parado gera alerta amarelo</p>
           </div>
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-sm">
+            <Label htmlFor="dias-para-critico" className="flex items-center gap-2 text-sm">
               <AlertTriangle className="h-4 w-4 text-destructive" />
               Dias para Crítico
             </Label>
             <Input
+              id="dias-para-critico"
               type="number"
               value={alertas.diasParadoCritico}
               onChange={(e) => onChange({ diasParadoCritico: Number(e.target.value) })}
@@ -61,8 +63,11 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
           </div>
         </div>
         <div className="space-y-2">
-          <Label className="text-sm">Estoque Mínimo Padrão</Label>
+          <Label htmlFor="estoque-minimo-padrao" className="text-sm">
+            Estoque Mínimo Padrão
+          </Label>
           <Input
+            id="estoque-minimo-padrao"
             type="number"
             value={alertas.estoqueMinimoPadrao}
             onChange={(e) => onChange({ estoqueMinimoPadrao: Number(e.target.value) })}
@@ -81,6 +86,7 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
               <span className="text-sm">Alerta Sonoro</span>
             </div>
             <Switch
+              aria-label="Alerta Sonoro"
               checked={alertas.alertaSonoro}
               onCheckedChange={(c) => onChange({ alertaSonoro: c })}
             />
@@ -91,6 +97,7 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
               <span className="text-sm">Vibrar ao Escanear</span>
             </div>
             <Switch
+              aria-label="Vibrar ao Escanear"
               checked={alertas.alertaVibrar}
               onCheckedChange={(c) => onChange({ alertaVibrar: c })}
             />
@@ -101,6 +108,7 @@ export function AlertasConfigCard({ alertas, onChange }: Props) {
               <span className="text-sm">Notificações Push</span>
             </div>
             <Switch
+              aria-label="Notificações Push"
               checked={alertas.notificacaoPush}
               onCheckedChange={(c) => onChange({ notificacaoPush: c })}
             />

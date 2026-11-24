@@ -181,8 +181,11 @@ export default function InventarioCicloDetalhe() {
                         </div>
                         <div className="flex items-end gap-2">
                           <div className="space-y-1">
-                            <Label className="text-xs">Contado</Label>
+                            <Label htmlFor={`contado-${cont.id}`} className="text-xs">
+                              Contado
+                            </Label>
                             <Input
+                              id={`contado-${cont.id}`}
                               type="number"
                               min="0"
                               className="h-8 w-24"

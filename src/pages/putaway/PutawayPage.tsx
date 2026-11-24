@@ -112,9 +112,12 @@ export default function PutawayPage() {
 
                 <div className="space-y-4 border-t pt-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Confirmar Local (Scan)</label>
+                    <label htmlFor="confirmar-local-scan" className="text-sm font-medium">
+                      Confirmar Local (Scan)
+                    </label>
                     <div className="flex gap-2">
                       <Input
+                        id="confirmar-local-scan"
                         placeholder="Escaneie o código da posição"
                         value={scannedLocation}
                         onChange={(e) => setScannedLocation(e.target.value)}
@@ -131,8 +134,11 @@ export default function PutawayPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Quantidade Armazenada</label>
+                    <label htmlFor="quantidade-armazenada" className="text-sm font-medium">
+                      Quantidade Armazenada
+                    </label>
                     <Input
+                      id="quantidade-armazenada"
                       type="number"
                       placeholder="Confirmar quantidade"
                       value={confirmQty}
@@ -181,6 +187,7 @@ export default function PutawayPage() {
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
+              aria-label="Buscar por produto ou destino"
               placeholder="Buscar por produto ou destino..."
               className="pl-9"
               value={searchTerm}

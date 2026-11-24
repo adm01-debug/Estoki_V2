@@ -152,8 +152,9 @@ export function PasswordResetApproval() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label>Motivo da solicitação</Label>
+                <Label htmlFor="motivo-da-solicitacao">Motivo da solicitação</Label>
                 <Textarea
+                  id="motivo-da-solicitacao"
                   placeholder="Ex: Esqueci minha senha, preciso redefinir..."
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
@@ -303,12 +304,13 @@ export function PasswordResetApproval() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>
+              <Label htmlFor="passwordresetapproval">
                 {actionDialog?.type === "approve"
                   ? "Observação (opcional)"
                   : "Motivo da rejeição *"}
               </Label>
               <Textarea
+                id="passwordresetapproval"
                 placeholder={
                   actionDialog?.type === "approve" ? "Observação..." : "Informe o motivo..."
                 }

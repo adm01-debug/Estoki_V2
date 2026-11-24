@@ -185,6 +185,7 @@ export default function UsersPage() {
             <div className="relative w-full md:w-96">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
+                aria-label="Buscar por nome ou email"
                 placeholder="Buscar por nome ou email..."
                 className="pl-9"
                 value={searchTerm}
@@ -295,7 +296,7 @@ export default function UsersPage() {
                 value={selectedRole}
                 onValueChange={(value) => setSelectedRole(value as AppRoleValue)}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger aria-label="Selecione o cargo" className="w-full">
                   <SelectValue placeholder="Selecione o cargo" />
                 </SelectTrigger>
                 <SelectContent>

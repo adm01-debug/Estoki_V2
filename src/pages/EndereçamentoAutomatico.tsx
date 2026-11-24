@@ -204,11 +204,14 @@ export default function EndereçamentoAutomatico() {
         <CardContent className="space-y-4 p-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1 block text-xs font-semibold text-muted-foreground">
+              <label
+                htmlFor="produto"
+                className="mb-1 block text-xs font-semibold text-muted-foreground"
+              >
                 Produto
               </label>
               <Select value={selectedProduto} onValueChange={setSelectedProduto}>
-                <SelectTrigger>
+                <SelectTrigger id="produto">
                   <SelectValue placeholder="Selecione um produto" />
                 </SelectTrigger>
                 <SelectContent>

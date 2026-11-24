@@ -54,6 +54,7 @@ export function EditableTable<T extends { id: string | number }>({
               <TableCell key={String(col.key)}>
                 {editingId === row.id && col.editable !== false ? (
                   <Input
+                    aria-label={String(col.header ?? col.key)}
                     value={String(editValues[col.key] || "")}
                     onChange={(e) => setEditValues((v) => ({ ...v, [col.key]: e.target.value }))}
                   />

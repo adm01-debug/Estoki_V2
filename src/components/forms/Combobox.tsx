@@ -29,6 +29,7 @@ export function Combobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Input
+          aria-label={placeholder}
           value={selected?.label || ""}
           placeholder={placeholder}
           readOnly

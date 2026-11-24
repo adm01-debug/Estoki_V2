@@ -43,12 +43,16 @@ export function ResultadoInspecaoCard({
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black uppercase tracking-wider text-success">
+              <label
+                htmlFor="aprovados"
+                className="text-[10px] font-black uppercase tracking-wider text-success"
+              >
                 Aprovados
               </label>
               <CheckCircle2 className="h-3 w-3 text-success" />
             </div>
             <Input
+              id="aprovados"
               type="number"
               value={quantidadeAprovada}
               onChange={(e) => setQuantidadeAprovada(Number(e.target.value))}
@@ -59,12 +63,16 @@ export function ResultadoInspecaoCard({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black uppercase tracking-wider text-warning">
+              <label
+                htmlFor="para-conserto"
+                className="text-[10px] font-black uppercase tracking-wider text-warning"
+              >
                 Para Conserto
               </label>
               <Hammer className="h-3 w-3 text-warning" />
             </div>
             <Input
+              id="para-conserto"
               type="number"
               value={quantidadeConserto}
               onChange={(e) => setQuantidadeConserto(Number(e.target.value))}
@@ -75,12 +83,16 @@ export function ResultadoInspecaoCard({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-black uppercase tracking-wider text-destructive">
+              <label
+                htmlFor="reprovados"
+                className="text-[10px] font-black uppercase tracking-wider text-destructive"
+              >
                 Reprovados
               </label>
               <XCircle className="h-3 w-3 text-destructive" />
             </div>
             <Input
+              id="reprovados"
               type="number"
               value={quantidadeReprovada}
               onChange={(e) => setQuantidadeReprovada(Number(e.target.value))}
@@ -114,10 +126,14 @@ export function ResultadoInspecaoCard({
         )}
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+          <label
+            htmlFor="parecer-do-inspetor-observacoes"
+            className="text-[10px] font-black uppercase tracking-wider text-muted-foreground"
+          >
             Parecer do Inspetor (Observações)
           </label>
           <Textarea
+            id="parecer-do-inspetor-observacoes"
             value={observacoes}
             onChange={(e) => setObservacoes(e.target.value)}
             placeholder="Descreva detalhadamente o estado do lote e as razões de eventuais reprovas..."

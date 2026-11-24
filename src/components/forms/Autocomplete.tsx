@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -20,10 +20,17 @@ export function Autocomplete({
 }: AutocompleteProps) {
   const [isOpen, setIsOpen] = useState(false);
   const filtered = options.filter((opt) => opt.toLowerCase().includes(value.toLowerCase()));
+  const uid = useId();
+
   return (
     <div className={cn("relative", className)}>
-      {label && <Label className="mb-1">{label}</Label>}
+      {label && (
+        <Label htmlFor={uid} className="mb-1">
+          {label}
+        </Label>
+      )}
       <Input
+        id={uid}
         value={value}
         onChange={(e) => {
           onChange(e.target.value);

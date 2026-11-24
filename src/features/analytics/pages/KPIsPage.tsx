@@ -186,7 +186,7 @@ export default function KPIsOperacionais() {
                   <span>Atualizado: {format(lastUpdate, "HH:mm:ss", { locale: ptBR })}</span>
                 </div>
                 <Select value={periodoFiltro} onValueChange={setPeriodoFiltro}>
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger aria-label="Período" className="w-32">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

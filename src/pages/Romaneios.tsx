@@ -352,6 +352,7 @@ export default function RomaneiosPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
+                aria-label="Filtrar romaneios"
                 placeholder="Filtrar romaneios..."
                 value={busca}
                 onChange={(e) => setBusca(e.target.value)}
@@ -359,7 +360,7 @@ export default function RomaneiosPage() {
               />
             </div>
             <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-              <SelectTrigger className="w-48 border-none bg-muted/30">
+              <SelectTrigger aria-label="Status" className="w-48 border-none bg-muted/30">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>

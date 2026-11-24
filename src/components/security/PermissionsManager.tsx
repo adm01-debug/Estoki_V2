@@ -310,6 +310,7 @@ export const PermissionsManager: React.FC = () => {
                                     <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
                                   )}
                                   <Switch
+                                    aria-label={permission.code}
                                     checked={isGranted}
                                     onCheckedChange={() => handleToggle(permission.id, isGranted)}
                                     disabled={role === "admin" || saving}
