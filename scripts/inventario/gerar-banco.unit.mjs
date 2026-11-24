@@ -37,3 +37,21 @@ test("inventario antigo sem a chave nova nao quebra nem inventa alerta", () => {
   delete dado.funcoes_executaveis_anon;
   assert.deepEqual(montarInventario(dado, {}).alertas, []);
 });
+
+test("security definer sem search_path fixado vira alerta nomeado", () => {
+  const dado = { ...base([]), funcoes_security_definer_sem_search_path: ["move_stock(uuid, integer)"] };
+  assert.deepEqual(montarInventario(dado, {}).alertas, [
+    {
+      tipo: "funcao_security_definer_sem_search_path",
+      detalhe: ["move_stock(uuid, integer)"],
+    },
+  ]);
+});
+
+test("nenhum security definer frouxo (ou chave ausente) nao gera alerta", () => {
+  assert.deepEqual(alertasDe([]), []);
+  assert.deepEqual(
+    montarInventario({ ...base([]), funcoes_security_definer_sem_search_path: [] }, {}).alertas,
+    []
+  );
+});

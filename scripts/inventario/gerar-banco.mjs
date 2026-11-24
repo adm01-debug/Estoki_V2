@@ -232,6 +232,13 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   // ainda executa e API exposta sem querer.
   const anonIndevidas = (dado.funcoes_executaveis_anon ?? []).filter((nome) => !ANON_PRE_LOGIN.has(nome));
   if (anonIndevidas.length) alertas.push({ tipo: 'funcao_anon_executavel', detalhe: anonIndevidas });
+  // SECURITY DEFINER executa com o dono da funcao; se o corpo nao fixa `search_path`, um schema criado
+  // pelo chamador a frente de public troca a tabela citada dentro do corpo. Hoje (medido 24/11/2026)
+  // zero funcoes nesse estado: qualquer nome aqui e regressao de hardening, nao divida herdada.
+  const secDefinerFrouxo = dado.funcoes_security_definer_sem_search_path ?? [];
+  if (secDefinerFrouxo.length) {
+    alertas.push({ tipo: 'funcao_security_definer_sem_search_path', detalhe: secDefinerFrouxo });
+  }
   const cronRuim = dado.cron.jobs
     .filter((j) => j.ativo && j.taxa_falha_7d_pct >= LIMIARES.taxaFalhaCronPct)
     .map((j) => `${j.nome} (${j.taxa_falha_7d_pct}% em 7d)`);
