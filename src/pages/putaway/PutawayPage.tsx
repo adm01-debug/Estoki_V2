@@ -74,106 +74,118 @@ export default function PutawayPage() {
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
             </Button>
 
-            <Card className="border-success bg-success/5">
-              <CardHeader>
-                <Badge variant="outline" className="mb-2 w-fit">
-                  ARMAZENAMENTO ATIVO
-                </Badge>
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Package className="h-5 w-5 text-success" />
-                  {activeTask.produto_nome}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-muted p-3">
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground">Origem</p>
-                    <p className="font-mono text-lg font-bold">
-                      {activeTask.posicao_origem_codigo || "Recebimento"}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-success/20 bg-success/10 p-3">
-                    <p className="text-[10px] font-bold uppercase text-success">Destino Sugerido</p>
-                    <p className="font-mono text-lg font-bold text-success">
-                      {activeTask.posicao_destino_codigo}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg bg-muted/50 p-4">
-                  <div className="flex items-center gap-3">
-                    <Box className="h-8 w-8 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium">Quantidade</p>
-                      <p className="text-2xl font-bold">{activeTask.quantidade}</p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleConfirm();
+              }}
+            >
+              <Card className="border-success bg-success/5">
+                <CardHeader>
+                  <Badge variant="outline" className="mb-2 w-fit">
+                    ARMAZENAMENTO ATIVO
+                  </Badge>
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <Package className="h-5 w-5 text-success" />
+                    {activeTask.produto_nome}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="rounded-lg bg-muted p-3">
+                      <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                        Origem
+                      </p>
+                      <p className="font-mono text-lg font-bold">
+                        {activeTask.posicao_origem_codigo || "Recebimento"}
+                      </p>
+                    </div>
+                    <div className="rounded-lg border border-success/20 bg-success/10 p-3">
+                      <p className="text-[10px] font-bold uppercase text-success">
+                        Destino Sugerido
+                      </p>
+                      <p className="font-mono text-lg font-bold text-success">
+                        {activeTask.posicao_destino_codigo}
+                      </p>
                     </div>
                   </div>
-                </div>
 
-                <div className="space-y-4 border-t pt-4">
-                  <div className="space-y-2">
-                    <label htmlFor="confirmar-local-scan" className="text-sm font-medium">
-                      Confirmar Local (Scan)
-                    </label>
-                    <div className="flex gap-2">
+                  <div className="flex items-center justify-between rounded-lg bg-muted/50 p-4">
+                    <div className="flex items-center gap-3">
+                      <Box className="h-8 w-8 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">Quantidade</p>
+                        <p className="text-2xl font-bold">{activeTask.quantidade}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="space-y-2">
+                      <label htmlFor="confirmar-local-scan" className="text-sm font-medium">
+                        Confirmar Local (Scan)
+                      </label>
+                      <div className="flex gap-2">
+                        <Input
+                          id="confirmar-local-scan"
+                          placeholder="Escaneie o código da posição"
+                          value={scannedLocation}
+                          onChange={(e) => setScannedLocation(e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          aria-label="Escanear código"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setScanOpen(true)}
+                        >
+                          <Scan className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="quantidade-armazenada" className="text-sm font-medium">
+                        Quantidade Armazenada
+                      </label>
                       <Input
-                        id="confirmar-local-scan"
-                        placeholder="Escaneie o código da posição"
-                        value={scannedLocation}
-                        onChange={(e) => setScannedLocation(e.target.value)}
+                        id="quantidade-armazenada"
+                        type="number"
+                        placeholder="Confirmar quantidade"
+                        value={confirmQty}
+                        onChange={(e) =>
+                          setConfirmQty(e.target.value === "" ? "" : Number(e.target.value))
+                        }
                       />
-                      <Button
-                        aria-label="Escanear código"
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setScanOpen(true)}
-                      >
-                        <Scan className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  <div className="space-y-2">
-                    <label htmlFor="quantidade-armazenada" className="text-sm font-medium">
-                      Quantidade Armazenada
-                    </label>
-                    <Input
-                      id="quantidade-armazenada"
-                      type="number"
-                      placeholder="Confirmar quantidade"
-                      value={confirmQty}
-                      onChange={(e) =>
-                        setConfirmQty(e.target.value === "" ? "" : Number(e.target.value))
-                      }
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              <Dialog open={scanOpen} onOpenChange={setScanOpen}>
+                <DialogContent aria-describedby={undefined}>
+                  <DialogHeader>
+                    <DialogTitle>Escanear Local de Destino</DialogTitle>
+                  </DialogHeader>
+                  <QRScanner
+                    onScan={(data) => {
+                      setScannedLocation(data.trim());
+                      setScanOpen(false);
+                    }}
+                  />
+                </DialogContent>
+              </Dialog>
 
-            <Dialog open={scanOpen} onOpenChange={setScanOpen}>
-              <DialogContent aria-describedby={undefined}>
-                <DialogHeader>
-                  <DialogTitle>Escanear Local de Destino</DialogTitle>
-                </DialogHeader>
-                <QRScanner
-                  onScan={(data) => {
-                    setScannedLocation(data.trim());
-                    setScanOpen(false);
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
-
-            <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
-              <Button
-                className="h-12 w-full bg-success text-lg hover:bg-success/90"
-                onClick={handleConfirm}
-                disabled={!confirmQty || !scannedLocation}
-              >
-                <CheckCircle2 className="mr-2 h-5 w-5" /> Finalizar Armazenamento
-              </Button>
-            </div>
+              <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
+                <Button
+                  type="submit"
+                  className="h-12 w-full bg-success text-lg hover:bg-success/90"
+                  disabled={!confirmQty || !scannedLocation}
+                >
+                  <CheckCircle2 className="mr-2 h-5 w-5" /> Finalizar Armazenamento
+                </Button>
+              </div>
+            </form>
           </div>
         </PageTransition>
       </AppLayout>
