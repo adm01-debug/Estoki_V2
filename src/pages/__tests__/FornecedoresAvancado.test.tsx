@@ -98,9 +98,7 @@ describe("FornecedoresAvancado", () => {
     fireEvent.click(screen.getByRole("button", { name: /recalcular scores/i }));
 
     await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith(
-        "2 de 3 fornecedores atualizados. Falhas: Gama"
-      )
+      expect(toast.error).toHaveBeenCalledWith("2 de 3 fornecedores atualizados. Falhas: Gama")
     );
   });
 });

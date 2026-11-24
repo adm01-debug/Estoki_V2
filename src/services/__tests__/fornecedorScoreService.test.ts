@@ -257,7 +257,9 @@ describe("recalcularFornecedorScores", () => {
     mockFrom.mockImplementation((tabela: string) => {
       if (tabela === "lotes") {
         return {
-          select: () => ({ not: () => ({ limit: () => Promise.resolve({ data: [], error: null }) }) }),
+          select: () => ({
+            not: () => ({ limit: () => Promise.resolve({ data: [], error: null }) }),
+          }),
         };
       }
       if (tabela === "eventos_triagem") {
