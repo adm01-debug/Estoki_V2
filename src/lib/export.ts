@@ -9,6 +9,21 @@ export function exportToCSV<T extends Record<string, unknown>>(data: T[], filena
   downloadFile(csv, `${filename}.csv`, "text/csv");
 }
 
+function csvCell(valor: unknown): string {
+  const texto = String(valor ?? "");
+  const protegido = /^[=+\-@\t\r]/.test(texto) ? `'${texto}` : texto;
+  return /[",\n\r;]/.test(protegido) ? `"${protegido.replace(/"/g, '""')}"` : protegido;
+}
+
+export function rowsToCSV(headers: string[], rows: unknown[][]): string {
+  return [headers, ...rows].map((linha) => linha.map(csvCell).join(",")).join("\n");
+}
+
+export function exportRowsToCSV(headers: string[], rows: unknown[][], filename: string): void {
+  if (!rows.length) return;
+  downloadFile(rowsToCSV(headers, rows), `${filename}.csv`, "text/csv;charset=utf-8;");
+}
+
 export function exportToJSON<T>(data: T[], filename: string): void {
   const json = JSON.stringify(data, null, 2);
   downloadFile(json, `${filename}.json`, "application/json");
