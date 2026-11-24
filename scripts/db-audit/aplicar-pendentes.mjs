@@ -35,6 +35,13 @@ const COLUNAS = {
   rastreamento_historico: ["tipo_evento", "produto_id", "lote_id", "quantidade", "localizacao", "descricao", "operador_id", "data_evento", "created_at"],
 };
 
+// `has_role` recebe o enum `app_role`, nao `text`: procurar por assinatura exata
+// (`to_regprocedure('public.has_role(uuid,text)')`) da falso negativo e bloqueia a
+// aplicacao. A checagem por nome/schema em pg_proc continua provando que a funcao existe.
+const EXISTE_HAS_ROLE =
+  "exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' and p.proname = 'has_role')";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -44,7 +51,7 @@ const PENDENCIAS = [
     // Dependencias que precisam existir ANTES (funcoes usadas nas policies).
     dependencias: [
       ["public.effective_tenant_id()", "to_regprocedure('public.effective_tenant_id()') is not null"],
-      ["public.has_role(uuid,text)", "to_regprocedure('public.has_role(uuid,text)') is not null"],
+      ["public.has_role", EXISTE_HAS_ROLE],
     ],
   },
   {
@@ -53,7 +60,7 @@ const PENDENCIAS = [
     aplicado:
       "to_regprocedure('public.iniciar_tarefa_picking(uuid)') is not null and " +
       "to_regprocedure('public.concluir_tarefa_picking(uuid,numeric,text)') is not null",
-    dependencias: [["public.has_role(uuid,text)", "to_regprocedure('public.has_role(uuid,text)') is not null"]],
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
 ];
 
