@@ -35,15 +35,15 @@ export const BrandingContent = () => (
           PROMO BRINDES
         </h2>
         <div className="flex items-center gap-2">
-          <p className="text-[12px] font-bold uppercase tracking-[0.4em] text-primary">
+          <p className="text-[12px] font-bold uppercase tracking-[0.4em] text-primary-bright">
             Intelligence
           </p>
           <div className="h-1 w-1 rounded-full bg-primary/30" />
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/30">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/80">
             WMS v10.0
           </p>
         </div>
-        <p className="mt-1.5 inline-block border-t border-sidebar-border/30 pt-1.5 text-[11px] font-black uppercase tracking-[0.25em] text-sidebar-foreground/40">
+        <p className="mt-1.5 inline-block border-t border-sidebar-border/30 pt-1.5 text-[11px] font-black uppercase tracking-[0.25em] text-sidebar-foreground/80">
           Cadeia de Excelência
         </p>
       </div>
@@ -52,9 +52,9 @@ export const BrandingContent = () => (
     {/* Hero */}
     <div className="max-w-lg space-y-6">
       <h1 className="text-4xl font-bold leading-tight text-sidebar-foreground xl:text-5xl">
-        Gerencie seu armazém com <span className="text-primary">inteligência</span>
+        Gerencie seu armazém com <span className="text-primary-bright">inteligência</span>
       </h1>
-      <p className="text-lg leading-relaxed text-sidebar-foreground/50">
+      <p className="text-lg leading-relaxed text-sidebar-foreground/70">
         Monitore operações em tempo real, otimize a performance da equipe e tome decisões baseadas
         em dados.
       </p>
@@ -67,11 +67,11 @@ export const BrandingContent = () => (
             className="flex items-center gap-4 rounded-xl border border-sidebar-border/50 bg-sidebar-accent/30 p-4 backdrop-blur-sm transition-colors hover:border-primary/30"
           >
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10">
-              <f.icon className="h-5 w-5 text-primary" />
+              <f.icon className="h-5 w-5 text-primary-bright" />
             </div>
             <div>
               <p className="text-sm font-semibold text-sidebar-foreground">{f.title}</p>
-              <p className="text-xs text-sidebar-foreground/40">{f.desc}</p>
+              <p className="text-xs text-sidebar-foreground/70">{f.desc}</p>
             </div>
           </div>
         ))}
@@ -79,7 +79,7 @@ export const BrandingContent = () => (
     </div>
 
     {/* Footer */}
-    <div className="flex items-center gap-2 text-xs text-sidebar-foreground/20">
+    <div className="flex items-center gap-2 text-xs text-sidebar-foreground/70">
       <Shield className="h-3.5 w-3.5" />
       <span>Criptografia end-to-end · SOC 2 Compliant</span>
     </div>

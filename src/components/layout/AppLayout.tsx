@@ -132,7 +132,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               aria-label={sidebarCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
-              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/50 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/70 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               {sidebarCollapsed ? (
                 <ChevronLeft className="h-3 w-3 rotate-180" />
