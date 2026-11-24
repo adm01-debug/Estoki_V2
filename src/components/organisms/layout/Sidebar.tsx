@@ -88,7 +88,7 @@ export const Sidebar = memo(function Sidebar({
                 animate={{ opacity: 1, y: 0 }}
                 className="group relative"
               >
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/30 transition-colors group-focus-within:text-primary" />
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/70 transition-colors group-focus-within:text-primary" />
                 <Input
                   placeholder="Buscar função..."
                   value={searchQuery}
@@ -117,7 +117,7 @@ export const Sidebar = memo(function Sidebar({
                   />
                 ))
               ) : (
-                <p className="px-4 py-2 text-xs italic text-sidebar-foreground/40">
+                <p className="px-4 py-2 text-xs italic text-sidebar-foreground/70">
                   Nenhum resultado encontrado
                 </p>
               )}

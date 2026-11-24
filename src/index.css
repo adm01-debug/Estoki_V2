@@ -24,7 +24,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 25% 10%;
 
-    --primary: 24 95% 53%;
+    /* AA: #b84f0a sobre branco = 5.03:1; texto branco sobre ele = 5.03:1 */
+    --primary: 24 90% 37%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 220 14% 96%;
@@ -33,7 +34,7 @@
     --muted: 220 14% 96%;
     --muted-foreground: 220 10% 46%;
 
-    --accent: 24 95% 53%;
+    --accent: 24 90% 37%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -69,6 +70,9 @@
     --kpi-card: 0 0% 100%;
     --kpi-icon-bg: 24 95% 95%;
 
+    /* Amber autoral: text-safe em superfícies escuras (6.89:1 sobre #0d1016) */
+    --primary-bright: 24 95% 53%;
+
     /* Glow */
     --glow-primary: 24 95% 53%;
     --glow-secondary: 30 100% 45%;
@@ -89,7 +93,8 @@
     --popover-foreground: 220 10% 95%;
 
     --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 100%;
+    /* AA: #08090d sobre #f97015 = 6.89:1 (antes branco = 2.85:1) */
+    --primary-foreground: 220 25% 5%;
 
     --secondary: 220 25% 12%;
     --secondary-foreground: 220 10% 85%;
@@ -98,7 +103,7 @@
     --muted-foreground: 220 10% 50%;
 
     --accent: 24 95% 53%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 220 25% 5%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;

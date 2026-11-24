@@ -54,7 +54,7 @@ const ForgotPasswordPage = () => {
             <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">
               Esqueceu a senha?
             </h2>
-            <p className="mt-1 text-sm text-sidebar-foreground/40">
+            <p className="mt-1 text-sm text-sidebar-foreground/70">
               Informe seu email para receber o link de recuperação
             </p>
           </div>
@@ -93,7 +93,7 @@ const ForgotPasswordPage = () => {
           <div className="text-center">
             <Link
               to="/auth/login"
-              className="inline-flex items-center text-sm text-sidebar-foreground/50 transition-colors hover:text-primary"
+              className="inline-flex items-center text-sm text-sidebar-foreground/70 transition-colors hover:text-primary-bright"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para o login
             </Link>
@@ -101,12 +101,12 @@ const ForgotPasswordPage = () => {
 
           {/* Legal Footer */}
           <div className="mt-8 border-t border-sidebar-border pt-8">
-            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/30">
+            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/80">
               Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/40">
+              <span className="font-semibold italic text-sidebar-foreground/70">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>

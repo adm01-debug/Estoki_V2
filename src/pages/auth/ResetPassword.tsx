@@ -45,7 +45,7 @@ const ResetPasswordPage = () => {
           </div>
           <div>
             <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">Nova senha</h2>
-            <p className="mt-1 text-sm text-sidebar-foreground/40">
+            <p className="mt-1 text-sm text-sidebar-foreground/70">
               Defina sua nova senha de acesso
             </p>
           </div>

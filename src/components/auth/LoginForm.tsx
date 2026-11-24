@@ -61,7 +61,7 @@ export const LoginForm = ({
           <button
             type="button"
             onClick={() => navigate("/auth/forgot-password")}
-            className="text-xs font-medium text-primary transition-colors hover:text-primary/80"
+            className="text-xs font-medium text-primary-bright transition-colors hover:text-primary-bright/80"
           >
             Esqueceu a senha?
           </button>
@@ -80,7 +80,7 @@ export const LoginForm = ({
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-0 h-full px-3 text-sidebar-foreground/30 hover:bg-transparent hover:text-sidebar-foreground"
+            className="absolute right-0 top-0 h-full px-3 text-sidebar-foreground/70 hover:bg-transparent hover:text-sidebar-foreground"
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
           >

@@ -39,7 +39,7 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
               <group.icon
                 className={cn(
                   "h-4 w-4 transition-colors",
-                  hasActiveChild ? "text-primary" : "text-sidebar-foreground/30"
+                  hasActiveChild ? "text-primary" : "text-sidebar-foreground/70"
                 )}
               />
             </div>
@@ -74,7 +74,7 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
             "group/trigger mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2 transition-all duration-200",
             hasActiveChild
               ? "text-primary"
-              : "text-sidebar-foreground/50 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+              : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
           )}
         >
           <group.icon
@@ -82,7 +82,7 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
               "h-4 w-4 shrink-0 transition-colors",
               hasActiveChild
                 ? "text-primary"
-                : "text-sidebar-foreground/30 group-hover/trigger:text-sidebar-foreground/60"
+                : "text-sidebar-foreground/70 group-hover/trigger:text-sidebar-foreground/60"
             )}
           />
           <span

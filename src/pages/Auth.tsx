@@ -87,12 +87,12 @@ const AuthPage = () => {
 
           {/* Legal Footer */}
           <div className="mt-8 border-t border-sidebar-border pt-8">
-            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/30">
+            <p className="text-center text-[10px] leading-relaxed text-sidebar-foreground/80">
               Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/40">
+              <span className="font-semibold italic text-sidebar-foreground/70">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>
@@ -103,7 +103,7 @@ const AuthPage = () => {
   }
 
   const inputClasses =
-    "bg-sidebar-accent/60 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/30 focus:border-primary focus:ring-primary/20 h-11 rounded-lg";
+    "bg-sidebar-accent/60 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/70 focus:border-primary focus:ring-primary/20 h-11 rounded-lg";
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
@@ -140,10 +140,10 @@ const AuthPage = () => {
               <h1 className="gradient-text text-3xl font-black leading-none tracking-tighter">
                 PROMO BRINDES
               </h1>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-primary">
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-primary-bright">
                 INTELLIGENCE
               </p>
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/40">
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/80">
                 WMS 10/10
               </p>
             </div>
@@ -154,10 +154,10 @@ const AuthPage = () => {
             <h2 className="text-2xl font-bold text-sidebar-foreground xl:text-3xl">
               Bem-vindo de volta
             </h2>
-            <p className="mt-1 text-sm text-sidebar-foreground/40">
+            <p className="mt-1 text-sm text-sidebar-foreground/70">
               Entre com suas credenciais para continuar
             </p>
-            <p className="mt-2 text-[11px] italic text-sidebar-foreground/30">
+            <p className="mt-2 text-[11px] italic text-sidebar-foreground/80">
               Sistema de uso exclusivo. Acesso restrito a colaboradores autorizados.
             </p>
           </div>
@@ -176,7 +176,7 @@ const AuthPage = () => {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-sidebar-border" />
-            <span className="text-xs font-medium uppercase text-sidebar-foreground/30">ou</span>
+            <span className="text-xs font-medium uppercase text-sidebar-foreground/70">ou</span>
             <div className="h-px flex-1 bg-sidebar-border" />
           </div>
 
@@ -219,23 +219,23 @@ const AuthPage = () => {
           <div className="flex flex-col gap-2 pt-2 text-center">
             <Link
               to="/auth/forgot-password"
-              className="text-sm font-medium text-sidebar-foreground/50 transition-colors hover:text-primary"
+              className="text-sm font-medium text-sidebar-foreground/70 transition-colors hover:text-primary-bright"
             >
               Esqueceu sua senha?
             </Link>
-            <p className="mt-2 text-[11px] text-sidebar-foreground/30">
+            <p className="mt-2 text-[11px] text-sidebar-foreground/80">
               Para solicitar acesso, contate o administrador do sistema.
             </p>
           </div>
 
           {/* Legal Footer */}
           <div className="mt-4 border-t border-sidebar-border/30 pt-8">
-            <p className="px-4 text-center text-[10px] leading-relaxed text-sidebar-foreground/20">
+            <p className="px-4 text-center text-[10px] leading-relaxed text-sidebar-foreground/80">
               Este sistema é propriedade intelectual exclusiva da Brasil Marcas, sendo protegido
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/30">
+              <span className="font-semibold italic text-sidebar-foreground/70">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>

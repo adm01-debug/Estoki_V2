@@ -58,7 +58,7 @@ export const SidebarNavButton = memo(function SidebarNavButton({
             "h-[18px] w-[18px] shrink-0 transition-all duration-200",
             isActive
               ? "text-primary"
-              : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/70"
+              : "text-sidebar-foreground/70 group-hover:text-sidebar-foreground/70"
           )}
         />
       </div>

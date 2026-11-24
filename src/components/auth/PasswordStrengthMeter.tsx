@@ -40,7 +40,7 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
       <div className="space-y-1">
         <div className="flex items-center justify-between">
           <span className={cn("text-[11px] font-semibold", level.textColor)}>{level.label}</span>
-          <span className="text-[11px] text-sidebar-foreground/30">
+          <span className="text-[11px] text-sidebar-foreground/80">
             {strength}/{rules.length}
           </span>
         </div>
@@ -59,12 +59,12 @@ export function PasswordStrengthMeter({ password }: PasswordStrengthMeterProps) 
             {passed[i] ? (
               <Check className="h-3 w-3 shrink-0 text-success" />
             ) : (
-              <X className="h-3 w-3 shrink-0 text-sidebar-foreground/20" />
+              <X className="h-3 w-3 shrink-0 text-sidebar-foreground/70" />
             )}
             <span
               className={cn(
                 "text-[11px] transition-colors",
-                passed[i] ? "text-success/80" : "text-sidebar-foreground/30"
+                passed[i] ? "text-success/80" : "text-sidebar-foreground/70"
               )}
             >
               {rule.label}
