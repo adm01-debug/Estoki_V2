@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { exigirLinhaAfetada } from "@/lib/exigirLinhaAfetada";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Warehouse, Plus, Pencil, Trash2, Search, MapPin } from "lucide-react";
+import { Warehouse, Plus, Pencil, Trash2, Search, MapPin, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 type Armazem = {
@@ -216,17 +217,30 @@ export default function WarehousesPage() {
                   <div className="flex items-center gap-2">
                     <Warehouse className="h-5 w-5 text-primary" />
                     <div>
-                      <h3 className="font-semibold">{a.nome}</h3>
+                      <Link to={`/armazens/${a.id}`} className="font-semibold hover:underline">
+                        {a.nome}
+                      </Link>
                       <p className="text-xs text-muted-foreground">{a.codigo}</p>
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => openEdit(a)}>
+                    <Button size="icon" variant="ghost" asChild>
+                      <Link to={`/armazens/${a.id}`} aria-label={`Ver detalhes de ${a.nome}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`Editar ${a.nome}`}
+                      onClick={() => openEdit(a)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="ghost"
+                      aria-label={`Remover ${a.nome}`}
                       onClick={() => confirm(`Remover "${a.nome}"?`) && remove.mutate(a.id)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />

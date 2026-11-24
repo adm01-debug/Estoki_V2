@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { exigirLinhaAfetada } from "@/lib/exigirLinhaAfetada";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, Plus, Pencil, Trash2, Search, Mail, Phone, MapPin } from "lucide-react";
+import { Users, Plus, Pencil, Trash2, Search, Mail, Phone, MapPin, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 type Cliente = {
@@ -221,17 +222,30 @@ export default function CustomersPage() {
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-primary" />
                     <div>
-                      <h3 className="font-semibold">{c.nome}</h3>
+                      <Link to={`/clientes/${c.id}`} className="font-semibold hover:underline">
+                        {c.nome}
+                      </Link>
                       <p className="text-xs text-muted-foreground">{c.cpf_cnpj}</p>
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => openEdit(c)}>
+                    <Button size="icon" variant="ghost" asChild>
+                      <Link to={`/clientes/${c.id}`} aria-label={`Ver detalhes de ${c.nome}`}>
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={`Editar ${c.nome}`}
+                      onClick={() => openEdit(c)}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                     <Button
                       size="icon"
                       variant="ghost"
+                      aria-label={`Remover ${c.nome}`}
                       onClick={() => confirm(`Remover "${c.nome}"?`) && remove.mutate(c.id)}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
