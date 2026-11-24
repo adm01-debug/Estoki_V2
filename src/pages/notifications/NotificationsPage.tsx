@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/common/AsyncStates";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Select,
   SelectContent,
@@ -99,6 +100,7 @@ export default function NotificationsPage() {
   const [filtro, setFiltro] = useState<FiltroStatus>("todas");
   const [tipoFiltro, setTipoFiltro] = useState<string>("todos");
   const [expandida, setExpandida] = useState<string | null>(null);
+  const [confirmarLimpar, setConfirmarLimpar] = useState(false);
 
   const notificacoesFiltradas = useMemo(() => {
     return notificacoes.filter((n) => {
@@ -138,7 +140,6 @@ export default function NotificationsPage() {
   }
 
   async function handleLimpar() {
-    if (!confirm("Resolver todas as notificações?")) return;
     const ok = await limparTodas();
     if (ok) toast.success("Todas resolvidas");
   }
@@ -187,7 +188,7 @@ export default function NotificationsPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={handleLimpar}
+                onClick={() => setConfirmarLimpar(true)}
                 disabled={notificacoes.length === 0}
                 className="gap-2 text-muted-foreground hover:text-destructive"
               >
@@ -330,6 +331,15 @@ export default function NotificationsPage() {
             </TabsContent>
           </Tabs>
         </div>
+        <ConfirmDialog
+          open={confirmarLimpar}
+          onOpenChange={setConfirmarLimpar}
+          onConfirm={handleLimpar}
+          title="Resolver todas as notificações?"
+          description="Todas as notificações pendentes serão arquivadas e sairão do contador do cabeçalho. Essa ação não pode ser desfeita."
+          confirmLabel="Resolver todas"
+          variant="warning"
+        />
       </PageTransition>
     </AppLayout>
   );

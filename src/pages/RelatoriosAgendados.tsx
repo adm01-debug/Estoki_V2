@@ -24,6 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface RelatorioAgendado {
   id: string;
@@ -48,6 +49,7 @@ async function fetchRelatorios(): Promise<RelatorioAgendado[]> {
 export default function RelatoriosAgendados() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ nome: "", tipo: "estoque", frequencia: "diario", email: "" });
+  const [relatorioParaExcluir, setRelatorioParaExcluir] = useState<RelatorioAgendado | null>(null);
   const queryClient = useQueryClient();
 
   const { data: relatorios = [], isLoading: loading } = useQuery({
@@ -99,7 +101,12 @@ export default function RelatoriosAgendados() {
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from("relatorios_agendados").delete().eq("id", id);
+    setRelatorioParaExcluir(null);
+    const { error } = await supabase.from("relatorios_agendados").delete().eq("id", id);
+    if (error) {
+      toast.error("Não foi possível remover o relatório");
+      return;
+    }
     toast.success("Relatório removido");
     reload();
   };
@@ -286,7 +293,8 @@ export default function RelatoriosAgendados() {
                       size="sm"
                       variant="ghost"
                       className="text-destructive"
-                      onClick={() => handleDelete(rel.id)}
+                      aria-label={`Excluir agendamento ${rel.nome}`}
+                      onClick={() => setRelatorioParaExcluir(rel)}
                     >
                       <Trash2 className="h-3 w-3" />
                     </Button>
@@ -297,6 +305,20 @@ export default function RelatoriosAgendados() {
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={relatorioParaExcluir !== null}
+        onOpenChange={(open) => {
+          if (!open) setRelatorioParaExcluir(null);
+        }}
+        onConfirm={() => {
+          if (relatorioParaExcluir) void handleDelete(relatorioParaExcluir.id);
+        }}
+        title="Excluir este agendamento?"
+        description={`O envio automático de "${relatorioParaExcluir?.nome ?? "relatório"}" será encerrado e não poderá ser recuperado.`}
+        confirmLabel="Excluir"
+        variant="destructive"
+      />
     </div>
   );
 }
