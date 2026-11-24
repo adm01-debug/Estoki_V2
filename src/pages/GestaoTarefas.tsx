@@ -33,6 +33,7 @@ const priorityMap: Record<string, "critical" | "high" | "low" | "medium"> = {
   urgente: "critical",
 };
 import { useGestaoTarefasPage } from "@/hooks/useGestaoTarefasPage";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
 import { TarefaStats } from "@/components/tarefas/TarefaStats";
@@ -42,6 +43,8 @@ import { NovaTarefaDialog } from "@/components/tarefas/NovaTarefaDialog";
 export default function GestaoTarefasPage() {
   const {
     isLoading,
+    isError,
+    refetch,
     searchTerm,
     setSearchTerm,
     filtroStatus,
@@ -63,6 +66,14 @@ export default function GestaoTarefasPage() {
   } = useGestaoTarefasPage();
 
   const [tab, setTab] = useState("kanban");
+
+  if (isError) {
+    return (
+      <AppLayout title="Gestão de Tarefas" showBack>
+        <ErrorState message="Não foi possível carregar as tarefas." onRetry={() => refetch()} />
+      </AppLayout>
+    );
+  }
 
   if (isLoading) {
     return (

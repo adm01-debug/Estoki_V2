@@ -33,9 +33,10 @@ import {
 } from "lucide-react";
 import { MovimentacaoCard } from "@/components/rastreabilidade/MovimentacaoCard";
 import { BuscaProdutoTab } from "@/components/rastreabilidade/BuscaProdutoTab";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function RastreabilidadePage() {
-  const { movimentacoes, loading, getMovimentacoesPorProduto } = useMovimentacoes();
+  const { movimentacoes, loading, error, refetch, getMovimentacoesPorProduto } = useMovimentacoes();
 
   const [tab, setTab] = useState("timeline");
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,6 +68,17 @@ export default function RastreabilidadePage() {
       return matchSearch && matchTipo;
     });
   }, [movimentacoes, searchTerm, filtroTipo]);
+
+  if (error) {
+    return (
+      <AppLayout title="Rastreabilidade" showBack>
+        <ErrorState
+          message="Não foi possível carregar as movimentações."
+          onRetry={() => refetch()}
+        />
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (

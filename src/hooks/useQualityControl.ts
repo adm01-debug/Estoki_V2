@@ -16,7 +16,12 @@ export interface QualityInspection {
 export function useQualityControl() {
   const queryClient = useQueryClient();
 
-  const { data: inspections = [], isLoading } = useQuery({
+  const {
+    data: inspections = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["quality-inspections"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -54,5 +59,5 @@ export function useQualityControl() {
     },
   });
 
-  return { inspections, isLoading, submitInspection };
+  return { inspections, isLoading, isError, refetch, submitInspection };
 }

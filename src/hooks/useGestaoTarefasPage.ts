@@ -10,7 +10,7 @@ import {
 } from "@/types/tarefas";
 
 export function useGestaoTarefasPage() {
-  const { tarefas, isLoading, error, createTarefa, completarTarefa } = useTarefas();
+  const { tarefas, isLoading, error, refetch, createTarefa, completarTarefa } = useTarefas();
   const safeTarefas = tarefas ?? [];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -111,6 +111,8 @@ export function useGestaoTarefasPage() {
 
   return {
     isLoading,
+    isError: !!error,
+    refetch,
     searchTerm,
     setSearchTerm,
     filtroStatus,
