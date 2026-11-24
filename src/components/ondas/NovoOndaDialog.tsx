@@ -20,6 +20,7 @@ import {
 import { Plus, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { gerarCodigoOnda } from "@/lib/codigoOnda";
 
 export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
   const [open, setOpen] = useState(false);
@@ -31,19 +32,44 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
     zona_alvo: string;
     rota: string;
   }>({
-    codigo: `ON-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`,
+    codigo: gerarCodigoOnda(),
     descricao: "",
     prioridade: "media",
     zona_alvo: "",
     rota: "",
   });
 
+  const abrirComCodigoNovo = (aberto: boolean) => {
+    setOpen(aberto);
+    // O codigo e gerado no mount do componente; se o dialog ficar muito tempo
+    // fechado dois usuarios poderiam receber o mesmo valor.
+    if (aberto) setFormData((atual) => ({ ...atual, codigo: gerarCodigoOnda() }));
+  };
+
+  const codigoJaExiste = async (codigo: string) => {
+    const { data, error } = await supabase
+      .from("ondas_separacao")
+      .select("id")
+      .eq("codigo", codigo)
+      .limit(1);
+    if (error) throw error;
+    return (data ?? []).length > 0;
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
+      let codigo = formData.codigo.trim();
+
+      for (let tentativa = 0; tentativa < 5; tentativa++) {
+        if (!(await codigoJaExiste(codigo))) break;
+        codigo = gerarCodigoOnda();
+      }
+
       const { error } = await supabase.from("ondas_separacao").insert([
         {
           ...formData,
+          codigo,
           status: "pendente",
           data_criacao: new Date().toISOString(),
           total_tarefas: 0,
@@ -64,7 +90,7 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={abrirComCodigoNovo}>
       <DialogTrigger asChild>
         <Button size="sm" className="gap-2">
           <Plus className="h-4 w-4" />
