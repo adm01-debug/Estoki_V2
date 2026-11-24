@@ -1,0 +1,52 @@
+name: E2E real (produção)
+
+# Fluxo logado de verdade contra o Supabase de produção, sem os mocks de
+# `tests/e2e/fixtures/auth.ts`. Não roda em pull_request de propósito: um login
+# real a cada push contra produção não é necessário e aumenta o risco de
+# bloqueio por tentativas de login (check_login_lockout/record_failed_login).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  login-real:
+    name: Login real + RPCs de picking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests (login real)
+        run: npx playwright test tests/e2e/auth-real.spec.ts --project=chromium --reporter=list
+        env:
+          CI: "true"
+          VITE_APP_URL: https://estoki-v2.vercel.app
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
+          E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
+          E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+
+      - name: Upload Playwright failure artifacts
+        uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: playwright-e2e-real
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore

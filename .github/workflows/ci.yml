@@ -39,8 +39,8 @@ jobs:
       - name: Build Application
         run: npm run build
         env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
 
   e2e-tests:
     name: Playwright E2E (${{ matrix.target }})
@@ -71,8 +71,8 @@ jobs:
         run: npm run test:e2e:build
         env:
           CI: "true"
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
 
       - name: Upload Playwright HTML report
         uses: actions/upload-artifact@v7
