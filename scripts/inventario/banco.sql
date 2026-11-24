@@ -82,9 +82,6 @@ SELECT jsonb_build_object(
     'cron_ativos', (SELECT count(*) FROM cron.job WHERE active),
     'ledger_registros', (SELECT count(*) FROM supabase_migrations.schema_migrations),
     'ledger_versao_max', (SELECT max(version) FROM supabase_migrations.schema_migrations),
-    -- Versoes aplicadas, para o gerador achar qual migration do repo ainda nao entrou no banco.
-    'ledger_versoes', (SELECT coalesce(jsonb_agg(version ORDER BY version), '[]'::jsonb)
-                         FROM supabase_migrations.schema_migrations),
     'max_connections', current_setting('max_connections')::int,
     'tamanho_bytes', pg_database_size(current_database())
   ),

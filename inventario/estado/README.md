@@ -17,8 +17,7 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão.
   (taxa ≥ 5 % em 7 dias), `cron_parado` (hora com mais da metade das execuções falhando),
   `cron_sem_execucao` (job ativo que roda todo dia sem nenhuma execução em 24 h — cron 100 % parado
   não grava falha, então só aparece aqui), `historico_cron_sem_limpeza` (> 50 mil linhas com mais de
-  7 dias), `migration_nao_aplicada` (migration do repo sem registro no ledger do banco: o repo está à
-  frente da produção), `edge_sem_deploy` e `edge_publicada_sem_codigo`. Limiares em `LIMIARES` no script.
+  7 dias), `edge_sem_deploy` e `edge_publicada_sem_codigo`. Limiares em `LIMIARES` no script.
 - **`funcoes`**: nomes das funções/RPCs do schema `public`, em ordem. Use para provar que uma RPC
   existe no banco real (a contagem `resumo.funcoes_public` não diz qual), comparando com as
   `supabase/migrations/*.sql`.
@@ -29,11 +28,13 @@ regere o arquivo (comandos abaixo) em vez de corrigir à mão.
   estimativa do planner. Não confie em `pg_stat_user_tables.n_live_tup`: zera quando o banco reinicia.
 - Contagens rodam com o papel da conexão: com papel que não ignora RLS, tabelas com RLS e `cron.job`
   podem vir incompletas.
-- A resposta só é gravada se o ledger bater com `supabase/migrations/`: pelo menos 90 % das versões
-  aplicadas no banco têm de existir como migration no repo (barra resposta colada de outro banco, que
-  teria versões desconhecidas). Quando `supabase/schema-manifest.json` existir, as tabelas também têm
-  de bater com ele (≥ 90 %, nos dois sentidos). Repo **à frente** do banco (migration no repo ainda
-  não aplicada) não é erro: vira o alerta `migration_nao_aplicada`.
+- A resposta só é gravada se o ledger bater com `supabase/migrations/` (maior versão aplicada entre as
+  20 migrations mais recentes do repo e quantidade de registros a até 10 % da de arquivos) e, quando
+  `supabase/schema-manifest.json` existir, se as tabelas baterem com ele (≥ 90 %, nos dois sentidos).
+  Essa conferência roda **só** no caminho `--entrada` (resposta colada do MCP): quando a leitura vem da
+  Management API do projeto oficial, a origem já está provada pela URL e o ledger não é comparado —
+  no banco oficial o `version` do ledger tem segundos diferentes do nome do arquivo (`20260512154025` no
+  ledger × `20260512154028` no repo), e comparar versão por versão acusa quase tudo como desconhecido.
   Isso barra resposta colada de outro banco. Sem o manifesto o script avisa em `stderr` e segue só com
   o ledger.
 - Nada de dado de usuário sai daqui: o SQL lê catálogo e contagens; de `cron.job` sai só o nome das
