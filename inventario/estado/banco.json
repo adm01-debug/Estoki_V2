@@ -2,6 +2,14 @@
   "alertas": [
     {
       "detalhe": [
+        "mv_alertas_severidade:anon,authenticated",
+        "mv_audit_daily:anon,authenticated",
+        "mv_notificacoes_tipo:anon,authenticated"
+      ],
+      "tipo": "view_sem_security_invoker"
+    },
+    {
+      "detalhe": [
         "adjust-inventory",
         "agv-dispatch",
         "ai-classification",
@@ -167,7 +175,7 @@
     },
     "historico": {
       "bytes": 90112,
-      "linhas": 127,
+      "linhas": 128,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -197,7 +205,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 98,
+        "execucoes_7d": 99,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
@@ -1153,7 +1161,8 @@
     "record_failed_login",
     "reset_login_attempts"
   ],
-  "medido_em": "2026-11-24T22:48:44Z",
+  "funcoes_security_definer_sem_search_path": [],
+  "medido_em": "2026-11-24T23:23:59Z",
   "resumo": {
     "cron_ativos": 4,
     "cron_jobs": 4,
@@ -1413,7 +1422,7 @@
     {
       "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 102,
+      "linhas": 103,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
@@ -2562,5 +2571,10 @@
       "setores_checkpoint",
       "stock_alerts"
     ]
-  }
+  },
+  "views_sem_security_invoker": [
+    "mv_alertas_severidade:anon,authenticated",
+    "mv_audit_daily:anon,authenticated",
+    "mv_notificacoes_tipo:anon,authenticated"
+  ]
 }
