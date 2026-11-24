@@ -2,6 +2,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { exportRowsToCSV } from "@/lib/export";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -96,6 +97,8 @@ export default function AdminTelemetriaPage() {
   const {
     data: rows = [],
     isLoading,
+    isError,
+    error,
     refetch,
     isRefetching,
   } = useQuery<TelemetryRow[]>({
@@ -463,7 +466,14 @@ export default function AdminTelemetriaPage() {
         </span>
       </div>
 
-      <TelemetryTable rows={rows} isLoading={isLoading} />
+      {isError ? (
+        <ErrorState
+          message={`Não foi possível carregar a telemetria: ${(error as Error).message}`}
+          onRetry={() => refetch()}
+        />
+      ) : (
+        <TelemetryTable rows={rows} isLoading={isLoading} />
+      )}
     </div>
   );
 }

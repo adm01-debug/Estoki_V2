@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -55,7 +56,13 @@ export default function IntegracaoTransportadoras() {
   const [tab, setTab] = useState("rastrear");
   const [rastreando, setRastreando] = useState(false);
 
-  const { data: romaneios = [], isLoading: loading } = useQuery({
+  const {
+    data: romaneios = [],
+    isLoading: loading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["romaneios-em-transito"],
     queryFn: fetchRomaneiosEmTransito,
     staleTime: 1000 * 60 * 2,
@@ -186,6 +193,13 @@ export default function IntegracaoTransportadoras() {
           Rastreamento de entregas e atualização automática de status
         </p>
       </div>
+
+      {isError && (
+        <ErrorState
+          message={`Não foi possível carregar os romaneios em trânsito: ${(error as Error).message}`}
+          onRetry={() => refetch()}
+        />
+      )}
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
