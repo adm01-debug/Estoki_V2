@@ -70,8 +70,13 @@ export default function PosicoesPage() {
   const clearSelection = () => setSelectedIds([]);
 
   const handleBulkUpdate = async (status: StatusPosicao) => {
-    await updatePosicao.mutateAsync({ ids: selectedIds, status });
-    clearSelection();
+    if (updatePosicao.isPending || selectedIds.length === 0) return;
+    try {
+      await updatePosicao.mutateAsync({ ids: selectedIds, status });
+      clearSelection();
+    } catch {
+      toast.error("Não foi possível atualizar as posições selecionadas");
+    }
   };
 
   const handleExport = () => {
@@ -193,6 +198,7 @@ export default function PosicoesPage() {
                   size="sm"
                   variant="outline"
                   className="gap-1"
+                  disabled={updatePosicao.isPending}
                   onClick={() => handleBulkUpdate("bloqueado")}
                 >
                   <Lock className="h-3 w-3" />
@@ -202,6 +208,7 @@ export default function PosicoesPage() {
                   size="sm"
                   variant="outline"
                   className="gap-1"
+                  disabled={updatePosicao.isPending}
                   onClick={() => handleBulkUpdate("livre")}
                 >
                   <Unlock className="h-3 w-3" />
