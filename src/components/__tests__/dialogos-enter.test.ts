@@ -7,6 +7,10 @@ const DIALOGOS = [
   "src/components/kpis-page/KPIMetaDialog.tsx",
   "src/components/inventario/NovoCicloDialog.tsx",
   "src/components/ondas/NovoOndaDialog.tsx",
+  "src/components/trocas-page/NovoRegistroDialog.tsx",
+  "src/components/romaneios/NovoRomaneioDialog.tsx",
+  "src/components/common/SavedFiltersManager.tsx",
+  "src/components/filters/SavedFiltersDropdown.tsx",
 ];
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");

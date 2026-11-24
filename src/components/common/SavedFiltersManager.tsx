@@ -152,24 +152,28 @@ export function SavedFiltersManager({
           <DialogHeader>
             <DialogTitle>Salvar Filtro</DialogTitle>
           </DialogHeader>
-          <Input
-            aria-label="Nome do filtro"
-            placeholder="Nome do filtro..."
-            value={filterName}
-            onChange={(e) => setFilterName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && filterName && saveMutation.mutate(filterName)}
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => saveMutation.mutate(filterName)}
-              disabled={!filterName || saveMutation.isPending}
-            >
-              Salvar
-            </Button>
-          </DialogFooter>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!filterName || saveMutation.isPending) return;
+              saveMutation.mutate(filterName);
+            }}
+          >
+            <Input
+              aria-label="Nome do filtro"
+              placeholder="Nome do filtro..."
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+            />
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowSaveDialog(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={!filterName || saveMutation.isPending}>
+                Salvar
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>
