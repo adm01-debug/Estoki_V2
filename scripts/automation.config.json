@@ -668,6 +668,14 @@
       "manual": ["node", "scripts/check-agents-integrity.mjs"],
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; referências literais: docs/agentes/github-ci.md e AGENTS.md (guard de integridade das instruções para agentes). O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-5de0694bc9845770",
+      "kind": "legacy",
+      "files": ["scripts/db-audit/aplicar-pendentes.mjs"],
+      "manual": ["node", "scripts/db-audit/aplicar-pendentes.mjs"],
+      "triggers": ["manual"],
+      "reason": "DDL no banco oficial: só por dispatch manual, com confirmação explícita. Chamador literal: .github/workflows/migrations-producao.yml. O dispatcher não executa esta operação."
     }
   ],
   "ci": [

@@ -1,0 +1,62 @@
+# docs:
+#   gatilho: workflow_dispatch apenas (modo `ler` por padrao; `aplicar` exige confirmacao explicita).
+#   prova: system_settings e as RPC iniciar/concluir_tarefa_picking existem no banco oficial, com as policies e grants do repo.
+#   falha: sem token, dependencia ausente, SQL que nao roda ou objeto continuando ausente depois de aplicar.
+#   avisa: notifica-falha-main.yml nao cobre dispatch manual; a falha aparece no run e no log do job.
+# nao-e-bug:
+#   - sem-token: sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN o job avisa e sai verde sem tocar no banco
+#   - modo-ler: e somente leitura (endpoint read-only), nao altera o banco
+#   - ledger: se o insert em supabase_migrations.schema_migrations falhar, o log avisa "(ledger nao registrado)" e a migration continua aplicada
+name: Migrations pendentes em producao
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "ler = so consulta; aplicar = executa DDL no banco oficial"
+        type: choice
+        options: [ler, aplicar]
+        default: ler
+      confirmacao:
+        description: "escreva APLICAR para autorizar DDL no banco oficial"
+        type: string
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migrations-producao
+  cancel-in-progress: false
+
+jobs:
+  migrations:
+    name: Migrations pendentes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "22"
+      - name: Ler ou aplicar
+        env:
+          # O secret do repo e SUPABASE_MANAGEMENT_TOKEN; SUPABASE_ACCESS_TOKEN fica como alternativa.
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
+          MODO: ${{ inputs.modo }}
+          CONFIRMACAO: ${{ inputs.confirmacao }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::warning::sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN: nada foi lido nem aplicado."
+            exit 0
+          fi
+          if [ "${MODO}" = "aplicar" ] && [ "${CONFIRMACAO}" != "APLICAR" ]; then
+            echo "::error::modo aplicar exige confirmacao = APLICAR"
+            exit 1
+          fi
+          node scripts/db-audit/aplicar-pendentes.mjs
