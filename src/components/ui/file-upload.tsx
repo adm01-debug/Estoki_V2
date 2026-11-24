@@ -82,7 +82,12 @@ export function FileUpload({
               className="flex items-center justify-between rounded bg-muted px-2 py-1 text-sm"
             >
               <span className="truncate">{file.name}</span>
-              <Button variant="ghost" size="icon" onClick={() => removeFile(i)}>
+              <Button
+                aria-label="Remover arquivo"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeFile(i)}
+              >
                 <X className="h-4 w-4" />
               </Button>
             </li>

@@ -33,6 +33,7 @@ export function NumberInput({
       <div className="flex">
         {showControls && (
           <Button
+            aria-label="Diminuir"
             type="button"
             variant="outline"
             size="icon"
@@ -54,6 +55,7 @@ export function NumberInput({
         />
         {showControls && (
           <Button
+            aria-label="Aumentar"
             type="button"
             variant="outline"
             size="icon"

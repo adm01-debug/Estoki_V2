@@ -61,6 +61,7 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
                     </div>
                   </div>
                   <Button
+                    aria-label="Fechar atalhos"
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 rounded-full"

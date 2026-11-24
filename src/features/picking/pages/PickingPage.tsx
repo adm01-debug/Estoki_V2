@@ -145,6 +145,7 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
+                        aria-label="Escanear código"
                         onClick={() => {
                           if (!scannedCode.trim()) {
                             toast.error("Escaneie ou digite o código do produto");

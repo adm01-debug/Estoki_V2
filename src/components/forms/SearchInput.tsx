@@ -45,6 +45,7 @@ export function SearchInput({
         ) : (
           value && (
             <Button
+              aria-label="Limpar busca"
               type="button"
               variant="ghost"
               size="icon"

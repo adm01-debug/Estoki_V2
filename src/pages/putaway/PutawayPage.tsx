@@ -119,7 +119,12 @@ export default function PutawayPage() {
                         value={scannedLocation}
                         onChange={(e) => setScannedLocation(e.target.value)}
                       />
-                      <Button variant="outline" size="icon" onClick={() => setScanOpen(true)}>
+                      <Button
+                        aria-label="Escanear código"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setScanOpen(true)}
+                      >
                         <Scan className="h-4 w-4" />
                       </Button>
                     </div>

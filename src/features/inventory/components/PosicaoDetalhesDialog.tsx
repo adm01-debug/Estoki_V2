@@ -72,7 +72,7 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
                 </Badge>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button aria-label="Fechar" variant="ghost" size="icon" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>
           </div>

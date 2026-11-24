@@ -29,6 +29,7 @@ export function WeekPicker({ value, onChange }: WeekPickerProps) {
       <PopoverContent className="w-[280px]">
         <div className="mb-4 flex items-center justify-between">
           <Button
+            aria-label="Mês anterior"
             size="icon"
             variant="ghost"
             onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1))}
@@ -37,6 +38,7 @@ export function WeekPicker({ value, onChange }: WeekPickerProps) {
           </Button>
           <span className="font-semibold">{format(month, "MMMM yyyy", { locale: ptBR })}</span>
           <Button
+            aria-label="Próximo mês"
             size="icon"
             variant="ghost"
             onClick={() => setMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1))}

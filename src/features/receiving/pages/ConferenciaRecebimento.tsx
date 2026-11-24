@@ -294,6 +294,7 @@ export default function ConferenciaRecebimento() {
           </div>
           <div className="flex items-center gap-2">
             <Button
+              aria-label={voiceActive ? "Desativar comando de voz" : "Ativar comando de voz"}
               variant={voiceActive ? "default" : "outline"}
               size="icon"
               onClick={toggleVoice}

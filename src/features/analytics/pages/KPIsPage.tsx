@@ -201,7 +201,7 @@ export default function KPIsOperacionais() {
                     {criticalAlerts.length} Alertas
                   </Badge>
                 )}
-                <Button variant="outline" size="icon" onClick={refetch}>
+                <Button aria-label="Atualizar" variant="outline" size="icon" onClick={refetch}>
                   <RefreshCw className={`h-4 w-4 ${isUpdating ? "animate-spin" : ""}`} />
                 </Button>
               </div>

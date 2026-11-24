@@ -134,7 +134,13 @@ export const OnboardingTour = memo(function OnboardingTour() {
           <CardContent className="p-5">
             <div className="mb-1 flex items-start justify-between">
               <h4 className="text-base font-bold text-foreground">{currentStep.title}</h4>
-              <Button variant="ghost" size="icon" className="-mr-1 -mt-1 h-7 w-7" onClick={close}>
+              <Button
+                aria-label="Fechar tour"
+                variant="ghost"
+                size="icon"
+                className="-mr-1 -mt-1 h-7 w-7"
+                onClick={close}
+              >
                 <X className="h-4 w-4" />
               </Button>
             </div>

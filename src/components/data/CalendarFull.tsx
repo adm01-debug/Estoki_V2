@@ -67,13 +67,13 @@ export function CalendarFull({
   return (
     <div className={cn("rounded-lg border bg-card p-4", className)}>
       <div className="mb-4 flex items-center justify-between">
-        <Button variant="outline" size="icon" onClick={prevMonth}>
+        <Button aria-label="Mês anterior" variant="outline" size="icon" onClick={prevMonth}>
           <ChevronLeft className="h-4 w-4" />
         </Button>
         <h2 className="font-semibold">
           {monthNames[month]} {year}
         </h2>
-        <Button variant="outline" size="icon" onClick={nextMonth}>
+        <Button aria-label="Próximo mês" variant="outline" size="icon" onClick={nextMonth}>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>

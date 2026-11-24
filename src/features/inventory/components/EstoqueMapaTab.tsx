@@ -69,6 +69,7 @@ export const EstoqueMapaTab = memo(
             <Button
               variant="outline"
               size="icon"
+              aria-label="Reduzir zoom"
               onClick={() => onZoomChange(Math.max(0.5, zoom - 0.1))}
             >
               <ZoomOut className="h-4 w-4" />
@@ -79,6 +80,7 @@ export const EstoqueMapaTab = memo(
             <Button
               variant="outline"
               size="icon"
+              aria-label="Aumentar zoom"
               onClick={() => onZoomChange(Math.min(1.5, zoom + 0.1))}
             >
               <ZoomIn className="h-4 w-4" />

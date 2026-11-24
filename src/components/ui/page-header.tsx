@@ -29,7 +29,12 @@ export function PageHeader({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {backUrl && (
-            <Button variant="ghost" size="icon" onClick={() => navigate(backUrl)}>
+            <Button
+              aria-label="Voltar"
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(backUrl)}
+            >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}

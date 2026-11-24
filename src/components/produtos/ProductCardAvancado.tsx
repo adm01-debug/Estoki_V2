@@ -69,7 +69,12 @@ export function ProductCardAvancado({ produto, onViewDetails }: ProductCardProps
         <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="h-8 w-8">
+              <Button
+                aria-label="Mais ações do produto"
+                variant="secondary"
+                size="icon"
+                className="h-8 w-8"
+              >
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>

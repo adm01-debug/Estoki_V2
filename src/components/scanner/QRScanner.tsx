@@ -195,7 +195,7 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
       {isScanning && (
         <div className="mt-4 flex justify-center gap-3">
           {cameras.length > 1 && (
-            <Button variant="outline" size="icon" onClick={switchCamera}>
+            <Button aria-label="Trocar câmera" variant="outline" size="icon" onClick={switchCamera}>
               <RotateCcw className="h-5 w-5" />
             </Button>
           )}
