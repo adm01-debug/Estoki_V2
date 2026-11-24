@@ -83,15 +83,33 @@ export function TelemetryTable({ rows, isLoading }: TelemetryTableProps) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b bg-muted/30">
-                  <th className="p-3 text-left font-medium text-muted-foreground">Quando</th>
-                  <th className="p-3 text-left font-medium text-muted-foreground">Operação</th>
-                  <th className="p-3 text-left font-medium text-muted-foreground">Tabela/RPC</th>
-                  <th className="p-3 text-right font-medium text-muted-foreground">Duração</th>
-                  <th className="p-3 text-right font-medium text-muted-foreground">Records</th>
-                  <th className="p-3 text-right font-medium text-muted-foreground">Limit</th>
-                  <th className="p-3 text-right font-medium text-muted-foreground">Offset</th>
-                  <th className="p-3 text-left font-medium text-muted-foreground">Count</th>
-                  <th className="p-3 text-left font-medium text-muted-foreground">Severidade</th>
+                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">
+                    Quando
+                  </th>
+                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">
+                    Operação
+                  </th>
+                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">
+                    Tabela/RPC
+                  </th>
+                  <th scope="col" className="p-3 text-right font-medium text-muted-foreground">
+                    Duração
+                  </th>
+                  <th scope="col" className="p-3 text-right font-medium text-muted-foreground">
+                    Records
+                  </th>
+                  <th scope="col" className="p-3 text-right font-medium text-muted-foreground">
+                    Limit
+                  </th>
+                  <th scope="col" className="p-3 text-right font-medium text-muted-foreground">
+                    Offset
+                  </th>
+                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">
+                    Count
+                  </th>
+                  <th scope="col" className="p-3 text-left font-medium text-muted-foreground">
+                    Severidade
+                  </th>
                 </tr>
               </thead>
               <tbody>

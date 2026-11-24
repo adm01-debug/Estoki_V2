@@ -255,12 +255,24 @@ export default function FornecedoresAvancado() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="p-2 text-left font-semibold">Fornecedor</th>
-                    <th className="p-2 text-center font-semibold">Score</th>
-                    <th className="p-2 text-center font-semibold">Entregas</th>
-                    <th className="p-2 text-center font-semibold">Conformes</th>
-                    <th className="p-2 text-center font-semibold">Divergentes</th>
-                    <th className="p-2 text-center font-semibold">Lead Time (dias)</th>
+                    <th scope="col" className="p-2 text-left font-semibold">
+                      Fornecedor
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Score
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Entregas
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Conformes
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Divergentes
+                    </th>
+                    <th scope="col" className="p-2 text-center font-semibold">
+                      Lead Time (dias)
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

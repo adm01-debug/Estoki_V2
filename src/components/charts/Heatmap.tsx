@@ -21,9 +21,11 @@ export function Heatmap({ data, colorScale = ["#f0fdf4", "#22c55e", "#15803d"] }
         <table className="border-collapse">
           <thead>
             <tr>
-              <th></th>
+              <th scope="col">
+                <span className="sr-only">Categoria</span>
+              </th>
               {xLabels.map((x) => (
-                <th key={x} className="origin-left rotate-45 p-1 text-xs">
+                <th key={x} scope="col" className="origin-left rotate-45 p-1 text-xs">
                   {x}
                 </th>
               ))}
@@ -32,7 +34,9 @@ export function Heatmap({ data, colorScale = ["#f0fdf4", "#22c55e", "#15803d"] }
           <tbody>
             {yLabels.map((y) => (
               <tr key={y}>
-                <td className="p-1 pr-2 text-right text-xs">{y}</td>
+                <th scope="row" className="p-1 pr-2 text-right text-xs font-normal">
+                  {y}
+                </th>
                 {xLabels.map((x) => {
                   const v = getValue(x, y);
                   return (

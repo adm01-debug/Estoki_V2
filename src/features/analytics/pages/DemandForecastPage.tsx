@@ -356,11 +356,21 @@ export default function PrevisaoDemandaIA() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="p-2 text-left">Produto</th>
-                    <th className="p-2 text-center">Demanda Prevista</th>
-                    <th className="p-2 text-center">Tendência</th>
-                    <th className="p-2 text-center">Confiança</th>
-                    <th className="p-2 text-left">Recomendação IA</th>
+                    <th scope="col" className="p-2 text-left">
+                      Produto
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Demanda Prevista
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Tendência
+                    </th>
+                    <th scope="col" className="p-2 text-center">
+                      Confiança
+                    </th>
+                    <th scope="col" className="p-2 text-left">
+                      Recomendação IA
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
