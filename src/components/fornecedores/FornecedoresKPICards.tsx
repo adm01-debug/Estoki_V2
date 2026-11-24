@@ -1,10 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle, Package, AlertTriangle } from "lucide-react";
+import { formatarPercentual } from "@/lib/fornecedorScore";
 
 interface Props {
   total: number;
-  qualidadeMedia: number;
-  pontualidadeMedia: number;
+  qualidadeMedia: number | null;
+  pontualidadeMedia: number | null;
   criticosCount: number;
 }
 
@@ -37,7 +38,7 @@ export function FornecedoresKPICards({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Qualidade Média</p>
-              <p className="text-2xl font-bold">{qualidadeMedia.toFixed(1)}%</p>
+              <p className="text-2xl font-bold">{formatarPercentual(qualidadeMedia)}</p>
             </div>
           </div>
         </CardContent>
@@ -50,7 +51,7 @@ export function FornecedoresKPICards({
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Pontualidade</p>
-              <p className="text-2xl font-bold">{pontualidadeMedia.toFixed(1)}%</p>
+              <p className="text-2xl font-bold">{formatarPercentual(pontualidadeMedia)}</p>
             </div>
           </div>
         </CardContent>
