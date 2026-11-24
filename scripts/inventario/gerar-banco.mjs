@@ -40,6 +40,25 @@ export const LIMIARES = {
   historicoCronMaisDe7Dias: 50000,
 };
 
+/**
+ * Funcoes que PODEM ficar executaveis por `anon`: o fluxo pre-login (lockout/login), as funcoes
+ * citadas em policy de RLS (executam com privilegio do chamador) e o probe publico de
+ * disponibilidade. A lista do que foi REVOGADO esta em
+ * supabase/migrations/20261124120000_SEC_revoke_anon_execute.sql.
+ */
+export const ANON_PRE_LOGIN = new Set([
+  'has_role',
+  'is_tenant_admin',
+  'is_tenant_member',
+  'effective_tenant_id',
+  'default_tenant_id',
+  'current_tenant_id',
+  'check_login_lockout',
+  'record_failed_login',
+  'reset_login_attempts',
+  'get_backend_health',
+]);
+
 /** Algo com cara de credencial no texto? (mesma regra do Promo_Gifts_V4) */
 export const PARECE_CREDENCIAL = /Bearer\s+[A-Za-z0-9._-]{20,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]+\.|sb_secret_/;
 
@@ -208,6 +227,11 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   // cofre de credencial ainda sem linha) merece o aviso do mesmo jeito.
   const rlsSemPolicy = tabelas.filter((t) => t.rls && t.policies === 0).map((t) => t.nome);
   if (rlsSemPolicy.length) alertas.push({ tipo: 'rls_sem_policy', detalhe: rlsSemPolicy });
+  // `anon` herda EXECUTE de PUBLIC, entao `REVOKE ... FROM PUBLIC` sozinho nao bloqueia (furo do
+  // picking, corrigido em 20261124120000). Toda funcao fora do fluxo pre-login que a chave publica
+  // ainda executa e API exposta sem querer.
+  const anonIndevidas = (dado.funcoes_executaveis_anon ?? []).filter((nome) => !ANON_PRE_LOGIN.has(nome));
+  if (anonIndevidas.length) alertas.push({ tipo: 'funcao_anon_executavel', detalhe: anonIndevidas });
   const cronRuim = dado.cron.jobs
     .filter((j) => j.ativo && j.taxa_falha_7d_pct >= LIMIARES.taxaFalhaCronPct)
     .map((j) => `${j.nome} (${j.taxa_falha_7d_pct}% em 7d)`);
