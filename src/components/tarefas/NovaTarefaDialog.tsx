@@ -47,48 +47,25 @@ export function NovaTarefaDialog({
         <DialogHeader>
           <DialogTitle>Nova Tarefa</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="tipo">Tipo</Label>
-            <Select
-              value={novaTarefa.tipo}
-              onValueChange={(v) => setNovaTarefa({ ...novaTarefa, tipo: v as TipoTarefa })}
-            >
-              <SelectTrigger id="tipo">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(tipoLabels).map(([key, val]) => (
-                  <SelectItem key={key} value={key}>
-                    {val}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição *</Label>
-            <Textarea
-              id="descricao"
-              placeholder="Descreva a tarefa..."
-              value={novaTarefa.descricao}
-              onChange={(e) => setNovaTarefa({ ...novaTarefa, descricao: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (submitting) return;
+            onCriar();
+          }}
+        >
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="prioridade">Prioridade</Label>
+              <Label htmlFor="tipo">Tipo</Label>
               <Select
-                value={novaTarefa.prioridade}
-                onValueChange={(v) =>
-                  setNovaTarefa({ ...novaTarefa, prioridade: v as PrioridadeTarefa })
-                }
+                value={novaTarefa.tipo}
+                onValueChange={(v) => setNovaTarefa({ ...novaTarefa, tipo: v as TipoTarefa })}
               >
-                <SelectTrigger id="prioridade">
+                <SelectTrigger id="tipo">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(prioridadeLabels).map(([key, val]) => (
+                  {Object.entries(tipoLabels).map(([key, val]) => (
                     <SelectItem key={key} value={key}>
                       {val}
                     </SelectItem>
@@ -97,26 +74,57 @@ export function NovaTarefaDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="quantidade">Quantidade</Label>
-              <Input
-                id="quantidade"
-                type="number"
-                value={novaTarefa.quantidade}
-                onChange={(e) =>
-                  setNovaTarefa({ ...novaTarefa, quantidade: Number(e.target.value) })
-                }
+              <Label htmlFor="descricao">Descrição *</Label>
+              <Textarea
+                id="descricao"
+                placeholder="Descreva a tarefa..."
+                value={novaTarefa.descricao}
+                onChange={(e) => setNovaTarefa({ ...novaTarefa, descricao: e.target.value })}
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="prioridade">Prioridade</Label>
+                <Select
+                  value={novaTarefa.prioridade}
+                  onValueChange={(v) =>
+                    setNovaTarefa({ ...novaTarefa, prioridade: v as PrioridadeTarefa })
+                  }
+                >
+                  <SelectTrigger id="prioridade">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(prioridadeLabels).map(([key, val]) => (
+                      <SelectItem key={key} value={key}>
+                        {val}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="quantidade">Quantidade</Label>
+                <Input
+                  id="quantidade"
+                  type="number"
+                  value={novaTarefa.quantidade}
+                  onChange={(e) =>
+                    setNovaTarefa({ ...novaTarefa, quantidade: Number(e.target.value) })
+                  }
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={onCriar} disabled={submitting}>
-            {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Criar Tarefa
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Criar Tarefa
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

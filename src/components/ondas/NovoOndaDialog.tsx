@@ -101,73 +101,81 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
         <DialogHeader>
           <DialogTitle>Nova Onda de Separação</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (saving) return;
+            handleSave();
+          }}
+        >
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="codigo">Código</Label>
+                <Input
+                  id="codigo"
+                  value={formData.codigo}
+                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="prioridade">Prioridade</Label>
+                <Select
+                  value={formData.prioridade}
+                  onValueChange={(v) => setFormData({ ...formData, prioridade: v as any })}
+                >
+                  <SelectTrigger id="prioridade">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="baixa">Baixa</SelectItem>
+                    <SelectItem value="media">Média</SelectItem>
+                    <SelectItem value="alta">Alta</SelectItem>
+                    <SelectItem value="urgente">Urgente</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="codigo">Código</Label>
+              <Label htmlFor="descricao">Descrição</Label>
               <Input
-                id="codigo"
-                value={formData.codigo}
-                onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                id="descricao"
+                value={formData.descricao}
+                onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
+                placeholder="Ex: Pedidos E-commerce Manhã"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="prioridade">Prioridade</Label>
-              <Select
-                value={formData.prioridade}
-                onValueChange={(v) => setFormData({ ...formData, prioridade: v as any })}
-              >
-                <SelectTrigger id="prioridade">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="baixa">Baixa</SelectItem>
-                  <SelectItem value="media">Média</SelectItem>
-                  <SelectItem value="alta">Alta</SelectItem>
-                  <SelectItem value="urgente">Urgente</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="zona-alvo">Zona Alvo</Label>
+                <Input
+                  id="zona-alvo"
+                  value={formData.zona_alvo}
+                  onChange={(e) => setFormData({ ...formData, zona_alvo: e.target.value })}
+                  placeholder="Ex: A, B, C"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="rota">Rota</Label>
+                <Input
+                  id="rota"
+                  value={formData.rota}
+                  onChange={(e) => setFormData({ ...formData, rota: e.target.value })}
+                  placeholder="Ex: Norte"
+                />
+              </div>
             </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição</Label>
-            <Input
-              id="descricao"
-              value={formData.descricao}
-              onChange={(e) => setFormData({ ...formData, descricao: e.target.value })}
-              placeholder="Ex: Pedidos E-commerce Manhã"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="zona-alvo">Zona Alvo</Label>
-              <Input
-                id="zona-alvo"
-                value={formData.zona_alvo}
-                onChange={(e) => setFormData({ ...formData, zona_alvo: e.target.value })}
-                placeholder="Ex: A, B, C"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="rota">Rota</Label>
-              <Input
-                id="rota"
-                value={formData.rota}
-                onChange={(e) => setFormData({ ...formData, rota: e.target.value })}
-                placeholder="Ex: Norte"
-              />
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} disabled={saving}>
-            {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Criar Onda
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Criar Onda
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
