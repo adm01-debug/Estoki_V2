@@ -64,8 +64,8 @@ jobs:
         id: build
         env:
           ANALYZE: "true"
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
         run: npm run build
         continue-on-error: true
 
@@ -105,8 +105,8 @@ jobs:
           npx playwright install --with-deps chromium
           npx playwright test tests/e2e/routes-smoke.spec.ts --project=chromium --reporter=list
         env:
-          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
 
       - name: Security (npm audit)
         id: security
