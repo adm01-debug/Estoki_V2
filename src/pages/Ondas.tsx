@@ -4,6 +4,7 @@ import { NovoOndaDialog } from "@/components/ondas/NovoOndaDialog";
 import { Download } from "lucide-react";
 import { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -146,6 +147,17 @@ export default function OndasPage() {
       toast.error("Erro ao iniciar onda");
     }
   };
+
+  if (error) {
+    return (
+      <AppLayout title="Ondas de Separação" showBack>
+        <ErrorState
+          message="Não foi possível carregar as ondas de separação."
+          onRetry={() => reloadOndas()}
+        />
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 import { LotesCharts } from "@/components/charts/WMSModuleCharts";
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -68,6 +69,7 @@ export default function LotesPage() {
     data: lotes = [],
     isLoading: loading,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["lotes-list"],
     queryFn: fetchLotes,
@@ -114,6 +116,16 @@ export default function LotesPage() {
     }).length;
     return { total, conferidos, pendentes, comDivergencia, vencendo };
   }, [lotes]);
+
+  if (error) {
+    return (
+      <AppLayout title="Lotes" showBack>
+        <PageTransition>
+          <ErrorState message="Não foi possível carregar os lotes." onRetry={() => refetch()} />
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (
