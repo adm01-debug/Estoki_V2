@@ -56,7 +56,7 @@ export const CheckpointsTab = memo(function CheckpointsTab() {
               Registrar Checkpoint
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby={undefined}>
             <DialogHeader>
               <DialogTitle>Registrar Checkpoint de Zona</DialogTitle>
             </DialogHeader>

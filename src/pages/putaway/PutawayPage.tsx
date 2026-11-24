@@ -141,7 +141,7 @@ export default function PutawayPage() {
             </Card>
 
             <Dialog open={scanOpen} onOpenChange={setScanOpen}>
-              <DialogContent>
+              <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                   <DialogTitle>Escanear Local de Destino</DialogTitle>
                 </DialogHeader>

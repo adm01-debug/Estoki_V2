@@ -111,7 +111,7 @@ export function AssinaturaConferenciaDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-lg">
+      <DialogContent aria-describedby={undefined} className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <PenLine className="h-5 w-5" />

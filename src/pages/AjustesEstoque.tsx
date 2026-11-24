@@ -173,7 +173,7 @@ export default function AjustesEstoquePage() {
                     <Plus className="h-4 w-4" /> Novo Ajuste
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent aria-describedby={undefined} className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Solicitar Ajuste de Quantidade</DialogTitle>
                   </DialogHeader>

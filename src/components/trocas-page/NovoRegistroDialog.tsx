@@ -80,7 +80,7 @@ export function NovoRegistroDialog({ onSave, saving }: NovoRegistroDialogProps) 
           Novo Registro
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Registrar Troca/Devolução</DialogTitle>
         </DialogHeader>

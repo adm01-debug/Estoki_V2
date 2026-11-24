@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 interface ImageZoomProps {
   src: string;
   alt?: string;
@@ -17,7 +17,11 @@ export function ImageZoom({ src, alt, className }: ImageZoomProps) {
         onClick={() => setIsOpen(true)}
       />
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-h-[90vh] max-w-[90vw] overflow-auto">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[90vh] max-w-[90vw] overflow-auto"
+        >
+          <DialogTitle className="sr-only">Imagem ampliada</DialogTitle>
           <img
             src={src}
             alt={alt}

@@ -232,7 +232,10 @@ export function DataImporter<T>({
       )}
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-h-[80vh] max-w-4xl overflow-auto">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[80vh] max-w-4xl overflow-auto"
+        >
           <DialogHeader>
             <DialogTitle>Preview dos Dados ({result?.success.length} registros)</DialogTitle>
           </DialogHeader>
@@ -267,7 +270,10 @@ export function DataImporter<T>({
       </Dialog>
 
       <Dialog open={showErrors} onOpenChange={setShowErrors}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-h-[80vh] max-w-2xl overflow-auto"
+        >
           <DialogHeader>
             <DialogTitle>Erros de Validação ({result?.errors.length})</DialogTitle>
           </DialogHeader>

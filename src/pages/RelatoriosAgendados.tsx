@@ -152,7 +152,7 @@ export default function RelatoriosAgendados() {
               Novo Agendamento
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby={undefined}>
             <DialogHeader>
               <DialogTitle>Novo Relatório Agendado</DialogTitle>
             </DialogHeader>

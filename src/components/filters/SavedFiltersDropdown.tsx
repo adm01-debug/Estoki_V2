@@ -169,7 +169,7 @@ export function SavedFiltersDropdown({
       </DropdownMenu>
 
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
-        <DialogContent>
+        <DialogContent aria-describedby={undefined}>
           <DialogHeader>
             <DialogTitle>Salvar Filtro</DialogTitle>
           </DialogHeader>

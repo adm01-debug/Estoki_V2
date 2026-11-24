@@ -71,7 +71,7 @@ export function NovoOndaDialog({ onSuccess }: { onSuccess: () => void }) {
           <span className="hidden sm:inline">Nova Onda</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Nova Onda de Separação</DialogTitle>
         </DialogHeader>

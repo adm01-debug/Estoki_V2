@@ -97,7 +97,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
               Registrar Ocorrência
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby={undefined}>
             <DialogHeader>
               <DialogTitle>Nova Ocorrência de Perda</DialogTitle>
             </DialogHeader>
@@ -206,7 +206,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                           Parecer
                         </Button>
                       </DialogTrigger>
-                      <DialogContent>
+                      <DialogContent aria-describedby={undefined}>
                         <DialogHeader>
                           <DialogTitle>Emitir Parecer — {oc.codigo}</DialogTitle>
                         </DialogHeader>

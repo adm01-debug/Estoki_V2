@@ -89,7 +89,7 @@ export function GeradorEtiquetas({ open, onOpenChange, data }: GeradorEtiquetasP
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+      <DialogContent aria-describedby={undefined} className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">🏷️ Gerar Etiquetas QR Code</DialogTitle>
         </DialogHeader>

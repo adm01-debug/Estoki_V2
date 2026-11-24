@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 interface GalleryProps {
   images: { src: string; alt?: string }[];
   columns?: number;
@@ -22,7 +22,8 @@ export function Gallery({ images, columns = 3 }: GalleryProps) {
         ))}
       </div>
       <Dialog open={selected !== null} onOpenChange={() => setSelected(null)}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent aria-describedby={undefined} className="max-w-4xl">
+          <DialogTitle className="sr-only">Visualização de imagem</DialogTitle>
           {selected !== null && (
             <img src={images[selected].src} alt={images[selected].alt} className="w-full" />
           )}

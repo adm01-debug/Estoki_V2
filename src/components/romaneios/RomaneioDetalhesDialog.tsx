@@ -72,7 +72,10 @@ export function RomaneioDetalhesDialog({
 
   return (
     <Dialog open={!!romaneio} onOpenChange={() => onClose()}>
-      <DialogContent className="max-h-[80vh] max-w-3xl overflow-y-auto">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-h-[80vh] max-w-3xl overflow-y-auto"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Truck className="h-5 w-5" />

@@ -6,7 +6,7 @@ import {
   CommandItem,
   CommandEmpty,
 } from "@/components/ui/command";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 interface SpotlightProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,7 +18,8 @@ export function Spotlight({ isOpen, onClose, items, placeholder = "Search..." }:
   const filtered = items.filter((item) => item.label.toLowerCase().includes(query.toLowerCase()));
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg p-0">
+      <DialogContent aria-describedby={undefined} className="max-w-lg p-0">
+        <DialogTitle className="sr-only">Busca rápida</DialogTitle>
         <Command>
           <CommandInput placeholder={placeholder} value={query} onValueChange={setQuery} />
           <CommandList>

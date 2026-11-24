@@ -94,7 +94,7 @@ export const PosicaoCard = memo(function PosicaoCard({
       </Card>
 
       <Dialog open={showDetails} onOpenChange={setShowDetails}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent aria-describedby={undefined} className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Info className="h-5 w-5 text-primary" />
