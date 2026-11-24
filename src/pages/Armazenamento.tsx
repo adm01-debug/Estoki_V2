@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { useEstoque, PosicaoEstoque } from "@/features/inventory/hooks/useEstoque";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { useMovimentacoes } from "@/hooks/useMovimentacoes";
 import {
   ArrowRight,
@@ -135,7 +136,7 @@ const calcularSugestoes = (posicoes: PosicaoEstoque[], item: ItemArmazenar): Pos
 const ArmazenamentoPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { posicoes, loading: loadingPosicoes, refetch } = useEstoque();
+  const { posicoes, loading: loadingPosicoes, error: erroPosicoes, refetch } = useEstoque();
   const { registrarEntrada } = useMovimentacoes();
 
   const [posicaoSelecionada, setPosicaoSelecionada] = useState<PosicaoSugerida | null>(null);
@@ -279,6 +280,16 @@ const ArmazenamentoPage = () => {
       setConfirmando(false);
     }
   };
+
+  if (erroPosicoes)
+    return (
+      <AppLayout title="WMS Putaway AI" showBack>
+        <ErrorState
+          message="Não foi possível carregar as posições de estoque."
+          onRetry={() => refetch()}
+        />
+      </AppLayout>
+    );
 
   if (loadingPosicoes)
     return (

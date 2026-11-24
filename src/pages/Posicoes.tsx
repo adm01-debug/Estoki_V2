@@ -17,6 +17,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEstoque } from "@/features/inventory/hooks/useEstoque";
+import { ErrorState } from "@/components/common/AsyncStates";
 import type { PosicaoEstoque, StatusPosicao } from "@/types/inventory";
 import { NovaPosicaoDialog } from "@/features/inventory/components/NovaPosicaoDialog";
 import { PosicaoDetalhesDialog } from "@/features/inventory/components/PosicaoDetalhesDialog";
@@ -52,7 +53,14 @@ const statusLabels: Record<
 };
 
 export default function PosicoesPage() {
-  const { posicoes: rawPosicoes, loading, updatePosicao, getEstatisticas, refetch } = useEstoque();
+  const {
+    posicoes: rawPosicoes,
+    loading,
+    error,
+    updatePosicao,
+    getEstatisticas,
+    refetch,
+  } = useEstoque();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const toggleSelection = (id: string) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
@@ -102,6 +110,16 @@ export default function PosicoesPage() {
   }, [posicoes, search, statusFilter, tipoFilter]);
 
   const stats = useMemo(() => getEstatisticas(), [getEstatisticas]);
+
+  if (error) {
+    return (
+      <AppLayout title="Posições de Estoque" showBack>
+        <PageTransition>
+          <ErrorState message="Não foi possível carregar as posições." onRetry={() => refetch()} />
+        </PageTransition>
+      </AppLayout>
+    );
+  }
 
   if (loading) {
     return (
