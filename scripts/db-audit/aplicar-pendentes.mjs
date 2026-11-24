@@ -42,41 +42,29 @@ const EXISTE_HAS_ROLE =
   "exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
   "where n.nspname = 'public' and p.proname = 'has_role')";
 
-// Mesmos alvos da migration 20261124120000_SEC_revoke_anon_execute.sql. Essa migration nao
-// cria objeto nenhum: ela revoga EXECUTE, entao a prova de aplicacao e negativa -- nenhuma
-// dessas funcoes pode continuar executavel por `anon` (que herda EXECUTE de PUBLIC).
-const ALVOS_REVOKE_ANON = [
-  "iniciar_tarefa_picking",
-  "concluir_tarefa_picking",
-  "move_stock",
-  "aplicar_ajuste_estoque",
-  "log_audit_event",
-  "registrar_checkin_diario",
-  "collect_challenge_reward",
-  "adicionar_xp",
-  "descontar_pontos",
-  "get_current_user_permissions",
-  "get_dashboard_metrics",
-  "refresh_dashboard_materialized_views",
-  "incrementar_metrica_dashboard",
-  "get_user_role",
-  "has_role_v2",
-  "get_min_stock_threshold",
-  "get_reorder_point",
-  "attach_user_to_default_tenant",
-  "handle_new_user",
-  "log_posicao_status_change",
-  "audit_sensitive_row_change",
-  "check_db_alert_thresholds",
-  "set_system_settings_updated_at",
-  "increment_version",
+// Mesma regra da migration 20261124120000_SEC_revoke_anon_execute.sql. Essa migration nao cria
+// objeto nenhum: ela revoga EXECUTE, entao a prova de aplicacao e negativa -- nenhuma funcao de
+// `public` fora do fluxo publico pre-login (e fora de extensao/trigger) pode continuar executavel
+// por `anon`, que herda EXECUTE de PUBLIC.
+const ANON_PUBLICO = [
+  "has_role",
+  "is_tenant_admin",
+  "is_tenant_member",
+  "effective_tenant_id",
+  "default_tenant_id",
+  "current_tenant_id",
+  "check_login_lockout",
+  "record_failed_login",
+  "reset_login_attempts",
+  "get_backend_health",
 ];
 
 const ANON_SEM_EXECUTE =
   "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
-  "where n.nspname = 'public' and p.prokind = 'f' " +
+  "where n.nspname = 'public' and p.prorettype <> 'pg_catalog.trigger'::regtype " +
+  "and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e') " +
   "and has_function_privilege('anon', p.oid, 'EXECUTE') " +
-  `and p.proname = any(array[${ALVOS_REVOKE_ANON.map((alvo) => `'${alvo}'`).join(",")}]))`;
+  `and p.proname <> all (array[${ANON_PUBLICO.map((nome) => `'${nome}'`).join(",")}]))`;
 
 const PENDENCIAS = [
   {
