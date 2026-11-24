@@ -42,6 +42,42 @@ const EXISTE_HAS_ROLE =
   "exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
   "where n.nspname = 'public' and p.proname = 'has_role')";
 
+// Mesmos alvos da migration 20261124120000_SEC_revoke_anon_execute.sql. Essa migration nao
+// cria objeto nenhum: ela revoga EXECUTE, entao a prova de aplicacao e negativa -- nenhuma
+// dessas funcoes pode continuar executavel por `anon` (que herda EXECUTE de PUBLIC).
+const ALVOS_REVOKE_ANON = [
+  "iniciar_tarefa_picking",
+  "concluir_tarefa_picking",
+  "move_stock",
+  "aplicar_ajuste_estoque",
+  "log_audit_event",
+  "registrar_checkin_diario",
+  "collect_challenge_reward",
+  "adicionar_xp",
+  "descontar_pontos",
+  "get_current_user_permissions",
+  "get_dashboard_metrics",
+  "refresh_dashboard_materialized_views",
+  "incrementar_metrica_dashboard",
+  "get_user_role",
+  "has_role_v2",
+  "get_min_stock_threshold",
+  "get_reorder_point",
+  "attach_user_to_default_tenant",
+  "handle_new_user",
+  "log_posicao_status_change",
+  "audit_sensitive_row_change",
+  "check_db_alert_thresholds",
+  "set_system_settings_updated_at",
+  "increment_version",
+];
+
+const ANON_SEM_EXECUTE =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' and p.prokind = 'f' " +
+  "and has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  `and p.proname = any(array[${ALVOS_REVOKE_ANON.map((alvo) => `'${alvo}'`).join(",")}]))`;
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -61,6 +97,12 @@ const PENDENCIAS = [
       "to_regprocedure('public.iniciar_tarefa_picking(uuid)') is not null and " +
       "to_regprocedure('public.concluir_tarefa_picking(uuid,numeric,text)') is not null",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261124120000_SEC_revoke_anon_execute.sql",
+    nome: "revoke_anon_execute",
+    aplicado: ANON_SEM_EXECUTE,
+    dependencias: [],
   },
 ];
 
