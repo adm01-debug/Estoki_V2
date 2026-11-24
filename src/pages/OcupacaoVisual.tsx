@@ -7,6 +7,7 @@ import { Warehouse, BarChart3, CheckCircle, Clock, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { motion, AnimatePresence } from "framer-motion";
 import { PosicaoVisual, ViewMode } from "@/components/ocupacao/types";
 import { KPICard } from "@/components/ocupacao/KPICard";
@@ -27,6 +28,8 @@ export default function OcupacaoVisualPage() {
   const {
     data: posicoes = [],
     isLoading,
+    isError,
+    error,
     refetch,
     dataUpdatedAt,
   } = useQuery({
@@ -128,6 +131,17 @@ export default function OcupacaoVisualPage() {
   const lastUpdate = dataUpdatedAt
     ? new Date(dataUpdatedAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
     : "—";
+
+  if (isError) {
+    return (
+      <AppLayout title="Mapa Visual – Portapaletes" showBack>
+        <ErrorState
+          message={`Não foi possível carregar o mapa de ocupação: ${String((error as Error)?.message ?? error ?? "erro desconhecido")}`}
+          onRetry={() => void refetch()}
+        />
+      </AppLayout>
+    );
+  }
 
   if (isLoading) {
     return (

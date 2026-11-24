@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Hash, Search } from "lucide-react";
+import { ErrorState } from "@/components/common/AsyncStates";
 
 // Coluna real de public.serial_numbers (provada no banco): numero_serial. Nao existe codigo.
 type Serial = {
@@ -30,7 +31,13 @@ const STATUS_LABELS: Record<
 export default function SerialsPage() {
   const [search, setSearch] = useState("");
 
-  const { data: serials = [], isLoading } = useQuery({
+  const {
+    data: serials = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["serial_numbers", "with_products"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -69,7 +76,12 @@ export default function SerialsPage() {
         />
       </div>
 
-      {isLoading ? (
+      {isError ? (
+        <ErrorState
+          message={`Não foi possível carregar os seriais: ${String((error as Error)?.message ?? error ?? "erro desconhecido")}`}
+          onRetry={() => void refetch()}
+        />
+      ) : isLoading ? (
         <p className="text-muted-foreground">Carregando...</p>
       ) : (
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

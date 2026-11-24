@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { ErrorState } from "@/components/common/AsyncStates";
 import {
   Search,
   UserPlus,
@@ -90,7 +91,9 @@ export default function UsersPage() {
   const {
     data: users = [],
     isLoading: loading,
+    isError,
     error,
+    refetch,
   } = useQuery({
     queryKey: ["users-list"],
     queryFn: fetchUsers,
@@ -137,19 +140,15 @@ export default function UsersPage() {
     }
   };
 
-  if (error) {
+  if (isError) {
     return (
       <AppLayout title="Gerenciamento de Usuários" showBack>
         <PageTransition>
           <div className="p-6">
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-sm font-bold text-destructive">Erro ao carregar usuários</p>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {String((error as Error)?.message ?? error)}
-                </p>
-              </CardContent>
-            </Card>
+            <ErrorState
+              message={`Erro ao carregar usuários: ${String((error as Error)?.message ?? error)}`}
+              onRetry={() => void refetch()}
+            />
           </div>
         </PageTransition>
       </AppLayout>

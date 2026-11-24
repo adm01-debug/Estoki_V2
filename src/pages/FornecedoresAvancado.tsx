@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ErrorState } from "@/components/common/AsyncStates";
 import {
   fetchFornecedorScores,
   recalcularFornecedorScores,
@@ -34,7 +35,13 @@ import { Progress } from "@/components/ui/progress";
 export default function FornecedoresAvancado() {
   const queryClient = useQueryClient();
   const [recalculando, setRecalculando] = useState(false);
-  const { data: fornecedores = [], isLoading: loading } = useQuery({
+  const {
+    data: fornecedores = [],
+    isLoading: loading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["fornecedor-scores"],
     queryFn: fetchFornecedorScores,
     staleTime: 1000 * 60 * 5,
@@ -103,6 +110,17 @@ export default function FornecedoresAvancado() {
     comScore.length > 0
       ? Math.round(comScore.reduce((s, f) => s + (f.score ?? 0), 0) / comScore.length)
       : null;
+
+  if (isError) {
+    return (
+      <div className="space-y-6 p-4 md:p-6">
+        <ErrorState
+          message={`Não foi possível carregar os fornecedores: ${String((error as Error)?.message ?? error ?? "erro desconhecido")}`}
+          onRetry={() => void refetch()}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 md:p-6">
