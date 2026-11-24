@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { test as authenticatedTest } from "./fixtures/auth";
 import AxeBuilder from "@axe-core/playwright";
 
 /**
@@ -43,3 +44,22 @@ for (const route of PUBLIC_ROUTES) {
     expect(blocking, `Blocking a11y issues on ${route}`).toEqual([]);
   });
 }
+
+/**
+ * E-173 — o skip link precisa ser o primeiro elemento focável e mover o foco
+ * para o `<main tabIndex={-1}>`; sem o tabIndex o hash muda mas o foco fica no
+ * `<body>` (quem usa teclado/leitor de tela continua no começo da página).
+ */
+authenticatedTest("a11y: skip link foca o conteúdo principal", async ({ authenticatedPage }) => {
+  const page = authenticatedPage;
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await page.keyboard.press("Tab");
+
+  const skipLink = page.getByRole("link", { name: "Pular para conteúdo principal" });
+  await expect(skipLink).toBeVisible({ timeout: 10_000 });
+  await expect(skipLink).toBeFocused();
+
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main-content")).toBeFocused();
+});

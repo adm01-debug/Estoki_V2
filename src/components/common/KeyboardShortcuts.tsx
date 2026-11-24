@@ -13,9 +13,8 @@ export function KeyboardShortcuts() {
     ["shift"]
   );
 
-  // Render only the trigger logic since KeyboardShortcutsHelp already has a dialog
-  // Actually, let's make KeyboardShortcutsHelp a controlled dialog if needed,
-  // or just use a hidden trigger.
-
-  return <KeyboardShortcutsHelp open={showHelp} onOpenChange={setShowHelp} />;
+  // Sem gatilho visual: o painel é uma ajuda para quem usa teclado e abre pelo
+  // atalho "?" (o gatilho no AppProviders era o 1º elemento focável da página,
+  // antes dos skip-links, e ficava escondido atrás da sidebar no desktop).
+  return <KeyboardShortcutsHelp open={showHelp} onOpenChange={setShowHelp} withTrigger={false} />;
 }
