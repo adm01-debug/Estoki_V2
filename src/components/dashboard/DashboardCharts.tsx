@@ -77,7 +77,7 @@ export const DashboardCharts = memo(function DashboardCharts({
         <TabsContent value="ocupacao" className="focus-visible:outline-none">
           <Card className="glass-card overflow-hidden border-border/30">
             <CardHeader className="border-b border-border/20 pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">
+              <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">
                 Ocupação por Porta-Palete
               </CardTitle>
             </CardHeader>

@@ -34,7 +34,7 @@ export const SidebarNavButton = memo(function SidebarNavButton({
     "w-full flex items-center gap-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
     collapsed ? "px-0 h-11 w-11 mx-auto justify-center" : "px-3 py-2.5",
     isActive
-      ? "bg-primary/15 text-primary"
+      ? "bg-primary/15 text-primary-bright"
       : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/80"
   );
 
@@ -57,7 +57,7 @@ export const SidebarNavButton = memo(function SidebarNavButton({
           className={cn(
             "h-[18px] w-[18px] shrink-0 transition-all duration-200",
             isActive
-              ? "text-primary"
+              ? "text-primary-bright"
               : "text-sidebar-foreground/70 group-hover:text-sidebar-foreground/70"
           )}
         />

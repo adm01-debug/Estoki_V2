@@ -46,7 +46,7 @@ export const SidebarHeader = memo(function SidebarHeader({
                   <h1 className="gradient-text text-[22px] font-black leading-[0.8] tracking-tighter text-sidebar-foreground">
                     PROMO
                   </h1>
-                  <p className="mt-1.5 text-[13px] font-black uppercase leading-none tracking-[0.25em] text-primary">
+                  <p className="mt-1.5 text-[13px] font-black uppercase leading-none tracking-[0.25em] text-primary-bright">
                     BRINDES
                   </p>
                 </div>

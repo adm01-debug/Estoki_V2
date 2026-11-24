@@ -71,7 +71,7 @@ export const IndexOperations = memo(function IndexOperations({
 
   return (
     <motion.section variants={itemVariants}>
-      <h2 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/60">
+      <h2 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary">
         <span className="h-px w-4 bg-primary/30" />
         Operações Rápidas
       </h2>

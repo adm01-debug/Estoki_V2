@@ -197,7 +197,7 @@ const DashboardPage = () => {
                           <History className="h-4 w-4 text-primary" />
                           Atividade Operacional
                         </CardTitle>
-                        <CardDescription className="text-[10px] font-bold uppercase opacity-60">
+                        <CardDescription className="text-[10px] font-bold uppercase">
                           Tempo Real
                         </CardDescription>
                       </div>

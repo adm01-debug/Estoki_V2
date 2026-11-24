@@ -24,10 +24,9 @@ import AxeBuilder from "@axe-core/playwright";
  *   e está em zero nas 16 rotas; o que não está (1 nó em `/recebimento`) tem
  *   diagnóstico e teto explícito em `KNOWN_DEBT_MARCACAO`. Um nó crítico novo
  *   falha o teste, sem depender do teto de contraste.
- * - **`color-contrast` — burndown, teto por rota.** `KNOWN_DEBT` guarda o pico
- *   observado (+1 nó de margem) e é um **teto, não um perdão**: passar dele
- *   falha o teste, e rota nova tem teto 0. Ao corrigir os tokens, baixe o
- *   número — este mapa é o burndown.
+ * - **`color-contrast` — gate duro.** `KNOWN_DEBT` guarda o teto por rota e
+ *   está vazio: qualquer nó de contraste novo falha o teste. Ao corrigir os
+ *   tokens, baixe o número — este mapa é o burndown.
  *
  * A medição é feita com `reducedMotion: "reduce"` e depois que o app montou
  * (`.initial-loader` de `index.html` fora do DOM e skeletons resolvidos). Sem
@@ -74,14 +73,15 @@ const PRIVATE_ROUTES = [
  * com ícone).
  *
  * O que sobrou é dívida real e mensurável:
- * - `color-contrast`: tokens com alfa sobre superfície clara
- *   (`text-primary/60..80`, `text-muted-foreground/60..70`, `text-warning/80`,
- *   `text-success` e `text-muted-foreground` em caixa alta de 10px), além dos
- *   triggers inativos do Radix Tabs. Correção é de design token, não de marcação.
  * - `aria-valid-attr-value` em `/recebimento`: os 6 filtros usam `TabsTrigger`
  *   sem nenhum `TabsContent`, então o `aria-controls` que o Radix gera aponta
  *   para um id inexistente. Ou viram segmented control (`aria-pressed`), ou
  *   ganham os tabpanels.
+ *
+ * `color-contrast` foi zerado em 2026-11-24: os tokens ganharam par claro/escuro
+ * com AA real (`--muted-foreground`, `--success`, `--warning`), o chrome escuro
+ * passou a usar `--primary-bright` e os textos com alfa (`/60` a `/80` em
+ * `text-` e `opacity-`) viraram cor sólida. Medido: 73 → 0 nós nas 15 rotas.
  *
  * Ao corrigir, **baixe o número aqui** — este mapa é o burndown.
  */
@@ -90,23 +90,8 @@ const KNOWN_DEBT_MARCACAO: Record<string, Record<string, number>> = {
   "/recebimento": { "aria-valid-attr-value": 1 },
 };
 
-const KNOWN_DEBT: Record<string, number> = {
-  "/": 12,
-  "/dashboard": 18,
-  "/estoque": 3,
-  "/produtos": 4,
-  "/recebimento": 4,
-  "/expedicao": 7,
-  "/picking": 4,
-  "/tarefas": 6,
-  "/ondas": 4,
-  "/pedidos": 4,
-  "/clientes": 4,
-  "/relatorios": 4,
-  "/alertas": 4,
-  "/admin/configuracoes": 2,
-  "/perfil": 8,
-};
+// Zerado: contraste agora é gate duro (qualquer nó novo falha o teste).
+const KNOWN_DEBT: Record<string, number> = {};
 
 // Projetos auditados: desktop chromium (baseline do burndown) e "Mobile
 // Chrome" (onde o layout esconde rótulo de botão e só o ícone fica). Os demais

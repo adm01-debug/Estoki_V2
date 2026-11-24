@@ -194,7 +194,7 @@ const KPIItem = ({
         <p
           className={cn(
             "text-[10px] font-bold uppercase tracking-widest",
-            variant === "warning" ? "text-warning/80" : "text-muted-foreground"
+            variant === "warning" ? "text-warning" : "text-muted-foreground"
           )}
         >
           {title}

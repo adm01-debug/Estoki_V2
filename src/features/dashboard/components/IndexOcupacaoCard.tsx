@@ -88,7 +88,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
             </div>
             <TooltipProvider>
               <div className="flex flex-col gap-3 border-t border-border/30 pt-4">
-                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                     <span>{posicoesOcupadas} Posições Ocupadas</span>

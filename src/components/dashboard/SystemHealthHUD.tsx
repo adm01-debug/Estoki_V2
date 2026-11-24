@@ -42,9 +42,9 @@ export const SystemHealthHUD = () => {
         className={cn(
           "flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-2.5 shadow-lg backdrop-blur-xl transition-all",
           status === "optimal"
-            ? "border-green-500/20 bg-green-500/5 text-green-600"
+            ? "border-success/20 bg-success/5 text-success"
             : status === "degraded"
-              ? "border-yellow-500/20 bg-yellow-500/5 text-yellow-600"
+              ? "border-warning/20 bg-warning/5 text-warning"
               : "border-red-500/20 bg-red-500/5 text-red-600"
         )}
       >
