@@ -45,7 +45,7 @@ export function PhotoCapture({ onCapture, onClose, aspectRatio = "4:3" }: PhotoC
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black">
       <div className="flex justify-end p-4">
-        <Button variant="ghost" size="icon" onClick={onClose}>
+        <Button aria-label="Fechar câmera" variant="ghost" size="icon" onClick={onClose}>
           <X className="h-6 w-6 text-white" />
         </Button>
       </div>

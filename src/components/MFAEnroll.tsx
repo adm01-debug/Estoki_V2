@@ -145,7 +145,12 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
               <code className="flex-1 break-all rounded bg-muted p-2 font-mono text-xs">
                 {enrollmentData?.secret}
               </code>
-              <Button variant="outline" size="icon" onClick={handleCopySecret}>
+              <Button
+                aria-label={copied ? "Segredo copiado" : "Copiar segredo"}
+                variant="outline"
+                size="icon"
+                onClick={handleCopySecret}
+              >
                 {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               </Button>
             </div>

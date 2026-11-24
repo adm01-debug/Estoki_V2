@@ -61,6 +61,7 @@ export const SidebarHeader = memo(function SidebarHeader({
         </div>
         {isMobile && (
           <Button
+            aria-label="Fechar menu lateral"
             variant="ghost"
             size="icon"
             onClick={onCloseMobile}

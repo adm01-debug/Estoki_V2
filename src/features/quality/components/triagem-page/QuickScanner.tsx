@@ -48,6 +48,7 @@ export function QuickScanner() {
     >
       <DialogTrigger asChild>
         <Button
+          aria-label="Escanear código"
           variant="ghost"
           size="icon"
           className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-primary"

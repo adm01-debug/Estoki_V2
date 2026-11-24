@@ -129,6 +129,7 @@ export function SavedFiltersManager({
                     {filter.nome}
                   </span>
                   <Button
+                    aria-label="Excluir filtro salvo"
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"

@@ -20,6 +20,7 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
       >
         <DialogTitle className="sr-only">Visualizador de imagens</DialogTitle>
         <Button
+          aria-label="Fechar visualizador"
           variant="ghost"
           size="icon"
           className="absolute right-2 top-2 text-white"
@@ -28,11 +29,18 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
           <X />
         </Button>
         <div className="flex h-full items-center justify-center">
-          <Button variant="ghost" size="icon" className="absolute left-2 text-white" onClick={prev}>
+          <Button
+            aria-label="Imagem anterior"
+            variant="ghost"
+            size="icon"
+            className="absolute left-2 text-white"
+            onClick={prev}
+          >
             <ChevronLeft />
           </Button>
           <img src={images[index]} className="max-h-[85vh] max-w-[85vw] object-contain" />
           <Button
+            aria-label="Próxima imagem"
             variant="ghost"
             size="icon"
             className="absolute right-2 text-white"

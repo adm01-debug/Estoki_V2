@@ -111,10 +111,17 @@ export function DataTable<T extends Record<string, any>>({
             Página {page + 1} de {pageCount}
           </span>
           <div className="flex gap-1">
-            <Button variant="outline" size="icon" onClick={() => setPage(0)} disabled={page === 0}>
+            <Button
+              aria-label="Primeira página"
+              variant="outline"
+              size="icon"
+              onClick={() => setPage(0)}
+              disabled={page === 0}
+            >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
             <Button
+              aria-label="Página anterior"
               variant="outline"
               size="icon"
               onClick={() => setPage(page - 1)}
@@ -123,6 +130,7 @@ export function DataTable<T extends Record<string, any>>({
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <Button
+              aria-label="Próxima página"
               variant="outline"
               size="icon"
               onClick={() => setPage(page + 1)}
@@ -131,6 +139,7 @@ export function DataTable<T extends Record<string, any>>({
               <ChevronRight className="h-4 w-4" />
             </Button>
             <Button
+              aria-label="Última página"
               variant="outline"
               size="icon"
               onClick={() => setPage(pageCount - 1)}

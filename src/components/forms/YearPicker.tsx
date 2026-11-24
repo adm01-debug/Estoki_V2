@@ -21,13 +21,23 @@ export function YearPicker({ value, onChange, minYear = 2000, maxYear = 2050 }: 
       </PopoverTrigger>
       <PopoverContent className="w-[280px]">
         <div className="mb-4 flex items-center justify-between">
-          <Button size="icon" variant="ghost" onClick={() => setDecade((d) => d - 10)}>
+          <Button
+            aria-label="Década anterior"
+            size="icon"
+            variant="ghost"
+            onClick={() => setDecade((d) => d - 10)}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="font-semibold">
             {decade} - {decade + 9}
           </span>
-          <Button size="icon" variant="ghost" onClick={() => setDecade((d) => d + 10)}>
+          <Button
+            aria-label="Próxima década"
+            size="icon"
+            variant="ghost"
+            onClick={() => setDecade((d) => d + 10)}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

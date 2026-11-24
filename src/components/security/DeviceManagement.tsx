@@ -168,6 +168,7 @@ export const DeviceManagement: React.FC = () => {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
+                          aria-label="Revogar dispositivo"
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:text-destructive"

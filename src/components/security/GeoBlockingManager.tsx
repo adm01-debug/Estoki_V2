@@ -153,6 +153,7 @@ export function GeoBlockingManager() {
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
+                            aria-label="Excluir regra"
                             variant="ghost"
                             size="icon"
                             className="text-destructive hover:text-destructive"

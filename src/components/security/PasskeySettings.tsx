@@ -243,6 +243,7 @@ export default function PasskeySettings() {
                     </div>
                   ) : (
                     <Button
+                      aria-label="Excluir passkey"
                       size="icon"
                       variant="ghost"
                       onClick={() => setDeleteConfirm(passkey.id)}

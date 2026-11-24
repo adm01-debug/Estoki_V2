@@ -31,6 +31,7 @@ export function PageHeader({
         <div className="flex items-center gap-3">
           {showBack && (
             <Button
+              aria-label="Voltar"
               variant="outline"
               size="icon"
               onClick={handleBack}

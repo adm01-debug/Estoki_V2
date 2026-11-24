@@ -600,6 +600,7 @@ export default function TriagemPage() {
                 </SelectContent>
               </Select>
               <Button
+                aria-label="Alternar ordenação"
                 variant="outline"
                 size="icon"
                 className="h-11 w-11 rounded-xl border-border/20 bg-background hover:bg-muted"
@@ -623,6 +624,7 @@ export default function TriagemPage() {
           {/* Floating Action Button for Mobile */}
           <div className="fixed bottom-6 right-6 z-50 md:hidden">
             <Button
+              aria-label="Iniciar triagem"
               size="icon"
               className="glow-button h-14 w-14 rounded-full shadow-2xl shadow-primary/40"
               onClick={() => {

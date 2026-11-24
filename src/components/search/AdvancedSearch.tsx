@@ -67,7 +67,13 @@ export function AdvancedSearch({
           )}
 
           {showClearButton && (
-            <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleClear}>
+            <Button
+              aria-label="Limpar busca"
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={handleClear}
+            >
               <X className="h-3 w-3" />
             </Button>
           )}
