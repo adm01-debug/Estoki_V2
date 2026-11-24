@@ -11,6 +11,11 @@ const DIALOGOS = [
   "src/components/romaneios/NovoRomaneioDialog.tsx",
   "src/components/common/SavedFiltersManager.tsx",
   "src/components/filters/SavedFiltersDropdown.tsx",
+  "src/components/DataImporter.tsx",
+  "src/components/security/PasskeySettings.tsx",
+  "src/features/receiving/components/ImportarNFDialog.tsx",
+  "src/pages/AjustesEstoque.tsx",
+  "src/pages/orders/OrdersPage.tsx",
 ];
 
 const read = (p: string) => readFileSync(resolve(process.cwd(), p), "utf8");
@@ -24,12 +29,15 @@ describe("diálogos de criação: Enter envia e ação não é ambígua", () => 
     expect(source).toContain('type="submit"');
   });
 
-  it.each(DIALOGOS)("%s não deixa botão sem type dentro do DialogContent", (file) => {
+  it.each(DIALOGOS)("%s não deixa botão sem type dentro do form", (file) => {
     const source = read(file);
-    const body = source.slice(source.indexOf("<DialogContent"));
-    const semType = [...body.matchAll(/<Button\b[^>]*>/g)]
+    const inicio = source.indexOf("<form");
+    const fim = source.indexOf("</form>");
+    expect(inicio).toBeGreaterThan(-1);
+    expect(fim).toBeGreaterThan(inicio);
+    const semType = [...source.slice(inicio, fim).matchAll(/<Button\b[^>]*>/g)]
       .map((m) => m[0])
-      .filter((tag) => !tag.includes('type="'));
+      .filter((tag) => !tag.includes('type="') && !tag.includes("asChild"));
     expect(semType).toEqual([]);
   });
 });

@@ -180,87 +180,102 @@ export default function AjustesEstoquePage() {
                   <DialogHeader>
                     <DialogTitle>Solicitar Ajuste de Quantidade</DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="produto">Produto *</Label>
-                      <Select
-                        value={newAdj.produto_id}
-                        onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
-                      >
-                        <SelectTrigger id="produto">
-                          <SelectValue placeholder="Selecione o produto..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {produtos.map((p) => (
-                            <SelectItem key={p.id} value={p.id}>
-                              {p.nome} <span className="text-muted-foreground">({p.sku})</span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (createAdjustment.isPending) return;
+                      handleCreate();
+                    }}
+                  >
+                    <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="qtd-atual">Qtd. Atual</Label>
-                        <Input
-                          id="qtd-atual"
-                          type="number"
-                          value={newAdj.quantidade_anterior}
-                          onChange={(e) =>
-                            setNewAdj({ ...newAdj, quantidade_anterior: parseInt(e.target.value) })
-                          }
-                        />
+                        <Label htmlFor="produto">Produto *</Label>
+                        <Select
+                          value={newAdj.produto_id}
+                          onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
+                        >
+                          <SelectTrigger id="produto">
+                            <SelectValue placeholder="Selecione o produto..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {produtos.map((p) => (
+                              <SelectItem key={p.id} value={p.id}>
+                                {p.nome} <span className="text-muted-foreground">({p.sku})</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="qtd-atual">Qtd. Atual</Label>
+                          <Input
+                            id="qtd-atual"
+                            type="number"
+                            value={newAdj.quantidade_anterior}
+                            onChange={(e) =>
+                              setNewAdj({
+                                ...newAdj,
+                                quantidade_anterior: parseInt(e.target.value),
+                              })
+                            }
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="nova-qtd">Nova Qtd.</Label>
+                          <Input
+                            id="nova-qtd"
+                            type="number"
+                            value={newAdj.quantidade_nova}
+                            onChange={(e) =>
+                              setNewAdj({ ...newAdj, quantidade_nova: parseInt(e.target.value) })
+                            }
+                          />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="nova-qtd">Nova Qtd.</Label>
-                        <Input
-                          id="nova-qtd"
-                          type="number"
-                          value={newAdj.quantidade_nova}
-                          onChange={(e) =>
-                            setNewAdj({ ...newAdj, quantidade_nova: parseInt(e.target.value) })
-                          }
+                        <Label htmlFor="motivo">Motivo</Label>
+                        <Select
+                          value={newAdj.motivo}
+                          onValueChange={(v) => setNewAdj({ ...newAdj, motivo: v })}
+                        >
+                          <SelectTrigger id="motivo">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="correcao">Correção de Contagem</SelectItem>
+                            <SelectItem value="quebra">Quebra/Avaria</SelectItem>
+                            <SelectItem value="perda">Perda/Extravio</SelectItem>
+                            <SelectItem value="inventario">Ajuste de Inventário</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="observacoes">Observações</Label>
+                        <Textarea
+                          id="observacoes"
+                          value={newAdj.observacoes}
+                          onChange={(e) => setNewAdj({ ...newAdj, observacoes: e.target.value })}
+                          placeholder="Explique o motivo do ajuste..."
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="motivo">Motivo</Label>
-                      <Select
-                        value={newAdj.motivo}
-                        onValueChange={(v) => setNewAdj({ ...newAdj, motivo: v })}
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsDialogOpen(false)}
                       >
-                        <SelectTrigger id="motivo">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="correcao">Correção de Contagem</SelectItem>
-                          <SelectItem value="quebra">Quebra/Avaria</SelectItem>
-                          <SelectItem value="perda">Perda/Extravio</SelectItem>
-                          <SelectItem value="inventario">Ajuste de Inventário</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="observacoes">Observações</Label>
-                      <Textarea
-                        id="observacoes"
-                        value={newAdj.observacoes}
-                        onChange={(e) => setNewAdj({ ...newAdj, observacoes: e.target.value })}
-                        placeholder="Explique o motivo do ajuste..."
-                      />
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancelar
-                    </Button>
-                    <Button
-                      onClick={handleCreate}
-                      disabled={createAdjustment.isPending || !newAdj.produto_id}
-                    >
-                      Enviar para Aprovação
-                    </Button>
-                  </DialogFooter>
+                        Cancelar
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={createAdjustment.isPending || !newAdj.produto_id}
+                      >
+                        Enviar para Aprovação
+                      </Button>
+                    </DialogFooter>
+                  </form>
                 </DialogContent>
               </Dialog>
             </div>
