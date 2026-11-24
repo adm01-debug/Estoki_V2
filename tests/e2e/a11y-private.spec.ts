@@ -114,7 +114,9 @@ const KNOWN_DEBT: Record<string, number> = {
 // Chrome, e firefox/webkit já têm o smoke público.
 const PROJETOS_GATE = ["chromium", "Mobile Chrome"];
 
-test.beforeEach((_fixtures, testInfo) => {
+// Playwright exige destructuring no 1o argumento do hook; o skip depende do projeto.
+// eslint-disable-next-line no-empty-pattern
+test.beforeEach(({}, testInfo) => {
   test.skip(
     !PROJETOS_GATE.includes(testInfo.project.name),
     `sweep de rotas privadas roda em ${PROJETOS_GATE.join(", ")}`
