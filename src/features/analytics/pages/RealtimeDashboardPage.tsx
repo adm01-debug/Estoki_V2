@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
@@ -100,13 +101,23 @@ const EMPTY_KPI: RealtimeKPI = {
 
 export default function DashboardTempoReal() {
   const queryClient = useQueryClient();
-  const { data: kpis = EMPTY_KPI } = useQuery({
+  const {
+    data: kpis = EMPTY_KPI,
+    isError: erroKpis,
+    error: erroKpisObj,
+    refetch: recarregarKpis,
+  } = useQuery({
     queryKey: ["realtime-kpis"],
     queryFn: fetchRealtimeKPIs,
     staleTime: 1000 * 30,
     gcTime: 1000 * 60 * 5,
   });
-  const { data: feed = [] } = useQuery({
+  const {
+    data: feed = [],
+    isError: erroFeed,
+    error: erroFeedObj,
+    refetch: recarregarFeed,
+  } = useQuery({
     queryKey: ["realtime-feed"],
     queryFn: fetchRealtimeFeed,
     staleTime: 1000 * 30,
@@ -234,6 +245,17 @@ export default function DashboardTempoReal() {
       </div>
 
       {/* KPI Grid */}
+      {erroKpis || erroFeed ? (
+        <ErrorState
+          message={`Não foi possível carregar os indicadores em tempo real: ${
+            (erroKpisObj as Error | null)?.message ?? (erroFeedObj as Error | null)?.message ?? ""
+          }`}
+          onRetry={() => {
+            if (erroKpis) recarregarKpis();
+            if (erroFeed) recarregarFeed();
+          }}
+        />
+      ) : null}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {kpiCards.map((kpi, i) => (
           <motion.div

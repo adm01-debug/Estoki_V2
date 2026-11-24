@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SEO } from "@/components/common/SEO";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,6 +120,10 @@ export default function Etiquetas() {
   const lotes = lotesQuery.data ?? [];
   const entregas = entregasQuery.data ?? [];
   const loading = lotesQuery.isLoading || entregasQuery.isLoading;
+  const erroCarregamento = fonte === "lotes" ? lotesQuery.isError : entregasQuery.isError;
+  const erroAtual = (fonte === "lotes" ? lotesQuery.error : entregasQuery.error) as Error | null;
+  const recarregarAtual = () =>
+    fonte === "lotes" ? lotesQuery.refetch() : entregasQuery.refetch();
 
   useEffect(() => {
     if (lotesQuery.error) {
@@ -343,7 +348,12 @@ export default function Etiquetas() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="max-h-[400px] overflow-y-auto p-0">
-                  {loading ? (
+                  {erroCarregamento ? (
+                    <ErrorState
+                      message={`Não foi possível carregar os registros: ${erroAtual?.message ?? ""}`}
+                      onRetry={recarregarAtual}
+                    />
+                  ) : loading ? (
                     <div className="flex justify-center py-12">
                       <Loader2 className="h-6 w-6 animate-spin text-primary" />
                     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { ErrorState } from "@/components/common/AsyncStates";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { useDemandForecast } from "../hooks/useDemandForecast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -74,7 +75,12 @@ export default function PrevisaoDemandaIA() {
   const [previsao, setPrevisao] = useState<Previsao | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const { data: produtos = [] } = useQuery({
+  const {
+    data: produtos = [],
+    isError: erroProdutos,
+    error: erroProdutosObj,
+    refetch: recarregarProdutos,
+  } = useQuery({
     queryKey: ["produtos-previsao"],
     queryFn: fetchProdutosPrevisao,
     staleTime: 1000 * 60 * 5,
@@ -192,6 +198,12 @@ export default function PrevisaoDemandaIA() {
       </div>
 
       {/* Product selector */}
+      {erroProdutos && (
+        <ErrorState
+          message={`Não foi possível carregar os produtos para previsão: ${(erroProdutosObj as Error).message}`}
+          onRetry={() => recarregarProdutos()}
+        />
+      )}
       <Card className="glass-card">
         <CardContent className="p-4">
           <div className="flex gap-3">
