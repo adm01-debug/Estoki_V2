@@ -68,7 +68,7 @@ const LoginPage = () => {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-sidebar">
+      <div className="flex min-h-dvh items-center justify-center bg-sidebar">
         <div className="flex flex-col items-center gap-4">
           <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
             <Box className="h-6 w-6 text-primary-foreground" />
@@ -84,7 +84,7 @@ const LoginPage = () => {
     "bg-sidebar-accent/60 border-sidebar-border text-sidebar-foreground placeholder:text-sidebar-foreground/70 focus:border-primary focus:ring-primary/20 h-11 rounded-lg";
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
+    <div className="relative flex min-h-dvh overflow-hidden">
       <div className="absolute inset-0 bg-sidebar" />
       <BrandingContent />
       <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">

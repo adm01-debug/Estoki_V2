@@ -149,6 +149,7 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
+                        className="h-11 w-11"
                         aria-label="Escanear código"
                         onClick={() => {
                           if (!scannedCode.trim()) {
@@ -167,6 +168,7 @@ export default function PickingPage() {
                       <Button
                         variant="outline"
                         size="icon"
+                        className="h-11 w-11"
                         onClick={isListening ? stopVoice : startVoice}
                         disabled={!isSpeechSupported}
                         title={

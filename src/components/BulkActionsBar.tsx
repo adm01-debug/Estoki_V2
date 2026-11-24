@@ -53,7 +53,7 @@ export function BulkActionsBar<T>({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6"
+          className="relative h-6 w-6 after:absolute after:-inset-2.5 after:content-['']"
           onClick={onClear}
           disabled={isExecuting}
         >

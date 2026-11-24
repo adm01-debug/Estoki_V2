@@ -133,7 +133,7 @@ export function BrandedSpinner({
 
 export function FullPageLoader({ text = "Carregando..." }: { text?: string }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background">
       <BrandedSpinner size="lg" text={text} />
     </div>
   );

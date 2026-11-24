@@ -145,13 +145,13 @@ export default function KPIsOperacionais() {
 
   if (loading)
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
       </div>
     );
   if (error)
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h-dvh items-center justify-center">
         <div className="text-destructive">Erro ao carregar dados: {error}</div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function KPIsOperacionais() {
         description="Indicadores operacionais em tempo real: ocupação, precisão e produtividade."
       />
       <AppLayout>
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 p-6">
+        <div className="min-h-dvh bg-gradient-to-br from-background via-background to-muted/20 p-6">
           <div className="mx-auto max-w-7xl space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
