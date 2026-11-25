@@ -1163,7 +1163,163 @@
     "reset_login_attempts"
   ],
   "funcoes_security_definer_sem_search_path": [],
-  "medido_em": "2026-11-25T00:08:54Z",
+  "medido_em": "2026-11-25T00:33:07Z",
+  "migrations_orfas": {
+    "criterio": "migration de supabase/migrations/ cuja tabela/funcao nao existe no banco (view fica de fora: o inventario nao guarda nome de view)",
+    "lista": [
+      {
+        "arquivo": "20240115000001_notifications.sql",
+        "motivo": "modelo antigo; o banco usa public.notificacoes",
+        "objetos": [
+          "notifications"
+        ]
+      },
+      {
+        "arquivo": "20240115000002_audit_logs.sql",
+        "motivo": "modelo antigo; o banco usa public.audit_log",
+        "objetos": [
+          "audit_logs"
+        ]
+      },
+      {
+        "arquivo": "20240115000003_inventory_counts.sql",
+        "motivo": "modelo antigo; o banco usa inventario_contagens/inventario_ciclos",
+        "objetos": [
+          "inventory_count_items",
+          "inventory_counts"
+        ]
+      },
+      {
+        "arquivo": "20240115_notifications.sql",
+        "motivo": "modelo antigo; o banco usa public.notificacoes",
+        "objetos": [
+          "notifications"
+        ]
+      },
+      {
+        "arquivo": "20240116_audit_logs.sql",
+        "motivo": "modelo antigo; o banco usa public.audit_log",
+        "objetos": [
+          "audit_logs",
+          "audit_trigger_func"
+        ]
+      },
+      {
+        "arquivo": "20240117_inventory_count.sql",
+        "motivo": "modelo antigo; o banco usa inventario_contagens/inventario_ciclos",
+        "objetos": [
+          "inventory_count_items",
+          "inventory_counts"
+        ]
+      },
+      {
+        "arquivo": "20240118_stock_reservations.sql",
+        "motivo": "feature nunca implementada; so stock-movement (nao deployada) cita a tabela",
+        "objetos": [
+          "stock_reservations",
+          "release_expired_reservations"
+        ]
+      },
+      {
+        "arquivo": "20240119_import_logs.sql",
+        "motivo": "feature nunca implementada; so batch-import (nao deployada) cita a tabela",
+        "objetos": [
+          "import_logs"
+        ]
+      },
+      {
+        "arquivo": "20241231000001_entity_versions.sql",
+        "motivo": "nunca aplicada; VersionHistory nao e importado por nenhuma tela",
+        "objetos": [
+          "entity_versions"
+        ]
+      },
+      {
+        "arquivo": "20251220114459_create_recebimentos_table.sql",
+        "motivo": "modelo antigo: recebimento real usa nfe_documents/nfe_items/lotes",
+        "objetos": [
+          "recebimentos"
+        ]
+      },
+      {
+        "arquivo": "20251220114813_create_triagens_table.sql",
+        "motivo": "modelo antigo; o banco usa public.eventos_triagem",
+        "objetos": [
+          "triagens",
+          "trigger_xp_triagem"
+        ]
+      },
+      {
+        "arquivo": "20251230000002_create_feature_flags_table.sql",
+        "motivo": "nunca aplicada; policy cita tabela roles inexistente e src/lib/featureFlags.ts nao e importado",
+        "objetos": [
+          "feature_flags",
+          "update_feature_flags_updated_at"
+        ]
+      },
+      {
+        "arquivo": "20251231000002_create_entity_versions_table.sql",
+        "motivo": "duplicata mais nova da anterior (mesma tabela, policy com nome igual: falharia)",
+        "objetos": [
+          "entity_versions",
+          "create_entity_version",
+          "get_entity_history",
+          "restore_entity_version"
+        ]
+      },
+      {
+        "arquivo": "20260512174934_e668fb50-a788-4a81-8f37-6c071e42fb6e.sql",
+        "motivo": "modelo antigo; o banco usa public.audit_log",
+        "objetos": [
+          "audit_logs"
+        ]
+      },
+      {
+        "arquivo": "20260516141406_c4b86d53-6670-4edd-87b9-8b6f9750c1fe.sql",
+        "motivo": "substituida por public.trigger_xp_triagem_completa",
+        "objetos": [
+          "handle_triagem_completion"
+        ]
+      },
+      {
+        "arquivo": "20260519161332_5e98c9d7-a46b-4cbc-810a-515bd8ac62e4.sql",
+        "motivo": "funcao validate_ean13 nunca aplicada e sem nenhum consumidor no codigo",
+        "objetos": [
+          "validate_ean13"
+        ]
+      }
+    ]
+  },
+  "objetos_citados_sem_banco": {
+    "criterio": "tabela/RPC citada em src/ ou em edge publicada que o banco nao tem; motivo preenchido = codigo morto conhecido",
+    "lista": [
+      {
+        "arquivos": [
+          "src/hooks/useEntityVersions.ts",
+          "src/hooks/useVersions.ts"
+        ],
+        "motivo": "useVersions/useEntityVersions: nenhuma tela importa VersionHistory",
+        "nome": "entity_versions",
+        "tipo": "tabela"
+      },
+      {
+        "arquivos": [
+          "src/lib/featureFlags.ts"
+        ],
+        "motivo": "src/lib/featureFlags.ts: nenhum import; src/config/feature-flags.tsx e a implementacao em uso",
+        "nome": "feature_flags",
+        "tipo": "tabela"
+      },
+      {
+        "arquivos": [
+          "src/features/inventory/components/EstoqueToolbar.tsx"
+        ],
+        "motivo": "EstoqueToolbar: componente nao importado por nenhuma tela",
+        "nome": "produtos_estoque",
+        "tipo": "tabela"
+      }
+    ]
+  },
   "policies_anon_permissivas": [],
   "resumo": {
     "cron_ativos": 4,
