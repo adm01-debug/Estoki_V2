@@ -25,9 +25,9 @@ e `alert-expiration` executavam e gravavam.
 
 As 153 fontes sem deploy sao trabalho versionado que nunca subiu — nao viram
 endpoint sozinhas. Deploy e sempre por lista explicita (workflows
-`deploy-functions.yml` / `edges-guarda-cron.yml`), com verificacao de que existe
-`index.ts` antes de enviar. Nunca `deploy --all`: publicaria 153 endpoints novos
-de uma vez.
+`deploy-functions.yml` / `edges-guarda-cron.yml` / `edges-produtos-sync.yml`), com
+verificacao de que existe `index.ts` antes de enviar. Nunca `deploy --all`:
+publicaria 153 endpoints novos de uma vez.
 
 ## 3. Guarda de sessao nao cobre cron
 
