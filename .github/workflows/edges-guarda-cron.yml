@@ -156,8 +156,13 @@ jobs:
           API="https://api.supabase.com/v1/projects/$REF"
           jq -Rs '{query: .}' "$MIGRATION" > /tmp/mig.json
           curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/mig.json "$API/database/query"
-          jq -n --arg q "select count(*) as jobs_com_credencial from cron.job where jobname in ('reorder-check-daily','stock-alert-daily','alert-expiration-daily') and command like '%Authorization%'" '{query:$q}' > /tmp/v.json
-          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/v.json "$API/database/query"
+          jq -n --arg q "select count(*) as jobs_com_credencial from cron.job where jobname in ('reorder-check-daily','stock-alert-daily','alert-expiration-daily') and command like '%x-cron-secret%'" '{query:$q}' > /tmp/v.json
+          JOBS=$(curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/v.json "$API/database/query")
+          echo "jobs com o header do cron: $JOBS"
+          if [ "$(echo "$JOBS" | jq -r '.[0].jobs_com_credencial')" != "$(echo "$FUNCOES" | wc -w)" ]; then
+            echo "::error::nem todos os jobs dos crons ficaram com x-cron-secret: $JOBS"
+            exit 1
+          fi
       - name: Provar que a chave publica nao executa
         if: env.SEM_TOKEN != '1'
         run: |
