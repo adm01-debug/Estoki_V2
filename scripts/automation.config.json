@@ -680,6 +680,46 @@
       "manual": ["node", "scripts/db-audit/aplicar-pendentes.mjs"],
       "triggers": ["manual"],
       "reason": "DDL no banco oficial: só por dispatch manual, com confirmação explícita. Chamador literal: .github/workflows/migrations-producao.yml. O dispatcher não executa esta operação."
+    },
+    {
+      "id": "legacy-32853fd8e8e01a02",
+      "kind": "legacy",
+      "files": ["scripts/diag/probe-refs.sh"],
+      "manual": ["bash", "scripts/diag/probe-refs.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-3e6abc2a087b01e1",
+      "kind": "legacy",
+      "files": ["scripts/diag/probe-anon.sh"],
+      "manual": ["bash", "scripts/diag/probe-anon.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-51b3d54a5eb20c8b",
+      "kind": "legacy",
+      "files": ["scripts/diag/probe-auth.sh"],
+      "manual": ["bash", "scripts/diag/probe-auth.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-9325980ce5269c50",
+      "kind": "legacy",
+      "files": ["scripts/diag/probe-db.sh"],
+      "manual": ["bash", "scripts/diag/probe-db.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-6bfa0dfa908f3e17",
+      "kind": "legacy",
+      "files": ["scripts/diag/dryrun-migration.sh"],
+      "manual": ["bash", "scripts/diag/dryrun-migration.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
     }
   ],
   "ci": [
