@@ -34,3 +34,32 @@ revoke execute on function public.reset_login_attempts(text) from public, anon, 
 grant execute on function public.check_login_lockout(text) to service_role;
 grant execute on function public.record_failed_login(text, inet) to service_role;
 grant execute on function public.reset_login_attempts(text) to service_role;
+
+-- Auto-prova: a migration falha se a revogacao nao pegou (anon/auth ainda executam) ou se o
+-- service_role ficou sem acesso. Vale no dry-run com ROLLBACK e na aplicacao real.
+do $prova$
+declare
+  v_anon boolean;
+  v_auth boolean;
+  v_svc  boolean;
+begin
+  select bool_or(has_function_privilege('anon', p.oid, 'EXECUTE')),
+         bool_or(has_function_privilege('authenticated', p.oid, 'EXECUTE')),
+         bool_or(has_function_privilege('service_role', p.oid, 'EXECUTE'))
+    into v_anon, v_auth, v_svc
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname = 'public'
+     and p.proname in ('check_login_lockout', 'record_failed_login', 'reset_login_attempts');
+
+  raise notice 'prova rpc-login: anon=% authenticated=% service_role=%', v_anon, v_auth, v_svc;
+
+  if coalesce(v_anon, false) or coalesce(v_auth, false) then
+    raise exception 'revogacao incompleta: anon=% auth=%', v_anon, v_auth;
+  end if;
+
+  if not coalesce(v_svc, false) then
+    raise exception 'service_role sem execute nas RPCs de lockout';
+  end if;
+end
+$prova$;
