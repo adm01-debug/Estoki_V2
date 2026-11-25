@@ -34,3 +34,30 @@ publicaria 153 endpoints novos de uma vez.
 `pg_cron` chama a funcao por HTTP sem sessao de usuario. Quem depende de cron leva
 `verify_jwt = false`, guarda no codigo e credencial no header enviado pelo job
 (hoje: service role lido de `vault.decrypted_secrets`).
+
+## 4. Superficie publica, medida em 25/11/2026
+
+Sweep das 94 publicadas com a chave publica do site (`sb_publishable_*`, POST `{}`):
+
+| Resposta | Quantas | Leitura |
+| --- | --- | --- |
+| 404 | 38 | removidas de producao (lista `remover` de 24/11; hoje `removido`) |
+| 401 | 38 | guarda de sessao no codigo (`exigirSessao`) |
+| 400 | 9 | `auth-*`/`webauthn-*` pre-login: validacao de payload recusou `{}` |
+| 403 | 1 | `backend-health` (papel insuficiente) |
+| 200 | 8 | `health` (probe) + 7 stubs sem corpo: 4 `integration-*`, `auth-logout`, `auth-session-list`, `auth-session-revoke` |
+
+As 38 marcadas `removido` nao existem mais em producao; o fonte continua no repo
+(redeploy: `npx supabase@3.1.0 functions deploy <slug> --project-ref ookjbflsnoefnsixrspc --use-api`).
+As 7 que respondiam 200 sem executar nada nao tem chamador no repo nem no app e
+estao marcadas `remover`.
+
+Nao confundir casca com stub: `auth-login` valida o payload com rate limit e chama
+`supabase.auth.signInWithPassword` de verdade, e `auth-2fa-*` exige sessao (HTTP 401
+sem ela). As 3 removidas nesta rodada eram as unicas `auth-*` sem nenhuma acao —
+devolviam `{success:true}` e ecoavam a entrada. O app autentica pelo GoTrue
+(`supabase.auth`), nunca por `/functions/v1/auth-*`.
+
+Heuristica de "funcao sem acesso a dados" (`grep '.from(' | '.rpc(' | 'fetch('`)
+da falso-positivo: `auth-login` so usa `supabase.auth.*` e aparece como casca. Antes
+de marcar algo como stub, ler o `index.ts`.
