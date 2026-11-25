@@ -120,6 +120,37 @@ SELECT jsonb_build_object(
            )
   ),
 
+  -- Funcao SECURITY DEFINER que a API alcanca (`anon` ou `authenticated` executa) e cujo corpo nao
+  -- cita nenhuma checagem: `auth.uid()`, `has_role`/`is_tenant_*` ou `tenant_id`. SECURITY DEFINER
+  -- roda com o dono da funcao, entao sem checagem interna quem tem a chave publica do bundle (ou um
+  -- usuario logado qualquer) chama a rotina de escrita como se fosse o dono. Fica fora `anon` do
+  -- fluxo pre-login (ver ANON_PRE_LOGIN) por nome, no JS. Fora funcao de trigger (`tgfoid`) e
+  -- funcao de extensao (`deptype='e'`): essas nao sao porta de entrada da API.
+  'funcoes_definer_sem_guarda', (
+    SELECT coalesce(jsonb_agg(jsonb_build_object(
+             'nome', p.proname,
+             'args', pg_get_function_identity_arguments(p.oid),
+             'anon', has_function_privilege('anon', p.oid, 'EXECUTE'),
+             'authenticated', has_function_privilege('authenticated', p.oid, 'EXECUTE'),
+             'service_role', has_function_privilege('service_role', p.oid, 'EXECUTE'),
+             'citada_por_funcao', EXISTS (
+               SELECT 1 FROM pg_proc q
+                WHERE q.pronamespace = p.pronamespace AND q.oid <> p.oid
+                  AND q.prosrc LIKE '%' || p.proname || '(%'
+             )) ORDER BY p.proname), '[]'::jsonb)
+      FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+     WHERE n.nspname = 'public' AND p.prokind = 'f' AND p.prosecdef
+       AND p.prorettype <> 'pg_catalog.trigger'::regtype
+       AND NOT EXISTS (SELECT 1 FROM pg_trigger t WHERE t.tgfoid = p.oid)
+       AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
+       AND (has_function_privilege('anon', p.oid, 'EXECUTE')
+            OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+       AND p.prosrc NOT LIKE '%auth.uid()%'
+       AND p.prosrc NOT LIKE '%has_role%'
+       AND p.prosrc NOT LIKE '%is_tenant_%'
+       AND p.prosrc NOT LIKE '%tenant_id%'
+  ),
+
   -- View/materialized view em public SEM `security_invoker`: sem essa opcao a view roda com os
   -- privilegios do DONO, entao o RLS das tabelas de base e ignorado e a leitura cruza tenants.
   -- `security_invoker=true` faz a view rodar como o chamador (RLS volta a valer). Materialized view
