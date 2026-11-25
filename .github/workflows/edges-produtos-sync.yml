@@ -189,8 +189,16 @@ jobs:
           echo "produtos antes: $ANTES"
           MARCO=$(consulta "select coalesce(max(id),0) as marco from net._http_response" | jq -r '.[0].marco')
           consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE}));" > /dev/null
-          sleep 25
-          SAIDA=$(consulta "select status_code, left(content, 300) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          # pg_net grava a linha antes de a resposta chegar (status_code nulo):
+          # fixo em 25s o teste falhava com a replicacao ainda em curso.
+          SAIDA=$(consulta "select status_code, left(content, 600) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          for _ in $(seq 1 40); do
+            if [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "null" ]; then
+              break
+            fi
+            sleep 10
+            SAIDA=$(consulta "select status_code, left(content, 600) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          done
           echo "resposta do caminho do cron: $SAIDA"
           if [ "$(echo "$SAIDA" | jq -r 'length')" != "1" ] ||
              [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "200" ] ||
