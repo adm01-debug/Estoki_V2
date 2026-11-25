@@ -247,6 +247,21 @@ export function montarInventario(dado, uso, edges = compararEdges(null, []), coe
   if (viewsFrouxas.length) {
     alertas.push({ tipo: 'view_sem_security_invoker', detalhe: viewsFrouxas });
   }
+  // Integridade estrutural: medido 25/11/2026 como zero nos tres casos, entao qualquer nome aqui e
+  // regressao nova. Tabela sem PK nao tem chave estavel por linha; trigger fora de 'O' para de rodar
+  // a regra que so existe nele, sem erro; constraint NOT VALID nunca conferiu o dado que ja estava.
+  const semPk = dado.tabelas_sem_pk ?? [];
+  if (semPk.length) alertas.push({ tipo: 'tabela_sem_pk', detalhe: semPk });
+  const triggerDesligado = (dado.triggers_desabilitados ?? []).map((t) => `${t.tabela}.${t.trigger} (${t.estado})`);
+  if (triggerDesligado.length) alertas.push({ tipo: 'trigger_desabilitado', detalhe: triggerDesligado });
+  const naoValidadas = (dado.constraints_nao_validadas ?? []).map((k) => `${k.tabela}.${k.constraint} (${k.tipo})`);
+  if (naoValidadas.length) alertas.push({ tipo: 'constraint_nao_validada', detalhe: naoValidadas });
+  // RLS habilitado nao significa RLS util: politica `TO anon` (ou `TO public`, que inclui anon) com
+  // qual/with_check verdadeiro e dado aberto para quem tem so a chave publica do bundle.
+  const anonPermissivas = (dado.policies_anon_permissivas ?? []).map(
+    (p) => `${p.tabela}.${p.cmd}.${p.policy} (${(p.roles ?? []).join(',')})`
+  );
+  if (anonPermissivas.length) alertas.push({ tipo: 'policy_anon_permissiva', detalhe: anonPermissivas });
   const cronRuim = dado.cron.jobs
     .filter((j) => j.ativo && j.taxa_falha_7d_pct >= LIMIARES.taxaFalhaCronPct)
     .map((j) => `${j.nome} (${j.taxa_falha_7d_pct}% em 7d)`);

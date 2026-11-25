@@ -159,6 +159,49 @@ SELECT jsonb_build_object(
       LEFT JOIN gatilhos g ON g.oid = t.oid
   ),
 
+  -- Tabela sem PK: RLS fica mais lenta, replicacao logica nao funciona e nao existe chave estavel
+  -- para uma linha (update/delete por id vira varredura). Qualquer nome aqui e divida estrutural.
+  'tabelas_sem_pk', (
+    SELECT coalesce(jsonb_agg(t.nome ORDER BY t.nome), '[]'::jsonb)
+      FROM tabelas t
+     WHERE NOT EXISTS (SELECT 1 FROM pg_index i WHERE i.indrelid = t.oid AND i.indisprimary)
+  ),
+
+  -- Trigger desligado: 'D' = DISABLE, 'R' = so em replica, 'A' = always; 'O' e o normal. Regra de
+  -- negocio que so existe no trigger (baixa de estoque, XP, notificacao) para de rodar sem erro.
+  'triggers_desabilitados', (
+    SELECT coalesce(jsonb_agg(jsonb_build_object('tabela', c.relname, 'trigger', t.tgname, 'estado', t.tgenabled)
+                              ORDER BY c.relname, t.tgname), '[]'::jsonb)
+      FROM pg_trigger t
+      JOIN pg_class c ON c.oid = t.tgrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public' AND NOT t.tgisinternal AND t.tgenabled <> 'O'
+  ),
+
+  -- Constraint NOT VALID: vale para linha nova, mas o dado que ja estava nunca foi conferido.
+  'constraints_nao_validadas', (
+    SELECT coalesce(jsonb_agg(jsonb_build_object('tabela', c.relname, 'constraint', k.conname, 'tipo', k.contype)
+                              ORDER BY c.relname, k.conname), '[]'::jsonb)
+      FROM pg_constraint k
+      JOIN pg_class c ON c.oid = k.conrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = 'public' AND NOT k.convalidated AND k.contype IN ('f', 'c')
+  ),
+
+  -- Politica de RLS que vale para anon (ou para PUBLIC, que inclui anon) e libera tudo. A chave
+  -- publica esta no bundle do site: com ela, visitante sem login le/escreve o que a politica liberar.
+  -- `TO authenticated` e o padrao correto; nome aqui e dado aberto na internet.
+  'policies_anon_permissivas', (
+    SELECT coalesce(jsonb_agg(jsonb_build_object('tabela', p.tablename, 'cmd', p.cmd,
+                                                 'policy', p.policyname, 'roles', p.roles)
+                              ORDER BY p.tablename, p.cmd, p.policyname), '[]'::jsonb)
+      FROM pg_policies p
+     WHERE p.schemaname = 'public'
+       AND p.roles::text[] && ARRAY['public', 'anon']::text[]
+       AND (p.qual IS NULL OR btrim(p.qual) IN ('true', '(true)'))
+       AND (p.with_check IS NULL OR btrim(p.with_check) IN ('true', '(true)'))
+  ),
+
   'cron', jsonb_build_object(
     'config', (SELECT jsonb_object_agg(name, setting ORDER BY name) FROM pg_settings
                 WHERE name IN ('cron.use_background_workers', 'cron.max_running_jobs', 'max_worker_processes')),
