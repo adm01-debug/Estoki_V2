@@ -66,7 +66,7 @@ export function ResizablePanel({
       <div
         onMouseDown={handleMouseDown}
         className={cn(
-          "absolute bottom-0 top-0 flex w-2 cursor-col-resize items-center justify-center hover:bg-primary/10",
+          "absolute top-0 bottom-0 flex w-2 cursor-col-resize items-center justify-center hover:bg-primary/10",
           side === "left" ? "right-0" : "left-0"
         )}
       >

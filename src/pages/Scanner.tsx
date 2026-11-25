@@ -121,7 +121,7 @@ export default function ScannerPage() {
               size="sm"
               onClick={() => setMode("qr")}
               className={cn(
-                "h-10 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+                "h-10 flex-1 gap-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all",
                 mode === "qr"
                   ? "glow-button"
                   : "text-muted-foreground hover:bg-transparent hover:text-primary"
@@ -135,7 +135,7 @@ export default function ScannerPage() {
               size="sm"
               onClick={() => setMode("ocr")}
               className={cn(
-                "h-10 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all",
+                "h-10 flex-1 gap-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all",
                 mode === "ocr"
                   ? "glow-button"
                   : "text-muted-foreground hover:bg-transparent hover:text-primary"
@@ -192,20 +192,20 @@ export default function ScannerPage() {
               {/* Resultado do scan */}
               {lastResult && !isLoading && (
                 <Card className="glass-card overflow-hidden border-primary/20 bg-primary/5 animate-in fade-in zoom-in-95">
-                  <div className="absolute left-0 top-0 h-full w-1 bg-primary/40" />
+                  <div className="absolute top-0 left-0 h-full w-1 bg-primary/40" />
                   <CardHeader className="border-b border-primary/10 pb-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "flex h-10 w-10 items-center justify-center rounded-xl border bg-background shadow-sm",
+                            "flex h-10 w-10 items-center justify-center rounded-xl border bg-background shadow-xs",
                             tipoConfig[lastResult.tipo].color
                           )}
                         >
                           <Package className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-widest text-primary/60">
+                          <p className="mb-1 text-[10px] leading-none font-bold tracking-widest text-primary/60 uppercase">
                             Tipo de Captura
                           </p>
                           <CardTitle className="text-lg font-black tracking-tight">
@@ -215,7 +215,7 @@ export default function ScannerPage() {
                       </div>
                       <Badge
                         className={cn(
-                          "rounded-full px-2.5 text-[10px] font-black uppercase tracking-widest",
+                          "rounded-full px-2.5 text-[10px] font-black tracking-widest uppercase",
                           statusConfig[lastResult.status]?.variant === "destructive"
                             ? "bg-destructive text-destructive-foreground"
                             : "bg-primary text-primary-foreground"
@@ -229,7 +229,7 @@ export default function ScannerPage() {
                     {/* Informações principais */}
                     <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                           Produto / SKU
                         </p>
                         <p className="text-base font-black tracking-tight text-foreground">
@@ -237,7 +237,7 @@ export default function ScannerPage() {
                         </p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                           Documento / Pedido
                         </p>
                         <p className="text-base font-black tracking-tight text-foreground">
@@ -246,7 +246,7 @@ export default function ScannerPage() {
                       </div>
                       {lastResult.lote && (
                         <div className="space-y-1">
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                             Lote de Origem
                           </p>
                           <p className="text-base font-black tracking-tight text-foreground">
@@ -255,12 +255,12 @@ export default function ScannerPage() {
                         </div>
                       )}
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                           Quantidade Capturada
                         </p>
                         <p className="text-2xl font-black tracking-tighter text-primary">
                           {lastResult.quantidade}{" "}
-                          <span className="ml-1 text-xs uppercase text-muted-foreground">
+                          <span className="ml-1 text-xs text-muted-foreground uppercase">
                             unidades
                           </span>
                         </p>
@@ -271,7 +271,7 @@ export default function ScannerPage() {
                             <MapPin className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground">
+                            <p className="mb-1 text-[10px] leading-none font-bold tracking-widest text-muted-foreground uppercase">
                               Localização no Armazém
                             </p>
                             <p className="text-base font-black tracking-tight text-foreground">
@@ -322,14 +322,14 @@ export default function ScannerPage() {
                       <Button
                         variant="outline"
                         onClick={handleNewScan}
-                        className="h-12 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all hover:bg-primary/5"
+                        className="h-12 flex-1 gap-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all hover:bg-primary/5"
                       >
                         <RotateCcw className="h-4 w-4" /> Novo Scan
                       </Button>
                       {lastResult.tipo !== "desconhecido" && (
                         <Button
                           onClick={() => handleNavigate(lastResult)}
-                          className="glow-button h-12 flex-1 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+                          className="glow-button h-12 flex-1 gap-2 rounded-xl text-xs font-bold tracking-wider uppercase"
                         >
                           Ver Detalhes <ArrowRight className="h-4 w-4" />
                         </Button>

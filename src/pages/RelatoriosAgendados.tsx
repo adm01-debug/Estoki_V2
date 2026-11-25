@@ -245,7 +245,7 @@ export default function RelatoriosAgendados() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="glass-card h-40 animate-pulse" />
+            <Card key={i} className="h-40 glass-card animate-pulse" />
           ))}
         </div>
       ) : relatorios.length === 0 ? (

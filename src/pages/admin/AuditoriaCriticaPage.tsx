@@ -487,7 +487,7 @@ export default function AuditoriaCriticaPage() {
             <CardContent>
               <div className="flex flex-col gap-3 md:flex-row">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     aria-label="Buscar por usuário, ação, motivo, tipo"
                     placeholder="Buscar por usuário, ação, motivo, tipo..."

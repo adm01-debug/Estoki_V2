@@ -160,7 +160,7 @@ export default function AjustesEstoquePage() {
           <div className="space-y-6 p-4">
             <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
               <div className="relative w-full md:w-96">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   aria-label="Buscar por produto ou motivo"
                   placeholder="Buscar por produto ou motivo..."

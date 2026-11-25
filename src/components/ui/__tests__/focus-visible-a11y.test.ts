@@ -18,7 +18,7 @@ const VISIBLE_FOCUS = /focus-visible:|focus:ring|focus:bg|focus:border|focus:tex
 
 /**
  * Exceções justificadas — não são alvos de foco do usuário:
- * - `ui/chart.tsx`: `outline-none` em camadas SVG internas do recharts;
+ * - `ui/chart.tsx`: `outline-hidden` em camadas SVG internas do recharts;
  * - `layout/AppLayout.tsx`: recipiente com `tabIndex={-1}` que só recebe foco do skip-link.
  */
 const EXCEPTIONS = [
@@ -27,11 +27,11 @@ const EXCEPTIONS = [
 ];
 
 /**
- * E-176: remover o contorno do foco (`outline-none`) só é aceitável quando existe
+ * E-176: remover o contorno do foco (`outline-hidden`) só é aceitável quando existe
  * um substituto visível. Sem isso o usuário de teclado não sabe onde está o foco.
  */
 describe("foco visível em quem remove o contorno (E-176)", () => {
-  it("toda classe com outline-none tem indicador de foco visível", () => {
+  it("toda classe com outline-hidden tem indicador de foco visível", () => {
     const offenders: string[] = [];
     for (const file of walk(ROOT)) {
       const rel = relative(ROOT, file);

@@ -62,7 +62,7 @@ export function EtiquetaPreview({
 
           <div className="flex items-start gap-2 pt-1">
             {/* QR Code */}
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {qrCodeUrl ? (
                 <img
                   src={qrCodeUrl}

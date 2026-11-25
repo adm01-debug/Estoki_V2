@@ -121,7 +121,7 @@ export function GamificacaoLoja() {
             <Coins className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            <p className="text-sm font-bold tracking-wider text-muted-foreground uppercase">
               Seu Saldo
             </p>
             <p className="text-2xl font-bold">{pontos} Pontos</p>

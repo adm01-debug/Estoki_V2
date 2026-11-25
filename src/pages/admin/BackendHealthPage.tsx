@@ -94,7 +94,7 @@ function StatCard({
       <CardContent className="flex items-center gap-4 p-4">
         <Icon className="h-8 w-8 shrink-0 opacity-60" />
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="text-[10px] font-bold uppercase text-muted-foreground">{label}</span>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase">{label}</span>
           <span className="text-2xl font-bold">{value}</span>
           {hint && <span className="text-[10px] text-muted-foreground">{hint}</span>}
         </div>
@@ -344,7 +344,7 @@ export default function BackendHealthPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <p className="text-2xl font-bold">{data.audit.total_events}</p>
-                  <p className="text-[10px] uppercase text-muted-foreground">eventos totais</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">eventos totais</p>
                   <div className="mt-3 space-y-1">
                     {Object.entries(data.audit.by_action)
                       .sort((a, b) => b[1] - a[1])
@@ -368,7 +368,7 @@ export default function BackendHealthPage() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <p className="text-2xl font-bold">{data.alerts.total}</p>
-                  <p className="text-[10px] uppercase text-muted-foreground">alertas gerados</p>
+                  <p className="text-[10px] text-muted-foreground uppercase">alertas gerados</p>
                   <div className="mt-3 space-y-1">
                     {Object.entries(data.alerts.by_severity)
                       .sort((a, b) => b[1] - a[1])

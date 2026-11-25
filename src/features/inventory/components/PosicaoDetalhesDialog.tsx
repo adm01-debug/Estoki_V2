@@ -115,7 +115,7 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
             <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4">
               <div className="mb-3 flex items-center gap-2">
                 <History className="h-4 w-4 text-muted-foreground" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                   Últimas Alterações
                 </span>
               </div>
@@ -125,7 +125,7 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
                     <Loader2 className="h-4 w-4 animate-spin opacity-20" />
                   </div>
                 ) : history.length === 0 ? (
-                  <p className="text-xs italic text-muted-foreground">Sem registros recentes</p>
+                  <p className="text-xs text-muted-foreground italic">Sem registros recentes</p>
                 ) : (
                   history.map((log) => (
                     <div key={log.id} className="flex items-start justify-between gap-2 text-xs">
@@ -138,7 +138,7 @@ export function PosicaoDetalhesDialog({ position, onClose }: PosicaoDetalhesDial
                           <User className="h-2 w-2" /> {log.profiles?.nome || "Sistema"}
                         </span>
                       </div>
-                      <span className="whitespace-nowrap text-[10px] text-muted-foreground">
+                      <span className="text-[10px] whitespace-nowrap text-muted-foreground">
                         {new Date(log.created_at).toLocaleString("pt-BR", {
                           day: "2-digit",
                           month: "2-digit",

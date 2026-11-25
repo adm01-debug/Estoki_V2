@@ -49,12 +49,12 @@ export const PosicaoCard = memo(function PosicaoCard({
     <>
       <Card
         className={cn(
-          "group relative cursor-pointer overflow-hidden border-border/40 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:border-primary/50 hover:shadow-lg",
+          "group relative cursor-pointer overflow-hidden border-border/40 bg-card/50 backdrop-blur-xs transition-all duration-300 hover:border-primary/50 hover:shadow-lg",
           "active:scale-[0.98]"
         )}
         onClick={handleCardClick}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
         <CardContent className="relative p-4">
           <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export const PosicaoCard = memo(function PosicaoCard({
               {status}
             </StatusBadge>
           </div>
-          <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/70">
+          <p className="mb-2 text-[10px] font-medium tracking-wider text-muted-foreground/70 uppercase">
             {tipo}
           </p>
 
@@ -105,7 +105,7 @@ export const PosicaoCard = memo(function PosicaoCard({
           <div className="space-y-6 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Código
                 </p>
                 <div className="flex items-center gap-2">
@@ -114,7 +114,7 @@ export const PosicaoCard = memo(function PosicaoCard({
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Status
                 </p>
                 <StatusBadge variant={getStatusVariant(status)} size="md" dot>
@@ -127,7 +127,7 @@ export const PosicaoCard = memo(function PosicaoCard({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Tipo
                 </p>
                 <div className="flex items-center gap-2">
@@ -136,7 +136,7 @@ export const PosicaoCard = memo(function PosicaoCard({
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                   Ocupação Atual
                 </p>
                 <Badge variant={ocupacao > 90 ? "destructive" : "secondary"} className="font-bold">

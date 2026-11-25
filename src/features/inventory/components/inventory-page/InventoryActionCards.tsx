@@ -8,10 +8,10 @@ export function InventoryActionCards() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <Card
-        className="glass-card group cursor-pointer overflow-hidden border-border/30 transition-all duration-500 hover:border-primary/50"
+        className="group glass-card cursor-pointer overflow-hidden border-border/30 transition-all duration-500 hover:border-primary/50"
         onClick={() => navigate("/inventario")}
       >
-        <div className="absolute right-0 top-0 rotate-12 p-8 opacity-[0.03] transition-opacity transition-transform duration-700 group-hover:scale-110 group-hover:opacity-[0.08]">
+        <div className="absolute top-0 right-0 rotate-12 p-8 opacity-[0.03] transition-opacity transition-transform duration-700 group-hover:scale-110 group-hover:opacity-[0.08]">
           <ClipboardList className="h-32 w-32 text-primary" />
         </div>
         <CardContent className="p-8">
@@ -36,10 +36,10 @@ export function InventoryActionCards() {
       </Card>
 
       <Card
-        className="glass-card group cursor-pointer overflow-hidden border-border/30 transition-all duration-500 hover:border-primary/50"
+        className="group glass-card cursor-pointer overflow-hidden border-border/30 transition-all duration-500 hover:border-primary/50"
         onClick={() => navigate("/inventory/movements")}
       >
-        <div className="absolute right-0 top-0 rotate-12 p-8 opacity-[0.03] transition-opacity transition-transform duration-700 group-hover:scale-110 group-hover:opacity-[0.08]">
+        <div className="absolute top-0 right-0 rotate-12 p-8 opacity-[0.03] transition-opacity transition-transform duration-700 group-hover:scale-110 group-hover:opacity-[0.08]">
           <History className="h-32 w-32 text-primary" />
         </div>
         <CardContent className="p-8">

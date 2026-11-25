@@ -28,7 +28,7 @@ export const SidebarHeader = memo(function SidebarHeader({
             <div className="flex items-center gap-3">
               <motion.div
                 className={cn(
-                  "flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-primary/80 to-primary/50 shadow-glow transition-all duration-300",
+                  "flex shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary via-primary/80 to-primary/50 shadow-glow transition-all duration-300",
                   isCollapsed ? "h-10 w-10" : "h-[68px] w-[68px]"
                 )}
                 whileHover={{ rotate: [0, -5, 5, 0], scale: 1.05 }}
@@ -43,17 +43,17 @@ export const SidebarHeader = memo(function SidebarHeader({
               </motion.div>
               {!isCollapsed && (
                 <div className="flex min-w-0 flex-col justify-center">
-                  <h1 className="gradient-text text-[22px] font-black leading-[0.8] tracking-tighter text-sidebar-foreground">
+                  <h1 className="gradient-text text-[22px] leading-[0.8] font-black tracking-tighter text-sidebar-foreground">
                     PROMO
                   </h1>
-                  <p className="mt-1.5 text-[13px] font-black uppercase leading-none tracking-[0.25em] text-primary-bright">
+                  <p className="mt-1.5 text-[13px] leading-none font-black tracking-[0.25em] text-primary-bright uppercase">
                     BRINDES
                   </p>
                 </div>
               )}
             </div>
             {!isCollapsed && (
-              <p className="ml-0.5 mt-1 whitespace-nowrap text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/80">
+              <p className="mt-1 ml-0.5 text-[9px] font-black tracking-[0.2em] whitespace-nowrap text-sidebar-foreground/80 uppercase">
                 INTELLIGENCE WMS
               </p>
             )}

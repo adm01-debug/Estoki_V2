@@ -27,7 +27,7 @@ export function AlertaPerdaLogistica() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+        <h3 className="flex items-center gap-2 text-sm font-bold tracking-wider text-muted-foreground uppercase">
           <AlertCircle className="h-4 w-4 text-destructive" />
           Alertas de Perda Logística
         </h3>

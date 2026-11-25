@@ -182,7 +182,7 @@ export default function ModoOffline() {
           <div className="flex items-center gap-3">
             <Badge
               variant={isOnline ? "default" : "destructive"}
-              className="gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider"
+              className="gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold tracking-wider uppercase"
             >
               {isOnline ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
               {isOnline ? "Sincronizado" : "Offline"}
@@ -194,7 +194,7 @@ export default function ModoOffline() {
               }}
               disabled={!isOnline || syncing}
               size="sm"
-              className="glow-button h-10 rounded-xl px-6 font-bold uppercase tracking-tighter"
+              className="glow-button h-10 rounded-xl px-6 font-bold tracking-tighter uppercase"
             >
               <RefreshCw className={`mr-2 h-4 w-4 ${syncing ? "animate-spin" : ""}`} />
               Sincronizar Tudo
@@ -243,7 +243,7 @@ export default function ModoOffline() {
               >
                 <Card
                   className={cn(
-                    "group overflow-hidden border-none shadow-sm transition-transform hover:scale-[1.02]",
+                    "group overflow-hidden border-none shadow-xs transition-transform hover:scale-[1.02]",
                     kpi.bg
                   )}
                 >
@@ -257,7 +257,7 @@ export default function ModoOffline() {
                       <kpi.icon className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <p className="mb-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                         {kpi.label}
                       </p>
                       <p className={cn("text-2xl font-black tracking-tight", kpi.color)}>
@@ -285,7 +285,7 @@ export default function ModoOffline() {
                           <AlertTriangle className="h-6 w-6 text-warning" />
                         </div>
                         <div>
-                          <p className="text-base font-black uppercase tracking-tight text-warning-foreground">
+                          <p className="text-base font-black tracking-tight text-warning-foreground uppercase">
                             {pendingOps} Operações Pendentes
                           </p>
                           <p className="text-xs font-medium text-warning-foreground/70">
@@ -300,7 +300,7 @@ export default function ModoOffline() {
                         }}
                         disabled={!isOnline || syncing}
                         variant="outline"
-                        className="h-11 rounded-xl border-warning/30 bg-warning/10 px-8 font-bold uppercase tracking-tighter text-warning transition-all hover:bg-warning hover:text-white"
+                        className="h-11 rounded-xl border-warning/30 bg-warning/10 px-8 font-bold tracking-tighter text-warning uppercase transition-all hover:bg-warning hover:text-white"
                       >
                         <Upload className="mr-2 h-4 w-4" />
                         Sincronizar
@@ -322,7 +322,7 @@ export default function ModoOffline() {
                     <Card className="group overflow-hidden border-border/30 bg-card/50 shadow-md transition-all hover:shadow-lg">
                       <CardHeader className="border-b border-border/10 pb-3">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+                          <CardTitle className="flex items-center gap-2 text-sm font-black tracking-widest uppercase">
                             <Database className="h-4 w-4 text-primary" />
                             {table.label}
                           </CardTitle>
@@ -344,7 +344,7 @@ export default function ModoOffline() {
                       <CardContent className="space-y-4 pt-4">
                         <div className="flex items-center justify-between">
                           <div className="space-y-0.5">
-                            <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                            <p className="text-[10px] font-bold text-muted-foreground uppercase">
                               Registros
                             </p>
                             <p className="text-xl font-black">{table.count}</p>
@@ -369,7 +369,7 @@ export default function ModoOffline() {
                             />
                           </div>
                           {table.lastSync && (
-                            <p className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-tight text-muted-foreground">
+                            <p className="flex items-center gap-1 text-[9px] font-bold tracking-tight text-muted-foreground uppercase">
                               <Clock className="h-2.5 w-2.5" /> Última Sincronização:{" "}
                               {table.lastSync}
                             </p>
@@ -386,14 +386,14 @@ export default function ModoOffline() {
               {/* Settings Sidebar */}
               <Card className="border-border/30 bg-card/50 shadow-md">
                 <CardHeader className="border-b border-border/10">
-                  <CardTitle className="text-xs font-black uppercase tracking-widest">
+                  <CardTitle className="text-xs font-black tracking-widest uppercase">
                     Configurações
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6 p-6">
                   <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/20 bg-muted/20 p-4">
                     <div className="space-y-1">
-                      <p className="text-xs font-black uppercase tracking-tighter">
+                      <p className="text-xs font-black tracking-tighter uppercase">
                         Auto-Sincronização
                       </p>
                       <p className="text-[10px] font-medium text-muted-foreground">
@@ -412,7 +412,7 @@ export default function ModoOffline() {
 
                   <div className="space-y-2 rounded-2xl border border-dashed border-border/40 p-4 text-center">
                     <Smartphone className="mx-auto h-8 w-8 text-muted-foreground/30" />
-                    <p className="px-4 text-[10px] font-bold uppercase leading-relaxed text-muted-foreground">
+                    <p className="px-4 text-[10px] leading-relaxed font-bold text-muted-foreground uppercase">
                       O armazenamento local é limitado ao navegador atual.
                     </p>
                   </div>

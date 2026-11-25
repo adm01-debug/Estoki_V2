@@ -27,7 +27,7 @@ export function CodeEditor({ value = "", onChange, language = "javascript" }: Co
   };
   return (
     <div className="relative">
-      <div className="absolute right-2 top-2 rounded bg-muted px-2 py-1 text-xs text-muted-foreground">
+      <div className="absolute top-2 right-2 rounded bg-muted px-2 py-1 text-xs text-muted-foreground">
         {language}
       </div>
       <Textarea

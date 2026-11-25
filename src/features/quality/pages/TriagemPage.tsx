@@ -237,7 +237,7 @@ export default function TriagemPage() {
             <Button
               size="sm"
               variant="outline"
-              className="hidden h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider sm:flex"
+              className="hidden h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold tracking-wider uppercase sm:flex"
               onClick={() => {
                 haptics.light();
                 handleExportCSV();
@@ -248,7 +248,7 @@ export default function TriagemPage() {
             <Button
               size="sm"
               variant="outline"
-              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider"
+              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold tracking-wider uppercase"
               onClick={() => {
                 haptics.light();
                 navigate("/scanner");
@@ -260,7 +260,7 @@ export default function TriagemPage() {
             <Button
               size="sm"
               variant={showAmostragem ? "secondary" : "outline"}
-              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider"
+              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold tracking-wider uppercase"
               onClick={() => {
                 haptics.light();
                 setShowAmostragem(!showAmostragem);
@@ -272,7 +272,7 @@ export default function TriagemPage() {
             <Button
               size="sm"
               variant={zenMode ? "secondary" : "outline"}
-              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider"
+              className="h-10 gap-2 rounded-xl border-border/40 text-[10px] font-bold tracking-wider uppercase"
               onClick={() => {
                 haptics.light();
                 setZenMode(!zenMode);
@@ -285,7 +285,7 @@ export default function TriagemPage() {
             </Button>
             <Button
               size="sm"
-              className="glow-button h-10 gap-2 rounded-xl text-[10px] font-bold uppercase tracking-wider"
+              className="glow-button h-10 gap-2 rounded-xl text-[10px] font-bold tracking-wider uppercase"
               onClick={() => {
                 haptics.medium();
                 handleIniciarTriagem();
@@ -304,7 +304,7 @@ export default function TriagemPage() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="sticky top-0 z-20 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/10 p-4 shadow-sm"
+                className="sticky top-0 z-20 flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/10 p-4 shadow-xs"
               >
                 <CheckSquare className="h-4 w-4 text-primary" />
                 <span className="text-sm font-bold text-primary">
@@ -325,7 +325,7 @@ export default function TriagemPage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 rounded-lg border-destructive/20 bg-background text-[10px] font-bold uppercase text-destructive"
+                  className="h-8 rounded-lg border-destructive/20 bg-background text-[10px] font-bold text-destructive uppercase"
                   onClick={() => haptics.error()}
                 >
                   <Trash2 className="mr-1.5 h-3 w-3" />
@@ -375,9 +375,9 @@ export default function TriagemPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
               <motion.div
                 whileHover={{ y: -4 }}
-                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/40 bg-background p-4 shadow-sm transition-all hover:shadow-md"
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/40 bg-background p-4 shadow-xs transition-all hover:shadow-md"
               >
-                <div className="absolute right-0 top-0 p-2 opacity-10 transition-opacity group-hover:opacity-20">
+                <div className="absolute top-0 right-0 p-2 opacity-10 transition-opacity group-hover:opacity-20">
                   <Trophy className="h-12 w-12 text-primary" />
                 </div>
                 <div className="mb-4 flex items-center justify-between">
@@ -386,13 +386,13 @@ export default function TriagemPage() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-primary/20 bg-primary/5 text-[9px] font-bold uppercase text-primary"
+                    className="border-primary/20 bg-primary/5 text-[9px] font-bold text-primary uppercase"
                   >
                     <Star className="mr-1 h-3 w-3 fill-yellow-500 text-yellow-500" /> Nível 14
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     Score de Acuracidade
                   </p>
                   <p className="text-2xl font-black text-foreground">99.8%</p>
@@ -404,7 +404,7 @@ export default function TriagemPage() {
 
               <motion.div
                 whileHover={{ y: -4 }}
-                className="flex flex-col justify-between rounded-2xl border border-border/40 bg-background p-4 shadow-sm transition-all hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-border/40 bg-background p-4 shadow-xs transition-all hover:shadow-md"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-indigo-500/20 bg-indigo-500/10">
@@ -412,13 +412,13 @@ export default function TriagemPage() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-indigo-200 text-[9px] font-bold uppercase text-indigo-600"
+                    className="border-indigo-200 text-[9px] font-bold text-indigo-600 uppercase"
                   >
                     Crítico
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     Fila de Gravação
                   </p>
                   <p className="text-2xl font-black text-foreground">{stats.emGravacao} Lotes</p>
@@ -427,7 +427,7 @@ export default function TriagemPage() {
 
               <motion.div
                 whileHover={{ y: -4 }}
-                className="flex flex-col justify-between rounded-2xl border border-border/40 bg-background p-4 shadow-sm transition-all hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-border/40 bg-background p-4 shadow-xs transition-all hover:shadow-md"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-orange-500/20 bg-orange-500/10">
@@ -435,13 +435,13 @@ export default function TriagemPage() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-orange-200 text-[9px] font-bold uppercase text-orange-600"
+                    className="border-orange-200 text-[9px] font-bold text-orange-600 uppercase"
                   >
                     Produção
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     Fila de Manuseio
                   </p>
                   <p className="text-2xl font-black text-foreground">{stats.emManuseio} Lotes</p>
@@ -450,7 +450,7 @@ export default function TriagemPage() {
 
               <motion.div
                 whileHover={{ y: -4 }}
-                className="flex flex-col justify-between rounded-2xl border border-l-4 border-border/40 border-l-success bg-background p-4 shadow-sm transition-all hover:shadow-md"
+                className="flex flex-col justify-between rounded-2xl border border-l-4 border-border/40 border-l-success bg-background p-4 shadow-xs transition-all hover:shadow-md"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-success/20 bg-success/10">
@@ -458,13 +458,13 @@ export default function TriagemPage() {
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-success-200 bg-success/5 text-[9px] font-bold uppercase text-success"
+                    className="border-success-200 bg-success/5 text-[9px] font-bold text-success uppercase"
                   >
                     <Zap className="mr-1 h-3 w-3 fill-yellow-500 text-yellow-500" /> Fast-Track
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     Lotes Platinum (30d)
                   </p>
                   <p className="text-2xl font-black text-foreground">Ativo</p>
@@ -478,9 +478,9 @@ export default function TriagemPage() {
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="relative overflow-hidden rounded-3xl border border-primary/20 bg-card/30 p-6 shadow-xl backdrop-blur-sm"
+              className="relative overflow-hidden rounded-3xl border border-primary/20 bg-card/30 p-6 shadow-xl backdrop-blur-xs"
             >
-              <div className="absolute right-0 top-0 p-8 opacity-5">
+              <div className="absolute top-0 right-0 p-8 opacity-5">
                 <Trophy className="h-32 w-32 text-primary" />
               </div>
 
@@ -489,10 +489,10 @@ export default function TriagemPage() {
                   <Trophy className="h-6 w-6 text-yellow-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black uppercase italic tracking-tight text-foreground">
+                  <h3 className="text-lg font-black tracking-tight text-foreground uppercase italic">
                     Guardiões da Acuracidade
                   </h3>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     Top 3 Operadores do Mês
                   </p>
                 </div>
@@ -560,14 +560,14 @@ export default function TriagemPage() {
           <motion.div
             layout
             className={cn(
-              "flex flex-col justify-between gap-4 rounded-2xl border p-4 shadow-sm transition-all duration-300 md:flex-row md:items-center",
+              "flex flex-col justify-between gap-4 rounded-2xl border p-4 shadow-xs transition-all duration-300 md:flex-row md:items-center",
               zenMode
                 ? "sticky top-4 z-30 border-primary/20 bg-primary/5"
                 : "border-border/20 bg-card/50"
             )}
           >
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
               <Input
                 aria-label="Buscar por ID ou Lote"
                 placeholder="Buscar por ID ou Lote..."
@@ -622,7 +622,7 @@ export default function TriagemPage() {
           </motion.div>
 
           {/* Floating Action Button for Mobile */}
-          <div className="fixed bottom-6 right-6 z-50 md:hidden">
+          <div className="fixed right-6 bottom-6 z-50 md:hidden">
             <Button
               aria-label="Iniciar triagem"
               size="icon"

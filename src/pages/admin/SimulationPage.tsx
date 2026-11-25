@@ -219,7 +219,7 @@ export default function SimulationPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex flex-col items-center rounded-xl border border-success/20 bg-success/10 p-4">
                         <span className="text-2xl font-bold text-success">{report.success}</span>
-                        <span className="text-[10px] font-bold uppercase text-success/70">
+                        <span className="text-[10px] font-bold text-success/70 uppercase">
                           Sucessos
                         </span>
                       </div>
@@ -227,7 +227,7 @@ export default function SimulationPage() {
                         <span className="text-2xl font-bold text-destructive">
                           {report.failure}
                         </span>
-                        <span className="text-[10px] font-bold uppercase text-destructive/70">
+                        <span className="text-[10px] font-bold text-destructive/70 uppercase">
                           Falhas
                         </span>
                       </div>
@@ -241,7 +241,7 @@ export default function SimulationPage() {
                             className="flex flex-col items-center rounded-lg border bg-muted/30 p-2"
                           >
                             <span className="text-lg font-bold">{report.latency[k]}ms</span>
-                            <span className="text-[9px] font-bold uppercase text-muted-foreground">
+                            <span className="text-[9px] font-bold text-muted-foreground uppercase">
                               {k.replace("Ms", "")}
                             </span>
                           </div>

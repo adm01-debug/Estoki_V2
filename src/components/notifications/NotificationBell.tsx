@@ -31,7 +31,7 @@ export function NotificationBell({
         <Button aria-label="Notificações" variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
           {unread > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
               {unread}
             </span>
           )}

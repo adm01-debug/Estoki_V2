@@ -78,10 +78,10 @@ export function SystemHealthMonitor() {
           />
         </div>
         <div className="flex flex-col">
-          <span className="text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground">
+          <span className="text-[10px] leading-none font-bold tracking-widest text-muted-foreground uppercase">
             Status do Sistema
           </span>
-          <span className="text-sm font-black uppercase tracking-tight text-foreground">
+          <span className="text-sm font-black tracking-tight text-foreground uppercase">
             {APP_NAME} <span className="text-primary">WMS</span>
           </span>
         </div>
@@ -92,7 +92,7 @@ export function SystemHealthMonitor() {
           <div key={i} className="flex items-center gap-2.5">
             <stat.icon className={cn("h-4 w-4", stat.color)} />
             <div className="flex flex-col">
-              <span className="text-[9px] font-bold uppercase leading-none tracking-tighter text-muted-foreground">
+              <span className="text-[9px] leading-none font-bold tracking-tighter text-muted-foreground uppercase">
                 {stat.label}
               </span>
               <span className="text-xs font-black tracking-tight">{stat.value}</span>

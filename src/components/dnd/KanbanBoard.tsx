@@ -39,7 +39,7 @@ export function KanbanBoard({ columns, onDragEnd, renderItem, className }: Kanba
     >
       <div className={cn("flex gap-4 overflow-x-auto p-4", className)}>
         {columns.map((column) => (
-          <div key={column.id} className="w-80 flex-shrink-0 rounded-lg bg-muted p-4">
+          <div key={column.id} className="w-80 shrink-0 rounded-lg bg-muted p-4">
             <h3 className="mb-4 font-semibold">
               {column.title} ({column.items.length})
             </h3>

@@ -150,7 +150,7 @@ export default function Dashboard() {
         </motion.section>
 
         <motion.section
-          className="content-visibility-auto grid grid-cols-1 gap-4 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 content-visibility-auto lg:grid-cols-3"
           variants={itemVariants}
         >
           <IndexOcupacaoCard
@@ -169,7 +169,7 @@ export default function Dashboard() {
         </motion.section>
 
         <Suspense fallback={<RouteLoadingFallback type="list" />}>
-          <div className="content-visibility-auto grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 content-visibility-auto lg:grid-cols-2">
             <IndexOperations
               aguardandoRecebimento={aguardandoRecebimento}
               triagemPendente={triagemPendente}

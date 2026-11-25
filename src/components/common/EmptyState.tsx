@@ -65,7 +65,7 @@ export function EmptyState({
             isCompact ? "h-16 w-16" : "h-24 w-24"
           )}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
           <Icon
             className={cn(
               "text-primary/40 transition-colors duration-300 group-hover:text-primary/60",
@@ -88,7 +88,7 @@ export function EmptyState({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
         className={cn(
-          "mb-2 font-black uppercase tracking-tight text-foreground",
+          "mb-2 font-black tracking-tight text-foreground uppercase",
           isCompact ? "text-base" : "text-xl"
         )}
       >
@@ -100,7 +100,7 @@ export function EmptyState({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
         className={cn(
-          "max-w-sm font-medium leading-relaxed text-muted-foreground",
+          "max-w-sm leading-relaxed font-medium text-muted-foreground",
           isCompact ? "text-xs" : "text-sm"
         )}
       >
@@ -128,7 +128,7 @@ export function EmptyState({
           <Button
             onClick={action.onClick}
             size={isCompact ? "sm" : "lg"}
-            className="gap-2 rounded-xl px-8 font-bold uppercase tracking-tighter shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-95"
+            className="gap-2 rounded-xl px-8 font-bold tracking-tighter uppercase shadow-lg shadow-primary/20 transition-all hover:shadow-primary/30 active:scale-95"
           >
             {action.icon ? <action.icon className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
             {action.label}
@@ -139,7 +139,7 @@ export function EmptyState({
             variant="ghost"
             size={isCompact ? "sm" : "lg"}
             onClick={secondaryAction.onClick}
-            className="rounded-xl font-bold uppercase tracking-tighter transition-all hover:bg-primary/5"
+            className="rounded-xl font-bold tracking-tighter uppercase transition-all hover:bg-primary/5"
           >
             {secondaryAction.label}
           </Button>

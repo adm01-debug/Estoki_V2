@@ -30,7 +30,7 @@ export const MobileNavigation = memo(function MobileNavigation({
       <AnimatePresence>
         {fabOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -78,7 +78,7 @@ export const MobileNavigation = memo(function MobileNavigation({
 
       {/* Bottom Navigation (Mobile) */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 md:hidden"
+        className="fixed right-0 bottom-0 left-0 z-40 px-4 pt-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] md:hidden"
         aria-label="Navegação mobile"
       >
         <div className="absolute inset-0 border-t border-border/10 bg-background/80 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] backdrop-blur-2xl" />
@@ -95,7 +95,7 @@ export const MobileNavigation = memo(function MobileNavigation({
               aria-label="Hub"
             >
               <Box className="h-6 w-6 opacity-70" />
-              <span className="text-[10px] font-extrabold uppercase tracking-tighter">Hub</span>
+              <span className="text-[10px] font-extrabold tracking-tighter uppercase">Hub</span>
             </motion.button>
           ) : (
             <motion.button
@@ -108,7 +108,7 @@ export const MobileNavigation = memo(function MobileNavigation({
               aria-label="Voltar"
             >
               <ArrowLeft className="h-6 w-6" />
-              <span className="text-[10px] font-extrabold uppercase tracking-tighter">Voltar</span>
+              <span className="text-[10px] font-extrabold tracking-tighter uppercase">Voltar</span>
             </motion.button>
           )}
 
@@ -142,7 +142,7 @@ export const MobileNavigation = memo(function MobileNavigation({
                 />
                 <span
                   className={cn(
-                    "text-[10px] uppercase tracking-tighter",
+                    "text-[10px] tracking-tighter uppercase",
                     isActive ? "font-black" : "font-bold"
                   )}
                 >
@@ -161,8 +161,8 @@ export const MobileNavigation = memo(function MobileNavigation({
               }}
               whileTap={{ scale: 0.85 }}
               className={cn(
-                "flex h-16 w-16 items-center justify-center rounded-[2rem] border-4 border-background shadow-glow-lg transition-all duration-500",
-                fabOpen ? "rotate-45 scale-90 bg-destructive" : "bg-primary"
+                "flex h-16 w-16 items-center justify-center rounded-4xl border-4 border-background shadow-glow-lg transition-all duration-500",
+                fabOpen ? "scale-90 rotate-45 bg-destructive" : "bg-primary"
               )}
               aria-label={fabOpen ? "Fechar ações rápidas" : "Ações rápidas"}
             >
@@ -206,7 +206,7 @@ export const MobileNavigation = memo(function MobileNavigation({
                 />
                 <span
                   className={cn(
-                    "text-[10px] uppercase tracking-tighter",
+                    "text-[10px] tracking-tighter uppercase",
                     isActive ? "font-black" : "font-bold"
                   )}
                 >

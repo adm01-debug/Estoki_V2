@@ -10,7 +10,7 @@ export function AuthLoading() {
         animate={{ opacity: 1, scale: 1 }}
       >
         <div className="relative">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/60 shadow-glow">
             <Box className="h-7 w-7 text-primary-foreground" />
           </div>
           <div className="absolute -inset-2 animate-ping rounded-2xl bg-primary/20" />

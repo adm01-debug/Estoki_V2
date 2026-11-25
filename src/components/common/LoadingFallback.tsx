@@ -6,7 +6,7 @@ export const LoadingFallback = forwardRef<HTMLDivElement>(function LoadingFallba
   return (
     <div
       ref={ref}
-      className="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border border-border/10 bg-background/50 p-12 backdrop-blur-sm"
+      className="flex min-h-[60vh] flex-col items-center justify-center rounded-xl border border-border/10 bg-background/50 p-12 backdrop-blur-xs"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}

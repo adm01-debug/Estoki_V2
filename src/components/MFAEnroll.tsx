@@ -142,7 +142,7 @@ export function MFAEnroll({ onSuccess, onCancel }: MFAEnrollProps) {
               Ou insira a chave manualmente:
             </p>
             <div className="flex items-center gap-2">
-              <code className="flex-1 break-all rounded bg-muted p-2 font-mono text-xs">
+              <code className="flex-1 rounded bg-muted p-2 font-mono text-xs break-all">
                 {enrollmentData?.secret}
               </code>
               <Button

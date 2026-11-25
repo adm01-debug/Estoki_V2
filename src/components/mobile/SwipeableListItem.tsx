@@ -149,7 +149,7 @@ export function SwipeableListItem({
       {leftAction && (
         <div
           className={cn(
-            "absolute bottom-0 left-0 top-0 flex cursor-pointer items-center justify-center",
+            "absolute top-0 bottom-0 left-0 flex cursor-pointer items-center justify-center",
             "transition-opacity duration-200",
             leftAction.color
           )}
@@ -169,7 +169,7 @@ export function SwipeableListItem({
       {rightAction && (
         <div
           className={cn(
-            "absolute bottom-0 right-0 top-0 flex cursor-pointer items-center justify-center",
+            "absolute top-0 right-0 bottom-0 flex cursor-pointer items-center justify-center",
             "transition-opacity duration-200",
             rightAction.color
           )}
@@ -203,12 +203,12 @@ export function SwipeableListItem({
         {!isOpen && !disabled && (
           <>
             {leftAction && (
-              <div className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground/30">
+              <div className="pointer-events-none absolute top-1/2 left-2 -translate-y-1/2 text-muted-foreground/30">
                 <ChevronRight className="h-4 w-4" />
               </div>
             )}
             {rightAction && (
-              <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground/30">
+              <div className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground/30">
                 <ChevronLeft className="h-4 w-4" />
               </div>
             )}

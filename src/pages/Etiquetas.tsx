@@ -313,7 +313,7 @@ export default function Etiquetas() {
             <div className="space-y-4 lg:col-span-2">
               <div className="flex flex-wrap gap-3">
                 <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     aria-label={
                       fonte === "lotes"
@@ -374,7 +374,7 @@ export default function Etiquetas() {
                           onCheckedChange={() => toggleSelect(lote.id)}
                           onClick={(e) => e.stopPropagation()}
                         />
-                        <Package className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <Package className="h-4 w-4 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">
                             {lote.produto_nome || "Produto"}
@@ -384,7 +384,7 @@ export default function Etiquetas() {
                             {lote.nf_entrada && ` • NF: ${lote.nf_entrada}`}
                           </p>
                         </div>
-                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>
                     ))
                   ) : (
@@ -400,7 +400,7 @@ export default function Etiquetas() {
                           onCheckedChange={() => toggleSelect(ent.id)}
                           onClick={(e) => e.stopPropagation()}
                         />
-                        <Truck className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <Truck className="h-4 w-4 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium">{ent.cliente}</p>
                           <p className="text-xs text-muted-foreground">
@@ -408,7 +408,7 @@ export default function Etiquetas() {
                             {ent.quantidade} un{ent.nf_saida && ` • NF: ${ent.nf_saida}`}
                           </p>
                         </div>
-                        <ChevronRight className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>
                     ))
                   )}

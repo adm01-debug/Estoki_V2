@@ -51,7 +51,7 @@ export function QuickScanner() {
           aria-label="Escanear código"
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-primary"
+          className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 text-muted-foreground/50 transition-colors hover:text-primary"
           onClick={() => haptics.light()}
         >
           <QrCode className="h-4 w-4" />
@@ -84,11 +84,11 @@ export function QuickScanner() {
                 className="space-y-4 rounded-2xl border border-primary/20 bg-primary/5 p-6"
               >
                 <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border bg-background text-primary shadow-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border bg-background text-primary shadow-xs">
                     <Package className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-widest text-primary/60">
+                    <p className="mb-1 text-[10px] leading-none font-bold tracking-widest text-primary/60 uppercase">
                       Resultado Identificado
                     </p>
                     <p className="text-lg font-black tracking-tight">{lastResult.produto}</p>
@@ -97,13 +97,13 @@ export function QuickScanner() {
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="mb-1 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                       Tipo
                     </p>
                     <p className="font-bold">{lastResult.tipo}</p>
                   </div>
                   <div>
-                    <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="mb-1 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                       Status
                     </p>
                     <p className="font-bold">{lastResult.status}</p>
@@ -113,7 +113,7 @@ export function QuickScanner() {
                 <div className="flex gap-2 pt-2">
                   <Button
                     variant="outline"
-                    className="h-11 flex-1 rounded-xl text-[11px] font-bold uppercase tracking-wider"
+                    className="h-11 flex-1 rounded-xl text-[11px] font-bold tracking-wider uppercase"
                     onClick={() => {
                       haptics.light();
                       clearLastResult();
@@ -122,7 +122,7 @@ export function QuickScanner() {
                     Novo Scan
                   </Button>
                   <Button
-                    className="glow-button h-11 flex-1 gap-2 rounded-xl text-[11px] font-bold uppercase tracking-wider"
+                    className="glow-button h-11 flex-1 gap-2 rounded-xl text-[11px] font-bold tracking-wider uppercase"
                     onClick={handleNavigate}
                   >
                     Ir para Triagem <ArrowRight className="h-4 w-4" />

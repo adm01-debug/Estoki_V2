@@ -135,7 +135,7 @@ export function Breadcrumbs({ className }: BreadcrumbsProps) {
       animate="show"
       aria-label="Breadcrumb"
       className={cn(
-        "sticky top-16 z-30 flex items-center gap-3 border-b border-border/5 bg-background/50 px-4 py-2 text-sm text-muted-foreground shadow-sm backdrop-blur-sm lg:px-6",
+        "sticky top-16 z-30 flex items-center gap-3 border-b border-border/5 bg-background/50 px-4 py-2 text-sm text-muted-foreground shadow-xs backdrop-blur-xs lg:px-6",
         className
       )}
     >
@@ -143,7 +143,7 @@ export function Breadcrumbs({ className }: BreadcrumbsProps) {
         <BackButton size="sm" variant="ghost" className="transition-colors hover:bg-primary/10" />
       </motion.div>
 
-      <div className="mx-1 h-4 w-[1px] shrink-0 bg-border/20" />
+      <div className="mx-1 h-4 w-px shrink-0 bg-border/20" />
 
       <div className="no-scrollbar flex items-center gap-1 overflow-x-auto py-1 pr-4">
         {crumbs.map((crumb, i) => (
@@ -172,13 +172,13 @@ export function Breadcrumbs({ className }: BreadcrumbsProps) {
               >
                 {crumb.label}
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/20"
+                  className="absolute right-0 bottom-0 left-0 h-0.5 bg-primary/20"
                   initial={{ scaleX: 0 }}
                   whileHover={{ scaleX: 1 }}
                 />
               </Link>
             ) : (
-              <span className="rounded-md border border-primary/10 bg-primary/5 px-2.5 py-1 text-xs font-bold text-foreground shadow-sm backdrop-blur-md">
+              <span className="rounded-md border border-primary/10 bg-primary/5 px-2.5 py-1 text-xs font-bold text-foreground shadow-xs backdrop-blur-md">
                 {crumb.label}
               </span>
             )}

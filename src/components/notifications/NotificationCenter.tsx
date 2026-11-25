@@ -55,7 +55,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
       )}
       onClick={() => markAsRead(notification.id)}
     >
-      <div className="mt-0.5 flex-shrink-0">
+      <div className="mt-0.5 shrink-0">
         <NotificationIcon type={notification.type} />
       </div>
       <div className="min-w-0 flex-1">
@@ -65,7 +65,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
           >
             {notification.title}
           </p>
-          {!notification.read && <span className="h-2 w-2 flex-shrink-0 rounded-full bg-primary" />}
+          {!notification.read && <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />}
         </div>
         <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{notification.message}</p>
         <p className="mt-1 text-xs text-muted-foreground/70">
@@ -76,7 +76,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
         variant="ghost"
         size="icon"
         aria-label="Dispensar notificação"
-        className="h-6 w-6 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+        className="h-6 w-6 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
         onClick={(e) => {
           e.stopPropagation();
           removeNotification(notification.id);
@@ -107,13 +107,13 @@ export function NotificationCenter() {
           variant="ghost"
           size="icon"
           aria-label="Notificações"
-          className="touch-friendly relative"
+          className="relative touch-friendly"
         >
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
               variant="destructive"
-              className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center px-1 text-xs"
+              className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center px-1 text-xs"
             >
               {unreadCount > 9 ? "9+" : unreadCount}
             </Badge>

@@ -69,7 +69,7 @@ export function Timeline({ items, className, showConnector = true }: TimelinePro
                 <Icon className="h-4 w-4" />
               </div>
               {showConnector && !isLast && (
-                <div className={cn("min-h-[2rem] w-0.5 flex-1", config.lineClass)} />
+                <div className={cn("min-h-8 w-0.5 flex-1", config.lineClass)} />
               )}
             </div>
 
@@ -85,7 +85,7 @@ export function Timeline({ items, className, showConnector = true }: TimelinePro
                   )}
                 </div>
                 {item.timestamp && (
-                  <span className="whitespace-nowrap text-xs text-muted-foreground">
+                  <span className="text-xs whitespace-nowrap text-muted-foreground">
                     {formatRelativeTime(item.timestamp)}
                   </span>
                 )}

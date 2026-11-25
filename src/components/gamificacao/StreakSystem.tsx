@@ -45,7 +45,7 @@ export const StreakResumo: React.FC = () => {
 
   if (loading) {
     return (
-      <Card className="border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-red-500/10">
+      <Card className="border-orange-500/30 bg-linear-to-br from-orange-500/10 to-red-500/10">
         <CardContent className="p-4">
           <div className="flex animate-pulse items-center gap-3">
             <div className="h-8 w-8 rounded-full bg-orange-500/20" />
@@ -60,7 +60,7 @@ export const StreakResumo: React.FC = () => {
   }
 
   return (
-    <Card className="relative overflow-hidden border-orange-500/30 bg-gradient-to-br from-orange-500/10 to-red-500/10">
+    <Card className="relative overflow-hidden border-orange-500/30 bg-linear-to-br from-orange-500/10 to-red-500/10">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -72,7 +72,7 @@ export const StreakResumo: React.FC = () => {
               <Flame className="h-8 w-8 text-orange-500" />
               {streakAtual >= 7 && (
                 <motion.div
-                  className="absolute -right-1 -top-1"
+                  className="absolute -top-1 -right-1"
                   animate={{ rotate: [0, 10, -10, 0] }}
                   transition={{ duration: 0.5, repeat: Infinity }}
                 >

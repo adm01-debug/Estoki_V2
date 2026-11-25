@@ -132,7 +132,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col justify-between gap-4 rounded-2xl border border-primary/20 bg-card/50 p-4 shadow-sm backdrop-blur-md md:flex-row md:items-center"
+        className="flex flex-col justify-between gap-4 rounded-2xl border border-primary/20 bg-card/50 p-4 shadow-xs backdrop-blur-md md:flex-row md:items-center"
       >
         <div className="flex items-center gap-4">
           <div className="rounded-xl border border-primary/20 bg-primary/10 p-2">
@@ -142,13 +142,13 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="h-5 rounded-full border-primary/20 bg-primary/5 text-[10px] font-black uppercase tracking-tighter text-primary"
+                className="h-5 rounded-full border-primary/20 bg-primary/5 text-[10px] font-black tracking-tighter text-primary uppercase"
               >
                 Quality Intelligence 2.0
               </Badge>
               <Badge
                 variant="outline"
-                className="h-5 rounded-full border-success/20 bg-success/5 text-[10px] font-black uppercase tracking-tighter text-success"
+                className="h-5 rounded-full border-success/20 bg-success/5 text-[10px] font-black tracking-tighter text-success uppercase"
               >
                 Aprovação: {aprovacaoReal}%
               </Badge>
@@ -170,7 +170,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
           <Button
             variant="outline"
             size="sm"
-            className="h-9 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-bold uppercase text-primary"
+            className="h-9 rounded-xl border-primary/20 bg-primary/5 text-[10px] font-bold text-primary uppercase"
           >
             Exportar BI
           </Button>
@@ -181,7 +181,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
         <Card className={chartCardClass + " col-span-1 md:col-span-1"}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <CardTitle className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 Status do Fluxo
               </CardTitle>
               <Info className="h-3 w-3 text-muted-foreground/50" />
@@ -218,7 +218,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
         <Card className={chartCardClass + " col-span-1 md:col-span-2"}>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <CardTitle className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 Tendência de Qualidade x Volume
               </CardTitle>
               <TrendingUp className="h-3 w-3 text-primary" />
@@ -272,7 +272,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
 
         <Card className={chartCardClass + " col-span-1 md:col-span-1"}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <CardTitle className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
               Distribuição por Status
             </CardTitle>
           </CardHeader>
@@ -312,7 +312,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card className={chartCardClass}>
           <CardHeader className="pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <CardTitle className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
               Pareto de Defeitos
             </CardTitle>
           </CardHeader>
@@ -346,13 +346,13 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
           </CardContent>
         </Card>
 
-        <div className="relative flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 to-background p-6 shadow-sm md:col-span-2 md:flex-row">
-          <div className="absolute right-0 top-0 h-32 w-32 -translate-y-1/2 translate-x-1/2 rounded-full bg-primary/5" />
+        <div className="relative flex flex-col items-center gap-6 overflow-hidden rounded-2xl border border-primary/20 bg-linear-to-br from-primary/5 to-background p-6 shadow-xs md:col-span-2 md:flex-row">
+          <div className="absolute top-0 right-0 h-32 w-32 translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5" />
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
             <TrendingUp className="h-10 w-10 text-primary" />
           </div>
           <div className="relative space-y-2">
-            <Badge className="rounded-full bg-primary px-3 text-[9px] font-black uppercase text-primary-foreground">
+            <Badge className="rounded-full bg-primary px-3 text-[9px] font-black text-primary-foreground uppercase">
               Recomendação Estratégica
             </Badge>
             <h4 className="text-lg font-black tracking-tight">Otimize o Fluxo de Triagem</h4>
@@ -362,7 +362,7 @@ export const TriagemCharts = memo(function TriagemCharts({ items }: TriagemChart
               para reduzir o Takt-Time médio em 15%.
             </p>
           </div>
-          <Button className="glow-button ml-auto mt-4 h-12 rounded-xl px-8 text-xs font-black uppercase tracking-widest md:mt-0">
+          <Button className="glow-button mt-4 ml-auto h-12 rounded-xl px-8 text-xs font-black tracking-widest uppercase md:mt-0">
             Aplicar Otimização
           </Button>
         </div>

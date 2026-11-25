@@ -340,7 +340,7 @@ export function ImportarNFDialog({ trigger, onSuccess }: ImportarNFDialogProps) 
                     <Card>
                       <CardContent className="pt-4">
                         <h3 className="mb-2 font-semibold">Informações Complementares</h3>
-                        <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                        <p className="text-sm whitespace-pre-wrap text-muted-foreground">
                           {nfeData.informacoesComplementares}
                         </p>
                       </CardContent>

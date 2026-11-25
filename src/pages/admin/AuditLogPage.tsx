@@ -163,7 +163,7 @@ export default function AuditLogPage() {
             <CardContent className="p-4">
               <div className="flex flex-col gap-4 md:flex-row">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     aria-label="Buscar por usuário, entidade, ID"
                     placeholder="Buscar por usuário, entidade, ID..."
@@ -211,7 +211,7 @@ export default function AuditLogPage() {
                     },
                     {
                       header: "Usuário",
-                      className: "flex-[2]",
+                      className: "flex-2",
                       cell: (log: AuditLogEntry) => (
                         <div className="flex flex-col">
                           <span className="text-sm font-medium">{log.user_nome || "Sistema"}</span>
@@ -240,7 +240,7 @@ export default function AuditLogPage() {
                     },
                     {
                       header: "Detalhes",
-                      className: "flex-[2]",
+                      className: "flex-2",
                       cell: (log: AuditLogEntry) => (
                         <span className="block truncate text-sm">{log.entity_label || "-"}</span>
                       ),
@@ -265,7 +265,7 @@ export default function AuditLogPage() {
                             <ScrollArea className="max-h-[60vh] rounded-md bg-muted p-4">
                               <div className="space-y-4">
                                 <div>
-                                  <h4 className="mb-2 text-xs font-bold uppercase text-muted-foreground">
+                                  <h4 className="mb-2 text-xs font-bold text-muted-foreground uppercase">
                                     Informações Gerais
                                   </h4>
                                   <pre className="text-xs">
@@ -283,7 +283,7 @@ export default function AuditLogPage() {
                                 </div>
                                 {log.old_values && (
                                   <div>
-                                    <h4 className="mb-2 text-xs font-bold uppercase text-red-500">
+                                    <h4 className="mb-2 text-xs font-bold text-red-500 uppercase">
                                       Valores Anteriores
                                     </h4>
                                     <pre className="rounded bg-red-500/5 p-2 text-xs">
@@ -293,7 +293,7 @@ export default function AuditLogPage() {
                                 )}
                                 {log.new_values && (
                                   <div>
-                                    <h4 className="mb-2 text-xs font-bold uppercase text-success">
+                                    <h4 className="mb-2 text-xs font-bold text-success uppercase">
                                       Novos Valores
                                     </h4>
                                     <pre className="rounded bg-success/5 p-2 text-xs">
@@ -306,7 +306,7 @@ export default function AuditLogPage() {
                                   log.metadata !== null &&
                                   Object.keys(log.metadata).length > 0 && (
                                     <div>
-                                      <h4 className="mb-2 text-xs font-bold uppercase text-primary">
+                                      <h4 className="mb-2 text-xs font-bold text-primary uppercase">
                                         Metadados Adicionais
                                       </h4>
                                       <pre className="text-xs">

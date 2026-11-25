@@ -71,7 +71,7 @@ export default function HelpPage() {
                   Perguntas Frequentes
                 </CardTitle>
                 <div className="relative mt-2">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     aria-label="Buscar dúvida"
                     placeholder="Buscar dúvida..."
@@ -86,7 +86,7 @@ export default function HelpPage() {
                       <AccordionTrigger className="text-left text-sm font-bold">
                         {faq.q}
                       </AccordionTrigger>
-                      <AccordionContent className="text-sm font-medium leading-relaxed text-muted-foreground">
+                      <AccordionContent className="text-sm leading-relaxed font-medium text-muted-foreground">
                         {faq.a}
                       </AccordionContent>
                     </AccordionItem>
@@ -107,7 +107,7 @@ export default function HelpPage() {
                 <p className="text-xs font-medium text-muted-foreground">
                   Nosso time de suporte está disponível de Seg a Sex, das 08h às 18h.
                 </p>
-                <Button className="w-full rounded-xl text-xs font-black uppercase tracking-widest">
+                <Button className="w-full rounded-xl text-xs font-black tracking-widest uppercase">
                   Falar com Consultor
                 </Button>
               </CardContent>

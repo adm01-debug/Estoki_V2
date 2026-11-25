@@ -54,16 +54,16 @@ export const DashboardActivityFeed = () => {
           transition={{ delay: index * 0.1 }}
           className="group relative flex items-start gap-4 rounded-2xl border border-transparent p-3 transition-all hover:border-border/50 hover:bg-muted/40"
         >
-          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-background shadow-sm transition-transform group-hover:scale-110">
+          <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-border/50 bg-background shadow-xs transition-transform group-hover:scale-110">
             {getIcon(log.action, log.entity_type)}
           </div>
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-bold uppercase tracking-tight text-foreground">
+              <p className="truncate text-sm font-bold tracking-tight text-foreground uppercase">
                 {log.user_nome || "Sistema"}
               </p>
-              <span className="whitespace-nowrap rounded-full bg-muted/50 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+              <span className="rounded-full bg-muted/50 px-2 py-0.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground">
                 {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: ptBR })}
               </span>
             </div>
@@ -86,7 +86,7 @@ export const DashboardActivityFeed = () => {
           </div>
 
           {log.action === "create" && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100">
+            <div className="absolute top-1/2 right-3 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100">
               <CheckCircle2 className="h-4 w-4 text-success" />
             </div>
           )}

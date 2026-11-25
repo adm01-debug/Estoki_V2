@@ -301,11 +301,11 @@ export default function IntegracaoTransportadoras() {
                 </CardHeader>
                 <CardContent>
                   <div className="relative space-y-4 pl-6">
-                    <div className="absolute bottom-2 left-[9px] top-2 w-0.5 bg-border" />
+                    <div className="absolute top-2 bottom-2 left-[9px] w-0.5 bg-border" />
                     {r.eventos.map((ev, j) => (
                       <div key={j} className="relative">
                         <div
-                          className={`absolute -left-[15px] h-3 w-3 rounded-full border-2 ${j === 0 ? "border-primary bg-primary" : "border-muted-foreground/30 bg-background"}`}
+                          className={`absolute left-[-15px] h-3 w-3 rounded-full border-2 ${j === 0 ? "border-primary bg-primary" : "border-muted-foreground/30 bg-background"}`}
                         />
                         <div className="text-xs">
                           <p className="font-semibold text-foreground">{ev.descricao}</p>

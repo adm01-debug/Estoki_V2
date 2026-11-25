@@ -230,7 +230,7 @@ export default function PickingPage() {
               </CardContent>
             </Card>
 
-            <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
+            <div className="fixed right-0 bottom-0 left-0 border-t bg-background p-4">
               <Button
                 className="h-12 w-full text-lg"
                 onClick={handleConfirm}
@@ -251,7 +251,7 @@ export default function PickingPage() {
         <div className="space-y-6 p-4">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
               <Input
                 aria-label="Buscar por produto ou posição"
                 placeholder="Buscar por produto ou posição..."
@@ -314,14 +314,14 @@ export default function PickingPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div>
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                          <p className="text-xs tracking-wider text-muted-foreground uppercase">
                             Quantidade
                           </p>
                           <p className="text-xl font-bold">{task.quantidade}</p>
                         </div>
-                        <div className="h-8 w-[1px] bg-border" />
+                        <div className="h-8 w-px bg-border" />
                         <div>
-                          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                          <p className="text-xs tracking-wider text-muted-foreground uppercase">
                             Zona
                           </p>
                           <p className="text-sm font-medium">{task.zona || "Geral"}</p>

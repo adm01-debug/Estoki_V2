@@ -32,17 +32,17 @@ export function SearchInput({
     <div className="space-y-2">
       {label && <Label htmlFor={uid}>{label}</Label>}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           id={uid}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="pl-10 pr-10"
+          className="pr-10 pl-10"
         />
         {loading ? (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <div className="absolute top-1/2 right-3 -translate-y-1/2">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
           </div>
         ) : (
@@ -52,7 +52,7 @@ export function SearchInput({
               type="button"
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-full w-10"
+              className="absolute top-0 right-0 h-full w-10"
               onClick={handleClear}
             >
               <X className="h-4 w-4" />

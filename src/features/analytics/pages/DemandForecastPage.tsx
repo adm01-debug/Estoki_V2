@@ -409,7 +409,7 @@ export default function PrevisaoDemandaIA() {
                         </Badge>
                       </td>
                       <td className="p-2 text-center">{p.confianca}%</td>
-                      <td className="p-2 text-left italic text-muted-foreground">
+                      <td className="p-2 text-left text-muted-foreground italic">
                         "{p.recomendacao}"
                       </td>
                     </tr>

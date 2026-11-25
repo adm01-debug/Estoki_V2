@@ -55,7 +55,7 @@ export default function StockMovementsPage() {
               <h1 className="text-2xl font-black tracking-tight text-foreground">
                 Fluxo de Movimentações
               </h1>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground/60 uppercase">
                 <Clock className="h-3.5 w-3.5" />
                 Log de auditoria completo e imutável
               </div>
@@ -63,7 +63,7 @@ export default function StockMovementsPage() {
 
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative w-full md:w-80">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground/50" />
                 <Input
                   aria-label="SKU, Lote ou Descrição"
                   placeholder="SKU, Lote ou Descrição..."
@@ -105,7 +105,7 @@ export default function StockMovementsPage() {
                     aria-label="Ver em lista"
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-md bg-background text-primary shadow-sm"
+                    className="h-7 w-7 rounded-md bg-background text-primary shadow-xs"
                   >
                     <List className="h-4 w-4" />
                   </Button>
@@ -120,7 +120,7 @@ export default function StockMovementsPage() {
                 </div>
                 <Badge
                   variant="outline"
-                  className="rounded-full border-primary/20 bg-primary/5 px-3 text-[10px] font-black uppercase tracking-widest text-primary"
+                  className="rounded-full border-primary/20 bg-primary/5 px-3 text-[10px] font-black tracking-widest text-primary uppercase"
                 >
                   {filteredMovements.length} Registros
                 </Badge>
@@ -146,7 +146,7 @@ export default function StockMovementsPage() {
                   </p>
                 </div>
               ) : (
-                <div className="relative space-y-4 before:absolute before:inset-0 before:ml-[1.375rem] before:h-full before:w-0.5 before:-translate-x-px before:bg-gradient-to-b before:from-border/10 before:via-border/60 before:to-border/10">
+                <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5.5 before:h-full before:w-0.5 before:-translate-x-px before:bg-linear-to-b before:from-border/10 before:via-border/60 before:to-border/10">
                   <AnimatePresence mode="popLayout">
                     {filteredMovements.map((mov, idx) => (
                       <motion.div
@@ -160,7 +160,7 @@ export default function StockMovementsPage() {
                       >
                         <div
                           className={cn(
-                            "absolute left-0 ml-0 flex h-11 w-11 items-center justify-center rounded-2xl border shadow-sm transition-transform group-hover/item:rotate-6 group-hover/item:scale-110",
+                            "absolute left-0 ml-0 flex h-11 w-11 items-center justify-center rounded-2xl border shadow-xs transition-transform group-hover/item:scale-110 group-hover/item:rotate-6",
                             mov.tipo.includes("entrada")
                               ? "border-success/20 bg-success/5"
                               : mov.tipo.includes("saida")
@@ -179,7 +179,7 @@ export default function StockMovementsPage() {
                             <Badge
                               variant="outline"
                               className={cn(
-                                "rounded-full px-2 py-0 text-[9px] font-black uppercase tracking-widest",
+                                "rounded-full px-2 py-0 text-[9px] font-black tracking-widest uppercase",
                                 mov.tipo.includes("entrada")
                                   ? "border-success/30 bg-success/5 text-success"
                                   : mov.tipo.includes("saida")
@@ -218,13 +218,13 @@ export default function StockMovementsPage() {
                             )}
                           </div>
                           <div className="flex items-center gap-4 pt-1">
-                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-muted-foreground/60 uppercase">
                               <Calendar className="h-3 w-3" />
                               {format(new Date(mov.created_at), "dd MMM yyyy • HH:mm", {
                                 locale: ptBR,
                               })}
                             </div>
-                            <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                            <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-muted-foreground/60 uppercase">
                               <User className="h-3 w-3" />
                               {mov.operador_nome || "Sistema Automatizado"}
                             </div>
@@ -234,7 +234,7 @@ export default function StockMovementsPage() {
                         <div className="shrink-0 text-right">
                           <p
                             className={cn(
-                              "text-2xl font-black leading-none tracking-tighter",
+                              "text-2xl leading-none font-black tracking-tighter",
                               mov.tipo.includes("entrada")
                                 ? "text-success"
                                 : mov.tipo.includes("saida")
@@ -245,7 +245,7 @@ export default function StockMovementsPage() {
                             {mov.tipo.includes("saida") ? "-" : "+"}
                             {mov.quantidade}
                           </p>
-                          <p className="mt-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <p className="mt-1 text-[9px] font-bold tracking-widest text-muted-foreground uppercase">
                             unidades
                           </p>
                         </div>

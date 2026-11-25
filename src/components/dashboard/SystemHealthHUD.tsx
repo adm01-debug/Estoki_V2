@@ -35,7 +35,7 @@ export const SystemHealthHUD = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-20 right-6 z-40 hidden md:block">
+    <div className="fixed right-6 bottom-20 z-40 hidden md:block">
       <motion.div
         layout
         onClick={() => setIsExpanded(!isExpanded)}
@@ -52,7 +52,7 @@ export const SystemHealthHUD = () => {
           <Activity className={cn("h-4 w-4", status === "optimal" && "animate-pulse")} />
           <div
             className={cn(
-              "absolute -right-1 -top-1 h-2 w-2 rounded-full",
+              "absolute -top-1 -right-1 h-2 w-2 rounded-full",
               status === "optimal"
                 ? "bg-green-500"
                 : status === "degraded"
@@ -62,7 +62,7 @@ export const SystemHealthHUD = () => {
           />
         </div>
 
-        <span className="whitespace-nowrap text-[10px] font-black uppercase tracking-widest">
+        <span className="text-[10px] font-black tracking-widest whitespace-nowrap uppercase">
           {isExpanded ? "System Health Monitor" : `${latency ?? "--"}ms`}
         </span>
 
@@ -72,7 +72,7 @@ export const SystemHealthHUD = () => {
               initial={{ opacity: 0, width: 0 }}
               animate={{ opacity: 1, width: "auto" }}
               exit={{ opacity: 0, width: 0 }}
-              className="border-current/10 ml-1 flex items-center gap-4 border-l pl-4"
+              className="ml-1 flex items-center gap-4 border-l border-current/10 pl-4"
             >
               <HealthItem icon={<Database className="h-3 w-3" />} label="Cloud" value="Online" />
               <HealthItem icon={<Server className="h-3 w-3" />} label="Edge" value="Active" />

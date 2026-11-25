@@ -143,7 +143,7 @@ const DashboardPage = () => {
               <div className="flex items-center gap-3">
                 <div
                   className={cn(
-                    "flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider",
+                    "flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black tracking-wider uppercase",
                     realtimeStatus.isConnected
                       ? "border border-success/20 bg-success/10 text-success shadow-[0_0_10px_rgba(34,197,94,0.1)]"
                       : "border border-border/50 bg-muted text-muted-foreground"
@@ -159,7 +159,7 @@ const DashboardPage = () => {
                   />
                   {realtimeStatus.isConnected ? "Live Connect" : "Desconectado"}
                 </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-muted/30 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="flex items-center gap-1.5 rounded-full bg-muted/30 px-3 py-1 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                   <Clock className="h-3 w-3" />
                   Update: {new Date().toLocaleTimeString()}
                 </div>
@@ -189,11 +189,11 @@ const DashboardPage = () => {
 
             <div className="space-y-6 lg:col-span-4">
               <ModuleErrorBoundary moduleName="Feed de Atividades">
-                <Card className="overflow-hidden rounded-[32px] border-border/40 bg-background/50 shadow-sm backdrop-blur-xl">
+                <Card className="overflow-hidden rounded-[32px] border-border/40 bg-background/50 shadow-xs backdrop-blur-xl">
                   <CardHeader className="border-b border-border/10 bg-muted/20 pb-3">
                     <div className="flex items-center justify-between">
                       <div className="space-y-1">
-                        <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-widest">
+                        <CardTitle className="flex items-center gap-2 text-sm font-black tracking-widest uppercase">
                           <History className="h-4 w-4 text-primary" />
                           Atividade Operacional
                         </CardTitle>
@@ -209,7 +209,7 @@ const DashboardPage = () => {
                     {canAccess(["admin"]) && (
                       <Button
                         variant="ghost"
-                        className="mt-2 h-8 w-full rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/5"
+                        className="mt-2 h-8 w-full rounded-xl text-[10px] font-black tracking-widest uppercase hover:bg-primary/5"
                         onClick={() => {
                           haptics.light();
                           navigate("/admin/auditoria");
@@ -222,17 +222,17 @@ const DashboardPage = () => {
                 </Card>
               </ModuleErrorBoundary>
 
-              <Card className="rounded-[32px] border-border/40 border-l-primary/20 bg-gradient-to-br from-primary/5 to-transparent shadow-sm">
+              <Card className="rounded-[32px] border-border/40 border-l-primary/20 bg-linear-to-br from-primary/5 to-transparent shadow-xs">
                 <CardContent className="p-6">
                   <div className="mb-4 flex items-center gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10">
                       <Zap className="h-5 w-5 text-primary" />
                     </div>
                     <div className="space-y-0.5">
-                      <h4 className="text-sm font-black uppercase tracking-tight">
+                      <h4 className="text-sm font-black tracking-tight uppercase">
                         Atalhos de Elite
                       </h4>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                         Navegação Rápida
                       </p>
                     </div>

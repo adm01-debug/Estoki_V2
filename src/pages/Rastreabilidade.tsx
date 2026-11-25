@@ -110,15 +110,15 @@ export default function RastreabilidadePage() {
             {/* Resumo de Progresso */}
             <Card className="lg:col-span-3">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider">
+                <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
                   <Timer className="h-4 w-4 text-primary" />
                   Timeline Operacional: Ciclo de Personalização
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="relative pb-4 pt-8">
+                <div className="relative pt-8 pb-4">
                   {/* Linha de Conexão */}
-                  <div className="absolute left-[10%] right-[10%] top-[52px] -z-10 h-0.5 bg-muted-foreground/20" />
+                  <div className="absolute top-[52px] right-[10%] left-[10%] -z-10 h-0.5 bg-muted-foreground/20" />
 
                   <div className="relative flex items-start justify-between">
                     {[
@@ -143,7 +143,7 @@ export default function RastreabilidadePage() {
                         </div>
                         <div className="text-center">
                           <p
-                            className={`text-[10px] font-bold uppercase tracking-tight ${step.status === "pending" ? "text-muted-foreground" : "text-foreground"}`}
+                            className={`text-[10px] font-bold tracking-tight uppercase ${step.status === "pending" ? "text-muted-foreground" : "text-foreground"}`}
                           >
                             {step.label}
                           </p>
@@ -158,7 +158,7 @@ export default function RastreabilidadePage() {
 
                 <div className="mt-6 rounded-xl border border-dashed border-muted-foreground/20 bg-muted/30 p-3">
                   <div className="mb-2 flex items-center justify-between">
-                    <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase">
                       Ocupação do Setor: Gravação
                     </span>
                     <span className="text-[10px] font-bold text-primary">75% Capacidade</span>
@@ -171,7 +171,7 @@ export default function RastreabilidadePage() {
             {/* Alertas e Perdas */}
             <Card className="border-destructive/20 bg-destructive/5">
               <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase text-destructive">
+                <CardTitle className="flex items-center gap-2 text-sm font-bold text-destructive uppercase">
                   <AlertTriangle className="h-4 w-4" />
                   Setor de Conserto
                 </CardTitle>
@@ -180,7 +180,7 @@ export default function RastreabilidadePage() {
                 <div>
                   <div className="mb-1 flex items-end justify-between">
                     <p className="text-2xl font-black tracking-tighter text-destructive">12</p>
-                    <p className="text-[10px] font-bold uppercase text-destructive/60">
+                    <p className="text-[10px] font-bold text-destructive/60 uppercase">
                       Peças Retidas
                     </p>
                   </div>
@@ -192,7 +192,7 @@ export default function RastreabilidadePage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-8 w-full rounded-lg border-destructive/20 text-[10px] font-bold uppercase text-destructive hover:bg-destructive/10"
+                    className="h-8 w-full rounded-lg border-destructive/20 text-[10px] font-bold text-destructive uppercase hover:bg-destructive/10"
                   >
                     Ver Itens Retidos
                   </Button>
@@ -213,7 +213,7 @@ export default function RastreabilidadePage() {
               {/* Filtros */}
               <div className="flex flex-wrap gap-3">
                 <div className="relative min-w-0 flex-1 sm:min-w-[200px]">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     aria-label="Buscar movimentações"
                     placeholder="Buscar movimentações..."
@@ -241,7 +241,7 @@ export default function RastreabilidadePage() {
               {/* Timeline */}
               <div className="relative">
                 {/* Linha vertical */}
-                <div className="absolute bottom-0 left-6 top-0 w-0.5 bg-border" />
+                <div className="absolute top-0 bottom-0 left-6 w-0.5 bg-border" />
 
                 <div className="space-y-4">
                   {movimentacoesFiltradas.length === 0 ? (

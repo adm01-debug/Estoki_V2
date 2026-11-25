@@ -21,10 +21,10 @@ export function TriagemCard({ triagem, onClick }: TriagemCardProps) {
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
     >
       <Card
-        className="group relative cursor-pointer overflow-hidden border-border/40 bg-card/80 backdrop-blur-sm transition-all hover:border-primary/40 hover:shadow-lg"
+        className="group relative cursor-pointer overflow-hidden border-border/40 bg-card/80 backdrop-blur-xs transition-all hover:border-primary/40 hover:shadow-lg"
         onClick={onClick}
       >
-        <div className="absolute right-0 top-0 p-3 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute top-0 right-0 p-3 opacity-0 transition-opacity group-hover:opacity-100">
           <ArrowRight className="h-4 w-4 text-primary" />
         </div>
 
@@ -43,7 +43,7 @@ export function TriagemCard({ triagem, onClick }: TriagemCardProps) {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="space-y-1.5">
-            <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="flex justify-between text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
               <span>Progresso da Triagem</span>
               <span className={cn(progresso === 100 ? "text-success" : "text-primary")}>
                 {Math.round(progresso)}%

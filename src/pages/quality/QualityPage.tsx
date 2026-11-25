@@ -56,7 +56,7 @@ export default function QualityPage() {
         <div className="space-y-6 p-4 md:p-6">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
             <div className="relative max-w-md flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Buscar por lote ou produto"
                 placeholder="Buscar por lote ou produto..."

@@ -25,7 +25,7 @@ export const MobileNavigation = memo(function MobileNavigation({
       <AnimatePresence>
         {fabOpen && (
           <motion.div
-            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -71,10 +71,10 @@ export const MobileNavigation = memo(function MobileNavigation({
 
       {/* Bottom Navigation (Mobile) */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2 md:hidden"
+        className="fixed right-0 bottom-0 left-0 z-40 px-4 pt-2 pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:hidden"
         aria-label="Navegação mobile"
       >
-        <div className="absolute inset-x-0 bottom-0 top-0 border-t border-border/10 bg-background/80 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] backdrop-blur-2xl" />
+        <div className="absolute inset-x-0 top-0 bottom-0 border-t border-border/10 bg-background/80 shadow-[0_-8px_30px_rgb(0,0,0,0.12)] backdrop-blur-2xl" />
         <div className="relative mx-auto flex h-14 max-w-md items-center justify-around px-1">
           {/* Mobile Navigation Controls - Smart & Contextual */}
           {pathname === "/" || pathname === "/dashboard" ? (
@@ -141,9 +141,7 @@ export const MobileNavigation = memo(function MobileNavigation({
               whileTap={{ scale: 0.9 }}
               className={cn(
                 "flex h-14 w-14 items-center justify-center rounded-2xl shadow-glow transition-all duration-300",
-                fabOpen
-                  ? "rotate-45 bg-destructive"
-                  : "bg-gradient-to-br from-primary to-primary/80"
+                fabOpen ? "rotate-45 bg-destructive" : "bg-linear-to-br from-primary to-primary/80"
               )}
               aria-label={fabOpen ? "Fechar ações rápidas" : "Ações rápidas"}
             >

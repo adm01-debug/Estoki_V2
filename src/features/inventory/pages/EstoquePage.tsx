@@ -311,7 +311,7 @@ export default function EstoquePage() {
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/10 p-4 shadow-sm"
+                className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/10 p-4 shadow-xs"
               >
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/20">
                   <CheckSquare className="h-4 w-4 text-primary" />
@@ -383,18 +383,18 @@ export default function EstoquePage() {
 
           <div className="flex gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Buscar posição, SKU, Rua"
                 type="text"
                 placeholder="Buscar posição, SKU, Rua..."
-                className="h-11 rounded-xl border-border/20 bg-card/50 pl-10 shadow-sm transition-all focus:bg-card focus:ring-2 focus:ring-primary/20"
+                className="h-11 rounded-xl border-border/20 bg-card/50 pl-10 shadow-xs transition-all focus:bg-card focus:ring-2 focus:ring-primary/20"
                 value={filters.search}
                 onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
               />
               {filters.search && (
                 <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 transition-colors hover:bg-muted"
+                  className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1 transition-colors hover:bg-muted"
                   onClick={() => {
                     haptics.light();
                     setFilters((prev) => ({ ...prev, search: "" }));
@@ -449,21 +449,21 @@ export default function EstoquePage() {
             <TabsList className="grid h-12 w-full grid-cols-3 rounded-2xl bg-muted/30 p-1">
               <TabsTrigger
                 value="mapa"
-                className="gap-2 rounded-xl text-xs font-bold uppercase tracking-tighter"
+                className="gap-2 rounded-xl text-xs font-bold tracking-tighter uppercase"
               >
                 <Warehouse className="h-4 w-4" />
                 Mapa
               </TabsTrigger>
               <TabsTrigger
                 value="boxes"
-                className="gap-2 rounded-xl text-xs font-bold uppercase tracking-tighter"
+                className="gap-2 rounded-xl text-xs font-bold tracking-tighter uppercase"
               >
                 <Box className="h-4 w-4" />
                 Boxes ({boxPositions.length})
               </TabsTrigger>
               <TabsTrigger
                 value="lista"
-                className="gap-2 rounded-xl text-xs font-bold uppercase tracking-tighter"
+                className="gap-2 rounded-xl text-xs font-bold tracking-tighter uppercase"
               >
                 <Layers className="h-4 w-4" />
                 Lista Ocupada
@@ -471,7 +471,7 @@ export default function EstoquePage() {
             </TabsList>
 
             <div className="mt-6">
-              <TabsContent value="mapa" className="focus-visible:outline-none">
+              <TabsContent value="mapa" className="focus-visible:outline-hidden">
                 <EstoqueMapaTab
                   filteredPositions={filteredPositions}
                   ruas={filters.ruas}
@@ -484,7 +484,7 @@ export default function EstoquePage() {
                 />
               </TabsContent>
 
-              <TabsContent value="boxes" className="space-y-4 focus-visible:outline-none">
+              <TabsContent value="boxes" className="space-y-4 focus-visible:outline-hidden">
                 {boxPositions.length === 0 ? (
                   <EmptyState
                     variant="compact"
@@ -503,7 +503,7 @@ export default function EstoquePage() {
                           setSelectedPosition(box);
                         }}
                         className={cn(
-                          "flex aspect-square flex-col items-center justify-center rounded-2xl border-2 shadow-sm transition-all hover:scale-105 active:scale-95",
+                          "flex aspect-square flex-col items-center justify-center rounded-2xl border-2 shadow-xs transition-all hover:scale-105 active:scale-95",
                           statusConfig[box.status as StatusPosicao].bg,
                           statusConfig[box.status as StatusPosicao].border,
                           "hover:ring-4 hover:ring-primary/20"
@@ -518,7 +518,7 @@ export default function EstoquePage() {
                 )}
               </TabsContent>
 
-              <TabsContent value="lista" className="min-h-0 flex-1 focus-visible:outline-none">
+              <TabsContent value="lista" className="min-h-0 flex-1 focus-visible:outline-hidden">
                 {filteredPositions.filter((p: PosicaoEstoque) => p.status === "ocupado").length ===
                 0 ? (
                   <EmptyState

@@ -47,17 +47,17 @@ export const UserMenu = memo(function UserMenu({
         <Button
           variant="ghost"
           size="icon"
-          className="touch-friendly relative rounded-xl hover:bg-primary/10"
+          className="relative touch-friendly rounded-xl hover:bg-primary/10"
           aria-label="Menu do usuário"
         >
           <div className="relative">
             <Avatar className="h-9 w-9 ring-2 ring-primary/20 ring-offset-1 ring-offset-background transition-all hover:ring-primary/40">
               <AvatarImage src={avatarUrl || undefined} />
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary/60 text-xs font-bold text-primary-foreground">
+              <AvatarFallback className="bg-linear-to-br from-primary to-primary/60 text-xs font-bold text-primary-foreground">
                 {getInitials(userName)}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-success" />
+            <div className="absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-background bg-success" />
           </div>
         </Button>
       </DropdownMenuTrigger>

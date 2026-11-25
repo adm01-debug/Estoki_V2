@@ -39,7 +39,7 @@ export function Clock({
         {time.toLocaleTimeString("pt-BR", options)}
       </div>
       {showDate && (
-        <div className="text-sm capitalize text-muted-foreground">
+        <div className="text-sm text-muted-foreground capitalize">
           {time.toLocaleDateString("pt-BR", dateOptions)}
         </div>
       )}

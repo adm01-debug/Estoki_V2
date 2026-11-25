@@ -8,4 +8,4 @@ export const tooltipStyle = {
   },
 };
 
-export const chartCardClass = "border-border/50 bg-card/80 backdrop-blur-sm";
+export const chartCardClass = "border-border/50 bg-card/80 backdrop-blur-xs";

@@ -60,19 +60,19 @@ export function WMSStatusBadge() {
             <Badge
               variant="outline"
               className={cn(
-                "cursor-help gap-1.5 border-primary/20 bg-background/50 px-2 py-1 backdrop-blur-sm transition-all duration-300",
+                "cursor-help gap-1.5 border-primary/20 bg-background/50 px-2 py-1 backdrop-blur-xs transition-all duration-300",
                 !isOnline && "border-destructive/30 bg-destructive/5 text-destructive"
               )}
             >
               {isOnline ? (
                 <>
                   <Wifi className="h-3 w-3 animate-pulse text-success" />
-                  <span className="text-[10px] font-bold uppercase tracking-tight">Sync On</span>
+                  <span className="text-[10px] font-bold tracking-tight uppercase">Sync On</span>
                 </>
               ) : (
                 <>
                   <WifiOff className="h-3 w-3" />
-                  <span className="text-[10px] font-bold uppercase tracking-tight">Offline</span>
+                  <span className="text-[10px] font-bold tracking-tight uppercase">Offline</span>
                 </>
               )}
             </Badge>
@@ -87,7 +87,7 @@ export function WMSStatusBadge() {
             <button
               onClick={handleManualSync}
               disabled={isSyncing}
-              className="group flex hidden items-center gap-1.5 whitespace-nowrap text-[10px] font-medium text-muted-foreground transition-colors hover:text-primary disabled:opacity-50 sm:flex"
+              className="group flex hidden items-center gap-1.5 text-[10px] font-medium whitespace-nowrap text-muted-foreground transition-colors hover:text-primary disabled:opacity-50 sm:flex"
             >
               {isSyncing ? (
                 <RefreshCw className="h-3 w-3 animate-spin text-primary" />

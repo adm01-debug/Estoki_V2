@@ -44,7 +44,7 @@ export function WarehouseMap({ positions, onPositionClick }: WarehouseMapProps) 
   return (
     <Card
       className={cn(
-        "w-full overflow-hidden border-primary/10 bg-background/50 backdrop-blur-sm transition-all duration-500",
+        "w-full overflow-hidden border-primary/10 bg-background/50 backdrop-blur-xs transition-all duration-500",
         isMaximized ? "fixed inset-4 z-50 h-[calc(100dvh-32px)]" : "relative"
       )}
     >
@@ -79,7 +79,7 @@ export function WarehouseMap({ positions, onPositionClick }: WarehouseMapProps) 
           <div className="flex min-w-max gap-8">
             {corridors.map((corridor) => (
               <div key={corridor} className="space-y-4">
-                <h4 className="rounded bg-muted/20 py-1 text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <h4 className="rounded bg-muted/20 py-1 text-center text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                   Cor {corridor}
                 </h4>
                 <div className="grid gap-1.5">
@@ -97,7 +97,7 @@ export function WarehouseMap({ positions, onPositionClick }: WarehouseMapProps) 
                                   whileTap={{ scale: 0.9 }}
                                   onClick={() => onPositionClick?.(pos)}
                                   className={cn(
-                                    "flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border-2 text-[10px] font-black shadow-sm transition-all",
+                                    "flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border-2 text-[10px] font-black shadow-xs transition-all",
                                     getStatusColor(pos.status, pos.ocupacao)
                                   )}
                                 >

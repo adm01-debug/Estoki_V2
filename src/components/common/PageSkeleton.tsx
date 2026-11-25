@@ -63,7 +63,7 @@ export function SkeletonPulse({ className, delay = 0 }: { className?: string; de
         delay: delay,
       }}
       className={cn(
-        "relative overflow-hidden rounded-lg bg-muted/40 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2.5s_infinite] before:bg-gradient-to-r before:from-transparent before:via-primary/5 before:to-transparent",
+        "relative overflow-hidden rounded-lg bg-muted/40 before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2.5s_infinite] before:bg-linear-to-r before:from-transparent before:via-primary/5 before:to-transparent",
         className
       )}
     />

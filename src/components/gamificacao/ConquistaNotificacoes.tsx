@@ -213,7 +213,7 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm duration-300 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs duration-300 animate-in fade-in"
       onClick={onClose}
     >
       <div
@@ -244,7 +244,7 @@ export function ConquistaCelebracao({ conquista, onClose }: ConquistaCelebracaoP
 
           {/* Texto */}
           <div>
-            <p className="text-sm uppercase tracking-wider text-muted-foreground">
+            <p className="text-sm tracking-wider text-muted-foreground uppercase">
               Conquista Desbloqueado!
             </p>
             <h2 className="mt-1 text-2xl font-bold">{conquista.nome}</h2>

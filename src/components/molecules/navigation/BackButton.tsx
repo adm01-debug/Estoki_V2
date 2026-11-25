@@ -60,7 +60,7 @@ export const BackButton = ({
             variant={variant}
             size={size}
             onClick={handleBack}
-            className="touch-friendly border border-border/20 bg-background/50 shadow-sm transition-colors hover:bg-primary/10"
+            className="touch-friendly border border-border/20 bg-background/50 shadow-xs transition-colors hover:bg-primary/10"
             aria-label="Voltar para tela anterior"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -69,7 +69,7 @@ export const BackButton = ({
       </TooltipTrigger>
       <TooltipContent
         side="bottom"
-        className="border-border/40 bg-popover/95 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+        className="border-border/40 bg-popover/95 text-[10px] font-bold tracking-wider uppercase backdrop-blur-md"
       >
         Voltar <kbd className="ml-2 rounded bg-muted px-1 py-0.5 font-mono text-[10px]">Alt+←</kbd>
       </TooltipContent>

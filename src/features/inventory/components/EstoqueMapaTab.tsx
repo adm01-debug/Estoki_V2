@@ -227,7 +227,7 @@ export const EstoqueMapaTab = memo(
                                           {position.status === "reservado" && (
                                             <Clock className="h-3 w-3 text-warning" />
                                           )}
-                                          <span className="absolute bottom-0 right-0.5 text-[7px] opacity-40 transition-opacity group-hover:opacity-100">
+                                          <span className="absolute right-0.5 bottom-0 text-[7px] opacity-40 transition-opacity group-hover:opacity-100">
                                             {secao}
                                           </span>
                                         </button>

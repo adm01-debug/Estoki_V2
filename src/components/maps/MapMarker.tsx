@@ -15,7 +15,7 @@ export function MapMarker({ position, label, color = "#ef4444", onClick }: MapMa
     >
       <MapPin className="h-8 w-8" style={{ color }} />
       {label && (
-        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-2 py-1 text-xs shadow">
+        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 rounded bg-background px-2 py-1 text-xs whitespace-nowrap shadow-sm">
           {label}
         </div>
       )}

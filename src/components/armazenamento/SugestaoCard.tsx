@@ -67,7 +67,7 @@ export function SugestaoCard({
             <div className="space-y-1">
               {melhorSugestao.motivos.slice(0, 3).map((motivo, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-green-500" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-green-500" />
                   {motivo}
                 </div>
               ))}

@@ -118,36 +118,36 @@ export const DynamicAIInsights = ({ kpis }: DynamicAIInsightsProps) => {
           transition={{ duration: 0.4, ease: "easeOut" }}
           onClick={handleNext}
           className={cn(
-            "relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-3xl border p-5 shadow-sm transition-all",
+            "relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-3xl border p-5 shadow-xs transition-all",
             insight.color
           )}
         >
-          <div className="absolute right-0 top-0 p-3">
-            <div className="border-current/10 flex items-center gap-1.5 rounded-full border bg-white/40 px-2 py-0.5 backdrop-blur-sm dark:bg-black/20">
+          <div className="absolute top-0 right-0 p-3">
+            <div className="flex items-center gap-1.5 rounded-full border border-current/10 bg-white/40 px-2 py-0.5 backdrop-blur-xs dark:bg-black/20">
               <Target className="h-3 w-3" />
-              <span className="text-[9px] font-black uppercase tracking-tighter">
+              <span className="text-[9px] font-black tracking-tighter uppercase">
                 {insight.badge}
               </span>
             </div>
           </div>
 
-          <div className="border-current/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-white/50 shadow-inner dark:bg-black/20">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-current/10 bg-white/50 shadow-inner dark:bg-black/20">
             {insight.icon}
           </div>
           <div className="flex-1 pr-12">
-            <p className="flex items-center gap-2 text-sm font-black uppercase tracking-tight text-foreground">
+            <p className="flex items-center gap-2 text-sm font-black tracking-tight text-foreground uppercase">
               {insight.title}
-              <span className="bg-current/30 h-1 w-1 rounded-full" />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="h-1 w-1 rounded-full bg-current/30" />
+              <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                 Smart Intelligence
               </span>
             </p>
-            <p className="max-w-2xl text-xs font-medium leading-relaxed text-muted-foreground">
+            <p className="max-w-2xl text-xs leading-relaxed font-medium text-muted-foreground">
               {insight.message}
             </p>
           </div>
 
-          <div className="bg-current/10 absolute bottom-0 left-0 h-1 w-full">
+          <div className="absolute bottom-0 left-0 h-1 w-full bg-current/10">
             <motion.div
               key={`bar-${insight.id}`}
               initial={{ width: 0 }}

@@ -81,7 +81,7 @@ export function EstoqueVirtualList({ positions, onSelect, className }: EstoqueVi
                 role="button"
                 aria-label={label}
                 className={cn(
-                  "group flex h-full cursor-pointer items-center justify-between rounded-xl border bg-card/80 p-4 backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
+                  "group flex h-full cursor-pointer items-center justify-between rounded-xl border bg-card/80 p-4 backdrop-blur-xs transition-all hover:border-primary/30 hover:shadow-md focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:outline-hidden",
                   diasArmazenado > 30 && "border-l-4 border-l-warning shadow-warning/5"
                 )}
               >
@@ -110,7 +110,7 @@ export function EstoqueVirtualList({ positions, onSelect, className }: EstoqueVi
                   <div className="flex flex-col items-end text-right">
                     <Badge
                       className={cn(
-                        "text-[10px] font-black uppercase tracking-wider",
+                        "text-[10px] font-black tracking-wider uppercase",
                         diasArmazenado > 30
                           ? "border-warning/30 bg-warning/20 text-warning"
                           : "bg-muted text-muted-foreground"

@@ -44,7 +44,7 @@ export function DateTimePicker({ value, onChange }: DateTimePickerProps) {
         </PopoverContent>
       </Popover>
       <div className="relative">
-        <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+        <Clock className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
         <Input
           aria-label="Horário"
           type="time"

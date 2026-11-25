@@ -80,7 +80,7 @@ export const LoginForm = ({
             type="button"
             variant="ghost"
             size="icon"
-            className="absolute right-0 top-0 h-full px-3 text-sidebar-foreground/70 hover:bg-transparent hover:text-sidebar-foreground"
+            className="absolute top-0 right-0 h-full px-3 text-sidebar-foreground/70 hover:bg-transparent hover:text-sidebar-foreground"
             onClick={() => setShowPassword(!showPassword)}
             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
           >
@@ -95,7 +95,7 @@ export const LoginForm = ({
       </div>
       <Button
         type="submit"
-        className="h-11 w-full bg-gradient-to-r from-primary to-primary/80 font-semibold text-primary-foreground shadow-glow hover:from-primary/90 hover:to-primary/70"
+        className="h-11 w-full bg-linear-to-r from-primary to-primary/80 font-semibold text-primary-foreground shadow-glow hover:from-primary/90 hover:to-primary/70"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

@@ -22,7 +22,7 @@ export function CodeBlock({
         <code className="text-sm text-gray-100">
           {lines.map((line, i) => (
             <div key={i} className="flex">
-              {showLineNumbers && <span className="w-8 select-none text-gray-500">{i + 1}</span>}
+              {showLineNumbers && <span className="w-8 text-gray-500 select-none">{i + 1}</span>}
               <span>{line}</span>
             </div>
           ))}

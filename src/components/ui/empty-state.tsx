@@ -35,7 +35,7 @@ export function EmptyState({
     >
       <div className="relative mb-6">
         <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl" />
-        <div className="relative rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <div className="relative rounded-2xl border border-border bg-card p-5 shadow-xs">
           <Icon className="h-10 w-10 text-primary/60" />
         </div>
       </div>

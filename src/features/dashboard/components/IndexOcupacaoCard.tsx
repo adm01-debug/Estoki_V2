@@ -28,7 +28,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
   const navigate = useNavigate();
 
   return (
-    <Card className="glass-card group col-span-1 border-border/30 lg:col-span-2">
+    <Card className="group col-span-1 glass-card border-border/30 lg:col-span-2">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="flex items-center gap-2 text-base font-bold">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
@@ -39,7 +39,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:bg-primary/5"
+          className="h-8 gap-2 text-[10px] font-bold tracking-widest text-primary uppercase hover:bg-primary/5"
           onClick={() => navigate("/ocupacao")}
         >
           Mapa Visual <ArrowUpRight className="h-3 w-3" />
@@ -88,7 +88,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
             </div>
             <TooltipProvider>
               <div className="flex flex-col gap-3 border-t border-border/30 pt-4">
-                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="flex items-center justify-between text-xs font-bold tracking-widest text-muted-foreground uppercase">
                   <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                     <span>{posicoesOcupadas} Posições Ocupadas</span>
@@ -105,7 +105,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
                       <Activity className="h-4 w-4 animate-pulse text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      <p className="text-[10px] font-bold tracking-wider text-primary uppercase">
                         Status da Operação
                       </p>
                       <p className="text-xs font-black text-foreground">Fluxo Estabilizado</p>
@@ -115,7 +115,7 @@ export const IndexOcupacaoCard = memo(function IndexOcupacaoCard({
                     <TooltipTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="cursor-help border-success/20 bg-success/10 text-[9px] font-black uppercase text-success"
+                        className="cursor-help border-success/20 bg-success/10 text-[9px] font-black text-success uppercase"
                       >
                         Otimizado <Info className="ml-1 h-2 w-2" />
                       </Badge>

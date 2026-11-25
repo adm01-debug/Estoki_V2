@@ -47,7 +47,7 @@ export function ImageUpload({ onUpload, value = [], multiple, className }: Image
                 className="h-20 w-full rounded object-cover"
               />
               <X
-                className="absolute right-1 top-1 h-4 w-4 cursor-pointer rounded bg-black/50 text-white"
+                className="absolute top-1 right-1 h-4 w-4 cursor-pointer rounded bg-black/50 text-white"
                 onClick={() => remove(i)}
               />
             </div>

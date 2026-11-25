@@ -33,7 +33,7 @@ const shortcuts: ShortcutItem[] = [
 
 function KeyboardKey({ children }: { children: React.ReactNode }) {
   return (
-    <kbd className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded border bg-muted px-1.5 font-mono text-xs">
+    <kbd className="inline-flex h-6 min-w-6 items-center justify-center rounded border bg-muted px-1.5 font-mono text-xs">
       {children}
     </kbd>
   );

@@ -91,7 +91,7 @@ export class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="flex min-h-[400px] items-center justify-center bg-background/50 p-4 backdrop-blur-sm md:p-8">
+        <div className="flex min-h-[400px] items-center justify-center bg-background/50 p-4 backdrop-blur-xs md:p-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -106,7 +106,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     <AlertTriangle className="h-6 w-6" />
                     Instabilidade Detectada
                   </CardTitle>
-                  <div className="rounded-full bg-destructive/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-destructive">
+                  <div className="rounded-full bg-destructive/10 px-2 py-1 text-[10px] font-bold tracking-wider text-destructive uppercase">
                     Error Boundary
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         className="overflow-hidden"
                       >
                         <div className="custom-scrollbar max-h-60 overflow-auto rounded-xl border border-border/50 bg-muted/40 p-4 text-left shadow-inner">
-                          <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
+                          <p className="mb-2 text-[10px] font-black tracking-widest text-muted-foreground/70 uppercase">
                             Diagnostic Report
                           </p>
                           <p className="mb-3 font-mono text-xs font-semibold text-destructive">

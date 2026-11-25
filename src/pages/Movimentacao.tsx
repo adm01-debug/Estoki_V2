@@ -138,15 +138,15 @@ export default function MovimentacaoPage() {
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Entradas</div>
+            <div className="mb-1 text-xs font-medium text-muted-foreground uppercase">Entradas</div>
             <div className="text-2xl font-bold text-green-600">{stats.entradas}</div>
           </div>
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">Saídas</div>
+            <div className="mb-1 text-xs font-medium text-muted-foreground uppercase">Saídas</div>
             <div className="text-2xl font-bold text-red-600">{stats.saidas}</div>
           </div>
           <div className="rounded-xl border bg-card p-4 text-center">
-            <div className="mb-1 text-xs font-medium uppercase text-muted-foreground">
+            <div className="mb-1 text-xs font-medium text-muted-foreground uppercase">
               Remanejamentos
             </div>
             <div className="text-2xl font-bold text-blue-600">{stats.remanejamentos}</div>

@@ -180,7 +180,7 @@ export function PasswordInput({
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute right-0 top-0 h-full hover:bg-transparent"
+          className="absolute top-0 right-0 h-full hover:bg-transparent"
           onClick={() => setShow(!show)}
           disabled={disabled}
         >
@@ -197,7 +197,7 @@ export function PasswordInput({
           {/* Breach Warning */}
           {hasBreachPenalty && (
             <div className="flex items-start gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 animate-in fade-in-50">
-              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-destructive" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
               <div className="text-sm">
                 <p className="font-medium text-destructive">Senha vazada!</p>
                 <p className="text-muted-foreground">

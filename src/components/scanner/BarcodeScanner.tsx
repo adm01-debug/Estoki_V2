@@ -195,7 +195,7 @@ export function BarcodeScanner({
           </div>
 
           {/* Controls */}
-          <div className="absolute right-2 top-2 flex gap-2">
+          <div className="absolute top-2 right-2 flex gap-2">
             {hasFlash && (
               <Button
                 aria-label="Lanterna"
