@@ -19,7 +19,7 @@ const ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY ?? "";
 test.skip(!EMAIL || !PASSWORD, "E2E_USER_EMAIL/E2E_USER_PASSWORD não definidos");
 
 test.describe("fluxo logado real (sem mocks)", () => {
-  test("login, sessão real e RPCs de picking autorizadas", async ({ page }) => {
+  test("login, sessão real e RPCs de picking autorizadas", async ({ page, request }) => {
     await page.goto("/auth");
     await page.fill("#login-email", EMAIL);
     await page.fill("#login-password", PASSWORD);
@@ -57,18 +57,15 @@ test.describe("fluxo logado real (sem mocks)", () => {
     expect(token, "sessão real deve conter access_token").not.toBeNull();
 
     // system_settings: leitura autenticada passa pelo RLS do tenant.
-    const settings = await page.evaluate(
-      async ([url, anon, jwt]) => {
-        const r = await fetch(`${url}/rest/v1/system_settings?select=*&limit=1`, {
-          headers: { apikey: anon, Authorization: `Bearer ${jwt}` },
-        });
-        return { status: r.status, body: (await r.text()).slice(0, 200) };
-      },
-      [SUPABASE_URL, ANON_KEY, token as string] as const
-    );
+    // As chamadas usam a API de request (fora do navegador): um fetch dentro da
+    // pagina logo apos o login e abortado pela navegacao e vira "Failed to fetch".
+    const settings = await request.get(`${SUPABASE_URL}/rest/v1/system_settings?select=*&limit=1`, {
+      headers: { apikey: ANON_KEY, Authorization: `Bearer ${token}` },
+    });
+    const settingsBody = (await settings.text()).slice(0, 200);
     expect(
-      settings.status,
-      `system_settings recusou o usuário logado: ${settings.body}`
+      settings.status(),
+      `system_settings recusou o usuário logado: ${settingsBody}`
     ).toBeLessThan(400);
 
     // Erro de negócio (tarefa inexistente) é esperado; erro de PERMISSÃO não.
@@ -80,22 +77,16 @@ test.describe("fluxo logado real (sem mocks)", () => {
       ],
     ] as const;
 
-    for (const [fn, body] of rpcs) {
-      const out = await page.evaluate(
-        async ([url, anon, jwt, name, payload]) => {
-          const r = await fetch(`${url}/rest/v1/rpc/${name}`, {
-            method: "POST",
-            headers: {
-              apikey: anon,
-              Authorization: `Bearer ${jwt}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          return { status: r.status, body: (await r.text()).slice(0, 400) };
+    for (const [fn, payload] of rpcs) {
+      const res = await request.post(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+        headers: {
+          apikey: ANON_KEY,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        [SUPABASE_URL, ANON_KEY, token as string, fn, body] as const
-      );
+        data: payload,
+      });
+      const out = { status: res.status(), body: (await res.text()).slice(0, 400) };
       expect(out.status, `${fn} recusou o usuário logado: ${out.body}`).not.toBe(401);
       expect(out.body, `${fn} devolveu erro de permissão: ${out.body}`).not.toContain(
         "permission denied"
@@ -106,27 +97,35 @@ test.describe("fluxo logado real (sem mocks)", () => {
     // continuar passando — sem isso a guarda viraria regressao nas telas que
     // as chamam (Painel, Relatorios, Simulacao).
     for (const fn of ["abc-analysis", "calculate-kpis"]) {
-      const out = await page.evaluate(
-        async ([url, anon, jwt, name]) => {
-          const r = await fetch(`${url}/functions/v1/${name}`, {
-            method: "POST",
-            headers: {
-              apikey: anon,
-              Authorization: `Bearer ${jwt}`,
-              "Content-Type": "application/json",
-            },
-            body: "{}",
-          });
-          return { status: r.status, body: (await r.text()).slice(0, 200) };
+      const res = await request.post(`${SUPABASE_URL}/functions/v1/${fn}`, {
+        headers: {
+          apikey: ANON_KEY,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        [SUPABASE_URL, ANON_KEY, token as string, fn] as const
-      );
+        data: {},
+      });
+      const out = { status: res.status(), body: (await res.text()).slice(0, 200) };
       expect(out.status, `${fn} recusou o usuário logado: ${out.body}`).toBeLessThan(400);
     }
 
-    // Picking: a rota carrega sem cair no RouteErrorBoundary.
+    // Configurações: a tela abre com sessão real, sem estado de erro.
+    await page.goto("/configuracoes");
+    await expect(page.getByText("Ops! Algo deu errado")).toHaveCount(0);
+    await expect(page.getByText("Configurações").first()).toBeVisible();
+
+    // Picking: a rota carrega sem cair no RouteErrorBoundary E a consulta da
+    // lista responde de fato — ou existe tarefa pendente com "Iniciar", ou o
+    // vazio explícito aparece. Skeleton eterno, erro de RLS ou lista em branco
+    // por falta de permissão não passam daqui.
     await page.goto("/picking");
     await expect(page.getByText("Ops! Algo deu errado")).toHaveCount(0);
+    await expect(
+      page
+        .getByRole("button", { name: /^Iniciar/ })
+        .first()
+        .or(page.getByText("Nenhuma tarefa de picking pendente."))
+    ).toBeVisible({ timeout: 25_000 });
   });
 
   test("edge com sessao obrigatoria recusa a chave publica sem login", async ({ request }) => {
