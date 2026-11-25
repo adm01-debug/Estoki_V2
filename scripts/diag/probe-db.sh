@@ -49,7 +49,7 @@ q "Integridade: constraints de public nao validadas" "select conrelid::regclass:
 
 q "Integridade: indices invalidos ou nao prontos" "select c.relname as tabela, i.indexrelid::regclass::text as indice, i.indisvalid, i.indisready from pg_index i join pg_class c on c.oid=i.indrelid where c.relnamespace='public'::regnamespace and (not i.indisvalid or not i.indisready) order by 1"
 
-q "Integridade: indices duplicados (mesma tabela, colunas e operadores)" "select indrelid::regclass::text as tabela, array_agg(indexrelid::regclass::text order by indexrelid::regclass::text) as indices from pg_index i where i.indisvalid and i.indrelid in (select oid from pg_class where relnamespace='public'::regnamespace and relkind='r') group by indrelid, indkey, indclass, indoption, indpred having count(*) > 1 order by 1"
+q "Integridade: indices duplicados (mesma tabela, colunas e operadores)" "select i.indrelid::regclass::text as tabela, string_agg(i.indexrelid::regclass::text || case when exists (select 1 from pg_constraint k where k.conindid = i.indexrelid) then ' [constraint]' else '' end || ' ' || pg_size_pretty(pg_relation_size(i.indexrelid)), ' | ' order by i.indexrelid::regclass::text) as indices_sem_duplicata from pg_index i where i.indisvalid and i.indrelid in (select oid from pg_class where relnamespace='public'::regnamespace and relkind='r') group by i.indrelid, i.indkey, i.indclass, i.indoption, i.indpred having count(*) > 1 order by 1"
 
 q "Integridade: tabelas de public sem PK" "select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and not exists (select 1 from pg_constraint k where k.conrelid=c.oid and k.contype='p') order by 1"
 
