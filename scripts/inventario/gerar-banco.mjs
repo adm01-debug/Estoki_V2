@@ -48,6 +48,9 @@ export const LIMIARES = {
  * disponibilidade. A lista do que foi REVOGADO esta em
  * supabase/migrations/20261124120000_SEC_revoke_anon_execute.sql.
  */
+// Enxugada por 20261126140000_SEC_login_rpc_service_role.sql: as 3 RPCs de lockout sairam daqui --
+// sem consumidor no codigo, entregavam bloqueio dirigido e contorno do contador a quem tivesse a
+// chave publica do bundle.
 export const ANON_PRE_LOGIN = new Set([
   'has_role',
   'is_tenant_admin',
@@ -55,9 +58,6 @@ export const ANON_PRE_LOGIN = new Set([
   'effective_tenant_id',
   'default_tenant_id',
   'current_tenant_id',
-  'check_login_lockout',
-  'record_failed_login',
-  'reset_login_attempts',
   'get_backend_health',
 ]);
 

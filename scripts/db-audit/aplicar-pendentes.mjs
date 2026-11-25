@@ -44,7 +44,7 @@ const EXISTE_HAS_ROLE =
 
 // Mesma regra da migration 20261124120000_SEC_revoke_anon_execute.sql. Essa migration nao cria
 // objeto nenhum: ela revoga EXECUTE, entao a prova de aplicacao e negativa -- nenhuma funcao de
-// `public` fora do fluxo publico pre-login (e fora de extensao/trigger) pode continuar executavel
+// `public` fora da allowlist (e fora de extensao/trigger) pode continuar executavel
 // por `anon`, que herda EXECUTE de PUBLIC.
 const ANON_PUBLICO = [
   "has_role",
@@ -53,9 +53,6 @@ const ANON_PUBLICO = [
   "effective_tenant_id",
   "default_tenant_id",
   "current_tenant_id",
-  "check_login_lockout",
-  "record_failed_login",
-  "reset_login_attempts",
   "get_backend_health",
 ];
 
