@@ -2,14 +2,6 @@
   "alertas": [
     {
       "detalhe": [
-        "mv_alertas_severidade:anon,authenticated",
-        "mv_audit_daily:anon,authenticated",
-        "mv_notificacoes_tipo:anon,authenticated"
-      ],
-      "tipo": "view_sem_security_invoker"
-    },
-    {
-      "detalhe": [
         "adjust-inventory",
         "agv-dispatch",
         "ai-classification",
@@ -176,7 +168,7 @@
     },
     "historico": {
       "bytes": 90112,
-      "linhas": 129,
+      "linhas": 142,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -190,7 +182,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 1,
-        "execucoes_7d": 3,
+        "execucoes_7d": 4,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "alert-expiration-daily",
@@ -206,7 +198,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 100,
+        "execucoes_7d": 110,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
@@ -222,7 +214,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 1,
-        "execucoes_7d": 3,
+        "execucoes_7d": 4,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "reorder-check-daily",
@@ -238,7 +230,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 1,
-        "execucoes_7d": 3,
+        "execucoes_7d": 4,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "stock-alert-daily",
@@ -1150,6 +1142,58 @@
     "word_similarity_dist_op",
     "word_similarity_op"
   ],
+  "funcoes_definer_sem_guarda": [
+    {
+      "anon": true,
+      "args": "p_email text",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "check_login_lockout",
+      "service_role": true
+    },
+    {
+      "anon": true,
+      "args": "",
+      "authenticated": true,
+      "chamada_por": [
+        "effective_tenant_id (definer)"
+      ],
+      "nome": "default_tenant_id",
+      "service_role": true
+    },
+    {
+      "anon": true,
+      "args": "_tenant_id uuid, _user_id uuid",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "is_tenant_admin",
+      "service_role": true
+    },
+    {
+      "anon": true,
+      "args": "_tenant_id uuid, _user_id uuid",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "is_tenant_member",
+      "service_role": true
+    },
+    {
+      "anon": true,
+      "args": "p_email text, p_ip_address inet",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "record_failed_login",
+      "service_role": true
+    },
+    {
+      "anon": true,
+      "args": "p_email text",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "reset_login_attempts",
+      "service_role": true
+    }
+  ],
   "funcoes_executaveis_anon": [
     "check_login_lockout",
     "current_tenant_id",
@@ -1163,7 +1207,7 @@
     "reset_login_attempts"
   ],
   "funcoes_security_definer_sem_search_path": [],
-  "medido_em": "2026-11-25T00:33:07Z",
+  "medido_em": "2026-11-25T10:40:17Z",
   "migrations_orfas": {
     "criterio": "migration de supabase/migrations/ cuja tabela/funcao nao existe no banco (view fica de fora: o inventario nao guarda nome de view)",
     "lista": [
@@ -1325,14 +1369,14 @@
     "cron_ativos": 4,
     "cron_jobs": 4,
     "funcoes_public": 79,
-    "ledger_registros": 99,
-    "ledger_versao_max": "20261124120000",
+    "ledger_registros": 101,
+    "ledger_versao_max": "20261125120000",
     "max_connections": 60,
     "policies": 335,
     "postgres": "17.11",
     "tabelas_public": 92,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 24630963,
+    "tamanho_bytes": 24655539,
     "triggers_public": 58,
     "views_public": 3
   },
@@ -1580,7 +1624,7 @@
     {
       "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 104,
+      "linhas": 114,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
@@ -1724,7 +1768,7 @@
       "triggers": 1,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 9
+        "src": 8
       }
     },
     {
@@ -2732,9 +2776,5 @@
   },
   "tabelas_sem_pk": [],
   "triggers_desabilitados": [],
-  "views_sem_security_invoker": [
-    "mv_alertas_severidade:anon,authenticated",
-    "mv_audit_daily:anon,authenticated",
-    "mv_notificacoes_tipo:anon,authenticated"
-  ]
+  "views_sem_security_invoker": []
 }
