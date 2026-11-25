@@ -1,0 +1,172 @@
+name: Edges obsoletas (prova de exposicao e remocao)
+
+# Decisao por funcao medida em 24/11/2025: supabase/functions/README.md e
+# scripts/edge-functions/decisao-edges.json trazem as 94 funcoes publicadas com a
+# decisao de cada uma. Este workflow age sobre as 38 marcadas "remover".
+#
+# Regra 8: remover funcao publicada e acao destrutiva em producao. O padrao e
+# modo=simular, que apenas prova ao vivo que a funcao executa com a chave publica.
+# A remocao exige modo=aplicar E confirmacao=REMOVER, e antes de apagar faz backup
+# do codigo publicado em artefato (rollback em um comando).
+
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: "simular = so prova a exposicao | aplicar = remove as 38"
+        required: true
+        default: simular
+        type: choice
+        options:
+          - simular
+          - aplicar
+      confirmacao:
+        description: "Digite REMOVER para autorizar a remocao em producao"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edges-obsoletas
+  cancel-in-progress: false
+
+env:
+  REF: ookjbflsnoefnsixrspc
+  ALVO_URL: https://ookjbflsnoefnsixrspc.supabase.co
+  CHAVE_PUBLICA: sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO
+
+jobs:
+  limpar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir autorizacao e lista
+        env:
+          MGMT: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
+          MODO: ${{ inputs.modo }}
+          CONFIRMACAO: ${{ inputs.confirmacao }}
+        run: |
+          set -euo pipefail
+          if [ -z "${MGMT:-}" ]; then
+            echo "::error::secret SUPABASE_MANAGEMENT_TOKEN ausente"; exit 1
+          fi
+          if [ "$MODO" = "aplicar" ] && [ "$CONFIRMACAO" != "REMOVER" ]; then
+            echo "::error::modo=aplicar exige confirmacao=REMOVER"; exit 1
+          fi
+          jq -r '[.funcoes[] | select(.decisao=="remover")] | .[].slug' \
+            scripts/edge-functions/decisao-edges.json | sort > /tmp/slugs.txt
+          TOTAL=$(wc -l < /tmp/slugs.txt)
+          if [ "$TOTAL" -eq 0 ]; then echo "::error::lista vazia"; exit 1; fi
+          while read -r s; do
+            if [ ! -f "supabase/functions/$s/index.ts" ]; then
+              echo "::error::$s sem fonte no repo - nao removemos o que nao esta versionado"; exit 1
+            fi
+          done < /tmp/slugs.txt
+          echo "Slugs ($TOTAL):"; cat /tmp/slugs.txt
+          echo "MODO=$MODO"
+
+      - name: Provar a exposicao hoje
+        run: |
+          set -uo pipefail
+          : > /tmp/prova.txt
+          TOTAL=$(wc -l < /tmp/slugs.txt)
+          EXPOSTAS=0
+          while read -r s; do
+            COD=$(curl -s -o /tmp/body.json -w '%{http_code}' -X POST \
+              "$ALVO_URL/functions/v1/$s" \
+              -H "apikey: $CHAVE_PUBLICA" \
+              -H "Authorization: Bearer $CHAVE_PUBLICA" \
+              -H "Content-Type: application/json" -d '{}' --max-time 20 || echo "000")
+            echo "$s -> HTTP $COD" | tee -a /tmp/prova.txt
+            case "$COD" in
+              2*|3*) EXPOSTAS=$((EXPOSTAS + 1)) ;;
+            esac
+          done < /tmp/slugs.txt
+          echo "resumo: $EXPOSTAS das $TOTAL funcoes responderam como executaveis com a chave publica" >> /tmp/prova.txt
+          cat /tmp/prova.txt
+
+      - name: Backup do codigo publicado
+        if: inputs.modo == 'aplicar'
+        env:
+          MGMT: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/backup
+          while read -r s; do
+            curl -sf -H "Authorization: Bearer $MGMT" \
+              "https://api.supabase.com/v1/projects/$REF/functions/$s" \
+              -o "/tmp/backup/$s.meta.json" || echo "aviso: sem metadados de $s"
+            curl -sf -H "Authorization: Bearer $MGMT" \
+              "https://api.supabase.com/v1/projects/$REF/functions/$s/body" \
+              -o "/tmp/backup/$s.body" || echo "aviso: sem corpo de $s"
+          done < /tmp/slugs.txt
+          find /tmp/backup -maxdepth 1 -type f -printf '%f\n' | sort | head -20
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: edges-obsoletas-${{ github.sha }}-${{ inputs.modo }}
+          path: |
+            /tmp/prova.txt
+            /tmp/backup
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Remover de producao
+        if: inputs.modo == 'aplicar'
+        env:
+          MGMT: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
+        run: |
+          set -euo pipefail
+          while read -r s; do
+            COD=$(curl -s -o /tmp/del.json -w '%{http_code}' -X DELETE \
+              -H "Authorization: Bearer $MGMT" \
+              "https://api.supabase.com/v1/projects/$REF/functions/$s")
+            if [ "$COD" != "200" ] && [ "$COD" != "204" ]; then
+              echo "::error::falha ao remover $s (HTTP $COD): $(head -c 300 /tmp/del.json)"; exit 1
+            fi
+            echo "removida: $s (HTTP $COD)"
+          done < /tmp/slugs.txt
+
+      - name: Provar que nao respondem mais
+        if: inputs.modo == 'aplicar'
+        run: |
+          set -uo pipefail
+          FALHAS=0
+          while read -r s; do
+            COD=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
+              "$ALVO_URL/functions/v1/$s" \
+              -H "apikey: $CHAVE_PUBLICA" \
+              -H "Authorization: Bearer $CHAVE_PUBLICA" \
+              -H "Content-Type: application/json" -d '{}' --max-time 20 || echo "000")
+            echo "$s -> HTTP $COD"
+            if [ "$COD" != "404" ]; then FALHAS=$((FALHAS+1)); fi
+          done < /tmp/slugs.txt
+          if [ "$FALHAS" -ne 0 ]; then
+            echo "::error::$FALHAS funcoes ainda respondem - verifique antes de repetir"
+            exit 1
+          fi
+          echo "todas as funcoes removidas respondem 404"
+
+      - name: Instrucoes de rollback
+        if: always()
+        run: |
+          {
+            echo "## Edges obsoletas - modo ${{ inputs.modo }}"
+            echo ""
+            echo "Lista decidida em \`scripts/edge-functions/decisao-edges.json\`."
+            echo ""
+            echo "Para republicar qualquer funcao removida (o fonte continua no repo):"
+            echo ""
+            echo '```bash'
+            echo 'npx supabase@3.1.0 functions deploy <slug> --project-ref ookjbflsnoefnsixrspc --use-api --yes'
+            echo '```'
+            echo ""
+            echo "O codigo publicado antes da remocao esta no artefato deste run."
+            echo "Lembre: \`supabase/config.toml\` define verify_jwt; nas 3 do cron a guarda e a migration"
+            echo "estao em \`supabase/migrations/20261126090000_SEC_edges-cron-com-credencial.sql\`."
+          } >> "$GITHUB_STEP_SUMMARY"
