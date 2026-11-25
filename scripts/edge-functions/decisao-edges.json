@@ -6,13 +6,14 @@
     "mantem": "index.ts verifica a sessao (exigirSessao/veioDoInterno/usuarioDaSessao/getUser)",
     "remover": "sem guarda, sem chamador em src/ e versao 1 (remocao exige autorizacao)",
     "precisa-guarda": "sem guarda e chamada pelo app",
-    "stub-sem-implementacao": "publicada mas sem corpo real: nao executa nada"
+    "stub-sem-implementacao": "publicada mas sem corpo real: nao executa nada",
+    "removido": "ja removida de producao; prova ao vivo: HTTP 404 com a chave publica"
   },
   "funcoes": [
     {
       "slug": "alert-monitor",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -22,8 +23,8 @@
     },
     {
       "slug": "audit-log",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -33,8 +34,8 @@
     },
     {
       "slug": "batch-processor",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -44,8 +45,8 @@
     },
     {
       "slug": "broadcast-event",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -55,8 +56,8 @@
     },
     {
       "slug": "bulk-delete",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -66,8 +67,8 @@
     },
     {
       "slug": "bulk-insert",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -77,8 +78,8 @@
     },
     {
       "slug": "bulk-update",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -88,8 +89,8 @@
     },
     {
       "slug": "bulk-upsert",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -99,8 +100,8 @@
     },
     {
       "slug": "cache",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -110,8 +111,8 @@
     },
     {
       "slug": "cache-invalidate",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -121,8 +122,8 @@
     },
     {
       "slug": "calculate-shipping",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -132,8 +133,8 @@
     },
     {
       "slug": "carrier-quote",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -143,8 +144,8 @@
     },
     {
       "slug": "carrier-quote-correios",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -154,8 +155,8 @@
     },
     {
       "slug": "carrier-quote-jadlog",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -165,8 +166,8 @@
     },
     {
       "slug": "check-permission",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -176,8 +177,8 @@
     },
     {
       "slug": "cleanup-old-data",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -187,8 +188,8 @@
     },
     {
       "slug": "complete-job",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -198,8 +199,8 @@
     },
     {
       "slug": "create-customer",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -209,8 +210,8 @@
     },
     {
       "slug": "create-payment-intent",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -220,8 +221,8 @@
     },
     {
       "slug": "create-purchase-order",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -231,8 +232,8 @@
     },
     {
       "slug": "create-subscription",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -242,8 +243,8 @@
     },
     {
       "slug": "cte-import",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -253,8 +254,8 @@
     },
     {
       "slug": "cycle-count",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -264,8 +265,8 @@
     },
     {
       "slug": "danfe-generate",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -275,8 +276,8 @@
     },
     {
       "slug": "data-migration",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -286,8 +287,8 @@
     },
     {
       "slug": "delete-file",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -297,8 +298,8 @@
     },
     {
       "slug": "download-file",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -308,8 +309,8 @@
     },
     {
       "slug": "expiration-check",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -319,8 +320,8 @@
     },
     {
       "slug": "export-pdf",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -330,8 +331,8 @@
     },
     {
       "slug": "export-products",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -341,8 +342,8 @@
     },
     {
       "slug": "external-db-bridge",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -352,8 +353,8 @@
     },
     {
       "slug": "generate-barcode",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -363,8 +364,8 @@
     },
     {
       "slug": "generate-csv",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -374,8 +375,8 @@
     },
     {
       "slug": "generate-excel",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -385,8 +386,8 @@
     },
     {
       "slug": "generate-putaway-list",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -396,8 +397,8 @@
     },
     {
       "slug": "generate-report",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -407,8 +408,8 @@
     },
     {
       "slug": "generate-sku",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -418,8 +419,8 @@
     },
     {
       "slug": "import-csv",
-      "decisao": "remover",
-      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita",
+      "decisao": "removido",
+      "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
@@ -429,47 +430,51 @@
     },
     {
       "slug": "integration-accounting",
-      "decisao": "stub-sem-implementacao",
-      "motivo": "casca vazia: cria cliente service-role e devolve {ok:true} sem executar nada (20 linhas). Deploy de 2026-11-21. Decidir entre implementar ou remover",
+      "decisao": "remover",
+      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-11-21",
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
-      "exige_autorizacao": false
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "integration-ecommerce",
-      "decisao": "stub-sem-implementacao",
-      "motivo": "casca vazia: cria cliente service-role e devolve {ok:true} sem executar nada (20 linhas). Deploy de 2026-11-21. Decidir entre implementar ou remover",
+      "decisao": "remover",
+      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-11-21",
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
-      "exige_autorizacao": false
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "integration-erp",
-      "decisao": "stub-sem-implementacao",
-      "motivo": "casca vazia: cria cliente service-role e devolve {ok:true} sem executar nada (20 linhas). Deploy de 2026-11-21. Decidir entre implementar ou remover",
+      "decisao": "remover",
+      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-11-21",
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
-      "exige_autorizacao": false
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "integration-marketplace",
-      "decisao": "stub-sem-implementacao",
-      "motivo": "casca vazia: cria cliente service-role e devolve {ok:true} sem executar nada (20 linhas). Deploy de 2026-11-21. Decidir entre implementar ou remover",
+      "decisao": "remover",
+      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-11-21",
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
-      "exige_autorizacao": false
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "abc-analysis",
@@ -883,13 +888,15 @@
     },
     {
       "slug": "auth-logout",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
+      "decisao": "remover",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
       "guarda_no_codigo": false,
-      "chamada_pelo_app": false
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "auth-refresh-token",
@@ -923,23 +930,27 @@
     },
     {
       "slug": "auth-session-list",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
+      "decisao": "remover",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
       "guarda_no_codigo": false,
-      "chamada_pelo_app": false
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "auth-session-revoke",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
+      "decisao": "remover",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
       "atualizada_em": "2026-08-11",
       "guarda_no_codigo": false,
-      "chamada_pelo_app": false
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "auth-social-login",
@@ -991,5 +1002,6 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": true
     }
-  ]
+  ],
+  "_revisado_em": "2026-11-25T21:40Z"
 }
