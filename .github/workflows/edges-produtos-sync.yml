@@ -1,0 +1,218 @@
+# docs:
+#   gatilho: workflow_dispatch apenas; exige confirmacao = IMPLANTAR.
+#   o que faz, nesta ordem: (1) grava os segredos da origem de produtos no ambiente das funcoes
+#     (SRC_SUPABASE_URL, SRC_SERVICE_KEY), (2) deploya a edge produtos-sync com verify_jwt=false,
+#     (3) aplica a migration 20261126130000_CAT_produtos-sync.sql (tabela do cursor + cron de 30min),
+#     (4) prova que a chave publica recebe 401 e que o caminho do cron responde 200 trazendo SKUs.
+#   prova (o job falha se nao bater): 401 {"error":"sessao obrigatoria"} na chave publica;
+#     resposta 200 nova em net._http_response pelo header da Vault com "replicados" > 0;
+#     produtos_sync_estado com ultima_execucao preenchida; cron.job com produtos-sync-catalogo.
+#   pre-requisito: secret SRC_SUPABASE_URL e SRC_SERVICE_KEY no repositorio apontando para o catalogo
+#     mestre (somente leitura) e o cron_secret no Vault (criado pelo workflow Guarda das edges de cron).
+#   rollback: artefato rollback-produtos-sync-<sha> guarda os segredos de env anteriores (so os nomes)
+#     e o corpo anterior da funcao, se ela ja existisse; a migration e aditiva (create table if not
+#     exists), para desfazer basta `select cron.unschedule('produtos-sync-catalogo')`.
+# nao-e-bug:
+#   - sem-token: avisa e sai verde sem tocar no projeto oficial
+#   - verify_jwt: nao e a defesa (a chave publica passa por ele); a defesa e a guarda no codigo
+name: Replicacao do catalogo mestre para produtos
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmacao:
+        description: "escreva IMPLANTAR para autorizar deploy, migration e cron no projeto oficial"
+        type: string
+        default: ""
+      modo:
+        description: "incremental (retoma do cursor) ou completo (recomeca do inicio)"
+        type: choice
+        options: [incremental, completo]
+        default: incremental
+      limite:
+        description: "SKUs por execucao (1 a 20000)"
+        type: string
+        default: "5000"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edges-produtos-sync
+  cancel-in-progress: false
+
+jobs:
+  replicacao:
+    name: Deploy, migration e prova da replicacao
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      REF: ookjbflsnoefnsixrspc
+      ALVO_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+      CHAVE_PUBLICA: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
+      FUNCAO: produtos-sync
+      MIGRATION: supabase/migrations/20261126130000_CAT_produtos-sync.sql
+      MODO: ${{ inputs.modo }}
+      LIMITE: ${{ inputs.limite }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - name: Checkout sem credenciais persistentes
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Node 22
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "22"
+      - name: Conferir autorizacao
+        env:
+          CONFIRMACAO: ${{ inputs.confirmacao }}
+          SRC_URL_SECRET: ${{ secrets.SRC_SUPABASE_URL }}
+          SRC_KEY_SECRET: ${{ secrets.SRC_SERVICE_KEY }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::warning::sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN: nada foi lido nem aplicado."
+            echo "SEM_TOKEN=1" >> "$GITHUB_ENV"
+            exit 0
+          fi
+          if [ "${CONFIRMACAO}" != "IMPLANTAR" ]; then
+            echo "::error::deploy, migration e cron no projeto oficial exigem confirmacao = IMPLANTAR"
+            exit 1
+          fi
+          if [ -z "${SRC_URL_SECRET:-}" ] || [ -z "${SRC_KEY_SECRET:-}" ]; then
+            echo "::error::faltam os secrets SRC_SUPABASE_URL e SRC_SERVICE_KEY (catalogo mestre)"
+            exit 1
+          fi
+          if [ ! -f "supabase/functions/$FUNCAO/index.ts" ]; then
+            echo "::error::sem fonte local para $FUNCAO"
+            exit 1
+          fi
+          if [ ! -f "$MIGRATION" ]; then
+            echo "::error::migration $MIGRATION ausente"
+            exit 1
+          fi
+          if ! grep -q "verify_jwt = false" supabase/config.toml; then
+            echo "::error::supabase/config.toml sem o contrato verify_jwt = false"
+            exit 1
+          fi
+          if ! echo "$LIMITE" | grep -qE '^[0-9]+$'; then
+            echo "::error::limite precisa ser numero inteiro: $LIMITE"
+            exit 1
+          fi
+          if [ "$LIMITE" -lt 1 ] || [ "$LIMITE" -gt 20000 ]; then
+            echo "::error::limite fora de 1..20000: $LIMITE"
+            exit 1
+          fi
+      - name: Guardar o que existe hoje (rollback)
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          mkdir -p rollback
+          API="https://api.supabase.com/v1/projects/$REF"
+          if curl -sS -f -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$API/secrets" -o /tmp/secrets.json; then
+            jq '[.[] | .name]' /tmp/secrets.json > rollback/segredos-de-env-antes.json
+            echo "nomes dos segredos de env salvos: $(cat rollback/segredos-de-env-antes.json)"
+          else
+            echo "::warning::nao foi possivel listar os segredos de env"
+          fi
+          if curl -sS -f -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$API/functions/$FUNCAO/body" -o "rollback/$FUNCAO.ts"; then
+            echo "backup do corpo anterior de $FUNCAO ($(wc -c < "rollback/$FUNCAO.ts") bytes)"
+          else
+            rm -f "rollback/$FUNCAO.ts"
+            echo "nota: $FUNCAO ainda nao existe no projeto"
+          fi
+      - name: Guardar artefato de rollback
+        if: env.SEM_TOKEN != '1'
+        uses: actions/upload-artifact@v7
+        with:
+          name: rollback-produtos-sync-${{ github.sha }}
+          path: rollback
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Gravar os segredos da origem no ambiente das funcoes
+        if: env.SEM_TOKEN != '1'
+        env:
+          SRC_URL_SECRET: ${{ secrets.SRC_SUPABASE_URL }}
+          SRC_KEY_SECRET: ${{ secrets.SRC_SERVICE_KEY }}
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          jq -n --arg u "$SRC_URL_SECRET" --arg k "$SRC_KEY_SECRET" \
+            '[{name:"SRC_SUPABASE_URL", value:$u}, {name:"SRC_SERVICE_KEY", value:$k}]' > /tmp/sec.json
+          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/sec.json "$API/secrets" > /dev/null
+          echo "SRC_SUPABASE_URL e SRC_SERVICE_KEY gravados no ambiente do projeto"
+      - name: Deploy da edge
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          npx --yes supabase@3.1.0 functions deploy "$FUNCAO" --project-ref "$REF" --use-api --yes
+      - name: Aplicar a migration do cursor e do cron
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          consulta() {
+            jq -n --arg q "$1" '{query:$q}' > /tmp/q.json
+            curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/q.json "$API/database/query"
+          }
+          jq -Rs '{query: .}' "$MIGRATION" > /tmp/mig.json
+          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/mig.json "$API/database/query"
+          JOBS=$(consulta "select count(*) as jobs from cron.job where jobname = 'produtos-sync-catalogo' and command like '%x-cron-secret%'")
+          echo "cron agendado com o header: $JOBS"
+          if [ "$(echo "$JOBS" | jq -r '.[0].jobs')" != "1" ]; then
+            echo "::error::cron produtos-sync-catalogo ausente ou sem x-cron-secret: $JOBS"
+            exit 1
+          fi
+      - name: Provar que a chave publica nao executa
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          corpo=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X POST "$ALVO_URL/functions/v1/$FUNCAO" -H "Authorization: Bearer $CHAVE_PUBLICA" -H "Content-Type: application/json" -d '{"modo":"incremental","limite":10}')
+          echo "$FUNCAO -> HTTP $corpo | $(head -c 120 /tmp/resp.json)"
+          if [ "$corpo" != "401" ] || ! grep -q "sessao obrigatoria" /tmp/resp.json; then
+            echo "::error::$FUNCAO executavel com a chave publica"
+            exit 1
+          fi
+      - name: Provar que o cron replica de verdade
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          consulta() {
+            jq -n --arg q "$1" '{query:$q}' > /tmp/q.json
+            curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/q.json "$API/database/query"
+          }
+          ANTES=$(consulta "select count(*) as n from produtos" | jq -r '.[0].n')
+          echo "produtos antes: $ANTES"
+          MARCO=$(consulta "select coalesce(max(id),0) as marco from net._http_response" | jq -r '.[0].marco')
+          consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE}));" > /dev/null
+          sleep 25
+          SAIDA=$(consulta "select status_code, left(content, 300) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          echo "resposta do caminho do cron: $SAIDA"
+          if [ "$(echo "$SAIDA" | jq -r 'length')" != "1" ] ||
+             [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "200" ] ||
+             [ "$(echo "$SAIDA" | jq -r '.[0].respostas')" != "1" ]; then
+            echo "::error::o caminho do cron nao respondeu 200: $SAIDA"
+            exit 1
+          fi
+          REPLICADOS=$(echo "$SAIDA" | jq -r '.[0].corpo' | grep -o '"replicados":[0-9]*' | cut -d: -f2)
+          if [ -z "$REPLICADOS" ] || [ "$REPLICADOS" -lt 1 ]; then
+            echo "::error::a execucao do cron nao replicou nenhum SKU: $SAIDA"
+            exit 1
+          fi
+          DEPOIS=$(consulta "select count(*) as n from produtos" | jq -r '.[0].n')
+          echo "produtos depois: $DEPOIS (replicados nesta execucao: $REPLICADOS)"
+          if [ "$DEPOIS" -le "$ANTES" ]; then
+            echo "::error::produtos nao cresceu ($ANTES -> $DEPOIS)"
+            exit 1
+          fi
+          ESTADO=$(consulta "select ultima_execucao, ultima_duracao_ms, ultimo_resultado, origem_sku from produtos_sync_estado where id = true")
+          echo "cursor: $ESTADO"
+          if [ "$(echo "$ESTADO" | jq -r '.[0].ultima_execucao')" = "null" ]; then
+            echo "::error::produtos_sync_estado sem ultima_execucao"
+            exit 1
+          fi
+          echo "replicacao provada: $ANTES -> $DEPOIS produtos, $REPLICADOS SKUs nesta execucao"

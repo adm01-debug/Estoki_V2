@@ -27,6 +27,9 @@ verify_jwt = false
 [functions.previsao-demanda]
 verify_jwt = false
 
+[functions.produtos-sync]
+verify_jwt = false
+
 [functions.reorder-check]
 verify_jwt = false
 
