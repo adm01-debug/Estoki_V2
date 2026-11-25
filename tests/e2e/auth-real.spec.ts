@@ -102,8 +102,42 @@ test.describe("fluxo logado real (sem mocks)", () => {
       );
     }
 
+    // Edges com sessao obrigatoria (`_shared/auth.ts`): o JWT real tem de
+    // continuar passando — sem isso a guarda viraria regressao nas telas que
+    // as chamam (Painel, Relatorios, Simulacao).
+    for (const fn of ["abc-analysis", "calculate-kpis"]) {
+      const out = await page.evaluate(
+        async ([url, anon, jwt, name]) => {
+          const r = await fetch(`${url}/functions/v1/${name}`, {
+            method: "POST",
+            headers: {
+              apikey: anon,
+              Authorization: `Bearer ${jwt}`,
+              "Content-Type": "application/json",
+            },
+            body: "{}",
+          });
+          return { status: r.status, body: (await r.text()).slice(0, 200) };
+        },
+        [SUPABASE_URL, ANON_KEY, token as string, fn] as const
+      );
+      expect(out.status, `${fn} recusou o usuário logado: ${out.body}`).toBeLessThan(400);
+    }
+
     // Picking: a rota carrega sem cair no RouteErrorBoundary.
     await page.goto("/picking");
     await expect(page.getByText("Ops! Algo deu errado")).toHaveCount(0);
+  });
+
+  test("edge com sessao obrigatoria recusa a chave publica sem login", async ({ request }) => {
+    // A chave publica esta no bundle do site: se ela sozinha executar a funcao,
+    // qualquer visitante consome IA, envia e-mail e le estoque com service role.
+    for (const fn of ["abc-analysis", "calculate-kpis"]) {
+      const r = await request.post(`${SUPABASE_URL}/functions/v1/${fn}`, {
+        headers: { apikey: ANON_KEY, Authorization: `Bearer ${ANON_KEY}` },
+        data: {},
+      });
+      expect(r.status(), `${fn} aceitou chamada sem sessão`).toBe(401);
+    }
   });
 });

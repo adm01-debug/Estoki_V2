@@ -1,6 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { exigirSessao } from "../_shared/auth.ts";
 
 // Templates de desafios por tipo
 const DESAFIOS_TEMPLATES = [
@@ -174,6 +175,8 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+  const recusaSemSessao = await exigirSessao(req);
+  if (recusaSemSessao) return recusaSemSessao;
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

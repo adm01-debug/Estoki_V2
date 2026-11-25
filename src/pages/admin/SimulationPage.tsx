@@ -11,6 +11,7 @@ import { Zap, Play, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function SimulationPage() {
   const [count, setCount] = useState(100);
@@ -23,6 +24,10 @@ export default function SimulationPage() {
     try {
       const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
       const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+      // As edges exigem sessao (supabase/functions/_shared/auth.ts): a chave
+      // publica nao basta, entao o teste roda com o JWT do usuario logado.
+      const { data: sessao } = await supabase.auth.getSession();
+      const TOKEN = sessao.session?.access_token ?? SUPABASE_KEY;
 
       type Scenario = {
         name: string;
@@ -66,7 +71,7 @@ export default function SimulationPage() {
             method: s.method ?? "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${SUPABASE_KEY}`,
+              Authorization: `Bearer ${TOKEN}`,
               apikey: SUPABASE_KEY,
             },
             body: s.method === "GET" ? undefined : JSON.stringify(s.body ?? {}),
