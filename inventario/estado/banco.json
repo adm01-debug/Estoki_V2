@@ -167,6 +167,7 @@
       "tipo": "edge_sem_deploy"
     }
   ],
+  "constraints_nao_validadas": [],
   "cron": {
     "config": {
       "cron.max_running_jobs": "32",
@@ -175,7 +176,7 @@
     },
     "historico": {
       "bytes": 90112,
-      "linhas": 128,
+      "linhas": 129,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -205,7 +206,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 99,
+        "execucoes_7d": 100,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
@@ -1162,7 +1163,8 @@
     "reset_login_attempts"
   ],
   "funcoes_security_definer_sem_search_path": [],
-  "medido_em": "2026-11-24T23:23:59Z",
+  "medido_em": "2026-11-25T00:08:54Z",
+  "policies_anon_permissivas": [],
   "resumo": {
     "cron_ativos": 4,
     "cron_jobs": 4,
@@ -1174,7 +1176,7 @@
     "postgres": "17.11",
     "tabelas_public": 92,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 24622771,
+    "tamanho_bytes": 24630963,
     "triggers_public": 58,
     "views_public": 3
   },
@@ -1422,7 +1424,7 @@
     {
       "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 103,
+      "linhas": 104,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
@@ -2572,6 +2574,8 @@
       "stock_alerts"
     ]
   },
+  "tabelas_sem_pk": [],
+  "triggers_desabilitados": [],
   "views_sem_security_invoker": [
     "mv_alertas_severidade:anon,authenticated",
     "mv_audit_daily:anon,authenticated",
