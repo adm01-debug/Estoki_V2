@@ -77,6 +77,22 @@ const VIEWS_SEM_SELECT_PUBLICO =
   "and (has_table_privilege('anon', c.oid, 'SELECT') " +
   "or (c.relkind = 'm' and has_table_privilege('authenticated', c.oid, 'SELECT'))))";
 
+// Mesma regra da migration 20261125120000_SEC_guarda_xp_pontos.sql, em duas provas: as tres funcoes
+// internas nao podem ser executaveis por anon/authenticated (20261124120000 tinha concedido em massa)
+// e descontar_pontos precisa carregar a guarda no proprio corpo -- ela continua liberada para
+// `authenticated` porque a loja de pontos chama o RPC, entao a prova nao pode ser de privilegio.
+const XP_PONTOS_FECHADO =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and p.proname in ('adicionar_xp', 'incrementar_metrica_dashboard', 'get_user_role') " +
+  "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  "or has_function_privilege('authenticated', p.oid, 'EXECUTE')))";
+
+const DESCONTAR_PONTOS_GUARDADA =
+  "exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' and p.proname = 'descontar_pontos' " +
+  "and p.prosecdef and pg_get_functiondef(p.oid) like '%auth.uid()%')";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -108,6 +124,12 @@ const PENDENCIAS = [
     nome: "mv_revoke_anon",
     aplicado: VIEWS_SEM_SELECT_PUBLICO,
     dependencias: [],
+  },
+  {
+    arquivo: "20261125120000_SEC_guarda_xp_pontos.sql",
+    nome: "guarda_xp_pontos",
+    aplicado: `${XP_PONTOS_FECHADO} and ${DESCONTAR_PONTOS_GUARDADA}`,
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
 ];
 
