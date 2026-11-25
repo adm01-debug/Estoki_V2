@@ -93,3 +93,23 @@ test("estado integro (tres listas vazias ou ausentes) nao gera alerta", () => {
     []
   );
 });
+
+test("policy que vale para anon e libera tudo vira alerta nomeado", () => {
+  const dado = {
+    ...base([]),
+    policies_anon_permissivas: [
+      { tabela: "produtos", cmd: "SELECT", policy: "leitura_publica", roles: ["anon", "authenticated"] },
+    ],
+  };
+  assert.deepEqual(montarInventario(dado, {}).alertas, [
+    { tipo: "policy_anon_permissiva", detalhe: ["produtos.SELECT.leitura_publica (anon,authenticated)"] },
+  ]);
+});
+
+test("sem policy permissiva para anon nao ha alerta", () => {
+  assert.deepEqual(montarInventario(base([]), {}).alertas, []);
+  assert.deepEqual(
+    montarInventario({ ...base([]), policies_anon_permissivas: [] }, {}).alertas,
+    []
+  );
+});

@@ -254,6 +254,12 @@ export function montarInventario(dado, uso, edges = compararEdges(null, [])) {
   if (triggerDesligado.length) alertas.push({ tipo: 'trigger_desabilitado', detalhe: triggerDesligado });
   const naoValidadas = (dado.constraints_nao_validadas ?? []).map((k) => `${k.tabela}.${k.constraint} (${k.tipo})`);
   if (naoValidadas.length) alertas.push({ tipo: 'constraint_nao_validada', detalhe: naoValidadas });
+  // RLS habilitado nao significa RLS util: politica `TO anon` (ou `TO public`, que inclui anon) com
+  // qual/with_check verdadeiro e dado aberto para quem tem so a chave publica do bundle.
+  const anonPermissivas = (dado.policies_anon_permissivas ?? []).map(
+    (p) => `${p.tabela}.${p.cmd}.${p.policy} (${(p.roles ?? []).join(',')})`
+  );
+  if (anonPermissivas.length) alertas.push({ tipo: 'policy_anon_permissiva', detalhe: anonPermissivas });
   const cronRuim = dado.cron.jobs
     .filter((j) => j.ativo && j.taxa_falha_7d_pct >= LIMIARES.taxaFalhaCronPct)
     .map((j) => `${j.nome} (${j.taxa_falha_7d_pct}% em 7d)`);
