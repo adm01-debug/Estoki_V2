@@ -2,6 +2,20 @@
   "alertas": [
     {
       "detalhe": [
+        "produtos_sync_estado"
+      ],
+      "tipo": "rls_sem_policy"
+    },
+    {
+      "detalhe": [
+        "alert-expiration-daily",
+        "reorder-check-daily",
+        "stock-alert-daily"
+      ],
+      "tipo": "cron_sem_execucao"
+    },
+    {
+      "detalhe": [
         "adjust-inventory",
         "agv-dispatch",
         "ai-classification",
@@ -11,27 +25,72 @@
         "ai-sentiment",
         "ai-summarize",
         "ai-translate",
+        "alert-monitor",
         "alert-pending-orders",
         "alert-stock-low",
+        "audit-log",
+        "auth-logout",
+        "auth-session-list",
+        "auth-session-revoke",
         "backup-database",
         "batch-import",
+        "batch-processor",
         "boleto-generate",
+        "broadcast-event",
+        "bulk-delete",
+        "bulk-insert",
+        "bulk-update",
+        "bulk-upsert",
+        "cache",
+        "cache-invalidate",
+        "calculate-shipping",
         "cancel-order",
         "carrier-label",
+        "carrier-quote",
+        "carrier-quote-correios",
+        "carrier-quote-jadlog",
         "check-expiration",
+        "check-permission",
+        "cleanup-old-data",
         "cleanup-sessions",
+        "complete-job",
+        "create-customer",
         "create-lot",
+        "create-payment-intent",
+        "create-purchase-order",
         "create-sales-order",
         "create-shipment",
+        "create-subscription",
         "cron-daily",
         "cron-weekly",
+        "cte-import",
+        "cycle-count",
+        "danfe-generate",
+        "data-migration",
+        "delete-file",
         "demand-forecast",
+        "download-file",
         "edi-process",
+        "expiration-check",
+        "export-pdf",
+        "export-products",
+        "external-db-bridge",
+        "generate-barcode",
+        "generate-csv",
+        "generate-excel",
         "generate-pdf-report",
         "generate-pick-list",
+        "generate-putaway-list",
+        "generate-report",
+        "generate-sku",
+        "import-csv",
         "import-data",
         "import-products",
+        "integration-accounting",
         "integration-correios",
+        "integration-ecommerce",
+        "integration-erp",
+        "integration-marketplace",
         "inventory-batch-adjust",
         "inventory-count",
         "inventory-reconcile",
@@ -167,8 +226,8 @@
       "max_worker_processes": "6"
     },
     "historico": {
-      "bytes": 90112,
-      "linhas": 142,
+      "bytes": 98304,
+      "linhas": 162,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -180,9 +239,9 @@
         "chama": [
           "net.http_post"
         ],
-        "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
-        "execucoes_7d": 4,
+        "duracao_max_s_7d": null,
+        "execucoes_24h": 0,
+        "execucoes_7d": 0,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "alert-expiration-daily",
@@ -198,10 +257,26 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 110,
+        "execucoes_7d": 122,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
+        "startup_timeout_7d": 0,
+        "taxa_falha_7d_pct": 0,
+        "ultima_falha": null
+      },
+      {
+        "agenda": "*/30 * * * *",
+        "ativo": true,
+        "chama": [
+          "net.http_post"
+        ],
+        "duracao_max_s_7d": 0,
+        "execucoes_24h": 8,
+        "execucoes_7d": 8,
+        "falhas_24h": 0,
+        "falhas_7d": 0,
+        "nome": "produtos-sync-catalogo",
         "startup_timeout_7d": 0,
         "taxa_falha_7d_pct": 0,
         "ultima_falha": null
@@ -212,9 +287,9 @@
         "chama": [
           "net.http_post"
         ],
-        "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
-        "execucoes_7d": 4,
+        "duracao_max_s_7d": null,
+        "execucoes_24h": 0,
+        "execucoes_7d": 0,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "reorder-check-daily",
@@ -228,9 +303,9 @@
         "chama": [
           "net.http_post"
         ],
-        "duracao_max_s_7d": 0,
-        "execucoes_24h": 1,
-        "execucoes_7d": 4,
+        "duracao_max_s_7d": null,
+        "execucoes_24h": 0,
+        "execucoes_7d": 0,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "stock-alert-daily",
@@ -241,7 +316,7 @@
     ]
   },
   "edge_functions": {
-    "no_repo": 247,
+    "no_repo": 248,
     "no_repo_sem_deploy": [
       "adjust-inventory",
       "agv-dispatch",
@@ -252,27 +327,72 @@
       "ai-sentiment",
       "ai-summarize",
       "ai-translate",
+      "alert-monitor",
       "alert-pending-orders",
       "alert-stock-low",
+      "audit-log",
+      "auth-logout",
+      "auth-session-list",
+      "auth-session-revoke",
       "backup-database",
       "batch-import",
+      "batch-processor",
       "boleto-generate",
+      "broadcast-event",
+      "bulk-delete",
+      "bulk-insert",
+      "bulk-update",
+      "bulk-upsert",
+      "cache",
+      "cache-invalidate",
+      "calculate-shipping",
       "cancel-order",
       "carrier-label",
+      "carrier-quote",
+      "carrier-quote-correios",
+      "carrier-quote-jadlog",
       "check-expiration",
+      "check-permission",
+      "cleanup-old-data",
       "cleanup-sessions",
+      "complete-job",
+      "create-customer",
       "create-lot",
+      "create-payment-intent",
+      "create-purchase-order",
       "create-sales-order",
       "create-shipment",
+      "create-subscription",
       "cron-daily",
       "cron-weekly",
+      "cte-import",
+      "cycle-count",
+      "danfe-generate",
+      "data-migration",
+      "delete-file",
       "demand-forecast",
+      "download-file",
       "edi-process",
+      "expiration-check",
+      "export-pdf",
+      "export-products",
+      "external-db-bridge",
+      "generate-barcode",
+      "generate-csv",
+      "generate-excel",
       "generate-pdf-report",
       "generate-pick-list",
+      "generate-putaway-list",
+      "generate-report",
+      "generate-sku",
+      "import-csv",
       "import-data",
       "import-products",
+      "integration-accounting",
       "integration-correios",
+      "integration-ecommerce",
+      "integration-erp",
+      "integration-marketplace",
       "inventory-batch-adjust",
       "inventory-count",
       "inventory-reconcile",
@@ -399,662 +519,354 @@
     ],
     "publicadas": [
       {
-        "atualizada_em": "2026-08-11T20:19Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "abc-analysis",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-08-11T20:19Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "ai-assistant",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-21T16:06Z",
+        "atualizada_em": "2026-11-25T17:35Z",
         "slug": "alert-expiration",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:20Z",
-        "slug": "alert-monitor",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 9
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-productivity",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-quality",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-sla-breach",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-08-11T20:20Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "alerta-divergencia-fornecedor",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-08-11T20:20Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "analytics",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:20Z",
-        "slug": "audit-log",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-2fa-setup",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-2fa-verify",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-change-password",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-login",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:20Z",
-        "slug": "auth-logout",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-refresh-token",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-register",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-reset-password",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "auth-session-list",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "auth-session-revoke",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "auth-social-login",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "auth-verify-email",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "backend-health",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "batch-processor",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "broadcast-event",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "bulk-delete",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "bulk-insert",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "bulk-update",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "bulk-upsert",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "cache",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "cache-invalidate",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "calculate-kpis",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:21Z",
-        "slug": "calculate-shipping",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "carrier-book",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-cancel",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "carrier-quote",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "carrier-quote-correios",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "carrier-quote-jadlog",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-rates-cache",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-11-21T23:10Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "carrier-track",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-webhooks",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "check-permission",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
+        "atualizada_em": "2026-11-25T17:32Z",
         "slug": "check-reorder",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "cleanup-old-data",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "complete-job",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "create-customer",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "create-payment-intent",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "create-purchase-order",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:22Z",
-        "slug": "create-subscription",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "cte-import",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "cycle-count",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "danfe-generate",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "dashboard-stats",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "data-migration",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
+        "versao": 7
       },
       {
         "atualizada_em": "2026-08-11T20:23Z",
         "slug": "db-alert-monitor",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "delete-file",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "download-file",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "expiration-check",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "export-data",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "export-pdf",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "export-products",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "external-db-bridge",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-barcode",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-csv",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-excel",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-putaway-list",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-report",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:23Z",
-        "slug": "generate-sku",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-08-11T20:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "gerar-desafios-diarios",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 6
       },
       {
         "atualizada_em": "2026-08-11T20:24Z",
         "slug": "get-permissions",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-08-11T20:24Z",
         "slug": "health",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 1
+        "versao": 5
       },
       {
-        "atualizada_em": "2026-08-11T20:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "health-check",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-08-11T20:24Z",
-        "slug": "import-csv",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-11-21T19:29Z",
-        "slug": "integration-accounting",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-amazon",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-21T19:29Z",
-        "slug": "integration-ecommerce",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-11-21T19:29Z",
-        "slug": "integration-erp",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-ifood",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-21T19:29Z",
-        "slug": "integration-marketplace",
-        "status": "ACTIVE",
-        "verify_jwt": true,
-        "versao": 1
-      },
-      {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-mercado-livre",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-rappi",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-sap",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-21T19:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "integration-totvs",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 2
+        "versao": 7
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "nfe-import",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-20T13:48Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "previsao-demanda",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-21T13:13Z",
+        "atualizada_em": "2026-11-25T18:10Z",
+        "slug": "produtos-sync",
+        "status": "ACTIVE",
+        "verify_jwt": false,
+        "versao": 3
+      },
+      {
+        "atualizada_em": "2026-11-25T17:35Z",
         "slug": "reorder-check",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 4
+        "versao": 12
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "safety-stock",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "scanner-ocr",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-25T17:33Z",
         "slug": "send-email-alert",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 6
       },
       {
-        "atualizada_em": "2026-11-21T15:09Z",
+        "atualizada_em": "2026-11-25T17:35Z",
         "slug": "stock-alert",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 2
+        "versao": 10
       },
       {
         "atualizada_em": "2026-11-20T14:24Z",
         "slug": "webauthn-auth-options",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-11-20T14:24Z",
         "slug": "webauthn-auth-verify",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-11-20T14:24Z",
         "slug": "webauthn-register-options",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 5
       },
       {
         "atualizada_em": "2026-11-20T14:24Z",
         "slug": "webauthn-register-verify",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 1
+        "versao": 5
       }
     ],
     "publicadas_sem_codigo_no_repo": []
@@ -1207,7 +1019,7 @@
     "reset_login_attempts"
   ],
   "funcoes_security_definer_sem_search_path": [],
-  "medido_em": "2026-11-25T10:40:17Z",
+  "medido_em": "2026-11-25T22:18:57Z",
   "migrations_orfas": {
     "criterio": "migration de supabase/migrations/ cuja tabela/funcao nao existe no banco (view fica de fora: o inventario nao guarda nome de view)",
     "lista": [
@@ -1366,17 +1178,17 @@
   },
   "policies_anon_permissivas": [],
   "resumo": {
-    "cron_ativos": 4,
-    "cron_jobs": 4,
+    "cron_ativos": 5,
+    "cron_jobs": 5,
     "funcoes_public": 79,
     "ledger_registros": 101,
     "ledger_versao_max": "20261125120000",
     "max_connections": 60,
     "policies": 335,
     "postgres": "17.11",
-    "tabelas_public": 92,
+    "tabelas_public": 93,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 24655539,
+    "tamanho_bytes": 36566707,
     "triggers_public": 58,
     "views_public": 3
   },
@@ -1444,7 +1256,7 @@
     {
       "bytes": 270336,
       "citada_no_banco": true,
-      "linhas": 24,
+      "linhas": 10,
       "linhas_exatas": true,
       "nome": "alertas_historico",
       "policies": 4,
@@ -1624,7 +1436,7 @@
     {
       "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 114,
+      "linhas": 126,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
@@ -1639,7 +1451,7 @@
     {
       "bytes": 49152,
       "citada_no_banco": true,
-      "linhas": 30,
+      "linhas": 35,
       "linhas_exatas": true,
       "nome": "desafios_diarios",
       "policies": 3,
@@ -2059,7 +1871,7 @@
     {
       "bytes": 196608,
       "citada_no_banco": true,
-      "linhas": 30,
+      "linhas": 18,
       "linhas_exatas": true,
       "nome": "notificacoes",
       "policies": 5,
@@ -2252,9 +2064,9 @@
       }
     },
     {
-      "bytes": 147456,
+      "bytes": 11862016,
       "citada_no_banco": true,
-      "linhas": 16,
+      "linhas": 20801,
       "linhas_exatas": true,
       "nome": "produtos",
       "policies": 5,
@@ -2262,8 +2074,23 @@
       "rls_forcado": false,
       "triggers": 1,
       "uso_no_codigo": {
-        "edges": 3,
+        "edges": 5,
         "src": 23
+      }
+    },
+    {
+      "bytes": 32768,
+      "citada_no_banco": false,
+      "linhas": 1,
+      "linhas_exatas": true,
+      "nome": "produtos_sync_estado",
+      "policies": 0,
+      "rls": true,
+      "rls_forcado": false,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 2,
+        "src": 0
       }
     },
     {
@@ -2622,7 +2449,7 @@
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
-        "edges": 2,
+        "edges": 3,
         "src": 0
       }
     },
