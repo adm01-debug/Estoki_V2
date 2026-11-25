@@ -5,8 +5,9 @@
 #     (3) aplica a migration 20261126130000_CAT_produtos-sync.sql (tabela do cursor + cron de 30min),
 #     (4) prova que a chave publica recebe 401 e que o caminho do cron responde 200 trazendo SKUs.
 #   prova (o job falha se nao bater): 401 {"error":"sessao obrigatoria"} na chave publica;
-#     resposta 200 nova em net._http_response pelo header da Vault com "replicados" > 0;
-#     produtos_sync_estado com ultima_execucao preenchida; cron.job com produtos-sync-catalogo.
+#     resposta 200 unica em net._http_response pelo header da Vault; cursor gravado por esta execucao
+#     (ultima_execucao avancou); produtos estavel quando replicados = 0 e crescente quando >= 1;
+#     cron.job com produtos-sync-catalogo. entrada exigir_replicados=true exige fila na origem.
 #   pre-requisito: secret SRC_SUPABASE_URL e SRC_SERVICE_KEY no repositorio apontando para o catalogo
 #     mestre (somente leitura) e o cron_secret no Vault (criado pelo workflow Guarda das edges de cron).
 #   rollback: artefato rollback-produtos-sync-<sha> guarda os segredos de env anteriores (so os nomes)
@@ -33,6 +34,11 @@ on:
         description: "SKUs por execucao (1 a 20000)"
         type: string
         default: "5000"
+      exigir_replicados:
+        description: "true = exigir SKU replicado nesta execucao (so quando ha fila conhecida); false = aceita 0 quando o cursor ja cobriu o catalogo"
+        type: choice
+        options: ["false", "true"]
+        default: "false"
 
 permissions:
   contents: read
@@ -56,6 +62,7 @@ jobs:
       MIGRATION: supabase/migrations/20261126130000_CAT_produtos-sync.sql
       MODO: ${{ inputs.modo }}
       LIMITE: ${{ inputs.limite }}
+      EXIGIR_REPLICADOS: ${{ inputs.exigir_replicados }}
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
       - name: Checkout sem credenciais persistentes
@@ -187,17 +194,19 @@ jobs:
           }
           ANTES=$(consulta "select count(*) as n from produtos" | jq -r '.[0].n')
           echo "produtos antes: $ANTES"
+          ESTADO_ANTES=$(consulta "select ultima_execucao from produtos_sync_estado where id = true" | jq -r '.[0].ultima_execucao')
+          echo "ultima_execucao antes: $ESTADO_ANTES"
           MARCO=$(consulta "select coalesce(max(id),0) as marco from net._http_response" | jq -r '.[0].marco')
           consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE}));" > /dev/null
           # pg_net grava a linha antes de a resposta chegar (status_code nulo):
           # fixo em 25s o teste falhava com a replicacao ainda em curso.
-          SAIDA=$(consulta "select status_code, left(content, 600) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          SAIDA=$(consulta "select status_code, left(content, 4000) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
           for _ in $(seq 1 40); do
             if [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "null" ]; then
               break
             fi
             sleep 10
-            SAIDA=$(consulta "select status_code, left(content, 600) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+            SAIDA=$(consulta "select status_code, left(content, 4000) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
           done
           echo "resposta do caminho do cron: $SAIDA"
           if [ "$(echo "$SAIDA" | jq -r 'length')" != "1" ] ||
@@ -207,20 +216,40 @@ jobs:
             exit 1
           fi
           REPLICADOS=$(echo "$SAIDA" | jq -r '.[0].corpo' | grep -o '"replicados":[0-9]*' | cut -d: -f2)
-          if [ -z "$REPLICADOS" ] || [ "$REPLICADOS" -lt 1 ]; then
-            echo "::error::a execucao do cron nao replicou nenhum SKU: $SAIDA"
+          if [ -z "$REPLICADOS" ]; then
+            echo "::error::a resposta do cron nao trouxe o campo replicados: $SAIDA"
             exit 1
           fi
           DEPOIS=$(consulta "select count(*) as n from produtos" | jq -r '.[0].n')
           echo "produtos depois: $DEPOIS (replicados nesta execucao: $REPLICADOS)"
-          if [ "$DEPOIS" -le "$ANTES" ]; then
-            echo "::error::produtos nao cresceu ($ANTES -> $DEPOIS)"
-            exit 1
-          fi
           ESTADO=$(consulta "select ultima_execucao, ultima_duracao_ms, ultimo_resultado, origem_sku from produtos_sync_estado where id = true")
           echo "cursor: $ESTADO"
-          if [ "$(echo "$ESTADO" | jq -r '.[0].ultima_execucao')" = "null" ]; then
+          ULTIMA=$(echo "$ESTADO" | jq -r '.[0].ultima_execucao')
+          if [ "$ULTIMA" = "null" ]; then
             echo "::error::produtos_sync_estado sem ultima_execucao"
             exit 1
           fi
-          echo "replicacao provada: $ANTES -> $DEPOIS produtos, $REPLICADOS SKUs nesta execucao"
+          # a execucao SEMPRE grava o cursor: se ele nao avancou, o caminho do cron nao rodou de fato
+          if [ -n "$ESTADO_ANTES" ] && [ "$ESTADO_ANTES" != "null" ] && [ "$ULTIMA" = "$ESTADO_ANTES" ]; then
+            echo "::error::o cron respondeu 200 mas nao gravou o cursor (ultima_execucao parada em $ULTIMA)"
+            exit 1
+          fi
+          if [ "$REPLICADOS" -ge 1 ]; then
+            if [ "$DEPOIS" -le "$ANTES" ]; then
+              echo "::error::o cron replicou $REPLICADOS SKUs mas produtos nao cresceu ($ANTES -> $DEPOIS)"
+              exit 1
+            fi
+            echo "replicacao provada: $ANTES -> $DEPOIS produtos, $REPLICADOS SKUs nesta execucao"
+          else
+            # 0 SKUs e' legitimo quando o cursor ja cobriu o catalogo (nenhum updated_at novo na origem).
+            # Nesse caso a prova de escrita e' o cursor acima; nada pode ter sido perdido.
+            if [ "$DEPOIS" -ne "$ANTES" ]; then
+              echo "::error::sem SKU replicado, mas produtos mudou ($ANTES -> $DEPOIS)"
+              exit 1
+            fi
+            if [ "$EXIGIR_REPLICADOS" = "true" ]; then
+              echo "::error::exigir_replicados=true e nenhum SKU foi replicado (ha fila na origem?): $SAIDA"
+              exit 1
+            fi
+            echo "caminho do cron provado sem SKU novo: cursor avancou e produtos ficou estavel em $ANTES (use exigir_replicados=true para exigir fila)"
+          fi
