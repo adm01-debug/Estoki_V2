@@ -39,5 +39,8 @@ KEEPERS="select json_agg(json_build_object('fn', p.proname, 'anon', has_function
 # que precisam continuar executaveis por anon. Esta consulta mede antes/depois na mesma transacao.
 LOGINPROOF="select json_agg(json_build_object('fn', p.proname, 'anon', has_function_privilege('anon', p.oid, 'EXECUTE'), 'auth', has_function_privilege('authenticated', p.oid, 'EXECUTE'), 'svc', has_function_privilege('service_role', p.oid, 'EXECUTE')) order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname='public' and p.prokind='f' and p.proname in ('check_login_lockout','record_failed_login','reset_login_attempts')"
 
-run "Dry-run (aplica + confere + ROLLBACK)" "begin; $(cat "$MIG") $KEEPERS; $LOGINPROOF; $VERIFY; rollback;"
+run "Dry-run: alvo do catalogo (aplica + confere + ROLLBACK)" "begin; $(cat "$MIG") $KEEPERS; $VERIFY; rollback;"
+# A API devolve so o resultado do ultimo statement: a prova das 3 RPCs de lockout vai num dry-run
+# proprio, com a mesma migration, para o numero sair visivel no log.
+run "Dry-run: RPCs de lockout (anon/auth=false, svc=true)" "begin; $(cat "$MIG") $LOGINPROOF; rollback;"
 run "Pos-rollback: anon ainda executa (informativo)" "select json_agg(json_build_object('fn', p.proname, 'anon', has_function_privilege('anon', p.oid, 'EXECUTE')) order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname='public' and p.proname in ('iniciar_tarefa_picking','concluir_tarefa_picking','move_stock','aplicar_ajuste_estoque')"
