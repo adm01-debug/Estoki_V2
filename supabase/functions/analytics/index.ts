@@ -3,11 +3,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { AnalyticsEventSchema, validateInput } from "../_shared/schemas.ts";
+import { exigirSessao } from "../_shared/auth.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: getCorsHeaders(req) });
   }
+  const recusaSemSessao = await exigirSessao(req);
+  if (recusaSemSessao) return recusaSemSessao;
 
   try {
     const supabase = createClient(

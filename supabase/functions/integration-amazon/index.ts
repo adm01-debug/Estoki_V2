@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
 import { IntegrationActionSchema, validateInput } from "../_shared/schemas.ts";
+import { exigirSessao } from "../_shared/auth.ts";
 
 const AMAZON_SP_API_BASE = "https://sellingpartnerapi-na.amazon.com";
 
@@ -10,6 +11,8 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
+  const recusaSemSessao = await exigirSessao(req);
+  if (recusaSemSessao) return recusaSemSessao;
 
   try {
     const supabase = createClient(

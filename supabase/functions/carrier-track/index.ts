@@ -3,9 +3,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { CarrierTrackSchema, validateInput } from "../_shared/schemas.ts";
 import { hasCredentials, track as correiosTrack, MissingCredentialsError } from "../_shared/correios.ts";
+import { exigirSessao } from "../_shared/auth.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const recusaSemSessao = await exigirSessao(req);
+  if (recusaSemSessao) return recusaSemSessao;
   const headers = { ...getCorsHeaders(req), "Content-Type": "application/json" };
 
   try {

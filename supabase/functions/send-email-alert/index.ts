@@ -1,6 +1,7 @@
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { exigirSessao } from "../_shared/auth.ts";
 
 const jsonResponse = (body: unknown, status = 200, request?: Request) =>
   new Response(JSON.stringify(body), {
@@ -17,6 +18,8 @@ const EmailAlertSchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
+  const recusaSemSessao = await exigirSessao(req);
+  if (recusaSemSessao) return recusaSemSessao;
   if (req.method !== "POST") return jsonResponse({ error: "Method not allowed" }, 405, req);
 
   try {
