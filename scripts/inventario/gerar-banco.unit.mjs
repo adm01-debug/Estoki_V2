@@ -69,3 +69,27 @@ test("nenhuma view sem security_invoker nao gera alerta", () => {
     []
   );
 });
+test("tabela sem PK, trigger desligado e constraint nao validada viram alerta nomeado", () => {
+  const dado = {
+    ...base([]),
+    tabelas_sem_pk: ["log_eventos"],
+    triggers_desabilitados: [{ tabela: "estoque", trigger: "baixa_estoque", estado: "D" }],
+    constraints_nao_validadas: [{ tabela: "pedidos", constraint: "fk_cliente", tipo: "f" }],
+  };
+  assert.deepEqual(montarInventario(dado, {}).alertas, [
+    { tipo: "tabela_sem_pk", detalhe: ["log_eventos"] },
+    { tipo: "trigger_desabilitado", detalhe: ["estoque.baixa_estoque (D)"] },
+    { tipo: "constraint_nao_validada", detalhe: ["pedidos.fk_cliente (f)"] },
+  ]);
+});
+
+test("estado integro (tres listas vazias ou ausentes) nao gera alerta", () => {
+  assert.deepEqual(montarInventario(base([]), {}).alertas, []);
+  assert.deepEqual(
+    montarInventario(
+      { ...base([]), tabelas_sem_pk: [], triggers_desabilitados: [], constraints_nao_validadas: [] },
+      {}
+    ).alertas,
+    []
+  );
+});
