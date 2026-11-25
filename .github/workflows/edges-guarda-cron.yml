@@ -2,12 +2,16 @@
 #   gatilho: workflow_dispatch apenas; `aplicar` exige confirmacao explicita = IMPLANTAR.
 #   pre-requisito: a PR que versiona o contrato `verify_jwt = false` das 13 edges em
 #     supabase/config.toml precisa estar na main; e ela que impede o deploy de virar JWT obrigatorio.
-#   faz, nesta ordem: (1) guarda a service role do projeto no Vault, (2) aplica a migration
-#     20261126090000_SEC_edges-cron-com-credencial.sql (crons passam a mandar credencial),
-#     (3) deploya reorder-check, stock-alert e alert-expiration com a guarda `exigirSessao`,
-#     (4) prova que a chave publica recebe 401 e que o caminho do cron continua entrando.
-#   prova: 401 {"error":"sessao obrigatoria"} para a chave publica nas 3; `net.http_post` com a
-#     credencial da Vault respondendo 200 em net._http_response; 3 jobs em cron.job com Authorization.
+#   faz, nesta ordem: (1) gera o segredo dos crons e grava no ambiente do projeto (CRON_SECRET),
+#     (2) deploya reorder-check, stock-alert e alert-expiration com a guarda (que aceita esse
+#     segredo pelo header `x-cron-secret`), (3) grava o mesmo valor no Vault, (4) aplica a migration
+#     20261126120000_SEC_cron-header-x-cron-secret.sql (crons passam a mandar o header),
+#     (5) prova que a chave publica recebe 401 e que o caminho do cron responde 200.
+#   prova (o job falha se nao bater): 401 {"error":"sessao obrigatoria"} para a chave publica nas 3;
+#     3 respostas 200 novas em net._http_response pelo header da Vault; 3 jobs em cron.job com o header.
+#   por que header e nao Bearer: medido em 25/11/2026 (runs 45629484550 e 45641665541), o Bearer de
+#     API key (anon, service_role e as duas do formato novo) nao chega ao codigo como
+#     SUPABASE_SERVICE_ROLE_KEY da funcao: as 4 chaves deram 401 na guarda. Header proprio nao sofre isso.
 #   rollback: artefato rollback-edges-cron-<sha> guarda o index.ts anterior das 3 e a definicao
 #     anterior dos jobs; para voltar, reponha o arquivo em uma branch fix: e rode de novo.
 #   falha: sem token, Migration recusada pelo banco, deploy recusado pela API, funcao que nao
@@ -44,7 +48,7 @@ jobs:
       ALVO_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
       CHAVE_PUBLICA: ${{ vars.VITE_SUPABASE_ANON_KEY || 'sb_publishable_lBoxcGwOv0lccSjiahKbng_0XD1m9RO' }}
       FUNCOES: reorder-check stock-alert alert-expiration
-      MIGRATION: supabase/migrations/20261126090000_SEC_edges-cron-com-credencial.sql
+      MIGRATION: supabase/migrations/20261126120000_SEC_cron-header-x-cron-secret.sql
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
     steps:
       - name: Checkout sem credenciais persistentes
@@ -112,30 +116,18 @@ jobs:
           path: rollback
           retention-days: 30
           if-no-files-found: warn
-      - name: Guardar a service role no Vault
+      - name: Gerar o segredo dos crons e gravar no ambiente das funcoes
         if: env.SEM_TOKEN != '1'
         run: |
           set -euo pipefail
           API="https://api.supabase.com/v1/projects/$REF"
-          SR=$(curl -sS -f -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" "$API/api-keys" | jq -r '.[] | select(.name=="service_role") | .api_key' | head -1)
-          if [ -z "${SR:-}" ]; then
-            echo "::error::a Management API nao devolveu a chave service_role do projeto"
-            exit 1
-          fi
-          echo "::add-mask::$SR"
-          Q="begin; delete from vault.secrets where name = 'service_role_key'; select vault.create_secret('${SR}', 'service_role_key', 'service role do projeto: credencial dos crons das edges com guarda exigirSessao'); commit;"
-          jq -n --arg q "$Q" '{query:$q}' > /tmp/vault.json
-          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/vault.json "$API/database/query" > /dev/null
-          echo "service_role_key gravado no Vault"
-      - name: Aplicar a migration dos crons
-        if: env.SEM_TOKEN != '1'
-        run: |
-          set -euo pipefail
-          API="https://api.supabase.com/v1/projects/$REF"
-          jq -Rs '{query: .}' "$MIGRATION" > /tmp/mig.json
-          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/mig.json "$API/database/query"
-          jq -n --arg q "select count(*) as jobs_com_credencial from cron.job where jobname in ('reorder-check-daily','stock-alert-daily','alert-expiration-daily') and command like '%Authorization%'" '{query:$q}' > /tmp/v.json
-          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/v.json "$API/database/query"
+          SEGREDO="${CRON_SECRET:-}"
+          if [ -z "$SEGREDO" ]; then SEGREDO=$(openssl rand -hex 32); fi
+          echo "::add-mask::$SEGREDO"
+          echo "CRON_SECRET=$SEGREDO" >> "$GITHUB_ENV"
+          jq -n --arg v "$SEGREDO" '[{name:"CRON_SECRET", value:$v}]' > /tmp/sec.json
+          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/sec.json "$API/secrets" > /dev/null
+          echo "CRON_SECRET gravado no ambiente do projeto"
       - name: Deploy das 3 edges
         if: env.SEM_TOKEN != '1'
         run: |
@@ -144,6 +136,33 @@ jobs:
             echo "== $s"
             npx --yes supabase@3.1.0 functions deploy "$s" --project-ref "$REF" --use-api --yes
           done
+      - name: Guardar o segredo dos crons no Vault
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::CRON_SECRET nao chegou ao ambiente do job"
+            exit 1
+          fi
+          Q="begin; delete from vault.secrets where name = 'cron_secret'; select vault.create_secret('${CRON_SECRET}', 'cron_secret', 'segredo do header x-cron-secret: autentica os crons das edges de guarda'); commit;"
+          jq -n --arg q "$Q" '{query:$q}' > /tmp/vault.json
+          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/vault.json "$API/database/query" > /dev/null
+          echo "cron_secret gravado no Vault"
+      - name: Aplicar a migration dos crons
+        if: env.SEM_TOKEN != '1'
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          jq -Rs '{query: .}' "$MIGRATION" > /tmp/mig.json
+          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/mig.json "$API/database/query"
+          jq -n --arg q "select count(*) as jobs_com_credencial from cron.job where jobname in ('reorder-check-daily','stock-alert-daily','alert-expiration-daily') and command like '%x-cron-secret%'" '{query:$q}' > /tmp/v.json
+          JOBS=$(curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/v.json "$API/database/query")
+          echo "jobs com o header do cron: $JOBS"
+          if [ "$(echo "$JOBS" | jq -r '.[0].jobs_com_credencial')" != "$(echo "$FUNCOES" | wc -w)" ]; then
+            echo "::error::nem todos os jobs dos crons ficaram com x-cron-secret: $JOBS"
+            exit 1
+          fi
       - name: Provar que a chave publica nao executa
         if: env.SEM_TOKEN != '1'
         run: |
@@ -163,11 +182,22 @@ jobs:
         run: |
           set -euo pipefail
           API="https://api.supabase.com/v1/projects/$REF"
+          consulta() {
+            jq -n --arg q "$1" '{query:$q}' > /tmp/q.json
+            curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/q.json "$API/database/query"
+          }
+          MARCO=$(consulta "select coalesce(max(id),0) as marco from net._http_response" | jq -r '.[0].marco')
+          echo "marco de respostas anteriores: $MARCO"
           for s in $FUNCOES; do
-            Q="select net.http_post(url := '${ALVO_URL}/functions/v1/${s}', headers := jsonb_build_object('Content-Type','application/json','Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')), body := '{}');"
-            jq -n --arg q "$Q" '{query:$q}' > /tmp/cron.json
-            curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/cron.json "$API/database/query" > /dev/null
+            consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${s}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := '{}');" > /dev/null
           done
-          sleep 8
-          jq -n --arg q "select status_code, count(*) as respostas from net._http_response where created > now() - interval '2 minutes' group by 1 order by 1" '{query:$q}' > /tmp/r.json
-          curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/r.json "$API/database/query"
+          sleep 10
+          SAIDA=$(consulta "select status_code, count(*) as respostas from net._http_response where id > ${MARCO} group by 1 order by 1")
+          echo "respostas novas do cron: $SAIDA"
+          if [ "$(echo "$SAIDA" | jq -r 'length')" != "1" ] ||
+             [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "200" ] ||
+             [ "$(echo "$SAIDA" | jq -r '.[0].respostas')" != "$(echo "$FUNCOES" | wc -w)" ]; then
+            echo "::error::o caminho do cron nao respondeu 200 nas 3 edges: $SAIDA"
+            exit 1
+          fi
+          echo "cron autenticado: $(echo "$FUNCOES" | wc -w) respostas 200"
