@@ -1,7 +1,55 @@
 project_id = "ookjbflsnoefnsixrspc"
 
+# Contrato de autenticacao das Edge Functions — o que esta aqui tem que ser igual
+# ao que roda no projeto. O padrao da CLI e exigir JWT (`verify_jwt = true`);
+# declarar `false` e o que mantem o deploy fiel a producao. Medido em 24/11/2026:
+# 13 das 94 funcoes publicadas rodam com `verify_jwt = false`.
+#
+# Sem esta declaracao, um deploy feito a partir do repo liga o JWT e quebra o
+# chamador: a cerimonia WebAuthn roda antes do login, e crons/webhooks chamam sem
+# sessao de usuario.
+#
+# `verify_jwt = false` NAO libera a funcao: quem decide e a guarda no codigo
+# (`_shared/auth.ts`). 10 das 13 chamam `exigirSessao` ou checam o header; as 3
+# restantes (reorder-check, stock-alert, alert-expiration) sao fechadas pela
+# migration 20261126090000_SEC_edges-cron-com-credencial.sql, que passa a exigir
+# credencial e ensina os crons a manda-la. Ver `supabase/functions/README.md`.
+
+[functions.alert-expiration]
+verify_jwt = false
+
+[functions.carrier-track]
+verify_jwt = false
+
+[functions.nfe-import]
+verify_jwt = false
+
+[functions.previsao-demanda]
+verify_jwt = false
+
 [functions.reorder-check]
 verify_jwt = false
 
+[functions.safety-stock]
+verify_jwt = false
+
+[functions.scanner-ocr]
+verify_jwt = false
+
+[functions.send-email-alert]
+verify_jwt = false
+
 [functions.stock-alert]
+verify_jwt = false
+
+[functions.webauthn-auth-options]
+verify_jwt = false
+
+[functions.webauthn-auth-verify]
+verify_jwt = false
+
+[functions.webauthn-register-options]
+verify_jwt = false
+
+[functions.webauthn-register-verify]
 verify_jwt = false
