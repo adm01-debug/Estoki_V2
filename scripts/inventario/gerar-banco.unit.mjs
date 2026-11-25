@@ -134,8 +134,8 @@ test("so funcao do fluxo pre-login sem guarda nao gera alerta", () => {
   const dado = {
     ...base([]),
     funcoes_definer_sem_guarda: [
-      { nome: "check_login_lockout", args: "text", anon: true, authenticated: true, chamada_por: [] },
-      { nome: "record_failed_login", args: "text, inet", anon: true, authenticated: true, chamada_por: [] },
+      { nome: "is_tenant_admin", args: "uuid, uuid", anon: true, authenticated: true, chamada_por: [] },
+      { nome: "has_role", args: "uuid, text", anon: true, authenticated: true, chamada_por: [] },
     ],
   };
   assert.deepEqual(montarInventario(dado, {}).alertas, []);
