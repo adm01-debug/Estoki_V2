@@ -50,3 +50,31 @@ export async function exigirSessao(req: Request): Promise<Response | null> {
     headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
   });
 }
+
+/**
+ * `true` quando a chamada traz o segredo dos crons internos (`x-cron-secret`).
+ *
+ * Existe porque o Bearer de API key NAO chega ao codigo: medido em 25/11/2026,
+ * as 4 chaves do projeto (anon, service_role e as duas novas) devolveram 401 ao
+ * serem enviadas como `Authorization: Bearer`, enquanto o mesmo trabalho roda
+ * pelo segredo em header proprio. Comparacao em tempo constante.
+ */
+export function veioDoCron(req: Request): boolean {
+  const recebido = req.headers.get("x-cron-secret") ?? "";
+  const segredo = Deno.env.get("CRON_SECRET") ?? "";
+  if (!recebido || !segredo || recebido.length !== segredo.length) return false;
+  let diferenca = 0;
+  for (let i = 0; i < segredo.length; i++) {
+    diferenca |= segredo.charCodeAt(i) ^ recebido.charCodeAt(i);
+  }
+  return diferenca === 0;
+}
+
+/**
+ * Guarda das funcoes chamadas por `pg_cron`: aceita o segredo do cron, o service
+ * role ou uma sessao de usuario. Uso igual ao de `exigirSessao`.
+ */
+export function exigirSessaoOuCron(req: Request): Promise<Response | null> {
+  if (veioDoCron(req)) return Promise.resolve(null);
+  return exigirSessao(req);
+}
