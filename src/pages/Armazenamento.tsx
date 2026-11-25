@@ -331,13 +331,13 @@ const ArmazenamentoPage = () => {
         <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border bg-muted/30 p-4">
           <div className="flex items-center gap-4">
             <div className="border-r px-4 text-center">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">
                 Tempo Decorrido
               </p>
               <p className="font-mono text-lg font-bold">00:04:12</p>
             </div>
             <div className="px-4 text-center">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Itens na Fila</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">Itens na Fila</p>
               <p className="text-lg font-bold text-primary">{queue.length + 1}</p>
             </div>
           </div>
@@ -363,7 +363,7 @@ const ArmazenamentoPage = () => {
                   <Zap className="h-7 w-7 animate-pulse text-white" />
                 </div>
                 <div>
-                  <h3 className="font-black leading-tight text-orange-900">
+                  <h3 className="leading-tight font-black text-orange-900">
                     OPORTUNIDADE CRÍTICA DE CROSS-DOCKING
                   </h3>
                   <p className="text-sm text-orange-800">
@@ -399,21 +399,21 @@ const ArmazenamentoPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-4 pt-2">
                   <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+                    <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
                       <span>Volume (m³)</span>
                       <span className="text-blue-600">Disponível: 1.45m³</span>
                     </div>
                     <Progress value={15} className="h-2 bg-blue-100" />
                   </div>
                   <div className="space-y-1">
-                    <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+                    <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
                       <span>Resistência de Piso (kg)</span>
                       <span className="text-green-600">Seguro</span>
                     </div>
                     <Progress value={21} className="h-2 bg-green-100" />
                   </div>
                   <div className="mt-2 flex gap-2 rounded border bg-slate-50 p-2 text-[10px] text-muted-foreground">
-                    <Info className="h-3 w-3 flex-shrink-0 text-primary" />
+                    <Info className="h-3 w-3 shrink-0 text-primary" />
                     <span>
                       Esta posição é dedicada para a família: <b>{item.descricao.split(" ")[0]}</b>.
                       Compatibilidade 100%.
@@ -437,7 +437,7 @@ const ArmazenamentoPage = () => {
             {queue.length > 0 && (
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <CardTitle className="text-xs font-bold tracking-widest text-muted-foreground uppercase">
                     Fila de Armazenagem ({queue.length})
                   </CardTitle>
                 </CardHeader>
@@ -481,7 +481,7 @@ const ArmazenamentoPage = () => {
       </div>
 
       {/* Floating Action Bar 10/10 */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-primary/10 bg-white/95 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] backdrop-blur-md lg:pl-64">
+      <div className="fixed right-0 bottom-0 left-0 z-50 border-t-2 border-primary/10 bg-white/95 p-4 shadow-[0_-10px_30px_rgba(0,0,0,0.05)] backdrop-blur-md lg:pl-64">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6">
           <div className="hidden items-center gap-4 md:flex">
             {posicaoSelecionada ? (
@@ -490,7 +490,7 @@ const ArmazenamentoPage = () => {
                   <MapPin className="h-6 w-6 animate-bounce text-primary" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                  <p className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase">
                     Destino Confirmado
                   </p>
                   <p className="text-2xl font-black tracking-tight text-primary">

@@ -35,7 +35,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
+            <Search className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
             <Input
               aria-label="Filtrar SKU"
               placeholder="Filtrar SKU..."
@@ -70,7 +70,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
                 <div className="flex items-center gap-4">
                   <div
                     className={cn(
-                      "flex h-10 w-10 items-center justify-center rounded-xl border shadow-sm transition-transform group-hover/item:scale-110",
+                      "flex h-10 w-10 items-center justify-center rounded-xl border shadow-xs transition-transform group-hover/item:scale-110",
                       item.variance === 0
                         ? "border-success/20 bg-success/5 text-success"
                         : "border-destructive/20 bg-destructive/5 text-destructive"
@@ -85,11 +85,11 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
                   <div className="space-y-0.5">
                     <p className="text-sm font-black tracking-tight text-foreground">{item.sku}</p>
                     <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                         Esperado: <span className="text-foreground">{item.expected}</span>
                       </span>
                       <div className="h-1 w-1 rounded-full bg-border" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                         Contado: <span className="text-foreground">{item.counted}</span>
                       </span>
                     </div>
@@ -99,7 +99,7 @@ export function InventorySessionList({ items, query, onQueryChange }: InventoryS
                   <Badge
                     variant={item.variance === 0 ? "outline" : "destructive"}
                     className={cn(
-                      "rounded-full px-2.5 text-[10px] font-black uppercase tracking-widest",
+                      "rounded-full px-2.5 text-[10px] font-black tracking-widest uppercase",
                       item.variance === 0 ? "border-success/30 bg-success/5 text-success" : ""
                     )}
                   >

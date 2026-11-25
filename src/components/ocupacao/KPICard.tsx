@@ -22,7 +22,7 @@ export function KPICard({ label, value, icon: Icon, color, subtitle }: KPICardPr
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              <p className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
                 {label}
               </p>
               <p className="mt-1 text-2xl font-bold text-foreground">{value}</p>

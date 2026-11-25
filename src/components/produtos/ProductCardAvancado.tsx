@@ -53,7 +53,7 @@ export function ProductCardAvancado({ produto, onViewDetails }: ProductCardProps
         ) : (
           <Package className="h-16 w-16 text-muted-foreground/20" />
         )}
-        <div className="absolute left-2 top-2 flex gap-1">
+        <div className="absolute top-2 left-2 flex gap-1">
           <Badge
             className={
               produto.curva_abc === "A"
@@ -66,7 +66,7 @@ export function ProductCardAvancado({ produto, onViewDetails }: ProductCardProps
             Curva {produto.curva_abc || "C"}
           </Badge>
         </div>
-        <div className="absolute right-2 top-2 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -94,7 +94,7 @@ export function ProductCardAvancado({ produto, onViewDetails }: ProductCardProps
       </div>
 
       <CardHeader className="p-4 pb-2">
-        <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+        <p className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase">
           {produto.sku}
         </p>
         <CardTitle className="line-clamp-1 text-sm">{produto.nome}</CardTitle>
@@ -103,7 +103,7 @@ export function ProductCardAvancado({ produto, onViewDetails }: ProductCardProps
       <CardContent className="space-y-4 p-4 pt-0">
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] uppercase text-muted-foreground">Estoque Disponível</p>
+            <p className="text-[10px] text-muted-foreground uppercase">Estoque Disponível</p>
             <p className={`text-xl font-bold ${isLowStock ? "text-destructive" : "text-primary"}`}>
               {produto.estoque_atual}
               <span className="ml-1 text-xs font-normal text-muted-foreground">un</span>

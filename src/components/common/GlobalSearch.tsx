@@ -56,7 +56,7 @@ export function GlobalSearch() {
         <span className="ml-2 hidden flex-1 text-xs font-medium text-muted-foreground transition-colors group-hover/search:text-foreground lg:inline-flex">
           Buscar (funções, produtos, lotes)...
         </span>
-        <kbd className="pointer-events-none ml-auto hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 transition-all group-hover/search:border-primary/50 group-hover/search:text-primary lg:inline-flex">
+        <kbd className="pointer-events-none ml-auto hidden h-5 items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 transition-all select-none group-hover/search:border-primary/50 group-hover/search:text-primary lg:inline-flex">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>

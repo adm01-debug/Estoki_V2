@@ -78,11 +78,11 @@ const AuthPage = () => {
     return (
       <div className="flex min-h-dvh items-center justify-center bg-sidebar">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
+          <div className="flex h-12 w-12 animate-pulse items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/60 shadow-glow">
             <Box className="h-6 w-6 text-primary-foreground" />
           </div>
           <div className="h-1 w-24 overflow-hidden rounded-full bg-primary/20">
-            <div className="shimmer h-full w-1/2 rounded-full bg-primary" />
+            <div className="h-full w-1/2 shimmer rounded-full bg-primary" />
           </div>
 
           {/* Legal Footer */}
@@ -92,7 +92,7 @@ const AuthPage = () => {
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/70">
+              <span className="font-semibold text-sidebar-foreground/70 italic">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>
@@ -115,8 +115,8 @@ const AuthPage = () => {
       />
       {/* Background Layers */}
       <div className="absolute inset-0 bg-sidebar" />
-      <div className="pointer-events-none absolute right-[-10%] top-[-30%] h-[60%] w-[60%] rounded-full bg-primary/[0.05] blur-[120px]" />
-      <div className="pointer-events-none absolute bottom-[-20%] left-[-10%] h-[40%] w-[40%] rounded-full bg-primary/[0.03] blur-[100px]" />
+      <div className="pointer-events-none absolute top-[-30%] right-[-10%] h-[60%] w-[60%] rounded-full bg-primary/5 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-[-20%] left-[-10%] h-[40%] w-[40%] rounded-full bg-primary/3 blur-[100px]" />
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.02]"
         style={{
@@ -133,17 +133,17 @@ const AuthPage = () => {
         <div className="w-full max-w-md space-y-6">
           {/* Mobile logo */}
           <div className="mb-6 flex flex-col items-center text-center lg:hidden">
-            <div className="mb-4 flex h-[68px] w-[68px] items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
+            <div className="mb-4 flex h-[68px] w-[68px] items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/60 shadow-glow">
               <Box className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="space-y-1">
-              <h1 className="gradient-text text-3xl font-black leading-none tracking-tighter">
+              <h1 className="gradient-text text-3xl leading-none font-black tracking-tighter">
                 PROMO BRINDES
               </h1>
-              <p className="text-xs font-black uppercase tracking-[0.3em] text-primary-bright">
+              <p className="text-xs font-black tracking-[0.3em] text-primary-bright uppercase">
                 INTELLIGENCE
               </p>
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-sidebar-foreground/80">
+              <p className="text-[9px] font-black tracking-[0.2em] text-sidebar-foreground/80 uppercase">
                 WMS 10/10
               </p>
             </div>
@@ -157,7 +157,7 @@ const AuthPage = () => {
             <p className="mt-1 text-sm text-sidebar-foreground/70">
               Entre com suas credenciais para continuar
             </p>
-            <p className="mt-2 text-[11px] italic text-sidebar-foreground/80">
+            <p className="mt-2 text-[11px] text-sidebar-foreground/80 italic">
               Sistema de uso exclusivo. Acesso restrito a colaboradores autorizados.
             </p>
           </div>
@@ -176,7 +176,7 @@ const AuthPage = () => {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-sidebar-border" />
-            <span className="text-xs font-medium uppercase text-sidebar-foreground/70">ou</span>
+            <span className="text-xs font-medium text-sidebar-foreground/70 uppercase">ou</span>
             <div className="h-px flex-1 bg-sidebar-border" />
           </div>
 
@@ -235,7 +235,7 @@ const AuthPage = () => {
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/70">
+              <span className="font-semibold text-sidebar-foreground/70 italic">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>

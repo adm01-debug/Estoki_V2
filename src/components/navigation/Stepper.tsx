@@ -17,7 +17,7 @@ export function Stepper({ steps, current, onChange, className }: StepperProps) {
             onClick={() => onChange?.(i)}
             disabled={!onChange}
             aria-current={i === current ? "step" : undefined}
-            className="flex flex-col items-center rounded-xl px-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 enabled:cursor-pointer disabled:cursor-default"
+            className="flex flex-col items-center rounded-xl px-1 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden enabled:cursor-pointer disabled:cursor-default"
           >
             <div
               className={cn(

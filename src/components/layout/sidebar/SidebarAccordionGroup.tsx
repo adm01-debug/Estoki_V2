@@ -87,7 +87,7 @@ export const SidebarAccordionGroup = memo(function SidebarAccordionGroup({
           />
           <span
             className={cn(
-              "flex-1 text-left text-xs font-bold uppercase tracking-wider",
+              "flex-1 text-left text-xs font-bold tracking-wider uppercase",
               hasActiveChild ? "text-primary-bright" : ""
             )}
           >

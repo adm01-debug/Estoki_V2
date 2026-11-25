@@ -55,7 +55,7 @@ export function VolumeChecklist({ romaneios = [] }: { romaneios?: RomaneioLike[]
       </CardHeader>
       <CardContent className="space-y-4 pt-4">
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+          <Search className="absolute top-2.5 left-2.5 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             aria-label="Filtrar romaneios"
             placeholder="Filtrar romaneios..."
@@ -66,7 +66,7 @@ export function VolumeChecklist({ romaneios = [] }: { romaneios?: RomaneioLike[]
         </div>
 
         <div className="space-y-1">
-          <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+          <div className="flex justify-between text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
             <span>Romaneios entregues</span>
             <span>{Math.round(progresso)}%</span>
           </div>
@@ -95,7 +95,7 @@ export function VolumeChecklist({ romaneios = [] }: { romaneios?: RomaneioLike[]
                 >
                   <div className="min-w-0 flex-1">
                     <div
-                      className={`flex items-center justify-between text-sm font-medium leading-none ${
+                      className={`flex items-center justify-between text-sm leading-none font-medium ${
                         item.status === "entregue" ? "text-muted-foreground" : ""
                       }`}
                     >

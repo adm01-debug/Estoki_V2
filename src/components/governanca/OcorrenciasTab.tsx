@@ -265,7 +265,7 @@ export const OcorrenciasTab = memo(function OcorrenciasTab() {
                   <p className="text-muted-foreground">{oc.parecer}</p>
                   {oc.acao_corretiva && (
                     <>
-                      <p className="mb-1 mt-2 font-medium">Ação Corretiva:</p>
+                      <p className="mt-2 mb-1 font-medium">Ação Corretiva:</p>
                       <p className="text-muted-foreground">{oc.acao_corretiva}</p>
                     </>
                   )}

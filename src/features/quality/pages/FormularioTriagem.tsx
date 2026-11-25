@@ -280,24 +280,24 @@ export default function FormularioTriagem() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="fixed right-4 top-24 z-40 hidden lg:block"
+          className="fixed top-24 right-4 z-40 hidden lg:block"
         >
           <div className="w-48 space-y-3 rounded-2xl border border-primary/20 bg-background/80 p-4 shadow-xl backdrop-blur-md">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
                 Sessão Ativa
               </span>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Produtividade</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">Produtividade</p>
               <p className="text-xl font-black text-primary">
                 {Math.round(quantidadeAprovada + quantidadeReprovada)}{" "}
                 <span className="text-[10px]">itens</span>
               </p>
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase text-muted-foreground">Precisão</p>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase">Precisão</p>
               <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div className="h-full bg-primary" style={{ width: "98%" }} />
               </div>
@@ -493,7 +493,7 @@ export default function FormularioTriagem() {
                   <CardContent className="pt-6">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                        <p className="text-sm font-bold tracking-wider text-muted-foreground uppercase">
                           Mapeamento Visual de Defeitos
                         </p>
                         <Badge variant="outline" className="text-[9px] font-black uppercase">
@@ -503,7 +503,7 @@ export default function FormularioTriagem() {
                       <VisualDefectTagging />
 
                       <div className="border-t border-border/40 pt-4">
-                        <p className="mb-4 text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                        <p className="mb-4 text-sm font-bold tracking-wider text-muted-foreground uppercase">
                           Causa Raiz do Defeito (Pareto)
                         </p>
                         <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -545,7 +545,7 @@ export default function FormularioTriagem() {
 
           {activeStep < 4 ? (
             <Button
-              className="glow-button h-12 flex-1 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+              className="glow-button h-12 flex-1 rounded-xl font-black tracking-widest uppercase shadow-xl shadow-primary/20"
               onClick={() => {
                 haptics.medium();
                 if (canGoNext) setActiveStep((prev) => prev + 1);
@@ -559,7 +559,7 @@ export default function FormularioTriagem() {
             <div className="flex flex-1 gap-4">
               <Button
                 variant="outline"
-                className="h-12 flex-1 rounded-xl border-destructive/20 font-black uppercase tracking-widest text-destructive hover:bg-destructive/5"
+                className="h-12 flex-1 rounded-xl border-destructive/20 font-black tracking-widest text-destructive uppercase hover:bg-destructive/5"
                 onClick={() => handleSubmit("reprovado")}
                 disabled={submitting}
               >
@@ -572,7 +572,7 @@ export default function FormularioTriagem() {
               </Button>
               <Button
                 variant="default"
-                className="h-12 flex-1 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+                className="h-12 flex-1 rounded-xl font-black tracking-widest uppercase shadow-xl shadow-primary/20"
                 onClick={() => handleSubmit("aprovado")}
                 disabled={submitting}
               >
@@ -601,7 +601,7 @@ export default function FormularioTriagem() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs"
           >
             <motion.div
               initial={{ scale: 0.5, y: 20 }}
@@ -620,7 +620,7 @@ export default function FormularioTriagem() {
                 <motion.div
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute -right-2 -top-2 rounded-full bg-yellow-500 p-2 text-white shadow-lg"
+                  className="absolute -top-2 -right-2 rounded-full bg-yellow-500 p-2 text-white shadow-lg"
                 >
                   <Star className="h-4 w-4 fill-current" />
                 </motion.div>
@@ -633,14 +633,14 @@ export default function FormularioTriagem() {
 
               <div className="flex items-center gap-3 rounded-xl border border-primary/10 bg-primary/5 px-6 py-3">
                 <div className="text-left">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase">
                     Bônus de XP
                   </p>
                   <p className="text-2xl font-bold text-primary">+50 XP</p>
                 </div>
                 <div className="h-8 w-px bg-primary/20" />
                 <div className="text-left">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground">Combo</p>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase">Combo</p>
                   <p className="text-2xl font-bold text-primary">x1.2</p>
                 </div>
               </div>

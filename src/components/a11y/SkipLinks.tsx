@@ -28,7 +28,7 @@ export function SkipLinks({ links = defaultLinks, className }: SkipLinksProps) {
         <a
           key={link.id}
           href={`#${link.id}`}
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:shadow-lg focus:ring-2 focus:ring-primary"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:shadow-lg focus:ring-2 focus:ring-primary"
         >
           {link.label}
         </a>

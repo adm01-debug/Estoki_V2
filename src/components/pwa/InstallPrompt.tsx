@@ -32,7 +32,7 @@ export function InstallPrompt() {
   if (!showPrompt) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 rounded-lg border bg-card p-4 shadow-lg md:left-auto md:right-4 md:w-80">
+    <div className="fixed right-4 bottom-4 left-4 z-50 rounded-lg border bg-card p-4 shadow-lg md:right-4 md:left-auto md:w-80">
       <div className="flex items-start gap-3">
         <Download className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
         <div className="flex-1">

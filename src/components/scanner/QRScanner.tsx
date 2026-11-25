@@ -175,15 +175,15 @@ export function QRScanner({ onScan, onError, className }: QRScannerProps) {
         {isScanning && (
           <div className="pointer-events-none absolute inset-0">
             {/* Corner markers */}
-            <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2">
-              <div className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-4 border-t-4 border-primary" />
-              <div className="absolute right-0 top-0 h-8 w-8 rounded-tr-lg border-r-4 border-t-4 border-primary" />
+            <div className="absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2">
+              <div className="absolute top-0 left-0 h-8 w-8 rounded-tl-lg border-t-4 border-l-4 border-primary" />
+              <div className="absolute top-0 right-0 h-8 w-8 rounded-tr-lg border-t-4 border-r-4 border-primary" />
               <div className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-lg border-b-4 border-l-4 border-primary" />
-              <div className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-4 border-r-4 border-primary" />
+              <div className="absolute right-0 bottom-0 h-8 w-8 rounded-br-lg border-r-4 border-b-4 border-primary" />
 
               {/* Scanning line animation */}
               <div
-                className="absolute left-4 right-4 h-0.5 animate-pulse bg-primary"
+                className="absolute right-4 left-4 h-0.5 animate-pulse bg-primary"
                 style={{ top: "50%" }}
               />
             </div>

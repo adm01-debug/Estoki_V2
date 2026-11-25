@@ -109,7 +109,7 @@ export default function ShippingPage() {
             <Card className="border-primary/20 bg-primary/5">
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Pendentes</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Pendentes</p>
                   <p className="text-2xl font-bold">{stats.pedentes}</p>
                 </div>
                 <div className="rounded-full bg-primary/10 p-2">
@@ -120,7 +120,7 @@ export default function ShippingPage() {
             <Card className="border-orange-500/20 bg-orange-500/5">
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Em Rota</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Em Rota</p>
                   <p className="text-2xl font-bold text-orange-600">{stats.emTransito}</p>
                 </div>
                 <div className="rounded-full bg-orange-500/10 p-2">
@@ -131,7 +131,7 @@ export default function ShippingPage() {
             <Card className="border-success/20 bg-success/5">
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Entregues</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Entregues</p>
                   <p className="text-2xl font-bold text-success">{stats.entreguesHoje}</p>
                 </div>
                 <div className="rounded-full bg-success/10 p-2">
@@ -142,7 +142,7 @@ export default function ShippingPage() {
             <Card className="border-destructive/20 bg-destructive/5">
               <CardContent className="flex items-center justify-between p-4">
                 <div>
-                  <p className="text-xs font-medium uppercase text-muted-foreground">Alertas</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Alertas</p>
                   <p className="text-2xl font-bold text-destructive">{stats.divergencias}</p>
                 </div>
                 <div className="rounded-full bg-destructive/10 p-2">
@@ -154,7 +154,7 @@ export default function ShippingPage() {
 
           {/* Logistics Alert Bar (10/10 Excellence) */}
           <Card className="relative overflow-hidden border-blue-600/30 bg-blue-600/10">
-            <div className="absolute right-0 top-0 p-4 opacity-10">
+            <div className="absolute top-0 right-0 p-4 opacity-10">
               <Truck className="h-24 w-24" />
             </div>
             <CardContent className="relative z-10 flex flex-col items-center justify-between gap-4 p-4 md:flex-row">
@@ -172,14 +172,14 @@ export default function ShippingPage() {
                 </div>
               </div>
               <div className="flex w-full gap-3 md:w-auto">
-                <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center dark:bg-black/20 md:flex-none">
-                  <p className="text-[10px] font-bold uppercase text-blue-600">Divergências</p>
+                <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center md:flex-none dark:bg-black/20">
+                  <p className="text-[10px] font-bold text-blue-600 uppercase">Divergências</p>
                   <p className="text-xl font-black text-blue-900 dark:text-white">
                     {percentual(stats.divergencias)}%
                   </p>
                 </div>
-                <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center dark:bg-black/20 md:flex-none">
-                  <p className="text-[10px] font-bold uppercase text-blue-600">Entregues</p>
+                <div className="min-w-[100px] flex-1 rounded border border-blue-600/20 bg-white/50 p-2 text-center md:flex-none dark:bg-black/20">
+                  <p className="text-[10px] font-bold text-blue-600 uppercase">Entregues</p>
                   <p className="text-xl font-black text-blue-900 dark:text-white">
                     {percentual(stats.entreguesHoje)}%
                   </p>
@@ -201,7 +201,7 @@ export default function ShippingPage() {
           {/* Control bar */}
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
               <Input
                 aria-label="Buscar por código, motorista, placa"
                 placeholder="Buscar por código, motorista, placa..."

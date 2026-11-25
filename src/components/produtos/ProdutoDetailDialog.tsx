@@ -134,7 +134,7 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge, onEdit }:
                 <div className="space-y-4">
                   {historico.map((event) => (
                     <div key={event.id} className="relative border-l pb-4 pl-6 last:pb-0">
-                      <div className="absolute left-[-9px] top-0 flex h-4 w-4 items-center justify-center rounded-full border-2 border-primary bg-background">
+                      <div className="absolute top-0 left-[-9px] flex h-4 w-4 items-center justify-center rounded-full border-2 border-primary bg-background">
                         {["recebimento_nf", "devolucao", "armazenamento"].includes(
                           event.tipo_evento
                         ) ? (

@@ -58,17 +58,17 @@ export function SearchInput({
 
   return (
     <div className={cn("relative", className)}>
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         aria-label={placeholder || "Buscar"}
         type="text"
         value={internalValue}
         onChange={(e) => setInternalValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-10 pr-10"
+        className="pr-10 pl-10"
         autoFocus={autoFocus}
       />
-      <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+      <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1">
         {isLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
         {showClear && internalValue && !isLoading && (
           <Button

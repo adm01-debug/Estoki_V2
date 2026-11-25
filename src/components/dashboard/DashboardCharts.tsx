@@ -55,29 +55,29 @@ export const DashboardCharts = memo(function DashboardCharts({
           <TabsList className="grid h-10 w-full grid-cols-3 bg-transparent p-0">
             <TabsTrigger
               value="ocupacao"
-              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-xs"
             >
               Ocupação
             </TabsTrigger>
             <TabsTrigger
               value="movimentacoes"
-              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-xs"
             >
               Movimentações
             </TabsTrigger>
             <TabsTrigger
               value="distribuicao"
-              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm"
+              className="rounded-xl text-xs font-bold transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-xs"
             >
               Distribuição
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <TabsContent value="ocupacao" className="focus-visible:outline-none">
+        <TabsContent value="ocupacao" className="focus-visible:outline-hidden">
           <Card className="glass-card overflow-hidden border-border/30">
             <CardHeader className="border-b border-border/20 pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary">
+              <CardTitle className="text-sm font-bold tracking-widest text-primary uppercase">
                 Ocupação por Porta-Palete
               </CardTitle>
             </CardHeader>
@@ -127,10 +127,10 @@ export const DashboardCharts = memo(function DashboardCharts({
           </Card>
         </TabsContent>
 
-        <TabsContent value="movimentacoes" className="focus-visible:outline-none">
+        <TabsContent value="movimentacoes" className="focus-visible:outline-hidden">
           <Card className="glass-card overflow-hidden border-border/30">
             <CardHeader className="border-b border-border/20 pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">
+              <CardTitle className="text-sm font-bold tracking-widest text-primary/70 uppercase">
                 Fluxo Operacional - Últimos 7 dias
               </CardTitle>
             </CardHeader>
@@ -180,10 +180,10 @@ export const DashboardCharts = memo(function DashboardCharts({
           </Card>
         </TabsContent>
 
-        <TabsContent value="distribuicao" className="focus-visible:outline-none">
+        <TabsContent value="distribuicao" className="focus-visible:outline-hidden">
           <Card className="glass-card overflow-hidden border-border/30">
             <CardHeader className="border-b border-border/20 pb-4">
-              <CardTitle className="text-sm font-bold uppercase tracking-widest text-primary/70">
+              <CardTitle className="text-sm font-bold tracking-widest text-primary/70 uppercase">
                 Distribuição Global de Status
               </CardTitle>
             </CardHeader>
@@ -238,10 +238,10 @@ export const DashboardCharts = memo(function DashboardCharts({
       </Tabs>
 
       {/* Itens Parados */}
-      <Card className="glass-card group overflow-hidden border-warning/30">
-        <div className="absolute left-0 top-0 h-full w-1 bg-warning/40" />
+      <Card className="group glass-card overflow-hidden border-warning/30">
+        <div className="absolute top-0 left-0 h-full w-1 bg-warning/40" />
         <CardHeader className="border-b border-warning/10 pb-4">
-          <CardTitle className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-warning">
+          <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-widest text-warning uppercase">
             <Clock className="h-4 w-4" />
             Alerta de Baixo Giro (+30 dias)
             <Badge
@@ -287,13 +287,13 @@ export const DashboardCharts = memo(function DashboardCharts({
                   </div>
                   <div className="grid grid-cols-2 gap-2 border-t border-border/20 pt-3">
                     <div>
-                      <span className="block text-[9px] font-bold uppercase text-muted-foreground">
+                      <span className="block text-[9px] font-bold text-muted-foreground uppercase">
                         Posição
                       </span>
                       <span className="text-xs font-black text-foreground">{item.posicao}</span>
                     </div>
                     <div className="text-right">
-                      <span className="block text-[9px] font-bold uppercase text-muted-foreground">
+                      <span className="block text-[9px] font-bold text-muted-foreground uppercase">
                         Quantidade
                       </span>
                       <span className="text-xs font-black text-foreground">

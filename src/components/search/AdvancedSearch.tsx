@@ -41,7 +41,7 @@ export function AdvancedSearch({
   return (
     <div className={cn("relative", className)}>
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+        <div className="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground">
           {isSearching ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
@@ -57,10 +57,10 @@ export function AdvancedSearch({
           placeholder={placeholder}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className={cn("pl-10 pr-20 transition-all", isFocused && "ring-2 ring-primary/20")}
+          className={cn("pr-20 pl-10 transition-all", isFocused && "ring-2 ring-primary/20")}
         />
 
-        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
+        <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-1">
           {showResultBadge && (
             <Badge variant="secondary" className="h-5 text-xs">
               {totalResults} resultado{totalResults !== 1 ? "s" : ""}

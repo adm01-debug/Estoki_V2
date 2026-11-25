@@ -42,7 +42,7 @@ export function TriagemHeaderCard({
   tempoEstimado = "12:30",
 }: TriagemHeaderCardProps) {
   return (
-    <Card className="overflow-hidden border-2 border-primary/10 bg-gradient-to-br from-card to-primary/5 shadow-xl">
+    <Card className="overflow-hidden border-2 border-primary/10 bg-linear-to-br from-card to-primary/5 shadow-xl">
       <div className="relative h-1.5 w-full bg-primary/20">
         <div
           className={cn(
@@ -58,7 +58,7 @@ export function TriagemHeaderCard({
               <Layers className="h-7 w-7 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-black uppercase tracking-tighter text-primary">
+              <CardTitle className="text-2xl font-black tracking-tighter text-primary uppercase">
                 Lote #{loteId || (id ? id.slice(0, 8).toUpperCase() : "NOVO")}
               </CardTitle>
               <CardDescription className="flex items-center gap-1.5 text-sm font-bold text-muted-foreground/80">
@@ -70,13 +70,13 @@ export function TriagemHeaderCard({
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
-              className="h-10 rounded-xl border-primary/20 bg-background/50 px-4 font-black text-primary shadow-sm"
+              className="h-10 rounded-xl border-primary/20 bg-background/50 px-4 font-black text-primary shadow-xs"
             >
               {quantidadeTotal} UNIDADES
             </Badge>
             <Badge
               variant="outline"
-              className="flex h-10 items-center gap-2 rounded-xl border-indigo-200 bg-indigo-50/50 px-4 font-black text-indigo-600 shadow-sm"
+              className="flex h-10 items-center gap-2 rounded-xl border-indigo-200 bg-indigo-50/50 px-4 font-black text-indigo-600 shadow-xs"
             >
               <Truck className="h-4 w-4" /> ORIGEM: LOGÍSTICA
             </Badge>
@@ -84,10 +84,10 @@ export function TriagemHeaderCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border/50 bg-background/40 p-5 shadow-inner backdrop-blur-sm md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-border/50 bg-background/40 p-5 shadow-inner backdrop-blur-xs md:flex-row">
           <div className="flex w-full items-center gap-8 md:w-auto">
             <div className="space-y-1">
-              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <p className="flex items-center gap-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 <Timer className="h-3 w-3" /> Tempo Operacional
               </p>
               <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export function TriagemHeaderCard({
             <div className="hidden h-10 w-px bg-border/50 md:block" />
 
             <div className="space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 Status da Inspeção
               </p>
               <div className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export function TriagemHeaderCard({
                     isRunning ? "bg-primary shadow-[0_0_8px_rgba(var(--primary),0.6)]" : "bg-muted"
                   )}
                 />
-                <span className="text-sm font-black uppercase tracking-tight">
+                <span className="text-sm font-black tracking-tight uppercase">
                   {isRunning ? "Em Conferência Ativa" : "Pausado / Aguardando"}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export function TriagemHeaderCard({
             <div className="hidden h-10 w-px bg-border/50 lg:block" />
 
             <div className="hidden space-y-1 lg:block">
-              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <p className="flex items-center gap-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 <Zap className="h-3 w-3 text-yellow-500" /> Takt Time
               </p>
               <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export function TriagemHeaderCard({
             <div className="hidden h-10 w-px bg-border/50 lg:block" />
 
             <div className="hidden space-y-1 lg:block">
-              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+              <p className="flex items-center gap-1 text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                 <Clock className="h-3 w-3 text-primary" /> Est. Conclusão
               </p>
               <div className="flex items-center gap-2">
@@ -176,13 +176,13 @@ export function TriagemHeaderCard({
           <div className="flex w-full gap-2 md:w-auto">
             <Button
               variant="outline"
-              className="h-11 flex-1 gap-2 rounded-xl border-border/40 text-[10px] font-bold uppercase tracking-wider md:flex-none"
+              className="h-11 flex-1 gap-2 rounded-xl border-border/40 text-[10px] font-bold tracking-wider uppercase md:flex-none"
             >
               Salvar Rascunho
             </Button>
             <Button
               variant="default"
-              className="glow-button h-11 flex-1 gap-2 rounded-xl bg-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/90 md:flex-none"
+              className="glow-button h-11 flex-1 gap-2 rounded-xl bg-primary text-[10px] font-bold tracking-wider uppercase hover:bg-primary/90 md:flex-none"
               onClick={onValidarParcial}
               disabled={!onValidarParcial}
             >

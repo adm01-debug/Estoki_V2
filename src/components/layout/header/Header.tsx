@@ -42,8 +42,8 @@ export const Header = memo(function Header({
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/10">
-      <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl supports-[backdrop-filter]:bg-background/60" />
-      <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-50" />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-2xl supports-backdrop-filter:bg-background/60" />
+      <div className="absolute right-0 bottom-0 left-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent opacity-50" />
       <div
         className={cn(
           "relative mx-auto flex h-16 max-w-[1600px] items-center justify-between px-4 transition-all duration-500 ease-in-out lg:px-6",
@@ -73,7 +73,7 @@ export const Header = memo(function Header({
                     variant="ghost"
                     size="icon"
                     onClick={onBack}
-                    className="touch-friendly border border-border/20 bg-background/50 shadow-sm transition-transform hover:bg-primary/10 active:scale-90"
+                    className="touch-friendly border border-border/20 bg-background/50 shadow-xs transition-transform hover:bg-primary/10 active:scale-90"
                     aria-label="Voltar para tela anterior (Atalho: Alt + Seta Esquerda)"
                   >
                     <ChevronLeft className="h-5 w-5" />
@@ -81,7 +81,7 @@ export const Header = memo(function Header({
                 </TooltipTrigger>
                 <TooltipContent
                   side="bottom"
-                  className="border-border/40 bg-popover/95 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md"
+                  className="border-border/40 bg-popover/95 text-[10px] font-bold tracking-wider uppercase backdrop-blur-md"
                 >
                   Voltar{" "}
                   <kbd className="ml-2 rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
@@ -93,10 +93,10 @@ export const Header = memo(function Header({
           </div>
           {isHome && (
             <div className="flex items-center gap-2 lg:hidden">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60 shadow-glow-sm">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/60 shadow-glow-sm">
                 <Box className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="gradient-text hidden font-extrabold text-foreground sm:block">
+              <span className="hidden gradient-text font-extrabold text-foreground sm:block">
                 ESTOKI
               </span>
             </div>
@@ -113,7 +113,7 @@ export const Header = memo(function Header({
               <TooltipTrigger asChild>
                 <div className="mr-2 flex animate-pulse items-center gap-1.5 rounded-full border border-destructive/20 bg-destructive/10 px-3 py-1 text-destructive">
                   <WifiOff className="h-3.5 w-3.5" />
-                  <span className="hidden text-[10px] font-black uppercase tracking-wider md:inline">
+                  <span className="hidden text-[10px] font-black tracking-wider uppercase md:inline">
                     Offline
                   </span>
                 </div>

@@ -168,13 +168,13 @@ export default function DashboardTriadorPage() {
       <div className="space-y-6 p-4">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Header com XP e Nível */}
-          <Card className="border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 lg:col-span-2">
+          <Card className="border-primary/20 bg-linear-to-r from-primary/10 to-primary/5 lg:col-span-2">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-primary/20">
                     <Trophy className="h-10 w-10 text-primary" />
-                    <div className="absolute -bottom-1 -right-1 rounded-full border-2 border-background bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
+                    <div className="absolute -right-1 -bottom-1 rounded-full border-2 border-background bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
                       #{minhaposicao?.posicao || "?"}
                     </div>
                   </div>
@@ -464,7 +464,7 @@ export default function DashboardTriadorPage() {
                 <div className="flex gap-2">
                   <Badge
                     variant="outline"
-                    className="gap-1 border-yellow-500/20 bg-yellow-500/10 text-[10px] font-black uppercase text-yellow-600"
+                    className="gap-1 border-yellow-500/20 bg-yellow-500/10 text-[10px] font-black text-yellow-600 uppercase"
                   >
                     <Star className="h-3 w-3 fill-current" /> Platinum
                   </Badge>
@@ -482,15 +482,15 @@ export default function DashboardTriadorPage() {
                     {/* Badge de Acuracidade - Gamification Phase 7 */}
                     <motion.div
                       whileHover={{ scale: 1.05 }}
-                      className="group relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-gradient-to-br from-indigo-500/10 to-primary/5 p-4"
+                      className="group relative overflow-hidden rounded-2xl border-2 border-primary/30 bg-linear-to-br from-indigo-500/10 to-primary/5 p-4"
                     >
-                      <div className="absolute -right-2 -top-2 opacity-10 transition-opacity group-hover:opacity-20">
+                      <div className="absolute -top-2 -right-2 opacity-10 transition-opacity group-hover:opacity-20">
                         <ShieldCheck className="h-16 w-16" />
                       </div>
                       <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
                         <ShieldCheck className="h-6 w-6 text-primary" />
                       </div>
-                      <h4 className="text-[11px] font-black uppercase tracking-tighter">
+                      <h4 className="text-[11px] font-black tracking-tighter uppercase">
                         Guardião da Acuracidade
                       </h4>
                       <p className="mt-1 text-[10px] leading-tight text-muted-foreground">
@@ -510,7 +510,7 @@ export default function DashboardTriadorPage() {
                         className="rounded-2xl border bg-card/50 p-4 transition-colors hover:bg-card"
                       >
                         <div className="mb-2 text-2xl">🏆</div>
-                        <h4 className="text-[11px] font-bold uppercase tracking-tighter">
+                        <h4 className="text-[11px] font-bold tracking-tighter uppercase">
                           {c.nome}
                         </h4>
                         <p className="mt-1 text-[10px] leading-tight text-muted-foreground">
@@ -625,7 +625,7 @@ export default function DashboardTriadorPage() {
                                   onClick={() => {
                                     coletarRecompensa(d.id);
                                   }}
-                                  className="rounded bg-primary px-2 py-1 text-[10px] font-bold uppercase text-primary-foreground transition-colors hover:bg-primary/90"
+                                  className="rounded bg-primary px-2 py-1 text-[10px] font-bold text-primary-foreground uppercase transition-colors hover:bg-primary/90"
                                 >
                                   Coletar
                                 </button>

@@ -69,8 +69,8 @@ const statusConfig: Record<
 // botão. As classes replicam o `TabsTrigger` que existia aqui (mesmo visual),
 // mas sem o `aria-controls` órfão que o Radix Tabs gerava sem `TabsContent`.
 const FILTRO_ITEM_CLASS =
-  "inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground ring-offset-background transition-all hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-const FILTRO_ITEM_ATIVO_CLASS = "bg-background text-foreground shadow-sm";
+  "inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground ring-offset-background transition-all hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+const FILTRO_ITEM_ATIVO_CLASS = "bg-background text-foreground shadow-xs";
 
 export default function RecebimentoPage() {
   const navigate = useNavigate();
@@ -178,13 +178,13 @@ export default function RecebimentoPage() {
             transition={{ delay: 0.3 }}
           >
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Buscar lote, fornecedor, pedido"
                 placeholder="Buscar lote, fornecedor, pedido..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-11 rounded-xl border-border/20 bg-card/50 pl-10 shadow-sm transition-all focus:bg-card focus:ring-2 focus:ring-primary/20"
+                className="h-11 rounded-xl border-border/20 bg-card/50 pl-10 shadow-xs transition-all focus:bg-card focus:ring-2 focus:ring-primary/20"
               />
             </div>
           </motion.div>
@@ -322,7 +322,7 @@ export default function RecebimentoPage() {
                       haptics.light();
                       navigate(`/recebimento/${item.id}`);
                     }}
-                    className="content-visibility-auto group cursor-pointer rounded-2xl border border-border/50 bg-card p-5 shadow-sm transition-all will-change-transform hover:border-primary/30 hover:bg-card/80 hover:shadow-md active:scale-[0.98]"
+                    className="group cursor-pointer rounded-2xl border border-border/50 bg-card p-5 shadow-xs transition-all will-change-transform content-visibility-auto hover:border-primary/30 hover:bg-card/80 hover:shadow-md active:scale-[0.98]"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
@@ -333,7 +333,7 @@ export default function RecebimentoPage() {
                           <Badge
                             variant={status.variant}
                             className={cn(
-                              "gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                              "gap-1 rounded-lg px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase",
                               item.status === "divergencia" && "animate-pulse"
                             )}
                           >
@@ -381,7 +381,7 @@ export default function RecebimentoPage() {
                           <div className="mt-4 flex flex-col gap-2">
                             <div className="flex items-center gap-3">
                               <div className="flex-1 space-y-1.5">
-                                <div className="flex justify-between text-[8px] font-black uppercase tracking-wider text-muted-foreground">
+                                <div className="flex justify-between text-[8px] font-black tracking-wider text-muted-foreground uppercase">
                                   <span>Progresso da Conferência</span>
                                   <span>{Math.round(progresso)}%</span>
                                 </div>
@@ -454,7 +454,7 @@ export default function RecebimentoPage() {
                           >
                             {item.quantidade_atual} / {qtdPedida}
                           </p>
-                          <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                          <p className="text-[10px] font-bold text-muted-foreground uppercase">
                             Unidades
                           </p>
                         </div>

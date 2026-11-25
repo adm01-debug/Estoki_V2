@@ -19,7 +19,7 @@ export function MapPopup({ children, position, onClose, className }: MapPopupPro
           aria-label="Fechar"
           variant="ghost"
           size="icon"
-          className="absolute right-1 top-1 h-6 w-6"
+          className="absolute top-1 right-1 h-6 w-6"
           onClick={onClose}
         >
           <X className="h-4 w-4" />

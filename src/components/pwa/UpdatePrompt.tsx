@@ -30,7 +30,7 @@ export function UpdatePrompt() {
   if (!showUpdate) return null;
 
   return (
-    <div className="fixed left-4 right-4 top-4 z-50 rounded-lg bg-primary p-4 text-primary-foreground shadow-lg md:left-auto md:right-4 md:w-80">
+    <div className="fixed top-4 right-4 left-4 z-50 rounded-lg bg-primary p-4 text-primary-foreground shadow-lg md:right-4 md:left-auto md:w-80">
       <div className="flex items-center gap-3">
         <RefreshCw className="h-5 w-5 shrink-0" />
         <div className="flex-1">

@@ -169,7 +169,7 @@ export default function RolesPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <h4 className="flex items-center gap-2 text-xs font-bold uppercase text-muted-foreground">
+                    <h4 className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase">
                       <Lock className="h-3 w-3" /> Permissões Principais
                     </h4>
                     <div className="flex flex-wrap gap-1">
@@ -256,9 +256,9 @@ export default function RolesPage() {
                                             }`}
                                           >
                                             {granted ? (
-                                              <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                                              <CheckCircle2 className="h-4 w-4 shrink-0" />
                                             ) : (
-                                              <Lock className="h-4 w-4 flex-shrink-0" />
+                                              <Lock className="h-4 w-4 shrink-0" />
                                             )}
                                             <span className="truncate">{perm.name}</span>
                                           </div>

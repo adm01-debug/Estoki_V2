@@ -116,7 +116,7 @@ export const OnboardingTour = memo(function OnboardingTour() {
 
   if (!isOpen && !tourCompleted) {
     return (
-      <div className="fixed bottom-20 right-4 z-50 md:bottom-4">
+      <div className="fixed right-4 bottom-20 z-50 md:bottom-4">
         <Button onClick={() => setIsOpen(true)} className="animate-pulse gap-2 shadow-lg">
           <Rocket className="h-4 w-4" /> Fazer Tour
         </Button>
@@ -128,8 +128,8 @@ export const OnboardingTour = memo(function OnboardingTour() {
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] bg-black/40" onClick={close} />
-      <div className="pointer-events-none fixed inset-0 z-[61] flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-60 bg-black/40" onClick={close} />
+      <div className="pointer-events-none fixed inset-0 z-61 flex items-center justify-center p-4">
         <Card className="pointer-events-auto w-full max-w-sm border-primary/20 shadow-2xl">
           <CardContent className="p-5">
             <div className="mb-1 flex items-start justify-between">
@@ -138,7 +138,7 @@ export const OnboardingTour = memo(function OnboardingTour() {
                 aria-label="Fechar tour"
                 variant="ghost"
                 size="icon"
-                className="-mr-1 -mt-1 h-7 w-7"
+                className="-mt-1 -mr-1 h-7 w-7"
                 onClick={close}
               >
                 <X className="h-4 w-4" />

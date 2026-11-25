@@ -39,7 +39,7 @@ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }:
     return (
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="glass-card h-full overflow-hidden border-border/30">
+          <Card key={i} className="h-full glass-card overflow-hidden border-border/30">
             <CardContent className="p-4 md:p-5">
               <div className="mb-4 flex items-start justify-between">
                 <Skeleton className="h-11 w-11 rounded-2xl" />
@@ -71,17 +71,17 @@ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }:
           >
             <Tooltip delayDuration={300}>
               <TooltipTrigger asChild>
-                <Card className="glass-card group h-full overflow-hidden border-border/30">
+                <Card className="group h-full glass-card overflow-hidden border-border/30">
                   <CardContent className="relative p-4 md:p-5">
-                    <div className="absolute right-0 top-0 -mr-8 -mt-8 h-24 w-24 rounded-full bg-primary/5 transition-transform group-hover:scale-110" />
+                    <div className="absolute top-0 right-0 -mt-8 -mr-8 h-24 w-24 rounded-full bg-primary/5 transition-transform group-hover:scale-110" />
                     <div className="mb-4 flex items-start justify-between">
                       <div
-                        className={`flex h-11 w-11 items-center justify-center rounded-2xl border shadow-sm ${variantStyles[item.variant]} transition-transform group-hover:rotate-6`}
+                        className={`flex h-11 w-11 items-center justify-center rounded-2xl border shadow-xs ${variantStyles[item.variant]} transition-transform group-hover:rotate-6`}
                       >
                         <item.icon className="h-5 w-5" />
                       </div>
                       {item.excellence && (
-                        <div className="animate-pulse rounded bg-primary px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary-foreground shadow-lg shadow-primary/20">
+                        <div className="animate-pulse rounded bg-primary px-1.5 py-0.5 text-[8px] font-black tracking-widest text-primary-foreground uppercase shadow-lg shadow-primary/20">
                           10/10
                         </div>
                       )}
@@ -106,7 +106,7 @@ export const IndexKPIs = memo(function IndexKPIs({ items, loading, onNavigate }:
                     <p className="mt-1 text-sm font-bold tracking-tight text-foreground">
                       {item.label}
                     </p>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
                       {item.sublabel}
                     </p>
                   </CardContent>

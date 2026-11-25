@@ -67,15 +67,15 @@ function TourOverlay({
   onClose: () => void;
 }) {
   return (
-    <div className="pointer-events-none fixed inset-0 z-[100]">
+    <div className="pointer-events-none fixed inset-0 z-100">
       {/* Overlay */}
       <div
-        className="pointer-events-auto absolute inset-0 bg-background/80 backdrop-blur-sm"
+        className="pointer-events-auto absolute inset-0 bg-background/80 backdrop-blur-xs"
         onClick={onClose}
       />
 
       {/* Tour Card */}
-      <div className="pointer-events-auto fixed bottom-24 left-1/2 z-[101] w-[90%] max-w-md -translate-x-1/2">
+      <div className="pointer-events-auto fixed bottom-24 left-1/2 z-101 w-[90%] max-w-md -translate-x-1/2">
         <div className="animate-fade-in rounded-xl border border-border bg-card p-5 shadow-2xl">
           <div className="mb-3 flex items-start justify-between">
             <div className="flex items-center gap-2">

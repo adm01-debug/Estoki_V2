@@ -217,7 +217,7 @@ export default function NotificationsPage() {
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                        <p className="text-xs tracking-wider text-muted-foreground uppercase">
                           {cfg.label}
                         </p>
                         <p className="text-2xl font-bold">{count}</p>
@@ -465,10 +465,10 @@ function NotificationItem({
                 exit={{ opacity: 0, height: 0 }}
                 className="mt-3 rounded-lg border border-border/40 bg-muted/20 p-3"
               >
-                <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <p className="mb-1 text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                   Detalhes
                 </p>
-                <pre className="whitespace-pre-wrap break-all font-mono text-[11px] text-foreground/80">
+                <pre className="font-mono text-[11px] break-all whitespace-pre-wrap text-foreground/80">
                   {JSON.stringify(item.dados, null, 2)}
                 </pre>
               </motion.div>

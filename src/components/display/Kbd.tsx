@@ -6,7 +6,7 @@ interface KbdProps {
 }
 export function Kbd({ children, className }: KbdProps) {
   return (
-    <kbd className={cn("rounded border bg-muted px-2 py-1 font-mono text-xs shadow-sm", className)}>
+    <kbd className={cn("rounded border bg-muted px-2 py-1 font-mono text-xs shadow-xs", className)}>
       {children}
     </kbd>
   );

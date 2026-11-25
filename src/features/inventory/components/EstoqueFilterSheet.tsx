@@ -72,7 +72,7 @@ export function EstoqueFilterSheet({
           <Filter className="h-4 w-4" />
           <span className="sr-only sm:not-sr-only sm:inline">Filtros</span>
           {activeFiltersCount > 0 && (
-            <Badge className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center p-0 text-xs">
+            <Badge className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center p-0 text-xs">
               {activeFiltersCount}
             </Badge>
           )}

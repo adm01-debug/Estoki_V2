@@ -173,7 +173,7 @@ export default function WarehouseDetailPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="-ml-2 mb-2 gap-1"
+            className="mb-2 -ml-2 gap-1"
             onClick={() => navigate("/armazens")}
           >
             <ArrowLeft className="h-4 w-4" />

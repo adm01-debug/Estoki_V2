@@ -53,11 +53,11 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
       tabIndex={0}
     >
       {columns.map((column) => (
-        <div key={column.id} className="flex w-80 flex-shrink-0 flex-col gap-3">
+        <div key={column.id} className="flex w-80 shrink-0 flex-col gap-3">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
               <div className={`h-2 w-2 rounded-full ${column.color || "bg-primary"}`} />
-              <h3 className="text-sm font-bold uppercase tracking-wider">{column.title}</h3>
+              <h3 className="text-sm font-bold tracking-wider uppercase">{column.title}</h3>
               <Badge variant="secondary" className="text-[10px]">
                 {items.filter((i) => i.columnId === column.id).length}
               </Badge>
@@ -110,7 +110,7 @@ export function KanbanBoard({ columns, items, onMoveItem, renderItem }: KanbanBo
                       {renderItem ? (
                         renderItem(item)
                       ) : (
-                        <Card className="shadow-sm transition-colors hover:border-primary/50">
+                        <Card className="shadow-xs transition-colors hover:border-primary/50">
                           <CardContent className="space-y-2 p-3">
                             <div className="flex items-start justify-between">
                               <p className="line-clamp-2 text-sm font-medium">{item.title}</p>

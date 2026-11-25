@@ -77,19 +77,19 @@ export const KPICard = memo(function KPICard({
       onClick={onClick}
       aria-label={`${label}${sublabel ? ` - ${sublabel}` : ""}: ${value}`}
       className={cn(
-        "kpi-card group relative w-full cursor-pointer overflow-hidden text-left",
+        "group kpi-card relative w-full cursor-pointer overflow-hidden text-left",
         "border border-border/50 bg-card/40 backdrop-blur-md",
-        "shadow-sm transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-glow",
+        "shadow-xs transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-glow",
         sizeClasses[size]
       )}
     >
       {/* Shine effect */}
-      <div className="absolute inset-0 z-0 translate-x-[-100%] skew-x-12 bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+      <div className="absolute inset-0 z-0 -translate-x-full skew-x-12 bg-linear-to-r from-transparent via-white/5 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
 
       {/* Gradient overlay */}
       <div
         className={cn(
-          "absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
+          "absolute inset-0 bg-linear-to-br opacity-0 transition-opacity duration-500 group-hover:opacity-100",
           gradientStyles[variant]
         )}
       />

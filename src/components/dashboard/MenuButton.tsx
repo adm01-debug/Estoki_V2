@@ -23,18 +23,18 @@ export const MenuButton = memo(function MenuButton({
     <button
       onClick={onClick}
       className={cn(
-        "menu-button group relative w-full overflow-hidden",
+        "group relative menu-button w-full overflow-hidden",
         variant === "primary" && "border-primary/30 bg-primary/5",
-        variant === "gradient" && "border-primary/40 bg-gradient-to-br from-primary/10 to-primary/5"
+        variant === "gradient" && "border-primary/40 bg-linear-to-br from-primary/10 to-primary/5"
       )}
     >
       {/* Hover shine effect */}
-      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+      <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 
       <div className="relative z-10 flex w-full items-center gap-4">
         <div
           className={cn(
-            "flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-200 group-hover:scale-110",
+            "flex h-14 w-14 shrink-0 items-center justify-center rounded-xl transition-all duration-200 group-hover:scale-110",
             variant === "primary" || variant === "gradient"
               ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
               : "bg-primary/10 text-primary"

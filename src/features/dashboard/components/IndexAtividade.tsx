@@ -60,7 +60,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
   return (
     <motion.section variants={itemVariants}>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary">
+        <h2 className="flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-primary uppercase">
           <span className="h-px w-4 bg-primary/30" />
           Atividade Recente
         </h2>
@@ -106,7 +106,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                       {/* Indicador lateral dinâmico */}
                       <div
                         className={cn(
-                          "absolute bottom-0 left-0 top-0 w-1 opacity-0 transition-opacity group-hover/item:opacity-100",
+                          "absolute top-0 bottom-0 left-0 w-1 opacity-0 transition-opacity group-hover/item:opacity-100",
                           activity.status === "success"
                             ? "bg-success"
                             : activity.status === "danger"
@@ -119,7 +119,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
 
                       <div
                         className={cn(
-                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform group-hover/item:scale-110",
+                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-xs transition-transform group-hover/item:scale-110",
                           getStatusClasses(activity.status)
                         )}
                       >
@@ -142,7 +142,7 @@ export const IndexAtividade = memo(({ atividades, loading, onSeeAll }: Props) =>
                             <Badge
                               variant="outline"
                               className={cn(
-                                "rounded-full border-none px-2 text-[10px] font-bold uppercase tracking-wider",
+                                "rounded-full border-none px-2 text-[10px] font-bold tracking-wider uppercase",
                                 getStatusClasses(activity.status)
                               )}
                             >

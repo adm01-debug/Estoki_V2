@@ -85,8 +85,8 @@ export default function ProfilePage() {
       <PageTransition>
         <div className="mx-auto max-w-[1200px] space-y-8 p-4 md:p-8">
           {/* Header do Perfil */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary/80 to-primary/60 p-8 shadow-2xl shadow-primary/20">
-            <div className="absolute right-0 top-0 rotate-12 scale-150 p-8 opacity-10">
+          <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-primary via-primary/80 to-primary/60 p-8 shadow-2xl shadow-primary/20">
+            <div className="absolute top-0 right-0 scale-150 rotate-12 p-8 opacity-10">
               <User className="h-48 w-48 text-white" />
             </div>
             <div className="relative z-10 flex flex-col items-center gap-8 md:flex-row">
@@ -101,7 +101,7 @@ export default function ProfilePage() {
                   <h1 className="text-3xl font-black tracking-tight text-white">
                     {profile?.nome || "Usuário Estoki"}
                   </h1>
-                  <Badge className="border-white/30 bg-white/20 px-3 font-black uppercase tracking-widest text-white">
+                  <Badge className="border-white/30 bg-white/20 px-3 font-black tracking-widest text-white uppercase">
                     {role === "admin"
                       ? "Administrador"
                       : role === "supervisor"
@@ -116,7 +116,7 @@ export default function ProfilePage() {
               <div className="md:ml-auto">
                 <Button
                   variant="outline"
-                  className="h-11 gap-2 rounded-xl border-white/30 bg-white/10 text-xs font-black uppercase tracking-wider text-white hover:bg-white/20 hover:text-white"
+                  className="h-11 gap-2 rounded-xl border-white/30 bg-white/10 text-xs font-black tracking-wider text-white uppercase hover:bg-white/20 hover:text-white"
                   onClick={() => setIsEditing(!isEditing)}
                 >
                   <Settings className="h-4 w-4" />
@@ -143,12 +143,12 @@ export default function ProfilePage() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="nome"
-                        className="text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                        className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                       >
                         Nome Completo
                       </Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                           id="nome"
                           disabled={!isEditing}
@@ -161,12 +161,12 @@ export default function ProfilePage() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="email"
-                        className="text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                        className="text-[10px] font-black tracking-widest text-muted-foreground uppercase"
                       >
                         E-mail Corporativo
                       </Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
                           id="email"
                           disabled
@@ -182,7 +182,7 @@ export default function ProfilePage() {
                       <Button
                         onClick={handleSave}
                         disabled={saving}
-                        className="glow-button h-11 gap-2 rounded-xl px-8 text-xs font-black uppercase tracking-wider"
+                        className="glow-button h-11 gap-2 rounded-xl px-8 text-xs font-black tracking-wider uppercase"
                       >
                         <Save className="h-4 w-4" /> {saving ? "Salvando..." : "Salvar Alterações"}
                       </Button>
@@ -233,7 +233,7 @@ export default function ProfilePage() {
                         </p>
                         <Badge
                           variant="outline"
-                          className="mt-1 border-success/20 bg-success/10 text-[9px] font-black uppercase tracking-widest text-success"
+                          className="mt-1 border-success/20 bg-success/10 text-[9px] font-black tracking-widest text-success uppercase"
                         >
                           Ativo
                         </Badge>
@@ -281,7 +281,7 @@ export default function ProfilePage() {
                             <div className="flex items-center gap-2">
                               <p className="text-sm font-black text-foreground">{session.device}</p>
                               {session.isCurrent && (
-                                <Badge className="border-success/20 bg-success/10 text-[9px] font-black uppercase text-success">
+                                <Badge className="border-success/20 bg-success/10 text-[9px] font-black text-success uppercase">
                                   Atual
                                 </Badge>
                               )}
@@ -300,7 +300,7 @@ export default function ProfilePage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="rounded-xl text-[10px] font-bold uppercase text-destructive opacity-0 transition-all group-hover:opacity-100"
+                            className="rounded-xl text-[10px] font-bold text-destructive uppercase opacity-0 transition-all group-hover:opacity-100"
                           >
                             Encerrar
                           </Button>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                   <div className="border-t border-border/20 bg-muted/10 p-4">
                     <Button
                       variant="link"
-                      className="w-full text-[10px] font-black uppercase tracking-widest text-primary"
+                      className="w-full text-[10px] font-black tracking-widest text-primary uppercase"
                     >
                       Encerrar todas as outras sessões
                     </Button>
@@ -331,19 +331,19 @@ export default function ProfilePage() {
                 <CardContent className="space-y-4 p-6">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                         Triagens Hoje
                       </span>
                       <span className="font-black text-primary">12</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                         Acuracidade Média
                       </span>
                       <span className="font-black text-success">98.5%</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                      <span className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                         Tempo de Sessão
                       </span>
                       <span className="font-black text-foreground">2h 45m</span>
@@ -356,7 +356,7 @@ export default function ProfilePage() {
                 <CardContent className="p-6">
                   <Button
                     variant="ghost"
-                    className="h-12 w-full justify-start gap-3 rounded-xl text-xs font-black uppercase tracking-widest text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    className="h-12 w-full justify-start gap-3 rounded-xl text-xs font-black tracking-widest text-destructive uppercase hover:bg-destructive/10 hover:text-destructive"
                     onClick={signOut}
                   >
                     <LogOut className="h-5 w-5" />
@@ -366,7 +366,7 @@ export default function ProfilePage() {
               </Card>
 
               <div className="space-y-1 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest">ESTOKI WMS v1.0.0</p>
+                <p className="text-[10px] font-bold tracking-widest uppercase">ESTOKI WMS v1.0.0</p>
                 <p className="text-[9px] font-medium tracking-tight">
                   ID do Usuário: {user?.id.slice(0, 8)}
                 </p>

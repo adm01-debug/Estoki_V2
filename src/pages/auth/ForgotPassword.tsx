@@ -45,7 +45,7 @@ const ForgotPasswordPage = () => {
       <div className="relative z-10 flex w-full items-center justify-center p-6 sm:p-10 lg:w-1/2">
         <div className="w-full max-w-md space-y-6">
           <div className="mb-4 text-center lg:hidden">
-            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow">
+            <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/60 shadow-glow">
               <Box className="h-7 w-7 text-primary-foreground" />
             </div>
             <h1 className="text-2xl font-bold text-sidebar-foreground">ESTOKI</h1>
@@ -106,7 +106,7 @@ const ForgotPasswordPage = () => {
               pela Lei nº 9.609/98 e demais normas aplicáveis. É proibida sua reprodução, cópia,
               modificação, distribuição ou uso não autorizado.
               <br />
-              <span className="font-semibold italic text-sidebar-foreground/70">
+              <span className="font-semibold text-sidebar-foreground/70 italic">
                 © 2026 ESTOKI WAREHOUSE Todos os direitos reservados.
               </span>
             </p>

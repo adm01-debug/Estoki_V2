@@ -163,8 +163,8 @@ export function FotosLoteObrigatorias({
                 <div className="absolute left-2/3 h-full w-px bg-primary" />
 
                 {/* Focus box for Labels/Seals */}
-                <div className="absolute left-1/2 top-1/2 flex h-1/4 w-1/3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border-2 border-primary/50">
-                  <div className="text-[6px] font-black uppercase text-primary/40">
+                <div className="absolute top-1/2 left-1/2 flex h-1/4 w-1/3 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border-2 border-primary/50">
+                  <div className="text-[6px] font-black text-primary/40 uppercase">
                     Enquadrar Etiqueta
                   </div>
                 </div>
@@ -208,7 +208,7 @@ export function FotosLoteObrigatorias({
                   {!foto.uploading && (
                     <button
                       onClick={() => onRemoveFoto(foto.id)}
-                      className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
+                      className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-destructive text-destructive-foreground opacity-0 transition-opacity group-hover:opacity-100"
                     >
                       <X className="h-4 w-4" />
                     </button>

@@ -92,7 +92,7 @@ export function ExpedicaoTimeline({ romaneios = [] }: { romaneios?: RomaneioLike
             Nenhum romaneio para exibir.
           </p>
         ) : (
-          <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-gradient-to-b before:from-primary/20 before:via-primary/10 before:to-transparent">
+          <div className="relative space-y-4 before:absolute before:inset-0 before:ml-5 before:h-full before:w-0.5 before:-translate-x-px before:bg-linear-to-b before:from-primary/20 before:via-primary/10 before:to-transparent">
             <TooltipProvider>
               {events.map((event, index) => (
                 <motion.div
@@ -103,7 +103,7 @@ export function ExpedicaoTimeline({ romaneios = [] }: { romaneios?: RomaneioLike
                   className="group relative flex items-start gap-4"
                 >
                   <div
-                    className={`z-10 mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 bg-background shadow-sm transition-transform ${
+                    className={`z-10 mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 bg-background shadow-xs transition-transform ${
                       !shouldReduceMotion ? "group-hover:scale-110" : ""
                     } ${
                       event.status === "success"

@@ -19,7 +19,7 @@ export function StepProgress({ steps, currentStep, className }: StepProgressProp
     <div className={cn("w-full py-4", className)}>
       <div className="relative flex justify-between">
         {/* Connecting Line */}
-        <div className="absolute left-0 right-0 top-5 -z-10 mx-6 h-0.5 bg-muted">
+        <div className="absolute top-5 right-0 left-0 -z-10 mx-6 h-0.5 bg-muted">
           <motion.div
             className="h-full bg-primary"
             initial={{ width: "0%" }}
@@ -41,7 +41,7 @@ export function StepProgress({ steps, currentStep, className }: StepProgressProp
                   scale: isActive ? 1.2 : 1,
                 }}
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shadow-sm transition-colors",
+                  "flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold shadow-xs transition-colors",
                   isCompleted || isActive ? "text-primary-foreground" : "text-muted-foreground"
                 )}
               >
@@ -50,7 +50,7 @@ export function StepProgress({ steps, currentStep, className }: StepProgressProp
               <div className="mt-2 text-center">
                 <p
                   className={cn(
-                    "text-[10px] font-bold uppercase tracking-wider",
+                    "text-[10px] font-bold tracking-wider uppercase",
                     isActive ? "text-primary" : "text-muted-foreground"
                   )}
                 >

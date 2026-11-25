@@ -88,7 +88,7 @@ export function VolumeContagem({
   return (
     <div className={cn("rounded-3xl border-2 border-border/50 bg-card p-6 shadow-xl", className)}>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-tighter text-primary">
+        <h3 className="flex items-center gap-2 text-sm font-black tracking-tighter text-primary uppercase">
           <Package className="h-4 w-4" />
           Controle de Volumes e Integridade
         </h3>
@@ -120,7 +120,7 @@ export function VolumeContagem({
           <UserCheck className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
+          <p className="text-[10px] font-black tracking-widest text-primary/60 uppercase">
             Cadeia de Custódia Digital
           </p>
           <p className="text-xs font-bold">
@@ -160,7 +160,7 @@ export function VolumeContagem({
                 <span className="text-[10px] font-bold opacity-50">{v.numero}</span>
               )}
               {v.conferido && !v.handoffConfirmado && !isMissing && (
-                <div className="absolute right-0 top-0 h-2 w-2 rounded-bl-sm bg-success" />
+                <div className="absolute top-0 right-0 h-2 w-2 rounded-bl-sm bg-success" />
               )}
             </div>
           );
@@ -168,7 +168,7 @@ export function VolumeContagem({
       </div>
 
       <div className="mb-6 space-y-1.5">
-        <div className="flex justify-between text-[10px] font-bold uppercase text-muted-foreground">
+        <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
           <span>Fluxo de Recebimento</span>
           <span>{Math.round((volumesConferidos / (volumes.length || 1)) * 100)}%</span>
         </div>
@@ -189,7 +189,7 @@ export function VolumeContagem({
             <div
               key={volume.id}
               className={cn(
-                "mb-3 overflow-hidden rounded-2xl border-2 shadow-sm transition-all",
+                "mb-3 overflow-hidden rounded-2xl border-2 shadow-xs transition-all",
                 status.color,
                 status.bg
               )}
@@ -229,7 +229,7 @@ export function VolumeContagem({
                         </Badge>
                       )}
                     </div>
-                    <div className="text-[11px] font-medium uppercase tracking-tight text-muted-foreground">
+                    <div className="text-[11px] font-medium tracking-tight text-muted-foreground uppercase">
                       Esperado: {volume.qtdEsperada} un
                     </div>
                   </div>
@@ -242,11 +242,11 @@ export function VolumeContagem({
               </button>
 
               {isExpanded && (
-                <div className="px-4 pb-4 pt-0">
-                  <div className="space-y-4 rounded-xl border border-border/50 bg-background/80 p-4 shadow-inner backdrop-blur-sm">
+                <div className="px-4 pt-0 pb-4">
+                  <div className="space-y-4 rounded-xl border border-border/50 bg-background/80 p-4 shadow-inner backdrop-blur-xs">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1.5">
-                        <label className="block text-[10px] font-black uppercase text-muted-foreground">
+                        <label className="block text-[10px] font-black text-muted-foreground uppercase">
                           Integridade
                         </label>
                         <div className="flex gap-2">
@@ -280,7 +280,7 @@ export function VolumeContagem({
                       <div className="space-y-1.5">
                         <label
                           htmlFor={`quantidade-contada-${volume.id}`}
-                          className="block text-[10px] font-black uppercase text-muted-foreground"
+                          className="block text-[10px] font-black text-muted-foreground uppercase"
                         >
                           Quantidade Contada
                         </label>
@@ -352,13 +352,13 @@ export function VolumeContagem({
       <div className="mt-6 border-t-2 border-dashed border-border/50 pt-6">
         <div className="grid grid-cols-3 gap-2 text-center">
           <div className="rounded-2xl border border-border/20 bg-muted/30 p-3">
-            <div className="mb-1 text-[10px] font-black uppercase text-muted-foreground">
+            <div className="mb-1 text-[10px] font-black text-muted-foreground uppercase">
               Esperado
             </div>
             <div className="text-xl font-black text-foreground">{totalEsperado}</div>
           </div>
           <div className="rounded-2xl border border-border/20 bg-muted/30 p-3">
-            <div className="mb-1 text-[10px] font-black uppercase text-muted-foreground">
+            <div className="mb-1 text-[10px] font-black text-muted-foreground uppercase">
               Contado
             </div>
             <div className="text-xl font-black text-foreground">{totalContado}</div>
@@ -373,7 +373,7 @@ export function VolumeContagem({
                   : "border-destructive/20 bg-destructive/10"
             )}
           >
-            <div className="mb-1 text-[10px] font-black uppercase text-muted-foreground">
+            <div className="mb-1 text-[10px] font-black text-muted-foreground uppercase">
               Divergência
             </div>
             <div

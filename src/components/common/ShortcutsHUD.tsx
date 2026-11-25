@@ -37,7 +37,7 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-100 bg-background/80 backdrop-blur-xs"
             onClick={() => setIsOpen(false)}
           />
           <motion.div
@@ -46,7 +46,7 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="fixed left-1/2 top-1/2 z-[101] w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-4"
+            className="fixed top-1/2 left-1/2 z-101 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 p-4"
           >
             <Card className="overflow-hidden rounded-[32px] border-primary/20 shadow-2xl">
               <CardHeader className="border-b border-border/10 bg-muted/20 pb-4">
@@ -56,10 +56,10 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
                       <Keyboard className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg font-black uppercase tracking-tight">
+                      <CardTitle className="text-lg font-black tracking-tight uppercase">
                         Atalhos de Elite
                       </CardTitle>
-                      <p className="text-[10px] font-bold uppercase leading-none tracking-widest text-muted-foreground">
+                      <p className="text-[10px] leading-none font-bold tracking-widest text-muted-foreground uppercase">
                         Aumente sua produtividade
                       </p>
                     </div>
@@ -88,21 +88,21 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
                         </span>
                         <div className="flex gap-1.5">
                           {shortcut.ctrl && (
-                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-sm">
+                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-xs">
                               Ctrl
                             </kbd>
                           )}
                           {shortcut.shift && (
-                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-sm">
+                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-xs">
                               Shift
                             </kbd>
                           )}
                           {shortcut.alt && (
-                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-sm">
+                            <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-border/50 bg-muted px-1.5 font-mono text-[10px] font-black uppercase shadow-xs">
                               Alt
                             </kbd>
                           )}
-                          <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-primary/20 bg-primary/5 px-1.5 font-mono text-[11px] font-black uppercase text-primary shadow-sm">
+                          <kbd className="flex h-6 min-w-[24px] items-center justify-center rounded border border-primary/20 bg-primary/5 px-1.5 font-mono text-[11px] font-black text-primary uppercase shadow-xs">
                             {shortcut.key}
                           </kbd>
                         </div>
@@ -111,7 +111,7 @@ export const ShortcutsHUD = memo(function ShortcutsHUD() {
                   </div>
                 </div>
                 <div className="flex items-center justify-center border-t border-border/10 bg-muted/20 p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
                     PROMO BRINDES INTELLIGENCE • OPERAÇÃO DE EXCELÊNCIA
                   </p>
                 </div>

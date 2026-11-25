@@ -20,7 +20,7 @@ export function FilterBar({
   return (
     <div className="mb-4 flex flex-col gap-3 md:flex-row">
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           aria-label={placeholder || "Buscar"}
           value={search}
@@ -31,7 +31,7 @@ export function FilterBar({
         {search && (
           <button
             onClick={() => onSearchChange("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
+            className="absolute top-1/2 right-3 -translate-y-1/2"
           >
             <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
           </button>

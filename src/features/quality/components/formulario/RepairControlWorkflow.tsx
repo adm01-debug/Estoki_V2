@@ -65,7 +65,7 @@ export function RepairControlWorkflow({ quantity, onConfirm }: RepairControlWork
               <Hammer className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-sm font-black uppercase tracking-wider text-warning">
+              <h3 className="text-sm font-black tracking-wider text-warning uppercase">
                 Workflow de Conserto
               </h3>
               <p className="text-xs font-medium text-muted-foreground">
@@ -75,14 +75,14 @@ export function RepairControlWorkflow({ quantity, onConfirm }: RepairControlWork
           </div>
           <Badge
             variant="outline"
-            className="border-warning/40 text-[10px] font-black uppercase text-warning"
+            className="border-warning/40 text-[10px] font-black text-warning uppercase"
           >
             Em Retenção
           </Badge>
         </div>
 
         <div className="space-y-3">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <p className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">
             Ações de Reparo Necessárias
           </p>
           <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -128,7 +128,7 @@ export function RepairControlWorkflow({ quantity, onConfirm }: RepairControlWork
 
         <div className="flex items-center justify-between border-t border-warning/10 pt-4">
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-bold uppercase text-muted-foreground">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase">
               Prioridade:
             </span>
             <div className="flex rounded-lg bg-muted p-1">
@@ -139,7 +139,7 @@ export function RepairControlWorkflow({ quantity, onConfirm }: RepairControlWork
                   className={cn(
                     "rounded-md px-3 py-1 text-[10px] font-black uppercase transition-all",
                     priority === p
-                      ? "bg-background text-foreground shadow-sm"
+                      ? "bg-background text-foreground shadow-xs"
                       : "text-muted-foreground hover:text-foreground"
                   )}
                 >

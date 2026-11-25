@@ -348,7 +348,7 @@ export default function ConferenciaRecebimento() {
                   {locationScanned && <Check className="h-5 w-5 animate-in zoom-in" />}
                 </Button>
               </div>
-              <p className="text-[10px] font-medium leading-tight text-muted-foreground">
+              <p className="text-[10px] leading-tight font-medium text-muted-foreground">
                 <Info className="mr-1 inline h-3 w-3" />A validação física é obrigatória para evitar
                 erros de troca de mercadoria ou endereçamento indevido no WMS.
               </p>
@@ -382,7 +382,7 @@ export default function ConferenciaRecebimento() {
             <div className="flex animate-pulse items-start gap-3 rounded-2xl border border-destructive/20 bg-destructive/10 p-4">
               <AlertTriangle className="mt-0.5 h-5 w-5 text-destructive" />
               <div>
-                <p className="text-sm font-black uppercase tracking-tighter text-destructive">
+                <p className="text-sm font-black tracking-tighter text-destructive uppercase">
                   Atenção: Inconsistência Detectada
                 </p>
                 <p className="text-xs font-medium text-destructive/80">

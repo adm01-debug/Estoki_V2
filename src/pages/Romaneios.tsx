@@ -322,7 +322,7 @@ export default function RomaneiosPage() {
               icon: BarChart3,
             },
           ].map((s, idx) => (
-            <Card key={idx} className="group overflow-hidden border-none shadow-sm">
+            <Card key={idx} className="group overflow-hidden border-none shadow-xs">
               <CardContent className="flex items-center gap-4 p-5">
                 <div
                   className={`${s.bg} rounded-2xl p-3 transition-transform group-hover:scale-110`}
@@ -330,7 +330,7 @@ export default function RomaneiosPage() {
                   <s.icon className={`h-6 w-6 ${s.color}`} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-black tracking-widest text-muted-foreground uppercase">
                     {s.label}
                   </p>
                   <div className="flex items-baseline gap-2">
@@ -347,10 +347,10 @@ export default function RomaneiosPage() {
 
         {romaneios.length > 0 && <RomaneiosCharts romaneios={romaneios} />}
 
-        <div className="flex flex-col items-center justify-between gap-4 rounded-xl border bg-white p-2 shadow-sm md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 rounded-xl border bg-white p-2 shadow-xs md:flex-row">
           <div className="flex w-full flex-1 gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Filtrar romaneios"
                 placeholder="Filtrar romaneios..."
@@ -378,7 +378,7 @@ export default function RomaneiosPage() {
               aria-label="Ver em grade"
               variant={viewMode === "grid" ? "secondary" : "ghost"}
               size="icon"
-              className="h-8 w-8 shadow-sm"
+              className="h-8 w-8 shadow-xs"
               onClick={() => setViewMode("grid")}
             >
               <LayoutGrid className="h-4 w-4" />
@@ -442,7 +442,7 @@ export default function RomaneiosPage() {
                           <div className="space-y-4 p-5">
                             <div className="flex items-center justify-between">
                               <Badge
-                                className={`${config.color} rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white`}
+                                className={`${config.color} rounded-full px-3 py-1 text-[10px] font-bold tracking-widest text-white uppercase`}
                               >
                                 {config.label}
                               </Badge>
@@ -457,10 +457,10 @@ export default function RomaneiosPage() {
                                   {romaneio.motorista?.charAt(0) || "M"}
                                 </div>
                                 <div>
-                                  <p className="text-sm font-bold leading-none">
+                                  <p className="text-sm leading-none font-bold">
                                     {romaneio.motorista || "Sem motorista"}
                                   </p>
-                                  <p className="mt-1 text-[10px] font-medium uppercase tracking-tighter text-muted-foreground">
+                                  <p className="mt-1 text-[10px] font-medium tracking-tighter text-muted-foreground uppercase">
                                     {romaneio.placa_veiculo} • {romaneio.rota || "Rota não def."}
                                   </p>
                                 </div>
@@ -504,7 +504,7 @@ export default function RomaneiosPage() {
                             )}
                             <Button
                               variant="outline"
-                              className="h-9 flex-1 border shadow-sm"
+                              className="h-9 flex-1 border shadow-xs"
                               onClick={() => setRomaneioSelecionadoId(romaneio.id)}
                             >
                               Detalhes

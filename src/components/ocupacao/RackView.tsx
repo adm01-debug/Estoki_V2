@@ -93,10 +93,10 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
             <div className="overflow-x-auto">
               <div className="min-w-fit">
                 <div className="flex gap-0">
-                  <div className="flex flex-col gap-1 pr-2 pt-0">
+                  <div className="flex flex-col gap-1 pt-0 pr-2">
                     {rackData.sortedLevels.map((niv) => (
                       <div key={niv} className="flex h-12 items-center justify-end">
-                        <span className="whitespace-nowrap text-[10px] font-medium text-muted-foreground">
+                        <span className="text-[10px] font-medium whitespace-nowrap text-muted-foreground">
                           {niv}
                         </span>
                       </div>
@@ -105,14 +105,14 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                   <div className="flex-1">
                     <div className="mb-1 flex gap-1">
                       {rackData.sortedSections.map((sec) => (
-                        <div key={sec} className="min-w-[3rem] flex-1 text-center">
+                        <div key={sec} className="min-w-12 flex-1 text-center">
                           <span className="text-[10px] font-medium text-muted-foreground">
                             {sec}
                           </span>
                         </div>
                       ))}
                     </div>
-                    <div className="rounded-b-md border-b-2 border-l-2 border-r-2 border-muted-foreground/20">
+                    <div className="rounded-b-md border-r-2 border-b-2 border-l-2 border-muted-foreground/20">
                       {rackData.sortedLevels.map((niv, nivIdx) => (
                         <div
                           key={niv}
@@ -128,7 +128,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                               return (
                                 <div
                                   key={`${sec}-${niv}`}
-                                  className="h-12 min-w-[3rem] flex-1 rounded-sm border border-dashed border-muted-foreground/10 bg-muted/30"
+                                  className="h-12 min-w-12 flex-1 rounded-sm border border-dashed border-muted-foreground/10 bg-muted/30"
                                 />
                               );
                             const cfg = statusConfig[pos.status] || statusConfig.livre;
@@ -144,7 +144,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                                     onClick={() => onSelect(pos)}
                                     aria-label={`Posição ${pos.codigo}, status ${cfg.label}`}
                                     className={cn(
-                                      "flex h-12 min-w-[3rem] flex-1 flex-col items-center justify-center gap-0.5 rounded-sm border text-[10px] font-medium transition-all duration-150 hover:z-10 hover:scale-[1.05] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                      "flex h-12 min-w-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-sm border text-[10px] font-medium transition-all duration-150 hover:z-10 hover:scale-[1.05] hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
                                       isSelected
                                         ? "scale-[1.05] shadow-lg ring-2 ring-primary ring-offset-1 ring-offset-background"
                                         : "",
@@ -152,7 +152,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                                     )}
                                     style={heatStyle}
                                   >
-                                    <span className="font-bold leading-none">
+                                    <span className="leading-none font-bold">
                                       {sec.replace("S", "")}
                                     </span>
                                     <span className="text-[8px] opacity-70">
@@ -190,7 +190,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
               className={cn(
                 "grid gap-1.5",
                 isBoxes
-                  ? "lg:grid-cols-16 grid-cols-4 sm:grid-cols-8 md:grid-cols-12"
+                  ? "grid-cols-4 sm:grid-cols-8 md:grid-cols-12 lg:grid-cols-16"
                   : "grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12"
               )}
             >
@@ -211,7 +211,7 @@ export function RackView({ ppName, positions, selectedId, viewMode, onSelect }: 
                           onClick={() => onSelect(pos)}
                           aria-label={`Posição ${pos.codigo}, status ${cfg.label}`}
                           className={cn(
-                            "flex aspect-square flex-col items-center justify-center rounded-md border text-[9px] font-medium transition-all duration-150 hover:scale-110 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                            "flex aspect-square flex-col items-center justify-center rounded-md border text-[9px] font-medium transition-all duration-150 hover:scale-110 hover:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden",
                             isSelected &&
                               "ring-2 ring-primary ring-offset-1 ring-offset-background",
                             cfg.bgClass,

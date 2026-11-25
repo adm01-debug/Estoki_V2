@@ -229,7 +229,7 @@ export default function LotesPage() {
           {/* Search & Filter */}
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Buscar lote, produto, fornecedor"
                 placeholder="Buscar lote, produto, fornecedor..."
@@ -239,7 +239,7 @@ export default function LotesPage() {
               />
               {search && (
                 <button
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
+                  className="absolute top-1/2 right-3 -translate-y-1/2"
                   onClick={() => setSearch("")}
                 >
                   <X className="h-4 w-4 text-muted-foreground" />

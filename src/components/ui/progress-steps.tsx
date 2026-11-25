@@ -73,7 +73,7 @@ export function ProgressSteps({
                 <div
                   className={cn(
                     "transition-colors",
-                    isVertical ? "mx-auto mt-2 h-full min-h-[2rem] w-0.5" : "mx-3 h-0.5 flex-1",
+                    isVertical ? "mx-auto mt-2 h-full min-h-8 w-0.5" : "mx-3 h-0.5 flex-1",
                     index < currentStep ? "bg-primary" : "bg-muted-foreground/30"
                   )}
                 />

@@ -43,7 +43,7 @@ export const SidebarNavButton = memo(function SidebarNavButton({
       {isActive && (
         <motion.div
           layoutId="sidebar-indicator"
-          className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
+          className="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r-full bg-primary"
           transition={{ type: "spring", stiffness: 350, damping: 30 }}
         />
       )}

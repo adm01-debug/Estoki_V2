@@ -30,7 +30,7 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
         <span className="text-xs text-muted-foreground">
           {top3[1].xp_total.toLocaleString()} XP
         </span>
-        <div className="mt-2 flex h-16 w-20 items-center justify-center rounded-t-lg bg-gradient-to-t from-gray-400 to-gray-300">
+        <div className="mt-2 flex h-16 w-20 items-center justify-center rounded-t-lg bg-linear-to-t from-gray-400 to-gray-300">
           <Medal className="h-8 w-8 text-white" />
         </div>
       </motion.div>
@@ -54,7 +54,7 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
         <span className="text-xs text-muted-foreground">
           {top3[0].xp_total.toLocaleString()} XP
         </span>
-        <div className="mt-2 flex h-24 w-24 items-center justify-center rounded-t-lg bg-gradient-to-t from-yellow-500 to-yellow-400">
+        <div className="mt-2 flex h-24 w-24 items-center justify-center rounded-t-lg bg-linear-to-t from-yellow-500 to-yellow-400">
           <Trophy className="h-10 w-10 text-white" />
         </div>
       </motion.div>
@@ -73,7 +73,7 @@ export const Podium: React.FC<PodiumProps> = ({ top3 }) => {
         <span className="text-xs text-muted-foreground">
           {top3[2].xp_total.toLocaleString()} XP
         </span>
-        <div className="mt-2 flex h-12 w-20 items-center justify-center rounded-t-lg bg-gradient-to-t from-amber-600 to-amber-500">
+        <div className="mt-2 flex h-12 w-20 items-center justify-center rounded-t-lg bg-linear-to-t from-amber-600 to-amber-500">
           <Medal className="h-6 w-6 text-white" />
         </div>
       </motion.div>

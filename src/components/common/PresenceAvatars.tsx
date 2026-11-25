@@ -97,11 +97,11 @@ export function PresenceAvatars() {
                       )}
                     >
                       <AvatarImage src={p.avatar_url || undefined} />
-                      <AvatarFallback className="text-[10px] font-bold uppercase text-white">
+                      <AvatarFallback className="text-[10px] font-bold text-white uppercase">
                         {p.nome.substring(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="absolute bottom-0 right-0 h-2 w-2 rounded-full border border-background bg-green-500 shadow-sm" />
+                    <div className="absolute right-0 bottom-0 h-2 w-2 rounded-full border border-background bg-green-500 shadow-xs" />
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="text-xs">

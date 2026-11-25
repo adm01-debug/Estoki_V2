@@ -49,7 +49,7 @@ export function UserCard({
               </AvatarFallback>
             </Avatar>
             <div
-              className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background ${statusColors[status]}`}
+              className={`absolute right-0 bottom-0 h-3 w-3 rounded-full border-2 border-background ${statusColors[status]}`}
             />
           </div>
           <div>

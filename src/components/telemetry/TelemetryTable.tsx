@@ -118,7 +118,7 @@ export function TelemetryTable({ rows, isLoading }: TelemetryTableProps) {
                     key={row.id}
                     className="border-b border-border/30 transition-colors hover:bg-muted/20"
                   >
-                    <td className="whitespace-nowrap p-3 font-mono text-xs text-muted-foreground">
+                    <td className="p-3 font-mono text-xs whitespace-nowrap text-muted-foreground">
                       {formatTime(row.created_at)}
                     </td>
                     <td className="p-3">
@@ -145,10 +145,10 @@ export function TelemetryTable({ rows, isLoading }: TelemetryTableProps) {
                     <td className="p-3 text-right font-mono text-xs tabular-nums">
                       {row.record_count ?? "-"}
                     </td>
-                    <td className="p-3 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                    <td className="p-3 text-right font-mono text-xs text-muted-foreground tabular-nums">
                       {row.query_limit ?? "-"}
                     </td>
-                    <td className="p-3 text-right font-mono text-xs tabular-nums text-muted-foreground">
+                    <td className="p-3 text-right font-mono text-xs text-muted-foreground tabular-nums">
                       {row.query_offset ?? "-"}
                     </td>
                     <td className="p-3 text-xs text-muted-foreground">{row.count_mode || "-"}</td>

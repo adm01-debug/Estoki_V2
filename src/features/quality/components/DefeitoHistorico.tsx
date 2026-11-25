@@ -139,7 +139,7 @@ export function DefeitoHistorico({
       {/* Alerta de defeito recorrente */}
       {temDefeitoRecorrente && (
         <div className="mb-4 flex items-start gap-3 rounded-lg border border-warning/30 bg-warning/10 p-3">
-          <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-warning" />
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
           <div>
             <div className="text-sm font-medium text-warning">
               Atenção: Defeito Recorrente Detectado

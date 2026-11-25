@@ -164,7 +164,7 @@ export default function KPIsOperacionais() {
         description="Indicadores operacionais em tempo real: ocupação, precisão e produtividade."
       />
       <AppLayout>
-        <div className="min-h-dvh bg-gradient-to-br from-background via-background to-muted/20 p-6">
+        <div className="min-h-dvh bg-linear-to-br from-background via-background to-muted/20 p-6">
           <div className="mx-auto max-w-7xl space-y-6">
             {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

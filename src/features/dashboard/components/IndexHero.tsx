@@ -70,7 +70,7 @@ export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
                 className="h-11 gap-2 rounded-xl border-primary/20 px-5 text-primary hover:bg-primary/5"
               >
                 <Zap className="h-4 w-4 shrink-0" />
-                <span className="text-[10px] font-bold uppercase tracking-widest">Ações</span>
+                <span className="text-[10px] font-bold tracking-widest uppercase">Ações</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -106,7 +106,7 @@ export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
             onClick={onDashboardClick}
           >
             <BarChart3 className="h-4 w-4" />
-            <span className="text-[10px] font-bold uppercase tracking-widest">Dashboard</span>
+            <span className="text-[10px] font-bold tracking-widest uppercase">Dashboard</span>
           </Button>
         </div>
       </div>
@@ -115,14 +115,14 @@ export function IndexHero({ userName, isConnected, onDashboardClick }: Props) {
         onClick={() => window.dispatchEvent(new CustomEvent("open-global-search"))}
         className="group relative cursor-pointer"
       >
-        <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 blur-sm transition duration-500 group-hover:opacity-100" />
+        <div className="absolute -inset-1 rounded-2xl bg-linear-to-r from-primary/20 via-primary/5 to-primary/20 opacity-0 blur-xs transition duration-500 group-hover:opacity-100" />
         <div className="relative flex h-14 items-center rounded-2xl border border-border/40 bg-card/40 px-5 shadow-inner backdrop-blur-xl transition-all group-hover:border-primary/30 group-hover:bg-card/60">
           <Search className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" />
           <span className="ml-4 text-sm font-medium text-muted-foreground">
             O que você deseja buscar hoje? (produtos, lotes, posições...)
           </span>
           <div className="ml-auto flex items-center gap-2">
-            <kbd className="hidden h-6 select-none items-center gap-1 rounded border border-border bg-background/50 px-2 font-mono text-[10px] font-bold text-muted-foreground sm:flex">
+            <kbd className="hidden h-6 items-center gap-1 rounded border border-border bg-background/50 px-2 font-mono text-[10px] font-bold text-muted-foreground select-none sm:flex">
               <span className="text-xs">⌘</span>K
             </kbd>
           </div>

@@ -62,11 +62,11 @@ export const getInitials = (nome: string) => {
 export const getPodiumColor = (posicao: number) => {
   switch (posicao) {
     case 1:
-      return "bg-gradient-to-br from-yellow-400 to-yellow-600 text-yellow-950";
+      return "bg-linear-to-br from-yellow-400 to-yellow-600 text-yellow-950";
     case 2:
-      return "bg-gradient-to-br from-gray-300 to-gray-500 text-gray-950";
+      return "bg-linear-to-br from-gray-300 to-gray-500 text-gray-950";
     case 3:
-      return "bg-gradient-to-br from-amber-500 to-amber-700 text-amber-950";
+      return "bg-linear-to-br from-amber-500 to-amber-700 text-amber-950";
     default:
       return "bg-muted";
   }

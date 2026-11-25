@@ -162,7 +162,7 @@ export default function InventarioCiclicoPage() {
                       <div key={ciclo.id} className="group relative">
                         <div
                           className={cn(
-                            "absolute left-4 top-1/2 z-10 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100",
+                            "absolute top-1/2 left-4 z-10 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100",
                             selectedIds.includes(ciclo.id) && "opacity-100"
                           )}
                           onClick={(e) => {

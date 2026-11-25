@@ -76,8 +76,8 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
           <SkipLinks />
 
           <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
-            <div className="absolute -right-[20%] -top-[40%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
-            <div className="absolute -bottom-[30%] -left-[10%] h-[40%] w-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
+            <div className="absolute top-[-40%] right-[-20%] h-[60%] w-[60%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.04)_0%,transparent_70%)]" />
+            <div className="absolute bottom-[-30%] left-[-10%] h-[40%] w-[40%] bg-[radial-gradient(ellipse,hsl(var(--primary)/0.03)_0%,transparent_70%)]" />
           </div>
 
           <Header
@@ -98,13 +98,13 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             id="main-content"
             tabIndex={-1}
             className={cn(
-              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out focus:outline-none",
+              "relative z-10 flex-1 overflow-x-hidden transition-all duration-300 ease-in-out focus:outline-hidden",
               mainPadding
             )}
             aria-label="Conteúdo principal"
           >
             <div className="mx-auto flex min-h-full max-w-[1600px] flex-col">
-              <Breadcrumbs className="pb-2 pt-4 lg:px-8" />
+              <Breadcrumbs className="pt-4 pb-2 lg:px-8" />
               {children || <Outlet />}
             </div>
           </main>
@@ -119,7 +119,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
 
           <aside
             className={cn(
-              "fixed left-0 top-0 z-40 hidden h-full flex-col border-r border-sidebar-border/30 bg-sidebar transition-all duration-300 ease-in-out lg:flex",
+              "fixed top-0 left-0 z-40 hidden h-full flex-col border-r border-sidebar-border/30 bg-sidebar transition-all duration-300 ease-in-out lg:flex",
               sidebarWidth
             )}
           >
@@ -135,7 +135,7 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             <button
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               aria-label={sidebarCollapsed ? "Expandir sidebar" : "Recolher sidebar"}
-              className="absolute -right-3 top-20 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/70 shadow-sm transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              className="absolute top-20 -right-3 flex h-6 w-6 items-center justify-center rounded-full border border-sidebar-border/50 bg-sidebar text-sidebar-foreground/70 shadow-xs transition-all hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
               {sidebarCollapsed ? (
                 <ChevronLeft className="h-3 w-3 rotate-180" />
@@ -149,14 +149,14 @@ export function AppLayout({ children, title, showBack = false, rightAction }: Ap
             {mobileMenuOpen && (
               <>
                 <motion.div
-                  className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+                  className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs lg:hidden"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   onClick={() => setMobileMenuOpen(false)}
                 />
                 <motion.aside
-                  className="fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col bg-sidebar shadow-2xl lg:hidden"
+                  className="fixed top-0 left-0 z-50 flex h-full w-[280px] flex-col bg-sidebar shadow-2xl lg:hidden"
                   initial={{ x: "-100%" }}
                   animate={{ x: 0 }}
                   exit={{ x: "-100%" }}

@@ -294,7 +294,7 @@ export const MFASettings: React.FC = () => {
         <CardContent>
           <ol className="space-y-4 text-muted-foreground">
             <li className="flex items-start gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                 1
               </span>
               <span>
@@ -303,19 +303,19 @@ export const MFASettings: React.FC = () => {
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                 2
               </span>
               <span>Clique em "Ativar" no método "Aplicativo Autenticador (TOTP)"</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                 3
               </span>
               <span>Escaneie o QR code com o aplicativo autenticador</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                 4
               </span>
               <span>
@@ -323,7 +323,7 @@ export const MFASettings: React.FC = () => {
               </span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                 5
               </span>
               <span>

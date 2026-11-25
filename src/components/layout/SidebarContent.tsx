@@ -76,9 +76,9 @@ export const SidebarContent = memo(function SidebarContent({
       <ScrollArea className="flex-1 px-3">
         <nav className="space-y-1 py-4">
           {!isCollapsed && (
-            <div className="sticky top-0 z-20 mb-4 bg-sidebar/95 px-3 py-2 backdrop-blur-sm">
+            <div className="sticky top-0 z-20 mb-4 bg-sidebar/95 px-3 py-2 backdrop-blur-xs">
               <div className="group relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/70 transition-colors group-focus-within:text-primary-bright" />
+                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/70 transition-colors group-focus-within:text-primary-bright" />
                 <Input
                   aria-label="Buscar função"
                   placeholder="Buscar função..."
@@ -108,7 +108,7 @@ export const SidebarContent = memo(function SidebarContent({
                   />
                 ))
               ) : (
-                <p className="px-4 py-2 text-xs italic text-sidebar-foreground/70">
+                <p className="px-4 py-2 text-xs text-sidebar-foreground/70 italic">
                   Nenhum resultado encontrado
                 </p>
               )}

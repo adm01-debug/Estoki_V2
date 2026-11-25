@@ -29,7 +29,7 @@ export const PerformanceHUD = () => {
         onClick={() => setShowDetails(!showDetails)}
       >
         <Activity className={cn("h-3.5 w-3.5", !isCritical && !isDegraded && "text-primary")} />
-        <span className="text-[10px] font-black uppercase tracking-widest">
+        <span className="text-[10px] font-black tracking-widest uppercase">
           {avgLatency}ms / {errorRate}% ER
         </span>
 
@@ -48,7 +48,7 @@ export const PerformanceHUD = () => {
             exit={{ opacity: 0, y: 10 }}
             className="absolute bottom-full left-0 mb-2 w-64 rounded-2xl border border-border/50 bg-card p-4 shadow-2xl backdrop-blur-xl"
           >
-            <h4 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-widest">
+            <h4 className="mb-3 flex items-center gap-2 text-xs font-black tracking-widest uppercase">
               <Zap className="h-3 w-3 text-primary" />
               Métricas de Performance
             </h4>
@@ -67,7 +67,7 @@ export const PerformanceHUD = () => {
             {isCritical && (
               <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-2">
                 <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-red-600" />
-                <p className="text-[9px] font-bold leading-tight text-red-600">
+                <p className="text-[9px] leading-tight font-bold text-red-600">
                   Sistema operando em condições críticas. Latência elevada detectada.
                 </p>
               </div>
@@ -89,7 +89,7 @@ const MetricItem = ({
   status: "ok" | "warn" | "error";
 }) => (
   <div className="flex items-center justify-between">
-    <span className="text-[10px] font-medium uppercase text-muted-foreground">{label}</span>
+    <span className="text-[10px] font-medium text-muted-foreground uppercase">{label}</span>
     <span
       className={cn(
         "text-[10px] font-black",

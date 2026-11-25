@@ -39,7 +39,7 @@ export function FilterPanel({ filters, values, onChange, onClear, className }: F
         <Button variant="outline" className={cn("relative", className)}>
           <Filter className="mr-2 h-4 w-4" /> Filtros
           {activeCount > 0 && (
-            <Badge className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center p-0">
+            <Badge className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center p-0">
               {activeCount}
             </Badge>
           )}

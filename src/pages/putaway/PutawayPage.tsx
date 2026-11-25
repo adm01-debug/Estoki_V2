@@ -93,7 +93,7 @@ export default function PutawayPage() {
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="rounded-lg bg-muted p-3">
-                      <p className="text-[10px] font-bold uppercase text-muted-foreground">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">
                         Origem
                       </p>
                       <p className="font-mono text-lg font-bold">
@@ -101,7 +101,7 @@ export default function PutawayPage() {
                       </p>
                     </div>
                     <div className="rounded-lg border border-success/20 bg-success/10 p-3">
-                      <p className="text-[10px] font-bold uppercase text-success">
+                      <p className="text-[10px] font-bold text-success uppercase">
                         Destino Sugerido
                       </p>
                       <p className="font-mono text-lg font-bold text-success">
@@ -176,7 +176,7 @@ export default function PutawayPage() {
                 </DialogContent>
               </Dialog>
 
-              <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
+              <div className="fixed right-0 bottom-0 left-0 border-t bg-background p-4">
                 <Button
                   type="submit"
                   className="h-12 w-full bg-success text-lg hover:bg-success/90"
@@ -197,7 +197,7 @@ export default function PutawayPage() {
       <PageTransition>
         <div className="space-y-6 p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute top-3 left-3 h-4 w-4 text-muted-foreground" />
             <Input
               aria-label="Buscar por produto ou destino"
               placeholder="Buscar por produto ou destino..."
@@ -231,7 +231,7 @@ export default function PutawayPage() {
                         </div>
                       </div>
                       <div className="min-w-[80px] rounded-lg bg-success/10 p-2 text-center">
-                        <p className="text-[8px] font-bold uppercase text-success">Destino</p>
+                        <p className="text-[8px] font-bold text-success uppercase">Destino</p>
                         <p className="font-mono text-sm font-bold text-success">
                           {task.posicao_destino_codigo}
                         </p>

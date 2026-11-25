@@ -79,23 +79,23 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <Card className="glass-card group rounded-[32px] border-blue-500/20 bg-blue-500/5 transition-all duration-300 hover:border-blue-500/40">
+        <Card className="group glass-card rounded-[32px] border-blue-500/20 bg-blue-500/5 transition-all duration-300 hover:border-blue-500/40">
           <CardContent className="flex items-center justify-between p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-500/20 bg-blue-500/10 transition-transform group-hover:rotate-12">
                 <ClipboardList className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-blue-600">
+                <p className="text-[10px] font-bold tracking-widest text-blue-600 uppercase">
                   Triagens Hoje
                 </p>
-                <p className="mt-1 text-3xl font-black leading-none text-blue-700">
+                <p className="mt-1 text-3xl leading-none font-black text-blue-700">
                   {safeKpis.triagensHoje}
                 </p>
               </div>
             </div>
             <div className="rounded-xl border border-blue-500/10 bg-white/40 px-4 py-2 text-right dark:bg-black/20">
-              <span className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <span className="block text-[10px] font-bold tracking-wider text-muted-foreground uppercase">
                 Pendentes
               </span>
               <span className="text-lg font-black text-orange-600">
@@ -105,31 +105,31 @@ export const DashboardKPIs = memo(function DashboardKPIs({ kpis }: DashboardKPIs
           </CardContent>
         </Card>
 
-        <Card className="glass-card group rounded-[32px] border-success/20 bg-success/5 transition-all duration-300 hover:border-success/40">
+        <Card className="group glass-card rounded-[32px] border-success/20 bg-success/5 transition-all duration-300 hover:border-success/40">
           <CardContent className="flex items-center justify-between p-5">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-success/20 bg-success/10 transition-transform group-hover:rotate-12">
                 <TrendingUp className="h-6 w-6 text-success" />
               </div>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-success">
+                <p className="text-[10px] font-bold tracking-widest text-success uppercase">
                   Fluxo Operacional
                 </p>
                 <div className="mt-1 flex gap-6">
                   <div>
-                    <span className="block text-[9px] font-bold uppercase text-muted-foreground">
+                    <span className="block text-[9px] font-bold text-muted-foreground uppercase">
                       Entradas
                     </span>
-                    <p className="text-2xl font-black leading-none text-success">
+                    <p className="text-2xl leading-none font-black text-success">
                       {safeKpis.entradasHoje}
                     </p>
                   </div>
                   <div className="my-auto h-8 w-px bg-border/40" />
                   <div>
-                    <span className="block text-[9px] font-bold uppercase text-muted-foreground">
+                    <span className="block text-[9px] font-bold text-muted-foreground uppercase">
                       Saídas
                     </span>
-                    <p className="text-2xl font-black leading-none text-destructive">
+                    <p className="text-2xl leading-none font-black text-destructive">
                       {safeKpis.saidasHoje}
                     </p>
                   </div>
@@ -157,11 +157,11 @@ const KPIItem = ({
 }: any) => (
   <Card
     className={cn(
-      "glass-card group relative overflow-hidden rounded-[32px] border-border/30 transition-all duration-300 hover:border-primary/30",
+      "group relative glass-card overflow-hidden rounded-[32px] border-border/30 transition-all duration-300 hover:border-primary/30",
       variant === "warning" && "border-warning/20 bg-warning/5 hover:border-warning/40"
     )}
   >
-    <div className="absolute right-0 top-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
+    <div className="absolute top-0 right-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger
@@ -193,7 +193,7 @@ const KPIItem = ({
       <div className="space-y-1">
         <p
           className={cn(
-            "text-[10px] font-bold uppercase tracking-widest",
+            "text-[10px] font-bold tracking-widest uppercase",
             variant === "warning" ? "text-warning" : "text-muted-foreground"
           )}
         >

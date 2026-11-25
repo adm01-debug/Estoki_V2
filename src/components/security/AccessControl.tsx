@@ -189,9 +189,9 @@ export const AccessControl: React.FC = () => {
                             }`}
                           >
                             {isGranted ? (
-                              <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+                              <CheckCircle2 className="h-4 w-4 shrink-0" />
                             ) : (
-                              <XCircle className="h-4 w-4 flex-shrink-0" />
+                              <XCircle className="h-4 w-4 shrink-0" />
                             )}
                             <span className="truncate">{permission.name}</span>
                           </div>

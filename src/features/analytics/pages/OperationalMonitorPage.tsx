@@ -171,7 +171,7 @@ function ActivityFeedItem({ item }: { item: ActivityItem }) {
         <p className="truncate text-sm text-foreground">{item.descricao}</p>
         {item.operador && <p className="text-xs text-muted-foreground">Op. {item.operador}</p>}
       </div>
-      <time className="whitespace-nowrap text-xs text-muted-foreground">
+      <time className="text-xs whitespace-nowrap text-muted-foreground">
         {format(new Date(item.timestamp), "HH:mm", { locale: ptBR })}
       </time>
     </div>
@@ -183,7 +183,7 @@ function SectionTitle({ children, icon }: { children: React.ReactNode; icon: Rea
   return (
     <div className="mb-3 flex items-center gap-2">
       <span className="text-muted-foreground">{icon}</span>
-      <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">{children}</h3>
+      <h3 className="text-sm font-semibold tracking-wide text-foreground uppercase">{children}</h3>
     </div>
   );
 }

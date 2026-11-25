@@ -11,7 +11,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { user } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur-sm">
       <div className="flex h-14 items-center gap-4 px-4">
         <Button
           aria-label="Abrir menu"

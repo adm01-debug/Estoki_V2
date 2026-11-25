@@ -136,7 +136,7 @@ const ConfiguracoesPage = () => {
           </Card>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 border-t bg-background p-4">
+        <div className="fixed right-0 bottom-0 left-0 border-t bg-background p-4">
           <div className="mx-auto flex max-w-lg gap-3">
             <Button variant="outline" className="flex-1 gap-2" onClick={handleResetar}>
               <RotateCcw className="h-4 w-4" />

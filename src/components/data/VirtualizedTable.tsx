@@ -43,7 +43,7 @@ export function VirtualizedTable<T>({
   return (
     <div className={cn("overflow-hidden rounded-md border", className)}>
       <Table>
-        <TableHeader className="sticky top-0 z-10 bg-background shadow-sm">
+        <TableHeader className="sticky top-0 z-10 bg-background shadow-xs">
           <TableRow>
             {columns.map((col, i) => (
               <TableHead key={i} className={col.className}>
@@ -68,7 +68,7 @@ export function VirtualizedTable<T>({
               <div
                 key={virtualRow.key}
                 className={cn(
-                  "absolute left-0 top-0 flex w-full items-center border-b transition-colors hover:bg-muted/50",
+                  "absolute top-0 left-0 flex w-full items-center border-b transition-colors hover:bg-muted/50",
                   onRowClick && "cursor-pointer"
                 )}
                 style={{

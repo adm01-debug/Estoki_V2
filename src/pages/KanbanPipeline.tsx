@@ -41,7 +41,7 @@ export default function KanbanPipeline() {
           </div>
           <div className="flex w-full items-center gap-2 sm:w-auto">
             <div className="relative flex-1 sm:w-64">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 aria-label="Buscar lote, produto, NF"
                 placeholder="Buscar lote, produto, NF..."
@@ -72,7 +72,7 @@ export default function KanbanPipeline() {
         ) : isLoading ? (
           <div className="flex gap-4 overflow-hidden">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="w-72 flex-shrink-0 space-y-3">
+              <div key={i} className="w-72 shrink-0 space-y-3">
                 <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-24 w-full" />
                 <Skeleton className="h-24 w-full" />

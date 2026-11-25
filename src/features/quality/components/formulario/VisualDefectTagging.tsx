@@ -54,7 +54,7 @@ export function VisualDefectTagging() {
             key={t.id}
             variant={selectedType === t.id ? "default" : "outline"}
             size="sm"
-            className="h-8 gap-2 rounded-full text-[10px] font-bold uppercase tracking-wider"
+            className="h-8 gap-2 rounded-full text-[10px] font-bold tracking-wider uppercase"
             onClick={() => setSelectedType(t.id)}
           >
             <div className={cn("h-2 w-2 rounded-full", t.color)} />
@@ -74,7 +74,7 @@ export function VisualDefectTagging() {
 
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center p-8">
           <div className="flex h-full w-full items-center justify-center rounded-[40px] border-4 border-foreground/5">
-            <span className="text-[10px] font-black uppercase text-muted-foreground/20">
+            <span className="text-[10px] font-black text-muted-foreground/20 uppercase">
               Área de Mapeamento Técnico
             </span>
           </div>
@@ -98,7 +98,7 @@ export function VisualDefectTagging() {
             </div>
 
             <button
-              className="absolute -right-2 -top-2 rounded-full border bg-background p-0.5 opacity-0 transition-opacity group-hover/point:opacity-100"
+              className="absolute -top-2 -right-2 rounded-full border bg-background p-0.5 opacity-0 transition-opacity group-hover/point:opacity-100"
               onClick={(e) => removePoint(p.id, e)}
             >
               <X className="h-2 w-2" />
@@ -106,7 +106,7 @@ export function VisualDefectTagging() {
           </motion.div>
         ))}
 
-        <div className="absolute bottom-4 left-4 rounded-lg border bg-background/80 px-2 py-1 text-[9px] font-bold uppercase tracking-tighter text-muted-foreground backdrop-blur-sm">
+        <div className="absolute bottom-4 left-4 rounded-lg border bg-background/80 px-2 py-1 text-[9px] font-bold tracking-tighter text-muted-foreground uppercase backdrop-blur-xs">
           {points.length} Pontos Identificados
         </div>
       </div>

@@ -13,9 +13,9 @@ export function KanbanColumn({ column, onLoteClick }: KanbanColumnProps) {
   const Icon = column.icon;
 
   return (
-    <div className="w-72 flex-shrink-0">
+    <div className="w-72 shrink-0">
       <Card className={`flex max-h-[calc(100dvh-280px)] flex-col ${column.bgClass}`}>
-        <CardHeader className="flex-shrink-0 px-4 py-3">
+        <CardHeader className="shrink-0 px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Icon className="h-4 w-4" style={{ color: column.color }} />

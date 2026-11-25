@@ -24,7 +24,7 @@ export default function InventoryPage() {
               <h1 className="text-2xl font-black tracking-tight text-foreground">
                 Controle de Inventário
               </h1>
-              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-muted-foreground/60 uppercase">
                 <Clock className="h-3.5 w-3.5" />
                 Última atualização: {new Date().toLocaleTimeString()}
               </div>
@@ -33,13 +33,13 @@ export default function InventoryPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 gap-2 rounded-xl border-border/40 text-xs font-bold uppercase tracking-wider"
+                className="h-9 gap-2 rounded-xl border-border/40 text-xs font-bold tracking-wider uppercase"
               >
                 <Download className="h-4 w-4" /> Exportar
               </Button>
               <Button
                 size="sm"
-                className="glow-button h-9 gap-2 rounded-xl text-xs font-bold uppercase tracking-wider"
+                className="glow-button h-9 gap-2 rounded-xl text-xs font-bold tracking-wider uppercase"
               >
                 <Plus className="h-4 w-4" /> Nova Contagem
               </Button>

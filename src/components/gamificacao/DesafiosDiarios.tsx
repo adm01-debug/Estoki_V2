@@ -207,7 +207,7 @@ export const DesafiosDiarios: React.FC<DesafiosDiariosProps> = ({ onXpGanho }) =
             </div>
           </div>
           {todosCompletos && (
-            <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white">
+            <Badge className="bg-linear-to-r from-yellow-500 to-orange-500 text-white">
               <Trophy className="mr-1 h-3 w-3" />
               Todos completos!
             </Badge>
@@ -243,7 +243,7 @@ export const DesafiosDiariosResumo: React.FC = () => {
 
   if (loading) {
     return (
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
+      <Card className="border-primary/20 bg-linear-to-br from-primary/10 to-primary/5">
         <CardContent className="pt-4">
           <div className="flex animate-pulse items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-muted" />
@@ -258,7 +258,7 @@ export const DesafiosDiariosResumo: React.FC = () => {
   }
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-primary/5">
+    <Card className="border-primary/20 bg-linear-to-br from-primary/10 to-primary/5">
       <CardContent className="pt-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

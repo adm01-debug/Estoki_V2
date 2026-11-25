@@ -139,7 +139,7 @@ export default function AprovacaoMovimentacoes() {
           ) : loading ? (
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="glass-card h-28 animate-pulse" />
+                <Card key={i} className="h-28 glass-card animate-pulse" />
               ))}
             </div>
           ) : filtered.length === 0 ? (

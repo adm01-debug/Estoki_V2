@@ -57,8 +57,8 @@ export const IndexQuickStats = memo(function IndexQuickStats({
 
   return (
     <TooltipProvider>
-      <Card className="glass-card group relative overflow-hidden border-border/30">
-        <div className="absolute right-0 top-0 rotate-12 p-4 opacity-10">
+      <Card className="group relative glass-card overflow-hidden border-border/30">
+        <div className="absolute top-0 right-0 rotate-12 p-4 opacity-10">
           <Zap className="h-24 w-24 text-primary" />
         </div>
         <CardHeader className="pb-2">
@@ -72,13 +72,13 @@ export const IndexQuickStats = memo(function IndexQuickStats({
         {!loading && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="group/efficiency mx-4 mt-4 flex cursor-help items-center justify-between rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/10 to-transparent p-3 transition-all hover:bg-primary/15">
+              <div className="group/efficiency mx-4 mt-4 flex cursor-help items-center justify-between rounded-2xl border border-primary/10 bg-linear-to-br from-primary/10 to-transparent p-3 transition-all hover:bg-primary/15">
                 <div className="flex items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/20 transition-transform group-hover/efficiency:rotate-12">
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                    <p className="text-[10px] font-bold tracking-wider text-primary uppercase">
                       Eficiência Operacional
                     </p>
                     <p className="text-sm font-black text-foreground">98.4%</p>
@@ -88,7 +88,7 @@ export const IndexQuickStats = memo(function IndexQuickStats({
                   {[1, 2, 3].map((i) => (
                     <div
                       key={i}
-                      className="h-6 w-6 rounded-full border-2 border-background bg-muted shadow-sm"
+                      className="h-6 w-6 rounded-full border-2 border-background bg-muted shadow-xs"
                     />
                   ))}
                 </div>
@@ -120,7 +120,7 @@ export const IndexQuickStats = memo(function IndexQuickStats({
                     <div className="flex items-center gap-3">
                       <div
                         className={cn(
-                          "flex h-10 w-10 items-center justify-center rounded-xl shadow-sm",
+                          "flex h-10 w-10 items-center justify-center rounded-xl shadow-xs",
                           stat.bgClass
                         )}
                       >
@@ -130,7 +130,7 @@ export const IndexQuickStats = memo(function IndexQuickStats({
                         <p className={cn("text-2xl font-extrabold tracking-tight", stat.textClass)}>
                           {stat.value}
                         </p>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <p className="text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
                           {stat.label}
                         </p>
                       </div>

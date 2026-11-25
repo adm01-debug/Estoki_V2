@@ -19,8 +19,8 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "relative animate-pulse overflow-hidden rounded bg-gradient-to-r from-muted via-muted/60 to-muted",
-        "after:animate-shimmer after:absolute after:inset-0 after:-translate-x-full after:bg-gradient-to-r after:from-transparent after:via-white/5 after:to-transparent",
+        "relative animate-pulse overflow-hidden rounded bg-linear-to-r from-muted via-muted/60 to-muted",
+        "after:animate-shimmer after:absolute after:inset-0 after:-translate-x-full after:bg-linear-to-r after:from-transparent after:via-white/5 after:to-transparent",
         className
       )}
     />
@@ -116,7 +116,7 @@ export function BrandedSpinner({
     <div className={cn("flex flex-col items-center justify-center gap-3", className)}>
       <motion.div
         className={cn(
-          "flex items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-glow",
+          "flex items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/60 shadow-glow",
           sizes[size]
         )}
         animate={{ scale: [1, 1.05, 1] }}

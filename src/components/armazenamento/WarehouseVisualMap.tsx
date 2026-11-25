@@ -68,7 +68,7 @@ export function WarehouseVisualMap({
 
               {/* Vertical Grid Representation (Levels x Columns) */}
               <div className="grid grid-cols-[3rem_1fr] gap-4">
-                <div className="flex flex-col justify-around text-xs font-medium italic text-muted-foreground">
+                <div className="flex flex-col justify-around text-xs font-medium text-muted-foreground italic">
                   {niveis.map((n) => (
                     <span key={n} className="flex items-center gap-1">
                       Nível {n}
@@ -116,7 +116,7 @@ export function WarehouseVisualMap({
                                   >
                                     {p.codigo.split("-").pop() || p.coluna}
                                     {isSugestao && !isSelecionada && (
-                                      <div className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-primary" />
+                                      <div className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-primary" />
                                     )}
                                   </div>
                                 </TooltipTrigger>

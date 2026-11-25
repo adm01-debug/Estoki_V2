@@ -58,7 +58,7 @@ export function PersistentStepper({
                 <div className="hidden sm:block">
                   <p
                     className={cn(
-                      "text-[10px] font-black uppercase tracking-tighter transition-colors",
+                      "text-[10px] font-black tracking-tighter uppercase transition-colors",
                       isActive ? "text-primary" : "text-muted-foreground/60"
                     )}
                   >

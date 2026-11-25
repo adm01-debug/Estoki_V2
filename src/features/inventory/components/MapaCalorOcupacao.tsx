@@ -12,7 +12,7 @@ export function MapaCalorOcupacao() {
   ];
 
   return (
-    <Card className="overflow-hidden border-none bg-gradient-to-br from-card to-card/50 shadow-xl">
+    <Card className="overflow-hidden border-none bg-linear-to-br from-card to-card/50 shadow-xl">
       <CardHeader className="border-b border-border/10 pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-sm font-bold">

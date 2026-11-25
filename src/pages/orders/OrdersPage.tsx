@@ -255,7 +255,7 @@ export default function OrdersPage() {
                   const pedido = pedidos.find((p) => p.id === item.id);
                   if (!pedido) return null;
                   return (
-                    <Card className="group shadow-sm transition-all hover:border-primary/50">
+                    <Card className="group shadow-xs transition-all hover:border-primary/50">
                       <CardContent className="space-y-3 p-4">
                         <div className="flex items-start justify-between">
                           <span className="font-mono text-sm font-bold text-primary">
@@ -286,7 +286,7 @@ export default function OrdersPage() {
                         </div>
 
                         <div className="flex items-center justify-between border-t pt-2">
-                          <span className="text-[10px] font-bold uppercase tracking-tighter text-muted-foreground">
+                          <span className="text-[10px] font-bold tracking-tighter text-muted-foreground uppercase">
                             {pedido.itens?.length ?? 0} Itens
                           </span>
                           <Button

@@ -54,22 +54,22 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-lg bg-muted/50 p-3">
-              <p className="text-[10px] font-medium uppercase text-muted-foreground">Status</p>
+              <p className="text-[10px] font-medium text-muted-foreground uppercase">Status</p>
               <Badge className={cn("mt-1", cfg.bgClass)}>{cfg.label}</Badge>
             </div>
             <div className="rounded-lg bg-muted/50 p-3">
-              <p className="text-[10px] font-medium uppercase text-muted-foreground">Tipo</p>
+              <p className="text-[10px] font-medium text-muted-foreground uppercase">Tipo</p>
               <p className="mt-1 text-sm font-medium">{posicao.tipo}</p>
             </div>
             {posicao.zona && (
               <div className="rounded-lg bg-muted/50 p-3">
-                <p className="text-[10px] font-medium uppercase text-muted-foreground">Zona</p>
+                <p className="text-[10px] font-medium text-muted-foreground uppercase">Zona</p>
                 <p className="mt-1 text-sm font-medium">{posicao.zona}</p>
               </div>
             )}
             {posicao.capacidade_kg && (
               <div className="rounded-lg bg-muted/50 p-3">
-                <p className="text-[10px] font-medium uppercase text-muted-foreground">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase">
                   Capacidade
                 </p>
                 <p className="mt-1 text-sm font-medium">{posicao.capacidade_kg} kg</p>
@@ -77,7 +77,7 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
             )}
             {posicao.porta_palete && (
               <div className="rounded-lg bg-muted/50 p-3">
-                <p className="text-[10px] font-medium uppercase text-muted-foreground">
+                <p className="text-[10px] font-medium text-muted-foreground uppercase">
                   Porta-Palete
                 </p>
                 <p className="mt-1 text-sm font-medium">{posicao.porta_palete}</p>
@@ -85,14 +85,14 @@ export function PosicaoDetalhePanel({ posicao, open, onClose }: PosicaoDetalhePa
             )}
             {posicao.nivel && (
               <div className="rounded-lg bg-muted/50 p-3">
-                <p className="text-[10px] font-medium uppercase text-muted-foreground">Nível</p>
+                <p className="text-[10px] font-medium text-muted-foreground uppercase">Nível</p>
                 <p className="mt-1 text-sm font-medium">{posicao.nivel}</p>
               </div>
             )}
           </div>
 
           <div>
-            <h4 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+            <h4 className="mb-2 text-xs font-semibold text-muted-foreground uppercase">
               Produtos Armazenados
             </h4>
             {isError ? (

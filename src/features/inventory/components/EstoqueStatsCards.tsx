@@ -50,7 +50,7 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex cursor-help items-center gap-1">
-                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                       Ocupação Total
                     </p>
                     <Info className="h-3 w-3 text-muted-foreground/50" />
@@ -65,7 +65,7 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({
         </CardContent>
       </Card>
       <Card className="group relative overflow-hidden">
-        <div className="absolute right-0 top-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="absolute top-0 right-0 p-2 opacity-0 transition-opacity group-hover:opacity-100">
           <div className="h-1.5 w-1.5 animate-ping rounded-full bg-success" />
         </div>
         <CardContent className="p-4">
@@ -77,7 +77,7 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({
               <p className="text-2xl font-bold tracking-tight text-success">
                 {stats.ppStats.ocupados + stats.boxStats.ocupados}
               </p>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
                 Ocupadas
               </p>
             </div>
@@ -94,7 +94,7 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({
               <p className="text-2xl font-bold tracking-tight">
                 {stats.ppStats.livres + stats.boxStats.livres}
               </p>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
                 Livres
               </p>
             </div>
@@ -111,7 +111,7 @@ export const EstoqueStatsCards = memo(function EstoqueStatsCards({
               <p className="text-2xl font-bold tracking-tight text-warning">
                 {stats.ppStats.reservados}
               </p>
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              <p className="text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
                 Reservadas
               </p>
             </div>

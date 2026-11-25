@@ -30,16 +30,16 @@ export function TriagemListItem({
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3, delay: Math.min(idx, 10) * 0.03 }}
       className={cn(
-        "group/card content-visibility-auto relative overflow-hidden rounded-2xl border bg-card p-5 transition-all duration-300 will-change-transform active:scale-[0.98]",
+        "group/card relative overflow-hidden rounded-2xl border bg-card p-5 transition-all duration-300 will-change-transform content-visibility-auto active:scale-[0.98]",
         isSelected
-          ? "border-primary bg-primary/5 shadow-lg shadow-primary/5 ring-1 ring-primary/20"
+          ? "border-primary bg-primary/5 shadow-lg ring-1 shadow-primary/5 ring-primary/20"
           : "border-border/30 hover:border-primary/40 hover:shadow-md"
       )}
       onClick={() => onNavigate(item.id)}
     >
       {/* Progress gradient background */}
       {!item.data_fim && (
-        <div className="absolute left-0 top-0 h-full w-1 animate-pulse bg-primary/40" />
+        <div className="absolute top-0 left-0 h-full w-1 animate-pulse bg-primary/40" />
       )}
       <div className="flex items-start gap-4">
         <div
@@ -69,7 +69,7 @@ export function TriagemListItem({
             <Badge
               variant="outline"
               className={cn(
-                "rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-widest transition-colors",
+                "rounded-full px-2 py-0.5 text-[9px] font-black tracking-widest uppercase transition-colors",
                 statusConfig[status].className
               )}
             >
@@ -80,7 +80,7 @@ export function TriagemListItem({
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <span className="block text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="block text-[9px] font-bold tracking-widest text-muted-foreground uppercase">
                 Identificação do Lote
               </span>
               <p className="truncate text-sm font-black tracking-tight text-foreground">
@@ -108,7 +108,7 @@ export function TriagemListItem({
                     {sidx < 3 && (
                       <div
                         className={cn(
-                          "h-[1px] w-3 transition-all duration-500",
+                          "h-px w-3 transition-all duration-500",
                           step.done ? "bg-primary" : "bg-border/20"
                         )}
                       />
@@ -118,7 +118,7 @@ export function TriagemListItem({
               </div>
             </div>
             <div className="space-y-1 sm:text-right">
-              <span className="block text-[9px] font-bold uppercase tracking-widest text-muted-foreground">
+              <span className="block text-[9px] font-bold tracking-widest text-muted-foreground uppercase">
                 Informações da Operação
               </span>
               <div className="flex flex-wrap items-center gap-3 text-[11px] font-medium text-muted-foreground/70 sm:justify-end">
@@ -141,7 +141,7 @@ export function TriagemListItem({
             variant={!item.data_fim ? "default" : "outline"}
             size="sm"
             className={cn(
-              "h-9 gap-2 rounded-xl px-4 text-[11px] font-bold uppercase tracking-wider transition-all",
+              "h-9 gap-2 rounded-xl px-4 text-[11px] font-bold tracking-wider uppercase transition-all",
               !item.data_fim ? "glow-button" : "hover:border-primary/40 hover:bg-primary/5"
             )}
             onClick={() => onNavigate(item.id)}
@@ -157,7 +157,7 @@ export function TriagemListItem({
             )}
           </Button>
           {item.data_fim && (
-            <p className="mt-2 text-[9px] font-bold uppercase text-muted-foreground/60">
+            <p className="mt-2 text-[9px] font-bold text-muted-foreground/60 uppercase">
               Fim: {formatDate(item.data_fim)}
             </p>
           )}

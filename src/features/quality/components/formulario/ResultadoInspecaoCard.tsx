@@ -45,7 +45,7 @@ export function ResultadoInspecaoCard({
             <div className="flex items-center justify-between">
               <label
                 htmlFor="aprovados"
-                className="text-[10px] font-black uppercase tracking-wider text-success"
+                className="text-[10px] font-black tracking-wider text-success uppercase"
               >
                 Aprovados
               </label>
@@ -65,7 +65,7 @@ export function ResultadoInspecaoCard({
             <div className="flex items-center justify-between">
               <label
                 htmlFor="para-conserto"
-                className="text-[10px] font-black uppercase tracking-wider text-warning"
+                className="text-[10px] font-black tracking-wider text-warning uppercase"
               >
                 Para Conserto
               </label>
@@ -85,7 +85,7 @@ export function ResultadoInspecaoCard({
             <div className="flex items-center justify-between">
               <label
                 htmlFor="reprovados"
-                className="text-[10px] font-black uppercase tracking-wider text-destructive"
+                className="text-[10px] font-black tracking-wider text-destructive uppercase"
               >
                 Reprovados
               </label>
@@ -128,7 +128,7 @@ export function ResultadoInspecaoCard({
         <div className="space-y-2">
           <label
             htmlFor="parecer-do-inspetor-observacoes"
-            className="text-[10px] font-black uppercase tracking-wider text-muted-foreground"
+            className="text-[10px] font-black tracking-wider text-muted-foreground uppercase"
           >
             Parecer do Inspetor (Observações)
           </label>

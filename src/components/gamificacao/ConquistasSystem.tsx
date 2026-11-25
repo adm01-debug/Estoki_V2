@@ -82,7 +82,7 @@ function BadgeIcon({ conquista, size = "md", showTooltip = true }: BadgeIconProp
         <Lock className={iconSizes[size]} />
       )}
       {conquista.desbloqueado && conquista.raridade === "lendario" && (
-        <div className="absolute -right-1 -top-1">
+        <div className="absolute -top-1 -right-1">
           <Sparkles className="h-3 w-3 animate-pulse text-amber-400" />
         </div>
       )}

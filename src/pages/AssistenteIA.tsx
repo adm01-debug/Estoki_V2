@@ -186,7 +186,7 @@ export default function AssistenteIA() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         {/* Quick Actions */}
         <div className="space-y-2 lg:col-span-1">
-          <h3 className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-primary/60">
+          <h3 className="mb-3 flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-primary/60 uppercase">
             <Sparkles className="h-3 w-3" />
             Ações Rápidas
           </h3>
@@ -208,11 +208,11 @@ export default function AssistenteIA() {
         </div>
 
         {/* Chat Area */}
-        <Card className="glass-card flex min-h-[600px] flex-col border-border/30 lg:col-span-3">
+        <Card className="flex min-h-[600px] glass-card flex-col border-border/30 lg:col-span-3">
           <CardHeader className="border-b border-border/30 pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-base font-bold">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/60">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-primary to-primary/60">
                   <Bot className="h-4 w-4 text-primary-foreground" />
                 </div>
                 ESTOKI AI
@@ -274,7 +274,7 @@ export default function AssistenteIA() {
                               : "rounded-bl-md border border-border/50 bg-card"
                           }`}
                         >
-                          <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                          <p className="text-sm leading-relaxed whitespace-pre-wrap">
                             {msg.content}
                           </p>
                           <p
@@ -326,7 +326,7 @@ export default function AssistenteIA() {
                   onKeyDown={handleKeyDown}
                   placeholder="Pergunte sobre seu estoque..."
                   rows={1}
-                  className="flex-1 resize-none rounded-xl border border-border/50 bg-background/50 px-4 py-3 text-sm placeholder:text-muted-foreground/50 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  className="flex-1 resize-none rounded-xl border border-border/50 bg-background/50 px-4 py-3 text-sm placeholder:text-muted-foreground/50 focus:border-primary/50 focus:ring-2 focus:ring-primary/30 focus:outline-hidden"
                   disabled={loading}
                 />
                 <Button

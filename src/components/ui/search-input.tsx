@@ -51,22 +51,22 @@ export function SearchInput({
 
   return (
     <div className={cn("relative", className)}>
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         aria-label={placeholder || "Buscar"}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="pl-9 pr-9"
+        className="pr-9 pl-9"
         autoFocus={autoFocus}
       />
       {isLoading ? (
-        <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
+        <Loader2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
       ) : value ? (
         <Button
           variant="ghost"
           size="sm"
-          className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 p-0"
+          className="absolute top-1/2 right-1 h-6 w-6 -translate-y-1/2 p-0"
           onClick={handleClear}
         >
           <X className="h-4 w-4" />

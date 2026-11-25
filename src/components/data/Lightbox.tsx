@@ -23,7 +23,7 @@ export function Lightbox({ images, initialIndex = 0, isOpen, onClose }: Lightbox
           aria-label="Fechar visualizador"
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2 text-white"
+          className="absolute top-2 right-2 text-white"
           onClick={onClose}
         >
           <X />

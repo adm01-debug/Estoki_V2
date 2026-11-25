@@ -15,7 +15,7 @@ export function SelectionToolbar({ selectedCount, onClear, onDelete }: Selection
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-card sticky top-0 z-20 col-span-full flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3"
+      className="sticky top-0 z-20 col-span-full flex glass-card items-center gap-2 rounded-lg border border-primary/20 bg-primary/10 p-3"
     >
       <CheckSquare className="h-4 w-4 text-primary" />
       <span className="text-sm font-medium">{selectedCount} selecionado(s)</span>

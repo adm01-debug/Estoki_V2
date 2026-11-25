@@ -195,7 +195,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
                     e.stopPropagation();
                     removeRecentSearch(term);
                   }}
-                  className="rounded-md p-1 opacity-0 transition-all hover:bg-muted group-hover:opacity-100"
+                  className="rounded-md p-1 opacity-0 transition-all group-hover:opacity-100 hover:bg-muted"
                 >
                   <X className="h-3 w-3" />
                 </button>

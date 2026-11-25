@@ -16,7 +16,7 @@ export default function SearchInput({
 }: SearchInputProps) {
   return (
     <div className={`relative ${className || ""}`}>
-      <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         aria-label={placeholder || "Buscar"}
         value={value}

@@ -113,7 +113,7 @@ export function AuditoriaEnterpriseViewer() {
       <CardContent>
         <ScrollArea className="h-[400px] w-full rounded-md border bg-background p-4">
           <div className="prose prose-sm dark:prose-invert max-w-none">
-            <pre className="whitespace-pre-wrap font-mono text-[10px] leading-tight">
+            <pre className="font-mono text-[10px] leading-tight whitespace-pre-wrap">
               {AUDITORIA_CONTENT}
             </pre>
           </div>

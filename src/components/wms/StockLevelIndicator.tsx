@@ -48,7 +48,7 @@ export function StockLevelIndicator({
               />
               {reorderPoint && (
                 <div
-                  className="absolute bottom-0 top-0 w-0.5 bg-orange-500"
+                  className="absolute top-0 bottom-0 w-0.5 bg-orange-500"
                   style={{ left: `${reorderPercentage}%` }}
                 />
               )}
