@@ -356,7 +356,7 @@
     {
       "id": "legacy-68cae5fc95bfe528",
       "kind": "legacy",
-      "files": ["scripts/inventario/gerar-banco.mjs"],
+      "files": ["scripts/inventario/gerar-banco.mjs", "scripts/inventario/coerencia.mjs"],
       "manual": ["node", "scripts/inventario/gerar-banco.mjs"],
       "triggers": ["manual"],
       "reason": "Legado mantido no fluxo existente; referências literais: package.json:scripts, .github/workflows/inventario-estado.yml, scripts/inventario/mudou-conteudo.mjs. O dispatcher não executa esta operação."
