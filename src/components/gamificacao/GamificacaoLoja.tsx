@@ -91,14 +91,9 @@ export function GamificacaoLoja() {
         p_valor: item.preco,
       });
 
-      // Se a RPC não existir, fazemos manualmente (embora RPC seja mais seguro)
-      if (pontosError) {
-        const { error: manualError } = await supabase
-          .from("gamificacao_usuarios")
-          .update({ pontos: pontos - item.preco })
-          .eq("user_id", user.id);
-        if (manualError) throw manualError;
-      }
+      // Sem fallback de UPDATE direto: ele gravava o saldo sem passar pela guarda do banco e sem
+      // olhar saldo (pontos ia a negativo). O RPC aceita o proprio usuario, entao falhar aqui e erro.
+      if (pontosError) throw pontosError;
 
       toast.success(`${item.nome} adquirido com sucesso!`);
       setPontos((prev) => prev - item.preco);

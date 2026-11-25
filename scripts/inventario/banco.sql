@@ -120,6 +120,38 @@ SELECT jsonb_build_object(
            )
   ),
 
+  -- Funcao SECURITY DEFINER que a API alcanca (`anon` ou `authenticated` executa) e cujo corpo nao
+  -- chama nenhuma checagem: `auth.uid()`, `has_role`/`is_tenant_*` ou as funcoes de tenant
+  -- (`*tenant_id(`), que amarram a acao ao chamador. Nome de COLUNA `tenant_id` nao conta: aparece
+  -- em corpo sem checagem nenhuma. SECURITY DEFINER roda com o dono da funcao, entao sem checagem
+  -- interna quem tem a chave publica do bundle (ou um usuario logado qualquer) executa a rotina de
+  -- escrita como se fosse o dono: a tela vira sugestao. Fora funcao de trigger (`tgfoid`) e funcao
+  -- de extensao (`deptype='e'`), que nao sao porta de entrada da API. `chamada_por` diz quem cita a
+  -- funcao e se quem cita e DEFINER (roda como o dono, nao depende do EXECUTE de quem chamou) ou
+  -- INVOKER (roda como o chamador: tirar o EXECUTE quebra o fluxo interno).
+  'funcoes_definer_sem_guarda', (
+    SELECT coalesce(jsonb_agg(jsonb_build_object(
+             'nome', p.proname,
+             'args', pg_get_function_identity_arguments(p.oid),
+             'anon', has_function_privilege('anon', p.oid, 'EXECUTE'),
+             'authenticated', has_function_privilege('authenticated', p.oid, 'EXECUTE'),
+             'service_role', has_function_privilege('service_role', p.oid, 'EXECUTE'),
+             'chamada_por', (
+               SELECT coalesce(jsonb_agg(q.proname || CASE WHEN q.prosecdef THEN ' (definer)' ELSE ' (invoker)' END ORDER BY q.proname), '[]'::jsonb)
+                 FROM pg_proc q
+                WHERE q.pronamespace = p.pronamespace AND q.oid <> p.oid
+                  AND q.prosrc LIKE '%' || p.proname || '(%'
+             )) ORDER BY p.proname), '[]'::jsonb)
+      FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+     WHERE n.nspname = 'public' AND p.prokind = 'f' AND p.prosecdef
+       AND p.prorettype <> 'pg_catalog.trigger'::regtype
+       AND NOT EXISTS (SELECT 1 FROM pg_trigger t WHERE t.tgfoid = p.oid)
+       AND NOT EXISTS (SELECT 1 FROM pg_depend d WHERE d.objid = p.oid AND d.deptype = 'e')
+       AND (has_function_privilege('anon', p.oid, 'EXECUTE')
+            OR has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+       AND p.prosrc !~ '(auth\.uid\(\)|has_role\(|is_tenant_[a-z_]*\(|[a-z_.]*tenant_id\()'
+  ),
+
   -- View/materialized view em public SEM `security_invoker`: sem essa opcao a view roda com os
   -- privilegios do DONO, entao o RLS das tabelas de base e ignorado e a leitura cruza tenants.
   -- `security_invoker=true` faz a view rodar como o chamador (RLS volta a valer). Materialized view

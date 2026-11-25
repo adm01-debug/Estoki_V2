@@ -241,6 +241,16 @@ export function montarInventario(dado, uso, edges = compararEdges(null, []), coe
   if (secDefinerFrouxo.length) {
     alertas.push({ tipo: 'funcao_security_definer_sem_search_path', detalhe: secDefinerFrouxo });
   }
+  // SECURITY DEFINER alcancavel por `anon`/`authenticated` cujo corpo nao checa `auth.uid()`/papel/
+  // tenant: quem tem a chave publica do bundle (ou um JWT de qualquer usuario) executa com o
+  // privilegio do dono. Medido 25/11/2026 com descontar_pontos/adicionar_xp abertos por
+  // 20261124120000_SEC_revoke_anon_execute.sql. Fora do fluxo pre-login todo nome aqui e furo.
+  const definerSemGuarda = (dado.funcoes_definer_sem_guarda ?? [])
+    .filter((f) => !ANON_PRE_LOGIN.has(f.nome))
+    .map((f) => (f.args ? `${f.nome}(${f.args})` : f.nome));
+  if (definerSemGuarda.length) {
+    alertas.push({ tipo: 'funcao_definer_sem_guarda', detalhe: definerSemGuarda });
+  }
   // View sem `security_invoker` roda com os privilegios do dono: o RLS das tabelas de base nao vale e
   // a leitura cruza tenants. Qualquer nome aqui e leitura de dado alheio, nao divida herdada.
   const viewsFrouxas = dado.views_sem_security_invoker ?? [];

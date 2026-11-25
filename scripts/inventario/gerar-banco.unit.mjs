@@ -113,3 +113,35 @@ test("sem policy permissiva para anon nao ha alerta", () => {
     []
   );
 });
+
+test("security definer alcancavel sem guarda no corpo vira alerta nomeado", () => {
+  const dado = {
+    ...base([]),
+    funcoes_definer_sem_guarda: [
+      { nome: "descontar_pontos", args: "uuid, integer", anon: true, authenticated: true, chamada_por: [] },
+      { nome: "adicionar_xp", args: "uuid, integer", anon: false, authenticated: true, chamada_por: [] },
+    ],
+  };
+  assert.deepEqual(montarInventario(dado, {}).alertas, [
+    {
+      tipo: "funcao_definer_sem_guarda",
+      detalhe: ["descontar_pontos(uuid, integer)", "adicionar_xp(uuid, integer)"],
+    },
+  ]);
+});
+
+test("so funcao do fluxo pre-login sem guarda nao gera alerta", () => {
+  const dado = {
+    ...base([]),
+    funcoes_definer_sem_guarda: [
+      { nome: "check_login_lockout", args: "text", anon: true, authenticated: true, chamada_por: [] },
+      { nome: "record_failed_login", args: "text, inet", anon: true, authenticated: true, chamada_por: [] },
+    ],
+  };
+  assert.deepEqual(montarInventario(dado, {}).alertas, []);
+});
+
+test("inventario sem a chave de definer sem guarda nao quebra nem inventa alerta", () => {
+  assert.deepEqual(montarInventario({ ...base([]), funcoes_definer_sem_guarda: [] }, {}).alertas, []);
+  assert.deepEqual(montarInventario(base([]), {}).alertas, []);
+});
