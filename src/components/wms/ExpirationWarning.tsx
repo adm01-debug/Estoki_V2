@@ -20,8 +20,8 @@ export function ExpirationWarning({
   const diffTime = expirationDate.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  let variant: "default" | "secondary" | "destructive" | "outline" = "default";
-  let status = "";
+  let variant: "default" | "secondary" | "destructive" | "outline";
+  let status: string;
   let Icon = Calendar;
 
   if (diffDays < 0) {

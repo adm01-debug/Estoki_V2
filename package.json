@@ -178,7 +178,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@capacitor/cli": "^8.6.0",
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^10.0.1",
     "@percy/cypress": "^3.1.9",
     "@playwright/test": "^1.65.1",
     "@sentry/vite-plugin": "^11.14.0",
@@ -201,7 +201,7 @@
     "autoprefixer": "^10.5.6",
     "chromatic": "^18.2.0",
     "cypress": "^16.3.0",
-    "eslint": "^9.32.0",
+    "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^17.13.0",

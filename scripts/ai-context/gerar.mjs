@@ -58,7 +58,7 @@ const SKIP_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', '.n
 const KEEP_DOT = new Set(['.github', '.env.example', '.env.sample', '.env.template', '.nvmrc', '.husky', '.gitlab-ci.yml', '.python-version', '.tool-versions', '.eslintrc.json', '.eslintrc.js', '.prettierrc', '.editorconfig', '.claude', '.cursor', '.cursorrules']);
 const ALL = [];
 (function walk(dir) {
-  let ents = [];
+  let ents;
   try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
   for (const e of ents) {
     if (e.name.startsWith('.') && !KEEP_DOT.has(e.name)) continue;

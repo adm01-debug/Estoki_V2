@@ -15,7 +15,7 @@ export const checkHealth = async (): Promise<HealthStatus> => {
     const { error } = await supabase.from("posicoes_estoque").select("id").limit(1);
     database = !error;
   } catch {
-    database = false;
+    /* segue com database = false */
   }
 
   const api = navigator.onLine;
