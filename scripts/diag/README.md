@@ -4,13 +4,13 @@ Recuperado dos branches `claude/diag-probe-seguranca` e `claude/diag-e2e-real-26
 de outro agente que nunca chegou a `main`). Rodar pelo workflow manual `.github/workflows/diag-producao.yml`
 ou a mao.
 
-| Script | Env | Efeito | Prova |
-|---|---|---|---|
-| `probe-refs.sh` | `S_URL S_KEY V_URL V_KEY V_PID` (opcionais) | leitura | a que projeto do Supabase cada secret aponta (nunca imprime a chave) |
-| `probe-anon.sh` | `SB_URL SB_ANON` | leitura | quais RPCs a chave publica executa sem sessao e o RLS de `system_settings` |
-| `probe-auth.sh` | `SB_URL SB_ANON EU EP` | leitura | login real e o que um JWT de usuario consegue ler/chamar |
-| `probe-db.sh` | `SUPABASE_ACCESS_TOKEN SB_URL` | leitura | catalogo, grants de `anon`/`authenticated`, RLS, policies e migrations aplicadas |
-| `dryrun-migration.sh <arquivo>` | `SUPABASE_ACCESS_TOKEN SB_URL` | `begin ... rollback` | a migration aplica, os grants resultantes e que nada ficou persistido |
+| Script                          | Env                                         | Efeito               | Prova                                                                            |
+| ------------------------------- | ------------------------------------------- | -------------------- | -------------------------------------------------------------------------------- |
+| `probe-refs.sh`                 | `S_URL S_KEY V_URL V_KEY V_PID` (opcionais) | leitura              | a que projeto do Supabase cada secret aponta (nunca imprime a chave)             |
+| `probe-anon.sh`                 | `SB_URL SB_ANON`                            | leitura              | quais RPCs a chave publica executa sem sessao e o RLS de `system_settings`       |
+| `probe-auth.sh`                 | `SB_URL SB_ANON EU EP`                      | leitura              | login real e o que um JWT de usuario consegue ler/chamar                         |
+| `probe-db.sh`                   | `SUPABASE_ACCESS_TOKEN SB_URL`              | leitura              | catalogo, grants de `anon`/`authenticated`, RLS, policies e migrations aplicadas |
+| `dryrun-migration.sh <arquivo>` | `SUPABASE_ACCESS_TOKEN SB_URL`              | `begin ... rollback` | a migration aplica, os grants resultantes e que nada ficou persistido            |
 
 Contrato:
 
