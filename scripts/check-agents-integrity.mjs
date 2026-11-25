@@ -129,7 +129,7 @@ function bytesNaBase(base) {
     }
   };
   for (const f of EXTRA_RAIZ) tamanho(f);
-  let lista = "";
+  let lista;
   try {
     // -z: sem C-quoting, entao nome com acento continua casando com o arquivo em disco
     lista = git(["ls-tree", "-r", "--name-only", "-z", base, "--", DOCS_DIR]);

@@ -53,7 +53,7 @@ export function extrairProjectRef(connectionString) {
     return hostDireto[1].toLowerCase();
   }
 
-  let usuario = '';
+  let usuario;
   try {
     usuario = decodeURIComponent(url.username);
   } catch {
@@ -76,7 +76,7 @@ export function carregarIdentidadeEsperada(arquivo) {
   try {
     identidade = JSON.parse(fs.readFileSync(arquivo, 'utf8'));
   } catch (error) {
-    throw new Error('identidade versionada invalida (' + arquivo + '): ' + error.message);
+    throw new Error('identidade versionada invalida (' + arquivo + '): ' + error.message, { cause: error });
   }
 
   const erros = [];
