@@ -66,6 +66,17 @@ const ANON_SEM_EXECUTE =
   "and has_function_privilege('anon', p.oid, 'EXECUTE') " +
   `and p.proname <> all (array[${ANON_PUBLICO.map((nome) => `'${nome}'`).join(",")}]))`;
 
+// Mesma regra da migration 20261124130000_SEC_mv_revoke_anon.sql. Materialized view nao aceita
+// `security_invoker` nem RLS: com SELECT concedido ela roda como o dono e ignora o filtro por
+// tenant (comprovado em 2026-11-24: GET /rest/v1/mv_alertas_severidade com a chave publica
+// respondeu 200 com linhas). VIEW comum so e problema para `anon` -- view com
+// `security_invoker=true` concedida a `authenticated` e uso legitimo.
+const VIEWS_SEM_SELECT_PUBLICO =
+  "not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace " +
+  "where n.nspname = 'public' and c.relkind in ('v', 'm') " +
+  "and (has_table_privilege('anon', c.oid, 'SELECT') " +
+  "or (c.relkind = 'm' and has_table_privilege('authenticated', c.oid, 'SELECT'))))";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -90,6 +101,12 @@ const PENDENCIAS = [
     arquivo: "20261124120000_SEC_revoke_anon_execute.sql",
     nome: "revoke_anon_execute",
     aplicado: ANON_SEM_EXECUTE,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261124130000_SEC_mv_revoke_anon.sql",
+    nome: "mv_revoke_anon",
+    aplicado: VIEWS_SEM_SELECT_PUBLICO,
     dependencias: [],
   },
 ];
