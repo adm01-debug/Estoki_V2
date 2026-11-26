@@ -129,8 +129,10 @@ jobs:
             codigo=$(curl -sS -o "$corpo" -w "%{http_code}" -X POST "$ALVO_URL/functions/v1/$s" \
               -H "apikey: $CHAVE_PUBLICA" -H "Authorization: Bearer $CHAVE_PUBLICA" \
               -H "Content-Type: application/json" -d '{}')
-            if [ "$codigo" = "401" ] && grep -q "sessao obrigatoria" "$corpo"; then
-              echo "ok: $s -> 401 guarda"
+            # guardas conhecidas: _shared/auth.ts responde 401 "sessao obrigatoria";
+            # backend-health responde 403 "Invalid session". As duas recusam a chave publica.
+            if { [ "$codigo" = "401" ] || [ "$codigo" = "403" ]; } && grep -qiE "sessao obrigatoria|invalid session" "$corpo"; then
+              echo "ok: $s -> $codigo guarda"
             else
               echo "::error::$s respondeu $codigo sem a guarda: $(head -c 200 "$corpo")"
               FALHA=1
