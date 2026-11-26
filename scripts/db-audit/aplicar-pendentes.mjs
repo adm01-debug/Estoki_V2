@@ -223,6 +223,25 @@ const SEC_ANON_TODAS_FUNCOES =
   "'record_failed_login','reset_login_attempts','get_backend_health']) " +
   "and has_function_privilege('anon', p.oid, 'EXECUTE'))";
 
+// 20261129150000 corrige a 20261129100000: revoga anon/PUBLIC sem reabrir `authenticated`.
+// A prova exige tres coisas ao mesmo tempo: (a) ninguem executa como anon fora da allowlist,
+// (b) as internas adicionar_xp e get_user_role continuam fechadas para authenticated,
+// (c) descontar_pontos continua aberta para authenticated (a loja de pontos chama com JWT).
+const SEC_ANON_PRESERVA_AUTH =
+  "(not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e') " +
+  "and p.proname <> all (array['has_role','is_tenant_admin','is_tenant_member'," +
+  "'effective_tenant_id','default_tenant_id','current_tenant_id','check_login_lockout'," +
+  "'record_failed_login','reset_login_attempts','get_backend_health']) " +
+  "and has_function_privilege('anon', p.oid, 'EXECUTE')) " +
+  "and not has_function_privilege('authenticated', " +
+  "to_regprocedure('public.adicionar_xp(uuid, integer, text, text, uuid)'), 'EXECUTE') " +
+  "and not has_function_privilege('authenticated', " +
+  "to_regprocedure('public.get_user_role(uuid)'), 'EXECUTE') " +
+  "and has_function_privilege('authenticated', " +
+  "to_regprocedure('public.descontar_pontos(uuid, integer)'), 'EXECUTE'))";
+
 const CORTE_COBERTURA = "20261127";
 
 const PENDENCIAS = [
@@ -388,6 +407,14 @@ const PENDENCIAS = [
     arquivo: "20261129100000_SEC_revoke_anon_todas_funcoes.sql",
     nome: "sec_anon_todas_funcoes",
     aplicado: SEC_ANON_TODAS_FUNCOES,
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    // 20261129150000 fecha o que a 20261129100000 deixou aberto em `authenticated` (as 6 internas
+    // voltaram a ser executaveis por qualquer usuario logado) sem perder as RPCs do app.
+    arquivo: "20261129150000_SEC_anon_preserva_privilegio_authenticated.sql",
+    nome: "sec_anon_preserva_authenticated",
+    aplicado: SEC_ANON_PRESERVA_AUTH,
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
 ];
