@@ -44,7 +44,9 @@ jobs:
 
       - name: Gerar
         env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          # O repo nao tem o secret SUPABASE_ACCESS_TOKEN (vem vazio); o token de
+          # management usado pelos outros workflows e o SUPABASE_MANAGEMENT_TOKEN.
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN }}
         run: |
           set -euo pipefail
           npx --yes supabase@latest gen types typescript \

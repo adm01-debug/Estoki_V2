@@ -19,3 +19,8 @@ scripts/regras_negocio
 scripts/supabase_snapshot
 inventario/estado
 docs/contexto
+
+# Gerado pelo Supabase CLI (workflow Tipos Supabase / npm run db:generate).
+# O gerador nao segue o estilo do prettier: reformatar a cada geracao produziria
+# milhares de linhas de diff sem mudanca de conteudo.
+src/integrations/supabase/types.ts

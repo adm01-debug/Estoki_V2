@@ -70,6 +70,7 @@ const routeLabels: Record<string, string> = {
   "/admin/auditoria": "Auditoria",
   "/admin/integracoes": "Integrações",
   "/admin/observabilidade": "Observabilidade",
+  "/admin/automacoes": "Automações",
 };
 
 const sectionLabels: Record<string, string> = {
