@@ -99,6 +99,19 @@ jobs:
         run: node scripts/migrations-todo-check.mjs
         continue-on-error: true
 
+      # 9 arquivos supabase/functions/_shared/*_test.ts existiam sem nenhum workflow que os
+      # executasse: 49 testes de auth, erp, forecast, tsp, inventory, prometheus, agv, shared e
+      # webauthn nunca foram gate. --node-modules-dir=none porque a raiz tem package.json.
+      - name: Instalar Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.8
+
+      - name: Testes das Edge Functions (deno)
+        id: deno
+        run: deno test --allow-all --node-modules-dir=none supabase/functions/_shared/
+        continue-on-error: true
+
       - name: E2E smoke (Playwright)
         id: e2e
         run: |
@@ -185,6 +198,7 @@ jobs:
           [ "${{ steps.build.outcome }}"     = "success" ] || fail "build"
           [ "${{ steps.rls.outcome }}"       = "success" ] || fail "rls-audit"
           [ "${{ steps.i18n_hard.outcome }}" = "success" ] || fail "i18n hardcoded"
+          [ "${{ steps.deno.outcome }}"       = "success" ] || fail "deno test (edge functions)"
           [ "${{ steps.deps.outcome }}"      = "success" ] || fail "dep-audit"
           [ "${{ steps.e2e.outcome }}"       = "success" ] || fail "e2e smoke"
           echo "✅ Quality gate aprovado"
