@@ -155,6 +155,26 @@ const ANON_SEM_ESCRITA =
   "or has_table_privilege('anon', c.oid, 'UPDATE') " +
   "or has_table_privilege('anon', c.oid, 'DELETE')))";
 
+// 20261127090000_SEC_tenant_isolation_endurecer.sql -- (1) tenant_id vira NOT NULL com
+// DEFAULT effective_tenant_id() onde existe a policy tenant_isolation; (2) o predicado da
+// restritiva perde o "tenant_id is null", que deixava qualquer linha orfa visivel para
+// todos; (3) as policies PERMISSIVE de predicado true so saem quando redundantes, isto e,
+// quando cada comando que elas cobrem continua coberto por outra permissiva real.
+const TENANT_NOT_NULL =
+  "not exists (select 1 from information_schema.columns c " +
+  "where c.table_schema = 'public' and c.column_name = 'tenant_id' and c.is_nullable = 'YES' " +
+  "and exists (select 1 from pg_policies t where t.schemaname = 'public' " +
+  "and t.tablename = c.table_name and t.policyname = 'tenant_isolation')) " +
+  "and not exists (select 1 from pg_policies p where p.schemaname = 'public' " +
+  "and p.policyname = 'tenant_isolation' and coalesce(p.qual, '') like '%is null%') " +
+  "and not exists (select 1 from pg_policies p where p.schemaname = 'public' " +
+  "and p.permissive = 'PERMISSIVE' " +
+  "and (btrim(coalesce(p.qual, '')) = 'true' or btrim(coalesce(p.with_check, '')) = 'true') " +
+  "and not ('anon' = any(p.roles) or 'public' = any(p.roles)) " +
+  "and 0 = (select count(*) from pg_policies o where o.schemaname = 'public' " +
+  "and o.tablename = p.tablename and o.policyname <> p.policyname and o.permissive = 'PERMISSIVE' " +
+  "and not (btrim(coalesce(o.qual, '')) = 'true' or btrim(coalesce(o.with_check, '')) = 'true')))";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -247,6 +267,12 @@ const PENDENCIAS = [
     arquivo: "20261126180000_SEC_revoke_anon_dml.sql",
     nome: "anon_sem_escrita",
     aplicado: ANON_SEM_ESCRITA,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261127090000_SEC_tenant_isolation_endurecer.sql",
+    nome: "tenant_not_null",
+    aplicado: TENANT_NOT_NULL,
     dependencias: [],
   },
 ];

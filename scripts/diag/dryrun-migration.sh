@@ -13,7 +13,37 @@ case "$MIG" in
   *) echo "recusa: $MIG precisa estar em supabase/migrations/"; exit 2 ;;
 esac
 [ -f "$MIG" ] || { echo "recusa: arquivo $MIG nao existe"; exit 2; }
-if grep -qiE '^[[:space:]]*(commit|end|rollback|start[[:space:]]+transaction)[[:space:]]*;|^[[:space:]]*\\(c|i|copy|connect)[[:space:]]' "$MIG"; then
+# `end;` tambem termina o `case` de PL/pgSQL, que fica dentro de um bloco
+# `do $tag$ ... $tag#!/usr/bin/env bash
+# Dry-run de migration: aplica, confere privilegios e faz ROLLBACK (nada e persistido).
+set +e
+
+TOKEN="${SUPABASE_ACCESS_TOKEN:?}"
+SB_URL="${SB_URL:?}"
+REF="${SB_URL#https://}"
+REF="${REF%%.supabase.co*}"
+MIG="$1"
+[ -n "$MIG" ] || { echo "uso: dryrun-migration.sh supabase/migrations/<arquivo>.sql"; exit 2; }
+case "$MIG" in
+  supabase/migrations/*.sql|./supabase/migrations/*.sql) ;;
+  *) echo "recusa: $MIG precisa estar em supabase/migrations/"; exit 2 ;;
+esac
+[ -f "$MIG" ] || { echo "recusa: arquivo $MIG nao existe"; exit 2; }
+ e e UMA statement: nao anula o ROLLBACK. So conta o que esta FORA
+# de bloco dollar-quoted.
+fora_dollar() {
+  awk '
+  {
+    line = $0
+    while (match(line, /\$[A-Za-z_][A-Za-z_0-9]*\$|\$\$/)) {
+      tok = substr(line, RSTART, RLENGTH)
+      if (d == "") d = tok; else if (d == tok) d = ""
+      line = substr(line, RSTART + RLENGTH)
+    }
+    if (d == "") print $0
+  }' "$1"
+}
+if fora_dollar "$MIG" | grep -qiE '^[[:space:]]*(commit|end|rollback|start[[:space:]]+transaction)[[:space:]]*;|^[[:space:]]*\\(c|i|copy|connect)[[:space:]]'; then
   echo "recusa: $MIG tem COMMIT/ROLLBACK/END ou meta-comando psql, o que anularia o ROLLBACK"; exit 2
 fi
 echo "== projeto: $REF | migration: $MIG =="
