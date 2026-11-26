@@ -7,6 +7,7 @@ const routeNames: Record<string, string> = {
   dashboard: "Dashboard",
   recebimento: "Recebimento",
   triagem: "Triagem",
+  "setor-conserto": "Setor de Conserto",
   estoque: "Estoque",
   scanner: "Scanner",
   movimentacao: "Movimentação",

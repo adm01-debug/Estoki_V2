@@ -16,6 +16,7 @@ import {
   ClipboardList,
   TrendingUp,
   RefreshCw,
+  Wrench,
 } from "lucide-react";
 
 export const menuItems = [
@@ -26,6 +27,7 @@ export const menuItems = [
   { name: "Lotes", path: "/lotes", icon: ClipboardList },
   { name: "Triagem", path: "/triagem", icon: FileSearch },
   { name: "Recebimento", path: "/recebimento", icon: Truck },
+  { name: "Setor de Conserto", path: "/setor-conserto", icon: Wrench },
   { name: "Movimentação", path: "/movimentacao", icon: ArrowLeftRight },
   { name: "Tarefas", path: "/tarefas", icon: ListChecks },
   { name: "Ondas", path: "/ondas", icon: Waves },

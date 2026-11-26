@@ -515,6 +515,22 @@ const PENDENCIAS = [
       "and (select count(*) from public.alertas_config) = 8",
     dependencias: [],
   },
+  {
+    // 20261130130000 da regra de negocio ao setor de conserto: a tela de retrabalho da triagem
+    // e a pagina /setor-conserto gravam em `recuperacao_materiais` e `setores_checkpoint`, que
+    // estavam sem GRANT de tabela e sem nenhuma CHECK (recuperar mais do que entrou era aceito).
+    arquivo: "20261130130000_UI_setor_conserto.sql",
+    nome: "setor_conserto",
+    aplicado:
+      "has_table_privilege('authenticated', 'public.recuperacao_materiais', 'UPDATE') " +
+      "and has_table_privilege('authenticated', 'public.setores_checkpoint', 'INSERT') " +
+      "and exists (select 1 from pg_constraint where conname = 'recuperacao_nao_excede_original') " +
+      "and exists (select 1 from pg_constraint where conname = 'recuperacao_status_valido')",
+    dependencias: [
+      ["public.recuperacao_materiais", "to_regclass('public.recuperacao_materiais') is not null"],
+      ["public.setores_checkpoint", "to_regclass('public.setores_checkpoint') is not null"],
+    ],
+  },
 ];
 
 function sqlEstado() {

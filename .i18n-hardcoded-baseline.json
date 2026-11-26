@@ -1,6 +1,6 @@
 {
-  "total": 1571,
-  "generatedAt": "2026-11-26T16:43:17.849Z",
+  "total": 1578,
+  "generatedAt": "2026-11-26T19:12:01.279Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -107,7 +107,6 @@
     "src/components/ia/PrevisaoDemandaIA.tsx": 5,
     "src/components/integracoes/CatalogoMestreCard.tsx": 4,
     "src/components/inventario/CicloCard.tsx": 1,
-    "src/components/inventario/InventarioConfigTab.tsx": 7,
     "src/components/inventario/InventarioDashboardTab.tsx": 2,
     "src/components/inventario/NovoCicloDialog.tsx": 9,
     "src/components/kanban/KanbanCard.tsx": 1,
@@ -287,6 +286,7 @@
     "src/pages/Romaneios.tsx": 17,
     "src/pages/Scanner.tsx": 3,
     "src/pages/Seguranca.tsx": 6,
+    "src/pages/SetorConserto.tsx": 14,
     "src/pages/TrocasDevolucoes.tsx": 17,
     "src/pages/TwoFactorAuth.tsx": 1,
     "src/pages/Unauthorized.tsx": 1,
