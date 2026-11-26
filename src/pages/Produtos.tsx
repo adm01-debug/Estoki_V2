@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { SEO } from "@/components/common/SEO";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageTransition } from "@/components/layout/PageTransition";
@@ -13,6 +13,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Plus, Filter, X, Download, AlertCircle } from "lucide-react";
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 import { RouteLoadingFallback } from "@/components/common/RouteLoadingFallback";
 import { useProdutos } from "@/hooks/useProdutos";
 import { ProdutosStats } from "@/components/produtos/ProdutosStats";
@@ -36,6 +38,16 @@ export default function ProdutosPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [selectedProduto, setSelectedProduto] = useState<Produto | null>(null);
   const [editingProduto, setEditingProduto] = useState<Produto | null>(null);
+
+  const filtrosAtuais = useMemo(() => ({ search, curva: curvaFilter }), [search, curvaFilter]);
+
+  const aplicarFiltros = useCallback((filtros: Record<string, unknown>) => {
+    setSearch(typeof filtros.search === "string" ? filtros.search : "");
+    setCurvaFilter(typeof filtros.curva === "string" ? filtros.curva : "todos");
+    setPage(1);
+  }, []);
+
+  useApplyDefaultSavedFilter("produtos", aplicarFiltros);
 
   const {
     produtos,
@@ -239,6 +251,11 @@ export default function ProdutosPage() {
                   <SelectItem value="C">Curva C</SelectItem>
                 </SelectContent>
               </Select>
+              <SavedFiltersDropdown
+                entityType="produtos"
+                currentFilters={filtrosAtuais}
+                onApplyFilter={aplicarFiltros}
+              />
             </div>
 
             {error && (

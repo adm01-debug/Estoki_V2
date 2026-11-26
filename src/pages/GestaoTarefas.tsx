@@ -1,6 +1,6 @@
 import { Tarefa } from "@/types/tarefas";
 import { SEO } from "@/components/common/SEO";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,8 @@ import { ErrorState } from "@/components/common/AsyncStates";
 import { TarefaCard } from "@/components/tarefas/TarefaCard";
 import { KanbanBoard } from "@/components/ui/kanban/KanbanBoard";
 import { TarefaStats } from "@/components/tarefas/TarefaStats";
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 import { TarefaCharts } from "@/components/tarefas/TarefaCharts";
 import { NovaTarefaDialog } from "@/components/tarefas/NovaTarefaDialog";
 
@@ -66,6 +68,22 @@ export default function GestaoTarefasPage() {
   } = useGestaoTarefasPage();
 
   const [tab, setTab] = useState("kanban");
+
+  const filtrosAtuais = useMemo(
+    () => ({ search: searchTerm, status: filtroStatus, tipo: filtroTipo }),
+    [filtroTipo, filtroStatus, searchTerm]
+  );
+
+  const aplicarFiltros = useCallback(
+    (filtros: Record<string, unknown>) => {
+      setSearchTerm(typeof filtros.search === "string" ? filtros.search : "");
+      setFiltroStatus(typeof filtros.status === "string" ? filtros.status : "todos");
+      setFiltroTipo(typeof filtros.tipo === "string" ? filtros.tipo : "todos");
+    },
+    [setFiltroStatus, setFiltroTipo, setSearchTerm]
+  );
+
+  useApplyDefaultSavedFilter("tarefas", aplicarFiltros);
 
   if (isError) {
     return (
@@ -187,6 +205,11 @@ export default function GestaoTarefasPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <SavedFiltersDropdown
+                  entityType="tarefas"
+                  currentFilters={filtrosAtuais}
+                  onApplyFilter={aplicarFiltros}
+                />
               </div>
 
               <div className="space-y-3">

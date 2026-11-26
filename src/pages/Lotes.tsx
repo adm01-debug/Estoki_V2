@@ -1,5 +1,7 @@
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 import { LotesCharts } from "@/components/charts/WMSModuleCharts";
-import { useState, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ErrorState } from "@/components/common/AsyncStates";
 import { SEO } from "@/components/common/SEO";
@@ -63,6 +65,15 @@ async function fetchLotes() {
 export default function LotesPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+
+  const filtrosAtuais = useMemo(() => ({ search, status: statusFilter }), [search, statusFilter]);
+
+  const aplicarFiltros = useCallback((filtros: Record<string, unknown>) => {
+    setSearch(typeof filtros.search === "string" ? filtros.search : "");
+    setStatusFilter(typeof filtros.status === "string" ? filtros.status : "todos");
+  }, []);
+
+  useApplyDefaultSavedFilter("lotes", aplicarFiltros);
   const [sortBy, setSortBy] = useState<"recent" | "expiry" | "qty">("recent");
 
   const {
@@ -270,6 +281,11 @@ export default function LotesPage() {
                 ))}
               </SelectContent>
             </Select>
+            <SavedFiltersDropdown
+              entityType="lotes"
+              currentFilters={filtrosAtuais}
+              onApplyFilter={aplicarFiltros}
+            />
           </div>
 
           {/* Lotes List */}

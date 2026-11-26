@@ -1,6 +1,8 @@
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 import { RomaneiosCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { romaneioItemSchema, romaneioSchema, validateForm } from "@/lib/validations";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { PageLoader, ErrorState } from "@/components/common/AsyncStates";
@@ -110,6 +112,18 @@ export default function RomaneiosPage() {
   } = useRomaneios();
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
   const [busca, setBusca] = useState("");
+
+  const filtrosAtuais = useMemo(
+    () => ({ search: busca, status: filtroStatus }),
+    [busca, filtroStatus]
+  );
+
+  const aplicarFiltros = useCallback((filtros: Record<string, unknown>) => {
+    setBusca(typeof filtros.search === "string" ? filtros.search : "");
+    setFiltroStatus(typeof filtros.status === "string" ? filtros.status : "todos");
+  }, []);
+
+  useApplyDefaultSavedFilter("romaneios", aplicarFiltros);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [romaneioSelecionadoId, setRomaneioSelecionadoId] = useState<string | null>(null);
   const romaneioSelecionado = romaneios.find((r) => r.id === romaneioSelecionadoId) ?? null;
@@ -372,6 +386,11 @@ export default function RomaneiosPage() {
                 <SelectItem value="entregue">Finalizado</SelectItem>
               </SelectContent>
             </Select>
+            <SavedFiltersDropdown
+              entityType="romaneios"
+              currentFilters={filtrosAtuais}
+              onApplyFilter={aplicarFiltros}
+            />
           </div>
           <div className="flex items-center gap-1 rounded-lg bg-muted/50 p-1">
             <Button
