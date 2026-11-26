@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { usuarioDaSessao } from "../_shared/auth.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 import { buildRegistrationOptions, resolveRp } from "../_shared/webauthn.ts";
@@ -8,6 +9,14 @@ import { buildRegistrationOptions, resolveRp } from "../_shared/webauthn.ts";
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: getCorsHeaders(req) });
+  }
+
+  const sessaoUserId = await usuarioDaSessao(req);
+  if (!sessaoUserId) {
+    return new Response(JSON.stringify({ error: "sessao obrigatoria" }), {
+      status: 401,
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+    });
   }
 
   try {
@@ -24,26 +33,16 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Authorization header required" }), {
+    const { data: sessao, error: authError } = await supabase.auth.admin.getUserById(sessaoUserId);
+
+    if (authError || !sessao?.user) {
+      return new Response(JSON.stringify({ error: "sessao obrigatoria" }), {
         status: 401,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      });
-    }
+    const user = sessao.user;
 
     const { deviceName } = __raw;
 

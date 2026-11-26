@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { usuarioDaSessao } from "../_shared/auth.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 import { resolveRp, verifyAuthenticationCredential } from "../_shared/webauthn.ts";
@@ -10,14 +11,16 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  // Exigir JWT — passkey é segundo fator, não substituto de sessão
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Authorization required" }), {
+  const sessaoUserId = await usuarioDaSessao(req);
+  if (!sessaoUserId) {
+    return new Response(JSON.stringify({ error: "sessao obrigatoria" }), {
       status: 401,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
+
+  // Guarda de sessao real (passkey e segundo fator, nao substituto de sessao).
+  // A checagem antiga de prefixo Bearer aceitava a chave publica do site.
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -32,9 +35,9 @@ serve(async (req) => {
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
-    const { credential, challengeId, userId } = __raw;
+    const { credential, challengeId } = __raw;
 
-    if (!credential?.id || !credential?.response?.signature || !challengeId || !userId) {
+    if (!credential?.id || !credential?.response?.signature || !challengeId) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
@@ -45,7 +48,7 @@ serve(async (req) => {
       .from("webauthn_challenges")
       .select("*")
       .eq("id", challengeId)
-      .eq("user_id", userId)
+      .eq("user_id", sessaoUserId)
       .eq("type", "authentication")
       .single();
 
@@ -69,7 +72,7 @@ serve(async (req) => {
       .from("passkey_credentials")
       .select("*")
       .eq("credential_id", credential.id)
-      .eq("user_id", userId)
+      .eq("user_id", sessaoUserId)
       .single();
 
     if (credError || !storedCredential) {

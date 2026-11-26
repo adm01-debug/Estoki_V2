@@ -174,7 +174,14 @@ export function useWebAuthn() {
           throw new Error("Seu dispositivo não suporta autenticação biométrica");
         }
 
-        // Get authentication options from server
+        // Passkey e segundo fator: sem sessao nao ha credencial para verificar
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!session) {
+          throw new Error("Você precisa estar logado para usar a passkey");
+        }
+
         const optionsResponse = await supabase.functions.invoke("webauthn-auth-options", {
           body: { email },
         });
@@ -238,7 +245,7 @@ export function useWebAuthn() {
           throw new Error("Autenticação falhou");
         }
 
-        toast.success("Login realizado com sucesso!");
+        toast.success("Passkey verificada com sucesso!");
         return verifyResponse.data;
       } catch (error) {
         if (import.meta.env.DEV) console.error("Error authenticating with passkey:", error);
