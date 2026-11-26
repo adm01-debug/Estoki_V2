@@ -12,9 +12,14 @@ export const mapSeveridade = (severidade: string): "info" | "warning" | "critica
   }
 };
 
+// Falta de estoque não é sucesso: sem esta lista o toast saía verde ("info").
+const TIPOS_CRITICOS = ["estoque_minimo", "sem_estoque", "ruptura", "divergencia"];
+const TIPOS_AVISO = ["estoque_baixo", "ponto_pedido", "chegou", "vencimento"];
+
 export const getTipoSeveridade = (tipo: string): "info" | "warning" | "critical" => {
-  if (tipo.includes("divergencia")) return "critical";
-  if (tipo.includes("chegou")) return "warning";
+  const normalizado = (tipo || "").toLowerCase();
+  if (TIPOS_CRITICOS.some((t) => normalizado.includes(t))) return "critical";
+  if (TIPOS_AVISO.some((t) => normalizado.includes(t))) return "warning";
   return "info";
 };
 

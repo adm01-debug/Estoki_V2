@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { exigirSessaoOuCron } from "../_shared/auth.ts";
+import { montarAlertas } from "../_shared/alertas.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: getCorsHeaders(req) });
@@ -27,16 +28,20 @@ serve(async (req) => {
       estoque_atual: (p.estoque || []).reduce((acc, e) => acc + (e.quantidade || 0), 0),
     }));
 
-    const lowStock = withStock.filter(
-      (p) => p.estoque_minimo != null && p.estoque_minimo > 0 && p.estoque_atual < p.estoque_minimo
-    );
+    // Fonte única das regras: quem decide o que alertar e com que severidade é a
+    // configuração editável em Configurações > Alertas, não o código da função.
+    const { data: config } = await supabase
+      .from("alertas_config")
+      .select("tipo, ativo, threshold_valor, threshold_dias, severidade");
+
+    const alerts = montarAlertas(withStock, config);
     const outOfStock = withStock.filter((p) => p.estoque_atual === 0);
 
     // Não duplicar: último alerta ativo por produto+tipo na UI canônica (alertas_historico)
     const { data: pending } = await supabase
       .from("alertas_historico")
       .select("produto_id, tipo, created_at")
-      .in("tipo", ["estoque_minimo", "ponto_pedido"])
+      .in("tipo", ["estoque_minimo", "ponto_pedido", "estoque_maximo"])
       .eq("status", "ativo")
       .order("created_at", { ascending: false });
     const lastOpen = new Map();
@@ -44,51 +49,6 @@ serve(async (req) => {
       const key = `${a.produto_id}|${a.tipo}`;
       if (!lastOpen.has(key)) lastOpen.set(key, a.created_at);
     }
-
-    const alerts = [
-      // estoque_minimo: abaixo do mínimo (abastecimento urgente)
-      ...(lowStock || []).map((p) => ({
-        produto_id: p.id,
-        tipo: "estoque_minimo",
-        severidade: (p.estoque_atual < (p.ponto_pedido || p.estoque_minimo)) ? "critico" : "aviso",
-        titulo: `Estoque abaixo do mínimo: ${p.nome}`,
-        mensagem: `${p.sku}: ${p.estoque_atual} un. (mínimo ${p.estoque_minimo})`,
-        status: "ativo",
-        dados_contexto: {
-          sku: p.sku,
-          estoque_atual: p.estoque_atual,
-          estoque_minimo: p.estoque_minimo,
-          ponto_pedido: p.ponto_pedido,
-          fonte: "stock-alert",
-        },
-      })),
-      // ponto_pedido: acima do mínimo mas no ponto de reposição
-      ...(withStock || [])
-        .filter(
-          (p) =>
-            p.estoque_minimo != null &&
-            p.estoque_minimo > 0 &&
-            p.ponto_pedido != null &&
-            p.ponto_pedido > 0 &&
-            p.estoque_atual >= p.estoque_minimo &&
-            p.estoque_atual <= p.ponto_pedido
-        )
-        .map((p) => ({
-          produto_id: p.id,
-          tipo: "ponto_pedido",
-          severidade: "aviso",
-          titulo: `Ponto de pedido atingido: ${p.nome}`,
-          mensagem: `${p.sku}: ${p.estoque_atual} un. (ponto de pedido ${p.ponto_pedido})`,
-          status: "ativo",
-          dados_contexto: {
-            sku: p.sku,
-            estoque_atual: p.estoque_atual,
-            estoque_minimo: p.estoque_minimo,
-            ponto_pedido: p.ponto_pedido,
-            fonte: "stock-alert",
-          },
-        })),
-    ];
 
     // Apenas alertas sem duplicata ativa do mesmo produto+tipo
     const toInsert = alerts.filter((a) => lastOpen.get(`${a.produto_id}|${a.tipo}`) == null);
@@ -102,9 +62,10 @@ serve(async (req) => {
       JSON.stringify({
         success: true,
         alerts_created: toInsert.length,
-        low_stock: lowStock.length,
+        low_stock: alerts.filter((a) => a.tipo === "estoque_minimo").length,
         out_of_stock: outOfStock.length,
         pending_dup: alerts.length - toInsert.length,
+        regras_desativadas: (config || []).filter((c) => c.ativo === false).map((c) => c.tipo),
       }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
