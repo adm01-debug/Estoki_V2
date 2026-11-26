@@ -23,6 +23,7 @@ on:
           - anon
           - db
           - auth
+          - edges
           - migracao
       migration:
         description: Caminho da migration para o dry-run (ex. supabase/migrations/2026...sql)
@@ -130,3 +131,28 @@ jobs:
       - name: Sem token de Management API
         if: env.SUPABASE_ACCESS_TOKEN == ''
         run: 'echo "::warning::sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN: nada foi aplicado."'
+
+  edges:
+    name: Env das edge functions
+    if: github.event.inputs.alvo == 'todos' || github.event.inputs.alvo == 'edges'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_MANAGEMENT_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
+      SB_REF: ${{ vars.VITE_SUPABASE_PROJECT_ID || 'ookjbflsnoefnsixrspc' }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Nomes das variaveis de ambiente das edges (nunca valores)
+        if: env.SUPABASE_ACCESS_TOKEN != ''
+        run: bash scripts/diag/probe-edge-env.sh
+      - name: Sem token de Management API
+        if: env.SUPABASE_ACCESS_TOKEN == ''
+        run: 'echo "::warning::sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN: os nomes nao foram lidos."'
+      - name: CORS ao vivo (origem permitida x origem de terceiro)
+        if: env.SUPABASE_ACCESS_TOKEN != ''
+        env:
+          ALVO_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          ORIGENS_PROVA: ${{ vars.APP_ORIGINS_PROVA || 'https://estoki.app,https://estoki-v2.vercel.app' }}
+        run: bash scripts/edge/provar-cors.sh

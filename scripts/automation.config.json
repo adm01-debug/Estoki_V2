@@ -714,6 +714,30 @@
       "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
     },
     {
+      "id": "legacy-6056e032d0ed349e",
+      "kind": "legacy",
+      "files": ["scripts/diag/probe-edge-env.sh"],
+      "manual": ["bash", "scripts/diag/probe-edge-env.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao: lista so os NOMES das variaveis de ambiente das edge functions (nunca valores) e falha quando WEBAUTHN_RP_ID/WEBAUTHN_ORIGINS faltam. Chamado por .github/workflows/diag-producao.yml (alvo=edges). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-00c707c55af1e13f",
+      "kind": "legacy",
+      "files": ["scripts/edge/provar-cors.sh"],
+      "manual": ["bash", "scripts/edge/provar-cors.sh"],
+      "triggers": ["manual"],
+      "reason": "Probe manual de producao: confere ao vivo que cada origem permitida e refletida no access-control-allow-origin e que origem de terceiro nao e. Chamado por .github/workflows/diag-producao.yml (alvo=edges). O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-d02174d23c7ef5d8",
+      "kind": "legacy",
+      "files": ["scripts/edge/definir-env.sh"],
+      "manual": ["bash", "scripts/edge/definir-env.sh"],
+      "triggers": ["manual"],
+      "reason": "Escritor manual de producao: define WEBAUTHN_ORIGINS/APP_ORIGINS e opcionalmente WEBAUTHN_RP_ID nas edge functions, com confirmacao escrita e validacao de esquema/porta/caminho. Chamado por .github/workflows/edges-env.yml. O dispatcher nao executa esta operacao."
+    },
+    {
       "id": "legacy-6bfa0dfa908f3e17",
       "kind": "legacy",
       "files": ["scripts/diag/dryrun-migration.sh"],
