@@ -4,13 +4,15 @@ Ler antes de criar, alterar ou debugar qualquer função em `supabase/functions/
 
 ## Panorama
 
-- `supabase/functions/` tem **249 diretórios**: **247 funções** (as que têm `index.ts`) + `_shared/` +
+- `supabase/functions/` tem **248 diretórios**: **246 funções** (as que têm `index.ts`) + `_shared/` +
   `tests/`, que só guarda três `*_test.ts` e não é função.
 - Maiores grupos por prefixo: `report-*` 14 · `auth-*` 12 · `integration-*` 11 · `inventory-*` 9 ·
   `carrier-*` 9 · `generate-*` 8 · `ai-*` 8 · `picking-*` 7 · `nfe-*` 7 · `create-*` 7 · `alert-*` 7 ·
   `wave-*`/`shipping-*`/`receiving-*` 6 cada. **Não existe prefixo `wms-*`.**
 - Há **pares redundantes PT/EN** que fazem a mesma coisa: `demand-forecast`/`previsao-demanda`,
-  `expiration-check`/`check-expiration`, `reorder-check`/`check-reorder`, `rate-limit`/`rate-limiter`.
+  `expiration-check`/`check-expiration` (`check-expiration` removida em 26/11/2026 — F436 em
+  `docs/qa/03-ACHADOS.md`; a oficial e `alert-expiration`), `reorder-check`/`check-reorder`,
+  `rate-limit`/`rate-limiter`.
   Antes de criar função nova, procure o par que já existe.
 - **Função ≠ função em uso.** `ESTADO_ATUAL.md` mediu, em 16/08/2026, 18 funções com chamador conhecido
   (7,3%) e 52 quebradas (21%); `docs/estado/EVIDENCIAS.md` §3.4 (`:127`) lista 51 delas. Isso é medição

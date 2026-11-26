@@ -1,6 +1,6 @@
 {
-  "total_referencias": 55,
-  "total_tabelas": 42,
+  "total_referencias": 54,
+  "total_tabelas": 41,
   "generatedAt": "2026-11-26T20:01:42.995Z",
   "tabelas": {
     "activity_logs": ["cron-weekly"],
@@ -20,7 +20,6 @@
     "invoices": ["invoice-generate"],
     "location_stock": ["generate-pick-list", "receiving-putaway", "transfer-stock"],
     "lot_tracking": ["reports"],
-    "lots": ["check-expiration"],
     "merged_documents": ["merge-pdfs"],
     "nfe": ["nfe-process"],
     "notifications": ["notifications", "stock-movement"],
