@@ -279,6 +279,19 @@ const PENDENCIAS = [
     dependencias: [],
   },
   {
+    // 20261126190000 reagenda os 4 crons de edge com timeout de 120s. A prova exige os 4 agendados,
+    // ativos e com o timeout explicito: sem ele o pg_net volta aos 5s padrao, que estouraram em 4
+    // das 12 execucoes do cron do catalogo (diag alvo=db, run 45756104163).
+    arquivo: "20261126190000_PERF_cron_timeout_pgnet.sql",
+    nome: "cron_timeout_pgnet",
+    aplicado:
+      "(select count(*) from cron.job where jobname in ('produtos-sync-catalogo','reorder-check-daily','stock-alert-daily','alert-expiration-daily')) = 4 " +
+      "and not exists (select 1 from cron.job where jobname in ('produtos-sync-catalogo','reorder-check-daily','stock-alert-daily','alert-expiration-daily') and (not active or command not like '%timeout_milliseconds := 120000%'))",
+    dependencias: [
+      ["vault.secrets.cron_secret", "exists (select 1 from vault.secrets where name = 'cron_secret')"],
+    ],
+  },
+  {
     arquivo: "20261127090000_SEC_tenant_isolation_endurecer.sql",
     nome: "tenant_not_null",
     aplicado: TENANT_NOT_NULL,
