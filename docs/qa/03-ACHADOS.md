@@ -4507,3 +4507,27 @@ O typecheck também não alcança: `package.json` -> `"typecheck": "tsc --noEmit
 - **Impacto no negócio:** Quando um usuário desbloqueia várias conquistas de uma vez (situação comum no primeiro uso), a chamada demora proporcionalmente ao número delas e pode travar a interface. Impacto pequeno hoje: o service não tem consumidor.
 - **Correção sugerida:** Acumular as conquistas num array e fazer um único `insert(novas)` depois do laço, como inventoryService.ts:123-129 já faz; e filtrar a consulta da linha 53 com `.eq("ativo", true).limit(500)`.
 - **Armadilha:** Não transforme o laço em `Promise.all` de inserts individuais: continuaria sendo N requisições. O ganho está no insert em array.
+
+## F432 — 38 edge functions citam 42 tabelas que nao existem: codigo morto que nunca foi implantado
+
+- **Camada:** edges-schema · **Severidade:** Media · **Confianca:** confirmado · **Verificacao:** EXECUTADO
+- **Evidencia:** Lista de tabelas reais extraida de `src/integrations/supabase/types.ts` (95 tabelas geradas do banco) contra todo `.from("<tabela>")` de `supabase/functions/**`: **56 referencias a 42 tabelas que nao existem**, em **38 funcoes (4.048 linhas)**. Lista congelada em `.edges-tabelas-baseline.json` e guardada pelo teste `src/lib/__tests__/edges-tabelas-existentes.test.ts` (prova por mutacao: sonda `_zz-probe` citando `tabela_que_nao_existe` faz 2 testes falharem, `expected 57 to be 56`).
+- **Nao sao endpoints publicados** (checado ao vivo em 26/11/2026, HTTP status com a chave publica do site):
+  - `stock-alert` (edge real, implantada) -> **401 {"error":"sessao obrigatoria"}**
+  - `alert-stock-low`, `picking-assign`, `transfer-stock`, `stock-movement`, `cleanup-sessions`, `notifications`, `reports`, `generate-pick-list`, `alert-pending-orders` -> **404 {"code":"NOT_FOUND"}**
+  - Cruzamento com `scripts/edge-functions/decisao-edges.json` (as 94 funcoes publicadas do projeto): **0 das 38 aparecem na lista de publicadas**.
+- **Locais:** `supabase/functions/` (38 pastas), `.edges-tabelas-baseline.json`, `src/lib/__tests__/edges-tabelas-existentes.test.ts`
+- **Causa raiz:** Geracao abandonada contra um schema em ingles que nunca existiu neste projeto (`pick_lists`, `stock_balances`, `sales_orders`, `alerts`, `nfe`, `location_stock`...). O produto usa as tabelas em portugues (`tarefas`, `romaneios`, `estoque_posicao`, `alertas_historico`, `produtos`). As duas familias coexistem no repo e ninguem percebeu porque nada as chama: `chamada_pelo_app=false` e 0 ocorrencia em `src/`.
+- **Impacto no negocio:** Nenhum hoje — nao ha runtime. O risco concreto e de operacao: se alguem implantar por engano (o workflow de deploy recebe uma lista de slugs) a funcao sobe e falha em 100% das chamadas; e se alguem ligar uma tela nela, entrega uma fachada que nao grava. Foi o que quase aconteceu com `alert-stock-low`, versao morta da geracao de alertas que grava em `alerts` (inexistente) enquanto a viva e `stock-alert` (cron diario 06:45, `x-cron-secret`, grava `alertas_historico`).
+- **Correcao sugerida:** Destino por funcao, em lote unico, com o codigo preservado em `supabase/arquivo/edges-nao-implantadas/` (byte a byte) em vez de exclusao: 4.048 linhas nao implantadas saem da superficie de deploy e o baseline passa a zero, ficando sensivel a qualquer referencia quebrada nova. Nenhuma das 38 tem chamador em `src/`, `migrations` ou outra edge.
+- **Armadilha:** `.from("x")` com tabela existente nao prova que a coluna existe. Ao reaproveitar qualquer trecho dessas 38, valide as colunas em `types.ts`, nao no nome do campo no codigo antigo.
+
+## F433 — Quatro tabelas orfas reais: nenhuma leitura, nenhuma escrita, nenhuma funcao do banco
+
+- **Camada:** banco-orfas · **Severidade:** Baixa · **Confianca:** confirmado · **Verificacao:** EXECUTADO
+- **Evidencia:** Inventario do banco remedido em 2026-11-26T19:47:14Z (`inventario/estado/banco.json`, `ledger_versao_max=20261130130000`): `tabelas_orfas.lista = ["ip_whitelist","produtividade_operador","regras_ponto_pedido","stock_alerts"]`, criterio "0 linhas + nao citada em funcao/view do banco + nenhum .from() em src/ ou supabase/functions/". `ip_whitelist` tem 2 policies e 0 linhas: o modelo de whitelist de IP existe, mas nada aplica o filtro — nao ha tela honesta possivel sem um ponto de enforcement. `produtividade_operador` e derivavel: `src/pages/Produtividade.tsx` calcula a partir de `eventos_triagem` (l.94,177), `tarefas` (l.102,185) e `gamificacao_usuarios` (l.110). `regras_ponto_pedido` duplica `produtos.ponto_pedido`/`estoque_minimo`. `stock_alerts` nao e escrito por ninguem.
+- **Locais:** `inventario/estado/banco.json`, `src/pages/Produtividade.tsx:94`, `src/integrations/supabase/types.ts`
+- **Causa raiz:** Cada uma nasceu de um plano diferente (seguranca por IP, tabela materializada de produtividade, regras de reposicao por produto, espelho de alertas em ingles) e o produto seguiu por outro caminho.
+- **Impacto no negocio:** Nenhum hoje: nao tem dado nem consumidor. O risco e alguem "implementar a tela" e entregar uma fachada que nao muda comportamento.
+- **Correcao sugerida:** Aposentar as quatro com prova de 0 linhas e 0 uso (DDL destrutiva, decisao do dono), ou implementar `ip_whitelist` de verdade com o filtro em uma camada unica antes de expor tela.
+- **Armadilha:** Nao criar tela para `ip_whitelist` sem o enforcement: a tela sugeriria bloqueio que nao existe, o mesmo erro que o "Plano de Retrabalho Configurado" sem gravacao ja causou antes (F159).
