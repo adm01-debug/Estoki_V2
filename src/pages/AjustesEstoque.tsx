@@ -86,8 +86,30 @@ export default function AjustesEstoquePage() {
     observacoes: "",
   });
 
+  // O estoque real vive em lotes.quantidade_atual (produtos nao tem coluna de saldo) e o
+  // trigger aplicar_ajuste_estoque so escreve quando o ajuste aponta para um lote. Sem esta
+  // lista o ajuste era aprovado com lote_id nulo e o estoque nunca mudava.
+  const { data: lotesDoProduto = [] } = useQuery({
+    queryKey: ["lotes-select", newAdj.produto_id],
+    enabled: Boolean(newAdj.produto_id),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("lotes")
+        .select("id, numero_lote, quantidade_atual, data_validade")
+        .eq("produto_id", newAdj.produto_id)
+        .order("data_validade", { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return data as {
+        id: string;
+        numero_lote: string;
+        quantidade_atual: number;
+        data_validade: string | null;
+      }[];
+    },
+  });
+
   const handleCreate = async () => {
-    if (!newAdj.produto_id) {
+    if (!newAdj.produto_id || !newAdj.lote_id) {
       return;
     }
     if (isNaN(newAdj.quantidade_anterior) || isNaN(newAdj.quantidade_nova)) {
@@ -192,7 +214,14 @@ export default function AjustesEstoquePage() {
                         <Label htmlFor="produto">Produto *</Label>
                         <Select
                           value={newAdj.produto_id}
-                          onValueChange={(v) => setNewAdj({ ...newAdj, produto_id: v })}
+                          onValueChange={(v) =>
+                            setNewAdj({
+                              ...newAdj,
+                              produto_id: v,
+                              lote_id: null,
+                              quantidade_anterior: 0,
+                            })
+                          }
                         >
                           <SelectTrigger id="produto">
                             <SelectValue placeholder="Selecione o produto..." />
@@ -205,6 +234,47 @@ export default function AjustesEstoquePage() {
                             ))}
                           </SelectContent>
                         </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="lote">Lote *</Label>
+                        <Select
+                          value={newAdj.lote_id ?? ""}
+                          disabled={!newAdj.produto_id || lotesDoProduto.length === 0}
+                          onValueChange={(v) => {
+                            const lote = lotesDoProduto.find((l) => l.id === v);
+                            setNewAdj({
+                              ...newAdj,
+                              lote_id: v,
+                              quantidade_anterior: lote?.quantidade_atual ?? 0,
+                            });
+                          }}
+                        >
+                          <SelectTrigger id="lote">
+                            <SelectValue
+                              placeholder={
+                                !newAdj.produto_id
+                                  ? "Escolha o produto primeiro"
+                                  : lotesDoProduto.length === 0
+                                    ? "Produto sem lote em estoque"
+                                    : "Selecione o lote..."
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {lotesDoProduto.map((l) => (
+                              <SelectItem key={l.id} value={l.id}>
+                                {l.numero_lote}
+                                <span className="text-muted-foreground">
+                                  {" "}
+                                  · saldo {l.quantidade_atual}
+                                </span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          O ajuste aprovado altera o saldo deste lote.
+                        </p>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
@@ -270,7 +340,9 @@ export default function AjustesEstoquePage() {
                       </Button>
                       <Button
                         type="submit"
-                        disabled={createAdjustment.isPending || !newAdj.produto_id}
+                        disabled={
+                          createAdjustment.isPending || !newAdj.produto_id || !newAdj.lote_id
+                        }
                       >
                         Enviar para Aprovação
                       </Button>
