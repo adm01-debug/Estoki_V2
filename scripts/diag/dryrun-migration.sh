@@ -39,7 +39,7 @@ REGEX=$(printf '%s' "$NAMES" | tr ',' '|')
 
 FAIL=0
 run() {
-  local label="$1" sql="$2" body code
+  local label="$1" sql="$2" body code falha=0
   echo "===== $label ====="
   body=$(jq -nc --arg q "$sql" '{query:$q}' | curl -sS -w '\n%{http_code}' -X POST "https://api.supabase.com/v1/projects/$REF/database/query" \
     -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary @-)
@@ -48,10 +48,12 @@ run() {
   printf '%s\n' "$body" | head -c 3000
   echo
   echo "-- http $code"
-  # A API devolve {"message":"...","code":"..."} quando o SQL falha e corpo vazio em erro de rede.
-  # Antes este script imprimia a resposta e seguia com sucesso mesmo quando ela vinha vazia ou com
-  # erro, entao um dry-run quebrado passava por verde.
-  if [ "$code" != "200" ] || [ -z "$body" ] || printf '%s' "$body" | grep -q '"message"'; then
+  # A Management API responde 201 em sucesso (nao 200) e devolve {"message":"...","code":"..."}
+  # quando o SQL falha; erro de rede volta corpo vazio. Antes este script imprimia a resposta e
+  # seguia com sucesso mesmo quando ela vinha vazia ou com erro, entao um dry-run quebrado
+  # passava por verde.
+  case "$code" in 200|201) ;; *) falha=1 ;; esac
+  if [ "$falha" = "1" ] || [ -z "$body" ] || printf '%s' "$body" | grep -q '"message"'; then
     echo "FALHA: o dry-run de '$label' nao concluiu (http $code)"
     FAIL=1
   fi
