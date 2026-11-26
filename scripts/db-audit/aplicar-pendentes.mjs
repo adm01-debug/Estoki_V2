@@ -479,6 +479,20 @@ const PENDENCIAS = [
     aplicado: FKS_COM_INDICE,
     dependencias: [],
   },
+  {
+    // 20261130100000 libera SELECT em produtos_sync_estado para a tela de integracoes: a tabela
+    // nasceu com RLS e nenhuma policy, entao a edge escrevia o cursor e ninguem lia.
+    arquivo: "20261130100000_UI_produtos_sync_estado_leitura.sql",
+    nome: "produtos_sync_estado_leitura",
+    aplicado:
+      "has_table_privilege('authenticated', 'public.produtos_sync_estado', 'SELECT') " +
+      "and not has_table_privilege('anon', 'public.produtos_sync_estado', 'SELECT') " +
+      "and exists (select 1 from pg_policies where schemaname = 'public' " +
+      "and tablename = 'produtos_sync_estado' and cmd = 'SELECT')",
+    dependencias: [
+      ["public.produtos_sync_estado", "to_regclass('public.produtos_sync_estado') is not null"],
+    ],
+  },
 ];
 
 function sqlEstado() {
