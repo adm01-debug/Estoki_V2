@@ -9,9 +9,8 @@ import { describe, expect, it } from "vitest";
 // O baseline e a lista medida do que ja estava quebrado quando a guarda nasceu. Ela
 // impede que novas referencias quebradas entrem e avisa quando alguem conserta uma.
 //
-// Atualizar depois de corrigir/remover uma funcao:
-//   npx vitest run src/lib/__tests__/edges-tabelas-existentes.test.ts -u
-// e revisar o diff de .edges-tabelas-baseline.json.
+// Atualizar depois de corrigir/remover uma funcao: editar .edges-tabelas-baseline.json a mao
+// (tirar a funcao da tabela e ajustar total_referencias) — nao e snapshot, `-u` nao altera nada.
 
 const RAIZ = process.cwd();
 const TYPES = resolve(RAIZ, "src/integrations/supabase/types.ts");
@@ -78,7 +77,7 @@ describe("edge functions so consultam tabela que existe", () => {
     expect(
       resolvidas,
       `Baseline desatualizado: ${resolvidas.join(", ")} nao sao mais citadas. ` +
-        "Rode com -u e commite o baseline menor."
+        "Edite .edges-tabelas-baseline.json a mao (nao e snapshot) e commite o baseline menor."
     ).toEqual([]);
 
     for (const tabela of Object.keys(baseline.tabelas)) {
