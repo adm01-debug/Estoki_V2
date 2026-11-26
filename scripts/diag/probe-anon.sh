@@ -25,3 +25,24 @@ code=$(curl -s -o /tmp/s.txt -w '%{http_code}' "$SB_URL/rest/v1/system_settings?
   -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON")
 echo "HTTP=$code"
 echo "BODY=$(head -c 300 /tmp/s.txt)"
+
+echo "===== leitura anon das tabelas de negocio (policy tenant_isolation) ====="
+for t in clientes audit_log comprovantes_entrega estoque_posicao tarefas notificacoes custodia_transferencias ajustes_estoque suppliers purchase_orders produtos gamificacao_loja integration_logs reorder_suggestions shipments stock_alerts entity_versions user_roles tenant_members tenants passkey_credentials webauthn_challenges system_settings; do
+  curl -s -D /tmp/h.txt -o /tmp/r.txt "$SB_URL/rest/v1/$t?select=*&limit=1" \
+    -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON" -H "Prefer: count=exact"
+  code=$(head -n 1 /tmp/h.txt | awk '{print $2}')
+  range=$(grep -i '^content-range:' /tmp/h.txt | tr -d '\r' | awk '{print $2}')
+  echo "$t HTTP=$code linhas=$range corpo=$(head -c 120 /tmp/r.txt)"
+done
+
+echo "===== escrita anon: deve ser negada em toda tabela ====="
+for t in tarefas entity_versions user_roles produtos; do
+  code_post=$(curl -s -o /tmp/w.txt -w '%{http_code}' -X POST "$SB_URL/rest/v1/$t" \
+    -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON" -H "Content-Type: application/json" \
+    -H "Prefer: return=minimal" -d '{}')
+  code_patch=$(curl -s -o /tmp/w2.txt -w '%{http_code}' -X PATCH "$SB_URL/rest/v1/$t?id=eq.00000000-0000-0000-0000-000000000001" \
+    -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON" -H "Content-Type: application/json" -d '{}')
+  code_del=$(curl -s -o /tmp/w3.txt -w '%{http_code}' -X DELETE "$SB_URL/rest/v1/$t?id=eq.00000000-0000-0000-0000-000000000001" \
+    -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON")
+  echo "$t INSERT=$code_post PATCH=$code_patch DELETE=$code_del"
+done
