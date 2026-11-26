@@ -101,6 +101,51 @@ const INTERNAS_SERVICE_ONLY =
   "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
   "or has_function_privilege('authenticated', p.oid, 'EXECUTE')))";
 
+// As 6 migrations de 2026-11-26 ficaram fora deste array e por isso nunca foram aplicadas pela
+// automacao. As provas abaixo seguem a mesma regra: o efeito observavel no banco, nunca o ledger.
+
+// 20261126090000 e 20261126120000 escrevem os MESMOS 3 jobs de cron; a segunda troca o header
+// `Authorization: Bearer` por `x-cron-secret`. Provar pelo efeito final evita reaplicar a primeira
+// depois da segunda e regredir o header.
+const CRON_JOBS_COM_HEADER =
+  "not exists (select 1 from (values ('reorder-check-daily'),('stock-alert-daily'),('alert-expiration-daily')) " +
+  "as j(nome) where not exists (select 1 from cron.job c " +
+  "where c.jobname = j.nome and c.command like '%x-cron-secret%' and c.command like '%cron_secret%'))";
+
+// 20261126130000 cria a tabela de cursor e o cron do catalogo mestre.
+const CATALOGO_SYNC_LIGADO =
+  "to_regclass('public.produtos_sync_estado') is not null and exists " +
+  "(select 1 from cron.job where jobname = 'produtos-sync-catalogo')";
+
+// 20261126140000 tira as 3 RPCs de lockout do alcance de anon/authenticated e mantem service_role.
+const LOCKOUT_RPC_SO_SERVICE_ROLE =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and p.proname in ('check_login_lockout', 'record_failed_login', 'reset_login_attempts') " +
+  "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  "or has_function_privilege('authenticated', p.oid, 'EXECUTE'))) " +
+  "and exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and p.proname in ('check_login_lockout', 'record_failed_login', 'reset_login_attempts') " +
+  "and has_function_privilege('service_role', p.oid, 'EXECUTE'))";
+
+// 20261126150000 cria os 7 indices de FK. Prova identica a auto-prova da migration.
+const FKS_COM_INDICE =
+  "not exists (select 1 from pg_constraint c " +
+  "where c.contype = 'f' and c.connamespace = 'public'::regnamespace " +
+  "and not exists (select 1 from pg_index i where i.indrelid = c.conrelid " +
+  "and i.indisvalid and i.indpred is null " +
+  "and (i.indkey::smallint[])[0:array_length(c.conkey, 1) - 1] = c.conkey))";
+
+// 20261126160000 derruba 6 indices duplicados. Prova negativa: nenhum deles pode voltar a existir.
+const INDICES_DUPLICADOS_FORA =
+  "to_regclass('public.idx_estoque_posicao') is null " +
+  "and to_regclass('public.idx_estoque_posicao_posicao_id') is null " +
+  "and to_regclass('public.idx_estoque_posicao_produto_id') is null " +
+  "and to_regclass('public.idx_estoque_posicao_lote_id') is null " +
+  "and to_regclass('public.idx_login_attempts_email') is null " +
+  "and to_regclass('public.idx_posicoes_estoque_codigo') is null";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -140,6 +185,50 @@ const PENDENCIAS = [
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
   {
+    arquivo: "20261126090000_SEC_edges-cron-com-credencial.sql",
+    nome: "edges_cron_credencial",
+    // Substituida por 20261126120000 (mesmos jobs, header melhor): a prova e o estado final.
+    aplicado: CRON_JOBS_COM_HEADER,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261126120000_SEC_cron-header-x-cron-secret.sql",
+    nome: "cron_header_x_cron_secret",
+    aplicado: CRON_JOBS_COM_HEADER,
+    // vault.secrets.cron_secret e gravado por .github/workflows/edges-guarda-cron.yml.
+    dependencias: [
+      ["vault.secrets.cron_secret", "exists (select 1 from vault.secrets where name = 'cron_secret')"],
+    ],
+  },
+  {
+    arquivo: "20261126130000_CAT_produtos-sync.sql",
+    nome: "produtos_sync_catalogo",
+    aplicado: CATALOGO_SYNC_LIGADO,
+    dependencias: [
+      ["vault.secrets.cron_secret", "exists (select 1 from vault.secrets where name = 'cron_secret')"],
+    ],
+  },
+  {
+    arquivo: "20261126140000_SEC_login_rpc_service_role.sql",
+    nome: "login_rpc_service_role",
+    aplicado: LOCKOUT_RPC_SO_SERVICE_ROLE,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261126150000_PERF_indices_fk.sql",
+    nome: "indices_fk",
+    aplicado: FKS_COM_INDICE,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261126160000_PERF_dedup_indices.sql",
+    nome: "dedup_indices",
+    aplicado: INDICES_DUPLICADOS_FORA,
+    dependencias: [],
+  },
+  {
+    // 20261126170000 e a "ultima palavra": revoga os 6 nomes internos de uma vez. Vem depois das
+    // outras porque 20261124120000 concede por catalogo e so ela fecha o conjunto todo.
     arquivo: "20261126170000_SEC_ultima_palavra_privilegios.sql",
     nome: "privilegios_finais",
     aplicado: `${INTERNAS_SERVICE_ONLY} and ${DESCONTAR_PONTOS_GUARDADA}`,
