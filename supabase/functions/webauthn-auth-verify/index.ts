@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+import { resolveRp, verifyAuthenticationCredential } from "../_shared/webauthn.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,17 +26,21 @@ serve(async (req) => {
 
     const __raw = await req.json();
     const __v = validateInput(GenericPayloadSchema, __raw);
-    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    if (!__v.success) {
+      return new Response(JSON.stringify(__v), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
     const { credential, challengeId, userId } = __raw;
 
-    if (!credential?.id || !challengeId || !userId) {
+    if (!credential?.id || !credential?.response?.signature || !challengeId || !userId) {
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // Verificar e consumir o challenge
     const { data: challengeData, error: challengeError } = await supabase
       .from("webauthn_challenges")
       .select("*")
@@ -60,7 +65,6 @@ serve(async (req) => {
       });
     }
 
-    // Verificar que a credencial existe e pertence ao usuário
     const { data: storedCredential, error: credError } = await supabase
       .from("passkey_credentials")
       .select("*")
@@ -75,19 +79,47 @@ serve(async (req) => {
       });
     }
 
-    // VERIFICAÇÃO CRIPTOGRÁFICA — exigida pela especificação WebAuthn W3C
-    // Sem ela qualquer pessoa com credential_id+challengeId pode obter token.
-    // Implementação completa requer @simplewebauthn/server (Deno-compatible).
-    // Por ora: bloquear até a verificação estar implementada.
-    // TODO: implementar verify com @noble/curves ou importar @simplewebauthn/server
+    // Verificação criptográfica exigida pela especificação WebAuthn: assinatura sobre
+    // authenticatorData || SHA256(clientDataJSON) com a chave pública registrada.
+    const { rpId, expectedOrigin } = resolveRp(req);
+
+    let verified;
+    try {
+      verified = await verifyAuthenticationCredential({
+        credential,
+        expectedChallenge: challengeData.challenge,
+        expectedOrigin,
+        rpId,
+        storedCredentialId: storedCredential.credential_id,
+        storedPublicKey: storedCredential.public_key,
+        storedCounter: storedCredential.counter ?? 0,
+      });
+    } catch (verifyError: unknown) {
+      const message = verifyError instanceof Error ? verifyError.message : "Verificacao falhou";
+      return new Response(JSON.stringify({ error: `Autenticacao rejeitada: ${message}` }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
+    const { error: updateError } = await supabase
+      .from("passkey_credentials")
+      .update({ counter: verified.newCounter, last_used_at: new Date().toISOString() })
+      .eq("id", storedCredential.id);
+
+    if (updateError) {
+      console.error("Error updating credential counter:", updateError);
+      throw updateError;
+    }
+
     return new Response(
       JSON.stringify({
-        error: "Passkey authentication temporarily disabled pending cryptographic verification implementation.",
+        success: true,
+        verified: true,
+        userVerified: verified.userVerified,
+        newCounter: verified.newCounter,
       }),
-      {
-        status: 503,
-        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
-      }
+      { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";

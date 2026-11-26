@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+import { resolveRp, verifyRegistrationCredential } from "../_shared/webauthn.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -14,7 +15,6 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Get user from auth header
     const authHeader = req.headers.get("authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Authorization header required" }), {
@@ -38,17 +38,21 @@ serve(async (req) => {
 
     const __raw = await req.json();
     const __v = validateInput(GenericPayloadSchema, __raw);
-    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
+    if (!__v.success) {
+      return new Response(JSON.stringify(__v), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
     const { credential, deviceName } = __raw;
 
-    if (!credential || !credential.id || !credential.response) {
+    if (!credential?.id || !credential?.response?.clientDataJSON || !credential?.response?.attestationObject) {
       return new Response(JSON.stringify({ error: "Invalid credential data" }), {
         status: 400,
         headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
-    // Get the challenge from database
     const { data: challengeData, error: challengeError } = await supabase
       .from("webauthn_challenges")
       .select("*")
@@ -65,10 +69,8 @@ serve(async (req) => {
       });
     }
 
-    // Delete used challenge
     await supabase.from("webauthn_challenges").delete().eq("id", challengeData.id);
 
-    // Verify challenge expiration
     if (new Date(challengeData.expires_at) < new Date()) {
       return new Response(JSON.stringify({ error: "Challenge expired" }), {
         status: 400,
@@ -76,18 +78,33 @@ serve(async (req) => {
       });
     }
 
-    // In a production environment, you would verify the attestation here
-    // For now, we'll store the credential directly
-    // The client-side already verified the credential with the browser
+    // Verifica attestationObject + clientDataJSON contra o challenge salvo e extrai a chave
+    // publica COSE. Sem isso qualquer string servia como public_key (comportamento antigo).
+    const { rpId, expectedOrigin } = resolveRp(req);
 
-    // Store the credential
+    let verified;
+    try {
+      verified = await verifyRegistrationCredential({
+        credential,
+        expectedChallenge: challengeData.challenge,
+        expectedOrigin,
+        rpId,
+      });
+    } catch (verifyError: unknown) {
+      const message = verifyError instanceof Error ? verifyError.message : "Verificacao falhou";
+      return new Response(JSON.stringify({ error: `Registro rejeitado: ${message}` }), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
+
     const { error: insertError } = await supabase.from("passkey_credentials").insert({
       user_id: user.id,
-      credential_id: credential.id,
-      public_key: credential.response.publicKey || credential.id,
-      counter: 0,
+      credential_id: verified.credentialId,
+      public_key: verified.publicKey,
+      counter: verified.counter,
       device_name: deviceName || "Unknown Device",
-      transports: credential.response.transports || ["internal"],
+      transports: verified.transports,
     });
 
     if (insertError) {
@@ -104,7 +121,11 @@ serve(async (req) => {
     console.log("Passkey registered successfully for user:", user.id);
 
     return new Response(
-      JSON.stringify({ success: true, message: "Passkey registered successfully" }),
+      JSON.stringify({
+        success: true,
+        credentialId: verified.credentialId,
+        message: "Passkey registered successfully",
+      }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
