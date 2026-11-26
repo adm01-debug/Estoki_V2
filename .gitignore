@@ -81,3 +81,6 @@ __pycache__/
 /.tools/repo-automation/
 /.tools/graphify/local-state/
 .env*
+
+# lock do Deno gerado por `deno check`/`deno test` local; os imports sao URL pinada
+deno.lock

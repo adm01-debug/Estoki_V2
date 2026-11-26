@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { usuarioDaSessao } from "../_shared/auth.ts";
 import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
 import { buildAuthenticationOptions, resolveRp } from "../_shared/webauthn.ts";
@@ -10,14 +11,16 @@ serve(async (req) => {
     return new Response(null, { headers: getCorsHeaders(req) });
   }
 
-  // Exigir JWT válido — sem sessão autenticada não há passkey para usar
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Authorization required" }), {
+  const sessaoUserId = await usuarioDaSessao(req);
+  if (!sessaoUserId) {
+    return new Response(JSON.stringify({ error: "sessao obrigatoria" }), {
       status: 401,
       headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
+
+  // Guarda de sessao real: a checagem de prefixo Bearer aceitava a chave publica do site
+  // como se fosse sessao, e qualquer visitante pedia as opcoes de qualquer email.
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -44,7 +47,8 @@ serve(async (req) => {
     const { data: authUser, error: authError } = await supabase
       .from("profiles")
       .select("id")
-      .eq("email", email)
+      .eq("id", sessaoUserId)
+      .ilike("email", email)
       .single();
 
     if (authError || !authUser) {
