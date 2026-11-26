@@ -314,6 +314,15 @@ const PENDENCIAS = [
       ["public.produtos", "to_regclass('public.produtos') is not null"],
     ],
   },
+  {
+    // 20261127200000 criou a FK entity_versions.changed_by sem indice no lado filho: o probe
+    // "FKs de public sem indice de suporte" passou a acusar 1 e a pendencia indices_fk voltou a
+    // ficar pendente depois de aplicar, derrubando o job com exit 1.
+    arquivo: "20261127210000_PERF_entity_versions_indice_fk.sql",
+    nome: "entity_versions_indice_fk",
+    aplicado: "to_regclass('public.idx_entity_versions_changed_by') is not null",
+    dependencias: [["public.entity_versions", "to_regclass('public.entity_versions') is not null"]],
+  },
 ];
 
 function sqlEstado() {
