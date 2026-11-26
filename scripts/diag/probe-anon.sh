@@ -25,3 +25,12 @@ code=$(curl -s -o /tmp/s.txt -w '%{http_code}' "$SB_URL/rest/v1/system_settings?
   -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON")
 echo "HTTP=$code"
 echo "BODY=$(head -c 300 /tmp/s.txt)"
+
+echo "===== leitura anon das tabelas de negocio (policy tenant_isolation) ====="
+for t in clientes audit_log comprovantes_entrega estoque_posicao tarefas notificacoes custodia_transferencias ajustes_estoque suppliers purchase_orders produtos; do
+  curl -s -D /tmp/h.txt -o /tmp/r.txt "$SB_URL/rest/v1/$t?select=*&limit=1" \
+    -H "apikey: $SB_ANON" -H "Authorization: Bearer $SB_ANON" -H "Prefer: count=exact"
+  code=$(head -n 1 /tmp/h.txt | awk '{print $2}')
+  range=$(grep -i '^content-range:' /tmp/h.txt | tr -d '\r' | awk '{print $2}')
+  echo "$t HTTP=$code linhas=$range corpo=$(head -c 120 /tmp/r.txt)"
+done
