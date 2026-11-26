@@ -1,6 +1,6 @@
 {
-  "total": 1559,
-  "generatedAt": "2026-11-26T14:04:28.926Z",
+  "total": 1560,
+  "generatedAt": "2026-11-26T14:52:15.836Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -249,7 +249,7 @@
     "src/hoc/withErrorHandler.tsx": 1,
     "src/hooks/__tests__/useKeyboardShortcuts.test.tsx": 1,
     "src/hooks/useInfiniteScroll.tsx": 1,
-    "src/pages/AjustesEstoque.tsx": 21,
+    "src/pages/AjustesEstoque.tsx": 22,
     "src/pages/AlertasInteligentes.tsx": 4,
     "src/pages/AprovacaoMovimentacoes.tsx": 4,
     "src/pages/Armazenamento.tsx": 5,
