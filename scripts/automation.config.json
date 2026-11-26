@@ -744,6 +744,14 @@
       "manual": ["bash", "scripts/diag/dryrun-migration.sh"],
       "triggers": ["manual"],
       "reason": "Probe manual de producao chamado por .github/workflows/diag-producao.yml. O dispatcher nao executa esta operacao."
+    },
+    {
+      "id": "legacy-medir-decisoes-edges",
+      "kind": "legacy",
+      "files": ["scripts/edge-functions/medir-decisoes.mjs"],
+      "manual": ["node", "scripts/edge-functions/medir-decisoes.mjs"],
+      "triggers": ["manual"],
+      "reason": "Remede scripts/edge-functions/decisao-edges.json a partir do inventario de producao; roda a mao quando o conjunto de edges publicadas mudar (o edges-obsoletas.yml consome o arquivo gerado)."
     }
   ],
   "ci": [
