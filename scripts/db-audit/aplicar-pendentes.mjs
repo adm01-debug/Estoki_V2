@@ -306,7 +306,7 @@ const PENDENCIAS = [
     nome: "entity_versions",
     aplicado:
       "to_regclass('public.entity_versions') is not null " +
-      "and (select relrowsecurity from pg_class where oid = 'public.entity_versions'::regclass) " +
+      "and exists (select 1 from pg_class c where c.oid = to_regclass('public.entity_versions') and c.relrowsecurity) " +
       "and exists (select 1 from pg_trigger where tgname = 'trg_versao_produtos' and not tgisinternal and tgrelid = 'public.produtos'::regclass) " +
       "and to_regprocedure('public.restore_entity_version(text,uuid,integer)') is not null",
     dependencias: [
