@@ -4,7 +4,7 @@ export interface FeatureFlag {
   key: string;
   enabled: boolean;
   value?: unknown;
-  description?: string;
+  description?: string | null;
   updatedAt?: string;
 }
 
@@ -69,7 +69,7 @@ class FeatureFlagsService {
             key: string;
             enabled: boolean;
             value?: unknown;
-            description?: string;
+            description?: string | null;
             updated_at?: string;
           }) => {
             this.flags.set(flag.key, {
