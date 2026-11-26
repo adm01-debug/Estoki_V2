@@ -15,7 +15,7 @@ if [ -z "$TOKEN" ]; then
   exit 0
 fi
 
-api="https://api.supabase.com/v1/projects/$REF/secrets/edge-functions"
+api="https://api.supabase.com/v1/projects/$REF/secrets"
 tmp="$(mktemp)"
 code="$(curl -sS -o "$tmp" -w '%{http_code}' -H "Authorization: Bearer $TOKEN" "$api" || echo 000)"
 
