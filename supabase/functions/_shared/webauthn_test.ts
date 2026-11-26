@@ -2,12 +2,13 @@
 // attestationObject/authData/clientDataJSON como o autenticador faria e exige que a verificação
 // aceite o caso válido e rejeite challenge, origin, assinatura e contador inválidos.
 
-import { assert, assertEquals, assertRejects } from "https://deno.land/std@0.224.0/assert/mod.ts";
+import { assert, assertEquals, assertRejects, assertThrows } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import { isoCBOR } from "https://esm.sh/@simplewebauthn/server@13.1.2/helpers";
 import {
   base64urlDecode,
   base64urlEncode,
   isStoredPublicKeyUsable,
+  resolveRp,
   verifyAuthenticationCredential,
   verifyRegistrationCredential,
 } from "./webauthn.ts";
@@ -374,4 +375,87 @@ Deno.test("autenticacao: rejeita public_key gravada no formato antigo (credentia
       storedCounter: 0,
     })
   );
+});
+
+
+// --- resolveRp: a origem tem de estar numa allowlist fixa, nunca no header do cliente ---
+
+function comWebauthnOrigins(valor: string | null): void {
+  if (valor === null) Deno.env.delete("WEBAUTHN_ORIGINS");
+  else Deno.env.set("WEBAUTHN_ORIGINS", valor);
+}
+
+function comRpId(valor: string | null): void {
+  if (valor === null) Deno.env.delete("WEBAUTHN_RP_ID");
+  else Deno.env.set("WEBAUTHN_RP_ID", valor);
+}
+
+function pedidoComOrigem(origin?: string): Request {
+  return new Request("https://edge.test/functions/v1/webauthn-auth-options", origin
+    ? { headers: { origin } }
+    : {});
+}
+
+Deno.test("resolveRp: sem WEBAUTHN_ORIGINS falha fechado", () => {
+  comWebauthnOrigins(null);
+  comRpId(null);
+  assertThrows(
+    () => resolveRp(pedidoComOrigem("https://atacante.test")),
+    Error,
+    "WEBAUTHN_ORIGINS nao configurado",
+  );
+});
+
+Deno.test("resolveRp: origem fora da allowlist e recusada", () => {
+  comWebauthnOrigins("https://estoki.app");
+  try {
+    assertThrows(
+      () => resolveRp(pedidoComOrigem("https://atacante.test")),
+      Error,
+      "Origem nao permitida",
+    );
+  } finally {
+    comWebauthnOrigins(null);
+  }
+});
+
+Deno.test("resolveRp: origem ausente e recusada", () => {
+  comWebauthnOrigins("https://estoki.app");
+  try {
+    assertThrows(() => resolveRp(pedidoComOrigem()), Error, "Origem nao permitida");
+  } finally {
+    comWebauthnOrigins(null);
+  }
+});
+
+Deno.test("resolveRp: origem permitida vira rpId e expectedOrigin exatos", () => {
+  comWebauthnOrigins("https://estoki.app,https://estoki-v2.vercel.app");
+  comRpId(null);
+  try {
+    const config = resolveRp(pedidoComOrigem("https://estoki-v2.vercel.app"));
+    assertEquals(config.rpId, "estoki-v2.vercel.app");
+    assertEquals(config.expectedOrigin, "https://estoki-v2.vercel.app");
+  } finally {
+    comWebauthnOrigins(null);
+  }
+});
+
+Deno.test("resolveRp: WEBAUTHN_RP_ID fixo tem precedencia sobre o hostname", () => {
+  comWebauthnOrigins("https://estoki.app");
+  comRpId("estoki.app");
+  try {
+    assertEquals(resolveRp(pedidoComOrigem("https://estoki.app")).rpId, "estoki.app");
+  } finally {
+    comWebauthnOrigins(null);
+    comRpId(null);
+  }
+});
+
+Deno.test("resolveRp: entrada com caminho e recusada", () => {
+  comWebauthnOrigins("https://estoki.app/entrar");
+  try {
+    assertThrows(() => resolveRp(pedidoComOrigem("https://estoki.app")), Error, "sem caminho");
+  } finally {
+    comWebauthnOrigins(null);
+  }
 });

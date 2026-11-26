@@ -29,20 +29,24 @@ function csv(value: string | undefined): string[] {
 }
 
 /**
- * Resolve rpId/origem esperados.
- * WEBAUTHN_ORIGINS (opcional): lista separada por vírgula, ex. "https://estoki-v2.vercel.app".
- * WEBAUTHN_RP_ID (opcional): deve ser o domínio registrável (ex. "estoki-v2.vercel.app").
+ * Resolve rpId/origem esperados e FALHA FECHADO.
+ *
+ * WEBAUTHN_ORIGINS (obrigatório): lista separada por vírgula, ex. "https://estoki.app,https://estoki-v2.vercel.app".
+ * WEBAUTHN_RP_ID (opcional): domínio registrável; sem ele usa o hostname da origem que chegou.
+ *
+ * Sem WEBAUTHN_ORIGINS a única origem "conhecida" seria o header Origin da própria requisição,
+ * que qualquer cliente escolhe — a conferência de origem viraria no-op e qualquer site poderia
+ * registrar/autenticar passkey em nome do Estoki. Por isso aqui é erro, não fallback.
  */
 export function resolveRp(req: Request): RpConfig {
   const headerOrigin = (req.headers.get("origin") ?? "").trim();
-  const fromEnv = csv(Deno.env.get("WEBAUTHN_ORIGINS"));
-  const allowed = fromEnv.length ? fromEnv : headerOrigin ? [headerOrigin] : [];
+  const allowlist = csv(Deno.env.get("WEBAUTHN_ORIGINS"));
 
-  if (!allowed.length) {
-    throw new Error("Origin ausente na requisicao");
+  if (!allowlist.length) {
+    throw new Error("WEBAUTHN_ORIGINS nao configurado");
   }
 
-  for (const origin of allowed) {
+  for (const origin of allowlist) {
     let parsed: URL;
     try {
       parsed = new URL(origin);
@@ -52,12 +56,19 @@ export function resolveRp(req: Request): RpConfig {
     if (parsed.protocol !== "https:" && parsed.hostname !== "localhost") {
       throw new Error(`Origem nao suportada: ${origin}`);
     }
+    if (parsed.origin !== origin.replace(/\/+$/, "")) {
+      throw new Error(`WEBAUTHN_ORIGINS deve conter apenas origem, sem caminho: ${origin}`);
+    }
+  }
+
+  if (!headerOrigin || !allowlist.includes(headerOrigin)) {
+    throw new Error(`Origem nao permitida: ${headerOrigin || "(ausente)"}`);
   }
 
   const rpIdEnv = (Deno.env.get("WEBAUTHN_RP_ID") ?? "").trim();
-  const rpId = rpIdEnv || new URL(allowed[0]).hostname;
+  const rpId = rpIdEnv || new URL(headerOrigin).hostname;
 
-  return { rpId, expectedOrigin: allowed.length === 1 ? allowed[0] : allowed };
+  return { rpId, expectedOrigin: headerOrigin };
 }
 
 export function base64urlEncode(bytes: Uint8Array): string {

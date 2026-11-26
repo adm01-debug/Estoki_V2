@@ -150,3 +150,9 @@ jobs:
       - name: Sem token de Management API
         if: env.SUPABASE_ACCESS_TOKEN == ''
         run: 'echo "::warning::sem SUPABASE_MANAGEMENT_TOKEN/SUPABASE_ACCESS_TOKEN: os nomes nao foram lidos."'
+      - name: CORS ao vivo (origem permitida x origem de terceiro)
+        if: env.SUPABASE_ACCESS_TOKEN != ''
+        env:
+          ALVO_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
+          ORIGENS_PROVA: ${{ vars.APP_ORIGINS_PROVA || 'https://estoki.app,https://estoki-v2.vercel.app' }}
+        run: bash scripts/edge/provar-cors.sh
