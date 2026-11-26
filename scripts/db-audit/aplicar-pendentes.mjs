@@ -210,6 +210,19 @@ const ESTOQUE_CHAVE_UPSERT =
 // aplicacao em producao: se ela nao tiver entrada em PENDENCIAS, o script nao le nem aplica, e
 // ainda imprime "nada pendente" com DDL faltando no banco. Foi o que aconteceu com as 6
 // migrations de 2026-11-26 (ver comentario em PENDENCIAS). Agora isso falha em vez de passar.
+// 20261129100000 fecha o que a 20261124120000 deixou de fora de proposito: as funcoes de trigger.
+// Medicao de producao em 2026-11-26 (run 45791932357) mostrou 7 funcoes ainda executaveis por `anon`,
+// entre elas aplicar_ajuste_estoque (altera saldo) e attach_user_to_default_tenant. Prova negativa:
+// ninguem de `public` fora da allowlist publica executa como anon.
+const SEC_ANON_TODAS_FUNCOES =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e') " +
+  "and p.proname <> all (array['has_role','is_tenant_admin','is_tenant_member'," +
+  "'effective_tenant_id','default_tenant_id','current_tenant_id','check_login_lockout'," +
+  "'record_failed_login','reset_login_attempts','get_backend_health']) " +
+  "and has_function_privilege('anon', p.oid, 'EXECUTE'))";
+
 const CORTE_COBERTURA = "20261127";
 
 const PENDENCIAS = [
@@ -368,6 +381,14 @@ const PENDENCIAS = [
     nome: "estoque_posicao_chave_upsert",
     aplicado: ESTOQUE_CHAVE_UPSERT,
     dependencias: [["public.estoque_posicao", "to_regclass('public.estoque_posicao') is not null"]],
+  },
+  {
+    // 20261129100000 nao cria objeto: fecha EXECUTE de anon/PUBLIC nas funcoes de trigger e nas duas
+    // RPC de escrita que a revogacao anterior deixou abertas.
+    arquivo: "20261129100000_SEC_revoke_anon_todas_funcoes.sql",
+    nome: "sec_anon_todas_funcoes",
+    aplicado: SEC_ANON_TODAS_FUNCOES,
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
 ];
 
