@@ -493,6 +493,18 @@ const PENDENCIAS = [
       ["public.produtos_sync_estado", "to_regclass('public.produtos_sync_estado') is not null"],
     ],
   },
+  {
+    // 20261130110000 garante a linha unica de `inventario_config` e o INSERT do admin.
+    // A aba Configuracoes do inventario exibia constantes e nao gravava nada; a tabela estava
+    // vazia em producao, entao o UPDATE autorizado atingia 0 linhas em silencio.
+    arquivo: "20261130110000_UI_inventario_config_edicao.sql",
+    nome: "inventario_config",
+    aplicado:
+      "to_regclass('public.inventario_config') is not null and " +
+      "exists (select 1 from pg_policies where schemaname = 'public' and tablename = 'inventario_config' " +
+      "and policyname = 'Admins can insert config')",
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
 ];
 
 function sqlEstado() {
