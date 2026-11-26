@@ -45,6 +45,9 @@ jobs:
   e2e-tests:
     name: Playwright E2E (${{ matrix.target }})
     runs-on: ubuntu-latest
+    # Sem teto, um E2E travado prendia a fila por ate 6h (default do GitHub) e
+    # bloqueava os runs seguintes. O normal medido e 21-26 min por run completo.
+    timeout-minutes: 30
     needs: validate
     strategy:
       fail-fast: false
@@ -69,6 +72,7 @@ jobs:
 
       - name: Run Playwright tests (production build)
         run: npm run test:e2e:build
+        timeout-minutes: 20
         env:
           CI: "true"
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://ookjbflsnoefnsixrspc.supabase.co' }}
