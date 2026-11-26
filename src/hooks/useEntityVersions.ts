@@ -68,6 +68,8 @@ export function useEntityVersions({
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey });
+      // A entidade restaurada muda na tela: sem isso a lista e o detalhe seguem com o dado antigo.
+      queryClient.invalidateQueries({ queryKey: [entityType] });
       toast.success("Versão restaurada com sucesso!");
       return data;
     },
