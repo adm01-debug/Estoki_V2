@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-import { getCorsHeaders, handleCors } from "../_shared/cors.ts";
+import { getCorsHeaders } from "../_shared/cors.ts";
 import { GenericPayloadSchema, validateInput } from "../_shared/schemas.ts";
+import { buildAuthenticationOptions, resolveRp } from "../_shared/webauthn.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -25,7 +26,12 @@ serve(async (req) => {
 
     const __raw = await req.json();
     const __v = validateInput(GenericPayloadSchema, __raw);
-    if (!__v.success) return new Response(JSON.stringify(__v), { status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
+    if (!__v.success) {
+      return new Response(JSON.stringify(__v), {
+        status: 400,
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
+      });
+    }
     const { email } = __raw;
 
     if (!email) {
@@ -52,7 +58,7 @@ serve(async (req) => {
 
     const { data: credentials, error: credError } = await supabase
       .from("passkey_credentials")
-      .select("credential_id, public_key")
+      .select("credential_id, public_key, transports")
       .eq("user_id", userId);
 
     if (credError || !credentials?.length) {
@@ -62,12 +68,24 @@ serve(async (req) => {
       });
     }
 
-    const challenge = crypto.randomUUID();
+    const { rpId } = resolveRp(req);
+
+    // generateAuthenticationOptions produz challenge base64url (32 bytes) e allowCredentials no
+    // formato PublicKeyCredentialRequestOptionsJSON. Antes o retorno vinha achatado e sem
+    // "options", então o cliente sempre caía em "Resposta inválida do servidor".
+    const options = await buildAuthenticationOptions({
+      rpId,
+      allowCredentials: credentials.map((cred) => ({
+        id: cred.credential_id,
+        transports: cred.transports ?? ["internal"],
+      })),
+    });
+
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
     const { data: challengeData, error: challengeError } = await supabase
       .from("webauthn_challenges")
-      .insert({ user_id: userId, challenge, type: "authentication", expires_at: expiresAt })
+      .insert({ user_id: userId, challenge: options.challenge, type: "authentication", expires_at: expiresAt })
       .select("id")
       .single();
 
@@ -79,12 +97,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({
-        challengeId: challengeData.id,
-        challenge,
-        userId,
-        allowCredentials: credentials.map((c) => ({ id: c.credential_id, type: "public-key" })),
-      }),
+      JSON.stringify({ options, challengeId: challengeData.id, userId }),
       { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } }
     );
   } catch (error: unknown) {
