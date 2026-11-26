@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Dry-run de migration: aplica, confere privilegios e faz ROLLBACK (nada e persistido).
+# Dry-run de migration: aplica o arquivo, confere privilegios e faz ROLLBACK (nada e persistido).
 set +e
 
 TOKEN="${SUPABASE_ACCESS_TOKEN:?}"
@@ -13,23 +13,9 @@ case "$MIG" in
   *) echo "recusa: $MIG precisa estar em supabase/migrations/"; exit 2 ;;
 esac
 [ -f "$MIG" ] || { echo "recusa: arquivo $MIG nao existe"; exit 2; }
+
 # `end;` tambem termina o `case` de PL/pgSQL, que fica dentro de um bloco
-# `do $tag$ ... $tag#!/usr/bin/env bash
-# Dry-run de migration: aplica, confere privilegios e faz ROLLBACK (nada e persistido).
-set +e
-
-TOKEN="${SUPABASE_ACCESS_TOKEN:?}"
-SB_URL="${SB_URL:?}"
-REF="${SB_URL#https://}"
-REF="${REF%%.supabase.co*}"
-MIG="$1"
-[ -n "$MIG" ] || { echo "uso: dryrun-migration.sh supabase/migrations/<arquivo>.sql"; exit 2; }
-case "$MIG" in
-  supabase/migrations/*.sql|./supabase/migrations/*.sql) ;;
-  *) echo "recusa: $MIG precisa estar em supabase/migrations/"; exit 2 ;;
-esac
-[ -f "$MIG" ] || { echo "recusa: arquivo $MIG nao existe"; exit 2; }
- e e UMA statement: nao anula o ROLLBACK. So conta o que esta FORA
+# `do $tag$ ... $tag$` e e UMA statement: nao anula o ROLLBACK. So conta o que esta FORA
 # de bloco dollar-quoted.
 fora_dollar() {
   awk '
@@ -51,12 +37,24 @@ echo "== projeto: $REF | migration: $MIG =="
 NAMES="iniciar_tarefa_picking,concluir_tarefa_picking,move_stock,aplicar_ajuste_estoque,log_audit_event,registrar_checkin_diario,collect_challenge_reward,adicionar_xp,descontar_pontos,get_current_user_permissions,get_dashboard_metrics,refresh_dashboard_materialized_views,incrementar_metrica_dashboard,attach_user_to_default_tenant,get_user_role,has_role_v2,get_min_stock_threshold,get_reorder_point,handle_new_user,log_posicao_status_change,audit_sensitive_row_change,check_db_alert_thresholds,set_system_settings_updated_at,increment_version"
 REGEX=$(printf '%s' "$NAMES" | tr ',' '|')
 
+FAIL=0
 run() {
-  local label="$1" sql="$2"
+  local label="$1" sql="$2" body code
   echo "===== $label ====="
-  jq -nc --arg q "$sql" '{query:$q}' | curl -s -X POST "https://api.supabase.com/v1/projects/$REF/database/query" \
-    -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary @- | head -c 3000
+  body=$(jq -nc --arg q "$sql" '{query:$q}' | curl -sS -w '\n%{http_code}' -X POST "https://api.supabase.com/v1/projects/$REF/database/query" \
+    -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" --data-binary @-)
+  code=$(printf '%s' "$body" | tail -n1)
+  body=$(printf '%s' "$body" | sed '$d')
+  printf '%s\n' "$body" | head -c 3000
   echo
+  echo "-- http $code"
+  # A API devolve {"message":"...","code":"..."} quando o SQL falha e corpo vazio em erro de rede.
+  # Antes este script imprimia a resposta e seguia com sucesso mesmo quando ela vinha vazia ou com
+  # erro, entao um dry-run quebrado passava por verde.
+  if [ "$code" != "200" ] || [ -z "$body" ] || printf '%s' "$body" | grep -q '"message"'; then
+    echo "FALHA: o dry-run de '$label' nao concluiu (http $code)"
+    FAIL=1
+  fi
 }
 
 run "Pre-check: policies que citam as 24" "select schemaname||'.'||tablename||' :: '||policyname from pg_policies where coalesce(qual,'')||' '||coalesce(with_check,'') ~* '$REGEX'"
@@ -69,8 +67,9 @@ KEEPERS="select json_agg(json_build_object('fn', p.proname, 'anon', has_function
 # que precisam continuar executaveis por anon. Esta consulta mede antes/depois na mesma transacao.
 LOGINPROOF="select json_agg(json_build_object('fn', p.proname, 'anon', has_function_privilege('anon', p.oid, 'EXECUTE'), 'auth', has_function_privilege('authenticated', p.oid, 'EXECUTE'), 'svc', has_function_privilege('service_role', p.oid, 'EXECUTE')) order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname='public' and p.prokind='f' and p.proname in ('check_login_lockout','record_failed_login','reset_login_attempts')"
 
-run "Dry-run: alvo do catalogo (aplica + confere + ROLLBACK)" "begin; $(cat "$MIG") $KEEPERS; $VERIFY; rollback;"
+run "Dry-run: aplica $MIG + privilegios das 24 (ROLLBACK)" "begin; $(cat "$MIG") $KEEPERS; $VERIFY; rollback;"
 # A API devolve so o resultado do ultimo statement: a prova das 3 RPCs de lockout vai num dry-run
 # proprio, com a mesma migration, para o numero sair visivel no log.
 run "Dry-run: RPCs de lockout (anon/auth=false, svc=true)" "begin; $(cat "$MIG") $LOGINPROOF; rollback;"
-run "Pos-rollback: anon ainda executa (informativo)" "select json_agg(json_build_object('fn', p.proname, 'anon', has_function_privilege('anon', p.oid, 'EXECUTE')) order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname='public' and p.proname in ('iniciar_tarefa_picking','concluir_tarefa_picking','move_stock','aplicar_ajuste_estoque')"
+
+exit "$FAIL"
