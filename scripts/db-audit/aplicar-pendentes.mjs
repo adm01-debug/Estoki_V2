@@ -101,6 +101,39 @@ const INTERNAS_SERVICE_ONLY =
   "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
   "or has_function_privilege('authenticated', p.oid, 'EXECUTE')))";
 
+// Mesma regra da migration 20261126140000_SEC_login_rpc_service_role.sql: as 3 RPCs de lockout
+// nao podem ser executaveis por anon nem por authenticated (nenhuma das duas tem motivo: o fluxo
+// de login nao chama o banco por elas -- grep em src/ e supabase/functions/ so acha os tipos
+// gerados). Fica em PENDENCIA propria, e nao dentro de ANON_PUBLICO, porque a allowlist de la
+// descreve o que 20261124120000 deixou aberto de proposito; mudar aquela lista faria a prova de
+// 20261124120000 falhar para sempre e o aplicador reaplicar em loop.
+const LOGIN_SERVICE_ONLY =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and p.proname in ('check_login_lockout', 'record_failed_login', 'reset_login_attempts') " +
+  "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  "or has_function_privilege('authenticated', p.oid, 'EXECUTE')))";
+
+// Mesma regra da migration 20261126150000_PERF_indices_fk.sql: nenhuma FK de `public` pode ficar
+// sem indice na coluna filha -- o Postgres nao cria um automaticamente e o ON DELETE SET NULL
+// varre a tabela filha inteira a cada DELETE/UPDATE no pai.
+const FKS_COM_INDICE =
+  "not exists (select 1 from pg_constraint c " +
+  "where c.contype = 'f' and c.connamespace = 'public'::regnamespace " +
+  "and not exists (select 1 from pg_index i " +
+  "where i.indrelid = c.conrelid and i.indisvalid and i.indpred is null " +
+  "and (i.indkey::smallint[])[0:array_length(c.conkey, 1) - 1] = c.conkey))";
+
+// Mesma regra da migration 20261126160000_PERF_dedup_indices.sql: entre indices de mesma tabela com
+// mesmas colunas e operadores, no maximo um nao-unique (pares unique x unique ficam, porque mexer em
+// unicidade nao se justifica pelo ganho).
+const SEM_INDICE_DUPLICADO =
+  "not exists (select 1 from pg_index i " +
+  "where i.indisvalid " +
+  "and i.indrelid in (select oid from pg_class where relnamespace = 'public'::regnamespace and relkind = 'r') " +
+  "group by i.indrelid, i.indkey, i.indclass, i.indoption, i.indpred " +
+  "having count(*) filter (where not i.indisunique) > 1)";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -138,6 +171,24 @@ const PENDENCIAS = [
     nome: "guarda_xp_pontos",
     aplicado: `${XP_PONTOS_FECHADO} and ${DESCONTAR_PONTOS_GUARDADA}`,
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261126140000_SEC_login_rpc_service_role.sql",
+    nome: "login_rpc_service_role",
+    aplicado: LOGIN_SERVICE_ONLY,
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261126150000_PERF_indices_fk.sql",
+    nome: "indices_fk",
+    aplicado: FKS_COM_INDICE,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261126160000_PERF_dedup_indices.sql",
+    nome: "dedup_indices",
+    aplicado: SEM_INDICE_DUPLICADO,
+    dependencias: [],
   },
   {
     arquivo: "20261126170000_SEC_ultima_palavra_privilegios.sql",
