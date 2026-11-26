@@ -187,7 +187,7 @@ export default function ConferenciaRecebimento() {
 
       // F026: registrar estoque na posicao de destino quando disponivel
       if (posicaoDestinoId && recebimento?.produto_id && quantidadeConferida > 0) {
-        await supabase.from("estoque_posicao").upsert(
+        const { error: estoqueError } = await supabase.from("estoque_posicao").upsert(
           {
             produto_id: recebimento.produto_id,
             posicao_id: posicaoDestinoId,
@@ -195,8 +195,12 @@ export default function ConferenciaRecebimento() {
             quantidade: quantidadeConferida,
             data_entrada: new Date().toISOString(),
           },
-          { onConflict: "produto_id,posicao_id" }
+          // Precisa casar com a UNIQUE (posicao_id, produto_id, lote_id) de estoque_posicao;
+          // com a chave de 2 colunas o upsert falhava com 42P10 e o saldo nao era gravado.
+          { onConflict: "posicao_id,produto_id,lote_id" }
         );
+
+        if (estoqueError) throw estoqueError;
       }
 
       setHasChanges(false);

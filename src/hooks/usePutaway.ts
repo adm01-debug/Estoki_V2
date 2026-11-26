@@ -85,7 +85,7 @@ export function usePutaway() {
               quantidade: qty,
               lote_id: null,
             },
-            { onConflict: "produto_id,posicao_id" }
+            { onConflict: "posicao_id,produto_id,lote_id" }
           );
           if (upsertErr) throw upsertErr;
 

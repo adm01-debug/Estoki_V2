@@ -184,6 +184,34 @@ const TENANT_NOT_NULL =
   "and o.cmd in (cmd_alvo, 'ALL') " +
   "and not (btrim(coalesce(o.qual, '')) = 'true' or btrim(coalesce(o.with_check, '')) = 'true'))))";
 
+// 20261127230000 nao cria objeto nenhum: troca o ROLE das policies permissivas de
+// `{anon,public}` para `authenticated`. A prova e a mesma da migration -- nao pode sobrar
+// permissiva de anon/public fora da negacao explicita (login_attempts) e do filtro por unidade
+// (tenant_isolation, que e RESTRICTIVE), e a policy de insert de entity_versions exige sessao.
+const POLICIES_SO_AUTHENTICATED =
+  "not exists (select 1 from pg_policies p where p.schemaname = 'public' " +
+  "and p.permissive = 'PERMISSIVE' " +
+  "and p.policyname not in ('login_attempts_deny_anon_all', 'tenant_isolation') " +
+  "and exists (select 1 from unnest(p.roles) r where r::text in ('anon', 'public'))) " +
+  "and exists (select 1 from pg_policies p where p.schemaname = 'public' " +
+  "and p.tablename = 'entity_versions' and p.policyname = 'entity_versions_insercao' " +
+  "and exists (select 1 from unnest(p.roles) r where r::text = 'authenticated'))";
+
+// 20261128100000 troca a UNIQUE de estoque_posicao por NULLS NOT DISTINCT: e a forma que
+// `on conflict (posicao_id, produto_id, lote_id)` aceita quando o lote vem nulo. Sem ela o
+// Postgres responde 42P10 (nenhum indice arbiter) ou grava saldo duplicado.
+const ESTOQUE_CHAVE_UPSERT =
+  "exists (select 1 from pg_index i join pg_class c on c.oid = i.indexrelid " +
+  "where i.indrelid = 'public.estoque_posicao'::regclass and i.indisunique " +
+  "and i.indnullsnotdistinct " +
+  "and pg_get_indexdef(i.indexrelid) like '%(posicao_id, produto_id, lote_id)%')";
+
+// Toda migration com versao a partir daqui nasce depois que esta automacao virou a via de
+// aplicacao em producao: se ela nao tiver entrada em PENDENCIAS, o script nao le nem aplica, e
+// ainda imprime "nada pendente" com DDL faltando no banco. Foi o que aconteceu com as 6
+// migrations de 2026-11-26 (ver comentario em PENDENCIAS). Agora isso falha em vez de passar.
+const CORTE_COBERTURA = "20261127";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -323,6 +351,24 @@ const PENDENCIAS = [
     aplicado: "to_regclass('public.idx_entity_versions_changed_by') is not null",
     dependencias: [["public.entity_versions", "to_regclass('public.entity_versions') is not null"]],
   },
+  {
+    // 20261127230000 nao cria objeto: ela tira as policies de identidade de `{anon,public}`.
+    // Sem entrada aqui ela nunca rodaria, e a chave publica do site continuaria coberta por
+    // policy que nao exige sessao.
+    arquivo: "20261127230000_SEC_policies_so_authenticated.sql",
+    nome: "policies_so_authenticated",
+    aplicado: POLICIES_SO_AUTHENTICATED,
+    dependencias: [["public.entity_versions", "to_regclass('public.entity_versions') is not null"]],
+  },
+  {
+    // 20261128100000 entrega a chave de upsert que o app usa (posicao_id, produto_id, lote_id)
+    // na forma NULLS NOT DISTINCT. Sem esta entrada a migration mergeada nunca rodaria e o
+    // upsert de estoque sem lote continuaria estourando 42P10 em producao.
+    arquivo: "20261128100000_WMS_estoque_posicao_chave_upsert.sql",
+    nome: "estoque_posicao_chave_upsert",
+    aplicado: ESTOQUE_CHAVE_UPSERT,
+    dependencias: [["public.estoque_posicao", "to_regclass('public.estoque_posicao') is not null"]],
+  },
 ];
 
 function sqlEstado() {
@@ -401,8 +447,25 @@ async function registrarLedger(versao, nome) {
   return false;
 }
 
+/** Migrations do repo que nenhuma entrada de PENDENCIAS cobre: seriam ignoradas em silencio. */
+function migrationsSemEntrada() {
+  return fs
+    .readdirSync(path.join(RAIZ, "supabase/migrations"))
+    .filter((f) => f.endsWith(".sql") && f.slice(0, 8) >= CORTE_COBERTURA)
+    .filter((f) => !PENDENCIAS.some((p) => p.arquivo === f))
+    .sort();
+}
+
 async function main() {
   if (!TOKEN) throw new Error("sem SUPABASE_ACCESS_TOKEN: nada foi lido nem aplicado");
+
+  // Falha ruidosa antes de tocar no banco: cobertura incompleta = DDL mergeada que nunca sobe.
+  const semEntrada = migrationsSemEntrada();
+  if (semEntrada.length) {
+    throw new Error(
+      `migration sem entrada em PENDENCIAS (nunca seria lida nem aplicada): ${semEntrada.join(", ")}`,
+    );
+  }
 
   const antes = await lerEstado();
   imprimir(antes);
