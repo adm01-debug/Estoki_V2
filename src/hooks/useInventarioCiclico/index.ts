@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { Ciclo, TipoCiclo, StatusCiclo, Contagem, StatusContagem } from "./types";
 import { mapCiclo, mapContagem, updateCicloProgress } from "./utils";
+import { INVENTARIO_CONFIG_PADRAO, divergenciaExcedeTolerancia } from "@/hooks/useInventarioConfig";
 
 export function useInventarioCiclico() {
   const [ciclos, setCiclos] = useState<Ciclo[]>([]);
@@ -11,6 +12,27 @@ export function useInventarioCiclico() {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const { user } = useAuth();
+  const [thresholdDivergencia, setThresholdDivergencia] = useState<number>(
+    INVENTARIO_CONFIG_PADRAO.threshold_divergencia
+  );
+
+  useEffect(() => {
+    let ativo = true;
+    supabase
+      .from("inventario_config")
+      .select("threshold_divergencia")
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!ativo) return;
+        const valor = Number(data?.threshold_divergencia);
+        if (Number.isFinite(valor) && valor > 0) setThresholdDivergencia(valor);
+      });
+    return () => {
+      ativo = false;
+    };
+  }, []);
 
   const fetchCiclos = useCallback(async () => {
     try {
@@ -170,7 +192,11 @@ export function useInventarioCiclico() {
         .single();
 
       if (contagem) {
-        const divergencia = quantidadeContada !== contagem.quantidade_sistema;
+        const divergencia = divergenciaExcedeTolerancia(
+          quantidadeContada,
+          contagem.quantidade_sistema,
+          thresholdDivergencia
+        );
         const newStatus: StatusContagem = divergencia ? "divergencia" : "concluido";
 
         const { error: updateError } = await supabase
