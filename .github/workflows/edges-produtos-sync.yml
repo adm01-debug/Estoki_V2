@@ -196,17 +196,28 @@ jobs:
           echo "produtos antes: $ANTES"
           ESTADO_ANTES=$(consulta "select ultima_execucao from produtos_sync_estado where id = true" | jq -r '.[0].ultima_execucao')
           echo "ultima_execucao antes: $ESTADO_ANTES"
-          MARCO=$(consulta "select coalesce(max(id),0) as marco from net._http_response" | jq -r '.[0].marco')
-          consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE}));" > /dev/null
+          # O id devolvido por net.http_post e' o mesmo de net._http_response. Filtrar
+          # por max(id) global pegava a resposta do cron de 30min que respondesse no
+          # mesmo intervalo: medido no run 45748797225, a consulta devolveu o corpo
+          # "incremental" do cron e a nossa requisicao ainda com status_code nulo, e o
+          # teste falhou com a replicacao sem rodar.
+          RID=$(consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE})) as rid" | jq -r '.[0].rid')
+          echo "request_id do pg_net: $RID"
+          if [ -z "$RID" ] || [ "$RID" = "null" ]; then
+            echo "::error::pg_net nao devolveu request_id para o disparo"
+            exit 1
+          fi
           # pg_net grava a linha antes de a resposta chegar (status_code nulo):
           # fixo em 25s o teste falhava com a replicacao ainda em curso.
-          SAIDA=$(consulta "select status_code, left(content, 4000) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+          CONSULTA_RESPOSTA="select status_code, left(content, 4000) as corpo, count(*) as respostas from net._http_response where id = ${RID} group by 1, 2 order by 1"
+          SAIDA=$(consulta "$CONSULTA_RESPOSTA")
           for _ in $(seq 1 40); do
-            if [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "null" ]; then
+            if [ "$(echo "$SAIDA" | jq -r 'length')" = "1" ] &&
+               [ "$(echo "$SAIDA" | jq -r '.[0].status_code')" != "null" ]; then
               break
             fi
             sleep 10
-            SAIDA=$(consulta "select status_code, left(content, 4000) as corpo, count(*) as respostas from net._http_response where id > ${MARCO} group by 1, 2 order by 1")
+            SAIDA=$(consulta "$CONSULTA_RESPOSTA")
           done
           echo "resposta do caminho do cron: $SAIDA"
           if [ "$(echo "$SAIDA" | jq -r 'length')" != "1" ] ||
