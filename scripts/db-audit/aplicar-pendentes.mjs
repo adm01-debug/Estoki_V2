@@ -90,6 +90,17 @@ const DESCONTAR_PONTOS_GUARDADA =
   "where n.nspname = 'public' and p.proname = 'descontar_pontos' " +
   "and p.prosecdef and pg_get_functiondef(p.oid) like '%auth.uid()%')";
 
+// Mesma regra da migration 20261126170000_SEC_ultima_palavra_privilegios.sql. Precisa ser PENDENCIA
+// propria porque 20261124120000 concede EXECUTE a `authenticated` por catalogo e desfaz
+// 20261125120000 a cada aplicacao: sem uma prova separada, o estado regride em silencio.
+const INTERNAS_SERVICE_ONLY =
+  "not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace " +
+  "where n.nspname = 'public' " +
+  "and p.proname in ('check_login_lockout', 'record_failed_login', 'reset_login_attempts', " +
+  "'adicionar_xp', 'incrementar_metrica_dashboard', 'get_user_role') " +
+  "and (has_function_privilege('anon', p.oid, 'EXECUTE') " +
+  "or has_function_privilege('authenticated', p.oid, 'EXECUTE')))";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -126,6 +137,12 @@ const PENDENCIAS = [
     arquivo: "20261125120000_SEC_guarda_xp_pontos.sql",
     nome: "guarda_xp_pontos",
     aplicado: `${XP_PONTOS_FECHADO} and ${DESCONTAR_PONTOS_GUARDADA}`,
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261126170000_SEC_ultima_palavra_privilegios.sql",
+    nome: "privilegios_finais",
+    aplicado: `${INTERNAS_SERVICE_ONLY} and ${DESCONTAR_PONTOS_GUARDADA}`,
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
 ];
