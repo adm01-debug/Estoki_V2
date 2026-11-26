@@ -446,6 +446,20 @@ const PENDENCIAS = [
     aplicado: "to_regprocedure('public.get_automacoes_saude()') is not null",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
+  {
+    // 20261130095000 fecha a superficie anon de funcoes de forma permanente. A varredura por
+    // catalogo pega get_automacoes_saude, criada depois das revogacoes de 24/11, e o event
+    // trigger impede que a proxima funcao criada em `public` nasca executavel pela chave
+    // publica. Sem o event trigger a prova de ANON_SEM_EXECUTE volta a reprovar na proxima
+    // funcao criada.
+    arquivo: "20261130095000_SEC_anon_autoprotecao_funcoes.sql",
+    nome: "sec_anon_autoprotecao_funcoes",
+    aplicado:
+      ANON_SEM_EXECUTE +
+      " and exists (select 1 from pg_event_trigger " +
+      "where evtname = 'fechar_execute_anon_funcao_nova')",
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
 ];
 
 function sqlEstado() {
