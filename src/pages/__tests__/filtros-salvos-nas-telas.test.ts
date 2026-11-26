@@ -12,6 +12,7 @@ const TELAS: { arquivo: string; entidade: string }[] = [
   { arquivo: "src/pages/Romaneios.tsx", entidade: "romaneios" },
   { arquivo: "src/pages/Movimentacao.tsx", entidade: "movimentacao" },
   { arquivo: "src/pages/GestaoTarefas.tsx", entidade: "tarefas" },
+  { arquivo: "src/pages/AlertasInteligentes.tsx", entidade: "alertas" },
 ];
 
 describe("filtros salvos montados nas telas", () => {

@@ -1,6 +1,6 @@
 import { AlertasCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ import {
   type ConfigAlerta,
 } from "@/components/alertas/AlertasConfigTable";
 import { ErrorState } from "@/components/common/AsyncStates";
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 
 export default function AlertasInteligentesPage() {
   const { hasRole } = useAuth();
@@ -27,6 +29,18 @@ export default function AlertasInteligentesPage() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [filtroSeveridade, setFiltroSeveridade] = useState<string>("todos");
   const [filtroStatus, setFiltroStatus] = useState<string>("todos");
+
+  const filtrosAtuais = useMemo(
+    () => ({ severidade: filtroSeveridade, status: filtroStatus }),
+    [filtroSeveridade, filtroStatus]
+  );
+
+  const aplicarFiltros = useCallback((filtros: Record<string, unknown>) => {
+    setFiltroSeveridade(typeof filtros.severidade === "string" ? filtros.severidade : "todos");
+    setFiltroStatus(typeof filtros.status === "string" ? filtros.status : "todos");
+  }, []);
+
+  useApplyDefaultSavedFilter("alertas", aplicarFiltros);
 
   const { criticalAlerts, hasCriticalAlerts } = useKPIAlerts({
     enabled: alertsEnabled,
@@ -175,16 +189,25 @@ export default function AlertasInteligentesPage() {
                   onRetry={() => void refetch()}
                 />
               ) : (
-                <AlertasHistoricoTable
-                  historico={historico}
-                  loading={loadingHistorico}
-                  filtroSeveridade={filtroSeveridade}
-                  filtroStatus={filtroStatus}
-                  onChangeSeveridade={setFiltroSeveridade}
-                  onChangeStatus={setFiltroStatus}
-                  onReconhecer={handleReconhecer}
-                  onResolver={handleResolver}
-                />
+                <>
+                  <div className="flex justify-end">
+                    <SavedFiltersDropdown
+                      entityType="alertas"
+                      currentFilters={filtrosAtuais}
+                      onApplyFilter={aplicarFiltros}
+                    />
+                  </div>
+                  <AlertasHistoricoTable
+                    historico={historico}
+                    loading={loadingHistorico}
+                    filtroSeveridade={filtroSeveridade}
+                    filtroStatus={filtroStatus}
+                    onChangeSeveridade={setFiltroSeveridade}
+                    onChangeStatus={setFiltroStatus}
+                    onReconhecer={handleReconhecer}
+                    onResolver={handleResolver}
+                  />
+                </>
               )}
             </TabsContent>
             <TabsContent value="config">
