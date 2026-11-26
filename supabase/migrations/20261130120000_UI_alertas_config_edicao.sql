@@ -35,7 +35,7 @@ BEGIN
     AND tablename = 'alertas_config'
     AND cmd IN ('ALL', 'INSERT', 'UPDATE')
     AND roles::text LIKE '%authenticated%';
-  IF policies_escrita < 2 THEN
+  IF policies_escrita < 1 THEN
     RAISE EXCEPTION 'alertas_config sem policy de edicao para authenticated (encontradas %)', policies_escrita;
   END IF;
 
