@@ -38,16 +38,21 @@ nomes = [n for n in nomes if n]
 print("total:", len(nomes))
 for n in nomes:
     print("  ", n)
-alvo = {"WEBAUTHN_RP_ID", "WEBAUTHN_ORIGINS"}
-faltando = sorted(alvo - set(nomes))
+obrigatorios = {"WEBAUTHN_ORIGINS", "APP_ORIGINS"}
+opcionais = {"WEBAUTHN_RP_ID"}
+faltando = sorted(obrigatorios - set(nomes))
 if faltando:
     print("AUSENTES:", ", ".join(faltando))
     sys.exit(2)
-print("OK: WEBAUTHN_RP_ID e WEBAUTHN_ORIGINS existem")
+if opcionais & set(nomes):
+    print("OK: WEBAUTHN_ORIGINS e APP_ORIGINS existem; WEBAUTHN_RP_ID fixado")
+else:
+    print("OK: WEBAUTHN_ORIGINS e APP_ORIGINS existem; WEBAUTHN_RP_ID ausente (rpId vem do hostname da origem)")
 PY
 rc=$?
 rm -f "$tmp"
 if [ "$rc" = "2" ]; then
-  echo "::error::WEBAUTHN_RP_ID/WEBAUTHN_ORIGINS ausentes em $REF: resolveRp cai para o header Origin do cliente"
+  echo "::error::WEBAUTHN_ORIGINS/APP_ORIGINS ausentes em $REF: resolveRp cai para o header Origin do cliente e o CORS devolve o dominio antigo"
+  exit 1
 fi
 exit 0
