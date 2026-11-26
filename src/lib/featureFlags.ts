@@ -35,15 +35,28 @@ class FeatureFlagsService {
     if (this.initialized) return;
 
     await this.loadFromRemote();
+    // A leitura remota exige sessao (RLS): sem login o app usa os defaults e recarrega
+    // assim que o usuario entra.
+    supabase.auth.onAuthStateChange((_evento, sessao) => {
+      if (sessao) void this.loadFromRemote();
+    });
     this.startAutoRefresh();
     this.initialized = true;
   }
 
+  /** Forca uma nova leitura do banco (usado pela tela admin depois de alterar uma flag). */
+  async reload(): Promise<void> {
+    await this.loadFromRemote();
+  }
+
   private async loadFromRemote(): Promise<void> {
     try {
-      const { data, error } = await (supabase.from("feature_flags" as any) as any)
-        .select("*")
-        .eq("active", true);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase.from("feature_flags").select("*").eq("active", true);
 
       if (error) {
         if (import.meta.env.DEV) console.error("Failed to load feature flags:", error);

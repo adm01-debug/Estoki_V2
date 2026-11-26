@@ -460,6 +460,17 @@ const PENDENCIAS = [
       "where evtname = 'fechar_execute_anon_funcao_nova')",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
+  {
+    // 20261130090000 cria `feature_flags`: a tabela que src/lib/featureFlags.ts lia desde
+    // sempre e que nunca existiu (HTTP 404 PGRST205 medido em producao em 26/11/2026).
+    arquivo: "20261130090000_FLAGS_feature_flags.sql",
+    nome: "feature_flags",
+    aplicado:
+      "to_regclass('public.feature_flags') is not null and " +
+      "(select relrowsecurity from pg_class where oid = 'public.feature_flags'::regclass) " +
+      "and (select count(*) from pg_policies where schemaname = 'public' and tablename = 'feature_flags') = 4",
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
 ];
 
 function sqlEstado() {

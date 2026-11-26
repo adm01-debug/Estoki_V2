@@ -19,6 +19,7 @@ const AuditoriaCriticaPage = lazy(() => import("@/pages/admin/AuditoriaCriticaPa
 const CircuitBreakersPage = lazy(() => import("@/pages/admin/CircuitBreakersPage"));
 const ApiPortalPage = lazy(() => import("@/pages/admin/ApiPortalPage"));
 const ObservabilidadePage = lazy(() => import("@/pages/admin/ObservabilidadePage"));
+const FeatureFlagsPage = lazy(() => import("@/pages/admin/FeatureFlagsPage"));
 
 export const adminRoutes = (
   <>
@@ -149,6 +150,18 @@ export const adminRoutes = (
           <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
             <ProtectedRoute allowedRoles={["admin"]}>
               <ObservabilidadePage />
+            </ProtectedRoute>
+          </Suspense>
+        </RouteErrorBoundary>
+      }
+    />
+    <Route
+      path="admin/funcionalidades"
+      element={
+        <RouteErrorBoundary>
+          <Suspense fallback={<RouteLoadingFallback type="dashboard" />}>
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <FeatureFlagsPage />
             </ProtectedRoute>
           </Suspense>
         </RouteErrorBoundary>
