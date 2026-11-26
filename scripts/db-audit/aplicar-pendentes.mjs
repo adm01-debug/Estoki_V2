@@ -146,6 +146,15 @@ const INDICES_DUPLICADOS_FORA =
   "and to_regclass('public.idx_login_attempts_email') is null " +
   "and to_regclass('public.idx_posicoes_estoque_codigo') is null";
 
+// 20261126180000 revoga DML de anon em todas as tabelas de public.
+// Prova: nenhuma tabela de public pode manter INSERT/UPDATE/DELETE para anon.
+const ANON_SEM_ESCRITA =
+  "not exists (select 1 from pg_class c join pg_namespace n on n.oid = c.relnamespace " +
+  "where n.nspname = 'public' and c.relkind in ('r','p','f') " +
+  "and (has_table_privilege('anon', c.oid, 'INSERT') " +
+  "or has_table_privilege('anon', c.oid, 'UPDATE') " +
+  "or has_table_privilege('anon', c.oid, 'DELETE')))";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -233,6 +242,12 @@ const PENDENCIAS = [
     nome: "privilegios_finais",
     aplicado: `${INTERNAS_SERVICE_ONLY} and ${DESCONTAR_PONTOS_GUARDADA}`,
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    arquivo: "20261126180000_SEC_revoke_anon_dml.sql",
+    nome: "anon_sem_escrita",
+    aplicado: ANON_SEM_ESCRITA,
+    dependencias: [],
   },
 ];
 
