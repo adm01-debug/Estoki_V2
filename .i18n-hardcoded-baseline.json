@@ -1,6 +1,6 @@
 {
-  "total": 1541,
-  "generatedAt": "2026-11-26T13:13:09.208Z",
+  "total": 1555,
+  "generatedAt": "2026-11-26T13:24:46.675Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -297,6 +297,7 @@
     "src/pages/admin/BackendHealthPage.tsx": 9,
     "src/pages/admin/CircuitBreakersPage.tsx": 2,
     "src/pages/admin/IntegrationsPage.tsx": 2,
+    "src/pages/admin/ObservabilidadePage.tsx": 14,
     "src/pages/admin/RolesPage.tsx": 3,
     "src/pages/admin/SettingsPage.tsx": 14,
     "src/pages/admin/SimulationPage.tsx": 8,
