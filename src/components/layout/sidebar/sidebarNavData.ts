@@ -36,6 +36,7 @@ import {
   Brain,
   Tag,
   Zap,
+  Flag,
   type LucideIcon,
 } from "lucide-react";
 
@@ -167,6 +168,7 @@ export const sidebarAdminItems: NavItem[] = [
   { path: "/admin/automacoes", icon: Workflow, label: "Automações" },
   { path: "/admin/simulacao", icon: Zap, label: "Simulador de Stress" },
   { path: "/admin/observabilidade", icon: BarChart3, label: "Observabilidade" },
+  { path: "/admin/funcionalidades", icon: Flag, label: "Funcionalidades" },
 ];
 
 export const sidebarUtilityItems: NavItem[] = [
