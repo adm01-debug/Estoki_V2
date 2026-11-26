@@ -1,5 +1,5 @@
 # docs:
-#   gatilho: workflow_dispatch (slugs vazio = as 22 edges com guarda de sessao de _shared/auth.ts).
+#   gatilho: workflow_dispatch (slugs vazio = as 26 edges com guarda de sessao de _shared/auth.ts).
 #   prova: depois do deploy cada slug recusa a chave publica do site com 401 {"error":"sessao obrigatoria"}
 #          (a resposta tem de ser a guarda, nao o "Invalid API key" da plataforma).
 #   rollback: o artefato rollback-edges-<sha> guarda o index.ts anterior de cada slug; para voltar,
@@ -72,7 +72,7 @@ jobs:
           PEDIDOS: ${{ inputs.slugs }}
         run: |
           set -euo pipefail
-          PADRAO="abc-analysis ai-assistant alerta-divergencia-fornecedor analytics calculate-kpis carrier-track check-reorder dashboard-stats export-data gerar-desafios-diarios health-check integration-amazon integration-ifood integration-mercado-livre integration-rappi integration-sap integration-totvs nfe-import previsao-demanda safety-stock scanner-ocr send-email-alert"
+          PADRAO="abc-analysis ai-assistant alert-expiration alerta-divergencia-fornecedor analytics calculate-kpis carrier-track check-reorder dashboard-stats export-data gerar-desafios-diarios health-check integration-amazon integration-ifood integration-mercado-livre integration-rappi integration-sap integration-totvs nfe-import previsao-demanda produtos-sync reorder-check safety-stock scanner-ocr send-email-alert stock-alert"
           if [ -z "${PEDIDOS// /}" ]; then
             SLUGS="$PADRAO"
           else
