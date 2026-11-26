@@ -1,15 +1,41 @@
 {
-  "_medido_em": "2026-11-24T12:41:51Z",
-  "_fonte": "estado-banco-prod-2026-11-24.json + supabase/functions/**/index.ts + grep em src/",
+  "_medido_em": "2026-11-26T22:52:54Z",
+  "_fonte": "inventario/estado/banco.json (publicadas) + supabase/functions/**/index.ts + inventario/estado/edges.json",
+  "_gerado_por": "node scripts/edge-functions/medir-decisoes.mjs --escrever",
   "_criterios": {
     "publica-por-design": "existe para rodar antes de haver sessao (auth/health/webauthn)",
-    "mantem": "index.ts verifica a sessao (exigirSessao/veioDoInterno/usuarioDaSessao/getUser)",
-    "remover": "sem guarda, sem chamador em src/ e versao 1 (remocao exige autorizacao)",
+    "mantem": "index.ts verifica a sessao (exigirSessao/exigirSessaoOuCron/usuarioDaSessao/getUser/veioDoCron/veioDoInterno)",
     "precisa-guarda": "sem guarda e chamada pelo app",
-    "stub-sem-implementacao": "publicada mas sem corpo real: nao executa nada",
+    "remover": "sem guarda, sem chamador no repo (remocao exige autorizacao)",
+    "sem-codigo-no-repo": "publicada em producao sem fonte versionado",
+    "revisar": "sem guarda detectavel e sem chamador no repo: decisao manual pendente (nao remover por atacado)",
     "removido": "ja removida de producao; prova ao vivo: HTTP 404 com a chave publica"
   },
   "funcoes": [
+    {
+      "slug": "abc-analysis",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
+      "slug": "ai-assistant",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
+      "slug": "alert-expiration",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": false,
+      "versao": 20,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
     {
       "slug": "alert-monitor",
       "decisao": "removido",
@@ -22,6 +48,46 @@
       "exige_autorizacao": true
     },
     {
+      "slug": "alert-productivity",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "alert-quality",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "alert-sla-breach",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "alerta-divergencia-fornecedor",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
+      "slug": "analytics",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
       "slug": "audit-log",
       "decisao": "removido",
       "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
@@ -31,6 +97,122 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "auth-2fa-setup",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-2fa-verify",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-change-password",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-login",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-logout",
+      "decisao": "removido",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
+      "verify_jwt": true,
+      "versao": 1,
+      "atualizada_em": "2026-08-11",
+      "guarda_no_codigo": false,
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
+    },
+    {
+      "slug": "auth-refresh-token",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-register",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-reset-password",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:20Z"
+    },
+    {
+      "slug": "auth-session-list",
+      "decisao": "removido",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
+      "verify_jwt": true,
+      "versao": 1,
+      "atualizada_em": "2026-08-11",
+      "guarda_no_codigo": false,
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
+    },
+    {
+      "slug": "auth-session-revoke",
+      "decisao": "removido",
+      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
+      "verify_jwt": true,
+      "versao": 1,
+      "atualizada_em": "2026-08-11",
+      "guarda_no_codigo": false,
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
+    },
+    {
+      "slug": "auth-social-login",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:21Z"
+    },
+    {
+      "slug": "auth-verify-email",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:21Z"
+    },
+    {
+      "slug": "backend-health",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 14,
+      "atualizada_em": "2026-11-26T11:45Z"
     },
     {
       "slug": "batch-processor",
@@ -121,6 +303,14 @@
       "exige_autorizacao": true
     },
     {
+      "slug": "calculate-kpis",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
       "slug": "calculate-shipping",
       "decisao": "removido",
       "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
@@ -130,6 +320,22 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "carrier-book",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:21Z"
+    },
+    {
+      "slug": "carrier-cancel",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:22Z"
     },
     {
       "slug": "carrier-quote",
@@ -165,6 +371,30 @@
       "exige_autorizacao": true
     },
     {
+      "slug": "carrier-rates-cache",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:22Z"
+    },
+    {
+      "slug": "carrier-track",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": false,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
+      "slug": "carrier-webhooks",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:22Z"
+    },
+    {
       "slug": "check-permission",
       "decisao": "removido",
       "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
@@ -174,6 +404,14 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "check-reorder",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
     },
     {
       "slug": "cleanup-old-data",
@@ -207,6 +445,14 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "create-lot",
+      "decisao": "mantem",
+      "motivo": "index.ts verifica a sessao (_shared/auth.ts) ou cria o cliente com o Authorization do chamador",
+      "verify_jwt": true,
+      "versao": 1,
+      "atualizada_em": "2026-11-26T14:17Z"
     },
     {
       "slug": "create-payment-intent",
@@ -275,6 +521,14 @@
       "exige_autorizacao": true
     },
     {
+      "slug": "dashboard-stats",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 17,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
       "slug": "data-migration",
       "decisao": "removido",
       "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
@@ -284,6 +538,14 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "db-alert-monitor",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:23Z"
     },
     {
       "slug": "delete-file",
@@ -317,6 +579,14 @@
       "guarda_no_codigo": false,
       "chamada_pelo_app": false,
       "exige_autorizacao": true
+    },
+    {
+      "slug": "export-data",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T04:59Z"
     },
     {
       "slug": "export-pdf",
@@ -418,6 +688,38 @@
       "exige_autorizacao": true
     },
     {
+      "slug": "gerar-desafios-diarios",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 17,
+      "atualizada_em": "2026-11-26T11:45Z"
+    },
+    {
+      "slug": "get-permissions",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:24Z"
+    },
+    {
+      "slug": "health",
+      "decisao": "publica-por-design",
+      "motivo": "precisa rodar antes de existir sessao",
+      "verify_jwt": true,
+      "versao": 13,
+      "atualizada_em": "2026-08-11T20:24Z"
+    },
+    {
+      "slug": "health-check",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 17,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
       "slug": "import-csv",
       "decisao": "removido",
       "motivo": "sem guarda, nenhum chamador em src/, versao 1 de 2026-08-11; pode existir chamador externo (automacao/webhook) que o repo nao revela, por isso a remocao passa por autorizacao explicita; REMOVIDA de producao em 25/11/2026 (edges-obsoletas modo=aplicar); prova: HTTP 404 com a chave publica",
@@ -430,7 +732,7 @@
     },
     {
       "slug": "integration-accounting",
-      "decisao": "remover",
+      "decisao": "removido",
       "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
@@ -441,8 +743,16 @@
       "endpoint_vivo_em": "2026-11-25"
     },
     {
+      "slug": "integration-amazon",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": true,
+      "versao": 17,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
       "slug": "integration-ecommerce",
-      "decisao": "remover",
+      "decisao": "removido",
       "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
@@ -454,7 +764,7 @@
     },
     {
       "slug": "integration-erp",
-      "decisao": "remover",
+      "decisao": "removido",
       "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
       "verify_jwt": true,
       "versao": 1,
@@ -463,545 +773,162 @@
       "chamada_pelo_app": false,
       "exige_autorizacao": true,
       "endpoint_vivo_em": "2026-11-25"
-    },
-    {
-      "slug": "integration-marketplace",
-      "decisao": "remover",
-      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false,
-      "exige_autorizacao": true,
-      "endpoint_vivo_em": "2026-11-25"
-    },
-    {
-      "slug": "abc-analysis",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "ai-assistant",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "alert-expiration",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "alert-productivity",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "alert-quality",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "alert-sla-breach",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "alerta-divergencia-fornecedor",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "analytics",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "auth-2fa-setup",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-2fa-verify",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "backend-health",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "calculate-kpis",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "carrier-book",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "carrier-cancel",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "carrier-rates-cache",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "carrier-track",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "carrier-webhooks",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "check-reorder",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "dashboard-stats",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "db-alert-monitor",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "export-data",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "gerar-desafios-diarios",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "get-permissions",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "health-check",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "integration-amazon",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
     },
     {
       "slug": "integration-ifood",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": true,
-      "versao": 2,
+      "versao": 17,
+      "atualizada_em": "2026-11-26T04:59Z"
+    },
+    {
+      "slug": "integration-marketplace",
+      "decisao": "removido",
+      "motivo": "casca vazia de 20 linhas: devolve {ok:true} sem executar nada; nenhum chamador no repo nem no app (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
+      "verify_jwt": true,
+      "versao": 1,
       "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "guarda_no_codigo": false,
+      "chamada_pelo_app": false,
+      "exige_autorizacao": true,
+      "endpoint_vivo_em": "2026-11-25"
     },
     {
       "slug": "integration-mercado-livre",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "integration-rappi",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "integration-sap",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "integration-totvs",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": true,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T05:00Z"
+    },
+    {
+      "slug": "lot-tracking",
+      "decisao": "mantem",
+      "motivo": "index.ts verifica a sessao (_shared/auth.ts) ou cria o cliente com o Authorization do chamador",
+      "verify_jwt": true,
+      "versao": 1,
+      "atualizada_em": "2026-11-26T14:17Z"
     },
     {
       "slug": "nfe-import",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 16,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "previsao-demanda",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 16,
+      "atualizada_em": "2026-11-26T05:00Z"
+    },
+    {
+      "slug": "produtos-sync",
+      "decisao": "mantem",
+      "motivo": "index.ts verifica a sessao (_shared/auth.ts) ou cria o cliente com o Authorization do chamador",
+      "verify_jwt": false,
+      "versao": 19,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "reorder-check",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 4,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
+      "versao": 23,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "safety-stock",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
+      "versao": 16,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "scanner-ocr",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T11:45Z"
     },
     {
       "slug": "send-email-alert",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
+      "versao": 17,
+      "atualizada_em": "2026-11-26T11:45Z"
     },
     {
       "slug": "stock-alert",
       "decisao": "mantem",
       "motivo": "exige sessao no proprio codigo",
       "verify_jwt": false,
-      "versao": 2,
-      "atualizada_em": "2026-11-21",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "webauthn-register-options",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "webauthn-register-verify",
-      "decisao": "mantem",
-      "motivo": "exige sessao no proprio codigo",
-      "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": true,
-      "chamada_pelo_app": true
-    },
-    {
-      "slug": "auth-change-password",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-login",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-logout",
-      "decisao": "remover",
-      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false,
-      "exige_autorizacao": true,
-      "endpoint_vivo_em": "2026-11-25"
-    },
-    {
-      "slug": "auth-refresh-token",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-register",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-reset-password",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-session-list",
-      "decisao": "remover",
-      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false,
-      "exige_autorizacao": true,
-      "endpoint_vivo_em": "2026-11-25"
-    },
-    {
-      "slug": "auth-session-revoke",
-      "decisao": "remover",
-      "motivo": "stub de 24-29 linhas: devolve {success:true} sem executar nada; o app autentica pelo GoTrue (supabase.auth) e nada no repo chama este slug (grep repo-wide em 25/11/2026); respondia HTTP 200 com a chave publica. Rollback: o fonte permanece no repo",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false,
-      "exige_autorizacao": true,
-      "endpoint_vivo_em": "2026-11-25"
-    },
-    {
-      "slug": "auth-social-login",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "auth-verify-email",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": false
-    },
-    {
-      "slug": "health",
-      "decisao": "publica-por-design",
-      "motivo": "precisa rodar antes de existir sessao",
-      "verify_jwt": true,
-      "versao": 1,
-      "atualizada_em": "2026-08-11",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": true
+      "versao": 21,
+      "atualizada_em": "2026-11-26T05:00Z"
     },
     {
       "slug": "webauthn-auth-options",
       "decisao": "publica-por-design",
       "motivo": "precisa rodar antes de existir sessao",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": true
+      "versao": 16,
+      "atualizada_em": "2026-11-26T11:45Z"
     },
     {
       "slug": "webauthn-auth-verify",
       "decisao": "publica-por-design",
       "motivo": "precisa rodar antes de existir sessao",
       "verify_jwt": false,
-      "versao": 1,
-      "atualizada_em": "2026-11-20",
-      "guarda_no_codigo": false,
-      "chamada_pelo_app": true
+      "versao": 16,
+      "atualizada_em": "2026-11-26T11:45Z"
+    },
+    {
+      "slug": "webauthn-register-options",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": false,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T11:45Z"
+    },
+    {
+      "slug": "webauthn-register-verify",
+      "decisao": "mantem",
+      "motivo": "exige sessao no proprio codigo",
+      "verify_jwt": false,
+      "versao": 16,
+      "atualizada_em": "2026-11-26T11:45Z"
     }
-  ],
-  "_revisado_em": "2026-11-25T21:40Z"
+  ]
 }
