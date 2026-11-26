@@ -12,9 +12,10 @@
 --   TEN 8   1 tenant distinto por tabela: o predicado novo nao muda o que cada usuario ve.
 --
 -- O que esta migration faz:
---   1. `tenant_id` vira NOT NULL com DEFAULT effective_tenant_id() nas tabelas que tem a
---      policy `tenant_isolation`. Fecha a ORIGEM do vazamento (linha sem unidade visivel
---      para todos) em vez de so tolerar isso no predicado.
+--   1. `tenant_id` vira NOT NULL com DEFAULT effective_tenant_id() em TODA coluna
+--      `tenant_id` de public (75 colunas, 73 nullable). Fecha a ORIGEM do vazamento
+--      (linha sem unidade visivel para todos) em vez de so tolerar isso no predicado.
+--      `user_roles` nao tem a policy tenant_isolation e entraria fora do escopo antigo.
 --   2. O predicado da `tenant_isolation` perde o `tenant_id is null`.
 --   3. Remove policies PERMISSIVE de predicado `true` SOMENTE quando redundantes: cada
 --      comando que elas cobrem (SELECT/INSERT/UPDATE/DELETE) tem de continuar coberto por
@@ -42,18 +43,15 @@ declare
 begin
   set local lock_timeout = '10s';
 
-  -- (1) tenant_id NOT NULL + DEFAULT nas tabelas com tenant_isolation
+  -- (1) tenant_id NOT NULL + DEFAULT em TODA coluna tenant_id de public. NAO exige a
+  -- policy tenant_isolation: user_roles tem isolamento proprio (6 policies) e tenant_id
+  -- nullable, e ficaria de fora do endurecimento. tenant_members ja e NOT NULL.
   for r in
     select c.table_name, c.column_default
     from information_schema.columns c
     where c.table_schema = 'public'
       and c.column_name = 'tenant_id'
       and c.is_nullable = 'YES'
-      and exists (
-        select 1 from pg_policies t
-        where t.schemaname = 'public' and t.tablename = c.table_name
-          and t.policyname = 'tenant_isolation'
-      )
     order by c.table_name
   loop
     execute format('select count(*) from public.%I where tenant_id is null', r.table_name)
@@ -145,12 +143,7 @@ begin
 
   select count(*), coalesce(string_agg(table_name, ' '), '-') into n, lista
   from information_schema.columns c
-  where c.table_schema = 'public' and c.column_name = 'tenant_id' and c.is_nullable = 'YES'
-    and exists (
-      select 1 from pg_policies t
-      where t.schemaname = 'public' and t.tablename = c.table_name
-        and t.policyname = 'tenant_isolation'
-    );
+  where c.table_schema = 'public' and c.column_name = 'tenant_id' and c.is_nullable = 'YES';
   if n > 0 then
     raise exception 'coluna tenant_id ainda nullable em % tabela(s): %', n, lista;
   end if;
