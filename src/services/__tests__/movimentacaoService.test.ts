@@ -139,4 +139,42 @@ describe("movimentacaoService", () => {
       } as any)
     ).rejects.toThrow("rpc-fail");
   });
+
+  it("registrar sem lote usa a chave de conflito da UNIQUE de estoque_posicao", async () => {
+    const upsert = vi.fn().mockResolvedValue({ error: null });
+    const insertRastreamento = vi.fn().mockResolvedValue({ error: null });
+    (supabase.from as any).mockImplementation((table: string) => {
+      if (table === "posicoes_estoque") {
+        return {
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              maybeSingle: vi.fn().mockResolvedValue({ data: { id: "pos-1" } }),
+            }),
+          }),
+        };
+      }
+      if (table === "estoque_posicao") return { upsert };
+      return { insert: insertRastreamento };
+    });
+
+    await movimentacaoService.registrar({
+      tipo: "armazenamento",
+      produto_id: "p1",
+      to_posicao_id: "pos-1",
+      quantidade: 4,
+      operador_id: "u1",
+    } as any);
+
+    // A UNIQUE de estoque_posicao e (posicao_id, produto_id, lote_id) NULLS NOT DISTINCT;
+    // qualquer outra chave aqui faz o upsert falhar em producao com 42P10.
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        produto_id: "p1",
+        posicao_id: "pos-1",
+        lote_id: null,
+        quantidade: 4,
+      }),
+      { onConflict: "posicao_id,produto_id,lote_id" }
+    );
+  });
 });

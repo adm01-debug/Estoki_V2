@@ -89,7 +89,9 @@ export const movimentacaoService = {
           quantidade: input.quantidade,
           lote_id: null,
         },
-        { onConflict: "produto_id,posicao_id" }
+        // A UNIQUE de estoque_posicao e (posicao_id, produto_id, lote_id) com NULLS NOT
+        // DISTINCT: com lote nulo a chave de 2 colunas nao casa e o upsert falha com 42P10.
+        { onConflict: "posicao_id,produto_id,lote_id" }
       );
       if (upsertErr) {
         logger.error("Erro no upsert de estoque_posicao", upsertErr, { input });
