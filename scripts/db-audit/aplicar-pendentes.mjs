@@ -437,6 +437,15 @@ const PENDENCIAS = [
       "has_column_privilege('authenticated','public.reorder_suggestions','status','UPDATE')",
     dependencias: [],
   },
+  {
+    // 20261126220000 cria get_automacoes_saude(), que alimenta o card "Saude da sincronizacao"
+    // da tela de Automacoes. Sem ela a tela nao tem como saber se o cron do catalogo esta vivo,
+    // porque produtos_sync_estado e fechado para anon/authenticated.
+    arquivo: "20261126220000_AUT_saude_crons.sql",
+    nome: "aut_saude_crons",
+    aplicado: "to_regprocedure('public.get_automacoes_saude()') is not null",
+    dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
 ];
 
 function sqlEstado() {

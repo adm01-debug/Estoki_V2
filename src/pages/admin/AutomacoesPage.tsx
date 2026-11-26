@@ -59,6 +59,28 @@ interface ReorderSuggestion {
   created_at: string;
 }
 
+interface CronSaude {
+  jobid: number;
+  jobname: string;
+  schedule: string;
+  ultima_execucao: string | null;
+  ultimo_status: string | null;
+  falhas_48h: number;
+}
+
+interface SaudeAutomacoes {
+  crons: CronSaude[];
+  catalogo: {
+    produtos: number;
+    cursor_ate: string | null;
+    cursor_sku: string | null;
+    ultima_execucao: string | null;
+    ultima_duracao_ms: number | null;
+    ultimo_resultado: unknown;
+  } | null;
+  gerado_em: string;
+}
+
 const PERIODOS = [
   { value: "1", label: "Últimas 24h" },
   { value: "7", label: "Últimos 7 dias" },
@@ -144,6 +166,16 @@ export default function AutomacoesPage() {
     },
   });
 
+  const saudeQuery = useQuery({
+    queryKey: ["automacoes-saude"],
+    staleTime: 60 * 1000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_automacoes_saude");
+      if (error) throw error;
+      return data as unknown as SaudeAutomacoes;
+    },
+  });
+
   const alterarStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase.from("reorder_suggestions").update({ status }).eq("id", id);
@@ -161,11 +193,18 @@ export default function AutomacoesPage() {
   const falhas = logs.filter(falhou);
   const pendentes = sugestoes.filter((s) => s.status === "pending");
   const ultimaExecucao = logs[0]?.created_at;
+  const saude = saudeQuery.data;
+  const crons = saude?.crons ?? [];
+  const cronsComFalha = crons.filter(
+    (c) => c.falhas_48h > 0 || c.ultimo_status === "failed"
+  ).length;
+  const catalogo = saude?.catalogo ?? null;
 
   const recarregarTudo = () => {
     queryClient.invalidateQueries({ queryKey: ["automacoes-logs"] });
     queryClient.invalidateQueries({ queryKey: ["automacoes-reposicao"] });
     queryClient.invalidateQueries({ queryKey: ["automacoes-integracoes"] });
+    queryClient.invalidateQueries({ queryKey: ["automacoes-saude"] });
   };
 
   const exportarLogs = () => {
@@ -272,6 +311,114 @@ export default function AutomacoesPage() {
           icon={RefreshCw}
         />
       </div>
+
+      <Card>
+        <CardHeader className="flex flex-row items-start justify-between gap-4">
+          <div>
+            <CardTitle className="text-base">Saúde da sincronização</CardTitle>
+            <CardDescription>
+              Jobs agendados no banco e replicação do catálogo mestre
+              {saude
+                ? ` · gerado ${formatDistanceToNow(new Date(saude.gerado_em), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}`
+                : ""}
+            </CardDescription>
+          </div>
+          {saude && (
+            <Badge variant={cronsComFalha > 0 ? "destructive" : "secondary"}>
+              {cronsComFalha > 0 ? `${cronsComFalha} job(s) com falha` : "todos os jobs em ordem"}
+            </Badge>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {saudeQuery.isError && (
+            <ErrorState
+              message={(saudeQuery.error as Error).message}
+              onRetry={() => saudeQuery.refetch()}
+            />
+          )}
+
+          {saude && (
+            <>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-lg border p-4">
+                  <p className="text-xs tracking-wide text-muted-foreground uppercase">
+                    SKUs replicados
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold tabular-nums">
+                    {catalogo ? catalogo.produtos.toLocaleString("pt-BR") : "—"}
+                  </p>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <p className="text-xs tracking-wide text-muted-foreground uppercase">
+                    Catálogo sincronizado
+                  </p>
+                  <p className="mt-1 text-sm font-medium">
+                    {catalogo?.ultima_execucao
+                      ? format(new Date(catalogo.ultima_execucao), "dd/MM/yyyy HH:mm", {
+                          locale: ptBR,
+                        })
+                      : "nunca"}
+                  </p>
+                </div>
+                <div className="rounded-lg border p-4">
+                  <p className="text-xs tracking-wide text-muted-foreground uppercase">
+                    Falhas nas últimas 48h
+                  </p>
+                  <p className="mt-1 text-2xl font-semibold tabular-nums">
+                    {crons.reduce((total, c) => total + c.falhas_48h, 0)}
+                  </p>
+                </div>
+              </div>
+
+              {crons.length === 0 ? (
+                <EmptyState
+                  title="Nenhum job agendado"
+                  description="O banco não reporta jobs ativos do pg_cron."
+                />
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Job</TableHead>
+                      <TableHead>Agenda</TableHead>
+                      <TableHead>Última execução</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Falhas 48h</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {crons.map((cron) => (
+                      <TableRow key={cron.jobid}>
+                        <TableCell className="font-medium">{cron.jobname}</TableCell>
+                        <TableCell className="font-mono text-xs">{cron.schedule}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {cron.ultima_execucao
+                            ? formatDistanceToNow(new Date(cron.ultima_execucao), {
+                                addSuffix: true,
+                                locale: ptBR,
+                              })
+                            : "nunca executou"}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={cron.ultimo_status === "failed" ? "destructive" : "secondary"}
+                          >
+                            {cron.ultimo_status ?? "—"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right tabular-nums">{cron.falhas_48h}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-start justify-between gap-4">

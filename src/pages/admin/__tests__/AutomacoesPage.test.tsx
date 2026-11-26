@@ -55,6 +55,36 @@ const sugestoes = [
   },
 ];
 
+const saude = {
+  crons: [
+    {
+      jobid: 35,
+      jobname: "produtos-sync-catalogo",
+      schedule: "*/30 * * * *",
+      ultima_execucao: new Date().toISOString(),
+      ultimo_status: "succeeded",
+      falhas_48h: 0,
+    },
+    {
+      jobid: 39,
+      jobname: "dashboard-mv-refresh",
+      schedule: "20 7 * * *",
+      ultima_execucao: null,
+      ultimo_status: "failed",
+      falhas_48h: 3,
+    },
+  ],
+  catalogo: {
+    produtos: 20814,
+    cursor_ate: "2026-11-26T09:51:00Z",
+    cursor_sku: "SKU-999",
+    ultima_execucao: new Date().toISOString(),
+    ultima_duracao_ms: 1838,
+    ultimo_resultado: { modo: "incremental", replicados: 0 },
+  },
+  gerado_em: new Date().toISOString(),
+};
+
 const tabela = (nome: string) => {
   const resultado = {
     data: nome === "integration_logs" ? logs : nome === "reorder_suggestions" ? sugestoes : [],
@@ -73,7 +103,10 @@ const tabela = (nome: string) => {
 };
 
 vi.mock("@/integrations/supabase/client", () => ({
-  supabase: { from: vi.fn((nome: string) => tabela(nome)) },
+  supabase: {
+    from: vi.fn((nome: string) => tabela(nome)),
+    rpc: vi.fn(() => Promise.resolve({ data: saude, error: null })),
+  },
 }));
 
 const renderPagina = () => {
@@ -103,6 +136,17 @@ describe("AutomacoesPage", () => {
     expect(valor("Execuções com erro")).toContain("1");
     expect(valor("Sugestões pendentes")).toContain("1");
     expect(screen.getByText("TOTVS Protheus")).toBeInTheDocument();
+  });
+
+  it("mostra a saude dos jobs de cron e do catalogo replicado", async () => {
+    renderPagina();
+
+    await waitFor(() => expect(screen.getByText("Saúde da sincronização")).toBeInTheDocument());
+    expect(await screen.findByText("20.814")).toBeInTheDocument();
+    expect(screen.getByText("produtos-sync-catalogo")).toBeInTheDocument();
+    expect(screen.getByText("dashboard-mv-refresh")).toBeInTheDocument();
+    expect(screen.getByText("1 job(s) com falha")).toBeInTheDocument();
+    expect(screen.getByText("Falhas nas últimas 48h")).toBeInTheDocument();
   });
 
   it("aprova uma sugestao de reposicao", async () => {
