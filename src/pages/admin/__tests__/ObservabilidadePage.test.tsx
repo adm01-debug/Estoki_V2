@@ -36,14 +36,22 @@ const renderizar = () =>
       <HelmetProvider>
         <ObservabilidadePage />
       </HelmetProvider>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
 
 const metricas = {
   audit: [
-    { dia: "2026-11-24", entity_type: "produtos", action: "update", total: 5, usuarios_distintos: 2 },
+    {
+      dia: "2026-11-24",
+      entity_type: "produtos",
+      action: "update",
+      total: 5,
+      usuarios_distintos: 2,
+    },
   ],
-  alertas: [{ dia: "2026-11-24", severidade: "critica", tipo: "estoque", status: "aberto", total: 3 }],
+  alertas: [
+    { dia: "2026-11-24", severidade: "critica", tipo: "estoque", status: "aberto", total: 3 },
+  ],
   notificacoes: [
     { dia: "2026-11-24", tipo: "estoque_baixo", enviadas: 4, lidas: 2, taxa_leitura_pct: 50 },
   ],
@@ -81,9 +89,7 @@ describe("ObservabilidadePage", () => {
 
     renderizar();
 
-    await waitFor(() =>
-      expect(screen.getByText("Sem indicadores no período")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText("Sem indicadores no período")).toBeInTheDocument());
   });
 
   it("mostra o erro da RPC em vez de tela vazia", async () => {
@@ -92,7 +98,7 @@ describe("ObservabilidadePage", () => {
     renderizar();
 
     await waitFor(() =>
-      expect(screen.getByText("Acesso restrito a administradores")).toBeInTheDocument(),
+      expect(screen.getByText("Acesso restrito a administradores")).toBeInTheDocument()
     );
   });
 });

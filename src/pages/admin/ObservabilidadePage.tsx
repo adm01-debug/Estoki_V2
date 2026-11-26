@@ -111,7 +111,7 @@ export default function ObservabilidadePage() {
   const refresh = useMutation({
     mutationFn: async () => {
       const { data: resultado, error: rpcError } = await supabase.rpc(
-        "refresh_dashboard_materialized_views",
+        "refresh_dashboard_materialized_views"
       );
       if (rpcError) throw rpcError;
       return resultado as { total_ms?: number } | null;
@@ -179,7 +179,10 @@ export default function ObservabilidadePage() {
   const totais = useMemo(() => {
     const eventos = (data?.audit ?? []).reduce((acc, l) => acc + Number(l.total ?? 0), 0);
     const alertas = (data?.alertas ?? []).reduce((acc, l) => acc + Number(l.total ?? 0), 0);
-    const enviadas = (data?.notificacoes ?? []).reduce((acc, l) => acc + Number(l.enviadas ?? 0), 0);
+    const enviadas = (data?.notificacoes ?? []).reduce(
+      (acc, l) => acc + Number(l.enviadas ?? 0),
+      0
+    );
     const lidas = (data?.notificacoes ?? []).reduce((acc, l) => acc + Number(l.lidas ?? 0), 0);
     return {
       eventos,
@@ -190,7 +193,8 @@ export default function ObservabilidadePage() {
     };
   }, [data]);
 
-  const semDados = !isLoading && !isError && totais.eventos + totais.alertas + totais.enviadas === 0;
+  const semDados =
+    !isLoading && !isError && totais.eventos + totais.alertas + totais.enviadas === 0;
 
   if (isLoading) {
     return (
@@ -243,11 +247,7 @@ export default function ObservabilidadePage() {
               <SelectItem value="90">Últimos 90 dias</SelectItem>
             </SelectContent>
           </Select>
-          <Button
-            variant="outline"
-            onClick={() => refresh.mutate()}
-            disabled={refresh.isPending}
-          >
+          <Button variant="outline" onClick={() => refresh.mutate()} disabled={refresh.isPending}>
             <RefreshCw className={`mr-2 h-4 w-4 ${refresh.isPending ? "animate-spin" : ""}`} />
             {refresh.isPending ? "Recalculando..." : "Recalcular agora"}
           </Button>
@@ -258,11 +258,7 @@ export default function ObservabilidadePage() {
         <StatCard title="Eventos auditados" value={totais.eventos} icon={Activity} />
         <StatCard title="Alertas" value={totais.alertas} icon={ShieldAlert} />
         <StatCard title="Notificações enviadas" value={totais.enviadas} icon={Bell} />
-        <StatCard
-          title="Taxa de leitura"
-          value={`${totais.taxaLeitura}%`}
-          icon={BarChart3}
-        />
+        <StatCard title="Taxa de leitura" value={`${totais.taxaLeitura}%`} icon={BarChart3} />
       </div>
 
       {semDados ? (
@@ -294,7 +290,9 @@ export default function ObservabilidadePage() {
                       ]}
                     />
                     <Legend
-                      formatter={(valor) => (valor === "eventos" ? "Eventos" : "Usuários distintos")}
+                      formatter={(valor) =>
+                        valor === "eventos" ? "Eventos" : "Usuários distintos"
+                      }
                     />
                     <Bar dataKey="eventos" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     <Bar
@@ -330,7 +328,7 @@ export default function ObservabilidadePage() {
                             className="h-full rounded-full"
                             style={{
                               width: `${Math.round(
-                                (item.total / (alertasPorSeveridade[0]?.total || 1)) * 100,
+                                (item.total / (alertasPorSeveridade[0]?.total || 1)) * 100
                               )}%`,
                               backgroundColor: item.cor,
                             }}
