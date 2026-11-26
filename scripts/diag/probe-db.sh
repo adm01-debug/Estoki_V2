@@ -147,3 +147,40 @@ q "SEC 7: policies permissivas por role em public (quem realmente concede)" "sel
 q "SEC 8: leitura no papel anon, com rollback (prova comportamental)" "begin; set local role anon; select (select count(*) from public.tarefas) as anon_tarefas, (select count(*) from public.produtos) as anon_produtos, (select count(*) from public.clientes) as anon_clientes, (select count(*) from public.user_roles) as anon_user_roles; rollback;"
 q "SEC 8b: update id=id no papel anon, com rollback (no-op, so mede o que o RLS deixa tocar)" "begin; set local role anon; with u as (update public.tarefas set id = id returning 1) select count(*) as anon_update_linhas from u; rollback;"
 q "SEC 9: permissivas de anon/public cujo predicado nao exige sessao nem unidade" "select tablename, policyname, cmd, roles::text as roles, coalesce(qual, '-') as qual from pg_policies where schemaname = 'public' and permissive = 'PERMISSIVE' and exists (select 1 from unnest(roles) r where r::text in ('anon','public')) and coalesce(qual, '-') not like '%auth.uid()%' and coalesce(qual, '-') not like '%effective_tenant_id%' order by 1, 2"
+
+# ---------------------------------------------------------------------------
+# Inventario do banco vivo (objetivo: backend x tela / objetos x app).
+# Contagem EXATA de linhas por tabela: reltuples e n_live_tup sao estimativas e
+# mentem em tabela nunca analisada. O bloco DO devolve tudo na mensagem de erro.
+qj() {
+  local label="$1" sql="$2" body
+  echo "===== $label ====="
+  body=$(jq -nc --arg q "$sql" '{query:$q}')
+  curl -s -X POST "https://api.supabase.com/v1/projects/$REF/database/query" \
+    -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+    --data-binary "$body" | head -c 20000
+  echo
+}
+
+qj "INV 1: contagem exata de linhas por tabela de public" "do \$\$
+declare r record; acc text := ''; n bigint;
+begin
+  for r in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
+           where n.nspname = 'public' and c.relkind = 'r' order by 1 loop
+    execute 'select count(*) from public.' || quote_ident(r.relname) into n;
+    acc := acc || r.relname || '=' || n || '  ';
+  end loop;
+  raise exception 'INV %', acc;
+end \$\$;"
+
+qj "INV 2: tabelas, RLS, nº de policies e privilegio de leitura" "select c.relname as tabela, c.relrowsecurity as rls, (select count(*) from pg_policies p where p.schemaname='public' and p.tablename=c.relname) as policies, has_table_privilege('authenticated', c.oid, 'SELECT') as auth_sel, has_table_privilege('anon', c.oid, 'SELECT') as anon_sel, (select count(*) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped) as colunas from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' order by 1"
+
+qj "INV 3: views e materialized views de public" "select c.relname, case c.relkind when 'v' then 'view' when 'm' then 'matview' end as tipo, c.relrowsecurity as rls, pg_get_viewdef(c.oid, true) as definicao from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('v','m') order by 2, 1"
+
+qj "INV 4: funcoes de public com args, tipo e secdef" "select p.proname, pg_get_function_identity_arguments(p.oid) as args, case p.prokind when 'f' then 'funcao' when 'p' then 'procedure' when 'a' then 'agregado' when 'w' then 'window' end as tipo, p.prosecdef as secdef, p.prorettype::regtype::text as retorno from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' order by 1"
+
+qj "INV 5: tabelas de public com RLS DESABILITADO (falha de seguranca)" "select c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and not c.relrowsecurity order by 1"
+
+qj "INV 6: buckets de storage e nº de objetos" "select b.id, b.name, b.public, (select count(*) from storage.objects o where o.bucket_id = b.id) as objetos from storage.buckets b order by 1"
+
+qj "INV 7: jobs do pg_cron ativos" "select jobid, jobname, schedule, command, active from cron.job order by 1"
