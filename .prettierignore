@@ -18,6 +18,10 @@ scripts/lib
 scripts/regras_negocio
 scripts/supabase_snapshot
 inventario/estado
+# Gerado pelo workflow Inventario de estado (scripts/inventario). Os JSON saem do
+# gerador, nao de edicao manual: reformatar a cada rodada derruba o gate de
+# formatacao em qualquer PR que dispare a regeneracao.
+inventario/ia
 docs/contexto
 
 # Gerado pelo Supabase CLI (workflow Tipos Supabase / npm run db:generate).

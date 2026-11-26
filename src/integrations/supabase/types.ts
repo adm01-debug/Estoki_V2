@@ -5478,6 +5478,7 @@ export type Database = {
         Returns: undefined
       }
       effective_tenant_id: { Args: never; Returns: string }
+      get_automacoes_saude: { Args: never; Returns: Json }
       get_backend_health: { Args: never; Returns: Json }
       get_current_user_permissions: {
         Args: never

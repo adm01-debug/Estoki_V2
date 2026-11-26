@@ -1,6 +1,6 @@
 {
-  "total": 1555,
-  "generatedAt": "2026-11-26T13:24:46.675Z",
+  "total": 1559,
+  "generatedAt": "2026-11-26T14:04:28.926Z",
   "perFile": {
     "src/components/BulkActionsBar.tsx": 2,
     "src/components/DataImporter.tsx": 4,
@@ -293,7 +293,7 @@
     "src/pages/admin/ApiPortalPage.tsx": 2,
     "src/pages/admin/AuditLogPage.tsx": 14,
     "src/pages/admin/AuditoriaCriticaPage.tsx": 21,
-    "src/pages/admin/AutomacoesPage.tsx": 24,
+    "src/pages/admin/AutomacoesPage.tsx": 28,
     "src/pages/admin/BackendHealthPage.tsx": 9,
     "src/pages/admin/CircuitBreakersPage.tsx": 2,
     "src/pages/admin/IntegrationsPage.tsx": 2,

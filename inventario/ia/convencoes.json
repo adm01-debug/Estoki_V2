@@ -1,0 +1,96 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (72)",
+   "src/features (14)",
+   "src/components (2)"
+  ],
+  "componentes": [
+   "src/components (463)",
+   "src/pages (72)",
+   "src/features (68)"
+  ],
+  "hooks": [
+   "src/hooks (266)",
+   "src/features (17)",
+   "src/components (7)"
+  ],
+  "servicos_logica": [
+   "src/lib (110)",
+   "src/services (26)",
+   "src/utils (15)"
+  ],
+  "testes": [
+   "co-localizado (__tests__) (67)",
+   "co-localizado (*.test) (43)",
+   "outro (17)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/db-audit (12)",
+   "scripts/ci (7)",
+   "scripts/diag (6)"
+  ],
+  "docs": [
+   "docs (11)",
+   "(raiz) (7)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (87%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (95%)",
+  "edge_functions": "kebab-case (97%)",
+  "tabelas": "snake_case (79%)"
+ },
+ "barrels_index": 27,
+ "extensao_componentes": [
+  ".tsx (620)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "@/components/": "src/components/",
+   "@/hooks/": "src/hooks/",
+   "@/lib/": "src/lib/",
+   "@/services/": "src/services/",
+   "@/types/": "src/types/",
+   "@/utils/": "src/utils/",
+   "@/contexts/": "src/contexts/",
+   "@/guards/": "src/guards/",
+   "@/hoc/": "src/hoc/",
+   "@/workers/": "src/workers/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "conventional commits (observado)",
+  "exemplos": [
+   "fix(ci): prova de guarda aceita a recusa do backend-health + probe de env falha de verdade (#341)",
+   "fix(seguranca): fecha o CORS no dominio atual e falha fechado no webauthn (#340)",
+   "fix: revoga anon sem reabrir authenticated nas funcoes de public (#339)",
+   "fix: fecha EXECUTE de anon em toda funcao de public, inclusive as de trigger (#338)",
+   "fix: upsert de estoque usa a chave unica real (42P10) e aplicador cobre as migrations novas"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": true,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.paths.json"
+  ]
+ }
+}
