@@ -505,6 +505,16 @@ const PENDENCIAS = [
       "and policyname = 'Admins can insert config')",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
+  {
+    // 20261130120000 popula as 8 regras de `alertas_config`: a tela Alertas > Configuracoes
+    // exibia "nenhuma configuracao encontrada" e nao tinha o que ligar/desligar por tipo.
+    arquivo: "20261130120000_UI_alertas_config_edicao.sql",
+    nome: "alertas_config",
+    aplicado:
+      "to_regclass('public.alertas_config') is not null " +
+      "and (select count(*) from public.alertas_config) = 8",
+    dependencias: [],
+  },
 ];
 
 function sqlEstado() {

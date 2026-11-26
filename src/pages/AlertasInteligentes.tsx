@@ -1,7 +1,9 @@
 import { AlertasCharts } from "@/components/charts/WMSModuleCharts";
 import { SEO } from "@/components/common/SEO";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Switch } from "@/components/ui/switch";
@@ -11,10 +13,16 @@ import { Bell, Volume2, VolumeX, Settings, History } from "lucide-react";
 import { useKPIAlerts } from "@/features/analytics/hooks/useKPIAlerts";
 import { AlertasResumoCards } from "@/components/alertas/AlertasResumoCards";
 import { AlertasHistoricoTable, AlertaHistorico } from "@/components/alertas/AlertasHistoricoTable";
-import { AlertasConfigTable } from "@/components/alertas/AlertasConfigTable";
+import {
+  AlertasConfigTable,
+  type AlteracaoAlerta,
+  type ConfigAlerta,
+} from "@/components/alertas/AlertasConfigTable";
 import { ErrorState } from "@/components/common/AsyncStates";
 
 export default function AlertasInteligentesPage() {
+  const { hasRole } = useAuth();
+  const queryClient = useQueryClient();
   const [alertsEnabled, setAlertsEnabled] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [filtroSeveridade, setFiltroSeveridade] = useState<string>("todos");
@@ -75,6 +83,17 @@ export default function AlertasInteligentesPage() {
       return data;
     },
   });
+
+  const salvarConfigAlerta = async (tipo: ConfigAlerta["tipo"], alteracao: AlteracaoAlerta) => {
+    const { error } = await supabase.from("alertas_config").update(alteracao).eq("tipo", tipo);
+    if (error) {
+      toast.error("Não foi possível salvar a configuração", { description: error.message });
+      return false;
+    }
+    await queryClient.invalidateQueries({ queryKey: ["alertas_config"] });
+    toast.success(`Configuração de ${tipo} atualizada`);
+    return true;
+  };
 
   const handleReconhecer = async (id: string) => {
     await supabase.from("alertas_historico").update({ status: "reconhecido" }).eq("id", id);
@@ -169,7 +188,11 @@ export default function AlertasInteligentesPage() {
               )}
             </TabsContent>
             <TabsContent value="config">
-              <AlertasConfigTable configAlertas={configAlertas} />
+              <AlertasConfigTable
+                configAlertas={configAlertas}
+                podeEditar={hasRole("admin")}
+                onSalvar={salvarConfigAlerta}
+              />
             </TabsContent>
           </Tabs>
         </div>
