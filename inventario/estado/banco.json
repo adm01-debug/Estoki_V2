@@ -2,17 +2,21 @@
   "alertas": [
     {
       "detalhe": [
-        "produtos_sync_estado"
+        "fechar_execute_anon_funcao_nova"
       ],
-      "tipo": "rls_sem_policy"
+      "tipo": "funcao_definer_sem_guarda"
     },
     {
       "detalhe": [
-        "alert-expiration-daily",
-        "reorder-check-daily",
-        "stock-alert-daily"
+        "dashboard-mv-refresh"
       ],
       "tipo": "cron_sem_execucao"
+    },
+    {
+      "detalhe": [
+        "tabela:lots"
+      ],
+      "tipo": "objeto_citado_sem_banco"
     },
     {
       "detalhe": [
@@ -55,7 +59,6 @@
         "cleanup-sessions",
         "complete-job",
         "create-customer",
-        "create-lot",
         "create-payment-intent",
         "create-purchase-order",
         "create-sales-order",
@@ -104,7 +107,6 @@
         "kpi-calculator",
         "label-print",
         "location-utilization",
-        "lot-tracking",
         "merge-pdfs",
         "metrics",
         "nfe-cancel",
@@ -226,8 +228,8 @@
       "max_worker_processes": "6"
     },
     "historico": {
-      "bytes": 98304,
-      "linhas": 162,
+      "bytes": 131072,
+      "linhas": 229,
       "mais_antigo": "2026-08-14T09:00:00Z",
       "mais_de_7_dias": 20
     },
@@ -239,12 +241,26 @@
         "chama": [
           "net.http_post"
         ],
+        "duracao_max_s_7d": 0,
+        "execucoes_24h": 1,
+        "execucoes_7d": 1,
+        "falhas_24h": 0,
+        "falhas_7d": 0,
+        "nome": "alert-expiration-daily",
+        "startup_timeout_7d": 0,
+        "taxa_falha_7d_pct": 0,
+        "ultima_falha": null
+      },
+      {
+        "agenda": "20 7 * * *",
+        "ativo": true,
+        "chama": [],
         "duracao_max_s_7d": null,
         "execucoes_24h": 0,
         "execucoes_7d": 0,
         "falhas_24h": 0,
         "falhas_7d": 0,
-        "nome": "alert-expiration-daily",
+        "nome": "dashboard-mv-refresh",
         "startup_timeout_7d": 0,
         "taxa_falha_7d_pct": 0,
         "ultima_falha": null
@@ -257,7 +273,7 @@
         ],
         "duracao_max_s_7d": 0,
         "execucoes_24h": 24,
-        "execucoes_7d": 122,
+        "execucoes_7d": 143,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "db-health-check",
@@ -272,8 +288,8 @@
           "net.http_post"
         ],
         "duracao_max_s_7d": 0,
-        "execucoes_24h": 8,
-        "execucoes_7d": 8,
+        "execucoes_24h": 30,
+        "execucoes_7d": 30,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "produtos-sync-catalogo",
@@ -287,9 +303,9 @@
         "chama": [
           "net.http_post"
         ],
-        "duracao_max_s_7d": null,
-        "execucoes_24h": 0,
-        "execucoes_7d": 0,
+        "duracao_max_s_7d": 0,
+        "execucoes_24h": 1,
+        "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "reorder-check-daily",
@@ -303,9 +319,9 @@
         "chama": [
           "net.http_post"
         ],
-        "duracao_max_s_7d": null,
-        "execucoes_24h": 0,
-        "execucoes_7d": 0,
+        "duracao_max_s_7d": 0,
+        "execucoes_24h": 1,
+        "execucoes_7d": 1,
         "falhas_24h": 0,
         "falhas_7d": 0,
         "nome": "stock-alert-daily",
@@ -357,7 +373,6 @@
       "cleanup-sessions",
       "complete-job",
       "create-customer",
-      "create-lot",
       "create-payment-intent",
       "create-purchase-order",
       "create-sales-order",
@@ -406,7 +421,6 @@
       "kpi-calculator",
       "label-print",
       "location-utilization",
-      "lot-tracking",
       "merge-pdfs",
       "metrics",
       "nfe-cancel",
@@ -519,354 +533,368 @@
     ],
     "publicadas": [
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "abc-analysis",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "ai-assistant",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:35Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "alert-expiration",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 9
+        "versao": 20
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-productivity",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-quality",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "alert-sla-breach",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "alerta-divergencia-fornecedor",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "analytics",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-2fa-setup",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-2fa-verify",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-change-password",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-login",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-refresh-token",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-register",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:20Z",
         "slug": "auth-reset-password",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "auth-social-login",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "auth-verify-email",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-08-11T20:21Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "backend-health",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 14
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "calculate-kpis",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
         "atualizada_em": "2026-08-11T20:21Z",
         "slug": "carrier-book",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-cancel",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-rates-cache",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "carrier-track",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 16
       },
       {
         "atualizada_em": "2026-08-11T20:22Z",
         "slug": "carrier-webhooks",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-11-25T17:32Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "check-reorder",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T14:17Z",
+        "slug": "create-lot",
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "versao": 1
+      },
+      {
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "dashboard-stats",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
         "atualizada_em": "2026-08-11T20:23Z",
         "slug": "db-alert-monitor",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "export-data",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "gerar-desafios-diarios",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 6
+        "versao": 17
       },
       {
         "atualizada_em": "2026-08-11T20:24Z",
         "slug": "get-permissions",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
         "atualizada_em": "2026-08-11T20:24Z",
         "slug": "health",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 5
+        "versao": 13
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "health-check",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "integration-amazon",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T04:59Z",
         "slug": "integration-ifood",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "integration-mercado-livre",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "integration-rappi",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "integration-sap",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "integration-totvs",
         "status": "ACTIVE",
         "verify_jwt": true,
-        "versao": 7
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T14:17Z",
+        "slug": "lot-tracking",
+        "status": "ACTIVE",
+        "verify_jwt": true,
+        "versao": 1
+      },
+      {
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "nfe-import",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "previsao-demanda",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T18:10Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "produtos-sync",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 3
+        "versao": 19
       },
       {
-        "atualizada_em": "2026-11-25T17:35Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "reorder-check",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 12
+        "versao": 23
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "safety-stock",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "scanner-ocr",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:33Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "send-email-alert",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 6
+        "versao": 17
       },
       {
-        "atualizada_em": "2026-11-25T17:35Z",
+        "atualizada_em": "2026-11-26T05:00Z",
         "slug": "stock-alert",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 10
+        "versao": 21
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "webauthn-auth-options",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 5
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "webauthn-auth-verify",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 5
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "webauthn-register-options",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 5
+        "versao": 16
       },
       {
-        "atualizada_em": "2026-11-20T14:24Z",
+        "atualizada_em": "2026-11-26T11:45Z",
         "slug": "webauthn-register-verify",
         "status": "ACTIVE",
         "verify_jwt": false,
-        "versao": 5
+        "versao": 16
       }
     ],
     "publicadas_sem_codigo_no_repo": []
@@ -886,6 +914,8 @@
     "default_tenant_id",
     "descontar_pontos",
     "effective_tenant_id",
+    "fechar_execute_anon_funcao_nova",
+    "get_automacoes_saude",
     "get_backend_health",
     "get_current_user_permissions",
     "get_dashboard_metrics",
@@ -922,7 +952,9 @@
     "record_failed_login",
     "refresh_dashboard_materialized_views",
     "registrar_checkin_diario",
+    "registrar_versao_entidade",
     "reset_login_attempts",
+    "restore_entity_version",
     "set_limit",
     "set_system_settings_updated_at",
     "show_limit",
@@ -936,6 +968,7 @@
     "strict_word_similarity_dist_op",
     "strict_word_similarity_op",
     "sync_member_role_to_user_roles",
+    "tocar_feature_flag",
     "transferir_estoque",
     "trigger_atualizar_conquistas",
     "trigger_atualizar_desafios",
@@ -957,20 +990,21 @@
   "funcoes_definer_sem_guarda": [
     {
       "anon": true,
-      "args": "p_email text",
-      "authenticated": true,
-      "chamada_por": [],
-      "nome": "check_login_lockout",
-      "service_role": true
-    },
-    {
-      "anon": true,
       "args": "",
       "authenticated": true,
       "chamada_por": [
-        "effective_tenant_id (definer)"
+        "effective_tenant_id (definer)",
+        "registrar_versao_entidade (definer)"
       ],
       "nome": "default_tenant_id",
+      "service_role": true
+    },
+    {
+      "anon": false,
+      "args": "",
+      "authenticated": true,
+      "chamada_por": [],
+      "nome": "fechar_execute_anon_funcao_nova",
       "service_role": true
     },
     {
@@ -988,38 +1022,19 @@
       "chamada_por": [],
       "nome": "is_tenant_member",
       "service_role": true
-    },
-    {
-      "anon": true,
-      "args": "p_email text, p_ip_address inet",
-      "authenticated": true,
-      "chamada_por": [],
-      "nome": "record_failed_login",
-      "service_role": true
-    },
-    {
-      "anon": true,
-      "args": "p_email text",
-      "authenticated": true,
-      "chamada_por": [],
-      "nome": "reset_login_attempts",
-      "service_role": true
     }
   ],
   "funcoes_executaveis_anon": [
-    "check_login_lockout",
     "current_tenant_id",
     "default_tenant_id",
     "effective_tenant_id",
     "get_backend_health",
     "has_role",
     "is_tenant_admin",
-    "is_tenant_member",
-    "record_failed_login",
-    "reset_login_attempts"
+    "is_tenant_member"
   ],
   "funcoes_security_definer_sem_search_path": [],
-  "medido_em": "2026-11-25T22:18:57Z",
+  "medido_em": "2026-11-26T19:47:14Z",
   "migrations_orfas": {
     "criterio": "migration de supabase/migrations/ cuja tabela/funcao nao existe no banco (view fica de fora: o inventario nao guarda nome de view)",
     "lista": [
@@ -1084,13 +1099,6 @@
         ]
       },
       {
-        "arquivo": "20241231000001_entity_versions.sql",
-        "motivo": "nunca aplicada; VersionHistory nao e importado por nenhuma tela",
-        "objetos": [
-          "entity_versions"
-        ]
-      },
-      {
         "arquivo": "20251220114459_create_recebimentos_table.sql",
         "motivo": "modelo antigo: recebimento real usa nfe_documents/nfe_items/lotes",
         "objetos": [
@@ -1103,24 +1111,6 @@
         "objetos": [
           "triagens",
           "trigger_xp_triagem"
-        ]
-      },
-      {
-        "arquivo": "20251230000002_create_feature_flags_table.sql",
-        "motivo": "nunca aplicada; policy cita tabela roles inexistente e src/lib/featureFlags.ts nao e importado",
-        "objetos": [
-          "feature_flags",
-          "update_feature_flags_updated_at"
-        ]
-      },
-      {
-        "arquivo": "20251231000002_create_entity_versions_table.sql",
-        "motivo": "duplicata mais nova da anterior (mesma tabela, policy com nome igual: falharia)",
-        "objetos": [
-          "entity_versions",
-          "create_entity_version",
-          "get_entity_history",
-          "restore_entity_version"
         ]
       },
       {
@@ -1151,19 +1141,10 @@
     "lista": [
       {
         "arquivos": [
-          "src/hooks/useEntityVersions.ts",
-          "src/hooks/useVersions.ts"
+          "supabase/functions/create-lot/index.ts"
         ],
-        "motivo": "useVersions/useEntityVersions: nenhuma tela importa VersionHistory",
-        "nome": "entity_versions",
-        "tipo": "tabela"
-      },
-      {
-        "arquivos": [
-          "src/lib/featureFlags.ts"
-        ],
-        "motivo": "src/lib/featureFlags.ts: nenhum import; src/config/feature-flags.tsx e a implementacao em uso",
-        "nome": "feature_flags",
+        "motivo": null,
+        "nome": "lots",
         "tipo": "tabela"
       },
       {
@@ -1178,18 +1159,18 @@
   },
   "policies_anon_permissivas": [],
   "resumo": {
-    "cron_ativos": 5,
-    "cron_jobs": 5,
-    "funcoes_public": 79,
-    "ledger_registros": 101,
-    "ledger_versao_max": "20261125120000",
+    "cron_ativos": 6,
+    "cron_jobs": 6,
+    "funcoes_public": 84,
+    "ledger_registros": 122,
+    "ledger_versao_max": "20261130130000",
     "max_connections": 60,
-    "policies": 335,
+    "policies": 321,
     "postgres": "17.11",
-    "tabelas_public": 93,
+    "tabelas_public": 95,
     "tabelas_sem_rls": 0,
-    "tamanho_bytes": 36566707,
-    "triggers_public": 58,
+    "tamanho_bytes": 46741171,
+    "triggers_public": 60,
     "views_public": 3
   },
   "tabelas": [
@@ -1199,7 +1180,7 @@
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "agv_devices",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1209,7 +1190,7 @@
       }
     },
     {
-      "bytes": 49152,
+      "bytes": 57344,
       "citada_no_banco": false,
       "linhas": 0,
       "linhas_exatas": true,
@@ -1239,18 +1220,18 @@
       }
     },
     {
-      "bytes": 57344,
+      "bytes": 65536,
       "citada_no_banco": false,
-      "linhas": 0,
+      "linhas": 8,
       "linhas_exatas": true,
       "nome": "alertas_config",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
       "uso_no_codigo": {
-        "edges": 0,
-        "src": 1
+        "edges": 1,
+        "src": 2
       }
     },
     {
@@ -1259,7 +1240,7 @@
       "linhas": 10,
       "linhas_exatas": true,
       "nome": "alertas_historico",
-      "policies": 4,
+      "policies": 3,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1299,7 +1280,7 @@
       }
     },
     {
-      "bytes": 98304,
+      "bytes": 114688,
       "citada_no_banco": true,
       "linhas": 4,
       "linhas_exatas": true,
@@ -1394,7 +1375,7 @@
       "linhas": 7,
       "linhas_exatas": true,
       "nome": "conquistas_definicoes",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -1436,7 +1417,7 @@
     {
       "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 126,
+      "linhas": 147,
       "linhas_exatas": true,
       "nome": "db_health_snapshots",
       "policies": 1,
@@ -1479,12 +1460,27 @@
       }
     },
     {
-      "bytes": 172032,
+      "bytes": 73728,
       "citada_no_banco": true,
-      "linhas": 5,
+      "linhas": 0,
+      "linhas_exatas": true,
+      "nome": "entity_versions",
+      "policies": 3,
+      "rls": true,
+      "rls_forcado": false,
+      "triggers": 0,
+      "uso_no_codigo": {
+        "edges": 0,
+        "src": 2
+      }
+    },
+    {
+      "bytes": 106496,
+      "citada_no_banco": true,
+      "linhas": 6,
       "linhas_exatas": true,
       "nome": "estoque_posicao",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 2,
@@ -1499,7 +1495,7 @@
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "eventos_picking",
-      "policies": 4,
+      "policies": 3,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -1514,7 +1510,7 @@
       "linhas": 11,
       "linhas_exatas": true,
       "nome": "eventos_triagem",
-      "policies": 5,
+      "policies": 4,
       "rls": true,
       "rls_forcado": false,
       "triggers": 2,
@@ -1524,12 +1520,27 @@
       }
     },
     {
+      "bytes": 49152,
+      "citada_no_banco": false,
+      "linhas": 13,
+      "linhas_exatas": true,
+      "nome": "feature_flags",
+      "policies": 4,
+      "rls": true,
+      "rls_forcado": false,
+      "triggers": 1,
+      "uso_no_codigo": {
+        "edges": 0,
+        "src": 6
+      }
+    },
+    {
       "bytes": 65536,
       "citada_no_banco": false,
       "linhas": 5,
       "linhas_exatas": true,
       "nome": "fornecedor_scores",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -1625,7 +1636,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 6,
-        "src": 0
+        "src": 2
       }
     },
     {
@@ -1634,7 +1645,7 @@
       "linhas": 12,
       "linhas_exatas": true,
       "nome": "inventario_ciclos",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1644,18 +1655,18 @@
       }
     },
     {
-      "bytes": 24576,
+      "bytes": 57344,
       "citada_no_banco": false,
-      "linhas": 0,
+      "linhas": 1,
       "linhas_exatas": true,
       "nome": "inventario_config",
-      "policies": 3,
+      "policies": 4,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 4
       }
     },
     {
@@ -1664,7 +1675,7 @@
       "linhas": 40,
       "linhas_exatas": true,
       "nome": "inventario_contagens",
-      "policies": 4,
+      "policies": 3,
       "rls": true,
       "rls_forcado": false,
       "triggers": 2,
@@ -1704,7 +1715,7 @@
       }
     },
     {
-      "bytes": 32768,
+      "bytes": 40960,
       "citada_no_banco": false,
       "linhas": 0,
       "linhas_exatas": true,
@@ -1734,12 +1745,12 @@
       }
     },
     {
-      "bytes": 40960,
+      "bytes": 32768,
       "citada_no_banco": true,
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "login_attempts",
-      "policies": 6,
+      "policies": 5,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -1790,7 +1801,7 @@
       "triggers": 3,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 35
+        "src": 36
       }
     },
     {
@@ -1799,7 +1810,7 @@
       "linhas": 7,
       "linhas_exatas": true,
       "nome": "metas_kpi",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1814,7 +1825,7 @@
       "linhas": 14,
       "linhas_exatas": true,
       "nome": "metricas_dashboard",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -1829,7 +1840,7 @@
       "linhas": 30,
       "linhas_exatas": true,
       "nome": "metricas_operacionais",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1844,7 +1855,7 @@
       "linhas": 1,
       "linhas_exatas": true,
       "nome": "nfe_documents",
-      "policies": 5,
+      "policies": 4,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -1904,7 +1915,7 @@
       "linhas": 12,
       "linhas_exatas": true,
       "nome": "ondas_separacao",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 2,
@@ -1929,7 +1940,7 @@
       }
     },
     {
-      "bytes": 114688,
+      "bytes": 131072,
       "citada_no_banco": true,
       "linhas": 5,
       "linhas_exatas": true,
@@ -1954,7 +1965,7 @@
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
-        "edges": 4,
+        "edges": 5,
         "src": 2
       }
     },
@@ -1979,7 +1990,7 @@
       "linhas": 27,
       "linhas_exatas": true,
       "nome": "permissions",
-      "policies": 2,
+      "policies": 1,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -2019,12 +2030,12 @@
       }
     },
     {
-      "bytes": 262144,
+      "bytes": 245760,
       "citada_no_banco": true,
       "linhas": 164,
       "linhas_exatas": true,
       "nome": "posicoes_estoque",
-      "policies": 5,
+      "policies": 4,
       "rls": true,
       "rls_forcado": false,
       "triggers": 2,
@@ -2034,7 +2045,7 @@
       }
     },
     {
-      "bytes": 81920,
+      "bytes": 98304,
       "citada_no_banco": true,
       "linhas": 21,
       "linhas_exatas": true,
@@ -2064,15 +2075,15 @@
       }
     },
     {
-      "bytes": 11862016,
+      "bytes": 21192704,
       "citada_no_banco": true,
-      "linhas": 20801,
+      "linhas": 20814,
       "linhas_exatas": true,
       "nome": "produtos",
       "policies": 5,
       "rls": true,
       "rls_forcado": false,
-      "triggers": 1,
+      "triggers": 2,
       "uso_no_codigo": {
         "edges": 5,
         "src": 23
@@ -2080,17 +2091,17 @@
     },
     {
       "bytes": 32768,
-      "citada_no_banco": false,
+      "citada_no_banco": true,
       "linhas": 1,
       "linhas_exatas": true,
       "nome": "produtos_sync_estado",
-      "policies": 0,
+      "policies": 1,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 2,
-        "src": 0
+        "src": 1
       }
     },
     {
@@ -2174,7 +2185,7 @@
       "linhas": 500,
       "linhas_exatas": true,
       "nome": "rastreamento_historico",
-      "policies": 4,
+      "policies": 3,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
@@ -2214,18 +2225,18 @@
       }
     },
     {
-      "bytes": 49152,
+      "bytes": 65536,
       "citada_no_banco": false,
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "recuperacao_materiais",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 4
       }
     },
     {
@@ -2234,7 +2245,7 @@
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "regras_ponto_pedido",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 1,
@@ -2270,7 +2281,7 @@
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 1,
-        "src": 0
+        "src": 2
       }
     },
     {
@@ -2334,7 +2345,7 @@
       }
     },
     {
-      "bytes": 122880,
+      "bytes": 139264,
       "citada_no_banco": false,
       "linhas": 25,
       "linhas_exatas": true,
@@ -2349,18 +2360,18 @@
       }
     },
     {
-      "bytes": 49152,
+      "bytes": 57344,
       "citada_no_banco": false,
       "linhas": 0,
       "linhas_exatas": true,
       "nome": "setores_checkpoint",
-      "policies": 3,
+      "policies": 2,
       "rls": true,
       "rls_forcado": false,
       "triggers": 0,
       "uso_no_codigo": {
         "edges": 0,
-        "src": 0
+        "src": 1
       }
     },
     {
@@ -2454,7 +2465,7 @@
       }
     },
     {
-      "bytes": 24576,
+      "bytes": 32768,
       "citada_no_banco": false,
       "linhas": 0,
       "linhas_exatas": true,
@@ -2474,7 +2485,7 @@
       "linhas": 66,
       "linhas_exatas": true,
       "nome": "tarefas",
-      "policies": 4,
+      "policies": 3,
       "rls": true,
       "rls_forcado": false,
       "triggers": 3,
@@ -2592,12 +2603,9 @@
   "tabelas_orfas": {
     "criterio": "0 linhas + nao citada em funcao/view do banco + nenhum .from() em src/ ou supabase/functions/",
     "lista": [
-      "inventario_config",
       "ip_whitelist",
       "produtividade_operador",
-      "recuperacao_materiais",
       "regras_ponto_pedido",
-      "setores_checkpoint",
       "stock_alerts"
     ]
   },
