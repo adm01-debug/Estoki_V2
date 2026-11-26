@@ -201,7 +201,11 @@ jobs:
           # mesmo intervalo: medido no run 45748797225, a consulta devolveu o corpo
           # "incremental" do cron e a nossa requisicao ainda com status_code nulo, e o
           # teste falhou com a replicacao sem rodar.
-          RID=$(consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE})) as rid" | jq -r '.[0].rid')
+          # `net.http_post` aborta em 5s por padrao (`timeout_milliseconds`): a
+          # replicacao de 3000 SKUs nao cabe nisso e a linha fica com status_code
+          # nulo. Medido no run 45751554625. O teto da propria Edge Function e' menor
+          # que 120s, entao quem corta primeiro passa a ser a funcao, nao o pg_net.
+          RID=$(consulta "select net.http_post(url := '${ALVO_URL}/functions/v1/${FUNCAO}', headers := jsonb_build_object('Content-Type','application/json','x-cron-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'cron_secret')), body := jsonb_build_object('modo','${MODO}','limite',${LIMITE}), timeout_milliseconds := 120000) as rid" | jq -r '.[0].rid')
           echo "request_id do pg_net: $RID"
           if [ -z "$RID" ] || [ "$RID" = "null" ]; then
             echo "::error::pg_net nao devolveu request_id para o disparo"
