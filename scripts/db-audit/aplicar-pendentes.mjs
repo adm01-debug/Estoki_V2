@@ -467,7 +467,7 @@ const PENDENCIAS = [
     nome: "feature_flags",
     aplicado:
       "to_regclass('public.feature_flags') is not null and " +
-      "(select relrowsecurity from pg_class where oid = 'public.feature_flags'::regclass) " +
+      "coalesce((select relrowsecurity from pg_class where oid = to_regclass('public.feature_flags')), false) " +
       "and (select count(*) from pg_policies where schemaname = 'public' and tablename = 'feature_flags') = 4",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
   },
