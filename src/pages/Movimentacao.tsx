@@ -1,5 +1,7 @@
-import { useState, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { SavedFiltersDropdown } from "@/components/filters/SavedFiltersDropdown";
+import { useApplyDefaultSavedFilter } from "@/hooks/useSavedFilters";
 import { ErrorState } from "@/components/common/AsyncStates";
 import { supabase } from "@/integrations/supabase/client";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -59,6 +61,18 @@ export default function MovimentacaoPage() {
   const [activeTab, setActiveTab] = useState("historico");
   const [searchTerm, setSearchTerm] = useState("");
   const [periodoFiltro, setPeriodoFiltro] = useState("todos");
+
+  const filtrosAtuais = useMemo(
+    () => ({ search: searchTerm, periodo: periodoFiltro }),
+    [searchTerm, periodoFiltro]
+  );
+
+  const aplicarFiltros = useCallback((filtros: Record<string, unknown>) => {
+    setSearchTerm(typeof filtros.search === "string" ? filtros.search : "");
+    setPeriodoFiltro(typeof filtros.periodo === "string" ? filtros.periodo : "todos");
+  }, []);
+
+  useApplyDefaultSavedFilter("movimentacao", aplicarFiltros);
 
   const {
     data: movimentacoes = [],
@@ -186,6 +200,11 @@ export default function MovimentacaoPage() {
                 <option value="semana">Esta semana</option>
                 <option value="mes">Este mês</option>
               </select>
+              <SavedFiltersDropdown
+                entityType="movimentacao"
+                currentFilters={filtrosAtuais}
+                onApplyFilter={aplicarFiltros}
+              />
             </div>
 
             {/* List */}

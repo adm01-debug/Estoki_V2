@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -187,4 +188,20 @@ export function useSavedFilters(entityType: string) {
     isSaving: saveMutation.isPending,
     isDeleting: deleteMutation.isPending,
   };
+}
+
+// Aplica automaticamente, uma vez por montagem, o filtro marcado como padrao.
+// E o que o comentario da coluna is_default promete: "aplicado ao abrir a pagina".
+export function useApplyDefaultSavedFilter(
+  entityType: string,
+  applyFilter: (filters: Record<string, unknown>) => void
+) {
+  const { defaultFilter } = useSavedFilters(entityType);
+  const aplicado = useRef(false);
+
+  useEffect(() => {
+    if (aplicado.current || !defaultFilter) return;
+    aplicado.current = true;
+    applyFilter(defaultFilter.filters as Record<string, unknown>);
+  }, [applyFilter, defaultFilter]);
 }
