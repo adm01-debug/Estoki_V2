@@ -242,7 +242,9 @@ const SEC_ANON_PRESERVA_AUTH =
   "and has_function_privilege('authenticated', " +
   "to_regprocedure('public.descontar_pontos(uuid, integer)'), 'EXECUTE'))";
 
-const CORTE_COBERTURA = "20261127";
+// Toda migration com timestamp >= este corte precisa de entrada em PENDENCIAS, senao o job falha.
+// 20261127 escondia a 20261126194000 (refresh das matviews do dashboard), criada fora de ordem.
+const CORTE_COBERTURA = "20261126";
 
 const PENDENCIAS = [
   {
@@ -416,6 +418,24 @@ const PENDENCIAS = [
     nome: "sec_anon_preserva_authenticated",
     aplicado: SEC_ANON_PRESERVA_AUTH,
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },
+  {
+    // 20261126194000 agenda o refresh diario das 3 matviews do dashboard. Nenhum dos crons
+    // anteriores atualiza as matviews, entao sem este job a tela de Observabilidade exibe o
+    // retrato congelado de 2026-07-23.
+    arquivo: "20261126194000_OBS_refresh_mv_dashboard_cron.sql",
+    nome: "obs_refresh_mv_dashboard_cron",
+    aplicado: "exists (select 1 from cron.job where jobname = 'dashboard-mv-refresh')",
+    dependencias: [],
+  },
+  {
+    // 20261126201000 libera UPDATE(status) para os botoes Aprovar/Ignorar da tela de Automacoes.
+    // A policy permissiva FOR ALL ja existia; o unico grant a `authenticated` era SELECT.
+    arquivo: "20261126201000_AUT_reorder_status_grant.sql",
+    nome: "aut_reorder_status_grant",
+    aplicado:
+      "has_column_privilege('authenticated','public.reorder_suggestions','status','UPDATE')",
+    dependencias: [],
   },
 ];
 
