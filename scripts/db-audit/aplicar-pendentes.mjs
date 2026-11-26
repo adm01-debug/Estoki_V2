@@ -297,6 +297,23 @@ const PENDENCIAS = [
     aplicado: TENANT_NOT_NULL,
     dependencias: [],
   },
+  {
+    // 20261127200000 entrega o historico de versoes (entity_versions) que o front ja tinha pronto
+    // (src/hooks/useEntityVersions.ts + src/components/versioning/VersionHistory.tsx) e o banco nunca
+    // criou: tabela, trigger em produtos e RPC de restauracao real. Sem esta entry a migration
+    // mergeada nunca roda.
+    arquivo: "20261127200000_WMS_entity_versions.sql",
+    nome: "entity_versions",
+    aplicado:
+      "to_regclass('public.entity_versions') is not null " +
+      "and (select relrowsecurity from pg_class where oid = 'public.entity_versions'::regclass) " +
+      "and exists (select 1 from pg_trigger where tgname = 'trg_versao_produtos' and not tgisinternal and tgrelid = 'public.produtos'::regclass) " +
+      "and to_regprocedure('public.restore_entity_version(text,uuid,integer)') is not null",
+    dependencias: [
+      ["public.effective_tenant_id", "to_regproc('public.effective_tenant_id') is not null"],
+      ["public.produtos", "to_regclass('public.produtos') is not null"],
+    ],
+  },
 ];
 
 function sqlEstado() {
