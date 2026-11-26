@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { CatalogoMestreCard } from "@/components/integracoes/CatalogoMestreCard";
 import { toast } from "@/hooks/use-toast";
 
 type IntegrationKind = "sap" | "totvs" | "amazon" | "mercado-livre" | "ifood" | "rappi";
@@ -146,6 +147,8 @@ export default function IntegrationsPage() {
           Rappi). Preencha os dados da API e clique em <strong>Testar conexão</strong>.
         </p>
       </div>
+
+      <CatalogoMestreCard />
 
       <div className="grid gap-6 md:grid-cols-2">
         {INTEGRACOES.map((def) => {
