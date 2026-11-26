@@ -164,6 +164,7 @@ export const sidebarAdminItems: NavItem[] = [
   { path: "/admin/auditoria", icon: ClipboardList, label: "Auditoria" },
   { path: "/admin/integracoes", icon: Activity, label: "Integrações" },
   { path: "/admin/simulacao", icon: Zap, label: "Simulador de Stress" },
+  { path: "/admin/observabilidade", icon: BarChart3, label: "Observabilidade" },
 ];
 
 export const sidebarUtilityItems: NavItem[] = [
