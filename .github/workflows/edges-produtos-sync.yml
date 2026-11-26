@@ -250,11 +250,26 @@ jobs:
             exit 1
           fi
           if [ "$REPLICADOS" -ge 1 ]; then
-            if [ "$DEPOIS" -le "$ANTES" ]; then
-              echo "::error::o cron replicou $REPLICADOS SKUs mas produtos nao cresceu ($ANTES -> $DEPOIS)"
+            # O upsert e' idempotente: recarregar SKU que ja existe NAO muda a contagem
+            # do destino. Medido no run 45752467230: modo=completo replicou 3000 e
+            # produtos ficou 20801 -> 20801. Exigir crescimento dava falso negativo
+            # eterno. A prova correta da escrita e' que a linha processada chegou ao
+            # destino: o cursor aponta o ultimo SKU lido da origem, entao ele tem de
+            # estar em produtos.
+            CURSOR_SKU=$(echo "$SAIDA" | jq -r '.[0].corpo | fromjson | .cursor.sku // empty')
+            case "$CURSOR_SKU" in
+              ''|null|*\'*)
+                echo "::error::a resposta do cron nao trouxe o sku do cursor: $SAIDA"
+                exit 1
+                ;;
+            esac
+            GRAVADO=$(consulta "select count(*) as n from produtos where sku = '$CURSOR_SKU'" | jq -r '.[0].n')
+            echo "sku do cursor: $CURSOR_SKU, gravado no destino: $GRAVADO"
+            if [ "$GRAVADO" -lt 1 ]; then
+              echo "::error::o cron replicou $REPLICADOS SKUs mas o sku do cursor ($CURSOR_SKU) nao esta em produtos"
               exit 1
             fi
-            echo "replicacao provada: $ANTES -> $DEPOIS produtos, $REPLICADOS SKUs nesta execucao"
+            echo "replicacao provada: $REPLICADOS SKUs nesta execucao, sku do cursor ($CURSOR_SKU) gravado, produtos em $DEPOIS (antes $ANTES)"
           else
             # 0 SKUs e' legitimo quando o cursor ja cobriu o catalogo (nenhum updated_at novo na origem).
             # Nesse caso a prova de escrita e' o cursor acima; nada pode ter sido perdido.
