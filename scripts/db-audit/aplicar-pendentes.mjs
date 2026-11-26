@@ -155,6 +155,16 @@ const ANON_SEM_ESCRITA =
   "or has_table_privilege('anon', c.oid, 'UPDATE') " +
   "or has_table_privilege('anon', c.oid, 'DELETE')))";
 
+// 20261127090000 remove as policies de RLS com predicado `true` nas tabelas de public que tem
+// coluna `tenant_id` e a policy `tenant_isolation`. Policies sao OR entre si: a permissiva
+// anulava a restritiva, entao o filtro por unidade nunca era aplicado.
+const RLS_SEM_POLICY_TRUE =
+  "not exists (select 1 from pg_policies p " +
+  "where p.schemaname = 'public' " +
+  "and (btrim(coalesce(p.qual, '')) = 'true' or btrim(coalesce(p.with_check, '')) = 'true') " +
+  "and exists (select 1 from pg_policies t where t.schemaname = 'public' " +
+  "and t.tablename = p.tablename and t.policyname = 'tenant_isolation'))";
+
 const PENDENCIAS = [
   {
     arquivo: "20261123080000_WMS_system_settings.sql",
@@ -247,6 +257,12 @@ const PENDENCIAS = [
     arquivo: "20261126180000_SEC_revoke_anon_dml.sql",
     nome: "anon_sem_escrita",
     aplicado: ANON_SEM_ESCRITA,
+    dependencias: [],
+  },
+  {
+    arquivo: "20261127090000_SEC_rls_remove_policies_permissivas.sql",
+    nome: "rls_sem_policy_true",
+    aplicado: RLS_SEM_POLICY_TRUE,
     dependencias: [],
   },
 ];
