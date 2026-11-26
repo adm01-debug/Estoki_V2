@@ -1,0 +1,61 @@
+name: Tipos Supabase
+
+# Gera src/integrations/supabase/types.ts a partir do banco real e publica como
+# artefato. Existe porque `npm run db:generate` depende de Supabase local (docker)
+# e o token local recebe 403 no projeto de producao: sem isso o arquivo de tipos
+# fica atras do banco (integration_logs, reorder_suggestions e stock_alerts, por
+# exemplo, existem em producao e nao existiam nos tipos).
+#
+# Uso: rodar pelo Actions, baixar o artefato `types` e substituir o arquivo.
+# Nao faz commit nem merge: a troca do arquivo passa por PR revisada.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref_projeto:
+        description: "Project ref do Supabase"
+        required: true
+        default: ookjbflsnoefnsixrspc
+      schema:
+        description: "Schema"
+        required: true
+        default: public
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tipos-supabase-${{ inputs.ref_projeto }}
+  cancel-in-progress: false
+
+jobs:
+  gerar:
+    name: Gerar types.ts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: "22"
+
+      - name: Gerar
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          npx --yes supabase@latest gen types typescript \
+            --project-id "${{ inputs.ref_projeto }}" \
+            --schema "${{ inputs.schema }}" > /tmp/types.ts
+          grep -q "^export type Json" /tmp/types.ts
+          echo "linhas: $(wc -l < /tmp/types.ts)"
+          echo "tabelas: $(grep -cE '^      [a-z_]+: \{' /tmp/types.ts)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: types
+          path: /tmp/types.ts
+          retention-days: 7
