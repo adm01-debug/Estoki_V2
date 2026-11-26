@@ -283,3 +283,39 @@ jobs:
             fi
             echo "caminho do cron provado sem SKU novo: cursor avancou e produtos ficou estavel em $ANTES (use exigir_replicados=true para exigir fila)"
           fi
+
+      - name: Provar paridade do catalogo mestre com o WMS
+        if: env.SEM_TOKEN != '1'
+        env:
+          SRC_URL_SECRET: ${{ secrets.SRC_SUPABASE_URL }}
+          SRC_KEY_SECRET: ${{ secrets.SRC_SERVICE_KEY }}
+        run: |
+          set -euo pipefail
+          API="https://api.supabase.com/v1/projects/$REF"
+          consulta() {
+            jq -n --arg q "$1" '{query:$q}' > /tmp/q.json
+            curl -sS -f -X POST -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" -d @/tmp/q.json "$API/database/query"
+          }
+          if [ -z "${SRC_URL_SECRET:-}" ] || [ -z "${SRC_KEY_SECRET:-}" ]; then
+            echo "::error::faltam os secrets SRC_SUPABASE_URL e SRC_SERVICE_KEY (catalogo mestre)"
+            exit 1
+          fi
+          # O filtro real da edge e' is_active=eq.true + sku nao nulo. Comparar o destino
+          # com o TOTAL bruto do mestre superestima o esperado (ha variantes inativas) e
+          # ja gerou falso alarme de "186 SKUs faltando". Medido em 2026-11-26 no mestre:
+          # total 20987, ativas com sku 20785, inativas 202, sku nulo 0.
+          MESTRE=$(curl -sS -D - -o /dev/null -H "apikey: $SRC_KEY_SECRET" -H "Authorization: Bearer $SRC_KEY_SECRET" -H "Prefer: count=exact" -H "Range: 0-0" "$SRC_URL_SECRET/rest/v1/product_variants?select=id&is_active=eq.true&sku=not.is.null" | tr -d '\r' | awk 'tolower($1)=="content-range:"{split($2,a,"/"); print a[2]}' | tr -d ' ')
+          WMS=$(consulta "select count(*) as n from produtos" | jq -r '.[0].n')
+          echo "catalogo mestre, variantes ativas com sku: $MESTRE"
+          echo "produtos no WMS: $WMS"
+          case "$MESTRE" in
+            ''|*[!0-9]*)
+              echo "::error::nao consegui contar as variantes ativas do catalogo mestre"
+              exit 1
+              ;;
+          esac
+          if [ "$WMS" -lt "$MESTRE" ]; then
+            echo "::error::o WMS tem menos SKUs ($WMS) que o catalogo mestre ativo ($MESTRE): faltam $((MESTRE - WMS))"
+            exit 1
+          fi
+          echo "paridade provada: o WMS tem $WMS SKUs e o catalogo mestre ativo tem $MESTRE; o excedente ($((WMS - MESTRE))) sao SKUs que ficaram inativos no mestre depois de replicados"
