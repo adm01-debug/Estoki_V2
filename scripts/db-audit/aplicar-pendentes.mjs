@@ -160,6 +160,12 @@ const ANON_SEM_ESCRITA =
 // restritiva perde o "tenant_id is null", que deixava qualquer linha orfa visivel para
 // todos; (3) as policies PERMISSIVE de predicado true so saem quando redundantes, isto e,
 // quando cada comando que elas cobrem continua coberto por outra permissiva real.
+// A prova abaixo cobra exatamente isso. A versao anterior exigia ZERO permissivas true
+// fora de anon/public, o que e' impossivel por desenho: as tabelas cujo unico caminho e'
+// a permissiva true (gamificacao_loja, integration_logs, reorder_suggestions, shipments,
+// stock_alerts, suppliers) precisam mante-la, senao ficam sem acesso nenhum. Medido no
+// run 45754257195: a migration aplicou (TEN 9 nullable 73 -> 0, RLS 7 63 -> 40) e o job
+// falhou mesmo assim com "continua pendente depois de aplicar".
 const TENANT_NOT_NULL =
   "not exists (select 1 from information_schema.columns c " +
   "where c.table_schema = 'public' and c.column_name = 'tenant_id' and c.is_nullable = 'YES' " +
@@ -171,9 +177,12 @@ const TENANT_NOT_NULL =
   "and p.permissive = 'PERMISSIVE' " +
   "and (btrim(coalesce(p.qual, '')) = 'true' or btrim(coalesce(p.with_check, '')) = 'true') " +
   "and not ('anon' = any(p.roles) or 'public' = any(p.roles)) " +
-  "and 0 = (select count(*) from pg_policies o where o.schemaname = 'public' " +
+  "and not exists (select 1 " +
+  "from unnest(case p.cmd when 'ALL' then array['SELECT','INSERT','UPDATE','DELETE'] else array[p.cmd] end) as cmd_alvo " +
+  "where not exists (select 1 from pg_policies o where o.schemaname = 'public' " +
   "and o.tablename = p.tablename and o.policyname <> p.policyname and o.permissive = 'PERMISSIVE' " +
-  "and not (btrim(coalesce(o.qual, '')) = 'true' or btrim(coalesce(o.with_check, '')) = 'true')))";
+  "and o.cmd in (cmd_alvo, 'ALL') " +
+  "and not (btrim(coalesce(o.qual, '')) = 'true' or btrim(coalesce(o.with_check, '')) = 'true'))))";
 
 const PENDENCIAS = [
   {
