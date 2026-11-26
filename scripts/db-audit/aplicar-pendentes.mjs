@@ -306,13 +306,22 @@ const PENDENCIAS = [
     nome: "entity_versions",
     aplicado:
       "to_regclass('public.entity_versions') is not null " +
-      "and (select relrowsecurity from pg_class where oid = 'public.entity_versions'::regclass) " +
+      "and exists (select 1 from pg_class c where c.oid = to_regclass('public.entity_versions') and c.relrowsecurity) " +
       "and exists (select 1 from pg_trigger where tgname = 'trg_versao_produtos' and not tgisinternal and tgrelid = 'public.produtos'::regclass) " +
       "and to_regprocedure('public.restore_entity_version(text,uuid,integer)') is not null",
     dependencias: [
       ["public.effective_tenant_id", "to_regproc('public.effective_tenant_id') is not null"],
       ["public.produtos", "to_regclass('public.produtos') is not null"],
     ],
+  },
+  {
+    // 20261127200000 criou a FK entity_versions.changed_by sem indice no lado filho: o probe
+    // "FKs de public sem indice de suporte" passou a acusar 1 e a pendencia indices_fk voltou a
+    // ficar pendente depois de aplicar, derrubando o job com exit 1.
+    arquivo: "20261127210000_PERF_entity_versions_indice_fk.sql",
+    nome: "entity_versions_indice_fk",
+    aplicado: "to_regclass('public.idx_entity_versions_changed_by') is not null",
+    dependencias: [["public.entity_versions", "to_regclass('public.entity_versions') is not null"]],
   },
 ];
 

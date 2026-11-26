@@ -27,6 +27,16 @@ create index if not exists idx_products_supplier_id on public.products (supplier
 create index if not exists idx_serial_numbers_posicao_id on public.serial_numbers (posicao_id);
 create index if not exists idx_system_settings_updated_by on public.system_settings (updated_by);
 
+-- entity_versions (20261127200000) cria a FK changed_by -> auth.users(id). Precisa nascer com
+-- indice de suporte; condicional porque esta migration roda antes da tabela existir.
+do $idx_ev$
+begin
+  if to_regclass('public.entity_versions') is not null then
+    create index if not exists idx_entity_versions_changed_by on public.entity_versions (changed_by);
+  end if;
+end
+$idx_ev$;
+
 -- Auto-prova: falha se sobrar qualquer FK de public sem indice de suporte (pega FK nova que
 -- apareca entre a medicao e a aplicacao).
 do $prova$
