@@ -28,6 +28,7 @@ import {
 import type { ReactNode } from "react";
 
 import type { Produto } from "@/types/product";
+import { VersionHistory } from "@/components/versioning";
 
 interface Props {
   produto: Produto | null;
@@ -171,17 +172,20 @@ export function ProdutoDetailDialog({ produto, onClose, getCurvaBadge, onEdit }:
           </TabsContent>
         </Tabs>
 
-        {produto && onEdit && (
-          <DialogFooter>
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={() => onEdit(produto)}
-              data-testid="produto-editar"
-            >
-              <Pencil className="h-4 w-4" />
-              Editar produto
-            </Button>
+        {produto && (
+          <DialogFooter className="gap-2">
+            {onEdit && (
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => onEdit(produto)}
+                data-testid="produto-editar"
+              >
+                <Pencil className="h-4 w-4" />
+                Editar produto
+              </Button>
+            )}
+            <VersionHistory entityType="produtos" entityId={produto.id} />
           </DialogFooter>
         )}
       </DialogContent>
