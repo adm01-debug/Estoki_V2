@@ -2,10 +2,10 @@
   "format_version": 1,
   "fonte": "scripts/inventario/gerar-rotas.mjs (le src/App.tsx, src/routes/*.tsx, src/config/menu.ts e os imports de cada pagina)",
   "resumo": {
-    "urls": 89,
-    "telas": 88,
-    "itens_de_menu": 16,
-    "hooks_distintos": 70,
+    "urls": 93,
+    "telas": 92,
+    "itens_de_menu": 17,
+    "hooks_distintos": 73,
     "problemas": 0
   },
   "urls": [
@@ -70,6 +70,16 @@
       "redireciona": null
     },
     {
+      "caminho": "/admin/automacoes",
+      "componente": "AutomacoesPage",
+      "arquivo": "src/pages/admin/AutomacoesPage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
       "caminho": "/admin/circuit-breakers",
       "componente": "CircuitBreakersPage",
       "arquivo": "src/pages/admin/CircuitBreakersPage.tsx",
@@ -90,9 +100,29 @@
       "redireciona": null
     },
     {
+      "caminho": "/admin/funcionalidades",
+      "componente": "FeatureFlagsPage",
+      "arquivo": "src/pages/admin/FeatureFlagsPage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
       "caminho": "/admin/integracoes",
       "componente": "IntegrationsPage",
       "arquivo": "src/pages/admin/IntegrationsPage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
+      "caminho": "/admin/observabilidade",
+      "componente": "ObservabilidadePage",
+      "arquivo": "src/pages/admin/ObservabilidadePage.tsx",
       "declarada_em": "src/routes/adminRoutes.tsx",
       "protegida": true,
       "papeis": [],
@@ -820,6 +850,16 @@
       "redireciona": null
     },
     {
+      "caminho": "/setor-conserto",
+      "componente": "SetorConserto",
+      "arquivo": "src/pages/SetorConserto.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "redireciona": null
+    },
+    {
       "caminho": "/tarefas",
       "componente": "GestaoTarefas",
       "arquivo": "src/pages/GestaoTarefas.tsx",
@@ -1307,6 +1347,29 @@
       "imports_quebrados": []
     },
     {
+      "id": "/admin/automacoes",
+      "url": "/admin/automacoes",
+      "componente": "AutomacoesPage",
+      "arquivo": "src/pages/admin/AutomacoesPage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 3,
+      "hooks": [],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [
+        "get_automacoes_saude"
+      ],
+      "tabelas": [
+        "integration_logs",
+        "reorder_suggestions"
+      ],
+      "imports_quebrados": []
+    },
+    {
       "id": "/admin/circuit-breakers",
       "url": "/admin/circuit-breakers",
       "componente": "CircuitBreakersPage",
@@ -1495,6 +1558,26 @@
       "imports_quebrados": []
     },
     {
+      "id": "/admin/funcionalidades",
+      "url": "/admin/funcionalidades",
+      "componente": "FeatureFlagsPage",
+      "arquivo": "src/pages/admin/FeatureFlagsPage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
+      "arquivos_lidos": 3,
+      "hooks": [],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [],
+      "tabelas": [
+        "feature_flags"
+      ],
+      "imports_quebrados": []
+    },
+    {
       "id": "/admin/integracoes",
       "url": "/admin/integracoes",
       "componente": "IntegrationsPage",
@@ -1504,11 +1587,39 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
+      "arquivos_lidos": 4,
+      "hooks": [
+        {
+          "nome": "useProdutosSyncEstado",
+          "arquivo": "src/hooks/useProdutosSyncEstado.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [],
+      "rpcs": [],
+      "tabelas": [
+        "produtos_sync_estado"
+      ],
+      "imports_quebrados": []
+    },
+    {
+      "id": "/admin/observabilidade",
+      "url": "/admin/observabilidade",
+      "componente": "ObservabilidadePage",
+      "arquivo": "src/pages/admin/ObservabilidadePage.tsx",
+      "declarada_em": "src/routes/adminRoutes.tsx",
+      "protegida": true,
+      "papeis": [],
+      "permissao": null,
+      "menu": null,
       "arquivos_lidos": 2,
       "hooks": [],
       "buckets": [],
       "edges": [],
-      "rpcs": [],
+      "rpcs": [
+        "get_dashboard_metrics",
+        "refresh_dashboard_materialized_views"
+      ],
       "tabelas": [],
       "imports_quebrados": []
     },
@@ -4669,7 +4780,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 137,
+      "arquivos_lidos": 138,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -4836,8 +4947,10 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "recuperacao_materiais",
         "romaneio_itens",
         "romaneios",
+        "setores_checkpoint",
         "tarefas"
       ],
       "imports_quebrados": []
@@ -5565,7 +5678,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 179,
+      "arquivos_lidos": 180,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5610,6 +5723,10 @@
         {
           "nome": "useInventarioCiclico",
           "arquivo": "src/hooks/useInventarioCiclico.ts"
+        },
+        {
+          "nome": "useInventarioConfig",
+          "arquivo": "src/hooks/useInventarioConfig.ts"
         },
         {
           "nome": "useKeyboardShortcuts",
@@ -5739,6 +5856,7 @@
         "eventos_picking",
         "eventos_triagem",
         "inventario_ciclos",
+        "inventario_config",
         "inventario_contagens",
         "lotes",
         "metas_kpi",
@@ -5767,7 +5885,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 172,
+      "arquivos_lidos": 173,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -5941,6 +6059,7 @@
         "eventos_picking",
         "eventos_triagem",
         "inventario_ciclos",
+        "inventario_config",
         "inventario_contagens",
         "lotes",
         "metas_kpi",
@@ -8825,7 +8944,7 @@
         "rotulo": "Produtos",
         "icone": "Layers"
       },
-      "arquivos_lidos": 168,
+      "arquivos_lidos": 169,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -10778,6 +10897,211 @@
       "imports_quebrados": []
     },
     {
+      "id": "/setor-conserto",
+      "url": "/setor-conserto",
+      "componente": "SetorConserto",
+      "arquivo": "src/pages/SetorConserto.tsx",
+      "declarada_em": "src/routes/wmsRoutes.tsx",
+      "protegida": false,
+      "papeis": [],
+      "permissao": null,
+      "menu": {
+        "rotulo": "Setor de Conserto",
+        "icone": "Wrench"
+      },
+      "arquivos_lidos": 170,
+      "hooks": [
+        {
+          "nome": "useAppLayoutState",
+          "arquivo": "src/hooks/useAppLayoutState.ts"
+        },
+        {
+          "nome": "useAtividadeRecente",
+          "arquivo": "src/features/dashboard/hooks/useAtividadeRecente.ts"
+        },
+        {
+          "nome": "useAuditLog",
+          "arquivo": "src/hooks/useAuditLog.ts"
+        },
+        {
+          "nome": "useAuth",
+          "arquivo": "src/contexts/AuthContext.tsx"
+        },
+        {
+          "nome": "useCurvaABC",
+          "arquivo": "src/features/analytics/hooks/useCurvaABC.ts"
+        },
+        {
+          "nome": "useDashboard",
+          "arquivo": "src/features/dashboard/hooks/useDashboard.ts"
+        },
+        {
+          "nome": "useDebounce",
+          "arquivo": "src/hooks/useDebounce.ts"
+        },
+        {
+          "nome": "useDocumentTitle",
+          "arquivo": "src/hooks/useDocumentTitle.ts"
+        },
+        {
+          "nome": "useEstoque",
+          "arquivo": "src/features/inventory/hooks/useEstoque.ts"
+        },
+        {
+          "nome": "useGestaoTarefasPage",
+          "arquivo": "src/hooks/useGestaoTarefasPage.ts"
+        },
+        {
+          "nome": "useKeyboardShortcuts",
+          "arquivo": "src/hooks/useKeyboardShortcuts.ts"
+        },
+        {
+          "nome": "useKPIAlerts",
+          "arquivo": "src/features/analytics/hooks/useKPIAlerts.ts"
+        },
+        {
+          "nome": "useKPIsOperacionais",
+          "arquivo": "src/features/analytics/hooks/useKPIsOperacionais.ts"
+        },
+        {
+          "nome": "useLocalStorage",
+          "arquivo": "src/hooks/useLocalStorage.ts"
+        },
+        {
+          "nome": "useMovimentacoes",
+          "arquivo": "src/hooks/useMovimentacoes.ts"
+        },
+        {
+          "nome": "useOperationalLive",
+          "arquivo": "src/features/analytics/hooks/useOperationalLive.ts"
+        },
+        {
+          "nome": "usePageTransition",
+          "arquivo": "src/hooks/usePageTransition.ts"
+        },
+        {
+          "nome": "usePerformance",
+          "arquivo": "src/utils/performance.ts"
+        },
+        {
+          "nome": "usePicking",
+          "arquivo": "src/features/picking/hooks/usePicking.ts"
+        },
+        {
+          "nome": "usePosicaoDetalhes",
+          "arquivo": "src/features/inventory/hooks/usePosicaoDetalhes.ts"
+        },
+        {
+          "nome": "useProdutos",
+          "arquivo": "src/hooks/useProdutos.ts"
+        },
+        {
+          "nome": "usePullToRefresh",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "usePushNotifications",
+          "arquivo": "src/hooks/usePushNotifications.ts"
+        },
+        {
+          "nome": "useRealtimeKPIs",
+          "arquivo": "src/features/analytics/hooks/useRealtimeKPIs.ts"
+        },
+        {
+          "nome": "useRecebimentos",
+          "arquivo": "src/features/receiving/hooks/useRecebimentos.ts"
+        },
+        {
+          "nome": "useRecuperacaoMateriais",
+          "arquivo": "src/hooks/useRecuperacaoMateriais.ts"
+        },
+        {
+          "nome": "useReducedMotion",
+          "arquivo": "src/hooks/useReducedMotion.ts"
+        },
+        {
+          "nome": "useRomaneios",
+          "arquivo": "src/features/shipping/hooks/useRomaneios.ts"
+        },
+        {
+          "nome": "useRoutePreload",
+          "arquivo": "src/hooks/useRoutePreload.ts"
+        },
+        {
+          "nome": "useScanner",
+          "arquivo": "src/hooks/useScanner.ts"
+        },
+        {
+          "nome": "useSidebarFavorites",
+          "arquivo": "src/hooks/useSidebarFavorites.ts"
+        },
+        {
+          "nome": "useSpeechRecognition",
+          "arquivo": "src/hooks/useSpeechRecognition.ts"
+        },
+        {
+          "nome": "useSwipeBack",
+          "arquivo": "src/hooks/useSwipeBack.ts"
+        },
+        {
+          "nome": "useSwipeGesture",
+          "arquivo": "src/hooks/useTouchGestures.ts"
+        },
+        {
+          "nome": "useTarefas",
+          "arquivo": "src/hooks/useTarefas.ts"
+        },
+        {
+          "nome": "useToast",
+          "arquivo": "src/hooks/use-toast.ts"
+        },
+        {
+          "nome": "useTransitionContext",
+          "arquivo": "src/contexts/TransitionContext.tsx"
+        },
+        {
+          "nome": "useTriagens",
+          "arquivo": "src/features/quality/hooks/useTriagens.ts"
+        }
+      ],
+      "buckets": [],
+      "edges": [
+        "scanner-ocr"
+      ],
+      "rpcs": [
+        "concluir_tarefa_picking",
+        "iniciar_tarefa_picking",
+        "log_audit_event",
+        "move_stock"
+      ],
+      "tabelas": [
+        "alertas_historico",
+        "audit_log",
+        "comprovantes_entrega",
+        "db_health_snapshots",
+        "estoque_posicao",
+        "eventos_picking",
+        "eventos_triagem",
+        "lotes",
+        "metas_kpi",
+        "metricas_dashboard",
+        "metricas_operacionais",
+        "nfe_documents",
+        "nfe_items",
+        "notificacoes",
+        "posicao_status_log",
+        "posicoes_estoque",
+        "produtos",
+        "rastreamento_historico",
+        "recuperacao_materiais",
+        "romaneio_itens",
+        "romaneios",
+        "setores_checkpoint",
+        "tarefas"
+      ],
+      "imports_quebrados": []
+    },
+    {
       "id": "/tarefas",
       "url": "/tarefas",
       "componente": "GestaoTarefas",
@@ -11386,7 +11710,7 @@
       "papeis": [],
       "permissao": null,
       "menu": null,
-      "arquivos_lidos": 137,
+      "arquivos_lidos": 138,
       "hooks": [
         {
           "nome": "useAppLayoutState",
@@ -11553,8 +11877,10 @@
         "posicoes_estoque",
         "produtos",
         "rastreamento_historico",
+        "recuperacao_materiais",
         "romaneio_itens",
         "romaneios",
+        "setores_checkpoint",
         "tarefas"
       ],
       "imports_quebrados": []
@@ -12039,6 +12365,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12099,6 +12426,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12159,6 +12487,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12226,6 +12555,7 @@
         "/romaneios",
         "/scanner",
         "/seguranca",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12306,6 +12636,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12372,6 +12703,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12407,6 +12739,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
@@ -12483,6 +12816,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12543,6 +12877,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12597,6 +12932,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
@@ -12607,6 +12943,12 @@
       "telas": [
         "/inventario",
         "/inventario/:id"
+      ]
+    },
+    "useInventarioConfig": {
+      "arquivo": "src/hooks/useInventarioConfig.ts",
+      "telas": [
+        "/inventario"
       ]
     },
     "useInventoryCount": {
@@ -12667,6 +13009,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12727,6 +13070,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12793,6 +13137,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12853,6 +13198,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -12896,6 +13242,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
@@ -12953,6 +13300,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
@@ -13010,6 +13358,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13076,6 +13425,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13143,6 +13493,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13203,6 +13554,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13245,9 +13597,16 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
+      ]
+    },
+    "useProdutosSyncEstado": {
+      "arquivo": "src/hooks/useProdutosSyncEstado.ts",
+      "telas": [
+        "/admin/integracoes"
       ]
     },
     "usePullToRefresh": {
@@ -13302,6 +13661,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13363,6 +13723,7 @@
         "/romaneios",
         "/scanner",
         "/seguranca",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13443,6 +13804,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13503,12 +13865,19 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
         "/triagem/:id",
         "/trocas",
         "/trocas-dashboard"
+      ]
+    },
+    "useRecuperacaoMateriais": {
+      "arquivo": "src/hooks/useRecuperacaoMateriais.ts",
+      "telas": [
+        "/setor-conserto"
       ]
     },
     "useReducedMotion": {
@@ -13563,6 +13932,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13623,6 +13993,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13683,6 +14054,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13743,6 +14115,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13803,6 +14176,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13863,6 +14237,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13930,6 +14305,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -13990,6 +14366,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -14031,6 +14408,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/trocas",
         "/trocas-dashboard"
@@ -14094,6 +14472,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -14154,6 +14533,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",
@@ -14228,6 +14608,7 @@
         "/relatorios",
         "/romaneios",
         "/scanner",
+        "/setor-conserto",
         "/tarefas",
         "/triador",
         "/triagem",

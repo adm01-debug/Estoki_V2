@@ -37,6 +37,7 @@ import { StepProgress } from "@/components/common/StepProgress";
 import { LeaveGuard } from "@/components/common/LeaveGuard";
 import { VisualDefectTagging } from "../components/formulario/VisualDefectTagging";
 import { RepairControlWorkflow } from "../components/formulario/RepairControlWorkflow";
+import { consertoService } from "../services/consertoService";
 
 export default function FormularioTriagem() {
   const navigate = useNavigate();
@@ -71,6 +72,10 @@ export default function FormularioTriagem() {
   const [mostrarAmostragem, setMostrarAmostragem] = useState(true);
   const [amostragemConfirmada, setAmostragemConfirmada] = useState(false);
   const [quantidadeConserto, setQuantidadeConserto] = useState(0);
+  const [planoConserto, setPlanoConserto] = useState<{
+    selectedActions: string[];
+    priority: string;
+  } | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [volumes, setVolumes] = useState<VolumeData[]>([]);
@@ -163,6 +168,26 @@ export default function FormularioTriagem() {
       });
       setHasChanges(false);
 
+      // Conserto: o plano configurado no workflow vira registro no setor de conserto.
+      let consertoFalhou: string | null = null;
+      if (resultado === "reprovado" && quantidadeConserto > 0) {
+        const defeito = planoConserto
+          ? `Ações: ${planoConserto.selectedActions.join(", ")} · prioridade ${planoConserto.priority}`
+          : `Defeito ${defectCategory} (plano não detalhado)`;
+        try {
+          await consertoService.registrarPlanoConserto({
+            loteId: (triagem as any)?.lote_id ?? null,
+            produtoId: (triagem as any)?.produto_id ?? null,
+            quantidade: quantidadeConserto,
+            defeito,
+          });
+        } catch (erroConserto) {
+          consertoFalhou =
+            erroConserto instanceof Error ? erroConserto.message : "Falha ao abrir o conserto";
+          toast.error("Conserto não registrado", { description: consertoFalhou });
+        }
+      }
+
       if (resultado === "aprovado") {
         setShowCelebration(true);
         // Play success haptics
@@ -176,7 +201,11 @@ export default function FormularioTriagem() {
       } else {
         haptics.error();
         toast.error("Triagem reprovada", {
-          description: `Tempo: ${formattedTime}`,
+          description: consertoFalhou
+            ? `Tempo: ${formattedTime} · conserto NÃO registrado: ${consertoFalhou}`
+            : quantidadeConserto > 0
+              ? `${quantidadeConserto} unidade(s) enviada(s) ao setor de conserto · tempo: ${formattedTime}`
+              : `Tempo: ${formattedTime}`,
           icon: <XCircle className="h-4 w-4" />,
         });
         navigate("/triagem");
@@ -481,8 +510,13 @@ export default function FormularioTriagem() {
                     <RepairControlWorkflow
                       quantity={quantidadeConserto}
                       onConfirm={(data) => {
+                        setHasChanges(true);
+                        setPlanoConserto({
+                          selectedActions: data?.selectedActions ?? [],
+                          priority: data?.priority ?? "media",
+                        });
                         toast.success("Plano de Retrabalho Configurado", {
-                          description: "As ações de conserto foram vinculadas a este lote.",
+                          description: `Será enviado ao setor de conserto com ${quantidadeConserto} unidade(s) ao finalizar a triagem.`,
                         });
                       }}
                     />
