@@ -467,9 +467,17 @@ const PENDENCIAS = [
     nome: "feature_flags",
     aplicado:
       "to_regclass('public.feature_flags') is not null and " +
-      "(select relrowsecurity from pg_class where oid = 'public.feature_flags'::regclass) " +
+      "coalesce((select relrowsecurity from pg_class where oid = to_regclass('public.feature_flags')), false) " +
       "and (select count(*) from pg_policies where schemaname = 'public' and tablename = 'feature_flags') = 4",
     dependencias: [["public.has_role", EXISTE_HAS_ROLE]],
+  },  {
+    // 20261130096000 cria o indice de suporte da FK feature_flags.updated_by. Sem ele a prova
+    // global de `indices_fk` (nenhuma FK de public sem indice de suporte) reprova: a lista da
+    // 20261126150000 e fechada e nao cobria a FK da tabela nova.
+    arquivo: "20261130096000_PERF_feature_flags_indice_fk.sql",
+    nome: "feature_flags_indice_fk",
+    aplicado: FKS_COM_INDICE,
+    dependencias: [],
   },
 ];
 

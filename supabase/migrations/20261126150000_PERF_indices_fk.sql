@@ -37,6 +37,16 @@ begin
 end
 $idx_ev$;
 
+-- feature_flags (20261130090000) cria a FK updated_by -> auth.users(id). Precisa nascer com
+-- indice de suporte; condicional porque esta migration roda antes da tabela existir.
+do $idx_ff$
+begin
+  if to_regclass('public.feature_flags') is not null then
+    create index if not exists idx_feature_flags_updated_by on public.feature_flags (updated_by);
+  end if;
+end
+$idx_ff$;
+
 -- Auto-prova: falha se sobrar qualquer FK de public sem indice de suporte (pega FK nova que
 -- apareca entre a medicao e a aplicacao).
 do $prova$
