@@ -105,12 +105,12 @@ q "VIEW 1: views de public sem security_invoker que leem tabela com RLS" "select
 q "SEQ 1: sequences com grant para anon" "select count(*) as total, coalesce(string_agg(c.relname, ' ' order by c.relname), '-') as nomes from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='S' and (has_sequence_privilege('anon', c.oid, 'USAGE') or has_sequence_privilege('anon', c.oid, 'SELECT') or has_sequence_privilege('anon', c.oid, 'UPDATE'))"
 q "SEQ 2: sequences de public e dono" "select count(*) as total, count(*) filter (where pg_get_userbyid(c.relowner) <> 'postgres') as outro_dono from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='S'"
 
-q "RBAC 1: linhas, papeis e unidade em user_roles" "select count(*) as linhas, count(distinct tenant_id) as unidades, coalesce(string_agg(distinct app_role::text, ' '), '-') as papeis from public.user_roles"
+q "RBAC 1: colunas reais de user_roles" "select column_name, data_type, is_nullable from information_schema.columns where table_schema='public' and table_name='user_roles' order by ordinal_position"
 q "RBAC 2: vinculos e unidades em tenant_members" "select count(*) as vinculos, count(distinct tenant_id) as unidades, count(distinct user_id) as usuarios from public.tenant_members"
 q "RBAC 3: policies de user_roles" "select policyname, permissive, cmd, roles::text as roles, coalesce(qual, '-') as qual from pg_policies where schemaname='public' and tablename='user_roles' order by policyname"
 q "RBAC 4: policies de tenant_members" "select policyname, permissive, cmd, roles::text as roles, coalesce(qual, '-') as qual from pg_policies where schemaname='public' and tablename='tenant_members' order by policyname"
-q "RBAC 5: conteudo de user_roles e permissions" "select (select count(*) from public.permissions) as permissions, (select count(*) from public.user_roles) as vinculos_papel, (select count(*) from public.tenant_members) as vinculos_unidade",
-q "RBAC 6: quem tem papel e qual" "select coalesce(app_role::text,'-') as papel, count(*) as quantos from public.user_roles group by app_role order by 2 desc"
+q "RBAC 5: linhas de user_roles por papel" "select count(*) as linhas, count(distinct tenant_id) as unidades, count(distinct user_id) as usuarios from public.user_roles"
+q "RBAC 6: permissions cadastradas" "select (select count(*) from public.permissions) as permissions, (select count(*) from public.user_roles) as vinculos_papel"
 q "TEN 13: valores distintos de default das colunas tenant_id" "select coalesce(column_default,'-') as padrao, count(*) as colunas from information_schema.columns where table_schema='public' and column_name='tenant_id' group by column_default order by 2 desc"
 
 q "RLS 7: policies de public com predicado literalmente true" "select count(*) as total, string_agg(tablename||' :: '||policyname||' ['||cmd||']', ' ;; ' order by tablename) as lista from pg_policies where schemaname='public' and ((cmd in ('SELECT','DELETE','UPDATE','ALL') and btrim(coalesce(qual,'')) = 'true') or (cmd in ('INSERT','UPDATE','ALL') and btrim(coalesce(with_check,'')) = 'true'))"
