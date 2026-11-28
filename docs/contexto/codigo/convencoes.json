@@ -1,0 +1,96 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "onde_ficam": {
+  "telas": [
+   "src/pages (76)",
+   "src/features (14)",
+   "src/components (2)"
+  ],
+  "componentes": [
+   "src/components (464)",
+   "src/pages (76)",
+   "src/features (68)"
+  ],
+  "hooks": [
+   "src/hooks (269)",
+   "src/features (17)",
+   "src/components (7)"
+  ],
+  "servicos_logica": [
+   "src/lib (110)",
+   "src/services (26)",
+   "src/utils (15)"
+  ],
+  "testes": [
+   "co-localizado (__tests__) (81)",
+   "co-localizado (*.test) (43)",
+   "outro (17)"
+  ],
+  "edge_functions": "supabase/functions",
+  "migrations": "supabase/migrations",
+  "scripts": [
+   "scripts/db-audit (12)",
+   "scripts/ci (7)",
+   "scripts/diag (6)"
+  ],
+  "docs": [
+   "docs (11)",
+   "(raiz) (7)"
+  ]
+ },
+ "nomenclatura": {
+  "componentes": "PascalCase (87%)",
+  "hooks": "use + PascalCase",
+  "servicos": "camelCase (95%)",
+  "edge_functions": "kebab-case (97%)",
+  "tabelas": "snake_case (79%)"
+ },
+ "barrels_index": 27,
+ "extensao_componentes": [
+  ".tsx (625)"
+ ],
+ "alias_imports": {
+  "(raiz)": {
+   "@/": "src/",
+   "@/components/": "src/components/",
+   "@/hooks/": "src/hooks/",
+   "@/lib/": "src/lib/",
+   "@/services/": "src/services/",
+   "@/types/": "src/types/",
+   "@/utils/": "src/utils/",
+   "@/contexts/": "src/contexts/",
+   "@/guards/": "src/guards/",
+   "@/hoc/": "src/hoc/",
+   "@/workers/": "src/workers/",
+   "~/": "src/"
+  }
+ },
+ "commits": {
+  "convencao": "conventional commits (observado)",
+  "exemplos": [
+   "docs: corrige F438 (as 342 refs eram refs/pull, nao branches vivas; nao ha poda a executar) (#365)",
+   "docs: registra F438 (auditoria de descartes, zero perda) e resolve os pares invertidos de edges (#364)",
+   "chore: remede decisao-edges.json (fonte de remocao estava de 24/11) (#363)",
+   "chore: remove check-expiration, fonte morta que consultava lots (#362)",
+   "fix: create-lot volta a gravar em lotes com a sessao do chamador (#360)"
+  ]
+ },
+ "pr_template": null,
+ "codeowners": null,
+ "contributing": "CONTRIBUTING.md",
+ "instrucoes_agentes": [
+  "AGENTS.md",
+  "CLAUDE.md"
+ ],
+ "typescript": {
+  "strict": true,
+  "noImplicitAny": true,
+  "tsconfigs": [
+   "tsconfig.app.json",
+   "tsconfig.json",
+   "tsconfig.node.json",
+   "tsconfig.paths.json"
+  ]
+ }
+}

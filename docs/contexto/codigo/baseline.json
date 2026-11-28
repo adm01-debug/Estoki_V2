@@ -1,0 +1,1388 @@
+{
+ "aviso": "GERADO AUTOMATICAMENTE por scripts/ai-context/gerar.mjs — não editar à mão; será sobrescrito.",
+ "format_version": 2,
+ "git": {
+  "commit": "bf1dae2417d8b8959b0361e7b6658af4de4b93c9",
+  "branch": "main",
+  "data_commit": "2026-11-26T22:08:36-03:00",
+  "remote": "https://github.com/adm01-debug/Estoki_V2",
+  "ultimos_commits": [
+   {
+    "sha": "bf1dae2",
+    "data": "2026-11-26",
+    "assunto": "docs: corrige F438 (as 342 refs eram refs/pull, nao branches vivas; nao ha poda a executar) (#365)"
+   },
+   {
+    "sha": "c8ec243",
+    "data": "2026-11-26",
+    "assunto": "docs: registra F438 (auditoria de descartes, zero perda) e resolve os pares invertidos de edges (#364)"
+   },
+   {
+    "sha": "13f6f66",
+    "data": "2026-11-26",
+    "assunto": "chore: remede decisao-edges.json (fonte de remocao estava de 24/11) (#363)"
+   },
+   {
+    "sha": "1637f78",
+    "data": "2026-11-26",
+    "assunto": "chore: remove check-expiration, fonte morta que consultava lots (#362)"
+   },
+   {
+    "sha": "5d60d81",
+    "data": "2026-11-26",
+    "assunto": "fix: create-lot volta a gravar em lotes com a sessao do chamador (#360)"
+   },
+   {
+    "sha": "f1e385b",
+    "data": "2026-11-26",
+    "assunto": "feat: filtros salvos ganham tela (produtos, lotes, romaneios, movimentacao, tarefas) (#359)"
+   },
+   {
+    "sha": "7f135a5",
+    "data": "2026-11-26",
+    "assunto": "fix: guarda impede edge function de consultar tabela inexistente (#358)"
+   },
+   {
+    "sha": "5a77f89",
+    "data": "2026-11-26",
+    "assunto": "chore(estado): atualiza inventario do estado real (#357)"
+   },
+   {
+    "sha": "7663d53",
+    "data": "2026-11-26",
+    "assunto": "feat: setor de conserto passa a gravar de verdade (#356)"
+   },
+   {
+    "sha": "0db6aec",
+    "data": "2026-11-26",
+    "assunto": "fix: alertas obedecem a configuracao e a tela de config passa a gravar (#355)"
+   },
+   {
+    "sha": "1a01222",
+    "data": "2026-11-26",
+    "assunto": "feat: aba de configuracoes do inventario grava de verdade e aplica a tolerancia de divergencia (#354)"
+   },
+   {
+    "sha": "eae57b5",
+    "data": "2026-11-26",
+    "assunto": "feat(ui): tela mostra o estado da replicacao do catalogo mestre (#353)"
+   },
+   {
+    "sha": "93bdf61",
+    "data": "2026-11-26",
+    "assunto": "fix: prova da feature_flags usa to_regclass (o cast direto quebrava o aplicador) (#352)"
+   },
+   {
+    "sha": "82528aa",
+    "data": "2026-11-26",
+    "assunto": "feat: painel de funcionalidades (feature flags) com tabela, RLS e tela admin (#350)"
+   },
+   {
+    "sha": "2d89587",
+    "data": "2026-11-26",
+    "assunto": "fix(seguranca): funcao nova em public nao nasce executavel pela chave publica (#351)"
+   },
+   {
+    "sha": "5555aa6",
+    "data": "2026-11-26",
+    "assunto": "fix: ajuste de estoque passa a exigir lote e a alterar o saldo de verdade (#349)"
+   },
+   {
+    "sha": "b5c85b5",
+    "data": "2026-11-26",
+    "assunto": "infra(ci): timeout no job Playwright E2E (#347)"
+   },
+   {
+    "sha": "df9729a",
+    "data": "2026-11-26",
+    "assunto": "feat: tela de Automacoes mostra saude dos crons e do catalogo replicado (#348)"
+   },
+   {
+    "sha": "cbcf2bd",
+    "data": "2026-11-26",
+    "assunto": "fix(seguranca): edges de lote exigem sessao (#346)"
+   },
+   {
+    "sha": "3b23af0",
+    "data": "2026-11-26",
+    "assunto": "fix(infra): aplicador enxerga as migrations de Observabilidade e Automacoes (#345)"
+   },
+   {
+    "sha": "bd23d96",
+    "data": "2026-11-26",
+    "assunto": "feat: tela de Automacoes expoe integracoes ERP e reposicao sugerida (#344)"
+   },
+   {
+    "sha": "ba6fa67",
+    "data": "2026-11-26",
+    "assunto": "feat: tela de Observabilidade consome as 3 matviews e agenda o refresh diario (#342)"
+   },
+   {
+    "sha": "5b2221c",
+    "data": "2026-11-26",
+    "assunto": "infra: workflow para gerar types.ts a partir do banco real (#343)"
+   },
+   {
+    "sha": "bd8f9fe",
+    "data": "2026-11-26",
+    "assunto": "fix(ci): prova de guarda aceita a recusa do backend-health + probe de env falha de verdade (#341)"
+   },
+   {
+    "sha": "d755443",
+    "data": "2026-11-26",
+    "assunto": "fix(seguranca): fecha o CORS no dominio atual e falha fechado no webauthn (#340)"
+   }
+  ],
+  "arquivos_mudados_7d": 811,
+  "pastas_mais_mudadas_30d": [
+   {
+    "pasta": "src/components/ui",
+    "mudancas": 87
+   },
+   {
+    "pasta": "src/components/common",
+    "mudancas": 47
+   },
+   {
+    "pasta": ".i18n-hardcoded-baseline.json",
+    "mudancas": 42
+   },
+   {
+    "pasta": "src/components/forms",
+    "mudancas": 42
+   },
+   {
+    "pasta": "src/pages/admin",
+    "mudancas": 39
+   },
+   {
+    "pasta": "package.json",
+    "mudancas": 36
+   },
+   {
+    "pasta": "src/components/layout",
+    "mudancas": 36
+   },
+   {
+    "pasta": "package-lock.json",
+    "mudancas": 34
+   },
+   {
+    "pasta": "src/features/quality",
+    "mudancas": 34
+   },
+   {
+    "pasta": "src/features/inventory",
+    "mudancas": 30
+   },
+   {
+    "pasta": "src/features/shipping",
+    "mudancas": 27
+   },
+   {
+    "pasta": "scripts/db-audit/aplicar-pendentes.mjs",
+    "mudancas": 26
+   },
+   {
+    "pasta": "src/features/analytics",
+    "mudancas": 21
+   },
+   {
+    "pasta": "src/components/data",
+    "mudancas": 20
+   },
+   {
+    "pasta": "src/components/security",
+    "mudancas": 20
+   }
+  ],
+  "arquivos_mais_mudados_90d": [
+   {
+    "arquivo": "package.json",
+    "mudancas": 56
+   },
+   {
+    "arquivo": "package-lock.json",
+    "mudancas": 54
+   },
+   {
+    "arquivo": "scripts/db-audit/aplicar-pendentes.mjs",
+    "mudancas": 26
+   },
+   {
+    "arquivo": ".github/workflows/cd.yml",
+    "mudancas": 22
+   },
+   {
+    "arquivo": ".github/workflows/qa.yml",
+    "mudancas": 18
+   },
+   {
+    "arquivo": ".github/workflows/ci.yml",
+    "mudancas": 13
+   },
+   {
+    "arquivo": "src/pages/Romaneios.tsx",
+    "mudancas": 12
+   },
+   {
+    "arquivo": "inventario/estado/edges.json",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "src/pages/AjustesEstoque.tsx",
+    "mudancas": 11
+   },
+   {
+    "arquivo": "docs/PLANO_MELHORIAS_2026.md",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "src/features/picking/pages/PickingPage.tsx",
+    "mudancas": 10
+   },
+   {
+    "arquivo": "inventario/estado/banco.json",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "scripts/diag/probe-db.sh",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/integrations/supabase/types.ts",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/pages/Armazenamento.tsx",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/pages/Posicoes.tsx",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "src/pages/admin/UsersPage.tsx",
+    "mudancas": 9
+   },
+   {
+    "arquivo": "docs/qa/03-ACHADOS.md",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "scripts/inventario/gerar-banco.mjs",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/features/shipping/hooks/useRomaneios.ts",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/pages/Ondas.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/pages/customers/CustomersPage.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/pages/putaway/PutawayPage.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/pages/serials/SerialsPage.tsx",
+    "mudancas": 8
+   },
+   {
+    "arquivo": "src/pages/warehouses/WarehousesPage.tsx",
+    "mudancas": 8
+   }
+  ],
+  "autores_30d": [
+   {
+    "autor": "adm01-debug",
+    "commits": 243
+   },
+   {
+    "autor": "dependabot[bot]",
+    "commits": 31
+   },
+   {
+    "autor": "github-actions[bot]",
+    "commits": 9
+   },
+   {
+    "autor": "Joaquim Ataides",
+    "commits": 1
+   }
+  ]
+ },
+ "contagens": {
+  "arquivos_total": 2060,
+  "arquivos_codigo": 1688,
+  "linhas_codigo": 178578,
+  "rotas": 94,
+  "rotas_http_backend": 11,
+  "vistas_por_id": 0,
+  "itens_menu": 75,
+  "modulos": 118,
+  "componentes": 625,
+  "hooks": 308,
+  "edge_functions": 248,
+  "tabelas": 108,
+  "migrations": 209,
+  "cron_jobs": 6,
+  "testes": 153,
+  "workflows": 19,
+  "scripts": 85,
+  "docs_md": 56
+ },
+ "por_pasta": {
+  "capacitor.config.ts": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "eslint.config.js": {
+   "arquivos": 1,
+   "linhas": 51
+  },
+  "playwright.config.ts": {
+   "arquivos": 1,
+   "linhas": 82
+  },
+  "postcss.config.js": {
+   "arquivos": 1,
+   "linhas": 6
+  },
+  "scripts/ai-context": {
+   "arquivos": 3,
+   "linhas": 1458
+  },
+  "scripts/apply_rls_helper.cjs": {
+   "arquivos": 1,
+   "linhas": 22
+  },
+  "scripts/audit-zod.mjs": {
+   "arquivos": 1,
+   "linhas": 65
+  },
+  "scripts/automation.mjs": {
+   "arquivos": 1,
+   "linhas": 992
+  },
+  "scripts/automation.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 603
+  },
+  "scripts/check-agents-integrity.mjs": {
+   "arquivos": 1,
+   "linhas": 205
+  },
+  "scripts/check-eventos-triagem.cjs": {
+   "arquivos": 1,
+   "linhas": 17
+  },
+  "scripts/ci": {
+   "arquivos": 11,
+   "linhas": 1964
+  },
+  "scripts/db-audit": {
+   "arquivos": 16,
+   "linhas": 2731
+  },
+  "scripts/dep-audit.mjs": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "scripts/edge-functions": {
+   "arquivos": 1,
+   "linhas": 168
+  },
+  "scripts/graphify-local.mjs": {
+   "arquivos": 1,
+   "linhas": 1076
+  },
+  "scripts/graphify-local.unit.mjs": {
+   "arquivos": 1,
+   "linhas": 463
+  },
+  "scripts/i18n-check.mjs": {
+   "arquivos": 1,
+   "linhas": 50
+  },
+  "scripts/i18n-hardcoded-check.mjs": {
+   "arquivos": 1,
+   "linhas": 102
+  },
+  "scripts/inventario": {
+   "arquivos": 7,
+   "linhas": 1272
+  },
+  "scripts/lib": {
+   "arquivos": 2,
+   "linhas": 223
+  },
+  "scripts/maintenance": {
+   "arquivos": 4,
+   "linhas": 2477
+  },
+  "scripts/migrations-todo-check.mjs": {
+   "arquivos": 1,
+   "linhas": 48
+  },
+  "scripts/probe-all.cjs": {
+   "arquivos": 1,
+   "linhas": 42
+  },
+  "scripts/probe-cols.cjs": {
+   "arquivos": 1,
+   "linhas": 59
+  },
+  "scripts/probe-empty.cjs": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/probe-full.cjs": {
+   "arquivos": 1,
+   "linhas": 41
+  },
+  "scripts/probe-full2.cjs": {
+   "arquivos": 1,
+   "linhas": 42
+  },
+  "scripts/probe-triagem.cjs": {
+   "arquivos": 1,
+   "linhas": 20
+  },
+  "scripts/qa-report.mjs": {
+   "arquivos": 1,
+   "linhas": 56
+  },
+  "scripts/regras_negocio": {
+   "arquivos": 3,
+   "linhas": 2539
+  },
+  "scripts/rls-audit.mjs": {
+   "arquivos": 1,
+   "linhas": 80
+  },
+  "scripts/seed-app-tables.cjs": {
+   "arquivos": 1,
+   "linhas": 377
+  },
+  "scripts/seed-aprovacoes.cjs": {
+   "arquivos": 1,
+   "linhas": 105
+  },
+  "scripts/seed-cadastros.cjs": {
+   "arquivos": 1,
+   "linhas": 196
+  },
+  "scripts/seed-conferencia.cjs": {
+   "arquivos": 1,
+   "linhas": 87
+  },
+  "scripts/seed-curva-abc.cjs": {
+   "arquivos": 1,
+   "linhas": 87
+  },
+  "scripts/seed-db-service.cjs": {
+   "arquivos": 1,
+   "linhas": 392
+  },
+  "scripts/seed-db.cjs": {
+   "arquivos": 1,
+   "linhas": 285
+  },
+  "scripts/seed-expedicao.cjs": {
+   "arquivos": 1,
+   "linhas": 100
+  },
+  "scripts/seed-inventario-geral.cjs": {
+   "arquivos": 1,
+   "linhas": 71
+  },
+  "scripts/seed-kpis.cjs": {
+   "arquivos": 1,
+   "linhas": 136
+  },
+  "scripts/seed-others-v2.cjs": {
+   "arquivos": 1,
+   "linhas": 723
+  },
+  "scripts/seed-others-v3.cjs": {
+   "arquivos": 1,
+   "linhas": 815
+  },
+  "scripts/seed-others.cjs": {
+   "arquivos": 1,
+   "linhas": 679
+  },
+  "scripts/seed-putaway.cjs": {
+   "arquivos": 1,
+   "linhas": 124
+  },
+  "scripts/seed-qualidade.cjs": {
+   "arquivos": 1,
+   "linhas": 73
+  },
+  "scripts/seed-triagens.cjs": {
+   "arquivos": 1,
+   "linhas": 128
+  },
+  "scripts/seed-trocas.cjs": {
+   "arquivos": 1,
+   "linhas": 145
+  },
+  "scripts/supabase_snapshot": {
+   "arquivos": 2,
+   "linhas": 2669
+  },
+  "scripts/test-db-connection.ts": {
+   "arquivos": 1,
+   "linhas": 112
+  },
+  "src/App.tsx": {
+   "arquivos": 1,
+   "linhas": 80
+  },
+  "src/components": {
+   "arquivos": 540,
+   "linhas": 49549
+  },
+  "src/config": {
+   "arquivos": 10,
+   "linhas": 1601
+  },
+  "src/constants": {
+   "arquivos": 5,
+   "linhas": 369
+  },
+  "src/contexts": {
+   "arquivos": 7,
+   "linhas": 567
+  },
+  "src/features": {
+   "arquivos": 114,
+   "linhas": 18814
+  },
+  "src/guards": {
+   "arquivos": 4,
+   "linhas": 239
+  },
+  "src/hoc": {
+   "arquivos": 5,
+   "linhas": 223
+  },
+  "src/hooks": {
+   "arquivos": 274,
+   "linhas": 15188
+  },
+  "src/i18n": {
+   "arquivos": 2,
+   "linhas": 77
+  },
+  "src/integrations": {
+   "arquivos": 3,
+   "linhas": 6082
+  },
+  "src/lib": {
+   "arquivos": 122,
+   "linhas": 6421
+  },
+  "src/main.tsx": {
+   "arquivos": 1,
+   "linhas": 52
+  },
+  "src/middleware": {
+   "arquivos": 1,
+   "linhas": 24
+  },
+  "src/pages": {
+   "arquivos": 93,
+   "linhas": 23717
+  },
+  "src/plugins": {
+   "arquivos": 4,
+   "linhas": 287
+  },
+  "src/routes": {
+   "arquivos": 5,
+   "linhas": 1127
+  },
+  "src/services": {
+   "arquivos": 35,
+   "linhas": 3203
+  },
+  "src/stores": {
+   "arquivos": 1,
+   "linhas": 32
+  },
+  "src/test": {
+   "arquivos": 1,
+   "linhas": 60
+  },
+  "src/types": {
+   "arquivos": 26,
+   "linhas": 1980
+  },
+  "src/utils": {
+   "arquivos": 17,
+   "linhas": 1865
+  },
+  "supabase/functions": {
+   "arquivos": 312,
+   "linhas": 21108
+  },
+  "tests/e2e": {
+   "arquivos": 12,
+   "linhas": 1210
+  },
+  "vite.config.ts": {
+   "arquivos": 1,
+   "linhas": 197
+  },
+  "vitest.config.ts": {
+   "arquivos": 1,
+   "linhas": 51
+  }
+ },
+ "maiores_arquivos": [
+  {
+   "arquivo": "src/integrations/supabase/types.ts",
+   "linhas": 6019
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linhas": 2138
+  },
+  {
+   "arquivo": "scripts/supabase_snapshot/snapshot.py",
+   "linhas": 1791
+  },
+  {
+   "arquivo": "scripts/graphify-local.mjs",
+   "linhas": 1076
+  },
+  {
+   "arquivo": "scripts/automation.mjs",
+   "linhas": 992
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linhas": 924
+  },
+  {
+   "arquivo": "scripts/seed-others-v3.cjs",
+   "linhas": 815
+  },
+  {
+   "arquivo": "supabase/functions/_shared/schemas.ts",
+   "linhas": 806
+  },
+  {
+   "arquivo": "scripts/maintenance/lib.mjs",
+   "linhas": 783
+  },
+  {
+   "arquivo": "src/components/ui/sidebar.tsx",
+   "linhas": 735
+  },
+  {
+   "arquivo": "scripts/seed-others-v2.cjs",
+   "linhas": 723
+  },
+  {
+   "arquivo": "scripts/maintenance/run.mjs",
+   "linhas": 720
+  },
+  {
+   "arquivo": "src/features/quality/pages/TriagemPage.tsx",
+   "linhas": 703
+  },
+  {
+   "arquivo": "src/features/quality/pages/FormularioTriagem.tsx",
+   "linhas": 693
+  },
+  {
+   "arquivo": "scripts/seed-others.cjs",
+   "linhas": 679
+  },
+  {
+   "arquivo": "scripts/db-audit/aplicar-pendentes.mjs",
+   "linhas": 672
+  },
+  {
+   "arquivo": "src/pages/Romaneios.tsx",
+   "linhas": 669
+  },
+  {
+   "arquivo": "src/features/quality/pages/DashboardTriador.tsx",
+   "linhas": 662
+  },
+  {
+   "arquivo": "src/pages/Relatorios.tsx",
+   "linhas": 650
+  },
+  {
+   "arquivo": "src/pages/admin/AutomacoesPage.tsx",
+   "linhas": 619
+  },
+  {
+   "arquivo": "src/pages/admin/AuditoriaCriticaPage.tsx",
+   "linhas": 572
+  },
+  {
+   "arquivo": "src/features/inventory/pages/EstoquePage.tsx",
+   "linhas": 563
+  },
+  {
+   "arquivo": "src/pages/Armazenamento.tsx",
+   "linhas": 560
+  },
+  {
+   "arquivo": "src/pages/Etiquetas.tsx",
+   "linhas": 532
+  },
+  {
+   "arquivo": "src/features/receiving/pages/RecebimentoPage.tsx",
+   "linhas": 491
+  }
+ ],
+ "qualidade": {
+  "any": 526,
+  "console_log": 340,
+  "ts_ignore": 0,
+  "eslint_disable": 1,
+  "todos": 7,
+  "arquivos_acima_500_linhas": 24
+ },
+ "todos": [
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 188,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(line); if (m) todos.push({ linha: ln, tipo: m[1], text"
+  },
+  {
+   "arquivo": "scripts/ai-context/gerar.mjs",
+   "linha": 222,
+   "tipo": "TODO",
+   "texto": "|FIXME|HACK|XXX)\\b[:\\s-]*([^\\n]{0,100})/.exec(l); return m ? { linha: i + 1, tipo: m[1], texto: m[2]"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 6,
+   "tipo": "TODO",
+   "texto": "/FIXME/XXX/HACK/PENDING) em"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 9,
+   "tipo": "TODO",
+   "texto": "in ...\") são"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 17,
+   "tipo": "TODO",
+   "texto": "|FIXME|XXX|HACK|PENDING)\\b/;"
+  },
+  {
+   "arquivo": "scripts/migrations-todo-check.mjs",
+   "linha": 47,
+   "tipo": "TODO",
+   "texto": "residual acionável.`);"
+  },
+  {
+   "arquivo": "scripts/regras_negocio/generate.py",
+   "linha": 570,
+   "tipo": "TODO",
+   "texto": "\", \"http\", \"import\")) and \"://\" not in c:"
+  }
+ ],
+ "alertas": {
+  "rotas_sem_arquivo": [],
+  "componentes_ambiguos": [],
+  "menu_sem_destino": [],
+  "edges_orfas": [
+   "abc-analysis",
+   "adjust-inventory",
+   "agv-dispatch",
+   "ai-assistant",
+   "ai-classification",
+   "ai-classify",
+   "ai-completion",
+   "ai-embedding",
+   "ai-sentiment",
+   "ai-summarize",
+   "ai-translate",
+   "alert-monitor",
+   "alert-pending-orders",
+   "alert-productivity",
+   "alert-quality",
+   "alert-sla-breach",
+   "alert-stock-low",
+   "analytics",
+   "audit-log",
+   "auth-2fa-setup",
+   "auth-2fa-verify",
+   "auth-change-password",
+   "auth-login",
+   "auth-logout",
+   "auth-refresh-token",
+   "auth-register",
+   "auth-reset-password",
+   "auth-session-list",
+   "auth-session-revoke",
+   "auth-social-login",
+   "auth-verify-email",
+   "backend-health",
+   "backup-database",
+   "batch-import",
+   "batch-processor",
+   "boleto-generate",
+   "broadcast-event",
+   "bulk-delete",
+   "bulk-insert",
+   "bulk-update",
+   "bulk-upsert",
+   "cache",
+   "cache-invalidate",
+   "calculate-kpis",
+   "calculate-shipping",
+   "cancel-order",
+   "carrier-book",
+   "carrier-cancel",
+   "carrier-label",
+   "carrier-quote",
+   "carrier-quote-correios",
+   "carrier-quote-jadlog",
+   "carrier-rates-cache",
+   "carrier-webhooks",
+   "check-permission",
+   "check-reorder",
+   "cleanup-old-data",
+   "cleanup-sessions",
+   "complete-job",
+   "create-customer",
+   "create-lot",
+   "create-payment-intent",
+   "create-purchase-order",
+   "create-sales-order",
+   "create-shipment",
+   "create-subscription",
+   "cron-daily",
+   "cron-weekly",
+   "cte-import",
+   "cycle-count",
+   "danfe-generate",
+   "dashboard-stats",
+   "data-migration",
+   "db-alert-monitor",
+   "delete-file",
+   "demand-forecast",
+   "download-file",
+   "edi-process",
+   "export-data",
+   "export-pdf",
+   "export-products",
+   "external-db-bridge",
+   "generate-barcode",
+   "generate-csv",
+   "generate-excel",
+   "generate-pdf-report",
+   "generate-pick-list",
+   "generate-putaway-list",
+   "generate-report",
+   "generate-sku",
+   "get-permissions",
+   "health",
+   "health-check",
+   "import-csv",
+   "import-data",
+   "import-products",
+   "integration-accounting",
+   "integration-amazon",
+   "integration-correios",
+   "integration-ecommerce",
+   "integration-erp",
+   "integration-ifood",
+   "integration-marketplace",
+   "integration-mercado-livre",
+   "integration-rappi",
+   "integration-sap",
+   "integration-totvs",
+   "inventory-batch-adjust",
+   "inventory-count",
+   "inventory-reconcile",
+   "inventory-release",
+   "inventory-reserve",
+   "inventory-snapshot",
+   "inventory-sync",
+   "inventory-transfer",
+   "inventory-valuation",
+   "invoice-generate",
+   "kpi-calculator",
+   "label-print",
+   "location-utilization",
+   "lot-tracking",
+   "merge-pdfs",
+   "metrics",
+   "nfe-cancel",
+   "nfe-correct",
+   "nfe-distribution",
+   "nfe-manifest",
+   "nfe-process",
+   "nfe-validate",
+   "notification-email",
+   "notification-push",
+   "notification-sms",
+   "notification-whatsapp",
+   "notifications",
+   "notify-slack",
+   "notify-user",
+   "packing-cancel",
+   "packing-confirm",
+   "packing-repack",
+   "packing-split",
+   "packing-start",
+   "parse-excel",
+   "parse-pdf",
+   "payment-create",
+   "picking-assign",
+   "picking-batch",
+   "picking-cancel",
+   "picking-confirm",
+   "picking-optimize",
+   "picking-skip",
+   "picking-split",
+   "pix-generate",
+   "print-label",
+   "process-queue",
+   "process-sales-order",
+   "push-notification",
+   "quality-inspection",
+   "queue-add",
+   "queue-job",
+   "queue-retry",
+   "rate-limit",
+   "rate-limiter",
+   "receive-purchase-order",
+   "receiving-cancel",
+   "receiving-confirm",
+   "receiving-create",
+   "receiving-inspect",
+   "receiving-putaway",
+   "receiving-reject",
+   "register-serial",
+   "release-stock",
+   "reorder-suggestions",
+   "report-custom",
+   "report-daily",
+   "report-export-excel",
+   "report-export-pdf",
+   "report-inventory",
+   "report-inventory-accuracy",
+   "report-monthly",
+   "report-picking-performance",
+   "report-receiving",
+   "report-shipping",
+   "report-supplier-performance",
+   "report-turnover",
+   "report-valuation",
+   "report-weekly",
+   "reports",
+   "reserve-stock",
+   "return-order",
+   "scan-barcode",
+   "schedule-task",
+   "scheduler-cleanup",
+   "scheduler-daily-tasks",
+   "scheduler-reports",
+   "scheduler-sync",
+   "search-locations",
+   "search-orders",
+   "search-products",
+   "send-email",
+   "send-push",
+   "send-sms",
+   "send-whatsapp",
+   "shipping-cancel",
+   "shipping-label",
+   "shipping-manifest",
+   "shipping-pod",
+   "shipping-rate",
+   "shipping-track-webhook",
+   "simulation-test",
+   "stripe-webhook",
+   "sync-external-api",
+   "sync-inventory",
+   "tests",
+   "track-shipment",
+   "transfer-stock",
+   "upload-file",
+   "upload-image",
+   "upload-multiple",
+   "validate-data",
+   "validate-ean",
+   "warehouse-metrics",
+   "wave-cancel",
+   "wave-merge",
+   "wave-optimize",
+   "wave-planning",
+   "wave-release",
+   "wave-split",
+   "webhook-handler",
+   "webhook-receiver"
+  ],
+  "edges_chamadas_sem_pasta": [],
+  "tabelas_sem_rls": [],
+  "tabelas_usadas_sem_definicao": [
+   "activity_logs",
+   "ai_logs",
+   "ajustes_inventario",
+   "alerts",
+   "backups",
+   "boletos",
+   "cache_entries",
+   "categories",
+   "cron_logs",
+   "edi_documents",
+   "files",
+   "images",
+   "inventory_reservations",
+   "invoices",
+   "location_stock",
+   "lot_tracking",
+   "merged_documents",
+   "nfe",
+   "packings",
+   "payments",
+   "pick_list_items",
+   "pick_lists",
+   "picking_routes",
+   "picking_waves",
+   "pix_payments",
+   "produtos_estoque",
+   "receiving_documents",
+   "sales_orders",
+   "sessions",
+   "shipping_labels",
+   "shipping_manifests",
+   "stock_balances",
+   "stock_transfers",
+   "temp_files",
+   "temp_tokens",
+   "units_of_measure",
+   "user_sessions"
+  ],
+  "tabelas_com_drift_migration_vs_types": [
+   "agv_devices",
+   "agv_missions",
+   "ajustes_estoque",
+   "alertas_config",
+   "alertas_historico",
+   "aprovacoes_movimentacao",
+   "armazens",
+   "audit_log",
+   "categorias",
+   "checkpoints_zona",
+   "clientes",
+   "comprovantes_entrega",
+   "conquistas_definicoes",
+   "conquistas_usuarios",
+   "custodia_transferencias",
+   "desafios_diarios",
+   "desafios_usuarios",
+   "entity_versions",
+   "estoque_posicao",
+   "eventos_picking",
+   "eventos_triagem",
+   "feature_flags",
+   "fornecedor_scores",
+   "gamificacao_loja",
+   "gamificacao_transacoes",
+   "gamificacao_usuarios",
+   "inspecoes_qualidade",
+   "integration_logs",
+   "inventario_ciclos",
+   "inventario_config",
+   "inventario_contagens",
+   "inventory_lots",
+   "locations",
+   "lot_movements",
+   "lotes",
+   "metas_kpi",
+   "metricas_dashboard",
+   "metricas_operacionais",
+   "nfe_documents",
+   "nfe_items",
+   "notificacoes",
+   "ocorrencias_perda",
+   "ondas_separacao",
+   "order_items",
+   "orders",
+   "pick_orders",
+   "posicao_status_log",
+   "posicoes_estoque",
+   "produtividade_operador",
+   "produtos",
+   "purchase_orders",
+   "putaway_orders",
+   "quality_inspections",
+   "rastreamento_historico",
+   "receiving_items",
+   "receivings",
+   "recuperacao_materiais",
+   "regras_ponto_pedido",
+   "relatorios_agendados",
+   "reorder_suggestions",
+   "romaneio_itens",
+   "romaneios",
+   "saved_filters",
+   "serial_numbers",
+   "setores_checkpoint",
+   "shipments",
+   "stock_alerts",
+   "stock_movements",
+   "streaks_historico",
+   "streaks_usuarios",
+   "suppliers",
+   "system_settings",
+   "tarefas",
+   "trocas_devolucoes",
+   "xp_historico"
+  ],
+  "rpcs_sem_definicao": [
+   "decrease_location_stock",
+   "get_inventory_summary",
+   "recalculate_weekly_stats"
+  ],
+  "componentes_orfaos": [
+   "src/components/a11y/Announce.tsx",
+   "src/components/a11y/FocusScope.tsx",
+   "src/components/a11y/FocusTrap.tsx",
+   "src/components/a11y/LiveRegion.tsx",
+   "src/components/a11y/VisuallyHidden.tsx",
+   "src/components/armazenamento/PosicaoStatusBadge.tsx",
+   "src/components/auth/PasswordStrengthMeter.tsx",
+   "src/components/charts/Funnel.tsx",
+   "src/components/charts/Gauge.tsx",
+   "src/components/charts/Heatmap.tsx",
+   "src/components/charts/Radar.tsx",
+   "src/components/charts/RadialBar.tsx",
+   "src/components/charts/Sankey.tsx",
+   "src/components/charts/Sparkline.tsx",
+   "src/components/charts/Treemap.tsx",
+   "src/components/common/ErrorFallback.tsx",
+   "src/components/common/LoadingSpinner.tsx",
+   "src/components/common/OnlineIndicator.tsx",
+   "src/components/common/SavedFiltersManager.tsx",
+   "src/components/common/SearchInput.tsx",
+   "src/components/common/SkeletonLoader.tsx",
+   "src/components/common/UnsavedChangesDialog.tsx",
+   "src/components/conferencia/AssinaturaConferenciaDialog.tsx",
+   "src/components/dashboard/QuickActionButton.tsx",
+   "src/components/data/BulkActionsBar.tsx",
+   "src/components/data/CalendarFull.tsx",
+   "src/components/data/DataGrid.tsx",
+   "src/components/data/DataImporter.tsx",
+   "src/components/data/DataTable.tsx",
+   "src/components/data/EditableTable.tsx",
+   "src/components/data/ExportDropdown.tsx",
+   "src/components/data/Gallery.tsx",
+   "src/components/data/ImageZoom.tsx",
+   "src/components/data/InfiniteScroll.tsx",
+   "src/components/data/InfoItem.tsx",
+   "src/components/data/Lightbox.tsx",
+   "src/components/data/PivotTable.tsx",
+   "src/components/data/Timeline.tsx",
+   "src/components/data/TreeTable.tsx",
+   "src/components/data/TreeView.tsx",
+   "src/components/data/VirtualGrid.tsx",
+   "src/components/data/VirtualList.tsx",
+   "src/components/display/AvatarGroup.tsx",
+   "src/components/display/Blockquote.tsx",
+   "src/components/display/Clock.tsx",
+   "src/components/display/CodeBlock.tsx",
+   "src/components/display/CompanyCard.tsx",
+   "src/components/display/Counter.tsx",
+   "src/components/display/Highlight.tsx",
+   "src/components/display/Kbd.tsx",
+   "src/components/display/QRCode.tsx",
+   "src/components/display/Stat.tsx",
+   "src/components/display/StatCard.tsx",
+   "src/components/display/Timeline.tsx",
+   "src/components/display/UserCard.tsx",
+   "src/components/dnd/Draggable.tsx",
+   "src/components/dnd/DragHandle.tsx",
+   "src/components/dnd/Droppable.tsx",
+   "src/components/dnd/KanbanBoard.tsx",
+   "src/components/ExportDropdown.tsx",
+   "src/components/feedback/Banner.tsx",
+   "src/components/feedback/Celebration.tsx",
+   "src/components/feedback/EmptyState.tsx",
+   "src/components/feedback/LoadingOverlay.tsx",
+   "src/components/feedback/Message.tsx",
+   "src/components/filters/FilterBar.tsx",
+   "src/components/gamificacao/ConquistaNotificacoes.tsx",
+   "src/components/gamificacao/StreakIndicator.tsx",
+   "src/components/ia/PrevisaoDemandaIA.tsx",
+   "src/components/InfiniteScrollList.tsx",
+   "src/components/inventario/StatusCicloCard.tsx",
+   "src/components/kanban/KanbanCard.tsx",
+   "src/components/kpis/AlertIndicator.tsx",
+   "src/components/kpis/KPITrendIndicator.tsx",
+   "src/components/layout/AspectRatio.tsx",
+   "src/components/layout/Breadcrumbs.tsx",
+   "src/components/layout/Divider.tsx",
+   "src/components/layout/Flex.tsx",
+   "src/components/layout/header/Header.tsx",
+   "src/components/layout/Masonry.tsx",
+   "src/components/layout/MobileNavigation.tsx",
+   "src/components/layout/PageContainer.tsx",
+   "src/components/layout/PageHeader.tsx",
+   "src/components/layout/ResizablePanel.tsx",
+   "src/components/layout/ScrollAreaCustom.tsx",
+   "src/components/layout/SidebarContent.tsx",
+   "src/components/layout/Space.tsx",
+   "src/components/layout/SplitPane.tsx",
+   "src/components/layout/Stack.tsx",
+   "src/components/maps/MapCluster.tsx",
+   "src/components/maps/MapContainer.tsx",
+   "src/components/maps/MapMarker.tsx",
+   "src/components/maps/MapPopup.tsx",
+   "src/components/maps/MapRoute.tsx",
+   "src/components/movimentacao/MovimentacaoDetalhesForm.tsx",
+   "src/components/movimentacao/MovimentacaoHistorico.tsx",
+   "src/components/movimentacao/MovimentacaoTipoSelector.tsx",
+   "src/components/navigation/ContextMenu.tsx",
+   "src/components/navigation/Navbar.tsx",
+   "src/components/navigation/Spotlight.tsx",
+   "src/components/navigation/Stepper.tsx",
+   "src/components/navigation/Steps.tsx",
+   "src/components/navigation/Wizard.tsx",
+   "src/components/NavLink.tsx",
+   "src/components/onboarding/OnboardingTour.tsx",
+   "src/components/produtos/ProductCardAvancado.tsx",
+   "src/components/produtos/ProdutosList.tsx",
+   "src/components/rastreabilidade/RastreabilidadeKPIs.tsx",
+   "src/components/relatorios/ReportFilters.tsx",
+   "src/components/ui/accordion-custom.tsx",
+   "src/components/ui/avatar-group.tsx",
+   "src/components/ui/breadcrumb.tsx",
+   "src/components/ui/carousel.tsx",
+   "src/components/ui/chart.tsx",
+   "src/components/ui/context-menu.tsx",
+   "src/components/ui/countdown.tsx",
+   "src/components/ui/data-table-advanced.tsx",
+   "src/components/ui/data-table.tsx",
+   "src/components/ui/date-range-picker.tsx",
+   "src/components/ui/date-time-picker.tsx",
+   "src/components/ui/drawer.tsx",
+   "src/components/ui/editor/RichTextEditor.tsx",
+   "src/components/ui/file-upload.tsx",
+   "src/components/ui/filter-panel.tsx",
+   "src/components/ui/hover-card.tsx",
+   "src/components/ui/input-otp.tsx",
+   "src/components/ui/loading-patterns.tsx",
+   "src/components/ui/loading-spinner.tsx",
+   "src/components/ui/menubar.tsx",
+   "src/components/ui/modal.tsx",
+   "src/components/ui/navigation-menu.tsx",
+   "src/components/ui/pagination.tsx",
+   "src/components/ui/progress-steps.tsx",
+   "src/components/ui/resizable.tsx",
+   "src/components/ui/search-input.tsx",
+   "src/components/ui/sidebar.tsx",
+   "src/components/ui/stats-card.tsx",
+   "src/components/ui/tabs-custom.tsx",
+   "src/components/ui/timeline.tsx",
+   "src/components/ui/toggle-group.tsx",
+   "src/components/ui/tooltip-icon.tsx",
+   "src/components/wms/BarcodeDisplay.tsx",
+   "src/components/wms/BatchInfo.tsx",
+   "src/components/wms/BinGrid.tsx",
+   "src/components/wms/CarrierLogo.tsx",
+   "src/components/wms/CycleCountCard.tsx",
+   "src/components/wms/InventoryCard.tsx",
+   "src/components/wms/LocationPicker.tsx",
+   "src/components/wms/PackingSlip.tsx",
+   "src/components/wms/PickList.tsx",
+   "src/components/wms/ProductCard.tsx",
+   "src/components/wms/PutawayList.tsx",
+   "src/components/wms/QualityStatus.tsx",
+   "src/components/wms/ReorderAlert.tsx",
+   "src/components/wms/SerialNumber.tsx",
+   "src/components/wms/ShipmentTracker.tsx",
+   "src/components/wms/StockLevelIndicator.tsx",
+   "src/components/wms/WarehouseMap.tsx",
+   "src/features/inventory/components/EstoqueToolbar.tsx",
+   "src/features/inventory/components/WarehouseMap.tsx",
+   "src/features/quality/components/TriagemTimer.tsx",
+   "src/hooks/useFormContext.tsx"
+  ],
+  "componentes_com_nome_duplicado": [
+   "Alert",
+   "AvatarGroup",
+   "Breadcrumbs",
+   "BulkActionsBar",
+   "CardSkeleton",
+   "ContextMenu",
+   "DashboardSkeleton",
+   "DataImporter",
+   "DataTable",
+   "DateRangePicker",
+   "DateTimePicker",
+   "EmptyState",
+   "ErrorState",
+   "ExportButton",
+   "ExportDropdown",
+   "FileUpload",
+   "FormField",
+   "FormSkeleton",
+   "Header",
+   "InventoryStats",
+   "KPICard",
+   "KanbanBoard",
+   "KanbanColumn",
+   "ListSkeleton",
+   "LoadingSpinner",
+   "MobileNavigation",
+   "PageHeader",
+   "PrevisaoDemandaIA",
+   "RadioGroup",
+   "ResizablePanel",
+   "RichTextEditor",
+   "SavedFiltersDropdown",
+   "ScrollArea",
+   "SearchInput",
+   "Sidebar",
+   "SidebarContent",
+   "SidebarHeader",
+   "Skeleton",
+   "Sparkline",
+   "StatCard",
+   "StatusBadge",
+   "TableSkeleton",
+   "Timeline",
+   "UserMenu",
+   "VersionHistory",
+   "WarehouseMap"
+  ],
+  "scripts_orfaos": [],
+  "env_usadas_nao_declaradas": [
+   "DEV",
+   "MODE",
+   "PROD",
+   "VITE_BITRIX24_WEBHOOK_URL",
+   "VITE_PUBLIC_SITE_URL"
+  ],
+  "ciclos_de_import": 2,
+  "possiveis_segredos_no_codigo": [
+   "supabase/functions/health-check/index.test.ts:10"
+  ]
+ },
+ "erros_do_gerador": []
+}
